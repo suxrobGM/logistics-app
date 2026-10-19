@@ -78,12 +78,12 @@ public class ControllerAuthorizationTests
     }
 
     [Fact]
-    public void Default_feature_endpoints_are_platform_admin_only()
+    public void Feature_admin_endpoints_are_platform_admin_only()
     {
         string[] actions =
         [
-            nameof(FeaturesController.GetDefaultFeatures),
-            nameof(FeaturesController.UpdateDefaultFeatures)
+            nameof(FeaturesController.GetTenantFeatures),
+            nameof(FeaturesController.UpdateTenantFeatures)
         ];
 
         foreach (var action in actions)

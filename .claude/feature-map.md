@@ -510,9 +510,9 @@ registry, `AgentLoopRunner`, decisions, and quota. Gated by `TenantFeature.AICop
 
 ### Feature flags
 
-- Domain: `Entities/Feature/DefaultFeatureConfig.cs`, `TenantFeatureConfig.cs`
+- Domain: `Entities/Feature/TenantFeatureConfig.cs`, `TenantPresetCatalog.cs`
 - Application: `Modules/IdentityAccess/Features/Commands/`, `Modules/IdentityAccess/Features/Queries/`, `Application.Abstractions/Features/IFeatureService.cs` (port)
-- Infrastructure: `Infrastructure.Persistence/Services/Feature/FeatureService.cs` (`ApplyPresetFeaturesAsync` writes per-tenant rows from presets; admin-locked rows are kept)
+- Infrastructure: `Infrastructure.Persistence/Services/Feature/FeatureService.cs` (`ApplyPresetFeaturesAsync` writes per-tenant rows from presets; admin-locked rows are kept; a feature with no row resolves through the tenant's presets - there are no platform-wide defaults)
 - API/UI: `FeaturesController.cs` (admin roles only), `TenantFeaturesController.cs` (read-only, current tenant), `admin-portal/pages/features/`. Tenants cannot toggle features; see _Tenant presets and solo mode_
 
 ## Documents & storage

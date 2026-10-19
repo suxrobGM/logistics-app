@@ -13,8 +13,7 @@ internal class FeatureService(IMasterUnitOfWork masterUow) : IFeatureService
     // Scope-lifetime memo: without it every [RequiresFeature] check costs 3-5 master-DB round trips.
     // Holds entities, not snapshots, so a writer's tracked edits stay visible through the cache.
     private readonly Dictionary<Guid, List<TenantFeatureConfig>> _tenantConfigCache = [];
-    private readonly Dictionary<Guid, PlanAccess> _planAccessCache = [];
-    private List<DefaultFeatureConfig>? _defaultConfigCache;
+    private readonly Dictionary<Guid, TenantAccess> _tenantAccessCache = [];
 
     public async Task<bool> IsFeatureEnabledAsync(Guid tenantId, TenantFeature feature)
     {
@@ -93,44 +92,26 @@ internal class FeatureService(IMasterUnitOfWork masterUow) : IFeatureService
         ];
     }
 
-    public async Task<IReadOnlyList<DefaultFeatureStatusDto>> GetDefaultFeaturesAsync()
-    {
-        var defaultMap = await GetDefaultMapAsync();
-
-        return
-        [
-            .. AllFeatures.Select(f => new DefaultFeatureStatusDto(
-                f,
-                f.GetDescription(),
-                defaultMap.GetValueOrDefault(f, true)))
-        ];
-    }
-
     private async Task<FeatureContext> GetContextAsync(Guid tenantId)
     {
         var configs = await GetTenantConfigsAsync(tenantId);
-        return new FeatureContext(
-            configs.ToDictionary(c => c.Feature),
-            await GetDefaultMapAsync(),
-            await GetPlanAccessAsync(tenantId));
+        return new FeatureContext(configs.ToDictionary(c => c.Feature), await GetTenantAccessAsync(tenantId));
     }
 
-    private async Task<PlanAccess> GetPlanAccessAsync(Guid tenantId)
+    private async Task<TenantAccess> GetTenantAccessAsync(Guid tenantId)
     {
-        if (_planAccessCache.TryGetValue(tenantId, out var cached))
+        if (_tenantAccessCache.TryGetValue(tenantId, out var cached))
         {
             return cached;
         }
 
         var tenant = await masterUow.Repository<Tenant>().GetByIdAsync(tenantId);
-        var access = tenant switch
-        {
-            { IsSubscriptionRequired: false } => new PlanAccess(true, null),
-            { Subscription: not null } => new PlanAccess(false, await GetPlanFeaturesAsync(tenant.Subscription.PlanId)),
-            _ => new PlanAccess(false, null)
-        };
+        var planFeatures = tenant is { IsSubscriptionRequired: true, Subscription: not null }
+            ? await GetPlanFeaturesAsync(tenant.Subscription.PlanId)
+            : null;
+        var access = new TenantAccess(planFeatures, TenantPresetCatalog.Resolve(tenant?.Presets ?? []));
 
-        _planAccessCache[tenantId] = access;
+        _tenantAccessCache[tenantId] = access;
         return access;
     }
 
@@ -155,27 +136,20 @@ internal class FeatureService(IMasterUnitOfWork masterUow) : IFeatureService
         return configs;
     }
 
-    private async Task<List<DefaultFeatureConfig>> GetDefaultConfigsAsync() =>
-        _defaultConfigCache ??= await masterUow.Repository<DefaultFeatureConfig>().GetListAsync();
-
-    private async Task<Dictionary<TenantFeature, bool>> GetDefaultMapAsync() =>
-        (await GetDefaultConfigsAsync()).ToDictionary(d => d.Feature, d => d.IsEnabledByDefault);
-
     /// <summary>
-    ///     Plan-derived access for one tenant. <see cref="IsUnrestricted" /> is set when the tenant
-    ///     does not require a subscription - such tenants get every feature, like the top plan.
-    ///     <see cref="PlanFeatures" /> is null when no plan gates apply.
+    ///     Plan and preset inputs for one tenant. <see cref="PlanFeatures" /> is null when no plan gates
+    ///     apply (no subscription required, or none yet). <see cref="PresetFeatures" /> answers for a
+    ///     feature with no config row - one added to the enum after the tenant's presets were applied.
     /// </summary>
-    private sealed record PlanAccess(bool IsUnrestricted, HashSet<TenantFeature>? PlanFeatures);
+    private sealed record TenantAccess(HashSet<TenantFeature>? PlanFeatures, IReadOnlySet<TenantFeature> PresetFeatures);
 
     /// <summary>
     ///     One tenant's full resolution state; owns the precedence chain:
-    ///     admin lock → plan gate → tenant override → platform default.
+    ///     admin lock → plan gate → tenant config → tenant presets.
     /// </summary>
     private sealed record FeatureContext(
         Dictionary<TenantFeature, TenantFeatureConfig> ConfigMap,
-        Dictionary<TenantFeature, bool> DefaultMap,
-        PlanAccess PlanAccess)
+        TenantAccess Access)
     {
         public bool IsEnabled(TenantFeature feature)
         {
@@ -194,15 +168,13 @@ internal class FeatureService(IMasterUnitOfWork masterUow) : IFeatureService
                 return config.IsEnabled;
             }
 
-            // Unrestricted tenants skip the platform defaults too: a default-off plan differentiator
-            // (e.g. AICopilot) would otherwise stay locked with no plan to ever grant it.
-            return PlanAccess.IsUnrestricted || DefaultMap.GetValueOrDefault(feature, true);
+            return Access.PresetFeatures.Contains(feature);
         }
 
         public bool IsAdminLocked(TenantFeature feature) =>
             ConfigMap.GetValueOrDefault(feature)?.IsAdminLocked ?? false;
 
         public bool IsInPlan(TenantFeature feature) =>
-            PlanAccess.PlanFeatures is null || PlanAccess.PlanFeatures.Contains(feature);
+            Access.PlanFeatures is null || Access.PlanFeatures.Contains(feature);
     }
 }

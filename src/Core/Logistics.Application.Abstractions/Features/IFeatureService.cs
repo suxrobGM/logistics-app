@@ -38,11 +38,6 @@ public interface IFeatureService
     Task<IReadOnlyList<FeatureStatusDto>> GetAllFeatureStatusAsync(Guid tenantId);
 
     /// <summary>
-    /// Gets the default feature configurations applied to new tenants.
-    /// </summary>
-    Task<IReadOnlyList<DefaultFeatureStatusDto>> GetDefaultFeaturesAsync();
-
-    /// <summary>
     /// Stages a tenant's feature configurations from its presets on the master unit of work; the caller saves.
     /// Admin-locked configurations keep their value.
     /// </summary>

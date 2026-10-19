@@ -103,7 +103,7 @@ erDiagram
     }
 ```
 
-The master DB also stores `SuperAdmin`, `BlogPost`, `ContactSubmission`, `DemoRequest`, `SystemSettings`, `DefaultFeatureConfig`, and `ImpersonationAuditLog` / `ImpersonationToken` (used by SuperAdmins to act on behalf of a tenant).
+The master DB also stores `SuperAdmin`, `BlogPost`, `ContactSubmission`, `DemoRequest`, `SystemSettings`, and `ImpersonationAuditLog` / `ImpersonationToken` (used by SuperAdmins to act on behalf of a tenant).
 
 ### Tenants and subscriptions
 

@@ -2,7 +2,6 @@ using System.Linq.Expressions;
 using Logistics.Domain.Entities;
 using Logistics.Domain.Persistence;
 using Logistics.Domain.Primitives.Enums;
-using Logistics.Domain.Specifications;
 using Logistics.Infrastructure.Persistence.Services.Feature;
 using NSubstitute;
 using Xunit;
@@ -18,9 +17,6 @@ public class FeatureServiceCachingTests
     private readonly IMasterRepository<TenantFeatureConfig, Guid> _configRepo =
         Substitute.For<IMasterRepository<TenantFeatureConfig, Guid>>();
 
-    private readonly IMasterRepository<DefaultFeatureConfig, Guid> _defaultRepo =
-        Substitute.For<IMasterRepository<DefaultFeatureConfig, Guid>>();
-
     private readonly IMasterUnitOfWork _masterUow = Substitute.For<IMasterUnitOfWork>();
     private readonly FeatureService _sut;
     private readonly Guid _tenantId = Guid.NewGuid();
@@ -29,13 +25,10 @@ public class FeatureServiceCachingTests
     public FeatureServiceCachingTests()
     {
         _masterUow.Repository<TenantFeatureConfig>().Returns(_configRepo);
-        _masterUow.Repository<DefaultFeatureConfig>().Returns(_defaultRepo);
         _masterUow.Repository<Tenant>().Returns(_tenantRepo);
 
         _configRepo.GetListAsync(Arg.Any<Expression<Func<TenantFeatureConfig, bool>>>(), Arg.Any<CancellationToken>())
             .Returns(_ => new List<TenantFeatureConfig>());
-        _defaultRepo.GetListAsync(Arg.Any<ISpecification<DefaultFeatureConfig>?>(), Arg.Any<CancellationToken>())
-            .Returns(_ => new List<DefaultFeatureConfig>());
 
         // Non-subscription tenant: plan gating is skipped, so all features are allowed.
         _tenantRepo.GetByIdAsync(_tenantId, Arg.Any<CancellationToken>())
@@ -53,14 +46,14 @@ public class FeatureServiceCachingTests
                     ZipCode = "12345",
                     Country = "US"
                 },
-                IsSubscriptionRequired = false
+                IsSubscriptionRequired = false,
+                Presets = [TenantPreset.GeneralFreight, TenantPreset.CarHauler]
             });
 
         _sut = new FeatureService(_masterUow);
     }
 
     private int ConfigQueryCount => _configRepo.ReceivedCalls().Count(c => c.GetMethodInfo().Name == "GetListAsync");
-    private int DefaultQueryCount => _defaultRepo.ReceivedCalls().Count(c => c.GetMethodInfo().Name == "GetListAsync");
     private int TenantQueryCount => _tenantRepo.ReceivedCalls().Count(c => c.GetMethodInfo().Name == "GetByIdAsync");
 
     [Fact]
@@ -70,7 +63,6 @@ public class FeatureServiceCachingTests
         await _sut.IsFeatureEnabledAsync(_tenantId, TenantFeature.AgenticDispatch);
 
         Assert.Equal(1, ConfigQueryCount);
-        Assert.Equal(1, DefaultQueryCount);
         Assert.Equal(1, TenantQueryCount);
     }
 
@@ -83,12 +75,11 @@ public class FeatureServiceCachingTests
         }
 
         Assert.Equal(1, ConfigQueryCount);
-        Assert.Equal(1, DefaultQueryCount);
         Assert.Equal(1, TenantQueryCount);
     }
 
     [Fact]
-    public async Task IsFeatureEnabled_DifferentTenants_QueriesPerTenantButSharesDefaults()
+    public async Task IsFeatureEnabled_DifferentTenants_QueriesPerTenant()
     {
         var otherTenantId = Guid.NewGuid();
 
@@ -97,7 +88,6 @@ public class FeatureServiceCachingTests
 
         Assert.Equal(2, ConfigQueryCount);
         Assert.Equal(2, TenantQueryCount);
-        Assert.Equal(1, DefaultQueryCount); // defaults are tenant-independent
     }
 
     [Fact]
@@ -119,7 +109,6 @@ public class FeatureServiceCachingTests
         await _sut.GetAllFeatureStatusAsync(_tenantId);
 
         Assert.Equal(1, ConfigQueryCount);
-        Assert.Equal(1, DefaultQueryCount);
         Assert.Equal(1, TenantQueryCount);
     }
 }

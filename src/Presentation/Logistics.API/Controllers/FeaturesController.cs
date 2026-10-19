@@ -16,33 +16,6 @@ namespace Logistics.API.Controllers;
 [Produces("application/json")]
 public class FeaturesController(IMediator mediator) : ControllerBase
 {
-    #region Default Features
-
-    /// <summary>Gets the default feature configuration for new tenants.</summary>
-    [HttpGet("defaults", Name = "GetDefaultFeatures")]
-    [ProducesResponseType(typeof(IReadOnlyList<DefaultFeatureStatusDto>), StatusCodes.Status200OK)]
-    [Authorize(Roles = $"{AppRoles.SuperAdmin},{AppRoles.Admin}")]
-    public async Task<IActionResult> GetDefaultFeatures()
-    {
-        var result = await mediator.Send(new GetDefaultFeaturesQuery());
-        return result.IsSuccess ? Ok(result.Value) : BadRequest(ErrorResponse.FromResult(result));
-    }
-
-    /// <summary>
-    /// Updates the default feature configuration for new tenants.
-    /// </summary>
-    [HttpPut("defaults", Name = "UpdateDefaultFeatures")]
-    [ProducesResponseType(StatusCodes.Status204NoContent)]
-    [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status400BadRequest)]
-    [Authorize(Roles = $"{AppRoles.SuperAdmin},{AppRoles.Admin}")]
-    public async Task<IActionResult> UpdateDefaultFeatures([FromBody] UpdateDefaultFeaturesCommand request)
-    {
-        var result = await mediator.Send(request);
-        return result.IsSuccess ? NoContent() : BadRequest(ErrorResponse.FromResult(result));
-    }
-
-    #endregion
-
     #region Tenant Features
 
     /// <summary>
