@@ -1,15 +1,16 @@
-using Logistics.Application.Abstractions;
+using Logistics.Application.Modules.Financial.Tax.Services;
 using Logistics.Domain.Entities;
 using Logistics.Domain.Persistence;
 using Logistics.Domain.Primitives.Enums;
-using Logistics.Domain.Primitives.ValueObjects;
 using Logistics.Mappings;
 using Logistics.Mediator;
 using Logistics.Shared.Models;
 
 namespace Logistics.Application.Modules.Financial.Invoices.Commands;
 
-internal sealed class UpdateLineItemHandler(ITenantUnitOfWork tenantUow)
+internal sealed class UpdateLineItemHandler(
+    ITenantUnitOfWork tenantUow,
+    IInvoiceTaxApplier taxApplier)
     : IRequestHandler<UpdateLineItemCommand, Result<InvoiceLineItemDto>>
 {
     public async Task<Result<InvoiceLineItemDto>> Handle(UpdateLineItemCommand req, CancellationToken ct)
@@ -72,9 +73,12 @@ internal sealed class UpdateLineItemHandler(ITenantUnitOfWork tenantUow)
 
         tenantUow.Repository<InvoiceLineItem>().Update(lineItem);
 
-        // Recalculate invoice total
-        var newTotal = invoice.LineItems.Sum(li => li.Amount.Amount * li.Quantity);
-        invoice.Total = new Money { Amount = newTotal, Currency = invoice.Total.Currency };
+        await taxApplier.ApplyAsync(invoice, ct);
+        if (invoice.Payments.Count > 0)
+        {
+            invoice.RecalculatePaymentStatus(DateTime.UtcNow);
+        }
+
         tenantUow.Repository<Invoice>().Update(invoice);
 
         await tenantUow.SaveChangesAsync(ct);
