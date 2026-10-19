@@ -120,8 +120,8 @@ public abstract partial class Invoice : AuditableEntity, ITenantEntity, IAuditab
     }
 
     /// <summary>
-    /// Sets the status from <see cref="AmountPaid"/>. Call it after a payment's amount or status changes,
-    /// or the total does.
+    /// Sets the status from <see cref="AmountPaid"/>. Call it after a payment's amount or status changes;
+    /// <see cref="RecalculateTotals"/> calls it when the total changes.
     /// </summary>
     public void RecalculatePaymentStatus(DateTime now)
     {

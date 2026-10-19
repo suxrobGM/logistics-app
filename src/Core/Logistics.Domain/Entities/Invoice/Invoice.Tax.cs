@@ -38,8 +38,8 @@ public abstract partial class Invoice
 
     /// <summary>
     /// Recomputes <see cref="Subtotal"/>, <see cref="TaxTotal"/>, and <see cref="Total"/>
-    /// from current line items per the active <see cref="TaxBehavior"/>. Idempotent.
-    /// Raises <see cref="InvoiceTotalsRecalculatedEvent"/>.
+    /// from current line items per the active <see cref="TaxBehavior"/>, then the payment status when the
+    /// invoice has payments. Idempotent. Raises <see cref="InvoiceTotalsRecalculatedEvent"/>.
     /// </summary>
     public void RecalculateTotals()
     {
@@ -83,6 +83,11 @@ public abstract partial class Invoice
         Subtotal = new Money { Amount = decimal.Round(subtotal, 2), Currency = currency };
         TaxTotal = new Money { Amount = decimal.Round(taxTotal, 2), Currency = currency };
         Total = new Money { Amount = decimal.Round(total, 2), Currency = currency };
+
+        if (Payments.Count > 0)
+        {
+            RecalculatePaymentStatus(DateTime.UtcNow);
+        }
 
         DomainEvents.Add(new InvoiceTotalsRecalculatedEvent(
             Id,

@@ -40,10 +40,6 @@ internal sealed class DeleteLineItemHandler(
         invoice.LineItems.Remove(lineItem);
 
         await taxApplier.ApplyAsync(invoice, ct);
-        if (invoice.Payments.Count > 0)
-        {
-            invoice.RecalculatePaymentStatus(DateTime.UtcNow);
-        }
 
         tenantUow.Repository<Invoice>().Update(invoice);
 

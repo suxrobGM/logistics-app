@@ -74,10 +74,6 @@ internal sealed class UpdateLineItemHandler(
         tenantUow.Repository<InvoiceLineItem>().Update(lineItem);
 
         await taxApplier.ApplyAsync(invoice, ct);
-        if (invoice.Payments.Count > 0)
-        {
-            invoice.RecalculatePaymentStatus(DateTime.UtcNow);
-        }
 
         tenantUow.Repository<Invoice>().Update(invoice);
 
