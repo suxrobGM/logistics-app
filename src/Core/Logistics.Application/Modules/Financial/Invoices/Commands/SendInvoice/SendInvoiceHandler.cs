@@ -74,8 +74,7 @@ internal sealed class SendInvoiceHandler(
         var companyName = tenant.CompanyName ?? tenant.Name;
 
         // Calculate amount due
-        var totalPaid = invoice.Payments.Sum(p => p.Amount.Amount);
-        var amountDue = invoice.Total.Amount - totalPaid;
+        var amountDue = invoice.AmountDue;
 
         // Build line items for email
         var lineItems = invoice.LineItems.Select(li => new InvoiceLineItemEmailModel

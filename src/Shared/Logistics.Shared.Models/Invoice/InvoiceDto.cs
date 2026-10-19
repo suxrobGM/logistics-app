@@ -34,6 +34,14 @@ public record InvoiceDto
     public DateTime? DueDate { get; set; }
 
     public IEnumerable<PaymentDto> Payments { get; set; } = [];
+
+    /// <summary>
+    /// Sum of the settled (Paid) payments in the invoice currency. Pending, failed and refunded payments
+    /// are listed in <see cref="Payments"/> but count for nothing here.
+    /// </summary>
+    public decimal AmountPaid { get; set; }
+
+    public decimal AmountDue { get; set; }
     public IEnumerable<InvoiceLineItemDto> LineItems { get; set; } = [];
 
     /// <summary>

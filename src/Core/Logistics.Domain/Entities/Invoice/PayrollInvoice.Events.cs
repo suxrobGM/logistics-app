@@ -44,12 +44,8 @@ public partial class PayrollInvoice
     /// </summary>
     public void ApplyPaymentWithEvent(Payment payment)
     {
-        Payments.Add(payment);
-        var paid = Payments.Sum(p => p.Amount);
-        var isFullyPaid = paid >= Total.Amount;
-        Status = isFullyPaid ? InvoiceStatus.Paid : InvoiceStatus.PartiallyPaid;
-
-        RaisePaidEvent(payment.Amount.Amount, isFullyPaid);
+        ApplyPayment(payment);
+        RaisePaidEvent(payment.Amount.Amount, Status == InvoiceStatus.Paid);
     }
 
     private void RaiseSubmittedEvent()
@@ -99,9 +95,6 @@ public partial class PayrollInvoice
 
     private void RaisePaidEvent(decimal paymentAmount, bool isFullyPaid)
     {
-        var totalPaid = Payments.Sum(p => p.Amount);
-        var outstanding = Total.Amount - totalPaid;
-
         DomainEvents.Add(new PayrollPaidEvent(
             Id,
             Number,
@@ -111,7 +104,7 @@ public partial class PayrollInvoice
             Employee?.DeviceToken,
             paymentAmount,
             Total.Amount,
-            outstanding,
+            AmountDue,
             Total.Currency,
             isFullyPaid,
             PeriodStart,

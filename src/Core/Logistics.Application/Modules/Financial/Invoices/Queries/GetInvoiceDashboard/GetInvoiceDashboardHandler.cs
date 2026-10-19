@@ -77,5 +77,5 @@ internal sealed class GetInvoiceDashboardHandler(ITenantUnitOfWork tenantUow)
     }
 
     private static decimal Outstanding(Invoice invoice) =>
-        invoice.Total.Amount - invoice.Payments.Sum(p => p.Amount.Amount);
+        invoice.AmountDue;
 }

@@ -33,20 +33,20 @@ internal sealed class FinancialsReportHandler(ITenantUnitOfWork tenantUow)
 
         var totalCount = invoices.Count;
         var totalInvoiced = invoices.Sum(i => i.Total.Amount);
-        var totalPaid = invoices.Sum(i => i.Payments.Sum(p => p.Amount.Amount));
+        var totalPaid = invoices.Sum(i => i.AmountPaid);
         var totalDue = totalInvoiced - totalPaid;
 
-        var fullyPaidInvoices = invoices.Count(i => i.Payments.Sum(p => p.Amount.Amount) >= i.Total.Amount);
+        var fullyPaidInvoices = invoices.Count(i => i.AmountPaid >= i.Total.Amount);
         var partiallyPaidInvoices = invoices.Count(i =>
-            i.Payments.Sum(p => p.Amount.Amount) > 0 &&
-            i.Payments.Sum(p => p.Amount.Amount) < i.Total.Amount);
-        var unpaidInvoices = invoices.Count(i => i.Payments.Sum(p => p.Amount.Amount) == 0);
+            i.AmountPaid > 0 &&
+            i.AmountPaid < i.Total.Amount);
+        var unpaidInvoices = invoices.Count(i => i.AmountPaid == 0);
 
         var averageInvoiceValue = totalCount > 0 ? totalInvoiced / totalCount : 0;
         var collectionRate = totalInvoiced > 0 ? (totalPaid / totalInvoiced) * 100 : 0;
         var now = DateTime.UtcNow;
         var overdue = invoices.Where(i => InvoiceStatuses.Open.Contains(i.Status) && i.DueDate < now).ToList();
-        var overdueAmount = overdue.Sum(i => i.Total.Amount - i.Payments.Sum(p => p.Amount.Amount));
+        var overdueAmount = overdue.Sum(i => i.AmountDue);
         var overdueInvoices = overdue.Count;
 
         var createdDates = invoices.Select(i => i.CreatedAt).DefaultIfEmpty(now).ToList();
@@ -109,7 +109,7 @@ internal sealed class FinancialsReportHandler(ITenantUnitOfWork tenantUow)
                 .ToList();
 
             var monthTotal = monthInvoices.Sum(i => i.Total.Amount);
-            var monthPaid = monthInvoices.Sum(i => i.Payments.Sum(p => p.Amount.Amount));
+            var monthPaid = monthInvoices.Sum(i => i.AmountPaid);
 
             trends.Add(new PaymentTrendDto
             {
@@ -133,7 +133,7 @@ internal sealed class FinancialsReportHandler(ITenantUnitOfWork tenantUow)
             {
                 CustomerName = g.Key.Name,
                 TotalInvoiced = g.Sum(i => i.Total.Amount),
-                TotalPaid = g.Sum(i => i.Payments.Sum(p => p.Amount.Amount)),
+                TotalPaid = g.Sum(i => i.AmountPaid),
                 InvoiceCount = g.Count()
             })
             .OrderByDescending(c => c.TotalInvoiced)
@@ -175,7 +175,7 @@ internal sealed class FinancialsReportHandler(ITenantUnitOfWork tenantUow)
                 .ToList();
 
             var revenue = monthInvoices.Sum(i => i.Total.Amount);
-            var paid = monthInvoices.Sum(i => i.Payments.Sum(p => p.Amount.Amount));
+            var paid = monthInvoices.Sum(i => i.AmountPaid);
 
             // Query actual expenses for this month
             var expenses = expenseQuery

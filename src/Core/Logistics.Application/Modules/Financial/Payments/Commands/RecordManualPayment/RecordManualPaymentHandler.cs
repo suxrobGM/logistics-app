@@ -54,8 +54,7 @@ internal sealed class RecordManualPaymentHandler(
         }
 
         // Calculate amount due
-        var totalPaid = invoice.Payments.Sum(p => p.Amount.Amount);
-        var amountDue = invoice.Total.Amount - totalPaid;
+        var amountDue = invoice.AmountDue;
 
         if (req.Amount > amountDue)
         {

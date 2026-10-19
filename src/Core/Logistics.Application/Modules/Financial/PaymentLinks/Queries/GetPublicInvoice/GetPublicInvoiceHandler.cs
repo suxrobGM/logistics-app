@@ -58,8 +58,7 @@ internal sealed class GetPublicInvoiceHandler(
         });
 
         // Calculate amount due
-        var totalPaid = invoice.Payments.Sum(p => p.Amount.Amount);
-        var amountDue = invoice.Total.Amount - totalPaid;
+        var amountDue = invoice.AmountDue;
 
         // Build the DTO
         var dto = new PublicInvoiceDto

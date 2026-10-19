@@ -1,6 +1,7 @@
 using Logistics.Application.Modules.Financial.Tax.Services;
 using Logistics.Domain.Entities;
 using Logistics.Domain.Persistence;
+using Logistics.Domain.Primitives.Enums;
 using Logistics.Mediator;
 using Logistics.Shared.Models;
 
@@ -42,19 +43,20 @@ internal sealed class CreateLoadInvoiceHandler(
         invoice.CustomerId = req.CustomerId;
         invoice.Customer = customer;
 
+        await taxApplier.ApplyAsync(invoice, ct);
+
         if (req.PaymentAmount is { } paymentAmount)
         {
             var payment = new Payment
             {
                 StripePaymentMethodId = req.StripePaymentMethodId,
                 Amount = new() { Amount = paymentAmount, Currency = invoice.Total.Currency },
+                Status = PaymentStatus.Paid,
                 BillingAddress = tenant.CompanyAddress
             };
 
             invoice.ApplyPayment(payment);
         }
-
-        await taxApplier.ApplyAsync(invoice, ct);
 
         await tenantUow.Repository<Invoice>().AddAsync(invoice, ct);
         await tenantUow.SaveChangesAsync(ct);

@@ -39,10 +39,9 @@ internal static class InvoiceTotalsSection
                     .FontSize(14).Bold().FontColor(Colors.Blue.Darken3);
             });
 
-            var paid = invoice.Payments.Where(p => p.Status == PaymentStatus.Paid).ToList();
-            if (!showPayments || paid.Count == 0) return;
+            var totalPaid = invoice.AmountPaid;
+            if (!showPayments || totalPaid == 0m) return;
 
-            var totalPaid = paid.Sum(p => p.Amount.Amount);
             totals.Item().PaddingTop(10).Row(row =>
             {
                 row.RelativeItem().Text("Paid:").FontColor(Colors.Green.Darken2);
@@ -51,7 +50,7 @@ internal static class InvoiceTotalsSection
                     .FontColor(Colors.Green.Darken2);
             });
 
-            var balance = invoice.Total.Amount - totalPaid;
+            var balance = invoice.AmountDue;
             totals.Item().Row(row =>
             {
                 row.RelativeItem().Text("Balance Due:").FontSize(12).Bold();

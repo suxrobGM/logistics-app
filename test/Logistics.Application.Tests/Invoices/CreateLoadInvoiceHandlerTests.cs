@@ -59,4 +59,40 @@ public class CreateLoadInvoiceHandlerTests
         Assert.Equal(2450m, added.Total.Amount);
         Assert.Empty(added.Payments);
     }
+
+    [Fact]
+    public async Task Handle_PaymentForTheTaxedTotal_InvoiceIsPaid()
+    {
+        var taxApplier = Substitute.For<IInvoiceTaxApplier>();
+        taxApplier.When(t => t.ApplyAsync(Arg.Any<Invoice>(), Arg.Any<CancellationToken>()))
+            .Do(call =>
+            {
+                var invoice = call.Arg<Invoice>();
+                foreach (var line in invoice.LineItems)
+                {
+                    line.TaxAmount = line.Total * 0.1m;
+                }
+
+                invoice.RecalculateTotals();
+            });
+        var sut = new CreateLoadInvoiceHandler(_tenantUow, taxApplier);
+        var load = LoadInvoiceChargesTests.NewLoad(linehaul: 2000m);
+        _loadRepo.GetByIdAsync(load.Id, Arg.Any<CancellationToken>()).Returns(load);
+        _customerRepo.GetByIdAsync(load.Customer.Id, Arg.Any<CancellationToken>()).Returns(load.Customer);
+        Invoice? added = null;
+        await _invoiceRepo.AddAsync(Arg.Do<Invoice>(i => added = i), Arg.Any<CancellationToken>());
+
+        var result = await sut.Handle(new CreateLoadInvoiceCommand
+        {
+            LoadId = load.Id,
+            CustomerId = load.Customer.Id,
+            PaymentAmount = 2200m
+        }, default);
+
+        Assert.True(result.IsSuccess);
+        Assert.NotNull(added);
+        Assert.Equal(2200m, added.Total.Amount);
+        Assert.Equal(PaymentStatus.Paid, Assert.Single(added.Payments).Status);
+        Assert.Equal(InvoiceStatus.Paid, added.Status);
+    }
 }

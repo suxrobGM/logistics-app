@@ -82,6 +82,20 @@ public abstract partial class Invoice : AuditableEntity, ITenantEntity, IAuditab
         return removed;
     }
 
+    public decimal AmountPaid => SumPaid(Payments, Total.Currency);
+
+    public decimal AmountDue => Total.Amount - AmountPaid;
+
+    /// <summary>
+    /// What settled payments add up to: only <see cref="PaymentStatus.Paid"/> payments in
+    /// <paramref name="currency"/> count. Pending, failed, cancelled and refunded payments stay on the
+    /// invoice but pay nothing. For callers that hold an invoice's payments without loading them through it.
+    /// </summary>
+    public static decimal SumPaid(IEnumerable<Payment> payments, string currency) => payments
+        .Where(p => p.Status == PaymentStatus.Paid
+                    && string.Equals(p.Amount.Currency, currency, StringComparison.OrdinalIgnoreCase))
+        .Sum(p => p.Amount.Amount);
+
     public void ApplyPayment(Payment payment)
     {
         Payments.Add(payment);
@@ -99,11 +113,12 @@ public abstract partial class Invoice : AuditableEntity, ITenantEntity, IAuditab
     }
 
     /// <summary>
-    /// Sets the status from what the payments add up to. Call it after a payment's amount changes.
+    /// Sets the status from <see cref="AmountPaid"/>. Call it after a payment's amount or status changes,
+    /// or the total does.
     /// </summary>
     public void RecalculatePaymentStatus(DateTime now)
     {
-        var paid = Payments.Sum(p => p.Amount.Amount);
+        var paid = AmountPaid;
         if (paid > 0m)
         {
             Status = paid >= Total.Amount ? InvoiceStatus.Paid : InvoiceStatus.PartiallyPaid;

@@ -22,13 +22,20 @@ internal sealed class UpdatePaymentHandler(ITenantUnitOfWork tenantUow) : IReque
             payment.StripePaymentMethodId = req.StripePaymentMethodId;
         }
 
+        var statusChanged = req.Status is not null && req.Status != payment.Status;
+        var amountChanged = req.Amount is not null && req.Amount != payment.Amount.Amount;
+
         payment.Status = PropertyUpdater.UpdateIfChanged(req.Status, payment.Status);
         payment.BillingAddress = PropertyUpdater.UpdateIfChanged(req.BillingAddress, payment.BillingAddress);
         payment.Description = PropertyUpdater.UpdateIfChanged(req.Description, payment.Description);
 
-        if (req.Amount is not null && req.Amount != payment.Amount.Amount)
+        if (amountChanged)
         {
-            payment.Amount = new() { Amount = req.Amount.Value, Currency = payment.Amount.Currency };
+            payment.Amount = new() { Amount = req.Amount!.Value, Currency = payment.Amount.Currency };
+        }
+
+        if (statusChanged || amountChanged)
+        {
             var invoice = await tenantUow.Repository<Invoice>().GetAsync(i => i.Payments.Any(p => p.Id == payment.Id), ct);
             invoice?.RecalculatePaymentStatus(DateTime.UtcNow);
         }

@@ -161,7 +161,9 @@ internal sealed class GetCompanyStatsHandler(ITenantUnitOfWork tenantUow)
             .GroupBy(_ => 1)
             .Select(_ => new
             {
-                OutstandingTotal = _.Sum(i => i.Total.Amount - i.Payments.Sum(p => p.Amount.Amount)),
+                OutstandingTotal = _.Sum(i => i.Total.Amount - i.Payments
+                    .Where(p => p.Status == PaymentStatus.Paid && p.Amount.Currency == i.Total.Currency)
+                    .Sum(p => p.Amount.Amount)),
                 OverdueCount = _.Count(i => i.DueDate < now)
             })
             .FirstOrDefaultAsync(ct);

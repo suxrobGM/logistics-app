@@ -29,7 +29,7 @@ internal sealed class PayrollReportHandler(ITenantUnitOfWork tenantUow)
         var payrolls = payrollsQuery.ToList();
 
         var totalPayroll = payrolls.Sum(p => p.Total.Amount);
-        var totalPaid = payrolls.Sum(p => p.Payments.Sum(pay => pay.Amount.Amount));
+        var totalPaid = payrolls.Sum(p => p.AmountPaid);
         var totalOutstanding = totalPayroll - totalPaid;
         var uniqueEmployees = payrolls.Select(p => p.EmployeeId).Distinct().Count();
         var averagePayrollAmount = payrolls.Any() ? totalPayroll / payrolls.Count : 0;
@@ -94,7 +94,7 @@ internal sealed class PayrollReportHandler(ITenantUnitOfWork tenantUow)
             {
                 Period = monthStart.ToString("MMM yyyy"),
                 TotalAmount = monthPayrolls.Sum(p => p.Total.Amount),
-                PaidAmount = monthPayrolls.Sum(p => p.Payments.Sum(pay => pay.Amount.Amount)),
+                PaidAmount = monthPayrolls.Sum(p => p.AmountPaid),
                 PayrollCount = monthPayrolls.Count,
                 EmployeeCount = monthPayrolls.Select(p => p.EmployeeId).Distinct().Count()
             });

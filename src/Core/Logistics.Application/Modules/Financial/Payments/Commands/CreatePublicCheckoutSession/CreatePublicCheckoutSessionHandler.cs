@@ -71,8 +71,7 @@ internal sealed class CreatePublicCheckoutSessionHandler(
                 $"This invoice was assigned to {factor.Name}. Please pay {factor.Name} directly.");
         }
 
-        var totalPaid = invoice.Payments.Sum(p => p.Amount.Amount);
-        var amountDue = invoice.Total.Amount - totalPaid;
+        var amountDue = invoice.AmountDue;
         var paymentAmount = req.Amount ?? amountDue;
 
         if (paymentAmount <= 0)

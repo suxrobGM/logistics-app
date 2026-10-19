@@ -15,6 +15,65 @@ public class InvoicePaymentTests
 {
     private static readonly DateTime Now = new(2026, 10, 1, 12, 0, 0, DateTimeKind.Utc);
 
+    #region Amount paid
+
+    [Theory]
+    [InlineData(PaymentStatus.Pending)]
+    [InlineData(PaymentStatus.Failed)]
+    [InlineData(PaymentStatus.Cancelled)]
+    [InlineData(PaymentStatus.Refunded)]
+    public void ApplyPayment_NotSettled_PaysNothing(PaymentStatus status)
+    {
+        var invoice = Invoice(Customer(null));
+        invoice.SentAt = Now;
+
+        invoice.ApplyPayment(Payment(1000m, status));
+
+        Assert.Equal(0m, invoice.AmountPaid);
+        Assert.Equal(1000m, invoice.AmountDue);
+        Assert.Equal(InvoiceStatus.Sent, invoice.Status);
+        Assert.Single(invoice.Payments);
+    }
+
+    [Fact]
+    public void AmountPaid_MixedPayments_CountsOnlyPaidInTheInvoiceCurrency()
+    {
+        var invoice = Invoice(Customer(null));
+        invoice.ApplyPayment(Payment(300m));
+        invoice.ApplyPayment(Payment(200m, PaymentStatus.Refunded));
+        invoice.ApplyPayment(Payment(500m, PaymentStatus.Pending));
+        invoice.ApplyPayment(Payment(100m, currency: "usd"));
+        invoice.ApplyPayment(Payment(900m, currency: "EUR"));
+
+        Assert.Equal(400m, invoice.AmountPaid);
+        Assert.Equal(600m, invoice.AmountDue);
+        Assert.Equal(InvoiceStatus.PartiallyPaid, invoice.Status);
+    }
+
+    [Fact]
+    public void ApplyPaymentWithEvent_PayrollPaidInFull_RaisesFullyPaid()
+    {
+        var total = new Money { Amount = 1000m, Currency = "USD" };
+        var payroll = new PayrollInvoice
+        {
+            EmployeeId = Guid.NewGuid(),
+            Subtotal = total,
+            TaxTotal = Money.Zero("USD"),
+            Total = total,
+            Status = InvoiceStatus.Approved
+        };
+        payroll.ApplyPayment(Payment(400m, PaymentStatus.Failed));
+
+        payroll.ApplyPaymentWithEvent(Payment(1000m));
+
+        Assert.Equal(InvoiceStatus.Paid, payroll.Status);
+        var paid = Assert.Single(payroll.DomainEvents.OfType<Logistics.Domain.Events.PayrollPaidEvent>());
+        Assert.True(paid.IsFullyPaid);
+        Assert.Equal(0m, paid.OutstandingAmount);
+    }
+
+    #endregion
+
     #region RemovePayment
 
     [Fact]
@@ -110,6 +169,31 @@ public class InvoicePaymentTests
         Assert.Equal(InvoiceStatus.PartiallyPaid, invoice.Status);
     }
 
+    [Fact]
+    public async Task UpdatePayment_StatusToRefunded_InvoiceReopens()
+    {
+        var tenantUow = Substitute.For<ITenantUnitOfWork>();
+        var paymentRepo = Substitute.For<ITenantRepository<Payment, Guid>>();
+        var invoiceRepo = Substitute.For<ITenantRepository<Invoice, Guid>>();
+        tenantUow.Repository<Payment>().Returns(paymentRepo);
+        tenantUow.Repository<Invoice>().Returns(invoiceRepo);
+
+        var invoice = Invoice(Customer(null));
+        invoice.DueDate = DateTime.UtcNow.AddDays(10);
+        var payment = Payment(1000m);
+        invoice.ApplyPayment(payment);
+        paymentRepo.GetByIdAsync(payment.Id, Arg.Any<CancellationToken>()).Returns(payment);
+        invoiceRepo.GetAsync(Arg.Any<Expression<Func<Invoice, bool>>>(), Arg.Any<CancellationToken>())
+            .Returns(invoice);
+        var sut = new UpdatePaymentHandler(tenantUow);
+
+        var result = await sut.Handle(
+            new UpdatePaymentCommand { Id = payment.Id, Status = PaymentStatus.Refunded }, CancellationToken.None);
+
+        Assert.True(result.IsSuccess);
+        Assert.Equal(InvoiceStatus.Issued, invoice.Status);
+    }
+
     #endregion
 
     #region Delete payment
@@ -141,10 +225,11 @@ public class InvoicePaymentTests
 
     #endregion
 
-    private static Payment Payment(decimal amount) => new()
+    private static Payment Payment(
+        decimal amount, PaymentStatus status = PaymentStatus.Paid, string currency = "USD") => new()
     {
-        Amount = new Money { Amount = amount, Currency = "USD" },
-        Status = PaymentStatus.Paid,
+        Amount = new Money { Amount = amount, Currency = currency },
+        Status = status,
         BillingAddress = FactoringTestData.Address
     };
 }

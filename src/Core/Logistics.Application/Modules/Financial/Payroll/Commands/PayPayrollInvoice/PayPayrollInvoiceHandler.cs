@@ -43,8 +43,7 @@ internal sealed class PayPayrollInvoiceHandler(
         }
 
         // Calculate amount due
-        var totalPaid = payrollInvoice.Payments.Sum(p => p.Amount.Amount);
-        var amountDue = payrollInvoice.Total.Amount - totalPaid;
+        var amountDue = payrollInvoice.AmountDue;
 
         if (amountDue <= 0)
         {
