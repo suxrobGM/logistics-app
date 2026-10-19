@@ -55,13 +55,11 @@ internal sealed class GetTruckStatsListHandler(ITenantUnitOfWork tenantUow)
             .OfType<Guid>()
             .Distinct()
             .ToArray();
-        var drivers = driverIds.Length == 0
-            ? []
-            : (await tenantUow.Repository<Employee>().Query()
+        var drivers = (await tenantUow.Repository<Employee>().Query()
                 .Where(e => driverIds.Contains(e.Id))
                 .Select(e => new { Employee = e, e.Role })
                 .ToListAsync(ct))
-                .ToDictionary(x => x.Employee.Id, x => x.Employee.ToDto(x.Role));
+            .ToDictionary(x => x.Employee.Id, x => x.Employee.ToDto(x.Role));
 
         var items = page.Select(r => new TruckStatsDto
         {
@@ -74,8 +72,7 @@ internal sealed class GetTruckStatsListHandler(ITenantUnitOfWork tenantUow)
             DriverShare = r.DriverShare,
             Drivers = [.. new[] { r.MainDriverId, r.SecondaryDriverId }
                 .Select(id => id is { } key ? drivers.GetValueOrDefault(key) : null)
-                .OfType<EmployeeDto>()],
-            TotalItems = totalItems
+                .OfType<EmployeeDto>()]
         }).ToList();
 
         return PagedResult<TruckStatsDto>.Ok(items, totalItems, req.PageSize);

@@ -10,5 +10,4 @@ public record TruckStatsDto
     public decimal Gross { get; set; }
     public decimal DriverShare { get; set; }
     public List<EmployeeDto> Drivers { get; set; } = [];
-    public int TotalItems { get; set; }
 }
