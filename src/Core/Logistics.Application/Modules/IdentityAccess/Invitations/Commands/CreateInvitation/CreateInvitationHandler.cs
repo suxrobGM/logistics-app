@@ -55,9 +55,9 @@ internal sealed class CreateInvitationHandler(
             }
         }
 
-        // Check for existing pending invitation
+        var normalizedEmail = userManager.NormalizeEmail(req.Email);
         var existingInvitation = await masterUow.Repository<Invitation>()
-            .GetAsync(i => i.Email == req.Email
+            .GetAsync(i => i.Email.ToUpper() == normalizedEmail
                         && i.TenantId == tenant.Id
                         && i.Status == InvitationStatus.Pending, ct);
 
@@ -66,9 +66,8 @@ internal sealed class CreateInvitationHandler(
             return Result<InvitationDto>.Fail("An active invitation already exists for this email.");
         }
 
-        // Check if user already exists and is already a tenant member
         var existingUser = await masterUow.Repository<User>()
-            .GetAsync(u => u.Email == req.Email, ct);
+            .GetAsync(u => u.NormalizedEmail == normalizedEmail, ct);
 
         if (existingUser is not null)
         {

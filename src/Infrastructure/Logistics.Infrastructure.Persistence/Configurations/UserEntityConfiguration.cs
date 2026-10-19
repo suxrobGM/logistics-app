@@ -8,6 +8,10 @@ internal sealed class UserEntityConfiguration : IEntityTypeConfiguration<User>
 {
     public void Configure(EntityTypeBuilder<User> builder)
     {
+        builder.HasIndex(u => u.NormalizedEmail)
+            .HasDatabaseName("EmailIndex")
+            .IsUnique();
+
         builder.HasOne(i => i.Tenant)
             .WithMany(i => i.Users)
             .HasForeignKey(i => i.TenantId)
