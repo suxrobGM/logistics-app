@@ -1,6 +1,7 @@
 using Logistics.Application.Abstractions;
 using Logistics.Application.Modules.Operations.Common.Services;
 using Logistics.Application.Modules.Operations.Trailers.Services;
+using Logistics.Application.Modules.Operations.Trucks.Services;
 using Logistics.Application.Utilities;
 using Logistics.Domain.Entities;
 using Logistics.Domain.Persistence;
@@ -42,12 +43,12 @@ internal sealed class UpdateTruckHandler(
         }
 
         // Update drivers
-        if (await SetDriverAsync(truck, req.MainDriverId, true) is { } fail1)
+        if (await SetDriverAsync(truck, req.MainDriverId, true, ct) is { } fail1)
         {
             return fail1;
         }
 
-        if (await SetDriverAsync(truck, req.SecondaryDriverId, false) is { } fail2)
+        if (await SetDriverAsync(truck, req.SecondaryDriverId, false, ct) is { } fail2)
         {
             return fail2;
         }
@@ -117,9 +118,9 @@ internal sealed class UpdateTruckHandler(
 
     /// <summary>
     ///     Assigns (or clears) a driver and returns a failure <see cref="Result" />
-    ///     if the supplied ID doesn’t exist.  Returns <c>null</c> on success.
+    ///     if the driver can't take the seat.  Returns <c>null</c> on success.
     /// </summary>
-    private async Task<Result?> SetDriverAsync(Truck truck, Guid? newDriverId, bool isMain)
+    private async Task<Result?> SetDriverAsync(Truck truck, Guid? newDriverId, bool isMain, CancellationToken ct)
     {
         var currentId = isMain ? truck.MainDriverId : truck.SecondaryDriverId;
         if (newDriverId == currentId) // nothing to change
@@ -141,10 +142,10 @@ internal sealed class UpdateTruckHandler(
             return null;
         }
 
-        var driver = await tenantUow.Repository<Employee>().GetByIdAsync(newDriverId.Value);
-        if (driver is null)
+        var driverResult = await TruckDriverAssignment.FindAssignableDriverAsync(tenantUow, newDriverId.Value, ct);
+        if (driverResult.Value is not { } driver)
         {
-            return Result.Fail($"Could not find a driver with ID {newDriverId}");
+            return Result.Fail(driverResult.Error!);
         }
 
         if (isMain)

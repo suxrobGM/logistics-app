@@ -24,6 +24,7 @@ public enum EligibilityIssueCode
     LoadNotFound,
     DriverNotAssigned,
     DriverNotFound,
+    DriverNotActive,
     NoActiveLicense,
     LicenseExpired,
     LicenseClassInsufficient,

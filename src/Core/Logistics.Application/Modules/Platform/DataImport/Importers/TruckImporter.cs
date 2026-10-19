@@ -84,6 +84,12 @@ internal sealed class TruckImporter(ITenantUnitOfWork tenantUow, IVehicleTranspo
                 continue;
             }
 
+            if (draft.Driver.Status != EmployeeStatus.Active)
+            {
+                draft.Errors.Add($"Driver '{driverCell}' is {draft.Driver.Status.GetDescription().ToLowerInvariant()} and cannot be assigned to a truck.");
+                continue;
+            }
+
             var otherTruck = trucks.FirstOrDefault(t => t.MainDriverId == draft.Driver.Id && t.Id != draft.Existing?.Id);
             if (otherTruck is not null)
             {

@@ -60,6 +60,16 @@ internal sealed class DispatchEligibilityService(
                 $"Driver '{effectiveDriverId}' not found."));
         }
 
+        if (driver.Status != EmployeeStatus.Active)
+        {
+            return EligibilityResult.Block(DriverNotActive(driver));
+        }
+
+        if (driverId is null && truck.SecondaryDriver is { Status: not EmployeeStatus.Active } secondaryDriver)
+        {
+            return EligibilityResult.Block(DriverNotActive(secondaryDriver));
+        }
+
         var issues = new List<EligibilityIssue>();
         var now = DateTime.UtcNow;
 
@@ -103,6 +113,11 @@ internal sealed class DispatchEligibilityService(
 
         return new EligibilityResult(!hasError, issues);
     }
+
+    private static EligibilityIssue DriverNotActive(Employee driver) => new(
+        EligibilityIssueCode.DriverNotActive,
+        EligibilitySeverity.Error,
+        $"Driver {driver.GetFullName()} is {driver.Status.GetDescription().ToLowerInvariant()} and cannot be dispatched.");
 
     /// <summary>
     /// Picks the most relevant license for the load: prefer one matching the load's

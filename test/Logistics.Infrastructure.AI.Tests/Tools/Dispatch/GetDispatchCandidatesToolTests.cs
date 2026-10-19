@@ -79,7 +79,8 @@ public class GetDispatchCandidatesToolTests
         _truckRepo.GetListAsync(Arg.Any<Expression<Func<Truck, bool>>>(), Arg.Any<CancellationToken>())
             .Returns([.. fleet.Select(f => f.Truck)]);
         _employeeRepo.GetListAsync(Arg.Any<Expression<Func<Employee, bool>>>(), Arg.Any<CancellationToken>())
-            .Returns([.. fleet.Select(f => f.Driver)]);
+            .Returns(ci => fleet.Select(f => f.Driver).AsQueryable()
+                .Where(ci.Arg<Expression<Func<Employee, bool>>>()).ToList());
         _hosRepo.GetListAsync(Arg.Any<Expression<Func<DriverHosStatus, bool>>>(), Arg.Any<CancellationToken>())
             .Returns([.. fleet.Select(f => f.Hos)]);
     }
@@ -118,6 +119,21 @@ public class GetDispatchCandidatesToolTests
             .GetProperty("truck_number").GetString());
         Assert.Equal(1, load.GetProperty("excluded").GetProperty("type_incompatible").GetInt32());
         Assert.Equal(1, load.GetProperty("excluded").GetProperty("hos_infeasible").GetInt32());
+    }
+
+    [Fact]
+    public async Task Execute_TerminatedDriver_TruckCountsAsDriverless()
+    {
+        var terminated = Truck("T-gone", TruckType.BoxTruck, Pickup);
+        terminated.Driver.Status = EmployeeStatus.Terminated;
+        var ok = Truck("T-ok", TruckType.BoxTruck, Pickup);
+        Setup([Load()], terminated, ok);
+
+        var load = (await Run()).GetProperty("loads")[0];
+
+        Assert.Equal("T-ok", Assert.Single(load.GetProperty("candidates").EnumerateArray())
+            .GetProperty("truck_number").GetString());
+        Assert.Equal(1, load.GetProperty("excluded").GetProperty("no_driver").GetInt32());
     }
 
     [Fact]

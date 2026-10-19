@@ -1,6 +1,7 @@
 using Logistics.Application.Abstractions;
 using Logistics.Domain.Entities;
 using Logistics.Domain.Persistence;
+using Logistics.Domain.Primitives.Enums;
 using Logistics.Mediator;
 using Logistics.Shared.Models;
 using Microsoft.Extensions.Logging;
@@ -19,6 +20,12 @@ internal sealed class MapEldDriverHandler(
         if (employee is null)
         {
             return Result.Fail($"Employee with ID {req.EmployeeId} not found");
+        }
+
+        if (employee.Status != EmployeeStatus.Active)
+        {
+            return Result.Fail(
+                $"Employee {employee.GetFullName()} is {employee.Status.GetDescription().ToLowerInvariant()} and cannot be mapped to an ELD driver");
         }
 
         var config = await tenantUow.Repository<EldProviderConfiguration>()

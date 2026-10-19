@@ -1,6 +1,7 @@
 using Logistics.Application.Abstractions.Eld;
 using Logistics.Domain.Entities;
 using Logistics.Domain.Persistence;
+using Logistics.Domain.Primitives.Enums;
 using Logistics.Shared.Identity.Roles;
 using Logistics.Shared.Models;
 using Microsoft.EntityFrameworkCore;
@@ -39,7 +40,8 @@ internal sealed class EldMappingSuggestionService(
             .ToList();
 
         var employees = await tenantUow.Repository<Employee>().Query()
-            .Where(e => e.Role != null && DrivingRoles.Contains(e.Role.Name) && !mappedEmployees.Contains(e.Id))
+            .Where(e => e.Status == EmployeeStatus.Active
+                        && e.Role != null && DrivingRoles.Contains(e.Role.Name) && !mappedEmployees.Contains(e.Id))
             .Select(e => new
             {
                 e.Id,

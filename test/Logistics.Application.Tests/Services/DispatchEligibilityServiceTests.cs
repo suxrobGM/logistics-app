@@ -382,6 +382,46 @@ public class DispatchEligibilityServiceTests
         Assert.Equal(EligibilitySeverity.Error, issue.Severity);
     }
 
+    [Theory]
+    [InlineData(EmployeeStatus.Suspended)]
+    [InlineData(EmployeeStatus.Terminated)]
+    [InlineData(EmployeeStatus.OnLeave)]
+    public async Task CheckAsync_DriverNotActive_Blocked(EmployeeStatus status)
+    {
+        var driver = CreateDriver(license: BuildLicense("US", LicenseClass.USClassA));
+        driver.Status = status;
+        var truck = CreateTruck(driver);
+        var load = CreateLoad();
+        WireRepos(truck, load, driver);
+
+        var result = await _sut.CheckAsync(TruckId, LoadId);
+
+        Assert.False(result.IsEligible);
+        Assert.Equal(EligibilityIssueCode.DriverNotActive, Assert.Single(result.Issues).Code);
+    }
+
+    [Fact]
+    public async Task CheckAsync_TruckSecondaryDriverTerminated_Blocked()
+    {
+        var driver = CreateDriver(license: BuildLicense("US", LicenseClass.USClassA));
+        var truck = CreateTruck(driver);
+        truck.SecondaryDriver = new Employee
+        {
+            Salary = Money.Zero("USD"),
+            Email = "co@test.com",
+            FirstName = "Co",
+            LastName = "Driver",
+            Status = EmployeeStatus.Terminated
+        };
+        var load = CreateLoad();
+        WireRepos(truck, load, driver);
+
+        var result = await _sut.CheckAsync(TruckId, LoadId);
+
+        Assert.False(result.IsEligible);
+        Assert.Contains("Co Driver", Assert.Single(result.Issues).Message);
+    }
+
     private void WireRepos(Truck truck, Load load, Employee driver)
     {
         _truckRepo.GetByIdAsync(TruckId, Arg.Any<CancellationToken>()).Returns(truck);

@@ -1,5 +1,6 @@
 using Logistics.Application.Abstractions;
 using Logistics.Application.Modules.Operations.Common.Services;
+using Logistics.Application.Modules.Operations.Trucks.Services;
 using Logistics.Domain.Entities;
 using Logistics.Domain.Persistence;
 using Logistics.Mediator;
@@ -29,11 +30,10 @@ internal sealed class CreateTruckHandler(
             return Result.Fail($"Already exists truck with number {req.TruckNumber}");
         }
 
-        var driver = await tenantUow.Repository<Employee>().GetByIdAsync(req.MainDriverId, ct);
-
-        if (driver is null)
+        var driverResult = await TruckDriverAssignment.FindAssignableDriverAsync(tenantUow, req.MainDriverId, ct);
+        if (driverResult.Value is not { } driver)
         {
-            return Result.Fail($"Could not find driver with ID {req.MainDriverId}");
+            return Result.Fail(driverResult.Error!);
         }
 
         var alreadyAssociatedTruck = await tenantUow.Repository<Truck>().GetAsync(i => i.MainDriverId == driver.Id, ct);

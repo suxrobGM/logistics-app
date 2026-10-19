@@ -8,7 +8,8 @@ internal sealed record AvailableTruck(Truck Truck, Employee? Driver, DriverHosSt
 
 /// <summary>
 /// Available trucks with driver, HOS row and hooked trailer. Each is a lazy navigation, so they are
-/// batch-read rather than queried per truck.
+/// batch-read rather than queried per truck. A main driver who is not Active is left out, so the truck
+/// reads as driverless.
 /// </summary>
 internal static class AvailableFleet
 {
@@ -30,7 +31,7 @@ internal static class AvailableFleet
 
         var drivers = driverIds.Count > 0
             ? (await tenantUow.Repository<Employee>()
-                .GetListAsync(e => driverIds.Contains(e.Id), ct))
+                .GetListAsync(e => driverIds.Contains(e.Id) && e.Status == EmployeeStatus.Active, ct))
                 .ToDictionary(e => e.Id)
             : [];
 
