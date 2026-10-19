@@ -14,5 +14,10 @@ internal sealed class InboundEmailRouteEntityConfiguration : IEntityTypeConfigur
 
         builder.HasIndex(x => x.ThreadToken).IsUnique();
         builder.HasIndex(x => x.TenantId);
+
+        builder.HasOne<Tenant>()
+            .WithMany()
+            .HasForeignKey(x => x.TenantId)
+            .OnDelete(DeleteBehavior.Cascade);
     }
 }
