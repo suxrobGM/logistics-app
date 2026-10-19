@@ -58,7 +58,6 @@ public class DeliveryDocument : LoadDocument
             Description = notes,
             LoadId = loadId,
             UploadedById = uploadedById,
-            Status = DocumentStatus.Active,
             CreatedAt = DateTime.UtcNow,
             RecipientName = recipientName,
             RecipientSignature = recipientSignature,
@@ -72,13 +71,5 @@ public class DeliveryDocument : LoadDocument
 
         doc.DomainEvents.Add(new DeliveryDocumentCreatedEvent(doc.Id, loadId, type));
         return doc;
-    }
-
-    protected override void OnStatusChanged(DocumentStatus newStatus)
-    {
-        if (newStatus == DocumentStatus.Deleted)
-        {
-            DomainEvents.Add(new LoadDocumentDeletedEvent(Id, LoadId));
-        }
     }
 }

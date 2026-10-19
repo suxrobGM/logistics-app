@@ -25,11 +25,6 @@ internal sealed class GetDocumentsValidator : AbstractValidator<GetDocumentsQuer
                 .WithMessage("Invalid owner type");
         });
 
-        RuleFor(i => i.Status)
-            .IsInEnum()
-            .When(i => i.Status.HasValue)
-            .WithMessage("Invalid document status");
-
         RuleFor(i => i.Type)
             .IsInEnum()
             .When(i => i.Type.HasValue)

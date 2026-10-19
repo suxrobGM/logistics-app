@@ -22,11 +22,6 @@ internal sealed class UpdateDocumentHandler(
             return Result.Fail($"Could not find document with ID '{req.DocumentId}'");
         }
 
-        if (document.Status == DocumentStatus.Deleted)
-        {
-            return Result.Fail("Cannot update deleted document");
-        }
-
         var caller = await documentAccess.ResolveCallerAsync(ct);
         if (caller is null || !await documentAccess.CanAccessAsync(caller, document, ct))
         {

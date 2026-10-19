@@ -35,19 +35,10 @@ public class EmployeeDocument : Document
             Description = description,
             EmployeeId = employeeId,
             UploadedById = uploadedById,
-            Status = DocumentStatus.Active,
             CreatedAt = DateTime.UtcNow
         };
 
         doc.DomainEvents.Add(new EmployeeDocumentUploadedEvent(doc.Id, employeeId));
         return doc;
-    }
-
-    protected override void OnStatusChanged(DocumentStatus newStatus)
-    {
-        if (newStatus == DocumentStatus.Deleted)
-        {
-            DomainEvents.Add(new EmployeeDocumentDeletedEvent(Id, EmployeeId));
-        }
     }
 }

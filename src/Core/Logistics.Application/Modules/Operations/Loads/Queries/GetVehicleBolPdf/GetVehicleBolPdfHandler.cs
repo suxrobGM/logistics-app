@@ -91,7 +91,6 @@ internal sealed class GetVehicleBolPdfHandler(
         var capture = await tenantUow.Repository<DeliveryDocument>().Query()
             .Where(d => d.LoadId == loadId
                         && d.Type == type
-                        && d.Status == DocumentStatus.Active
                         && (d.RecipientSignature != null || d.RecipientName != null || d.UnableToSignReason != null))
             .OrderByDescending(d => d.CapturedAt)
             .FirstOrDefaultAsync(ct);

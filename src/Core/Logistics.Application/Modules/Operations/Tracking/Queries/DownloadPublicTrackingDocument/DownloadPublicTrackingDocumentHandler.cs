@@ -50,11 +50,6 @@ internal sealed class DownloadPublicTrackingDocumentHandler(
             return Result<DocumentDownloadDto>.Fail("Document not found.");
         }
 
-        if (document.Status == DocumentStatus.Deleted)
-        {
-            return Result<DocumentDownloadDto>.Fail("Document has been deleted.");
-        }
-
         return await documentDownloads.OpenAsync(document, ct);
     }
 }

@@ -49,7 +49,6 @@ internal sealed class GetDocumentsHandler(
     private async Task<List<Document>> FetchAsync(GetDocumentsQuery req, CancellationToken ct)
     {
         var ownerId = req.OwnerId;
-        var status = req.Status;
         var type = req.Type;
 
         return req switch
@@ -58,28 +57,24 @@ internal sealed class GetDocumentsHandler(
             [
                 .. await tenantUow.Repository<LoadDocument>().GetListAsync(d =>
                     d.LoadId == ownerId &&
-                    (!status.HasValue || d.Status == status) &&
                     (!type.HasValue || d.Type == type), ct)
             ],
             { OwnerType: DocumentOwnerType.Employee, OwnerId: not null } =>
             [
                 .. await tenantUow.Repository<EmployeeDocument>().GetListAsync(d =>
                     d.EmployeeId == ownerId &&
-                    (!status.HasValue || d.Status == status) &&
                     (!type.HasValue || d.Type == type), ct)
             ],
             { OwnerType: DocumentOwnerType.Truck, OwnerId: not null } =>
             [
                 .. await tenantUow.Repository<TruckDocument>().GetListAsync(d =>
                     d.TruckId == ownerId &&
-                    (!status.HasValue || d.Status == status) &&
                     (!type.HasValue || d.Type == type), ct)
             ],
             _ =>
             [
                 .. await tenantUow.Repository<Document>().GetListAsync(d =>
-                    (!status.HasValue || d.Status == status) &&
-                    (!type.HasValue || d.Type == type), ct)
+                    !type.HasValue || d.Type == type, ct)
             ]
         };
     }

@@ -12,7 +12,6 @@ public sealed record DocumentDto
     public string BlobPath { get; init; } = null!;
     public string BlobContainer { get; init; } = null!;
     public DocumentType Type { get; init; }
-    public DocumentStatus Status { get; init; }
     public string? Description { get; init; }
 
     public Guid UploadedById { get; init; }

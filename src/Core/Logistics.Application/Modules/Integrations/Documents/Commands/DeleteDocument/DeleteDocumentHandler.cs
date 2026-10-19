@@ -48,8 +48,7 @@ internal sealed class DeleteDocumentHandler(
                 logger.LogInformation(
                     "Document deleted: {DocumentId}, BlobPath: {BlobPath}",
                     req.DocumentId, blobPath);
-                // Delete blob in background
-                _ = DeleteBlobAsync(blobContainer, blobPath, ct);
+                await DeleteBlobAsync(blobContainer, blobPath);
                 return Result.Ok();
             }
 
@@ -63,19 +62,20 @@ internal sealed class DeleteDocumentHandler(
         }
     }
 
-    private Task DeleteBlobAsync(string blobContainer, string blobPath, CancellationToken ct)
+    /// <remarks>
+    /// Runs after the row is deleted and ignores the request token: a cancelled request would
+    /// otherwise leave the blob orphaned with nothing pointing at it.
+    /// </remarks>
+    private async Task DeleteBlobAsync(string blobContainer, string blobPath)
     {
-        return Task.Run(async () =>
+        try
         {
-            try
-            {
-                await blobStorageService.DeleteAsync(blobContainer, blobPath, ct);
-            }
-            catch (Exception ex)
-            {
-                logger.LogError(ex, "Failed to delete blob {BlobPath} from container {BlobContainer}", blobPath,
-                    blobContainer);
-            }
-        }, ct);
+            await blobStorageService.DeleteAsync(blobContainer, blobPath, CancellationToken.None);
+        }
+        catch (Exception ex)
+        {
+            logger.LogError(ex, "Failed to delete blob {BlobPath} from container {BlobContainer}", blobPath,
+                blobContainer);
+        }
     }
 }

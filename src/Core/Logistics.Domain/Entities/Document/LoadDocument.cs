@@ -35,19 +35,10 @@ public class LoadDocument : Document
             Description = description,
             LoadId = loadId,
             UploadedById = uploadedById,
-            Status = DocumentStatus.Active,
             CreatedAt = DateTime.UtcNow
         };
 
         doc.DomainEvents.Add(new LoadDocumentUploadedEvent(doc.Id, loadId));
         return doc;
-    }
-
-    protected override void OnStatusChanged(DocumentStatus newStatus)
-    {
-        if (newStatus == DocumentStatus.Deleted)
-        {
-            DomainEvents.Add(new LoadDocumentDeletedEvent(Id, LoadId));
-        }
     }
 }

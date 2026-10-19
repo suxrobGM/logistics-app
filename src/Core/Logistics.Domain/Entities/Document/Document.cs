@@ -14,7 +14,6 @@ public abstract class Document : AuditableEntity, ITenantEntity
     public required string BlobPath { get; set; }
     public required string BlobContainer { get; set; }
     public required DocumentType Type { get; set; }
-    public DocumentStatus Status { get; protected set; } = DocumentStatus.Active;
     public string? Description { get; protected set; }
 
     public Guid UploadedById { get; set; }
@@ -25,18 +24,9 @@ public abstract class Document : AuditableEntity, ITenantEntity
     /// </summary>
     public virtual Employee UploadedBy { get; set; } = null!;
 
-    public void UpdateStatus(DocumentStatus status)
-    {
-        Status = status;
-        UpdatedAt = DateTime.UtcNow;
-        OnStatusChanged(status);
-    }
-
     public void UpdateDescription(string? description)
     {
         Description = description;
         UpdatedAt = DateTime.UtcNow;
     }
-
-    protected abstract void OnStatusChanged(DocumentStatus newStatus);
 }

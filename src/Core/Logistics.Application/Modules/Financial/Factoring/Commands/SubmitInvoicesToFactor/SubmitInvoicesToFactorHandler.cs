@@ -64,7 +64,7 @@ internal sealed class SubmitInvoicesToFactorHandler(
 
         var loadIds = invoices.Select(i => i.LoadId).ToList();
         var documents = await tenantUow.Repository<LoadDocument>().GetListAsync(
-            d => loadIds.Contains(d.LoadId) && d.Status == DocumentStatus.Active && SubmittedDocuments.Contains(d.Type), ct);
+            d => loadIds.Contains(d.LoadId) && SubmittedDocuments.Contains(d.Type), ct);
         var documentsByLoad = documents.ToLookup(d => d.LoadId);
 
         var problems = invoices

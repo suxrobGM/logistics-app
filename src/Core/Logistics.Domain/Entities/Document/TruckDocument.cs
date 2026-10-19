@@ -35,19 +35,10 @@ public class TruckDocument : Document
             Description = description,
             TruckId = truckId,
             UploadedById = uploadedById,
-            Status = DocumentStatus.Active,
             CreatedAt = DateTime.UtcNow
         };
 
         doc.DomainEvents.Add(new TruckDocumentUploadedEvent(doc.Id, truckId));
         return doc;
-    }
-
-    protected override void OnStatusChanged(DocumentStatus newStatus)
-    {
-        if (newStatus == DocumentStatus.Deleted)
-        {
-            DomainEvents.Add(new TruckDocumentDeletedEvent(Id, TruckId));
-        }
     }
 }

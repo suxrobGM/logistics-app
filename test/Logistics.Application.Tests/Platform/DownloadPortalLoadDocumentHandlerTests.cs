@@ -68,17 +68,6 @@ public class DownloadPortalLoadDocumentHandlerTests
         Assert.False(result.IsSuccess);
     }
 
-    [Fact]
-    public async Task Handle_DeletedDocument_Fails()
-    {
-        var document = AddDocument(_load.Id);
-        document.UpdateStatus(DocumentStatus.Deleted);
-
-        var result = await _sut.Handle(Query(_load.Id, document.Id, _customerId), CancellationToken.None);
-
-        Assert.False(result.IsSuccess);
-    }
-
     private LoadDocument AddDocument(Guid loadId)
     {
         var document = LoadDocument.Create(

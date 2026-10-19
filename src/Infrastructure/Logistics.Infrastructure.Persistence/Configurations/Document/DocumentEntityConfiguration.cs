@@ -43,10 +43,6 @@ internal sealed class DocumentEntityConfiguration : IEntityTypeConfiguration<Doc
         builder.Property(d => d.Type)
             .IsRequired();
 
-        builder.Property(d => d.Status)
-            .IsRequired()
-            .HasDefaultValue(DocumentStatus.Active);
-
         builder.Property(d => d.OwnerType)
             .IsRequired();
 

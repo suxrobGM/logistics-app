@@ -22,11 +22,6 @@ internal sealed class DownloadDocumentHandler(
             return Result<DocumentDownloadDto>.Fail($"Could not find document with ID '{req.DocumentId}'");
         }
 
-        if (document.Status == DocumentStatus.Deleted)
-        {
-            return Result<DocumentDownloadDto>.Fail("Document has been deleted");
-        }
-
         var caller = await documentAccess.ResolveCallerAsync(ct);
         if (caller is null || !await documentAccess.CanAccessAsync(caller, document, ct))
         {

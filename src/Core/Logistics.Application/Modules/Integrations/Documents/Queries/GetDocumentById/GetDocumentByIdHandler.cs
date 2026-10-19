@@ -25,11 +25,6 @@ internal sealed class GetDocumentByIdHandler(
             return Result<DocumentDto>.Fail($"Could not find document with ID '{req.DocumentId}'");
         }
 
-        if (document.Status == DocumentStatus.Deleted)
-        {
-            return Result<DocumentDto>.Fail("Document has been deleted");
-        }
-
         var caller = await documentAccess.ResolveCallerAsync(ct);
         if (caller is null || !await documentAccess.CanAccessAsync(caller, document, ct))
         {

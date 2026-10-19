@@ -23,7 +23,7 @@ internal sealed class DownloadPortalLoadDocumentHandler(
         }
 
         var document = await tenantUow.Repository<LoadDocument>().GetByIdAsync(req.DocumentId, ct);
-        if (document is null || document.LoadId != req.LoadId || document.Status == DocumentStatus.Deleted)
+        if (document is null || document.LoadId != req.LoadId)
         {
             return Result<DocumentDownloadDto>.Fail(NotFound);
         }

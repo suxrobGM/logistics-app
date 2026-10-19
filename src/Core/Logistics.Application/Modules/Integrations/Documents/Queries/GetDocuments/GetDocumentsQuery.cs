@@ -16,6 +16,5 @@ public class GetDocumentsQuery : IQuery<Result<IEnumerable<DocumentDto>>>
     /// </summary>
     public Guid? OwnerId { get; set; } // LoadId or EmployeeId
 
-    public DocumentStatus? Status { get; set; }
     public DocumentType? Type { get; set; }
 }
