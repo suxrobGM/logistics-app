@@ -115,11 +115,11 @@ public partial class Trip
 
     /// <summary>
     /// Moves the trip to InTransit once any load is picked up, and to Completed once every drop-off is delivered.
-    /// A completed or cancelled trip keeps its status.
+    /// A draft, completed or cancelled trip keeps its status.
     /// </summary>
     public void RefreshStatus()
     {
-        if (Status is TripStatus.Completed or TripStatus.Cancelled)
+        if (Status is TripStatus.Draft or TripStatus.Completed or TripStatus.Cancelled)
         {
             return;
         }

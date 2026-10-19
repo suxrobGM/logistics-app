@@ -127,5 +127,18 @@ public class TripTests
         Assert.Equal(LoadStatus.Cancelled, load.Status);
     }
 
+    [Fact]
+    public void RefreshStatus_DraftTripWithPickedUpLoad_StaysDraft()
+    {
+        var load = NewLoad();
+        var trip = Trip.Create("Trip", _truck, [load]);
+        load.Dispatch();
+        load.ConfirmPickup();
+
+        trip.RefreshStatus();
+
+        Assert.Equal(TripStatus.Draft, trip.Status);
+    }
+
     #endregion
 }
