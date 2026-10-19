@@ -132,9 +132,6 @@ internal sealed class DemoTenantsSeeder(
                     await context.MasterUnitOfWork.SaveChangesAsync(cancellationToken);
                     Logger.LogInformation("Updated tenant '{Name}'", existing.Name);
                 }
-
-                // Ensure DB exists even for existing tenants (idempotent - no-op if present).
-                await databaseProvider.CreateDatabaseAsync(existing.DatabaseName);
             }
         }
 

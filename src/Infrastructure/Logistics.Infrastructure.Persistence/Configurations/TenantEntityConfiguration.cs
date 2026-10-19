@@ -12,6 +12,9 @@ internal sealed class TenantEntityConfiguration : IEntityTypeConfiguration<Tenan
     {
         builder.ToTable("tenants");
 
+        builder.Property(t => t.Name).HasMaxLength(64);
+        builder.HasIndex(t => t.Name).IsUnique();
+
         // PostgreSQL truncates identifiers past 63 bytes.
         builder.Property(t => t.DatabaseName).HasMaxLength(63);
 

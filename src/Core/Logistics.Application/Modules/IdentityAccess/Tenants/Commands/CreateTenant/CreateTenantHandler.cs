@@ -28,6 +28,9 @@ internal sealed class CreateTenantHandler(
     IOptions<IdentityServerOptions> identityServerOptions)
     : IRequestHandler<CreateTenantCommand, Result>
 {
+    /// <summary>PostgreSQL identifier limit; matches the <c>tenants.database_name</c> column.</summary>
+    private const int MaxDatabaseNameLength = 63;
+
     public async Task<Result> Handle(CreateTenantCommand req, CancellationToken ct)
     {
         var tenantName = req.Name.Trim().ToLower();
@@ -55,10 +58,16 @@ internal sealed class CreateTenantHandler(
             return Result.Fail($"Tenant name '{tenant.Name}' is already taken, please chose another name");
         }
 
+        if (tenant.DatabaseName.Length > MaxDatabaseNameLength)
+        {
+            return Result.Fail($"Tenant name '{tenant.Name}' is too long for a database name");
+        }
+
         var created = await tenantDatabase.CreateDatabaseAsync(tenant.DatabaseName);
         if (!created)
         {
-            return Result.Fail("Could not create the tenant's database");
+            return Result.Fail(
+                $"Could not create the tenant database '{tenant.DatabaseName}'. It may already exist.");
         }
 
         await masterUow.Repository<Tenant>().AddAsync(tenant, ct);

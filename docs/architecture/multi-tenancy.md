@@ -168,6 +168,7 @@ sequenceDiagram
     API->>TDS: GenerateDatabaseName(slug)
     TDS-->>API: "acme_logisticsx"
     API->>TDS: CreateDatabaseAsync(databaseName)
+    TDS->>Postgres: Fail if the database already exists
     TDS->>Postgres: Create database (EF Core migrate)
     TDS->>TDb: Apply EF Core migrations
     TDS->>TDb: Seed roles & permissions

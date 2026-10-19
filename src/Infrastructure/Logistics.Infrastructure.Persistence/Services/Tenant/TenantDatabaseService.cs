@@ -34,6 +34,12 @@ internal partial class TenantDatabaseService(
     {
         try
         {
+            if (await DatabaseExistsAsync(databaseName))
+            {
+                logger.LogWarning("Tenant database '{DatabaseName}' already exists; refusing to provision into it", databaseName);
+                return false;
+            }
+
             context.Database.SetConnectionString(databaseOptions.BuildConnectionString(databaseName));
             await context.Database.MigrateAsync();
             await AddTenantRoles();
@@ -71,6 +77,16 @@ internal partial class TenantDatabaseService(
             logger.LogError("Thrown exception in TenantDatabaseService.DeleteDatabaseAsync(): {@Exception}", ex);
             return false;
         }
+    }
+
+    private async Task<bool> DatabaseExistsAsync(string databaseName)
+    {
+        await using var connection = new NpgsqlConnection(databaseOptions.BuildConnectionString("postgres"));
+        await connection.OpenAsync();
+
+        await using var command = new NpgsqlCommand("SELECT 1 FROM pg_database WHERE datname = @name", connection);
+        command.Parameters.AddWithValue("name", databaseName);
+        return await command.ExecuteScalarAsync() is not null;
     }
 
     private async Task AddTenantRoles()
