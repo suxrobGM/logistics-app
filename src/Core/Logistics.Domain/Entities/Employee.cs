@@ -87,6 +87,19 @@ public class Employee : Entity, ITenantEntity
         return string.Join(" ", FirstName, LastName);
     }
 
+    /// <summary>The part of a load's revenue share-of-gross pay is computed on, after the pay exclusions.</summary>
+    public decimal PayableRevenue(decimal linehaul, decimal fuelSurcharge, decimal accessorials) =>
+        linehaul + (PayExcludesFuelSurcharge ? 0 : fuelSurcharge) + (PayExcludesAccessorials ? 0 : accessorials);
+
+    /// <summary>Names what <see cref="PayableRevenue"/> covers, for the gross pay line of a settlement.</summary>
+    public string PayableRevenueBasis() => (PayExcludesFuelSurcharge, PayExcludesAccessorials) switch
+    {
+        (true, true) => "linehaul",
+        (true, false) => "linehaul and accessorials",
+        (false, true) => "linehaul and fuel surcharge",
+        _ => "gross revenue"
+    };
+
     public static Employee CreateEmployeeFromUser(
         User user,
         string currency,

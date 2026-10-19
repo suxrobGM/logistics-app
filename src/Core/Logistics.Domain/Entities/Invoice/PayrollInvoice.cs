@@ -18,6 +18,32 @@ public partial class PayrollInvoice : Invoice
     public DateOnly PeriodStart { get; set; }
     public DateOnly PeriodEnd { get; set; }
 
+    /// <summary>The period's days as a UTC [start, day after end) range, for comparing timestamps.</summary>
+    public (DateTime From, DateTime To) PeriodUtcRange() =>
+        (PeriodStart.ToDateTime(TimeOnly.MinValue, DateTimeKind.Utc),
+            PeriodEnd.AddDays(1).ToDateTime(TimeOnly.MinValue, DateTimeKind.Utc));
+
+    /// <summary>
+    /// Weeks a weekly salary pays for: the whole weeks, plus one for the leftover days only when the period
+    /// starts on Sunday, the first day of the pay week.
+    /// </summary>
+    public int PeriodWeeks()
+    {
+        var days = PeriodEnd.DayNumber - PeriodStart.DayNumber + 1;
+        var weeks = days / 7;
+        return days % 7 > 0 && PeriodStart.DayOfWeek == DayOfWeek.Sunday ? weeks + 1 : weeks;
+    }
+
+    /// <summary>
+    /// Months a monthly salary pays for, counting the start month. A last month that ends before the start
+    /// day of the month is not counted.
+    /// </summary>
+    public int PeriodMonths()
+    {
+        var months = (PeriodEnd.Year - PeriodStart.Year) * 12 + PeriodEnd.Month - PeriodStart.Month + 1;
+        return PeriodEnd.Day < PeriodStart.Day ? months - 1 : months;
+    }
+
     #region Calculated Earnings Data
 
     /// <summary>

@@ -109,7 +109,7 @@ internal class PayrollService(
             return;
         }
 
-        var (from, to) = UtcRange(payroll.PeriodStart, payroll.PeriodEnd);
+        var (from, to) = payroll.PeriodUtcRange();
         var timeEntries = await tenantUow.Repository<TimeEntry>().GetListAsync(te =>
             te.EmployeeId == payroll.EmployeeId &&
             te.PayrollInvoiceId == null &&
@@ -171,7 +171,7 @@ internal class PayrollService(
     private async Task<SettlementInputs> BuildInputsAsync(PayrollInvoice payroll, CancellationToken ct)
     {
         var employee = payroll.Employee;
-        var gross = await CalculateGrossPayAsync(employee, payroll.PeriodStart, payroll.PeriodEnd, ct);
+        var gross = await CalculateGrossPayAsync(payroll, ct);
         payroll.TotalDistanceDriven = gross.Distance;
         payroll.TotalHoursWorked = gross.Hours;
 
@@ -202,7 +202,7 @@ internal class PayrollService(
     private async Task<List<FuelCardTransaction>> GetFuelChargesAsync(
         Guid employeeId, PayrollInvoice payroll, CancellationToken ct)
     {
-        var (from, to) = UtcRange(payroll.PeriodStart, payroll.PeriodEnd);
+        var (from, to) = payroll.PeriodUtcRange();
         var truckIds = await tenantUow.Repository<Truck>().Query()
             .Where(t => t.MainDriverId == employeeId)
             .Select(t => t.Id)
@@ -229,36 +229,31 @@ internal class PayrollService(
         }
     }
 
-    private async Task<GrossPay> CalculateGrossPayAsync(
-        Employee employee, DateOnly startDate, DateOnly endDate, CancellationToken ct)
+    private async Task<GrossPay> CalculateGrossPayAsync(PayrollInvoice payroll, CancellationToken ct)
     {
+        var employee = payroll.Employee;
         var rate = employee.Salary.Amount;
+        var (from, to) = payroll.PeriodUtcRange();
 
         switch (employee.SalaryType)
         {
             case SalaryType.ShareOfGross:
             {
-                var loads = await GetDeliveredLoadsAsync(employee.Id, startDate, endDate, ct);
-                var revenue = loads.Sum(l => l.PayableRevenue(employee.PayExcludesFuelSurcharge, employee.PayExcludesAccessorials));
-                var basis = (employee.PayExcludesFuelSurcharge, employee.PayExcludesAccessorials) switch
-                {
-                    (true, true) => "linehaul",
-                    (true, false) => "linehaul and accessorials",
-                    (false, true) => "linehaul and fuel surcharge",
-                    _ => "gross revenue"
-                };
-                return new GrossPay(revenue * rate, $"{Percent(rate)} of {basis} on {loads.Count} load(s)");
+                var loads = await GetDeliveredLoadsAsync(employee.Id, from, to, ct);
+                var revenue = loads.Sum(l => employee.PayableRevenue(l.Linehaul, l.FuelSurcharge, l.Accessorials));
+                return new GrossPay(revenue * rate,
+                    $"{Percent(rate)} of {employee.PayableRevenueBasis()} on {loads.Count} load(s)");
             }
             case SalaryType.Weekly:
-                var weeks = CountWeeks(startDate, endDate);
+                var weeks = payroll.PeriodWeeks();
                 return new GrossPay(weeks * rate, $"Weekly salary x {weeks}");
             case SalaryType.Monthly:
-                var months = CountMonths(startDate, endDate);
+                var months = payroll.PeriodMonths();
                 return new GrossPay(months * rate, $"Monthly salary x {months}");
             case SalaryType.RatePerDistance:
             {
                 // Load distances are meters; the rate is per the tenant's distance unit.
-                var loads = await GetDeliveredLoadsAsync(employee.Id, startDate, endDate, ct);
+                var loads = await GetDeliveredLoadsAsync(employee.Id, from, to, ct);
                 var meters = loads.Sum(l => l.Distance);
                 var unit = tenantUow.GetCurrentTenant().Settings.DistanceUnit;
                 var distance = unit.FromMeters(meters);
@@ -268,22 +263,19 @@ internal class PayrollService(
             }
             case SalaryType.Hourly:
             {
-                var (from, to) = UtcRange(startDate, endDate);
                 var hours = await tenantUow.Repository<TimeEntry>().Query()
-                    .Where(te => te.EmployeeId == employee.Id &&
-                                 te.Date >= from &&
-                                 te.Date < to)
+                    .Where(te => te.EmployeeId == employee.Id && te.Date >= from && te.Date < to)
                     .SumAsync(te => te.TotalHours, ct);
                 return new GrossPay(hours * rate, $"{hours:0.##} hour(s) x {rate:0.00}", Hours: hours);
             }
             case SalaryType.PerLoad:
             {
-                var loads = await GetDeliveredLoadsAsync(employee.Id, startDate, endDate, ct);
+                var loads = await GetDeliveredLoadsAsync(employee.Id, from, to, ct);
                 return new GrossPay(loads.Count * rate, $"{loads.Count} load(s) x {rate:0.00}");
             }
             case SalaryType.PerStop:
             {
-                var stops = await CountDepartedStopsAsync(employee.Id, startDate, endDate, ct);
+                var stops = await CountDepartedStopsAsync(employee.Id, from, to, ct);
                 return new GrossPay(stops * rate, $"{stops} stop(s) x {rate:0.00}");
             }
             default:
@@ -295,11 +287,8 @@ internal class PayrollService(
     /// Loads delivered in the period on a trip the employee drove, main or secondary. A load on no trip has
     /// no recorded driver, so it goes to whoever drives its truck now.
     /// </summary>
-    private Task<List<DeliveredLoad>> GetDeliveredLoadsAsync(
-        Guid employeeId, DateOnly startDate, DateOnly endDate, CancellationToken ct)
-    {
-        var (from, to) = UtcRange(startDate, endDate);
-        return tenantUow.Repository<Load>().Query()
+    private Task<List<DeliveredLoad>> GetDeliveredLoadsAsync(Guid employeeId, DateTime from, DateTime to, CancellationToken ct) =>
+        tenantUow.Repository<Load>().Query()
             .Where(l => l.DeliveredAt >= from && l.DeliveredAt < to &&
                         (l.TripStops.Any()
                             ? l.TripStops.Any(s => s.Trip.DriverId == employeeId || s.Trip.SecondaryDriverId == employeeId)
@@ -311,65 +300,18 @@ internal class PayrollService(
                 l.Accessorials.Sum(a => a.Rate * a.Quantity),
                 l.Distance))
             .ToListAsync(ct);
-    }
 
     /// <summary>
     /// Stops the driver app marked departed in the period, on trips the employee drove.
     /// </summary>
-    private Task<int> CountDepartedStopsAsync(Guid employeeId, DateOnly startDate, DateOnly endDate, CancellationToken ct)
-    {
-        var (from, to) = UtcRange(startDate, endDate);
-        return tenantUow.Repository<TripStop>().Query()
+    private Task<int> CountDepartedStopsAsync(Guid employeeId, DateTime from, DateTime to, CancellationToken ct) =>
+        tenantUow.Repository<TripStop>().Query()
             .CountAsync(s => s.DepartedAt >= from && s.DepartedAt < to &&
                              (s.Trip.DriverId == employeeId || s.Trip.SecondaryDriverId == employeeId), ct);
-    }
 
     private static string Percent(decimal ratio) => (ratio * 100).ToString("0.##", CultureInfo.InvariantCulture) + "%";
 
-    private static int CountWeeks(DateOnly startDate, DateOnly endDate)
-    {
-        // Assuming a week starts on Sunday and ends on Saturday.
-        var days = endDate.DayNumber - startDate.DayNumber + 1; // +1 to include the start day in the count
-        var fullWeeks = days / 7;
-        var remainingDays = days % 7;
-
-        // Check if the remaining days form a week when combined with the start and end dates.
-        if (remainingDays > 0)
-        {
-            var startDay = startDate.DayOfWeek;
-            var endDay = endDate.AddDays(-remainingDays).DayOfWeek;
-
-            if (endDay >= startDay)
-            {
-                fullWeeks++;
-            }
-        }
-
-        return fullWeeks;
-    }
-
-    private static int CountMonths(DateOnly startDate, DateOnly endDate)
-    {
-        var months = (endDate.Year - startDate.Year) * 12 + endDate.Month - startDate.Month;
-
-        // If endDate is in a month but before the start date day, then reduce a month.
-        if (endDate.Day < startDate.Day)
-        {
-            months--;
-        }
-
-        return months + 1; // +1 to include the starting month
-    }
-
-    /// <summary>The period's days as a UTC [start, day after end) range, for comparing timestamps.</summary>
-    private static (DateTime From, DateTime To) UtcRange(DateOnly start, DateOnly end) =>
-        (start.ToDateTime(TimeOnly.MinValue, DateTimeKind.Utc), end.AddDays(1).ToDateTime(TimeOnly.MinValue, DateTimeKind.Utc));
-
     private sealed record GrossPay(decimal Amount, string Description, double Distance = 0, decimal Hours = 0);
 
-    private sealed record DeliveredLoad(decimal Linehaul, decimal FuelSurcharge, decimal Accessorials, double Distance)
-    {
-        public decimal PayableRevenue(bool excludeFuelSurcharge, bool excludeAccessorials) =>
-            Linehaul + (excludeFuelSurcharge ? 0 : FuelSurcharge) + (excludeAccessorials ? 0 : Accessorials);
-    }
+    private sealed record DeliveredLoad(decimal Linehaul, decimal FuelSurcharge, decimal Accessorials, double Distance);
 }
