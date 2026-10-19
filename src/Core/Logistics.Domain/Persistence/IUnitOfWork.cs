@@ -43,21 +43,4 @@ public interface IUnitOfWork<in TMarker> : IDisposable
     ///     Rolls back the current transaction (idempotent; does nothing if none exists).
     /// </summary>
     Task RollbackTransactionAsync(CancellationToken ct = default);
-
-    /// <summary>
-    ///     Executes a raw SQL command (non-query).
-    /// </summary>
-    Task ExecuteRawSql(string sql, CancellationToken ct = default);
-
-    /// <summary>
-    ///     Executes a raw SQL query returning a list of <typeparamref name="TSqlResponse" />.
-    /// </summary>
-    Task<List<TSqlResponse>> ExecuteRawSql<TSqlResponse>(string sql, CancellationToken ct = default)
-        where TSqlResponse : class;
-
-    /// <summary>
-    ///     Executes an interpolated raw SQL query returning a list of <typeparamref name="TSqlResponse" />.
-    /// </summary>
-    Task<List<TSqlResponse>> ExecuteRawSql<TSqlResponse>(FormattableString sql, CancellationToken ct = default)
-        where TSqlResponse : class;
 }

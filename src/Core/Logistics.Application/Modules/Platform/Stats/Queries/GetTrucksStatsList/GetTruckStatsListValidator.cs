@@ -8,7 +8,7 @@ internal sealed class GetTruckStatsListValidator : AbstractValidator<GetTrucksSt
     {
         RuleFor(i => i.StartDate).LessThan(i => i.EndDate);
         RuleFor(i => i.Page)
-            .GreaterThanOrEqualTo(0);
+            .GreaterThanOrEqualTo(1);
         RuleFor(i => i.PageSize)
             .GreaterThanOrEqualTo(1);
     }

@@ -1,11 +1,9 @@
-using System.Text.Json;
 using Logistics.Domain.Entities;
 using Logistics.Infrastructure.Persistence.Conventions;
 using Logistics.Infrastructure.Persistence.Extensions;
 using Logistics.Infrastructure.Persistence.Helpers;
 using Logistics.Infrastructure.Persistence.Interceptors;
 using Logistics.Infrastructure.Persistence.Options;
-using Logistics.Shared.Models;
 using Microsoft.AspNetCore.DataProtection;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
@@ -91,24 +89,5 @@ public class TenantDbContext : DbContext
         // Encrypt provider-secret columns at rest (ELD / LoadBoard / Accounting). Applied after
         // entity configs so it overrides their plain string mappings. No-op when no protector.
         builder.ApplyEncryptedSecretColumns(_dataProtectionProvider);
-
-        // Query-only DTOs for PostgreSQL functions - no table generation
-        builder.Entity<CompanyStatsDto>(entity =>
-        {
-            entity.HasNoKey();
-            entity.ToTable((string?)null);
-        });
-
-        builder.Entity<TruckStatsDto>(entity =>
-        {
-            entity.HasNoKey();
-            entity.ToTable((string?)null);
-
-            entity.Property(t => t.Drivers)
-                .HasColumnType("jsonb")
-                .HasConversion(
-                    v => JsonSerializer.Serialize(v, (JsonSerializerOptions?)null),
-                    v => JsonSerializer.Deserialize<List<EmployeeDto>>(v, (JsonSerializerOptions?)null) ?? new List<EmployeeDto>());
-        });
     }
 }

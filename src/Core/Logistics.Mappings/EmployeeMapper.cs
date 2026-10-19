@@ -7,6 +7,11 @@ public static class EmployeeMapper
 {
     public static EmployeeDto ToDto(this Employee entity)
     {
+        return entity.ToDto(entity.Role);
+    }
+
+    public static EmployeeDto ToDto(this Employee entity, TenantRole? role)
+    {
         return new EmployeeDto
         {
             Id = entity.Id,
@@ -21,7 +26,7 @@ public static class EmployeeMapper
             SalaryType = entity.SalaryType,
             Status = entity.Status,
             StripeConnectedAccountId = entity.StripeConnectedAccountId,
-            Role = entity.Role?.ToDto()
+            Role = role?.ToDto()
         };
     }
 }

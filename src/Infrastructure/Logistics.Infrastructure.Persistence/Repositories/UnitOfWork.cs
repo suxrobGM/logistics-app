@@ -75,23 +75,6 @@ internal abstract class UnitOfWork<TMarker>(DbContext db) : IUnitOfWork<TMarker>
         }
     }
 
-    public Task ExecuteRawSql(string sql, CancellationToken ct = default)
-    {
-        return Db.Database.ExecuteSqlRawAsync(sql, ct);
-    }
-
-    public Task<List<TSqlResponse>> ExecuteRawSql<TSqlResponse>(string sql, CancellationToken ct = default)
-        where TSqlResponse : class
-    {
-        return Db.Set<TSqlResponse>().FromSqlRaw(sql).ToListAsync(ct);
-    }
-
-    public Task<List<TSqlResponse>> ExecuteRawSql<TSqlResponse>(FormattableString sql, CancellationToken ct = default)
-        where TSqlResponse : class
-    {
-        return Db.Set<TSqlResponse>().FromSql(sql).ToListAsync(ct);
-    }
-
     public void Dispose()
     {
         _tx?.Dispose();

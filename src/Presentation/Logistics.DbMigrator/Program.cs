@@ -1,7 +1,6 @@
 ﻿using Open.IdentityServer.EntityFramework.DbContexts;
 using Open.IdentityServer.EntityFramework.Options;
 using Logistics.Application.Modules.Financial.Payroll.Services;
-using Logistics.DbMigrator.Data;
 using Logistics.Infrastructure.Persistence.Data;
 using Logistics.DbMigrator.Extensions;
 using Logistics.DbMigrator.Services;
@@ -48,7 +47,6 @@ builder.Services.AddSeeders();
 // These hosted services will run in the order they are registered
 builder.Services.AddHostedService<MigrateDatabaseWorker>();
 builder.Services.AddHostedService<SeederOrchestrationWorker>();
-builder.Services.AddHostedService<CreateSqlFunctionsWorker>();
 
 // `--exit` stops the host once the workers above have completed, for one-shot runs
 if (args.Contains("--exit"))

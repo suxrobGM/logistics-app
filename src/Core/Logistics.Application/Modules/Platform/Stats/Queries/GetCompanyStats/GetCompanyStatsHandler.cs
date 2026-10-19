@@ -16,22 +16,12 @@ internal sealed class GetCompanyStatsHandler(ITenantUnitOfWork tenantUow)
         GetCompanyStatsQuery req, CancellationToken ct)
     {
         var companyStats = new CompanyStatsDto();
-
-        try
-        {
-            var result = await tenantUow.ExecuteRawSql<CompanyStatsDto>("SELECT * FROM get_company_stats();", ct);
-            companyStats = result.FirstOrDefault() ?? new CompanyStatsDto();
-        }
-        catch
-        {
-            await PopulateStatsFromEfCore(companyStats, ct);
-        }
-
+        await PopulateCompanyStats(companyStats, ct);
         await PopulateDashboardKpis(companyStats, ct);
         return Result<CompanyStatsDto>.Ok(companyStats);
     }
 
-    private async Task PopulateStatsFromEfCore(CompanyStatsDto stats, CancellationToken ct)
+    private async Task PopulateCompanyStats(CompanyStatsDto stats, CancellationToken ct)
     {
         // Calculate all date boundaries once
         var now = DateTime.UtcNow;
