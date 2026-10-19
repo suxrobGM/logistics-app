@@ -15,5 +15,10 @@ internal sealed class AgentMessageEntityConfiguration : IEntityTypeConfiguration
 
         builder.HasIndex(m => new { m.ConversationId, m.Sequence })
             .IsUnique();
+
+        builder.HasOne<AgentSession>()
+            .WithMany()
+            .HasForeignKey(m => m.SessionId)
+            .OnDelete(DeleteBehavior.SetNull);
     }
 }

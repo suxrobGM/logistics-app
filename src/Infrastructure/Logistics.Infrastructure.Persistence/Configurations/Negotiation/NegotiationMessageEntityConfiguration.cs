@@ -13,6 +13,11 @@ internal sealed class NegotiationMessageEntityConfiguration : IEntityTypeConfigu
         builder.HasIndex(m => new { m.NegotiationId, m.Sequence })
             .IsUnique();
 
+        builder.HasOne<AgentDecision>()
+            .WithMany()
+            .HasForeignKey(m => m.AgentDecisionId)
+            .OnDelete(DeleteBehavior.SetNull);
+
         builder.Property(m => m.Subject)
             .HasMaxLength(500);
 

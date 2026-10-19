@@ -74,6 +74,11 @@ internal sealed class RateNegotiationEntityConfiguration : IEntityTypeConfigurat
             .HasForeignKey(n => n.LoadId)
             .OnDelete(DeleteBehavior.SetNull);
 
+        builder.HasOne<AgentConversation>()
+            .WithMany()
+            .HasForeignKey(n => n.ConversationId)
+            .OnDelete(DeleteBehavior.SetNull);
+
         builder.HasMany(n => n.Messages)
             .WithOne(m => m.Negotiation)
             .HasForeignKey(m => m.NegotiationId)
