@@ -9,6 +9,11 @@ internal sealed class SubscriptionEntityConfiguration : IEntityTypeConfiguration
     public void Configure(EntityTypeBuilder<Subscription> builder)
     {
         builder.ToTable("subscriptions");
+
+        builder.HasIndex(i => i.StripeSubscriptionId)
+            .IsUnique()
+            .HasFilter("stripe_subscription_id IS NOT NULL");
+
         builder.HasOne(i => i.Tenant)
             .WithOne(i => i.Subscription)
             .HasForeignKey<Subscription>(i => i.TenantId);
