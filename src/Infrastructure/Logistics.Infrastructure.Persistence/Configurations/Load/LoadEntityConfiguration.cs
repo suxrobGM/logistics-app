@@ -27,6 +27,8 @@ internal sealed class LoadEntityConfiguration : IEntityTypeConfiguration<Load>
         builder.HasIndex(i => i.Number)
             .IsUnique();
 
+        builder.HasIndex(i => i.Status);
+
         builder.HasOne(i => i.AssignedDispatcher)
             .WithMany(i => i.DispatchedLoads)
             .HasForeignKey(i => i.AssignedDispatcherId);
