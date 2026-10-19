@@ -12,7 +12,6 @@ internal sealed class ConditionDefectEntityConfiguration : IEntityTypeConfigurat
 
         builder.Property(d => d.PartCategory)
             .IsRequired()
-            .HasConversion<string>()
             .HasMaxLength(64);
 
         builder.Property(d => d.Description)
@@ -21,16 +20,18 @@ internal sealed class ConditionDefectEntityConfiguration : IEntityTypeConfigurat
 
         builder.Property(d => d.Severity)
             .IsRequired()
-            .HasConversion<string>()
             .HasMaxLength(32);
 
         builder.Property(d => d.Zone)
-            .HasConversion<string>()
             .HasMaxLength(32);
 
         builder.Property(d => d.DamageType)
-            .HasConversion<string>()
             .HasMaxLength(16);
+
+        builder.HasOne<Document>()
+            .WithMany()
+            .HasForeignKey(d => d.PhotoDocumentId)
+            .OnDelete(DeleteBehavior.SetNull);
 
         builder.HasIndex(d => d.LoadConditionReportId);
         builder.HasIndex(d => d.PartCategory);
