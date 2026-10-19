@@ -21,7 +21,7 @@ public static partial class LoadMapper
         var truck = lookup.FindTruck(entity.AssignedTruckId);
         var trip = lookup.FindTrip(entity.Id);
 
-        var dto = new LoadDto
+        return new LoadDto
         {
             Id = entity.Id,
             Number = entity.Number,
@@ -76,16 +76,10 @@ public static partial class LoadMapper
             Invoice = lookup.FindInvoice(entity.Id),
             TripId = trip?.Id,
             TripName = trip?.Name,
-            TripNumber = trip?.Number
+            TripNumber = trip?.Number,
+            CurrentAddress = truck?.CurrentAddress,
+            CurrentLocation = truck?.CurrentLocation
         };
-
-        if (truck?.CurrentAddress is not null)
-        {
-            dto.CurrentAddress = truck.CurrentAddress;
-            dto.CurrentLocation = truck.CurrentLocation;
-        }
-
-        return dto;
     }
 
     [MapperRequiredMapping(RequiredMappingStrategy.Target)]

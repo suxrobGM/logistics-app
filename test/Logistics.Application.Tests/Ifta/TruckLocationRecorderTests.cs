@@ -157,4 +157,45 @@ public class TruckLocationRecorderTests
 
         Assert.Equal("TX", AccruedRegion);
     }
+
+    #region Current address
+
+    private static readonly Address DallasAddress = new()
+    {
+        Line1 = "1 Main St", City = "Dallas", State = "TX", ZipCode = "75201", Country = "US"
+    };
+
+    [Fact]
+    public async Task Record_MovedWithoutAddress_ClearsStaleAddress()
+    {
+        _truck.CurrentLocation = Dallas;
+        _truck.CurrentAddress = DallasAddress;
+
+        await _sut.RecordAsync(_truck, FortWorth, DateTime.UtcNow);
+
+        Assert.Null(_truck.CurrentAddress);
+    }
+
+    [Fact]
+    public async Task Record_JitterWithoutAddress_KeepsAddress()
+    {
+        _truck.CurrentLocation = Dallas;
+        _truck.CurrentAddress = DallasAddress;
+
+        await _sut.RecordAsync(_truck, new GeoPoint(Dallas.Longitude + 0.0005, Dallas.Latitude), DateTime.UtcNow);
+
+        Assert.Same(DallasAddress, _truck.CurrentAddress);
+    }
+
+    [Fact]
+    public async Task Record_WithAddress_ReplacesAddress()
+    {
+        _truck.CurrentLocation = FortWorth;
+
+        await _sut.RecordAsync(_truck, Dallas, DateTime.UtcNow, address: DallasAddress);
+
+        Assert.Same(DallasAddress, _truck.CurrentAddress);
+    }
+
+    #endregion
 }

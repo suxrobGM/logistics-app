@@ -27,12 +27,15 @@ internal sealed class SetTruckGeolocationHandler(
             return Result.Ok();
         }
 
-        truck.CurrentAddress = req.GeolocationData.CurrentAddress;
-
-        if (req.GeolocationData.CurrentLocation is not null)
+        var geolocation = req.GeolocationData;
+        if (geolocation.CurrentLocation is not null)
         {
-            // Appends the breadcrumb, accrues IFTA jurisdiction mileage, sets CurrentLocation
-            await locationRecorder.RecordAsync(truck, req.GeolocationData.CurrentLocation, DateTime.UtcNow, ct: ct);
+            await locationRecorder.RecordAsync(
+                truck, geolocation.CurrentLocation, DateTime.UtcNow, address: geolocation.CurrentAddress, ct: ct);
+        }
+        else
+        {
+            truck.CurrentAddress = geolocation.CurrentAddress;
         }
 
         await tenantUow.SaveChangesAsync(ct);

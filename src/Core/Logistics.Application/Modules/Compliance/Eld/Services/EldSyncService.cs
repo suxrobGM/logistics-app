@@ -307,7 +307,7 @@ internal sealed class EldSyncService(
 
             var point = new GeoPoint(location.Longitude, location.Latitude);
             var timestamp = location.Timestamp == default ? DateTime.UtcNow : location.Timestamp;
-            await locationRecorder.RecordAsync(truck, point, timestamp, config.ProviderType, location.OdometerMiles, ct);
+            await locationRecorder.RecordAsync(truck, point, timestamp, config.ProviderType, location.OdometerMiles, ct: ct);
             mapping.LastSyncedAt = DateTime.UtcNow;
 
             updates.Add(new TruckGeolocationDto

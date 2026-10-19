@@ -21,12 +21,16 @@ internal sealed class TruckLocationRecorder(
     /// <summary>Segments shorter than this are stationary jitter and accrue nothing.</summary>
     private const decimal MinSegmentMiles = 0.05m;
 
+    /// <summary>Moves shorter than this keep the current address; parked trucks jitter by a few metres.</summary>
+    private const double AddressStaleMeters = 500;
+
     public async Task RecordAsync(
         Truck truck,
         GeoPoint location,
         DateTime timestampUtc,
         EldProviderType? source = null,
         int? odometerReading = null,
+        Address? address = null,
         CancellationToken ct = default)
     {
         var previous = await tenantUow.Repository<TruckLocationHistory>().Query()
@@ -48,6 +52,13 @@ internal sealed class TruckLocationRecorder(
             Source = source,
             OdometerReading = odometerReading
         }, ct);
+
+        if (address is not null
+            || truck.CurrentLocation is not { } current
+            || current.DistanceTo(location) > AddressStaleMeters)
+        {
+            truck.CurrentAddress = address;
+        }
 
         truck.CurrentLocation = location;
 

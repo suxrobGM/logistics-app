@@ -1,3 +1,4 @@
+using System.Globalization;
 using System.Text;
 using Logistics.Domain.Primitives.Enums;
 using Logistics.Domain.Primitives.ValueObjects;
@@ -64,6 +65,8 @@ internal static partial class TelegramMessageFormatter
 
             if (truck.CurrentAddress is not null)
                 sb.AppendLine(Escape($"  Location: {FormatCity(truck.CurrentAddress)}"));
+            else if (truck.CurrentLocation is { } location)
+                sb.AppendLine(Escape(string.Create(CultureInfo.InvariantCulture, $"  Location: {location.Latitude:F4}, {location.Longitude:F4}")));
 
             sb.AppendLine();
         }

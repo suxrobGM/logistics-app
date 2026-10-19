@@ -208,7 +208,7 @@ public class EldSyncServiceTests
         await _sut.SyncLiveAsync(_config, CancellationToken.None);
 
         await _recorder.Received(1).RecordAsync(
-            truck, new GeoPoint(-87.63, 41.88), seen, EldProviderType.Samsara, 8705, Arg.Any<CancellationToken>());
+            truck, new GeoPoint(-87.63, 41.88), seen, EldProviderType.Samsara, 8705, null, Arg.Any<CancellationToken>());
         await _liveTracking.Received(1).BroadcastGeolocationDataAsync(
             Arg.Any<string>(), Arg.Is<TruckGeolocationDto>(g => g.TruckId == truck.Id), Arg.Any<CancellationToken>());
     }
