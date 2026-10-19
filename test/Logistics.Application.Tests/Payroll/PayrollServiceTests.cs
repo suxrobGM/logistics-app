@@ -27,7 +27,7 @@ public class PayrollServiceTests
     private readonly List<FuelCardTransaction> _fuel = [];
     private readonly List<PayrollInvoice> _payrolls = [];
     private readonly List<TripStop> _stops = [];
-    private readonly Employee _driver = new() { Email = "d@x.com", FirstName = "Ana", LastName = "Diaz" };
+    private readonly Employee _driver = new() { Email = "d@x.com", FirstName = "Ana", LastName = "Diaz", Salary = Money.Zero("USD") };
     private readonly Truck _truck;
     private readonly PayrollService _sut;
 

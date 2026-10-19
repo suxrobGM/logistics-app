@@ -9,6 +9,7 @@ using Logistics.Application.Modules.Integrations.Agents.Services;
 using Logistics.Domain.Entities;
 using Logistics.Domain.Persistence;
 using Logistics.Domain.Primitives.Enums;
+using Logistics.Domain.Primitives.ValueObjects;
 using Logistics.Shared.Models;
 using Logistics.Mediator;
 using Microsoft.Extensions.Logging.Abstractions;
@@ -106,6 +107,7 @@ internal sealed class AgentTestContext
             .Select(e => new Employee
             {
                 Id = e.UserId,
+                Salary = Money.Zero("USD"),
                 Email = $"{e.FirstName}.{e.LastName}@test.com".ToLowerInvariant(),
                 FirstName = e.FirstName,
                 LastName = e.LastName

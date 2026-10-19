@@ -54,7 +54,7 @@ public class BookLoadBoardLoadHandlerTests
         _listing = CreateListing();
 
         var truck = new Truck { Number = "T-100", Type = TruckType.FreightTruck };
-        var dispatcher = new Employee { Email = "dispatcher@test.com", FirstName = "Dana", LastName = "Doe" };
+        var dispatcher = new Employee { Email = "dispatcher@test.com", FirstName = "Dana", LastName = "Doe", Salary = Money.Zero("USD") };
 
         _command = new BookLoadBoardLoadCommand
         {
@@ -145,6 +145,19 @@ public class BookLoadBoardLoadHandlerTests
         Assert.True(result.IsSuccess);
         await _loadRepo.Received(1).AddAsync(
             Arg.Is<Load>(l => l.AssignedDispatcherId == dispatcherId), Arg.Any<CancellationToken>());
+    }
+
+    [Fact]
+    public async Task Handle_Books_PricesTheLoadInTheTenantCurrency()
+    {
+        _tenant.Settings.Currency = CurrencyCode.EUR;
+
+        var result = await _sut.Handle(_command, CancellationToken.None);
+
+        Assert.True(result.IsSuccess);
+        await _loadRepo.Received(1).AddAsync(
+            Arg.Is<Load>(l => l.DeliveryCost.Currency == "EUR" && l.Invoice!.Total.Currency == "EUR"),
+            Arg.Any<CancellationToken>());
     }
 
     #endregion

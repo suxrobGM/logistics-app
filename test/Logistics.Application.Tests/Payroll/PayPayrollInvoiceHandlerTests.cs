@@ -75,6 +75,7 @@ public class PayPayrollInvoiceHandlerTests
     {
         return new Employee
         {
+            Salary = Money.Zero("USD"),
             Email = "driver@test.com",
             FirstName = "John",
             LastName = "Doe",

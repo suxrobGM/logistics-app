@@ -307,6 +307,7 @@ public class DispatchEligibilityServiceTests
         var driver = new Employee
         {
             Id = DriverId,
+            Salary = Money.Zero("USD"),
             Email = "driver@test.com",
             FirstName = "John",
             LastName = "Doe",
@@ -415,6 +416,7 @@ public class DispatchEligibilityServiceTests
         return new Employee
         {
             Id = DriverId,
+            Salary = Money.Zero("USD"),
             Email = "driver@test.com",
             FirstName = "John",
             LastName = "Doe",

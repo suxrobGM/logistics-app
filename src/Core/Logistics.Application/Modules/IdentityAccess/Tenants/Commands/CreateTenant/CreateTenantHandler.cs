@@ -133,7 +133,7 @@ internal sealed class CreateTenantHandler(
         var ownerRole = await tenantUow.Repository<TenantRole>()
             .GetAsync(r => r.Name == TenantRoles.Owner);
 
-        var employee = Employee.CreateEmployeeFromUser(owner);
+        var employee = Employee.CreateEmployeeFromUser(owner, tenant.Settings.Currency.ToString());
         if (ownerRole is not null)
         {
             employee.Role = ownerRole;

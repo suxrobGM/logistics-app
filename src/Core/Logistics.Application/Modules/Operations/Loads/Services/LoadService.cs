@@ -84,6 +84,7 @@ internal sealed class LoadService(ITenantUnitOfWork tenantUow, IVehicleTransport
         }
 
         // 4) Create domain entities in memory
+        var currency = tenantUow.GetCurrentTenant().Settings.Currency.ToString();
         var loads = new List<Load>(paramList.Count);
         foreach (var p in paramList)
         {
@@ -108,6 +109,7 @@ internal sealed class LoadService(ITenantUnitOfWork tenantUow, IVehicleTransport
                 customer,
                 truck,
                 dispatcher,
+                currency,
                 trip
             );
 

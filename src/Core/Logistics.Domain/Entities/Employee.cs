@@ -17,7 +17,7 @@ public class Employee : Entity, ITenantEntity
     /// </summary>
     public Address? Address { get; set; }
 
-    public Money Salary { get; set; } = Money.Zero("USD");
+    public required Money Salary { get; set; }
     public SalaryType SalaryType { get; set; } = SalaryType.None;
     public EmployeeStatus Status { get; set; } = EmployeeStatus.Active;
 
@@ -89,6 +89,7 @@ public class Employee : Entity, ITenantEntity
 
     public static Employee CreateEmployeeFromUser(
         User user,
+        string currency,
         decimal salary = 0,
         SalaryType salaryType = SalaryType.None)
     {
@@ -99,7 +100,7 @@ public class Employee : Entity, ITenantEntity
             FirstName = user.FirstName,
             LastName = user.LastName,
             PhoneNumber = user.PhoneNumber,
-            Salary = new() { Amount = salary, Currency = "USD" },
+            Salary = new() { Amount = salary, Currency = currency },
             SalaryType = salaryType
         };
 

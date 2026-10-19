@@ -115,7 +115,7 @@ public class ImportImporterTests
     public async Task LoadImporter_UnknownCustomer_IsARowError()
     {
         var userId = Guid.NewGuid();
-        var dispatcher = new Employee { Id = userId, Email = "me@test.dev", FirstName = "Me", LastName = "Dispatcher" };
+        var dispatcher = new Employee { Id = userId, Email = "me@test.dev", FirstName = "Me", LastName = "Dispatcher", Salary = Money.Zero("USD") };
         var currentUser = Substitute.For<ICurrentUserService>();
         currentUser.GetUserId().Returns(userId);
         var loadRepo = Substitute.For<ITenantRepository<Load, Guid>>();

@@ -3,6 +3,7 @@ using Logistics.Domain.Entities;
 using Logistics.Domain.Entities.Safety;
 using Logistics.Domain.Persistence;
 using Logistics.Domain.Primitives.Enums.Safety;
+using Logistics.Domain.Primitives.ValueObjects;
 using Logistics.Shared.Identity.Claims;
 using Logistics.Shared.Identity.Policies;
 using Logistics.Application.Abstractions.CurrentUser;
@@ -75,6 +76,7 @@ public class DvirReportOwnershipTests
     private static Employee Employee(Guid id, TenantRole role) => new()
     {
         Id = id,
+        Salary = Money.Zero("USD"),
         Email = $"{id}@test.com",
         FirstName = "Test",
         LastName = "Employee",

@@ -39,8 +39,8 @@ public class LoadLookupResolverTests
     public async Task ResolveAsync_MapsRelatedValuesWithoutTheNavigations()
     {
         var customer = new Customer { Name = "ACME" };
-        var dispatcher = new Employee { Email = "d@x.com", FirstName = "Dana", LastName = "Disp" };
-        var driver = new Employee { Email = "r@x.com", FirstName = "Rick", LastName = "Road" };
+        var dispatcher = new Employee { Email = "d@x.com", FirstName = "Dana", LastName = "Disp", Salary = Money.Zero("USD") };
+        var driver = new Employee { Email = "r@x.com", FirstName = "Rick", LastName = "Road", Salary = Money.Zero("USD") };
         var truck = new Truck { Number = "T-7", Type = TruckType.FreightTruck, MainDriverId = driver.Id };
         var load = new Load
         {

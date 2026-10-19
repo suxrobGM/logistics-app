@@ -2,6 +2,7 @@ using Logistics.Application.Abstractions.CurrentUser;
 using Logistics.Application.Modules.IdentityAccess.Employees.Commands;
 using Logistics.Domain.Entities;
 using Logistics.Domain.Persistence;
+using Logistics.Domain.Primitives.ValueObjects;
 using Logistics.Shared.Identity.Roles;
 using NSubstitute;
 using Xunit;
@@ -90,6 +91,7 @@ public class UpdateEmployeeHandlerTests
     private static Employee Employee(TenantRole role) => new()
     {
         Id = Guid.NewGuid(),
+        Salary = Money.Zero("USD"),
         Email = "employee@test.com",
         FirstName = "Test",
         LastName = "Employee",

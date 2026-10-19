@@ -120,11 +120,10 @@ internal sealed class DriverImporter(
                 await userManager.UpdateAsync(user);
             }
 
-            var driver = Employee.CreateEmployeeFromUser(user);
+            var driver = Employee.CreateEmployeeFromUser(user, options.Currency);
             driver.FirstName = draft.FirstName!;
             driver.LastName = draft.LastName!;
             driver.PhoneNumber = draft.Row.Get(Phone) ?? user.PhoneNumber;
-            driver.Salary = Money.Zero(options.Currency);
             driver.Address = draft.Address;
             driver.JoinedDate = draft.HireDate ?? DateTime.UtcNow;
             driver.Role = driverRole;

@@ -184,7 +184,8 @@ internal class EmployeeSeeder(ILogger<EmployeeSeeder> logger) : SeederBase(logge
             return employee;
         }
 
-        employee = Employee.CreateEmployeeFromUser(user, salary, salaryType);
+        var currency = context.TenantUnitOfWork.GetCurrentTenant().Settings.Currency.ToString();
+        employee = Employee.CreateEmployeeFromUser(user, currency, salary, salaryType);
         employee.Address = context.Region?.CompanyAddress;
         user.TenantId = tenantId;
         await employeeRepository.AddAsync(employee);
