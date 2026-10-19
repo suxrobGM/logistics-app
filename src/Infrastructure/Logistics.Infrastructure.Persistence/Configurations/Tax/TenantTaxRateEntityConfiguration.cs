@@ -21,7 +21,7 @@ internal sealed class TenantTaxRateEntityConfiguration : IEntityTypeConfiguratio
             j.Property(p => p.Region).HasMaxLength(10);
         });
 
-        builder.Property(r => r.RatePercent).HasPrecision(5, 2);
+        builder.Property(r => r.RatePercent).HasPrecision(7, 4);
         builder.Property(r => r.TaxCode).HasMaxLength(50);
         builder.Property(r => r.Description).HasMaxLength(200);
 

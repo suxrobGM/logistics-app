@@ -24,7 +24,7 @@ internal sealed class InvoiceLineItemEntityConfiguration : IEntityTypeConfigurat
         });
 
         builder.Property(i => i.TaxRatePercent)
-            .HasPrecision(5, 2);
+            .HasPrecision(7, 4);
 
         builder.Property(i => i.TaxAmount)
             .HasPrecision(18, 2);
