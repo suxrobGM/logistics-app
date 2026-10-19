@@ -29,5 +29,10 @@ internal sealed class FactoringBatchItemEntityConfiguration : IEntityTypeConfigu
             .OnDelete(DeleteBehavior.Cascade);
 
         builder.HasIndex(i => i.InvoiceId);
+
+        builder.HasOne<Payment>()
+            .WithMany()
+            .HasForeignKey(i => i.PaymentId)
+            .OnDelete(DeleteBehavior.SetNull);
     }
 }

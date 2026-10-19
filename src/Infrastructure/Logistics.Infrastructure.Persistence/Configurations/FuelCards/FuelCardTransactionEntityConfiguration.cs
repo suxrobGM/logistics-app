@@ -50,5 +50,10 @@ internal sealed class FuelCardTransactionEntityConfiguration : IEntityTypeConfig
             .WithMany()
             .HasForeignKey(i => i.PayrollInvoiceId)
             .OnDelete(DeleteBehavior.SetNull);
+
+        builder.HasOne<Expense>()
+            .WithMany()
+            .HasForeignKey(i => i.ExpenseId)
+            .OnDelete(DeleteBehavior.SetNull);
     }
 }
