@@ -66,15 +66,30 @@ public class UserController(IMediator mediator, IUserPermissionService userPermi
         return result.IsSuccess ? Ok(result.Value) : NotFound(ErrorResponse.FromResult(result));
     }
 
+    [HttpPut("me", Name = "UpdateCurrentUser")]
+    [ProducesResponseType(StatusCodes.Status204NoContent)]
+    [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status400BadRequest)]
+    [Authorize]
+    public async Task<IActionResult> UpdateCurrentUser([FromBody] UpdateUserCommand request)
+    {
+        if (User.GetUserId() is not { } userId)
+        {
+            return BadRequest(new ErrorResponse("User not authenticated"));
+        }
+
+        request.Id = userId;
+        var result = await mediator.Send(request);
+        return result.IsSuccess ? NoContent() : BadRequest(ErrorResponse.FromResult(result));
+    }
+
     [HttpPut("{id:guid}", Name = "UpdateUser")]
     [ProducesResponseType(StatusCodes.Status204NoContent)]
     [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status400BadRequest)]
-    [Authorize(Policy = Permission.User.View)]
+    [Authorize(Policy = Permission.User.Manage)]
     public async Task<IActionResult> Update(Guid id, [FromBody] UpdateUserCommand request)
     {
         request.Id = id;
         var result = await mediator.Send(request);
         return result.IsSuccess ? NoContent() : BadRequest(ErrorResponse.FromResult(result));
     }
-
 }

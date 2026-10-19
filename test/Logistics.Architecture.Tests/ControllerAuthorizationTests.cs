@@ -109,6 +109,20 @@ public class ControllerAuthorizationTests
         }
     }
 
+    /// <summary>
+    /// Every role holds User.View, so gating the update on it let any driver or customer rename
+    /// any user. Editing someone else needs User.Manage; your own profile goes through /users/me.
+    /// </summary>
+    [Fact]
+    public void Updating_another_user_requires_user_manage()
+    {
+        var policy = typeof(UserController)
+            .GetMethod(nameof(UserController.Update), BindingFlags.Public | BindingFlags.Instance)
+            ?.GetCustomAttribute<AuthorizeAttribute>()?.Policy;
+
+        Assert.Equal(Permission.User.Manage, policy);
+    }
+
     [Fact]
     public void Unassigned_loads_require_dispatch_view()
     {
