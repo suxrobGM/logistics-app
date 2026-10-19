@@ -15,7 +15,8 @@ internal sealed class RejectAICopilotDecisionHandler(
     IAICopilotDecisionGuard guard,
     IAgentDecisionNotes notes,
     ICurrentUserService currentUser,
-    IAICopilotBroadcastService broadcastService) : IRequestHandler<RejectAICopilotDecisionCommand, Result>
+    IAICopilotBroadcastService broadcastService,
+    IAgentDecisionDtoMapper decisionDtoMapper) : IRequestHandler<RejectAICopilotDecisionCommand, Result>
 {
     public async Task<Result> Handle(RejectAICopilotDecisionCommand request, CancellationToken ct)
     {
@@ -34,7 +35,7 @@ internal sealed class RejectAICopilotDecisionHandler(
             message => broadcastService.BroadcastMessageAsync(tenantId, conversation.CreatedById, message), ct);
 
         await broadcastService.BroadcastDecisionAsync(
-            tenantId, conversation.CreatedById, await tenantUow.ToLabeledDtoAsync(decision, ct));
+            tenantId, conversation.CreatedById, await decisionDtoMapper.MapAsync(decision, ct));
         return Result.Ok();
     }
 }

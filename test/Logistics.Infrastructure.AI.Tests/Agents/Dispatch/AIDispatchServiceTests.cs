@@ -1,4 +1,5 @@
 using Logistics.Application.Abstractions.Agents;
+using Logistics.Application.Modules.Integrations.Agents.Services;
 using Logistics.Infrastructure.AI.Agents;
 using Logistics.Infrastructure.AI.Agents.Dispatch;
 using Logistics.Domain.Entities;
@@ -92,7 +93,7 @@ public class AIDispatchServiceTests
 
         var toolExecutor = Substitute.For<IAgentToolExecutor>();
         var decisionProcessor = new AgentDecisionProcessor(
-            toolExecutor, toolRegistry, _tenantUow, _broadcastService,
+            toolExecutor, toolRegistry, _tenantUow, _broadcastService, new AgentDecisionDtoMapper(_tenantUow),
             NullLogger<AgentDecisionProcessor>.Instance);
         var loopRunner = new AgentLoopRunner(decisionProcessor, _tenantUow, NullLogger<AgentLoopRunner>.Instance);
 

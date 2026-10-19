@@ -6,15 +6,9 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Logistics.Application.Modules.Integrations.Agents.Services;
 
-/// <summary>
-/// The one way to turn decisions into DTOs. Decision cards label their load and truck from
-/// <see cref="AgentDecisionDto.LoadName"/> and <see cref="AgentDecisionDto.TruckNumber"/> and fall
-/// back to the raw ids in the tool input, so a bare <c>ToDto()</c> shows GUIDs.
-/// </summary>
-public static class AgentDecisionDtos
+public sealed class AgentDecisionDtoMapper(ITenantUnitOfWork tenantUow) : IAgentDecisionDtoMapper
 {
-    public static async Task<List<AgentDecisionDto>> ToLabeledDtosAsync(
-        this ITenantUnitOfWork tenantUow, IReadOnlyCollection<AgentDecision> decisions, CancellationToken ct)
+    public async Task<List<AgentDecisionDto>> MapAsync(IReadOnlyCollection<AgentDecision> decisions, CancellationToken ct)
     {
         var loadIds = decisions.Select(d => d.LoadId).OfType<Guid>().Distinct().ToList();
         var truckIds = decisions.Select(d => d.TruckId).OfType<Guid>().Distinct().ToList();
@@ -40,7 +34,6 @@ public static class AgentDecisionDtos
             .ToList();
     }
 
-    public static async Task<AgentDecisionDto> ToLabeledDtoAsync(
-        this ITenantUnitOfWork tenantUow, AgentDecision decision, CancellationToken ct) =>
-        (await tenantUow.ToLabeledDtosAsync([decision], ct))[0];
+    public async Task<AgentDecisionDto> MapAsync(AgentDecision decision, CancellationToken ct) =>
+        (await MapAsync([decision], ct))[0];
 }

@@ -1,4 +1,5 @@
 using Logistics.Application.Abstractions.Agents;
+using Logistics.Application.Modules.Integrations.Agents.Services;
 using Logistics.Infrastructure.AI.Tools;
 using Logistics.Infrastructure.AI.Agents;
 using System.Text.Json.Nodes;
@@ -49,7 +50,7 @@ public class AgentLoopRunnerTests
 
         var processor = new AgentDecisionProcessor(
             _toolExecutor, new AgentToolRegistry(), _tenantUow,
-            Substitute.For<IAIDispatchBroadcastService>(),
+            Substitute.For<IAIDispatchBroadcastService>(), new AgentDecisionDtoMapper(_tenantUow),
             NullLogger<AgentDecisionProcessor>.Instance);
         _sut = new AgentLoopRunner(processor, _tenantUow, NullLogger<AgentLoopRunner>.Instance);
     }

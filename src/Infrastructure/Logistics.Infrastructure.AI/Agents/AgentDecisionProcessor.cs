@@ -25,6 +25,7 @@ internal sealed class AgentDecisionProcessor(
     IAgentToolRegistry toolRegistry,
     ITenantUnitOfWork tenantUow,
     IAIDispatchBroadcastService broadcastService,
+    IAgentDecisionDtoMapper decisionDtoMapper,
     ILogger<AgentDecisionProcessor> logger)
 {
     public async Task<List<LlmToolResultBlock>> ProcessToolCallsAsync(
@@ -54,7 +55,7 @@ internal sealed class AgentDecisionProcessor(
         // Save all decisions first, then broadcast - ensures clients see committed data
         await tenantUow.SaveChangesAsync(ct);
 
-        foreach (var dto in await tenantUow.ToLabeledDtosAsync(decisions, ct))
+        foreach (var dto in await decisionDtoMapper.MapAsync(decisions, ct))
         {
             await BroadcastDecisionAsync(dto, context);
         }

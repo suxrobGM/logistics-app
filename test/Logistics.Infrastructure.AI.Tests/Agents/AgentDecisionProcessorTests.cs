@@ -1,4 +1,5 @@
 using Logistics.Application.Abstractions.Agents;
+using Logistics.Application.Modules.Integrations.Agents.Services;
 using Logistics.Infrastructure.AI.Tools;
 using Logistics.Infrastructure.AI.Agents;
 using System.Text.Json.Nodes;
@@ -50,7 +51,7 @@ public class AgentDecisionProcessorTests
             BillingEmail = "test@test.com",
             CompanyAddress = new() { Line1 = "123 Test St", City = "Test", State = "TX", ZipCode = "12345", Country = "US" }
         });
-        _sut = new AgentDecisionProcessor(_toolExecutor, _toolRegistry, _tenantUow, _broadcastService, _logger);
+        _sut = new AgentDecisionProcessor(_toolExecutor, _toolRegistry, _tenantUow, _broadcastService, new AgentDecisionDtoMapper(_tenantUow), _logger);
     }
 
     private static AgentSession CreateSession()

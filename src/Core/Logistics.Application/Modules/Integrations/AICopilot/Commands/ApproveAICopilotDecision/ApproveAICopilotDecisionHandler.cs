@@ -22,6 +22,7 @@ internal sealed class ApproveAICopilotDecisionHandler(
     ICurrentUserService currentUser,
     IAgentRunContext runContext,
     IAICopilotBroadcastService broadcastService,
+    IAgentDecisionDtoMapper decisionDtoMapper,
     IOptions<LlmOptions> llmOptions) : IRequestHandler<ApproveAICopilotDecisionCommand, Result>
 {
     public async Task<Result> Handle(ApproveAICopilotDecisionCommand request, CancellationToken ct)
@@ -57,7 +58,7 @@ internal sealed class ApproveAICopilotDecisionHandler(
             ct);
 
         await broadcastService.BroadcastDecisionAsync(
-            tenant.Id, conversation.CreatedById, await tenantUow.ToLabeledDtoAsync(decision, ct));
+            tenant.Id, conversation.CreatedById, await decisionDtoMapper.MapAsync(decision, ct));
         return outcome;
     }
 }

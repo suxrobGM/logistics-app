@@ -24,7 +24,7 @@ public class GetPendingDecisionsHandlerTests
         _loadRepo.Query().Returns(new List<Load>().BuildMock());
         _truckRepo.Query().Returns(new List<Truck>().BuildMock());
 
-        _sut = new GetPendingDecisionsHandler(_ctx.TenantUow);
+        _sut = new GetPendingDecisionsHandler(_ctx.TenantUow, _ctx.DecisionDtoMapper);
     }
 
     private static AgentDecision SuggestedDecision(AgentSessionType sessionType) => new()

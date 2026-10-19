@@ -60,6 +60,7 @@ internal sealed class AgentTestContext
     public IAgentDecisionExecution Execution { get; }
     public IAgentDecisionAuthorization Authorization { get; }
     public IAICopilotDecisionGuard CopilotGuard { get; }
+    public IAgentDecisionDtoMapper DecisionDtoMapper { get; }
 
     public Guid UserId { get; } = Guid.NewGuid();
 
@@ -90,7 +91,8 @@ internal sealed class AgentTestContext
         Commands = new AgentConversationCommands(
             TenantUow, Access, QuotaService, DispatchService, SenderDirectory,
             NullLogger<AgentConversationCommands>.Instance);
-        Queries = new AgentConversationQueries(TenantUow, Access, SenderDirectory);
+        DecisionDtoMapper = new AgentDecisionDtoMapper(TenantUow);
+        Queries = new AgentConversationQueries(TenantUow, Access, SenderDirectory, DecisionDtoMapper);
         Notes = new AgentDecisionNotes(TenantUow, SenderDirectory);
         Execution = new AgentDecisionExecution(ToolExecutor);
         Authorization = new AgentDecisionAuthorization(ToolRegistry, UserPermissions);

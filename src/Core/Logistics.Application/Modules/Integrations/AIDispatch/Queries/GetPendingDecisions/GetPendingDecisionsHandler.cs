@@ -10,7 +10,8 @@ using Microsoft.EntityFrameworkCore;
 namespace Logistics.Application.Modules.Integrations.AIDispatch.Queries;
 
 internal sealed class GetPendingDecisionsHandler(
-    ITenantUnitOfWork tenantUow) : IRequestHandler<GetPendingDecisionsQuery, Result<List<AgentDecisionDto>>>
+    ITenantUnitOfWork tenantUow,
+    IAgentDecisionDtoMapper decisionDtoMapper) : IRequestHandler<GetPendingDecisionsQuery, Result<List<AgentDecisionDto>>>
 {
     public async Task<Result<List<AgentDecisionDto>>> Handle(
         GetPendingDecisionsQuery request, CancellationToken ct)
@@ -23,7 +24,7 @@ internal sealed class GetPendingDecisionsHandler(
             .OrderByDescending(d => d.CreatedAt)
             .ToListAsync(ct);
 
-        var dtos = await tenantUow.ToLabeledDtosAsync(decisions, ct);
+        var dtos = await decisionDtoMapper.MapAsync(decisions, ct);
         return Result<List<AgentDecisionDto>>.Ok(dtos);
     }
 }
