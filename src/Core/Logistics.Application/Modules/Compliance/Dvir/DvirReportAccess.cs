@@ -1,3 +1,4 @@
+using Logistics.Application.Abstractions.CurrentUser;
 using Logistics.Domain.Entities;
 using Logistics.Domain.Persistence;
 using Logistics.Shared.Identity.Claims;
@@ -6,19 +7,11 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Logistics.Application.Modules.Compliance.Dvir;
 
-internal static class DvirReportAccess
+internal sealed class DvirReportAccess(ITenantUnitOfWork tenantUow, ICurrentUserService currentUser) : IDvirReportAccess
 {
-    /// <summary>
-    /// Drivers hold <c>Dvir.Manage</c> to file their own, which alone would let any of them sign a
-    /// compliance record as a colleague. <c>Dvir.Review</c> is what buys acting on someone else's.
-    /// </summary>
-    public static async Task<bool> CanFileForAsync(
-        ITenantUnitOfWork tenantUow,
-        Guid? callerId,
-        Guid driverId,
-        CancellationToken ct)
+    public async Task<bool> CanFileForAsync(Guid driverId, CancellationToken ct)
     {
-        if (callerId is not { } caller)
+        if (currentUser.GetUserId() is not { } caller)
         {
             return false;
         }

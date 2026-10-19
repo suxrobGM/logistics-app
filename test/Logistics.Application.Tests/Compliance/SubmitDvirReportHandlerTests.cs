@@ -1,4 +1,5 @@
 using Logistics.Application.Abstractions.CurrentUser;
+using Logistics.Application.Modules.Compliance.Dvir;
 using Logistics.Application.Modules.Compliance.Dvir.Commands;
 using Logistics.Domain.Entities.Safety;
 using Logistics.Domain.Persistence;
@@ -23,7 +24,7 @@ public class SubmitDvirReportHandlerTests
     {
         _tenantUow.Repository<DvirReport>().Returns(_reportRepo);
         _currentUser.GetUserId().Returns(DriverId);
-        _sut = new SubmitDvirReportHandler(_tenantUow, _currentUser);
+        _sut = new SubmitDvirReportHandler(_tenantUow, new DvirReportAccess(_tenantUow, _currentUser));
     }
 
     [Fact]

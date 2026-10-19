@@ -1,3 +1,4 @@
+using Logistics.Application.Modules.Compliance.Dvir;
 using Logistics.Application.Modules.Compliance.Dvir.Commands;
 using Logistics.Domain.Entities;
 using Logistics.Domain.Entities.Safety;
@@ -93,9 +94,9 @@ public class DvirReportOwnershipTests
         Type = DvirType.PreTrip
     };
 
-    private CreateDvirReportHandler CreateSut() => new(_tenantUow, _currentUser);
+    private CreateDvirReportHandler CreateSut() => new(_tenantUow, new DvirReportAccess(_tenantUow, _currentUser));
 
-    private SubmitDvirReportHandler SubmitSut() => new(_tenantUow, _currentUser);
+    private SubmitDvirReportHandler SubmitSut() => new(_tenantUow, new DvirReportAccess(_tenantUow, _currentUser));
 
     private static CreateDvirReportCommand CreateCommand() => new()
     {
