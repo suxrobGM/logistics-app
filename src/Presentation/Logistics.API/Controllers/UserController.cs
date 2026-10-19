@@ -37,7 +37,7 @@ public class UserController(IMediator mediator, IUserPermissionService userPermi
         return Ok(permissions);
     }
 
-    [HttpGet("{id}", Name = "GetUserById")]
+    [HttpGet("{id:guid}", Name = "GetUserById")]
     [ProducesResponseType(typeof(UserDto), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status404NotFound)]
     [Authorize(Policy = Permission.User.View)]
