@@ -57,15 +57,21 @@ internal sealed class ExpenseEntityConfiguration : IEntityTypeConfiguration<Expe
         }
     }
 
-    public sealed class TruckExpenseEntityConfiguration : IEntityTypeConfiguration<TruckExpense>
+    public sealed class TruckLinkedExpenseEntityConfiguration : IEntityTypeConfiguration<TruckLinkedExpense>
     {
-        public void Configure(EntityTypeBuilder<TruckExpense> builder)
+        public void Configure(EntityTypeBuilder<TruckLinkedExpense> builder)
         {
             builder.HasOne(e => e.Truck)
                 .WithMany()
                 .HasForeignKey(e => e.TruckId)
                 .OnDelete(DeleteBehavior.Restrict);
+        }
+    }
 
+    public sealed class TruckExpenseEntityConfiguration : IEntityTypeConfiguration<TruckExpense>
+    {
+        public void Configure(EntityTypeBuilder<TruckExpense> builder)
+        {
             builder.Property(e => e.ExternalTransactionId).HasMaxLength(100);
             builder.Property(e => e.PricePerUnit).HasPrecision(18, 4);
 
@@ -84,11 +90,6 @@ internal sealed class ExpenseEntityConfiguration : IEntityTypeConfiguration<Expe
             builder.Property(e => e.VendorAddress).HasMaxLength(500);
             builder.Property(e => e.VendorPhone).HasMaxLength(20);
             builder.Property(e => e.RepairDescription).HasMaxLength(2000);
-
-            builder.HasOne(e => e.Truck)
-                .WithMany()
-                .HasForeignKey(e => e.TruckId)
-                .OnDelete(DeleteBehavior.Restrict);
         }
     }
 

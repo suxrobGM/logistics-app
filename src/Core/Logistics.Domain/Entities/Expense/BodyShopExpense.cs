@@ -6,19 +6,9 @@ namespace Logistics.Domain.Entities;
 /// <summary>
 ///     Body shop repair expenses for trucks.
 /// </summary>
-public class BodyShopExpense : Expense
+public class BodyShopExpense : TruckLinkedExpense
 {
     public override ExpenseType Type { get; set; } = ExpenseType.BodyShop;
-
-    /// <summary>
-    ///     The truck being repaired.
-    /// </summary>
-    public required Guid TruckId { get; set; }
-
-    /// <summary>
-    ///     Navigation property for the truck.
-    /// </summary>
-    public virtual Truck Truck { get; set; } = null!;
 
     /// <summary>
     ///     Body shop vendor address.

@@ -401,7 +401,7 @@ registry, `AgentLoopRunner`, decisions, and quota. Gated by `TenantFeature.AICop
 
 ### Expenses
 
-- Domain: `Entities/Expense/` (CompanyExpense, TruckExpense, BodyShopExpense)
+- Domain: `Entities/Expense/` (CompanyExpense, TruckExpense, BodyShopExpense; the last two share `TruckLinkedExpense.TruckId`)
 - Application: `Modules/Financial/Expenses/Commands/`, `Modules/Financial/Expenses/Queries/`
 - API/UI: `ExpenseController.cs`, `tms-portal/pages/expenses/`
 
