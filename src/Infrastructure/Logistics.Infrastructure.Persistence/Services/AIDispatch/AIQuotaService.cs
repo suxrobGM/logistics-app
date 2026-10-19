@@ -29,7 +29,7 @@ internal sealed class AIQuotaService(
 
         // Every status counts - failed and cancelled runs still consumed paid tokens.
         var spentThisWeek = await tenantUow.Repository<AgentSession>().Query()
-            .Where(s => s.StartedAt >= countFrom)
+            .Where(s => s.CreatedAt >= countFrom)
             .SumAsync(s => s.EstimatedCostUsd, ct);
 
         var resetsAt = countFrom.AddDays(7);
@@ -60,7 +60,7 @@ internal sealed class AIQuotaService(
         // Units round per session in memory - the min-1 ceiling doesn't translate to SQL, and
         // summing raw cost first would drift from the invoice.
         var overageCosts = await tenantUow.Repository<AgentSession>().Query()
-            .Where(s => s.StartedAt >= countFrom)
+            .Where(s => s.CreatedAt >= countFrom)
             .Where(AIOverageBilling.Billable)
             .Select(s => s.EstimatedCostUsd)
             .ToListAsync(ct);

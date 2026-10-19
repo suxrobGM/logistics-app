@@ -198,5 +198,5 @@ between `## HOS Rules` and `## Workflow` as defaults ranking below the hard cons
 - Policy text is **untrusted** (LLM output derived from dispatcher-typed rejection reasons).
   `AIDispatchSystemPrompt` sanitises and truncates at the injection point, not in callers.
 - Truncation keeps **whole lines only** - a half-truncated rule reads as a different rule.
-- Learning creates no `AgentSession`, so it never consumes quota. Cost lands on
-  `AIDispatchPolicy.GenerationCostUsd` and is never exposed to the tenant.
+- Learning creates no `AgentSession`, so it never consumes quota. Its cost is only logged by
+  `AIDispatchPolicyLearner` and is never exposed to the tenant.

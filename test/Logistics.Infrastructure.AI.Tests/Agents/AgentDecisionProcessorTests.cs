@@ -55,7 +55,7 @@ public class AgentDecisionProcessorTests
 
     private static AgentSession CreateSession()
     {
-        return new AgentSession { StartedAt = DateTime.UtcNow };
+        return new AgentSession { CreatedAt = DateTime.UtcNow };
     }
 
     private static LlmToolUseBlock CreateToolUse(string name, JsonObject? input = null)

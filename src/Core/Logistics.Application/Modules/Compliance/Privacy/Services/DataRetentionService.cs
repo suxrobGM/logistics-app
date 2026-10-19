@@ -43,7 +43,7 @@ internal sealed class DataRetentionService(
                 var oldSessions = await tenantUow.Repository<AgentSession>()
                     .Query()
                     .DispatchOnly()
-                    .Where(s => s.StartedAt < dispatchCutoff)
+                    .Where(s => s.CreatedAt < dispatchCutoff)
                     .ToListAsync(ct);
 
                 foreach (var session in oldSessions)

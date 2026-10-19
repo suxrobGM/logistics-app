@@ -56,7 +56,7 @@ public class AgentLoopRunnerTests
 
     private static AgentSession Session() => new()
     {
-        StartedAt = DateTime.UtcNow,
+        CreatedAt = DateTime.UtcNow,
         ModelUsed = "claude-haiku-5-5"
     };
 
@@ -96,7 +96,6 @@ public class AgentLoopRunnerTests
         await _sut.RunAsync(session, Conversation(), new ToolCallContext(), null, CancellationToken.None);
 
         await _provider.Received(1).SendAsync(Arg.Any<LlmRequest>(), Arg.Any<CancellationToken>());
-        Assert.Equal("All done.", session.Summary);
         Assert.Equal(150, session.TotalTokensUsed);
         Assert.Equal(LlmPricing.Calculate("claude-haiku-5-5", 100, 50), session.EstimatedCostUsd);
     }
@@ -181,7 +180,6 @@ public class AgentLoopRunnerTests
         var reply = conversation.Messages[^1];
         Assert.DoesNotContain(reply.Content, b => b is LlmToolUseBlock);
         Assert.Equal(AgentLoopRunner.TruncatedNotice, Assert.IsType<LlmTextBlock>(reply.Content[^1]).Text);
-        Assert.Equal(AgentLoopRunner.TruncatedNotice, session.Summary);
     }
 
     [Fact]

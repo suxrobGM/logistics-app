@@ -62,11 +62,6 @@ public class LoadBoardConfiguration : Entity, ITenantEntity
     public DateTime? LastSyncedAt { get; set; }
 
     /// <summary>
-    /// The account/organization ID in the load board provider's system
-    /// </summary>
-    public string? ExternalAccountId { get; set; }
-
-    /// <summary>
     /// Company DOT number for broker verification
     /// </summary>
     public string? CompanyDotNumber { get; set; }

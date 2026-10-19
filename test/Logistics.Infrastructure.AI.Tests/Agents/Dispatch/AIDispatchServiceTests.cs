@@ -357,8 +357,8 @@ public class AIDispatchServiceTests
     [Fact]
     public async Task CancelAsync_SessionNotRunning_ReturnsFalse()
     {
-        var session = new AgentSession { StartedAt = DateTime.UtcNow };
-        session.Complete("done");
+        var session = new AgentSession { CreatedAt = DateTime.UtcNow };
+        session.Complete();
 
         _sessionRepo.GetByIdAsync(Arg.Any<Guid>(), Arg.Any<CancellationToken>())
             .Returns(session);
@@ -371,7 +371,7 @@ public class AIDispatchServiceTests
     [Fact]
     public async Task CancelAsync_RunningSession_ReturnsTrue()
     {
-        var session = new AgentSession { StartedAt = DateTime.UtcNow };
+        var session = new AgentSession { CreatedAt = DateTime.UtcNow };
 
         _sessionRepo.GetByIdAsync(Arg.Any<Guid>(), Arg.Any<CancellationToken>())
             .Returns(session);

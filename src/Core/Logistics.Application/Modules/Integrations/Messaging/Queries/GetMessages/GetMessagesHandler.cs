@@ -40,7 +40,6 @@ internal sealed class GetMessagesHandler(
 
         var messages = await tenantUow.Repository<Message>()
             .GetListAsync(m => m.ConversationId == req.ConversationId
-                               && !m.IsDeleted
                                && (!req.Before.HasValue || m.SentAt < req.Before.Value), ct);
 
         var messageDtos = messages

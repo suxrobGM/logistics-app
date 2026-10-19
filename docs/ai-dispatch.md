@@ -199,8 +199,8 @@ dispatcher-typed rejection reasons, which is a prompt-injection path.
 
 **Cost** - learning runs on `Llm:PolicyLearningModel` (default `deepseek-flash`) via the optional
 `LlmCompletionRequest.ModelId` override, and creates **no** `AgentSession` row, so it does not
-consume the tenant's weekly quota. Cost is recorded on the policy row (`GenerationCostUsd`) for
-platform observability and is never exposed to the tenant.
+consume the tenant's weekly quota. The learner logs each pass's estimated cost for platform
+observability; it is never stored or exposed to the tenant.
 
 **UI** - `tms-portal/pages/ai-dispatch/dispatch-policy/`: read the learned rules, write your own
 directives, pause learning, regenerate, or delete everything. Deleting does not stop the agent

@@ -29,7 +29,7 @@ public class AgentOverageReporterTests
         var session = new AgentSession
         {
             Type = type,
-            StartedAt = DateTime.UtcNow,
+            CreatedAt = DateTime.UtcNow,
             IsOverage = isOverage,
             EstimatedCostUsd = cost
         };
@@ -43,7 +43,7 @@ public class AgentOverageReporterTests
     {
         // Both surfaces bill - the copilot used to be blocked at the boundary instead.
         var session = Session(type, isOverage: true);
-        session.Complete("done");
+        session.Complete();
 
         await _sut.ReportIfOverBudgetAsync(session, _tenantId);
 
@@ -55,7 +55,7 @@ public class AgentOverageReporterTests
     public async Task ReportIfOverBudget_WithinBudget_ReportsNothing()
     {
         var session = Session(AgentSessionType.Copilot, isOverage: false);
-        session.Complete("done");
+        session.Complete();
 
         await _sut.ReportIfOverBudgetAsync(session, _tenantId);
 
@@ -98,7 +98,7 @@ public class AgentOverageReporterTests
             .ThrowsAsync(new InvalidOperationException("stripe down"));
 
         var session = Session(AgentSessionType.Copilot, isOverage: true);
-        session.Complete("done");
+        session.Complete();
 
         await _sut.ReportIfOverBudgetAsync(session, _tenantId);
     }

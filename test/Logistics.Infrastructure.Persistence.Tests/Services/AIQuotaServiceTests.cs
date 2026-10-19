@@ -91,8 +91,8 @@ public class AIQuotaServiceTests
     private static AgentSession CreateCompletedSessionAt(
         DateTime startedAt, decimal costUsd, bool isOverage = false)
     {
-        var session = new AgentSession { StartedAt = startedAt, EstimatedCostUsd = costUsd, IsOverage = isOverage };
-        session.Complete("done");
+        var session = new AgentSession { CreatedAt = startedAt, EstimatedCostUsd = costUsd, IsOverage = isOverage };
+        session.Complete();
         return session;
     }
 
@@ -186,12 +186,12 @@ public class AIQuotaServiceTests
         SetupTenantWithPlan(tenantId, 10m);
 
         var now = DateTime.UtcNow;
-        var completed = new AgentSession { StartedAt = now, EstimatedCostUsd = 0.50m };
-        completed.Complete("done");
-        var running = new AgentSession { StartedAt = now, EstimatedCostUsd = 0m };
-        var failed = new AgentSession { StartedAt = now, EstimatedCostUsd = 0.25m };
+        var completed = new AgentSession { CreatedAt = now, EstimatedCostUsd = 0.50m };
+        completed.Complete();
+        var running = new AgentSession { CreatedAt = now, EstimatedCostUsd = 0m };
+        var failed = new AgentSession { CreatedAt = now, EstimatedCostUsd = 0.25m };
         failed.Fail("error");
-        var cancelled = new AgentSession { StartedAt = now, EstimatedCostUsd = 0.10m };
+        var cancelled = new AgentSession { CreatedAt = now, EstimatedCostUsd = 0.10m };
         cancelled.Cancel();
 
         SetupSessions(completed, running, failed, cancelled);
@@ -210,9 +210,9 @@ public class AIQuotaServiceTests
 
         var now = DateTime.UtcNow;
         // A session that died before the loop (or an in-flight one) carries zero cost.
-        var preLoopFailure = new AgentSession { StartedAt = now, EstimatedCostUsd = 0m };
+        var preLoopFailure = new AgentSession { CreatedAt = now, EstimatedCostUsd = 0m };
         preLoopFailure.Fail("setup error");
-        var running = new AgentSession { StartedAt = now, EstimatedCostUsd = 0m };
+        var running = new AgentSession { CreatedAt = now, EstimatedCostUsd = 0m };
 
         SetupSessions(preLoopFailure, running);
 
@@ -308,7 +308,7 @@ public class AIQuotaServiceTests
         SetupTenantWithPlan(tenantId, 1m);
 
         var now = DateTime.UtcNow;
-        var failedOverage = new AgentSession { StartedAt = now, EstimatedCostUsd = 0.50m, IsOverage = true };
+        var failedOverage = new AgentSession { CreatedAt = now, EstimatedCostUsd = 0.50m, IsOverage = true };
         failedOverage.Fail("error");
 
         SetupSessions(

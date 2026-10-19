@@ -102,7 +102,7 @@ internal sealed class AIDispatchPolicyLearner(
 
         policy ??= await CreatePolicyAsync(policyRepo, ct);
         policy.ApplyLearnedPolicy(
-            content, digest.Count, digest.LastDecisionAt, result.ModelUsed, result.EstimatedCostUsd);
+            content, digest.Count, digest.LastDecisionAt, result.ModelUsed);
 
         await tenantUow.SaveChangesAsync(ct);
 

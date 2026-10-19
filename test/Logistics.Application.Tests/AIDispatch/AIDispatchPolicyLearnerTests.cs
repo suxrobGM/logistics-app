@@ -150,7 +150,7 @@ public class AIDispatchPolicyLearnerTests
         SetDecisions(decisions);
 
         var policy = new AIDispatchPolicy();
-        policy.ApplyLearnedPolicy("old", 20, decisions.Max(d => d.CreatedAt), "deepseek-flash", 0.001m);
+        policy.ApplyLearnedPolicy("old", 20, decisions.Max(d => d.CreatedAt), "deepseek-flash");
         SetPolicy(policy);
 
         var result = await _sut.LearnForCurrentTenantAsync();
@@ -167,7 +167,7 @@ public class AIDispatchPolicyLearnerTests
         SetDecisions(decisions);
 
         var policy = new AIDispatchPolicy();
-        policy.ApplyLearnedPolicy("old", 20, decisions.Max(d => d.CreatedAt), "deepseek-flash", 0.001m);
+        policy.ApplyLearnedPolicy("old", 20, decisions.Max(d => d.CreatedAt), "deepseek-flash");
         // Push LastRunAt outside the manual cooldown.
         typeof(AIDispatchPolicy).GetProperty(nameof(AIDispatchPolicy.LastRunAt))!
             .SetValue(policy, DateTime.UtcNow.AddHours(-2));
@@ -229,7 +229,7 @@ public class AIDispatchPolicyLearnerTests
         SetLlmResponse("NO_POLICY");
 
         var policy = new AIDispatchPolicy();
-        policy.ApplyLearnedPolicy("## Learned preferences\n- Stale rule (3 rejections)", 5, null, "m", 0m);
+        policy.ApplyLearnedPolicy("## Learned preferences\n- Stale rule (3 rejections)", 5, null, "m");
         SetPolicy(policy);
 
         var result = await _sut.LearnForCurrentTenantAsync();
@@ -338,7 +338,7 @@ public class AIDispatchPolicyLearnerTests
         SetLlmResponse("## Learned preferences\n- Prefer short hauls (20 rejections)");
 
         var policy = new AIDispatchPolicy();
-        policy.ApplyLearnedPolicy("## Learned preferences\n- Existing rule (4 rejections)", 4, null, "m", 0m);
+        policy.ApplyLearnedPolicy("## Learned preferences\n- Existing rule (4 rejections)", 4, null, "m");
         SetPolicy(policy);
 
         await _sut.LearnForCurrentTenantAsync();

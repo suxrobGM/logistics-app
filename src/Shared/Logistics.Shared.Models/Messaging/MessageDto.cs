@@ -9,5 +9,4 @@ public record MessageDto
     public required string Content { get; init; }
     public DateTime SentAt { get; init; }
     public bool IsRead { get; init; }
-    public bool IsDeleted { get; init; }
 }

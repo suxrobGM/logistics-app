@@ -184,7 +184,7 @@ internal sealed class GetTenantQuotaUsagesHandler(
             tenantUow.SetCurrentTenant(tenant);
 
             var sessions = tenantUow.Repository<AgentSession>().Query()
-                .Where(s => s.StartedAt >= costWindowStart);
+                .Where(s => s.CreatedAt >= costWindowStart);
 
             // aggregate the sessions and the truck count in one round trip, so a busy tenant does not cross the wire tens of thousands of times
             var totals = await sessions
@@ -192,16 +192,16 @@ internal sealed class GetTenantQuotaUsagesHandler(
                 .Select(g => new
                 {
                     SpentThisWeekUsd = g.Sum(s =>
-                        s.StartedAt >= countFrom ? s.EstimatedCostUsd : 0m),
+                        s.CreatedAt >= countFrom ? s.EstimatedCostUsd : 0m),
                     OverageSessions = g.Sum(s =>
-                        s.StartedAt >= countFrom && s.Status == AgentSessionStatus.Completed && s.IsOverage
+                        s.CreatedAt >= countFrom && s.Status == AgentSessionStatus.Completed && s.IsOverage
                             ? 1
                             : 0),
                     TotalTokens = g.Sum(s =>
-                        s.StartedAt >= countFrom ? s.InputTokensUsed + s.OutputTokensUsed : 0),
+                        s.CreatedAt >= countFrom ? s.InputTokensUsed + s.OutputTokensUsed : 0),
                     MonthlyLlmCost = g.Sum(s => s.EstimatedCostUsd),
-                    LastModel = g.Where(s => s.StartedAt >= countFrom)
-                        .OrderByDescending(s => s.StartedAt)
+                    LastModel = g.Where(s => s.CreatedAt >= countFrom)
+                        .OrderByDescending(s => s.CreatedAt)
                         .Select(s => s.ModelUsed)
                         .FirstOrDefault()
                 })

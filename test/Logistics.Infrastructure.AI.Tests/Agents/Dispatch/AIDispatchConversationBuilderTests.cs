@@ -111,7 +111,7 @@ public class AIDispatchConversationBuilderTests
         bool isEnabled = true)
     {
         var policy = new AIDispatchPolicy();
-        policy.ApplyLearnedPolicy(learned, 20, DateTime.UtcNow, "deepseek-flash", 0.001m);
+        policy.ApplyLearnedPolicy(learned, 20, DateTime.UtcNow, "deepseek-flash");
         policy.EditManual(directives, isEnabled, Guid.NewGuid());
         return policy;
     }
@@ -122,7 +122,7 @@ public class AIDispatchConversationBuilderTests
     public async Task BuildAsync_NoPolicyRow_OmitsPolicySection()
     {
         SetPolicies();
-        var session = new AgentSession { StartedAt = DateTime.UtcNow };
+        var session = new AgentSession { CreatedAt = DateTime.UtcNow };
 
         var conversation = await _sut.BuildAsync(session, CreateConversation(), ValidConfig, CancellationToken.None);
 
@@ -134,7 +134,7 @@ public class AIDispatchConversationBuilderTests
     public async Task BuildAsync_DisabledPolicy_OmitsPolicySection()
     {
         SetPolicies(CreatePolicy(learned: "## Learned preferences\n- Prefer short hauls (5 rejections)", isEnabled: false));
-        var session = new AgentSession { StartedAt = DateTime.UtcNow };
+        var session = new AgentSession { CreatedAt = DateTime.UtcNow };
 
         var conversation = await _sut.BuildAsync(session, CreateConversation(), ValidConfig, CancellationToken.None);
 
@@ -148,7 +148,7 @@ public class AIDispatchConversationBuilderTests
         SetPolicies(CreatePolicy(
             learned: "## Learned preferences\n- Prefer short hauls (5 rejections)",
             directives: "- Never assign Truck 42 to hazmat"));
-        var session = new AgentSession { StartedAt = DateTime.UtcNow };
+        var session = new AgentSession { CreatedAt = DateTime.UtcNow };
 
         var conversation = await _sut.BuildAsync(session, CreateConversation(), ValidConfig, CancellationToken.None);
 
@@ -166,7 +166,7 @@ public class AIDispatchConversationBuilderTests
     public async Task BuildAsync_PolicyWithOnlyDirectives_OmitsLearnedHeading()
     {
         SetPolicies(CreatePolicy(directives: "- Prefer flatbeds out of Dallas"));
-        var session = new AgentSession { StartedAt = DateTime.UtcNow };
+        var session = new AgentSession { CreatedAt = DateTime.UtcNow };
 
         var conversation = await _sut.BuildAsync(session, CreateConversation(), ValidConfig, CancellationToken.None);
 
@@ -182,7 +182,7 @@ public class AIDispatchConversationBuilderTests
     public async Task BuildAsync_SoloOperatorTenant_BuildsTheSoloPrompt()
     {
         SetTenant(TenantPreset.GeneralFreight, TenantPreset.SoloOperator);
-        var session = new AgentSession { StartedAt = DateTime.UtcNow };
+        var session = new AgentSession { CreatedAt = DateTime.UtcNow };
 
         var conversation = await _sut.BuildAsync(session, CreateConversation(), ValidConfig, CancellationToken.None);
 
@@ -193,7 +193,7 @@ public class AIDispatchConversationBuilderTests
     [Fact]
     public async Task BuildAsync_FleetTenant_BuildsTheFleetPrompt()
     {
-        var session = new AgentSession { StartedAt = DateTime.UtcNow };
+        var session = new AgentSession { CreatedAt = DateTime.UtcNow };
 
         var conversation = await _sut.BuildAsync(session, CreateConversation(), ValidConfig, CancellationToken.None);
 
@@ -206,7 +206,7 @@ public class AIDispatchConversationBuilderTests
     [Fact]
     public async Task BuildAsync_ValidConfig_ReturnsConversation()
     {
-        var session = new AgentSession { StartedAt = DateTime.UtcNow };
+        var session = new AgentSession { CreatedAt = DateTime.UtcNow };
 
         var conversation = await _sut.BuildAsync(session, CreateConversation(), ValidConfig, CancellationToken.None);
 
@@ -219,7 +219,7 @@ public class AIDispatchConversationBuilderTests
     [Fact]
     public async Task BuildAsync_IncludesToolsFromRegistry()
     {
-        var session = new AgentSession { StartedAt = DateTime.UtcNow };
+        var session = new AgentSession { CreatedAt = DateTime.UtcNow };
 
         var conversation = await _sut.BuildAsync(session, CreateConversation(), ValidConfig, CancellationToken.None);
 
@@ -229,7 +229,7 @@ public class AIDispatchConversationBuilderTests
     [Fact]
     public async Task BuildAsync_IncludesSystemPrompt()
     {
-        var session = new AgentSession { StartedAt = DateTime.UtcNow };
+        var session = new AgentSession { CreatedAt = DateTime.UtcNow };
 
         var conversation = await _sut.BuildAsync(session, CreateConversation(), ValidConfig, CancellationToken.None);
 
@@ -240,7 +240,7 @@ public class AIDispatchConversationBuilderTests
     [Fact]
     public async Task BuildAsync_MissingApiKey_Throws()
     {
-        var session = new AgentSession { StartedAt = DateTime.UtcNow };
+        var session = new AgentSession { CreatedAt = DateTime.UtcNow };
 
         var ex = await Assert.ThrowsAsync<InvalidOperationException>(
             () => _sut.BuildAsync(session, CreateConversation(), EmptyApiKeyConfig, CancellationToken.None));
@@ -257,7 +257,7 @@ public class AIDispatchConversationBuilderTests
         _rows.Add(conversation.AddTextMessage(_rows.Count + 1, AgentMessageRole.User, "Assign truck 5 to load 42"));
         _rows.Add(conversation.AddTextMessage(_rows.Count + 1, AgentMessageRole.Assistant, "Done - see summary."));
         _rows.Add(conversation.AddTextMessage(_rows.Count + 1, AgentMessageRole.User, "Now do the rest"));
-        var session = new AgentSession { StartedAt = DateTime.UtcNow };
+        var session = new AgentSession { CreatedAt = DateTime.UtcNow };
 
         var llmConversation = await _sut.BuildAsync(session, conversation, ValidConfig, CancellationToken.None);
 
@@ -270,7 +270,7 @@ public class AIDispatchConversationBuilderTests
     {
         var conversation = CreateConversation("Now do the rest");
         var sentAt = _rows[0].CreatedAt;
-        var session = new AgentSession { StartedAt = DateTime.UtcNow };
+        var session = new AgentSession { CreatedAt = DateTime.UtcNow };
 
         var llmConversation = await _sut.BuildAsync(session, conversation, ValidConfig, CancellationToken.None);
 
@@ -287,7 +287,7 @@ public class AIDispatchConversationBuilderTests
     public async Task BuildAsync_SameTranscript_ReplaysIdentically()
     {
         var conversation = CreateConversation("Assign what you can");
-        var session = new AgentSession { StartedAt = DateTime.UtcNow };
+        var session = new AgentSession { CreatedAt = DateTime.UtcNow };
 
         var first = await _sut.BuildAsync(session, conversation, ValidConfig, CancellationToken.None);
         var second = await _sut.BuildAsync(session, conversation, ValidConfig, CancellationToken.None);

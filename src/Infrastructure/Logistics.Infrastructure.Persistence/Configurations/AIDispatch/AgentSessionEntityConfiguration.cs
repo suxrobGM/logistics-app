@@ -12,9 +12,6 @@ internal sealed class AgentSessionEntityConfiguration : IEntityTypeConfiguration
 
         builder.Ignore(s => s.TotalTokensUsed);
 
-        builder.Property(s => s.Summary)
-            .HasMaxLength(4000);
-
         builder.Property(s => s.ErrorMessage)
             .HasMaxLength(2000);
 
@@ -27,7 +24,7 @@ internal sealed class AgentSessionEntityConfiguration : IEntityTypeConfiguration
 
         // The quota check sums this week's cost before every dispatch run and copilot turn.
         // Covering, so that sum never leaves the index.
-        builder.HasIndex(s => s.StartedAt)
+        builder.HasIndex(s => s.CreatedAt)
             .IncludeProperties(s => s.EstimatedCostUsd);
 
         // A conversation is the user's own audit surface, so deleting it takes its turn sessions

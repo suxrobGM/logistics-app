@@ -37,7 +37,6 @@ internal sealed class MarkConversationReadHandler(
         var unreadMessages = await tenantUow.Repository<Message>().GetListAsync(
             m => m.ConversationId == req.ConversationId
                  && m.SenderId != req.ReadById
-                 && !m.IsDeleted
                  && !m.ReadReceipts.Any(r => r.ReadById == req.ReadById),
             ct);
 

@@ -92,11 +92,6 @@ public class LoadBoardListing : AuditableEntity, ITenantEntity
     public string? Notes { get; set; }
 
     /// <summary>
-    /// Store original provider response for debugging
-    /// </summary>
-    public string? RawJson { get; set; }
-
-    /// <summary>
     /// When this listing expires on the load board
     /// </summary>
     public DateTime ExpiresAt { get; set; }

@@ -68,7 +68,7 @@ internal sealed class AgentConversationQueries(
         {
             var sessions = await tenantUow.Repository<AgentSession>().Query()
                 .Where(s => s.ConversationId == conversation.Id)
-                .OrderBy(s => s.StartedAt)
+                .OrderBy(s => s.CreatedAt)
                 .ToListAsync(ct);
 
             dto.Sessions = sessions.Select(s => s.ToDto()).ToList();

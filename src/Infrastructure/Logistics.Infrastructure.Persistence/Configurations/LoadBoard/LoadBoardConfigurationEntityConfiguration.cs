@@ -18,9 +18,6 @@ internal sealed class LoadBoardConfigurationEntityConfiguration : IEntityTypeCon
         builder.Property(i => i.ApiKey)
             .IsRequired();
 
-        builder.Property(i => i.ExternalAccountId)
-            .HasMaxLength(100);
-
         builder.Property(i => i.UserEmail)
             .HasMaxLength(256);
 

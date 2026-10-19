@@ -13,7 +13,6 @@ internal sealed class GetUnreadCountHandler(ITenantUnitOfWork tenantUow)
     {
         var totalUnread = await tenantUow.Repository<Message>().CountAsync(
             m => m.SenderId != req.EmployeeId
-                 && !m.IsDeleted
                  && m.Conversation.Participants.Any(p => p.EmployeeId == req.EmployeeId
                                                         && (p.LastReadAt == null || m.SentAt > p.LastReadAt)),
             ct);

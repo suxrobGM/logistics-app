@@ -32,9 +32,6 @@ public class AIDispatchPolicy : AuditableEntity, ITenantEntity
     /// <summary>Model that produced <see cref="GeneratedContent"/>. Platform observability only - keep out of DTOs.</summary>
     public string? ModelUsed { get; private set; }
 
-    /// <summary>Cost of the last learning pass. Platform observability only, like <see cref="ModelUsed"/>.</summary>
-    public decimal GenerationCostUsd { get; private set; }
-
     /// <summary>
     /// Newest <c>CreatedAt</c> among the decisions analyzed - the watermark that lets the nightly job
     /// skip tenants with no new labelled data instead of re-billing the same history.
@@ -60,15 +57,13 @@ public class AIDispatchPolicy : AuditableEntity, ITenantEntity
         string? generatedContent,
         int decisionsAnalyzed,
         DateTime? lastDecisionAt,
-        string modelUsed,
-        decimal costUsd)
+        string modelUsed)
     {
         GeneratedContent = DispatchPolicyText.KeepWholeLinesWithin(
             generatedContent, DispatchPolicyText.MaxStoredChars);
         DecisionsAnalyzed = decisionsAnalyzed;
         LastDecisionAt = lastDecisionAt;
         ModelUsed = modelUsed;
-        GenerationCostUsd = costUsd;
         GeneratedAt = DateTime.UtcNow;
         LastRunAt = DateTime.UtcNow;
     }

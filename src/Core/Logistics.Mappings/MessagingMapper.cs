@@ -22,7 +22,6 @@ public static partial class MessagingMapper
             SenderName = entity.Sender?.GetFullName(),
             Content = entity.Content,
             SentAt = entity.SentAt,
-            IsDeleted = entity.IsDeleted,
             IsRead = false // Must be set by caller
         };
     }

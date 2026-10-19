@@ -77,9 +77,6 @@ internal sealed class AgentLoopRunner(
             if (result.StopReason == LlmStopReason.MaxTokens)
             {
                 conversation.Messages.Add(Truncated(result.AssistantMessage));
-                session.Summary = result.TextContent is null
-                    ? TruncatedNotice
-                    : $"{result.TextContent}\n\n{TruncatedNotice}";
                 logger.LogWarning(
                     "Agent session {SessionId} hit the {MaxTokens}-token output cap on iteration {Iteration}",
                     session.Id, conversation.MaxTokens, iteration + 1);
@@ -87,9 +84,6 @@ internal sealed class AgentLoopRunner(
             }
 
             conversation.Messages.Add(result.AssistantMessage);
-
-            if (result.TextContent is not null)
-                session.Summary = result.TextContent;
 
             // The server paused its own tool loop (web search); resending the conversation as it
             // stands resumes it. No tool results to add.

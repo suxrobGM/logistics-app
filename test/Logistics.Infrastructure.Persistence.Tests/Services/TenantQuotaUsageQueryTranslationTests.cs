@@ -16,7 +16,7 @@ public class TenantQuotaUsageQueryTranslationTests
 {
     private static IQueryable<AgentSession> WindowedSessions(TenantDbContext db, DateTime costWindowStart) =>
         db.Set<AgentSession>()
-            .Where(s => s.StartedAt >= costWindowStart);
+            .Where(s => s.CreatedAt >= costWindowStart);
 
     private static IQueryable<TenantUsageShape> UsageAggregate(
         TenantDbContext db, DateTime costWindowStart, DateTime countFrom) =>
@@ -25,16 +25,16 @@ public class TenantQuotaUsageQueryTranslationTests
             .Select(g => new TenantUsageShape
             {
                 SpentThisWeekUsd = g.Sum(s =>
-                    s.StartedAt >= countFrom ? s.EstimatedCostUsd : 0m),
+                    s.CreatedAt >= countFrom ? s.EstimatedCostUsd : 0m),
                 OverageSessions = g.Sum(s =>
-                    s.StartedAt >= countFrom && s.Status == AgentSessionStatus.Completed && s.IsOverage
+                    s.CreatedAt >= countFrom && s.Status == AgentSessionStatus.Completed && s.IsOverage
                         ? 1
                         : 0),
                 TotalTokens = g.Sum(s =>
-                    s.StartedAt >= countFrom ? s.InputTokensUsed + s.OutputTokensUsed : 0),
+                    s.CreatedAt >= countFrom ? s.InputTokensUsed + s.OutputTokensUsed : 0),
                 MonthlyLlmCost = g.Sum(s => s.EstimatedCostUsd),
-                LastModel = g.Where(s => s.StartedAt >= countFrom)
-                    .OrderByDescending(s => s.StartedAt)
+                LastModel = g.Where(s => s.CreatedAt >= countFrom)
+                    .OrderByDescending(s => s.CreatedAt)
                     .Select(s => s.ModelUsed)
                     .FirstOrDefault()
             });

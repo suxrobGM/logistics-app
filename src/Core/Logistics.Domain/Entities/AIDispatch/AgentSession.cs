@@ -23,7 +23,6 @@ public class AgentSession : AuditableEntity, ITenantEntity
     /// </summary>
     public Guid? TriggeredByUserId { get; init; }
 
-    public DateTime StartedAt { get; init; } = DateTime.UtcNow;
     public DateTime? CompletedAt { get; set; }
 
     /// <summary>
@@ -67,11 +66,6 @@ public class AgentSession : AuditableEntity, ITenantEntity
     public int DecisionCount { get; set; }
 
     /// <summary>
-    /// Agent's summary of the session outcome.
-    /// </summary>
-    public string? Summary { get; set; }
-
-    /// <summary>
     /// Error message if the session failed.
     /// </summary>
     public string? ErrorMessage { get; set; }
@@ -84,11 +78,10 @@ public class AgentSession : AuditableEntity, ITenantEntity
 
     public virtual List<AgentDecision> Decisions { get; } = [];
 
-    public void Complete(string? summary = null)
+    public void Complete()
     {
         Status = AgentSessionStatus.Completed;
         CompletedAt = DateTime.UtcNow;
-        Summary = summary;
     }
 
     public void Fail(string errorMessage)

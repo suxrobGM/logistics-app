@@ -71,7 +71,6 @@ internal sealed class AgentTurnService(
             Type = surface.SessionType,
             ConversationId = conversation.Id,
             TriggeredByUserId = request.TriggeredByUserId,
-            StartedAt = DateTime.UtcNow,
             IsOverage = quota.IsOverQuota && quota.OverageBillable
         };
 
@@ -100,7 +99,7 @@ internal sealed class AgentTurnService(
                 session, state, setup.ToolContext,
                 () => BroadcastTurnUpdateSafeAsync(request, surface, conversation, session), linkedCt);
 
-            session.Complete(session.Summary);
+            session.Complete();
         }
         catch (OperationCanceledException)
         {

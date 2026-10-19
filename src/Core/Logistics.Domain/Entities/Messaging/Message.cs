@@ -28,16 +28,6 @@ public class Message : Entity, ITenantEntity
     public DateTime SentAt { get; set; } = DateTime.UtcNow;
 
     /// <summary>
-    /// Whether the message has been deleted (soft delete).
-    /// </summary>
-    public bool IsDeleted { get; set; }
-
-    /// <summary>
-    /// When the message was deleted (if applicable).
-    /// </summary>
-    public DateTime? DeletedAt { get; set; }
-
-    /// <summary>
     /// Navigation property to the conversation.
     /// </summary>
     public virtual Conversation Conversation { get; set; } = null!;
