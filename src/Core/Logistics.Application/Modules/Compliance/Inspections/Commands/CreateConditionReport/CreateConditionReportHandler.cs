@@ -4,6 +4,7 @@ using Logistics.Application.Modules.Common.Constants;
 using Logistics.Application.Utilities;
 using Logistics.Domain.Entities;
 using Logistics.Domain.Persistence;
+using Logistics.Domain.Primitives;
 using Logistics.Domain.Primitives.Enums;
 using Logistics.Mediator;
 using Logistics.Shared.Models;
@@ -76,7 +77,7 @@ internal sealed class CreateConditionReportHandler(
             {
                 report.LoadVehicleId = vehicle?.Id;
                 var vin = string.IsNullOrWhiteSpace(req.Vin) ? vehicle?.Vin : req.Vin;
-                report.Vin = vin?.Trim().ToUpperInvariant();
+                report.Vin = VinFormat.Normalize(vin);
                 report.VehicleYear = req.VehicleYear ?? vehicle?.Year;
                 report.VehicleMake = req.VehicleMake ?? vehicle?.Make;
                 report.VehicleModel = req.VehicleModel ?? vehicle?.Model;
