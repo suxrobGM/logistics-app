@@ -8,7 +8,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Logistics.Application.Modules.Integrations.Negotiation.Queries;
 
-internal sealed class GetNegotiationsHandler(ITenantUnitOfWork tenantUow)
+internal sealed class GetNegotiationsHandler(ITenantUnitOfWork tenantUow, INegotiationDtoMapper dtoMapper)
     : IRequestHandler<GetNegotiationsQuery, PagedResult<RateNegotiationDto>>
 {
     public async Task<PagedResult<RateNegotiationDto>> Handle(GetNegotiationsQuery req, CancellationToken ct)
@@ -31,7 +31,7 @@ internal sealed class GetNegotiationsHandler(ITenantUnitOfWork tenantUow)
             .ApplyPaging(req.Page, req.PageSize)
             .ToListAsync(ct);
 
-        var dtos = await NegotiationDtoBatch.MapAsync(tenantUow, negotiations, ct);
+        var dtos = await dtoMapper.MapAsync(negotiations, ct);
 
         return PagedResult<RateNegotiationDto>.Ok(dtos, totalItems, req.PageSize);
     }

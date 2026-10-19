@@ -62,7 +62,7 @@ public class NegotiationExpirySweepJob(
             "Expired {Count} negotiations for tenant {TenantName}", stale.Count, tenant.Name);
 
         var broadcastService = scope.ServiceProvider.GetRequiredService<IAIDispatchBroadcastService>();
-        var dtos = await NegotiationDtoBatch.MapAsync(tenantUow, stale, ct);
+        var dtos = await scope.ServiceProvider.GetRequiredService<INegotiationDtoMapper>().MapAsync(stale, ct);
 
         await Task.WhenAll(dtos.Select(dto => broadcastService.BroadcastNegotiationAsync(tenant.Id, dto)));
     }
