@@ -8,7 +8,8 @@ internal sealed class TruckEntityConfiguration : IEntityTypeConfiguration<Truck>
 {
     public void Configure(EntityTypeBuilder<Truck> builder)
     {
-        builder.ToTable("trucks");
+        builder.ToTable("trucks", t => t.HasCheckConstraint(
+            "ck_trucks_main_driver_not_secondary", "main_driver_id <> secondary_driver_id"));
 
         // Number is unique case-insensitively through the raw-SQL index ux_trucks_number_lower, created in the
         // migration because EF can't model an expression index.
@@ -33,6 +34,15 @@ internal sealed class TruckEntityConfiguration : IEntityTypeConfiguration<Truck>
             .WithMany()
             .HasForeignKey(i => i.SecondaryDriverId)
             .OnDelete(DeleteBehavior.SetNull);
+
+        // A driver holds one seat on one truck; TruckDriverAssignment checks the cross-seat case.
+        builder.HasIndex(i => i.MainDriverId)
+            .IsUnique()
+            .HasFilter("main_driver_id IS NOT NULL");
+
+        builder.HasIndex(i => i.SecondaryDriverId)
+            .IsUnique()
+            .HasFilter("secondary_driver_id IS NOT NULL");
 
         builder.HasOne(i => i.CurrentTrailer)
             .WithMany()

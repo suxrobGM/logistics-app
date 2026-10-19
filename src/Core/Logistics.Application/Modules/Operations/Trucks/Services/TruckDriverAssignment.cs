@@ -8,10 +8,11 @@ namespace Logistics.Application.Modules.Operations.Trucks.Services;
 internal static class TruckDriverAssignment
 {
     /// <summary>
-    ///     Loads the driver for a truck's main or secondary seat, refusing one who is not Active.
+    ///     Loads the driver for a truck's main or secondary seat, refusing one who is not Active or who already
+    ///     holds either seat on another truck. <paramref name="truckId" /> is the truck being edited, if any.
     /// </summary>
     public static async Task<Result<Employee>> FindAssignableDriverAsync(
-        ITenantUnitOfWork tenantUow, Guid driverId, CancellationToken ct)
+        ITenantUnitOfWork tenantUow, Guid driverId, Guid? truckId, CancellationToken ct)
     {
         var driver = await tenantUow.Repository<Employee>().GetByIdAsync(driverId, ct);
         if (driver is null)
@@ -23,6 +24,14 @@ internal static class TruckDriverAssignment
         {
             return Result<Employee>.Fail(
                 $"Driver '{driver.GetFullName()}' is {driver.Status.GetDescription().ToLowerInvariant()} and cannot be assigned to a truck");
+        }
+
+        var otherTruck = await tenantUow.Repository<Truck>().GetAsync(
+            t => t.Id != truckId && (t.MainDriverId == driverId || t.SecondaryDriverId == driverId), ct);
+        if (otherTruck is not null)
+        {
+            return Result<Employee>.Fail(
+                $"Driver '{driver.GetFullName()}' already drives truck '{otherTruck.Number}'");
         }
 
         return Result<Employee>.Ok(driver);

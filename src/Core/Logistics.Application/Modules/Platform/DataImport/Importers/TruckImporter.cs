@@ -110,10 +110,14 @@ internal sealed class TruckImporter(ITenantUnitOfWork tenantUow, IVehicleTranspo
                 continue;
             }
 
-            var otherTruck = trucks.FirstOrDefault(t => t.MainDriverId == draft.Driver.Id && t.Id != draft.Existing?.Id);
+            var otherTruck = trucks.FirstOrDefault(t => t.IsDrivenBy(draft.Driver.Id) && t.Id != draft.Existing?.Id);
             if (otherTruck is not null)
             {
                 draft.Errors.Add($"Driver '{driverCell}' already drives truck {otherTruck.Number}.");
+            }
+            else if (draft.Existing?.SecondaryDriverId == draft.Driver.Id)
+            {
+                draft.Errors.Add($"Driver '{driverCell}' is the secondary driver of truck {draft.Key}.");
             }
             else if (!claimedDrivers.TryAdd(draft.Driver.Id, draft.Key))
             {

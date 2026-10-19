@@ -102,6 +102,45 @@ public class UpdateTruckHandlerTests
         Assert.Equal("TRK-101", truck.Number);
     }
 
+    [Theory]
+    [InlineData(true)]
+    [InlineData(false)]
+    public async Task Handle_DriverSeatedOnAnotherTruck_Fails(bool otherSeatIsMain)
+    {
+        var driver = AddDriver(EmployeeStatus.Active);
+        var other = AddTruck("100");
+        if (otherSeatIsMain)
+        {
+            other.MainDriverId = driver.Id;
+        }
+        else
+        {
+            other.SecondaryDriverId = driver.Id;
+        }
+
+        var truck = AddTruck("101");
+
+        var main = await _sut.Handle(new UpdateTruckCommand { Id = truck.Id, MainDriverId = driver.Id }, default);
+        var secondary = await _sut.Handle(new UpdateTruckCommand { Id = truck.Id, SecondaryDriverId = driver.Id }, default);
+
+        Assert.Contains("already drives truck '100'", main.Error);
+        Assert.Contains("already drives truck '100'", secondary.Error);
+        await _tenantUow.DidNotReceive().SaveChangesAsync(Arg.Any<CancellationToken>());
+    }
+
+    [Fact]
+    public async Task Handle_SameDriverInBothSeats_Fails()
+    {
+        var truck = AddTruck("101");
+        var driver = AddDriver(EmployeeStatus.Active);
+
+        var result = await _sut.Handle(
+            new UpdateTruckCommand { Id = truck.Id, MainDriverId = driver.Id, SecondaryDriverId = driver.Id }, default);
+
+        Assert.False(result.IsSuccess);
+        await _tenantUow.DidNotReceive().SaveChangesAsync(Arg.Any<CancellationToken>());
+    }
+
     private Truck AddTruck(string number)
     {
         var truck = new Truck { Number = number, Type = TruckType.FreightTruck };

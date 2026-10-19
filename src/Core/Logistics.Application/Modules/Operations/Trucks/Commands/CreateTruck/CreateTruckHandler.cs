@@ -32,18 +32,10 @@ internal sealed class CreateTruckHandler(
             return Result.Fail($"Already exists truck with number {number}");
         }
 
-        var driverResult = await TruckDriverAssignment.FindAssignableDriverAsync(tenantUow, req.MainDriverId, ct);
+        var driverResult = await TruckDriverAssignment.FindAssignableDriverAsync(tenantUow, req.MainDriverId, null, ct);
         if (driverResult.Value is not { } driver)
         {
             return Result.Fail(driverResult.Error!);
-        }
-
-        var alreadyAssociatedTruck = await tenantUow.Repository<Truck>().GetAsync(i => i.MainDriverId == driver.Id, ct);
-
-        if (alreadyAssociatedTruck is not null)
-        {
-            return Result.Fail(
-                $"Driver '{driver.GetFullName()}' is already associated with the truck number '{req.TruckNumber}'");
         }
 
         var truckEntity = Truck.Create(req.TruckNumber, req.TruckType, driver);

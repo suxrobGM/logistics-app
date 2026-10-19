@@ -42,7 +42,11 @@ internal sealed class UpdateTruckHandler(
             return Result.Fail($"Already exists truck with number {number}");
         }
 
-        // Update drivers
+        if (req.MainDriverId is not null && req.MainDriverId == req.SecondaryDriverId)
+        {
+            return Result.Fail("A driver cannot be both the main and the secondary driver of a truck");
+        }
+
         if (await SetDriverAsync(truck, req.MainDriverId, true, ct) is { } fail1)
         {
             return fail1;
@@ -147,7 +151,7 @@ internal sealed class UpdateTruckHandler(
             return null;
         }
 
-        var driverResult = await TruckDriverAssignment.FindAssignableDriverAsync(tenantUow, newDriverId.Value, ct);
+        var driverResult = await TruckDriverAssignment.FindAssignableDriverAsync(tenantUow, newDriverId.Value, truck.Id, ct);
         if (driverResult.Value is not { } driver)
         {
             return Result.Fail(driverResult.Error!);
