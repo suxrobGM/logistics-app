@@ -67,11 +67,12 @@ public class PayrollService(
     {
         var amount = CalculateSalary(employee, startDate, endDate);
 
-        var money = new Money { Amount = amount, Currency = "USD" };
+        var currency = tenantUow.GetCurrentTenant().Settings.Currency.ToString();
+        var money = new Money { Amount = amount, Currency = currency };
         var payroll = new PayrollInvoice
         {
             Subtotal = money,
-            TaxTotal = Money.Zero("USD"),
+            TaxTotal = Money.Zero(currency),
             Total = money,
             Status = InvoiceStatus.Paid,
             PeriodStart = DateOnly.FromDateTime(startDate),
