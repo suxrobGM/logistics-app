@@ -13,7 +13,7 @@ internal sealed class CreateApiKeyHandler(ITenantUnitOfWork tenantUow) : IReques
     {
         var tenant = tenantUow.GetCurrentTenant();
         var rawKey = GenerateKey(tenant.Id);
-        var hash = ApiKeyHasher.Hash(rawKey);
+        var hash = TokenHasher.Hash(rawKey);
         var prefix = BuildPrefix(rawKey);
 
         var apiKey = new ApiKey

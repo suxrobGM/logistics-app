@@ -9,9 +9,9 @@ namespace Logistics.Domain.Entities;
 public class ImpersonationToken : Entity, IMasterEntity
 {
     /// <summary>
-    /// Secure random token for URL parameter.
+    /// SHA-256 hex of the one-time token; the raw token only travels in the impersonation URL.
     /// </summary>
-    public required string Token { get; set; }
+    public required string TokenHash { get; set; }
 
     /// <summary>
     /// The admin user who initiated the impersonation.

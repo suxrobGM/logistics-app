@@ -71,10 +71,11 @@ internal sealed class AddAdminHandler(
 
         var currentUser = await userManager.FindByIdAsync(currentUserId.Value.ToString());
 
+        var token = TokenGenerator.GenerateSecureToken(64);
         var invitation = new Invitation
         {
             Email = req.Email,
-            Token = TokenGenerator.GenerateSecureToken(64),
+            TokenHash = TokenHasher.Hash(token),
             TenantId = null,
             Type = InvitationType.AppUser,
             AppRole = AppRoles.Admin,
@@ -87,14 +88,14 @@ internal sealed class AddAdminHandler(
         await masterUow.Repository<Invitation>().AddAsync(invitation, ct);
         await masterUow.SaveChangesAsync(ct);
 
-        await SendAdminInvitationEmailAsync(invitation, currentUser?.GetFullName() ?? "An administrator");
+        await SendAdminInvitationEmailAsync(invitation, token, currentUser?.GetFullName() ?? "An administrator");
 
         return Result<AddAdminResult>.Ok(new AddAdminResult { Invited = true });
     }
 
-    private async Task SendAdminInvitationEmailAsync(Invitation invitation, string invitedByName)
+    private async Task SendAdminInvitationEmailAsync(Invitation invitation, string token, string invitedByName)
     {
-        var acceptUrl = $"{identityServerOptions.Value.UserFacingAuthority}/Account/AcceptInvitation?token={invitation.Token}";
+        var acceptUrl = $"{identityServerOptions.Value.UserFacingAuthority}/Account/AcceptInvitation?token={token}";
 
         var model = new InvitationEmailModel
         {

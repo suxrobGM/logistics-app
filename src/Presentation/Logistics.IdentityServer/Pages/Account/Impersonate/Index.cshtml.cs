@@ -1,3 +1,4 @@
+using Logistics.Application.Utilities;
 using Logistics.Domain.Entities;
 using Logistics.Domain.Options;
 using Logistics.Domain.Persistence;
@@ -32,9 +33,9 @@ public class Index(
             return RedirectToPage("/Account/Login/Index", new { error = "Missing impersonation token" });
         }
 
-        // Find and validate impersonation token
+        var tokenHash = TokenHasher.Hash(token);
         var impersonationToken = await masterUow.Repository<ImpersonationToken>()
-            .GetAsync(t => t.Token == token && !t.IsUsed && t.ExpiresAt > DateTime.UtcNow);
+            .GetAsync(t => t.TokenHash == tokenHash && !t.IsUsed && t.ExpiresAt > DateTime.UtcNow);
 
         if (impersonationToken is null)
         {

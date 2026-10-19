@@ -96,10 +96,11 @@ internal sealed class CreateInvitationHandler(
             customerName = customer.Name;
         }
 
+        var token = TokenGenerator.GenerateSecureToken(64);
         var invitation = new Invitation
         {
             Email = req.Email,
-            Token = TokenGenerator.GenerateSecureToken(64),
+            TokenHash = TokenHasher.Hash(token),
             TenantId = tenant.Id,
             Type = req.Type,
             TenantRole = req.TenantRole,
@@ -114,7 +115,7 @@ internal sealed class CreateInvitationHandler(
         await masterUow.SaveChangesAsync(ct);
 
         // Send invitation email
-        await SendInvitationEmailAsync(invitation, tenant, currentUser.GetFullName());
+        await SendInvitationEmailAsync(invitation, token, tenant, currentUser.GetFullName());
 
         var dto = invitation.ToDto(
             tenant.CompanyName ?? tenant.Name,
@@ -139,9 +140,9 @@ internal sealed class CreateInvitationHandler(
         }
     }
 
-    private async Task SendInvitationEmailAsync(Invitation invitation, Tenant tenant, string invitedByName)
+    private async Task SendInvitationEmailAsync(Invitation invitation, string token, Tenant tenant, string invitedByName)
     {
-        var acceptUrl = $"{identityServerOptions.Value.UserFacingAuthority}/Account/AcceptInvitation?token={invitation.Token}";
+        var acceptUrl = $"{identityServerOptions.Value.UserFacingAuthority}/Account/AcceptInvitation?token={token}";
         var companyName = tenant.CompanyName ?? tenant.Name;
 
         var model = new InvitationEmailModel

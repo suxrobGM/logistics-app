@@ -16,9 +16,9 @@ internal sealed class InvitationEntityConfiguration : IEntityTypeConfiguration<I
             .IsRequired()
             .HasMaxLength(256);
 
-        builder.Property(i => i.Token)
+        builder.Property(i => i.TokenHash)
             .IsRequired()
-            .HasMaxLength(128);
+            .HasMaxLength(64);
 
         builder.Property(i => i.TenantRole)
             .HasMaxLength(64);
@@ -29,7 +29,7 @@ internal sealed class InvitationEntityConfiguration : IEntityTypeConfiguration<I
         builder.Property(i => i.PersonalMessage)
             .HasMaxLength(500);
 
-        builder.HasIndex(i => i.Token).IsUnique();
+        builder.HasIndex(i => i.TokenHash).IsUnique();
         builder.HasIndex(i => new { i.Email, i.TenantId, i.Status });
         builder.HasIndex(i => i.ExpiresAt);
 

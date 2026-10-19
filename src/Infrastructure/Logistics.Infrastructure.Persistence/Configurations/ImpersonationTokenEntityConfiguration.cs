@@ -12,11 +12,11 @@ internal sealed class ImpersonationTokenEntityConfiguration : IEntityTypeConfigu
 
         builder.HasKey(t => t.Id);
 
-        builder.Property(t => t.Token)
+        builder.Property(t => t.TokenHash)
             .IsRequired()
-            .HasMaxLength(128);
+            .HasMaxLength(64);
 
-        builder.HasIndex(t => t.Token).IsUnique();
+        builder.HasIndex(t => t.TokenHash).IsUnique();
         builder.HasIndex(t => t.ExpiresAt);
         builder.HasIndex(t => new { t.IsUsed, t.ExpiresAt });
     }

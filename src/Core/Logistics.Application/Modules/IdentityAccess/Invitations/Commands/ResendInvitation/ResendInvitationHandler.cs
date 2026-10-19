@@ -1,6 +1,7 @@
 using Logistics.Application.Abstractions;
 using Logistics.Application.Abstractions.Email.Models;
 using Logistics.Application.Abstractions.Email;
+using Logistics.Application.Utilities;
 using Logistics.Domain.Entities;
 using Logistics.Domain.Options;
 using Logistics.Domain.Persistence;
@@ -44,22 +45,23 @@ internal sealed class ResendInvitationHandler(
             return Result.Fail("Cannot resend an expired invitation. Please create a new invitation.");
         }
 
-        // Update send count and last sent time
+        // Only the hash is stored, so a resend issues a fresh token; the previous link stops working.
+        var token = TokenGenerator.GenerateSecureToken(64);
+        invitation.TokenHash = TokenHasher.Hash(token);
         invitation.SendCount++;
         invitation.LastSentAt = DateTime.UtcNow;
 
         masterUow.Repository<Invitation>().Update(invitation);
         await masterUow.SaveChangesAsync(ct);
 
-        // Resend the email
-        await SendInvitationEmailAsync(invitation, tenant);
+        await SendInvitationEmailAsync(invitation, token, tenant);
 
         return Result.Ok();
     }
 
-    private async Task SendInvitationEmailAsync(Invitation invitation, Tenant tenant)
+    private async Task SendInvitationEmailAsync(Invitation invitation, string token, Tenant tenant)
     {
-        var acceptUrl = $"{identityServerOptions.Value.UserFacingAuthority}/Account/AcceptInvitation?token={invitation.Token}";
+        var acceptUrl = $"{identityServerOptions.Value.UserFacingAuthority}/Account/AcceptInvitation?token={token}";
         var companyName = tenant.CompanyName ?? tenant.Name;
 
         var model = new InvitationEmailModel

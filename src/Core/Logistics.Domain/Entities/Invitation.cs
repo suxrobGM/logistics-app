@@ -16,9 +16,9 @@ public class Invitation : AuditableEntity, IMasterEntity
     public required string Email { get; set; }
 
     /// <summary>
-    /// Unique token for invitation verification.
+    /// SHA-256 hex of the invitation token; the raw token only travels in the emailed link.
     /// </summary>
-    public required string Token { get; set; }
+    public required string TokenHash { get; set; }
 
     /// <summary>
     /// The tenant this invitation is for. Null for app-level (<see cref="InvitationType.AppUser"/>) invitations.

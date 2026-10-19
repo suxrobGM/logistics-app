@@ -71,9 +71,10 @@ internal sealed class ImpersonateUserHandler(
             ? impersonationOptions.Value.TokenExpirationMinutes
             : 5;
 
+        var token = TokenGenerator.GenerateSecureToken(64);
         var impersonationToken = new ImpersonationToken
         {
-            Token = TokenGenerator.GenerateSecureToken(64),
+            TokenHash = TokenHasher.Hash(token),
             AdminUserId = adminUserId.Value,
             TargetUserId = targetUser.Id,
             ExpiresAt = DateTime.UtcNow.AddMinutes(expirationMinutes),
@@ -87,11 +88,11 @@ internal sealed class ImpersonateUserHandler(
         await masterUow.SaveChangesAsync(ct);
 
         // 7. Build impersonation URL
-        var impersonationUrl = $"{identityServerOptions.Value.UserFacingAuthority}/Account/Impersonate?token={impersonationToken.Token}";
+        var impersonationUrl = $"{identityServerOptions.Value.UserFacingAuthority}/Account/Impersonate?token={token}";
 
         return Result<ImpersonateUserResult>.Ok(new ImpersonateUserResult
         {
-            ImpersonationToken = impersonationToken.Token,
+            ImpersonationToken = token,
             ImpersonationUrl = impersonationUrl
         });
     }

@@ -53,7 +53,7 @@ internal sealed class ApiKeyAuthenticationHandler(
         var tenantUow = Context.RequestServices.GetRequiredService<ITenantUnitOfWork>();
         tenantUow.SetCurrentTenant(tenant);
 
-        var keyHash = ApiKeyHasher.Hash(rawKey);
+        var keyHash = TokenHasher.Hash(rawKey);
         var apiKey = await tenantUow.Repository<ApiKey>()
             .GetAsync(k => k.KeyHash == keyHash);
 

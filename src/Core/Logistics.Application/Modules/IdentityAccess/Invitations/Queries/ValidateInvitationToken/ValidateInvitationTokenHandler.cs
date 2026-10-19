@@ -1,5 +1,6 @@
 using Logistics.Application.Abstractions;
 using Logistics.Application.Modules.Common.Constants;
+using Logistics.Application.Utilities;
 using Logistics.Domain.Entities;
 using Logistics.Domain.Persistence;
 using Logistics.Domain.Primitives.Enums;
@@ -18,9 +19,10 @@ internal sealed class ValidateInvitationTokenHandler(
 {
     public async Task<Result<InvitationValidationResult>> Handle(ValidateInvitationTokenQuery req, CancellationToken ct)
     {
+        var tokenHash = TokenHasher.Hash(req.Token);
         var invitation = await masterUow.Repository<Invitation>()
             .Query()
-            .FirstOrDefaultAsync(i => i.Token == req.Token, ct);
+            .FirstOrDefaultAsync(i => i.TokenHash == tokenHash, ct);
 
         if (invitation is null)
         {
