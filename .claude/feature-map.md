@@ -210,7 +210,7 @@ registry, `AgentLoopRunner`, decisions, and quota. Gated by `TenantFeature.AICop
 
 ### Copilot tools (loads, customers, invoicing, expenses, maintenance, detention, inspections)
 
-- Infrastructure: `Tools/SearchLoadsTool.cs`, `GetLoadTool.cs`, `Operations/GetDetentionTool.cs`, `Compliance/GetConditionReportsTool.cs`, `SearchCustomersTool.cs`, `GetInvoicesTool.cs`, `GetInvoiceTool.cs`, `SearchExpensesTool.cs`, `GetExpenseStatsTool.cs`, `GetUpcomingMaintenanceTool.cs`, `CreateLoadInvoiceTool.cs`, `SendInvoiceTool.cs`, `CreatePaymentLinkTool.cs` (+ shared `AgentToolJson.cs` schema and binding)
+- Infrastructure: `Tools/SearchLoadsTool.cs`, `GetLoadTool.cs`, `Operations/GetDetentionTool.cs`, `Compliance/GetConditionReportsTool.cs`, `SearchCustomersTool.cs`, `GetInvoicesTool.cs`, `GetInvoiceTool.cs`, `SearchExpensesTool.cs`, `GetExpenseStatsTool.cs`, `CreateLoadInvoiceTool.cs`, `SendInvoiceTool.cs`, `CreatePaymentLinkTool.cs` (+ shared `AgentToolJson.cs` schema and binding)
 
 ### LLM providers
 

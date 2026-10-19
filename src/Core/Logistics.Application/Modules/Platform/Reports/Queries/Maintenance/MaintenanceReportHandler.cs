@@ -19,8 +19,6 @@ internal sealed class MaintenanceReportHandler(ITenantUnitOfWork tenantUow)
 
         var recordQuery = tenantUow.Repository<MaintenanceRecord>().Query()
             .Where(r => r.ServiceDate >= startDate && r.ServiceDate <= endDate);
-
-        // Combined record summary (1 query instead of 4)
         var recordSummary = await recordQuery
             .GroupBy(_ => 1)
             .Select(g => new

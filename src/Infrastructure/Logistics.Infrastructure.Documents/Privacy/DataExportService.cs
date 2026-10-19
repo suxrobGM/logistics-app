@@ -184,7 +184,6 @@ internal sealed class DataExportService(
               tenants/<name>/       - per-organization data
                 employee.json       - employee record (if applicable)
                 customer-users.json - customer portal users (if applicable)
-                notifications.json  - recent notifications visible to you
 
             Operational records (loads, trips, invoices, payments, audit logs)
             are retained for legal/financial compliance and are not included here.
