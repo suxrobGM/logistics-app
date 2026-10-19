@@ -9,7 +9,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Logistics.Application.Modules.Operations.Trucks.Queries;
 
-internal sealed class GetTrucksHandler(ITenantUnitOfWork tenantUow)
+internal sealed class GetTrucksHandler(ITenantUnitOfWork tenantUow, ILoadLookupBuilder lookupBuilder)
     : IRequestHandler<GetTrucksQuery, PagedResult<TruckDto>>
 {
     public async Task<PagedResult<TruckDto>> Handle(
@@ -62,7 +62,7 @@ internal sealed class GetTrucksHandler(ITenantUnitOfWork tenantUow)
             .Where(l => l.AssignedTruckId != null && truckIds.Contains(l.AssignedTruckId.Value))
             .ToArrayAsync(ct);
 
-        var lookup = await LoadLookupResolver.ResolveAsync(tenantUow, pageLoads, ct);
+        var lookup = await lookupBuilder.BuildAsync(pageLoads, ct);
         var loadsByTruck = pageLoads
             .GroupBy(l => l.AssignedTruckId!.Value)
             .ToDictionary(g => g.Key, g => g.ToArray());

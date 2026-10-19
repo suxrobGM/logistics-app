@@ -6,17 +6,9 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Logistics.Application.Modules.Operations.Loads;
 
-/// <summary>
-/// Resolves everything <c>LoadMapper</c> shows for a batch of loads in a fixed number of queries,
-/// whatever the batch size. Read off the navigation properties instead, a 50-row page costs 200+
-/// lazy SELECTs. Every handler that maps a load uses it, single-row ones included.
-/// </summary>
-internal static class LoadLookupResolver
+internal sealed class LoadLookupBuilder(ITenantUnitOfWork uow) : ILoadLookupBuilder
 {
-    public static async Task<LoadLookup> ResolveAsync(
-        ITenantUnitOfWork uow,
-        IReadOnlyCollection<Load> loads,
-        CancellationToken ct = default)
+    public async Task<LoadLookup> BuildAsync(IReadOnlyCollection<Load> loads, CancellationToken ct = default)
     {
         var loadIds = loads.Select(l => l.Id).ToArray();
 

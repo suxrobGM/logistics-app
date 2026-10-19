@@ -8,7 +8,7 @@ using Logistics.Shared.Models;
 
 namespace Logistics.Application.Modules.Operations.Trucks.Queries;
 
-internal sealed class GetTruckHandler(ITenantUnitOfWork tenantUow)
+internal sealed class GetTruckHandler(ITenantUnitOfWork tenantUow, ILoadLookupBuilder lookupBuilder)
     : IRequestHandler<GetTruckQuery, Result<TruckDto>>
 {
     public async Task<Result<TruckDto>> Handle(
@@ -23,7 +23,7 @@ internal sealed class GetTruckHandler(ITenantUnitOfWork tenantUow)
 
         // Resolve only the loads that reach the DTO, not ones OnlyActiveLoads drops.
         var loads = SelectLoads(truckEntity, req.IncludeLoads, req.OnlyActiveLoads);
-        var lookup = await LoadLookupResolver.ResolveAsync(tenantUow, loads, ct);
+        var lookup = await lookupBuilder.BuildAsync(loads, ct);
 
         var truckDto = ConvertToDto(truckEntity, loads, lookup);
         return Result<TruckDto>.Ok(truckDto);

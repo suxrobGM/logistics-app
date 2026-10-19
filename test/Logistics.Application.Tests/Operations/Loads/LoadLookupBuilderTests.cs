@@ -16,14 +16,14 @@ namespace Logistics.Application.Tests.Operations.Loads;
 /// The loads here have every navigation unset, so each value the DTO shows can only have come from
 /// the batched lookup - a mapper that went back to the navigations would leave it blank.
 /// </summary>
-public class LoadLookupResolverTests
+public class LoadLookupBuilderTests
 {
     private static readonly Address Somewhere =
         new() { Line1 = "1 A St", City = "NYC", State = "NY", ZipCode = "10001", Country = "US" };
 
     private readonly ITenantUnitOfWork _tenantUow = Substitute.For<ITenantUnitOfWork>();
 
-    public LoadLookupResolverTests()
+    public LoadLookupBuilderTests()
     {
         _tenantUow.StubLoadLookups();
     }
@@ -87,7 +87,7 @@ public class LoadLookupResolverTests
         });
         Returns(invoice);
 
-        var lookup = await LoadLookupResolver.ResolveAsync(_tenantUow, [load]);
+        var lookup = await new LoadLookupBuilder(_tenantUow).BuildAsync([load]);
         var dto = load.ToDto(lookup);
 
         Assert.Equal("ACME", dto.Customer?.Name);

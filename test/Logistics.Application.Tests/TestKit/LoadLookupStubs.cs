@@ -7,7 +7,7 @@ using NSubstitute;
 namespace Logistics.Application.Tests.TestKit;
 
 /// <summary>
-/// Every handler that maps a load runs <c>LoadLookupResolver</c>, which reads these repositories.
+/// Every handler that maps a load runs <c>LoadLookupBuilder</c>, which reads these repositories.
 /// Stubbing them empty lets a test set up only the ones it asserts on - a later
 /// <c>Repository&lt;T&gt;().Returns(...)</c> replaces the stub.
 /// </summary>

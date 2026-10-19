@@ -1,4 +1,5 @@
 using Logistics.Application.Abstractions.CurrentUser;
+using Logistics.Application.Modules.Operations.Loads;
 using Logistics.Application.Modules.Operations.Common.Services;
 using Logistics.Application.Modules.Operations.Loads.Queries;
 using Logistics.Application.Tests.TestKit;
@@ -27,7 +28,7 @@ public class GetLoadByIdHandlerTests
         _tenantUow.Repository<Load>().Returns(_loadRepo);
         _tenantUow.StubLoadLookups();
         _currentUserService.GetUserId().Returns(_driverId);
-        _sut = new GetLoadByIdHandler(_tenantUow, _currentUserService, Substitute.For<IVehicleCapacityChecker>());
+        _sut = new GetLoadByIdHandler(_tenantUow, _currentUserService, Substitute.For<IVehicleCapacityChecker>(), new LoadLookupBuilder(_tenantUow));
     }
 
     private static Load CreateLoad(Truck? assignedTruck) => new()

@@ -6,7 +6,7 @@ using Xunit;
 namespace Logistics.Infrastructure.Persistence.Tests.Services;
 
 /// <summary>
-/// Forces translation of the two projections in <c>LoadLookupResolver</c> that read across a
+/// Forces translation of the two projections in <c>LoadLookupBuilder</c> that read across a
 /// navigation. Its handler tests run on MockQueryable, which evaluates them in memory.
 /// </summary>
 public class LoadLookupQueryTranslationTests

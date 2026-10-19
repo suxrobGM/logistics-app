@@ -1,4 +1,5 @@
 using Logistics.Application.Abstractions.CurrentUser;
+using Logistics.Application.Modules.Operations.Loads;
 using Logistics.Application.Modules.Operations.Loads.Queries;
 using Logistics.Application.Tests.TestKit;
 using Logistics.Domain.Entities;
@@ -23,7 +24,7 @@ public class GetLoadsHandlerTests
         tenantUow.Repository<Load>().Returns(loadRepo);
         currentUser.IsInRole(TenantRoles.Driver).Returns(true);
 
-        var sut = new GetLoadsHandler(tenantUow, currentUser);
+        var sut = new GetLoadsHandler(tenantUow, currentUser, new LoadLookupBuilder(tenantUow));
         var result = await sut.Handle(new GetLoadsQuery(), CancellationToken.None);
 
         Assert.True(result.IsSuccess);
@@ -52,7 +53,7 @@ public class GetLoadsHandlerTests
         };
         loadRepo.Query().Returns(new[] { load }.BuildMock());
 
-        var sut = new GetLoadsHandler(tenantUow, Substitute.For<ICurrentUserService>());
+        var sut = new GetLoadsHandler(tenantUow, Substitute.For<ICurrentUserService>(), new LoadLookupBuilder(tenantUow));
         var result = await sut.Handle(new GetLoadsQuery { Search = "acme" }, CancellationToken.None);
 
         Assert.Single(result.Value!);

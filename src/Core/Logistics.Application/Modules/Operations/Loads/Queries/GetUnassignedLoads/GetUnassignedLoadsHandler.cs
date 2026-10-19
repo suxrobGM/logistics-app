@@ -12,7 +12,7 @@ namespace Logistics.Application.Modules.Operations.Loads.Queries;
 /// <summary>
 /// Handler for getting loads that are not assigned to any active trip.
 /// </summary>
-internal sealed class GetUnassignedLoadsHandler(ITenantUnitOfWork uow)
+internal sealed class GetUnassignedLoadsHandler(ITenantUnitOfWork uow, ILoadLookupBuilder lookupBuilder)
     : IRequestHandler<GetUnassignedLoadsQuery, PagedResult<LoadDto>>
 {
     public async Task<PagedResult<LoadDto>> Handle(GetUnassignedLoadsQuery req, CancellationToken ct)
@@ -37,7 +37,7 @@ internal sealed class GetUnassignedLoadsHandler(ITenantUnitOfWork uow)
             .ApplyPaging(req.Page, req.PageSize)
             .ToArrayAsync(ct);
 
-        var lookup = await LoadLookupResolver.ResolveAsync(uow, entities, ct);
+        var lookup = await lookupBuilder.BuildAsync(entities, ct);
         var loads = entities.Select(l => l.ToDto(lookup)).ToArray();
 
         return PagedResult<LoadDto>.Ok(loads, totalItems, req.PageSize);

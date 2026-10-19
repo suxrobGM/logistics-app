@@ -14,7 +14,8 @@ namespace Logistics.Application.Modules.Operations.Loads.Queries;
 internal sealed class GetLoadByIdHandler(
     ITenantUnitOfWork tenantUow,
     ICurrentUserService currentUserService,
-    IVehicleCapacityChecker vehicleCapacityChecker)
+    IVehicleCapacityChecker vehicleCapacityChecker,
+    ILoadLookupBuilder lookupBuilder)
     : IRequestHandler<GetLoadByIdQuery, Result<LoadDto>>
 {
     public async Task<Result<LoadDto>> Handle(GetLoadByIdQuery req, CancellationToken ct)
@@ -26,7 +27,7 @@ internal sealed class GetLoadByIdHandler(
             return Result<LoadDto>.Fail($"Could not find a load with ID '{req.Id}'");
         }
 
-        var lookup = await LoadLookupResolver.ResolveAsync(tenantUow, [load], ct);
+        var lookup = await lookupBuilder.BuildAsync([load], ct);
         var dto = load.ToDto(lookup);
         dto.Accessorials = load.Accessorials.Select(a => a.ToDto()).ToList();
         var trip = load.TripStops.FirstOrDefault()?.Trip;

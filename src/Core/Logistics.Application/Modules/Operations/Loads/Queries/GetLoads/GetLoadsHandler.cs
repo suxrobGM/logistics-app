@@ -13,7 +13,8 @@ namespace Logistics.Application.Modules.Operations.Loads.Queries;
 
 internal sealed class GetLoadsHandler(
     ITenantUnitOfWork tenantUow,
-    ICurrentUserService currentUserService)
+    ICurrentUserService currentUserService,
+    ILoadLookupBuilder lookupBuilder)
     : IRequestHandler<GetLoadsQuery, PagedResult<LoadDto>>
 {
     public async Task<PagedResult<LoadDto>> Handle(
@@ -92,7 +93,7 @@ internal sealed class GetLoadsHandler(
         }
 
         var entities = await baseQuery.ToArrayAsync(ct);
-        var lookup = await LoadLookupResolver.ResolveAsync(tenantUow, entities, ct);
+        var lookup = await lookupBuilder.BuildAsync(entities, ct);
         var loads = entities.Select(i => i.ToDto(lookup)).ToArray();
 
         return PagedResult<LoadDto>.Ok(loads, totalItems, req.PageSize);
