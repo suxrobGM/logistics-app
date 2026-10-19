@@ -139,6 +139,22 @@ public class Truck : Entity, ITenantEntity
         return MainDriverId == driverId || SecondaryDriverId == driverId;
     }
 
+    /// <summary>Takes the driver out of whichever seat they hold on this truck.</summary>
+    public void RemoveDriver(Guid driverId)
+    {
+        if (MainDriverId == driverId)
+        {
+            MainDriver = null;
+            MainDriverId = null;
+        }
+
+        if (SecondaryDriverId == driverId)
+        {
+            SecondaryDriver = null;
+            SecondaryDriverId = null;
+        }
+    }
+
     public IEnumerable<string> GetDriversNames()
     {
         if (MainDriver is { } mainDriver)

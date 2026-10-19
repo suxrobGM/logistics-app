@@ -47,9 +47,13 @@ internal sealed class UpdateEmployeeHandler(
             employeeEntity.Salary = new() { Amount = salaryAmount, Currency = employeeEntity.Salary.Currency };
         }
 
-        if (req.Status.HasValue && employeeEntity.Status != req.Status)
+        if (req.Status is { } status && status != employeeEntity.Status)
         {
-            employeeEntity.Status = req.Status.Value;
+            employeeEntity.Status = status;
+            if (status != EmployeeStatus.Active)
+            {
+                await ReleaseTruckSeatsAsync(employeeEntity.Id, ct);
+            }
         }
 
         if (req.Address is not null)
@@ -60,6 +64,21 @@ internal sealed class UpdateEmployeeHandler(
         tenantUow.Repository<Employee>().Update(employeeEntity);
         await tenantUow.SaveChangesAsync(ct);
         return Result.Ok();
+    }
+
+    /// <summary>
+    /// Only Active employees drive, so one leaving Active gives up their truck seats; readers of a truck's
+    /// drivers then never see an inactive one.
+    /// </summary>
+    private async Task ReleaseTruckSeatsAsync(Guid employeeId, CancellationToken ct)
+    {
+        var trucks = await tenantUow.Repository<Truck>()
+            .GetListAsync(t => t.MainDriverId == employeeId || t.SecondaryDriverId == employeeId, ct);
+
+        foreach (var truck in trucks)
+        {
+            truck.RemoveDriver(employeeId);
+        }
     }
 
     private async Task<Result> CheckRoleChangeAllowedAsync(

@@ -65,11 +65,6 @@ internal sealed class DispatchEligibilityService(
             return EligibilityResult.Block(DriverNotActive(driver));
         }
 
-        if (driverId is null && truck.SecondaryDriver is { Status: not EmployeeStatus.Active } secondaryDriver)
-        {
-            return EligibilityResult.Block(DriverNotActive(secondaryDriver));
-        }
-
         var issues = new List<EligibilityIssue>();
         var now = DateTime.UtcNow;
         var today = DateOnly.FromDateTime(now);

@@ -31,7 +31,7 @@ internal static class AvailableFleet
 
         var drivers = driverIds.Count > 0
             ? (await tenantUow.Repository<Employee>()
-                .GetListAsync(e => driverIds.Contains(e.Id) && e.Status == EmployeeStatus.Active, ct))
+                .GetListAsync(e => driverIds.Contains(e.Id), ct))
                 .ToDictionary(e => e.Id)
             : [];
 

@@ -786,6 +786,14 @@ namespace Logistics.Infrastructure.Persistence.Migrations.Tenant
                 WHERE t.truck_id = tr.id
                   AND t.status <> 'draft';
                 """);
+
+            // Only Active employees drive: the app now releases a driver's seats when they leave Active.
+            migrationBuilder.Sql("""
+                UPDATE trucks SET main_driver_id = NULL
+                WHERE main_driver_id IN (SELECT id FROM employees WHERE status <> 'active');
+                UPDATE trucks SET secondary_driver_id = NULL
+                WHERE secondary_driver_id IN (SELECT id FROM employees WHERE status <> 'active');
+                """);
         }
 
         /// <inheritdoc />

@@ -2,6 +2,7 @@ using Logistics.Application.Abstractions.CurrentUser;
 using Logistics.Application.Modules.IdentityAccess.Employees.Commands;
 using Logistics.Domain.Entities;
 using Logistics.Domain.Persistence;
+using Logistics.Domain.Primitives.Enums;
 using Logistics.Domain.Primitives.ValueObjects;
 using Logistics.Shared.Identity.Roles;
 using NSubstitute;
@@ -75,6 +76,48 @@ public class UpdateEmployeeHandlerTests
 
         Assert.True(result.IsSuccess);
         Assert.Same(newRole, target.Role);
+    }
+
+    [Fact]
+    public async Task Handle_DriverSuspended_ReleasesTheirTruckSeats()
+    {
+        var driver = Employee(Role("driver"));
+        var mainSeat = new Truck { Number = "T-1", Type = TruckType.FreightTruck, MainDriverId = driver.Id };
+        var secondarySeat = new Truck { Number = "T-2", Type = TruckType.FreightTruck, SecondaryDriverId = driver.Id };
+        ArrangeTrucks(driver, mainSeat, secondarySeat);
+
+        var result = await Handler().Handle(
+            new UpdateEmployeeCommand { UserId = driver.Id, Status = EmployeeStatus.Suspended },
+            CancellationToken.None);
+
+        Assert.True(result.IsSuccess);
+        Assert.Null(mainSeat.MainDriverId);
+        Assert.Null(secondarySeat.SecondaryDriverId);
+    }
+
+    [Fact]
+    public async Task Handle_StatusUnchanged_KeepsTruckSeats()
+    {
+        var driver = Employee(Role("driver"));
+        var truck = new Truck { Number = "T-1", Type = TruckType.FreightTruck, MainDriverId = driver.Id };
+        ArrangeTrucks(driver, truck);
+
+        var result = await Handler().Handle(
+            new UpdateEmployeeCommand { UserId = driver.Id, Status = EmployeeStatus.Active },
+            CancellationToken.None);
+
+        Assert.True(result.IsSuccess);
+        Assert.Equal(driver.Id, truck.MainDriverId);
+    }
+
+    private void ArrangeTrucks(Employee driver, params Truck[] trucks)
+    {
+        _employeeRepo.GetByIdAsync(driver.Id, Arg.Any<CancellationToken>()).Returns(driver);
+        var truckRepo = Substitute.For<ITenantRepository<Truck, Guid>>();
+        truckRepo.GetListAsync(Arg.Any<System.Linq.Expressions.Expression<Func<Truck, bool>>>(),
+                Arg.Any<CancellationToken>())
+            .Returns(ci => trucks.Where(ci.Arg<System.Linq.Expressions.Expression<Func<Truck, bool>>>().Compile()).ToList());
+        _tenantUow.Repository<Truck>().Returns(truckRepo);
     }
 
     private void Arrange(Employee caller, Employee target, TenantRole newRole)

@@ -122,21 +122,6 @@ public class GetDispatchCandidatesToolTests
     }
 
     [Fact]
-    public async Task Execute_TerminatedDriver_TruckCountsAsDriverless()
-    {
-        var terminated = Truck("T-gone", TruckType.BoxTruck, Pickup);
-        terminated.Driver.Status = EmployeeStatus.Terminated;
-        var ok = Truck("T-ok", TruckType.BoxTruck, Pickup);
-        Setup([Load()], terminated, ok);
-
-        var load = (await Run()).GetProperty("loads")[0];
-
-        Assert.Equal("T-ok", Assert.Single(load.GetProperty("candidates").EnumerateArray())
-            .GetProperty("truck_number").GetString());
-        Assert.Equal(1, load.GetProperty("excluded").GetProperty("no_driver").GetInt32());
-    }
-
-    [Fact]
     public async Task Execute_HazmatLoad_RunsEligibilityAndPutsBlockedCandidatesLast()
     {
         var blocked = Truck("T-blocked", TruckType.BoxTruck, Pickup);
