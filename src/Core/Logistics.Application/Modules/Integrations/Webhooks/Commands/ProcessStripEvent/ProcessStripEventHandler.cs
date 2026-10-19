@@ -174,8 +174,7 @@ internal sealed class ProcessStripEventHandler(
                 Tenant = tenant,
                 PlanId = subscriptionPlan.Id,
                 Plan = subscriptionPlan,
-                StripeSubscriptionId = stripeSubscription.Id,
-                StripeCustomerId = tenant.StripeCustomerId
+                StripeSubscriptionId = stripeSubscription.Id
             };
 
             await masterUow.Repository<Subscription>().AddAsync(newSubscription);

@@ -29,11 +29,6 @@ public class ImpersonationToken : Entity, IMasterEntity
     public DateTime ExpiresAt { get; set; }
 
     /// <summary>
-    /// Whether the token has been used.
-    /// </summary>
-    public bool IsUsed { get; set; }
-
-    /// <summary>
     /// When the token was used (if used).
     /// </summary>
     public DateTime? UsedAt { get; set; }
@@ -43,5 +38,5 @@ public class ImpersonationToken : Entity, IMasterEntity
     /// </summary>
     public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
 
-    public bool IsValid => !IsUsed && DateTime.UtcNow < ExpiresAt;
+    public bool IsValid => UsedAt is null && DateTime.UtcNow < ExpiresAt;
 }

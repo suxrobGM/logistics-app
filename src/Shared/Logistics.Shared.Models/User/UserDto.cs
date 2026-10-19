@@ -10,5 +10,4 @@ public record UserDto
     public Guid? TenantId { get; set; }
     public string? TenantName { get; set; }
     public string? Role { get; set; }
-    public string? PreferredLanguage { get; set; }
 }

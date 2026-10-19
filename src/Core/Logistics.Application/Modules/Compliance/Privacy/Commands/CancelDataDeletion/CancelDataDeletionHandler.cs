@@ -41,9 +41,6 @@ internal sealed class CancelDataDeletionHandler(
         request.Status = DataDeletionStatus.Cancelled;
         request.CancelledAt = now;
 
-        var user = await masterUow.Repository<User>().GetByIdAsync(userId.Value, ct);
-        user?.DeletionRequestedAt = null;
-
         await masterUow.SaveChangesAsync(ct);
         return Result.Ok();
     }

@@ -48,8 +48,6 @@ internal sealed class RequestDataDeletionHandler(
             Status = DataDeletionStatus.Pending
         };
 
-        user.DeletionRequestedAt = now;
-
         await masterUow.Repository<DataDeletionRequest>().AddAsync(request, ct);
         await masterUow.SaveChangesAsync(ct);
 

@@ -18,6 +18,5 @@ internal sealed class ImpersonationTokenEntityConfiguration : IEntityTypeConfigu
 
         builder.HasIndex(t => t.TokenHash).IsUnique();
         builder.HasIndex(t => t.ExpiresAt);
-        builder.HasIndex(t => new { t.IsUsed, t.ExpiresAt });
     }
 }

@@ -35,7 +35,7 @@ public class Index(
 
         var tokenHash = TokenHasher.Hash(token);
         var impersonationToken = await masterUow.Repository<ImpersonationToken>()
-            .GetAsync(t => t.TokenHash == tokenHash && !t.IsUsed && t.ExpiresAt > DateTime.UtcNow);
+            .GetAsync(t => t.TokenHash == tokenHash && t.UsedAt == null && t.ExpiresAt > DateTime.UtcNow);
 
         if (impersonationToken is null)
         {
@@ -44,7 +44,6 @@ public class Index(
         }
 
         // Mark token as used
-        impersonationToken.IsUsed = true;
         impersonationToken.UsedAt = DateTime.UtcNow;
         masterUow.Repository<ImpersonationToken>().Update(impersonationToken);
         await masterUow.SaveChangesAsync();

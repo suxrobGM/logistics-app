@@ -17,7 +17,7 @@ internal sealed class GetUserTenantAccessHandler(IMasterUnitOfWork masterUow)
     {
         var tenantAccessList = await masterUow.Repository<UserTenantAccess>().Query()
             .Where(uta => uta.UserId == req.UserId && uta.IsActive)
-            .OrderByDescending(uta => uta.LastAccessedAt)
+            .OrderBy(uta => uta.Tenant!.CompanyName ?? uta.Tenant.Name)
             .ToListAsync(ct);
 
         var dtos = tenantAccessList.Select(uta => uta.ToDto()).ToList();

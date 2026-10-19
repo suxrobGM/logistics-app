@@ -28,9 +28,4 @@ public class UserTenantAccess : AuditableEntity, IMasterEntity
     /// Whether this tenant access is currently active.
     /// </summary>
     public bool IsActive { get; set; } = true;
-
-    /// <summary>
-    /// Last time the user accessed this tenant's portal.
-    /// </summary>
-    public DateTime? LastAccessedAt { get; set; }
 }

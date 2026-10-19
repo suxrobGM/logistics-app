@@ -150,7 +150,6 @@ internal class StripeSubscriptionSyncSeeder(ILogger<StripeSubscriptionSyncSeeder
             PlanId = plan.Id,
             Plan = plan,
             StripeSubscriptionId = stripeSub.Id,
-            StripeCustomerId = tenant.StripeCustomerId,
             CancelAtPeriodEnd = stripeSub.CancelAtPeriodEnd
         };
 

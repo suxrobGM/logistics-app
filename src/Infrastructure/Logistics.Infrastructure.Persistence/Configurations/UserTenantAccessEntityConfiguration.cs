@@ -10,7 +10,6 @@ internal sealed class UserTenantAccessEntityConfiguration : IEntityTypeConfigura
     {
         builder.ToTable("user_tenant_accesses");
 
-        builder.HasIndex(i => i.UserId);
         builder.HasIndex(i => new { i.UserId, i.TenantId }).IsUnique();
 
         builder.Property(i => i.CustomerName)

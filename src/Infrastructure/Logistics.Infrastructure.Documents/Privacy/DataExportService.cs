@@ -4,6 +4,7 @@ using System.Text.Json;
 using Logistics.Application.Abstractions.Privacy;
 using Logistics.Domain.Entities;
 using Logistics.Domain.Persistence;
+using Logistics.Domain.Primitives.Enums;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 
@@ -39,7 +40,13 @@ internal sealed class DataExportService(
         {
             using (var archive = new ZipArchive(output, ZipArchiveMode.Create, leaveOpen: true))
             {
-                await WriteJsonAsync(archive, "profile.json", BuildProfile(user), ct);
+                var deletionRequestedAt = await masterUow.Repository<DataDeletionRequest>()
+                    .Query()
+                    .Where(r => r.UserId == userId && r.Status == DataDeletionStatus.Pending)
+                    .Select(r => (DateTime?)r.RequestedAt)
+                    .FirstOrDefaultAsync(ct);
+
+                await WriteJsonAsync(archive, "profile.json", BuildProfile(user, deletionRequestedAt), ct);
                 await WriteMasterDbDataAsync(archive, userId, ct);
                 await WriteTenantsDataAsync(archive, user, ct);
                 await WriteReadmeAsync(archive, user, ct);
@@ -55,7 +62,7 @@ internal sealed class DataExportService(
         }
     }
 
-    private static object BuildProfile(User user) => new
+    private static object BuildProfile(User user, DateTime? deletionRequestedAt) => new
     {
         user.Id,
         user.FirstName,
@@ -64,7 +71,7 @@ internal sealed class DataExportService(
         user.PhoneNumber,
         user.UserName,
         user.CreatedAt,
-        user.DeletionRequestedAt,
+        DeletionRequestedAt = deletionRequestedAt,
         user.AnonymizedAt
     };
 
@@ -76,7 +83,7 @@ internal sealed class DataExportService(
             .ToListAsync(ct);
 
         await WriteJsonAsync(archive, "tenant-access.json",
-            accesses.Select(a => new { a.TenantId, a.CustomerUserId, a.CustomerName, a.IsActive, a.LastAccessedAt, a.CreatedAt }),
+            accesses.Select(a => new { a.TenantId, a.CustomerUserId, a.CustomerName, a.IsActive, a.CreatedAt }),
             ct);
 
         var consents = await masterUow.Repository<ConsentRecord>()

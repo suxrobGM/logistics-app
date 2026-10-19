@@ -14,6 +14,5 @@ public class UserTenantAccessDto
     public string? CompanyName { get; set; }
     public string? CustomerName { get; set; }
     public bool IsActive { get; set; }
-    public DateTime? LastAccessedAt { get; set; }
     public TenantSettings? Settings { get; set; }
 }

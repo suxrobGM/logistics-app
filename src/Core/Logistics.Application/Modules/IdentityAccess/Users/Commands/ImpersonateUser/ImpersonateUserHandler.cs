@@ -77,8 +77,7 @@ internal sealed class ImpersonateUserHandler(
             TokenHash = TokenHasher.Hash(token),
             AdminUserId = adminUserId.Value,
             TargetUserId = targetUser.Id,
-            ExpiresAt = DateTime.UtcNow.AddMinutes(expirationMinutes),
-            IsUsed = false
+            ExpiresAt = DateTime.UtcNow.AddMinutes(expirationMinutes)
         };
 
         await masterUow.Repository<ImpersonationToken>().AddAsync(impersonationToken, ct);

@@ -15,7 +15,6 @@ public static class SubscriptionMapper
             Plan = entity.Plan.ToDto(),
             CancelAtPeriodEnd = entity.CancelAtPeriodEnd,
             StripeSubscriptionId = entity.StripeSubscriptionId,
-            StripeCustomerId = entity.StripeCustomerId,
         };
     }
 
