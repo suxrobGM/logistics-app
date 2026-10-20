@@ -41,6 +41,8 @@ public class ProcessResendWebhookHandlerTests
 
         _mediator.Send(Arg.Any<ProcessInboundNegotiationEmailCommand>(), Arg.Any<CancellationToken>())
             .Returns(Result.Ok());
+        _mediator.Send(Arg.Any<ForwardInboundEmailCommand>(), Arg.Any<CancellationToken>())
+            .Returns(Result.Ok());
 
         _sut = new ProcessResendWebhookHandler(
             _verifier, _masterUow, _tenantUow, _mediator, _webhookEvents,
@@ -130,13 +132,31 @@ public class ProcessResendWebhookHandlerTests
     }
 
     [Fact]
-    public async Task Handle_AddressWithoutThreadToken_IsAccepted()
+    public async Task Handle_AddressWithoutThreadToken_ForwardsAndRecordsTheEvent()
     {
         var result = await _sut.Handle(
             Command(Body(receivedFor: "hello@mail.test.com")), CancellationToken.None);
 
         Assert.True(result.IsSuccess);
         await AssertNoInnerCommand();
+        await _mediator.Received(1).Send(
+            Arg.Is<ForwardInboundEmailCommand>(c => c.ProviderEmailId == "email-1"),
+            Arg.Any<CancellationToken>());
+        await _webhookEvents.Received(1).MarkHandledAsync("Resend", "email-1", Arg.Any<CancellationToken>());
+    }
+
+    [Fact]
+    public async Task Handle_ForwardFails_FailsWithoutRejectedCodeAndWritesNoLedgerRow()
+    {
+        _mediator.Send(Arg.Any<ForwardInboundEmailCommand>(), Arg.Any<CancellationToken>())
+            .Returns(Result.Fail("provider unavailable"));
+
+        var result = await _sut.Handle(
+            Command(Body(receivedFor: "hello@mail.test.com")), CancellationToken.None);
+
+        Assert.False(result.IsSuccess);
+        Assert.Null(result.ErrorCode);
+        await _webhookEvents.DidNotReceiveWithAnyArgs().MarkHandledAsync(default!, default!, default);
     }
 
     [Fact]

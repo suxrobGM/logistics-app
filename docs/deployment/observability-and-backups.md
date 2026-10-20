@@ -184,7 +184,7 @@ backup.
       `SeedData/ifta-tax-rates.json` holds approximations.
 - [ ] **Tenant presets.** Each pilot tenant has its presets set (car hauler turns on vehicle
       transport, intermodal turns on containers).
-- [ ] **Mapbox and notifications.** `Mapbox__AccessToken` and `NotificationEmail` set.
+- [ ] **Mapbox and notifications.** `Mapbox__AccessToken` and `OwnerNotifications__Email` set.
 - [ ] **Firebase.** `FIREBASE_CREDENTIALS_JSON` secret holds the production Admin SDK key (push
       notifications to the driver app), and the driver app build uses the production Firebase
       project (Crashlytics).

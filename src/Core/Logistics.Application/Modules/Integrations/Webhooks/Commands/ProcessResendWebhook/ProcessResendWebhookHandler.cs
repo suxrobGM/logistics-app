@@ -59,8 +59,8 @@ internal sealed class ProcessResendWebhookHandler(
 
         if (ExtractThreadToken(payload) is not { } token)
         {
-            logger.LogInformation("Resend webhook {EventKey} is not addressed to a negotiation thread", eventKey);
-            return Result.Ok();
+            var forwarded = await mediator.Send(new ForwardInboundEmailCommand { ProviderEmailId = eventKey }, ct);
+            return await RecordIfHandledAsync(forwarded, eventKey, ct);
         }
 
         var route = await masterUow.Repository<InboundEmailRoute>()
@@ -87,22 +87,26 @@ internal sealed class ProcessResendWebhookHandler(
         var inner = await mediator.Send(new ProcessInboundNegotiationEmailCommand
         {
             ThreadToken = token,
-            ProviderEmailId = payload.Data?.EmailId ?? eventKey,
+            ProviderEmailId = eventKey,
             From = payload.Data?.From ?? "",
             Subject = payload.Data?.Subject,
             MessageId = payload.Data?.MessageId
         }, ct);
 
+        return await RecordIfHandledAsync(inner, eventKey, ct);
+    }
+
+    private async Task<Result> RecordIfHandledAsync(Result inner, string eventKey, CancellationToken ct)
+    {
         // Record last: a transient failure must stay retryable, and a recorded key would kill the retry.
         if (!inner.IsSuccess)
         {
             logger.LogWarning("Resend webhook {EventKey} could not be processed yet: {Error}",
                 eventKey, inner.Error);
-            return Result.Fail(inner.Error ?? $"Resend webhook {eventKey} could not be processed yet");
+            return Result.Fail(inner.Error!);
         }
 
         await webhookEvents.MarkHandledAsync(Provider, eventKey, ct);
-
         return Result.Ok();
     }
 

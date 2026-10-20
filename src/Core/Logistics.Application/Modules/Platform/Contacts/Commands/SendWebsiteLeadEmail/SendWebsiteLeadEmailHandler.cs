@@ -10,7 +10,7 @@ namespace Logistics.Application.Modules.Platform.Contacts.Commands;
 internal sealed class SendWebsiteLeadEmailHandler(
     IThreadedEmailSender emailSender,
     IEmailTemplateService emailTemplateService,
-    IOptions<LeadNotificationOptions> options) : IRequestHandler<SendWebsiteLeadEmailCommand, Result>
+    IOptions<OwnerNotificationOptions> options) : IRequestHandler<SendWebsiteLeadEmailCommand, Result>
 {
     public async Task<Result> Handle(SendWebsiteLeadEmailCommand req, CancellationToken ct)
     {

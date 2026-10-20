@@ -36,7 +36,7 @@ public static class Registrar
 
         services.Configure<CustomerPortalOptions>(configuration.GetSection(CustomerPortalOptions.SectionName));
         services.Configure<IdentityServerOptions>(configuration.GetSection(IdentityServerOptions.SectionName));
-        services.Configure<LeadNotificationOptions>(o => o.Email = configuration["NotificationEmail"]);
+        services.Configure<OwnerNotificationOptions>(configuration.GetSection(OwnerNotificationOptions.SectionName));
 
         // Current user service (only for web apps with IHttpContextAccessor)
         services.TryAddScoped<ICurrentUserService>(sp =>
