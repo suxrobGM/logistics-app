@@ -34,6 +34,7 @@ internal class SubscriptionPlanSeeder(ILogger<SubscriptionPlanSeeder> logger) : 
         TenantFeature.Dvir,
         TenantFeature.AgenticDispatch,
         TenantFeature.AICopilot,
+        TenantFeature.McpServer,
         TenantFeature.VehicleTransport
     ];
 
