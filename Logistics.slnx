@@ -21,6 +21,9 @@
     <Project Path="src/Core/Logistics.Domain.Primitives/Logistics.Domain.Primitives.csproj" />
     <Project Path="src/Core/Logistics.Mediator/Logistics.Mediator.csproj" />
   </Folder>
+  <Folder Name="/private/">
+    <Project Path="private/tools/outreach/Logistics.Outreach/Logistics.Outreach.csproj" />
+  </Folder>
   <Folder Name="/Shared/">
     <Project Path="src/Shared/Logistics.Shared.Models/Logistics.Shared.Models.csproj" />
     <Project Path="src/Shared/Logistics.Shared.Identity/Logistics.Shared.Identity.csproj" />
