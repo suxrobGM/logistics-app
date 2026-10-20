@@ -45,8 +45,6 @@ internal class SubscriptionPlanSeeder(ILogger<SubscriptionPlanSeeder> logger) : 
         TenantFeature.Timesheets,
         TenantFeature.Safety,
         TenantFeature.Maintenance,
-        TenantFeature.TelegramBot,
-        TenantFeature.McpServer,
         TenantFeature.Accounting,
         TenantFeature.FuelCards,
         TenantFeature.Ifta,
