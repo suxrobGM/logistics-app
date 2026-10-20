@@ -54,13 +54,13 @@
     <PackageVersion Include="OpenAI" Version="2.14.0" />
     <PackageVersion Include="PdfPig" Version="0.1.16" />
     <PackageVersion Include="QuestPDF" Version="2026.9.0" />
-    <PackageVersion Include="Resend" Version="0.18.0" />
+    <PackageVersion Include="Resend" Version="0.24.0" />
     <PackageVersion Include="Riok.Mapperly" Version="4.3.1" />
     <PackageVersion Include="Scrutor" Version="7.0.0" />
     <PackageVersion Include="Sentry.AspNetCore" Version="6.12.1" />
     <PackageVersion Include="Sentry.Serilog" Version="6.12.1" />
     <PackageVersion Include="Serilog.AspNetCore" Version="10.0.0" />
-    <PackageVersion Include="Spectre.Console.Cli" Version="0.55.0" />
+    <PackageVersion Include="Spectre.Console.Cli" Version="0.57.2" />
     <PackageVersion Include="Stripe.net" Version="52.4.2" />
     <PackageVersion Include="Swashbuckle.AspNetCore" Version="10.2.3" />
     <PackageVersion Include="System.Linq.Dynamic.Core" Version="1.7.4" />

@@ -58,7 +58,7 @@ internal sealed class IssueCommand : Command<IssueCommand.Settings>
         }
     }
 
-    protected override int Execute(CommandContext context, Settings settings, CancellationToken cancellationToken)
+    public override int Execute(CommandContext context, Settings settings, CancellationToken cancellationToken)
     {
         using var privateKey = SigningKeys.LoadPrivateKey();
         if (privateKey is null)

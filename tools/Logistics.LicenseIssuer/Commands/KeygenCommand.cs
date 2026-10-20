@@ -5,7 +5,7 @@ namespace Logistics.LicenseIssuer.Commands;
 
 internal sealed class KeygenCommand : Command
 {
-    protected override int Execute(CommandContext context, CancellationToken cancellationToken)
+    public override int Execute(CommandContext context, CancellationToken cancellationToken)
     {
         using var ecdsa = ECDsa.Create(ECCurve.NamedCurves.nistP256);
         Console.WriteLine($"{SigningKeys.PrivateKeyVariable}={Convert.ToBase64String(ecdsa.ExportPkcs8PrivateKey())}");

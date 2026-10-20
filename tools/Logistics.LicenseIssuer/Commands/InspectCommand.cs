@@ -26,7 +26,7 @@ internal sealed class InspectCommand : AsyncCommand<InspectCommand.Settings>
                 : ValidationResult.Success();
     }
 
-    protected override async Task<int> ExecuteAsync(CommandContext context, Settings settings, CancellationToken cancellationToken)
+    public override async Task<int> ExecuteAsync(CommandContext context, Settings settings, CancellationToken cancellationToken)
     {
         using var publicKey = SigningKeys.LoadPublicKey(settings.PublicKey!);
 
