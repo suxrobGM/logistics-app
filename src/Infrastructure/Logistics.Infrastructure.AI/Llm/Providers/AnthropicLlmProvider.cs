@@ -40,9 +40,9 @@ internal sealed class AnthropicLlmProvider(LlmProviderOptions config, HttpClient
     }
 
     /// <summary>
-    /// Adaptive models reject a temperature and have no clean "off" - omitting <c>thinking</c>
-    /// still runs it at the default effort - so they always get an explicit effort, and
-    /// <see cref="ReasoningEffort.None"/> maps to <c>low</c>.
+    /// Never sends a temperature: Claude models after Opus 4.6 reject any value but 1.0. Adaptive
+    /// models have no clean "off" - omitting <c>thinking</c> still runs it at the default effort - so
+    /// they always get an explicit effort, and <see cref="ReasoningEffort.None"/> maps to <c>low</c>.
     /// </summary>
     internal static MessageCreateParams BuildParameters(LlmRequest request)
     {
@@ -64,18 +64,16 @@ internal sealed class AnthropicLlmProvider(LlmProviderOptions config, HttpClient
             CacheControl = new CacheControlEphemeral()
         };
 
-        if (isAdaptive)
+        if (!isAdaptive)
         {
-            return parameters with
-            {
-                Thinking = new ThinkingConfigAdaptive(),
-                OutputConfig = new OutputConfig { Effort = EffortFor(request.Effort) }
-            };
+            return parameters;
         }
 
-        return request.Temperature is { } temperature
-            ? parameters with { Temperature = (double)temperature }
-            : parameters;
+        return parameters with
+        {
+            Thinking = new ThinkingConfigAdaptive(),
+            OutputConfig = new OutputConfig { Effort = EffortFor(request.Effort) }
+        };
     }
 
     internal static Effort EffortFor(ReasoningEffort effort) => effort switch

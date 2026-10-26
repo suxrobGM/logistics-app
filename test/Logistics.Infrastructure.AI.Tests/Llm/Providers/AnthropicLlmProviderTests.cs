@@ -193,22 +193,12 @@ public class AnthropicLlmProviderTests
     }
 
     [Fact]
-    public void BuildParameters_AdaptiveModel_NeverSendsTemperature()
-    {
-        // The 5.5 models reject non-default sampling parameters outright.
-        var parameters = AnthropicLlmProvider.BuildParameters(Request("claude-sonnet-5-5", ReasoningEffort.None));
-
-        Assert.Null(parameters.Temperature);
-    }
-
-    [Fact]
-    public void BuildParameters_NonReasoningModel_SendsNoThinkingAndKeepsTemperature()
+    public void BuildParameters_NonReasoningModel_SendsNoThinking()
     {
         var parameters = AnthropicLlmProvider.BuildParameters(Request("unknown-model", ReasoningEffort.High));
 
         Assert.Null(parameters.Thinking);
         Assert.Null(parameters.OutputConfig);
-        Assert.Equal(0d, parameters.Temperature);
     }
 
     #endregion
