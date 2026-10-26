@@ -99,8 +99,8 @@ internal sealed class AccountingReceivablesSyncService(
     }
 
     /// <summary>
-    /// A factored invoice's payment is the factor buying it, deposited at the full total to the factoring
-    /// clearing account rather than the usual deposit account.
+    /// A factored invoice's payment goes in full to the factoring clearing account. Payments on invoices
+    /// before the sync-from date are skipped, since those invoices are never pushed.
     /// </summary>
     private async Task PushPaymentsAsync(SyncRun run, CancellationToken ct)
     {
@@ -108,6 +108,7 @@ internal sealed class AccountingReceivablesSyncService(
         var from = run.SyncFrom;
 
         var rows = await tenantUow.Repository<LoadInvoice>().Query()
+            .Where(i => i.CreatedAt >= from)
             .SelectMany(i => i.Payments.Where(p =>
                     p.Status == PaymentStatus.Paid && (p.RecordedAt ?? p.CreatedAt) >= from
                     && !mappings.Any(m => m.LocalEntityType == QboLocalEntityType.Payment && m.LocalId == p.Id

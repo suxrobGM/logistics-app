@@ -19,9 +19,8 @@ internal sealed class AccountingPayablesSyncService(
     }
 
     /// <summary>
-    /// The fee a factor kept is a purchase paid out of the clearing account the factored invoice was
-    /// deposited to. The advance and the reserve reach the bank as transfers out of that account, which
-    /// the bookkeeper records.
+    /// The factor's fee is a purchase paid from the clearing account; the bookkeeper records the advance
+    /// and reserve transfers. Fees on invoices before the sync-from date are skipped, as their deposit is never pushed.
     /// </summary>
     private async Task PushFactoringFeesAsync(SyncRun run, CancellationToken ct)
     {
@@ -36,7 +35,7 @@ internal sealed class AccountingPayablesSyncService(
         var fees = await tenantUow.Repository<FactoringBatchItem>().Query()
             .Where(mappingService.NotUpToDate<FactoringBatchItem>(QboLocalEntityType.FactoringFee))
             .Where(i => (i.Status == FactoringStatus.Funded || i.Status == FactoringStatus.ChargedBack)
-                        && i.FeeAmount > 0 && i.FundedAt >= from)
+                        && i.FeeAmount > 0 && i.FundedAt >= from && i.Invoice.CreatedAt >= from)
             .OrderBy(i => i.FundedAt)
             .Take(SyncRun.BatchSize)
             .Select(i => new { Item = i, BatchNumber = i.Batch.Number, InvoiceNumber = i.Invoice.Number })

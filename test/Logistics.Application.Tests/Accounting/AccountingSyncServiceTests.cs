@@ -306,6 +306,24 @@ public class AccountingSyncServiceTests
         Assert.Contains("factoring clearing account", mapping.LastError);
     }
 
+    [Fact]
+    public async Task SyncAsync_PaymentOnInvoiceBeforeSyncFromDate_IsSkippedWithItsInvoice()
+    {
+        _config.SyncFromDate = DateTime.UtcNow.Date;
+        _config.FactoringClearingAccountId = "clearing";
+        _config.FactoringFeeAccountId = "fees";
+        var item = AddFundedFactoredInvoice();
+        item.Invoice.CreatedAt = DateTime.UtcNow.AddDays(-30);
+
+        await _sut.SyncAsync(CancellationToken.None);
+
+        await _provider.DidNotReceive().UpsertPaymentAsync(
+            Arg.Any<QboPaymentPayload>(), Arg.Any<QboWriteTarget>(), Arg.Any<CancellationToken>());
+        await _provider.DidNotReceive().UpsertExpenseAsync(
+            Arg.Any<QboExpensePayload>(), Arg.Any<QboWriteTarget>(), Arg.Any<CancellationToken>());
+        Assert.DoesNotContain(_mappings, m => m.SyncStatus == QboSyncStatus.Failed);
+    }
+
     /// <summary>A pushed customer and invoice whose invoice the factor bought: sale payment of 1000, fee 30.</summary>
     private FactoringBatchItem AddFundedFactoredInvoice()
     {
