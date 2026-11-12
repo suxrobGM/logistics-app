@@ -1,25 +1,20 @@
 using Logistics.Application.Abstractions;
-using Logistics.Application.Abstractions.Email.Models;
-using Logistics.Application.Abstractions.Email;
+using Logistics.Application.Modules.IdentityAccess.Invitations.Services;
 using Logistics.Application.Utilities;
 using Logistics.Domain.Entities;
-using Logistics.Domain.Options;
 using Logistics.Domain.Persistence;
 using Logistics.Domain.Primitives.Enums;
 using Logistics.Mappings;
 using Logistics.Mediator;
 using Logistics.Shared.Models;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Options;
 
 namespace Logistics.Application.Modules.IdentityAccess.Invitations.Commands;
 
 internal sealed class ResendInvitationHandler(
     IMasterUnitOfWork masterUow,
     ITenantUnitOfWork tenantUow,
-    IEmailSender emailSender,
-    IEmailTemplateService emailTemplateService,
-    IOptions<IdentityServerOptions> identityServerOptions)
+    IInvitationEmailSender invitationEmailSender)
     : IRequestHandler<ResendInvitationCommand, Result>
 {
     public async Task<Result> Handle(ResendInvitationCommand req, CancellationToken ct)
@@ -54,29 +49,9 @@ internal sealed class ResendInvitationHandler(
         masterUow.Repository<Invitation>().Update(invitation);
         await masterUow.SaveChangesAsync(ct);
 
-        await SendInvitationEmailAsync(invitation, token, tenant);
+        await invitationEmailSender.SendAsync(invitation, token,
+            invitation.InvitedByUser?.GetFullName() ?? "A team member", tenant, isReminder: true);
 
         return Result.Ok();
-    }
-
-    private async Task SendInvitationEmailAsync(Invitation invitation, string token, Tenant tenant)
-    {
-        var acceptUrl = $"{identityServerOptions.Value.UserFacingAuthority}/Account/AcceptInvitation?token={token}";
-        var companyName = tenant.DisplayName;
-
-        var model = new InvitationEmailModel
-        {
-            InvitedByName = invitation.InvitedByUser?.GetFullName() ?? "A team member",
-            CompanyName = companyName,
-            TypeLabel = invitation.Type == InvitationType.Employee ? "team member" : "customer portal user",
-            RoleDisplayName = InvitationMapper.GetRoleDisplayName(invitation.TenantRole),
-            AcceptUrl = acceptUrl,
-            ExpiresAt = invitation.ExpiresAt.ToString("MMMM dd, yyyy")
-        };
-
-        var subject = $"Reminder: You're invited to join {companyName}";
-        var body = await emailTemplateService.RenderAsync("InvitationReminder", model);
-
-        await emailSender.SendEmailAsync(invitation.Email, subject, body);
     }
 }

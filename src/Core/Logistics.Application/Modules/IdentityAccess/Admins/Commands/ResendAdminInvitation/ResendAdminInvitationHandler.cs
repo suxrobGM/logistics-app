@@ -1,25 +1,20 @@
 using Logistics.Application.Abstractions;
-using Logistics.Application.Abstractions.Email;
-using Logistics.Application.Abstractions.Email.Models;
+using Logistics.Application.Modules.IdentityAccess.Invitations.Services;
 using Logistics.Application.Modules.Common.Constants;
 using Logistics.Application.Utilities;
 using Logistics.Domain.Entities;
-using Logistics.Domain.Options;
 using Logistics.Domain.Persistence;
 using Logistics.Domain.Primitives.Enums;
 using Logistics.Mappings;
 using Logistics.Mediator;
 using Logistics.Shared.Models;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Options;
 
 namespace Logistics.Application.Modules.IdentityAccess.Admins.Commands;
 
 internal sealed class ResendAdminInvitationHandler(
     IMasterUnitOfWork masterUow,
-    IEmailSender emailSender,
-    IEmailTemplateService emailTemplateService,
-    IOptions<IdentityServerOptions> identityServerOptions)
+    IInvitationEmailSender invitationEmailSender)
     : IRequestHandler<ResendAdminInvitationCommand, Result>
 {
     public async Task<Result> Handle(ResendAdminInvitationCommand req, CancellationToken ct)
@@ -52,23 +47,8 @@ internal sealed class ResendAdminInvitationHandler(
         masterUow.Repository<Invitation>().Update(invitation);
         await masterUow.SaveChangesAsync(ct);
 
-        var acceptUrl = $"{identityServerOptions.Value.UserFacingAuthority}/Account/AcceptInvitation?token={token}";
-
-        var model = new InvitationEmailModel
-        {
-            InvitedByName = invitation.InvitedByUser?.GetFullName() ?? "An administrator",
-            CompanyName = PlatformConstants.PlatformName,
-            TypeLabel = "administrator",
-            RoleDisplayName = InvitationMapper.GetAppRoleDisplayName(invitation.AppRole),
-            AcceptUrl = acceptUrl,
-            ExpiresAt = invitation.ExpiresAt.ToString("MMMM dd, yyyy")
-        };
-
-        var body = await emailTemplateService.RenderAsync("InvitationReminder", model);
-        await emailSender.SendEmailAsync(
-            invitation.Email,
-            $"Reminder: You're invited to join {PlatformConstants.PlatformName}",
-            body);
+        await invitationEmailSender.SendAsync(invitation, token,
+            invitation.InvitedByUser?.GetFullName() ?? "An administrator", tenant: null, isReminder: true);
 
         return Result.Ok();
     }

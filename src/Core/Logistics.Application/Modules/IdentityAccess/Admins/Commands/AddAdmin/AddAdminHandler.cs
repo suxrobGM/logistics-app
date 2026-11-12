@@ -1,11 +1,9 @@
 using Logistics.Application.Abstractions;
+using Logistics.Application.Modules.IdentityAccess.Invitations.Services;
 using Logistics.Application.Abstractions.CurrentUser;
-using Logistics.Application.Abstractions.Email;
-using Logistics.Application.Abstractions.Email.Models;
 using Logistics.Application.Modules.Common.Constants;
 using Logistics.Application.Utilities;
 using Logistics.Domain.Entities;
-using Logistics.Domain.Options;
 using Logistics.Domain.Persistence;
 using Logistics.Domain.Primitives.Enums;
 using Logistics.Mappings;
@@ -13,17 +11,14 @@ using Logistics.Mediator;
 using Logistics.Shared.Identity.Roles;
 using Logistics.Shared.Models;
 using Microsoft.AspNetCore.Identity;
-using Microsoft.Extensions.Options;
 
 namespace Logistics.Application.Modules.IdentityAccess.Admins.Commands;
 
 internal sealed class AddAdminHandler(
     IMasterUnitOfWork masterUow,
     UserManager<User> userManager,
-    IEmailSender emailSender,
-    IEmailTemplateService emailTemplateService,
     ICurrentUserService currentUserService,
-    IOptions<IdentityServerOptions> identityServerOptions)
+    IInvitationEmailSender invitationEmailSender)
     : IRequestHandler<AddAdminCommand, Result<AddAdminResult>>
 {
     public async Task<Result<AddAdminResult>> Handle(AddAdminCommand req, CancellationToken ct)
@@ -88,30 +83,9 @@ internal sealed class AddAdminHandler(
         await masterUow.Repository<Invitation>().AddAsync(invitation, ct);
         await masterUow.SaveChangesAsync(ct);
 
-        await SendAdminInvitationEmailAsync(invitation, token, currentUser?.GetFullName() ?? "An administrator");
+        await invitationEmailSender.SendAsync(invitation, token, currentUser?.GetFullName() ?? "An administrator",
+            tenant: null, isReminder: false);
 
         return Result<AddAdminResult>.Ok(new AddAdminResult { Invited = true });
-    }
-
-    private async Task SendAdminInvitationEmailAsync(Invitation invitation, string token, string invitedByName)
-    {
-        var acceptUrl = $"{identityServerOptions.Value.UserFacingAuthority}/Account/AcceptInvitation?token={token}";
-
-        var model = new InvitationEmailModel
-        {
-            InvitedByName = invitedByName,
-            CompanyName = PlatformConstants.PlatformName,
-            TypeLabel = "administrator",
-            RoleDisplayName = InvitationMapper.GetAppRoleDisplayName(invitation.AppRole),
-            PersonalMessage = invitation.PersonalMessage,
-            AcceptUrl = acceptUrl,
-            ExpiresAt = invitation.ExpiresAt.ToString("MMMM dd, yyyy")
-        };
-
-        var body = await emailTemplateService.RenderAsync("Invitation", model);
-        await emailSender.SendEmailAsync(
-            invitation.Email,
-            $"You're invited to join {PlatformConstants.PlatformName} as an administrator",
-            body);
     }
 }

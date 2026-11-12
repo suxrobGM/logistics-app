@@ -1,9 +1,7 @@
 using Logistics.Application.Abstractions;
-using Logistics.Application.Abstractions.Email.Models;
-using Logistics.Application.Abstractions.Email;
+using Logistics.Application.Modules.IdentityAccess.Invitations.Services;
 using Logistics.Application.Utilities;
 using Logistics.Domain.Entities;
-using Logistics.Domain.Options;
 using Logistics.Domain.Persistence;
 using Logistics.Domain.Primitives.Enums;
 using Logistics.Mappings;
@@ -11,7 +9,6 @@ using Logistics.Mediator;
 using Logistics.Shared.Identity.Roles;
 using Logistics.Shared.Models;
 using Microsoft.AspNetCore.Identity;
-using Microsoft.Extensions.Options;
 using Logistics.Application.Abstractions.CurrentUser;
 
 namespace Logistics.Application.Modules.IdentityAccess.Invitations.Commands;
@@ -20,10 +17,8 @@ internal sealed class CreateInvitationHandler(
     IMasterUnitOfWork masterUow,
     ITenantUnitOfWork tenantUow,
     UserManager<User> userManager,
-    IEmailSender emailSender,
-    IEmailTemplateService emailTemplateService,
     ICurrentUserService currentUserService,
-    IOptions<IdentityServerOptions> identityServerOptions)
+    IInvitationEmailSender invitationEmailSender)
     : IRequestHandler<CreateInvitationCommand, Result<InvitationDto>>
 {
     public async Task<Result<InvitationDto>> Handle(CreateInvitationCommand req, CancellationToken ct)
@@ -115,7 +110,7 @@ internal sealed class CreateInvitationHandler(
         await masterUow.SaveChangesAsync(ct);
 
         // Send invitation email
-        await SendInvitationEmailAsync(invitation, token, tenant, currentUser.GetFullName());
+        await invitationEmailSender.SendAsync(invitation, token, currentUser.GetFullName(), tenant, isReminder: false);
 
         var dto = invitation.ToDto(
             tenant.DisplayName,
@@ -138,27 +133,5 @@ internal sealed class CreateInvitationHandler(
                 .GetAsync(cu => cu.UserId == userId, ct);
             return customerUser is not null;
         }
-    }
-
-    private async Task SendInvitationEmailAsync(Invitation invitation, string token, Tenant tenant, string invitedByName)
-    {
-        var acceptUrl = $"{identityServerOptions.Value.UserFacingAuthority}/Account/AcceptInvitation?token={token}";
-        var companyName = tenant.DisplayName;
-
-        var model = new InvitationEmailModel
-        {
-            InvitedByName = invitedByName,
-            CompanyName = companyName,
-            TypeLabel = invitation.Type == InvitationType.Employee ? "team member" : "customer portal user",
-            RoleDisplayName = InvitationMapper.GetRoleDisplayName(invitation.TenantRole),
-            PersonalMessage = invitation.PersonalMessage,
-            AcceptUrl = acceptUrl,
-            ExpiresAt = invitation.ExpiresAt.ToString("MMMM dd, yyyy")
-        };
-
-        var subject = $"You're invited to join {companyName}";
-        var body = await emailTemplateService.RenderAsync("Invitation", model);
-
-        await emailSender.SendEmailAsync(invitation.Email, subject, body);
     }
 }
