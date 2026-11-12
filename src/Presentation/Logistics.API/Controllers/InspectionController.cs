@@ -55,6 +55,7 @@ public class InspectionsController(IMediator mediator) : ControllerBase
     [ProducesResponseType(typeof(Guid), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status400BadRequest)]
     [Authorize]
+    [Consumes("multipart/form-data")]
     [RequestSizeLimit(100 * 1024 * 1024)]
     public async Task<IActionResult> CreateInspection([FromForm] CreateInspectionRequest request)
     {

@@ -39,6 +39,7 @@ public class ImportController(IMediator mediator) : ControllerBase
     [HttpPost("preview", Name = "PreviewImport")]
     [ProducesResponseType(typeof(ImportPreviewDto), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status400BadRequest)]
+    [Consumes("multipart/form-data")]
     [RequestSizeLimit(RequestLimitBytes)]
     public async Task<IActionResult> Preview([FromForm] PreviewImportRequest request)
     {
@@ -57,12 +58,14 @@ public class ImportController(IMediator mediator) : ControllerBase
     [HttpPost("validate", Name = "ValidateImport")]
     [ProducesResponseType(typeof(ImportResultDto), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status400BadRequest)]
+    [Consumes("multipart/form-data")]
     [RequestSizeLimit(RequestLimitBytes)]
     public Task<IActionResult> Validate([FromForm] RunImportRequest request) => RunAsync(request, dryRun: true);
 
     [HttpPost(Name = "RunImport")]
     [ProducesResponseType(typeof(ImportResultDto), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status400BadRequest)]
+    [Consumes("multipart/form-data")]
     [RequestSizeLimit(RequestLimitBytes)]
     public Task<IActionResult> Run([FromForm] RunImportRequest request) => RunAsync(request, dryRun: false);
 

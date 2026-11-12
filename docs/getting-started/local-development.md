@@ -158,7 +158,7 @@ For payment testing:
 
 | Application     | URL                              | Credentials                       |
 | --------------- | -------------------------------- | --------------------------------- |
-| API (Swagger)   | <https://localhost:7000/swagger> | -                                 |
+| API reference   | <http://localhost:7000/scalar>   | -                                 |
 | Identity Server | <https://localhost:7001>         | -                                 |
 | Admin Portal    | <http://localhost:7002>          | <admin@test.com> / Test12345#     |
 | TMS Portal      | <http://localhost:7003>          | <owner@test.com> / Test12345#     |

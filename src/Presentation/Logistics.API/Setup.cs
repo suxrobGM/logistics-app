@@ -11,6 +11,7 @@ using Logistics.API.Extensions;
 using Logistics.API.Jobs;
 using Logistics.API.Middlewares;
 using Logistics.API.ModelBinders;
+using Logistics.API.OpenApi;
 using Logistics.Application;
 using Logistics.Domain.Options;
 using Logistics.Infrastructure.Communications;
@@ -38,6 +39,8 @@ using Logistics.McpServer;
 using Logistics.TelegramBot;
 using Logistics.Shared.Models;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.OpenApi;
+using Scalar.AspNetCore;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Authorization;
@@ -58,10 +61,8 @@ internal static class Setup
             var services = builder.Services;
             var configuration = builder.Configuration;
 
-            // Application layers
             services.AddApplicationLayer();
 
-            // Infrastructure layers
             services.AddCommunicationsInfrastructure(configuration);
             services.AddDocumentsInfrastructure();
             services.AddVinInfrastructure();
@@ -82,25 +83,31 @@ internal static class Setup
                 .AddTenantDatabase()
                 .AddIdentity();
 
-            // Backs secret-column encryption and the OAuth state protector. Stable app name + master-DB
-            // key ring so ciphertext survives restarts and works across API instances.
+            // Fixed app name and a master-DB key ring, so encrypted columns survive restarts and scale-out.
             services.AddLogisticsDataProtection<MasterDbContext>("LogisticsX");
 
-            // Real health probe: master DB connectivity (composes with AddHealthChecks() in LogisticsHost).
             services.AddHealthChecks()
                 .AddDbContextCheck<MasterDbContext>("master-db")
                 .AddCheck<HangfireHealthCheck>("hangfire");
 
-            // Registered here (not the shared persistence builder) since it needs Data Protection -
-            // keeps hosts without it, e.g. the DB migrator, constructible.
+            // Needs Data Protection, which the DB migrator host doesn't register.
             services.AddScoped<IOAuthStateProtector, OAuthStateProtector>();
             services.TryAddSingleton(TimeProvider.System);
 
             services.AddHttpContextAccessor();
             services.AddMemoryCache();
             services.AddAuthorization();
-            services.AddEndpointsApiExplorer();
-            services.AddSwaggerGen();
+            services.AddOpenApi(options =>
+            {
+                // ng-openapi-gen reads 3.0 and 3.1 only.
+                options.OpenApiVersion = OpenApiSpecVersion.OpenApi3_1;
+                options.AddSchemaTransformer<DateTimeSchemaTransformer>();
+                options.AddOperationTransformer<EnumParameterTransformer>();
+                options.AddDocumentTransformer<EnumSchemaTransformer>();
+            });
+
+            // The OpenAPI document is built from these options, not MVC's.
+            services.ConfigureHttpJsonOptions(options => ConfigureJson(options.SerializerOptions));
 
             services.AddOptions<ImpersonationOptions>()
                 .Bind(configuration.GetSection(ImpersonationOptions.SectionName))
@@ -113,7 +120,7 @@ internal static class Setup
 
             services.AddOptions<ProductLicenseOptions>()
                 .Bind(configuration.GetSection(ProductLicenseOptions.SectionName))
-                // Local runs are not deployments: keep them out of the heartbeat table unless asked.
+                // Keep local runs out of the heartbeat table unless asked.
                 .PostConfigure(o =>
                 {
                     if (builder.Environment.IsDevelopment() && configuration["License:HeartbeatEnabled"] is null)
@@ -126,7 +133,6 @@ internal static class Setup
                     "License:HeartbeatUrl must be an absolute URL while License:HeartbeatEnabled is true.")
                 .ValidateOnStart();
 
-            // Rate limiting configuration
             services.AddRateLimiter(options =>
             {
                 options.GlobalLimiter = PartitionedRateLimiter.Create<HttpContext, string>(context =>
@@ -139,10 +145,9 @@ internal static class Setup
                             Window = TimeSpan.FromMinutes(1)
                         }));
 
-                // Strict rate limit for impersonation endpoint
                 options.AddIpFixedWindowPolicy("impersonation", 5, TimeSpan.FromMinutes(15));
 
-                // Anonymous heartbeat receiver: one instance reports once a day, so this is generous.
+                // An instance reports once a day.
                 options.AddIpFixedWindowPolicy(ProductLicenseController.HeartbeatRateLimitPolicy, 10, TimeSpan.FromMinutes(10));
 
                 options.OnRejected = async (context, cancellationToken) =>
@@ -172,8 +177,6 @@ internal static class Setup
             services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
                 .AddJwtBearer(JwtBearerDefaults.AuthenticationScheme, options =>
                 {
-                    // Bind supplies RequireHttpsMetadata when configured; it otherwise stays true,
-                    // so only Development relaxes it.
                     configuration.Bind("Jwt", options);
 
                     if (builder.Environment.IsDevelopment() && configuration["Jwt:RequireHttpsMetadata"] is null)
@@ -189,8 +192,7 @@ internal static class Setup
                         ValidAudience = configuration["Jwt:Audience"]
                     };
 
-                    // Browser websockets cannot set an Authorization header, so SignalR passes the
-                    // token as the access_token query parameter.
+                    // Browser websockets can't send an Authorization header, so SignalR uses the query string.
                     options.Events = new JwtBearerEvents
                     {
                         OnMessageReceived = context =>
@@ -215,7 +217,6 @@ internal static class Setup
 
                     configure.Filters.Add(new AuthorizeFilter(policy));
 
-                    // Add custom model binder for snake_case enum query parameters
                     configure.ModelBinderProviders.Insert(0, new SnakeCaseEnumModelBinderProvider());
                 })
                 .ConfigureApiBehaviorOptions(options =>
@@ -223,14 +224,7 @@ internal static class Setup
                     options.InvalidModelStateResponseFactory = context =>
                         new BadRequestObjectResult(Result.Fail(GetModelStateErrors(context.ModelState)));
                 })
-                .AddJsonOptions(options =>
-                {
-                    options.JsonSerializerOptions.Converters.Add(
-                        new JsonStringEnumConverter(JsonNamingPolicy.SnakeCaseLower)
-                    );
-                    options.JsonSerializerOptions.Converters.Add(new Iso8601UtcDateTimeConverter());
-                    options.JsonSerializerOptions.DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull;
-                });
+                .AddJsonOptions(options => ConfigureJson(options.JsonSerializerOptions));
 
             services.AddLogisticsCors("https://logisticsx.app", "https://*.logisticsx.app");
             return builder.Build();
@@ -243,18 +237,18 @@ internal static class Setup
         {
             app.UseLogisticsProductVersionHeader();
 
-            // Serilog must wrap the exception handler so it logs AFTER error body is captured
+            // Before the exception handler, so the log includes the error body.
             app.UseSerilogRequestLoggingWithErrorDetails();
             app.UseCustomExceptionHandler();
 
             if (app.Environment.IsDevelopment())
             {
-                app.UseSwagger();
-                app.UseSwaggerUI();
+                app.MapOpenApi();
+                app.MapScalarApiReference();
             }
             else
             {
-                // Not in Development: it serves http only, so redirection just warns on every start.
+                // Development serves http only.
                 app.UseHttpsRedirection();
             }
 
@@ -272,10 +266,8 @@ internal static class Setup
 
             app.MapControllers();
 
-            // MCP Server
             app.MapMcpEndpoint();
 
-            // Telegram Bot
             app.MapTelegramWebhook();
 
             app.MapHub<TrackingHub>("/hubs/tracking").RequireAuthorization();
@@ -308,11 +300,20 @@ internal static class Setup
             NegotiationExpirySweepJob.ScheduleJobs();
             ProductLicenseHeartbeatJob.ScheduleJobs();
 
-            // Remove recurring jobs whose code is gone, so Hangfire storage stops firing them
+            // Jobs whose code is gone.
             RecurringJob.RemoveIfExists("ai-dispatch");
             RecurringJob.RemoveIfExists("ProcessMaintenanceReminders");
             return app;
         }
+    }
+
+    /// <summary>The wire format shared by MVC and the OpenAPI document.</summary>
+    private static void ConfigureJson(JsonSerializerOptions options)
+    {
+        options.Converters.Add(new JsonStringEnumConverter(JsonNamingPolicy.SnakeCaseLower));
+        options.Converters.Add(new Iso8601UtcDateTimeConverter());
+        options.DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull;
+        options.NumberHandling = JsonNumberHandling.Strict;
     }
 
     private static string GetModelStateErrors(ModelStateDictionary modelState)

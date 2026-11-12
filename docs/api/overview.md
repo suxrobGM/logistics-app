@@ -9,12 +9,14 @@ The Logistics API is a RESTful service built with ASP.NET Core.
 | Development | <https://localhost:7000>     |
 | Production  | <https://api.yourdomain.com> |
 
-## Swagger Documentation
+## API Reference
 
-Interactive API documentation is available at:
+In Development the API serves its OpenAPI document and an interactive reference (Scalar):
 
-- Development: <https://localhost:7000/swagger>
-- Production: <https://api.yourdomain.com/swagger> (if enabled)
+- OpenAPI document: <http://localhost:7000/openapi/v1.json>
+- API reference: <http://localhost:7000/scalar>
+
+Neither is served outside Development.
 
 ## Authentication
 

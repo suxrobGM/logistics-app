@@ -46,7 +46,7 @@ Three demo tenants are seeded: `us` (Heartland Logistics LLC) and `eu` (EuroFrei
 
 | Service | URL |
 | --- | --- |
-| API (Swagger) | https://localhost:7000/swagger |
+| API reference | http://localhost:7000/scalar |
 | Identity Server | https://localhost:7001 |
 | Admin Portal | http://localhost:7002 |
 | TMS Portal | http://localhost:7003 |

@@ -7,10 +7,16 @@ Started 2026-11-11. Phase 1 is done; phase 2 waits on third-party packages.
 - Every project targets `net11.0` from `Directory.Build.props`; SDK pinned to 11.0.100 in `global.json`.
   CI (`build.yml`) and the three Dockerfiles use 11.0.
 - ASP.NET Core / Microsoft.Extensions on 11.0.0. Open.IdentityServer 3.1.5, Anthropic 13.8
-  (API version `2026-10-21`), Stripe.net 53.1 (API version `2026-09-30.endive`), Swashbuckle 11.
+  (API version `2026-10-21`), Stripe.net 53.1 (API version `2026-09-30.endive`).
 - `double`/`float` → `decimal` goes through `ToDecimal()` (`FloatingPointExtensions`): .NET 11
   casts keep the exact binary value, which skewed driver share, payroll and rate math.
 - xUnit v3 on Microsoft.Testing.Platform (`global.json` `test.runner`), `coverlet.MTP`.
+- Built-in OpenAPI (`Microsoft.AspNetCore.OpenApi`) replaced Swashbuckle on 2026-11-12, with Scalar at
+  `/scalar`. MVC and `Http.Json` share one `ConfigureJson`, with numbers kept strict. The document is pinned to
+  3.1 because ng-openapi-gen can't read 3.2. Three transformers in `Logistics.API/OpenApi/` fix generator gaps:
+  date-time types behind the custom converter, `null` leaking into shared enums, and enum query/route/form
+  fields listed by C# name. Generic schemas use the default names (`PagedResponseOfLoadDto`). Clients
+  regenerated with ng-openapi-gen 1.1 and openapi-generator 7.27.
 - C#: collection expressions (incl. C# 15 `with(...)`), primary constructors, extension blocks,
   `[GeneratedRegex]`, UUIDv7 primary keys. Style rules enforced in the build.
 - Private: outreach tool on `net11.0` (its own `private/Directory.Packages.props`).
@@ -51,12 +57,6 @@ Then, in one change:
 
 ## Decided against (revisit only with a reason)
 
-- **Built-in OpenAPI instead of Swashbuckle.** Tried 2026-11-11: same paths and operation ids, but the
-  generator reads the minimal-API `Http.Json` options, not MVC's. Result: enums lose their snake_case
-  values (emitted as integers), every number becomes `anyOf: [number, string]`, and generic schemas are
-  renamed (`PagedResponseOfLoadDto` vs `LoadDtoPagedResponse`). The Angular client would change
-  everywhere. Matching would need mirrored JSON options (which also change MCP/Telegram minimal
-  endpoints), strict number handling and a custom `CreateSchemaReferenceId`.
 - **IDE0305** (`.ToList()` → `[.. ]`): wrapping long LINQ chains reads worse. Left at its default.
 - **xUnit1051** (pass `TestContext.Current.CancellationToken`): off for `test/**`. Auto-fixing would pin
   NSubstitute setups and `Received()` checks to one token.

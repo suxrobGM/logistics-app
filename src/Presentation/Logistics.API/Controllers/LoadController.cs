@@ -80,6 +80,7 @@ public class LoadController(IMediator mediator) : ControllerBase
     [ProducesResponseType(typeof(ImportLoadFromPdfResponse), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status400BadRequest)]
     [Authorize(Policy = Permission.Load.Manage)]
+    [Consumes("multipart/form-data")]
     [RequestSizeLimit(10 * 1024 * 1024)] // 10 MB limit
     public async Task<IActionResult> ImportFromPdf([FromForm] ImportLoadFromPdfRequest request)
     {

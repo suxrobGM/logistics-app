@@ -77,6 +77,7 @@ public class ExpenseController(IMediator mediator) : ControllerBase
     [ProducesResponseType(typeof(UploadReceiptResponse), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status400BadRequest)]
     [Authorize(Policy = Permission.Expense.Manage)]
+    [Consumes("multipart/form-data")]
     [RequestSizeLimit(20 * 1024 * 1024)] // 20MB limit
     public async Task<IActionResult> UploadReceipt([FromForm] UploadReceiptRequest request)
     {

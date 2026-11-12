@@ -48,6 +48,7 @@ public class DocumentController(IMediator mediator) : ControllerBase
     [ProducesResponseType(typeof(Guid), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status400BadRequest)]
     [Authorize(Policy = Permission.Document.Manage)]
+    [Consumes("multipart/form-data")]
     [RequestSizeLimit(MaxUploadSizeBytes)]
     public async Task<IActionResult> UploadDocument([FromForm] UploadDocumentRequest request)
     {
@@ -122,6 +123,7 @@ public class DocumentController(IMediator mediator) : ControllerBase
     [ProducesResponseType(typeof(Guid), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status400BadRequest)]
     [Authorize(Policy = Permission.Document.Manage)]
+    [Consumes("multipart/form-data")]
     [RequestSizeLimit(MaxUploadSizeBytes)] // 20MB limit for multiple photos
     public async Task<IActionResult> CaptureProofOfDelivery([FromForm] CaptureProofOfDeliveryRequest request)
     {
@@ -165,6 +167,7 @@ public class DocumentController(IMediator mediator) : ControllerBase
     [ProducesResponseType(typeof(Guid), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status400BadRequest)]
     [Authorize(Policy = Permission.Document.Manage)]
+    [Consumes("multipart/form-data")]
     [RequestSizeLimit(MaxUploadSizeBytes)] // 20MB limit for multiple photos
     public async Task<IActionResult> CaptureBillOfLading([FromForm] CaptureProofOfDeliveryRequest request)
     {

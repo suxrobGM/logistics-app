@@ -2,6 +2,7 @@ using Logistics.Infrastructure.Integrations.Common;
 using Logistics.TelegramBot.Options;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.DependencyInjection;
+using Telegram.Bot;
 using Telegram.Bot.Types;
 
 namespace Logistics.TelegramBot.Handlers;
@@ -25,7 +26,7 @@ internal static class TelegramWebhookHandler
             return;
         }
 
-        var update = await context.Request.ReadFromJsonAsync<Update>(context.RequestAborted);
+        var update = await context.Request.ReadFromJsonAsync<Update>(JsonBotAPI.Options, context.RequestAborted);
         if (update is null)
         {
             context.Response.StatusCode = StatusCodes.Status400BadRequest;

@@ -144,7 +144,7 @@ dotnet run --project src/Presentation/Logistics.IdentityServer   # https://local
 dotnet run --project src/Presentation/Logistics.API              # https://localhost:7000
 ```
 
-The Swagger UI is at <https://localhost:7000/swagger>.
+The API reference is at <http://localhost:7000/scalar>.
 
 With access to the private submodule, you can also start the TMS portal. It needs [Bun](https://bun.sh).
 
