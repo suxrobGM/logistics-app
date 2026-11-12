@@ -81,7 +81,11 @@ public class ContainerDeadlineAlertServiceTests
                 Type = TerminalType.InlandDepot,
                 Address = new Logistics.Domain.Primitives.ValueObjects.Address
                 {
-                    Line1 = "1 Yard", City = "Carson", State = "CA", ZipCode = "90745", Country = "US"
+                    Line1 = "1 Yard",
+                    City = "Carson",
+                    State = "CA",
+                    ZipCode = "90745",
+                    Country = "US"
                 }
             });
         });

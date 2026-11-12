@@ -18,41 +18,41 @@ public static class Registrar
 {
     extension(IServiceCollection services)
     {
-            /// <summary>
-            ///     Add a persistence infrastructure layer (databases, repositories, multi-tenancy).
-            ///     Returns IInfrastructureBuilder for fluent configuration of Master/Tenant databases.
-            /// </summary>
-            /// <param name="services">The service collection.</param>
-            /// <param name="configuration">The configuration.</param>
-            /// <returns>The infrastructure builder.</returns>
-            public IPersistenceInfrastructureBuilder AddPersistenceInfrastructure(
-        IConfiguration configuration)
+        /// <summary>
+        ///     Add a persistence infrastructure layer (databases, repositories, multi-tenancy).
+        ///     Returns IInfrastructureBuilder for fluent configuration of Master/Tenant databases.
+        /// </summary>
+        /// <param name="services">The service collection.</param>
+        /// <param name="configuration">The configuration.</param>
+        /// <returns>The infrastructure builder.</returns>
+        public IPersistenceInfrastructureBuilder AddPersistenceInfrastructure(
+    IConfiguration configuration)
+        {
+            // This assembly holds no handlers; the interceptor just needs IMediator resolvable in
+            // hosts (IdentityServer, DbMigrator) that never compose the Application layer.
+            services.AddMediator();
+
+            services.AddScoped<DispatchDomainEventsInterceptor>();
+            services.AddScoped<AuditableEntitySaveChangesInterceptor>();
+
+            services.Configure<CustomerPortalOptions>(configuration.GetSection(CustomerPortalOptions.SectionName));
+            services.Configure<IdentityServerOptions>(configuration.GetSection(IdentityServerOptions.SectionName));
+            services.Configure<OwnerNotificationOptions>(configuration.GetSection(OwnerNotificationOptions.SectionName));
+
+            // Current user service (only for web apps with IHttpContextAccessor)
+            services.TryAddScoped<ICurrentUserService>(sp =>
             {
-                // This assembly holds no handlers; the interceptor just needs IMediator resolvable in
-                // hosts (IdentityServer, DbMigrator) that never compose the Application layer.
-                services.AddMediator();
+                var httpContextAccessor = sp.GetService<IHttpContextAccessor>();
+                return httpContextAccessor is not null
+                    ? new CurrentUserService(httpContextAccessor)
+                    : new NoopCurrentUserService();
+            });
 
-                services.AddScoped<DispatchDomainEventsInterceptor>();
-                services.AddScoped<AuditableEntitySaveChangesInterceptor>();
+            // Privacy / GDPR
+            services.AddScoped<IDataAnonymizer, DataAnonymizer>();
+            services.AddScoped<IUserTenantReader, UserTenantReader>();
 
-                services.Configure<CustomerPortalOptions>(configuration.GetSection(CustomerPortalOptions.SectionName));
-                services.Configure<IdentityServerOptions>(configuration.GetSection(IdentityServerOptions.SectionName));
-                services.Configure<OwnerNotificationOptions>(configuration.GetSection(OwnerNotificationOptions.SectionName));
-
-                // Current user service (only for web apps with IHttpContextAccessor)
-                services.TryAddScoped<ICurrentUserService>(sp =>
-                {
-                    var httpContextAccessor = sp.GetService<IHttpContextAccessor>();
-                    return httpContextAccessor is not null
-                        ? new CurrentUserService(httpContextAccessor)
-                        : new NoopCurrentUserService();
-                });
-
-                // Privacy / GDPR
-                services.AddScoped<IDataAnonymizer, DataAnonymizer>();
-                services.AddScoped<IUserTenantReader, UserTenantReader>();
-
-                return new PersistenceInfrastructureBuilder(services, configuration);
-            }
+            return new PersistenceInfrastructureBuilder(services, configuration);
+        }
     }
 }

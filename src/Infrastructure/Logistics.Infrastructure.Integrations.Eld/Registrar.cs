@@ -14,23 +14,23 @@ public static class Registrar
 {
     extension(IServiceCollection services)
     {
-            /// <summary>
-            ///     Add ELD provider integrations (Samsara, Motive, TT ELD, Demo).
-            /// </summary>
-            public IServiceCollection AddEldIntegrations(
-        IConfiguration configuration)
-            {
-                services.AddHttpClient<SamsaraEldService>();
-                services.AddHttpClient<MotiveEldService>();
-                services.AddHttpClient<TtEldService>();
-                services.AddHttpClient<GeotabClient>();
-                services.AddScoped<GeotabEldService>();
-                services.AddScoped<DemoEldService>();
+        /// <summary>
+        ///     Add ELD provider integrations (Samsara, Motive, TT ELD, Demo).
+        /// </summary>
+        public IServiceCollection AddEldIntegrations(
+    IConfiguration configuration)
+        {
+            services.AddHttpClient<SamsaraEldService>();
+            services.AddHttpClient<MotiveEldService>();
+            services.AddHttpClient<TtEldService>();
+            services.AddHttpClient<GeotabClient>();
+            services.AddScoped<GeotabEldService>();
+            services.AddScoped<DemoEldService>();
 
-                // Options binding + factory pattern for provider selection
-                services.AddProviderIntegration<EldOptions, IEldProviderFactory, EldProviderFactory>(
-                    configuration, EldOptions.SectionName);
-                return services;
-            }
+            // Options binding + factory pattern for provider selection
+            services.AddProviderIntegration<EldOptions, IEldProviderFactory, EldProviderFactory>(
+                configuration, EldOptions.SectionName);
+            return services;
+        }
     }
 }

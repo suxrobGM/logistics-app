@@ -17,35 +17,35 @@ public static class HttpClientJsonExtensions
 {
     extension(HttpClient client)
     {
-            /// <summary>
-            /// Performs a GET, deserialises the JSON body to <typeparamref name="T"/> on success, or
-            /// returns <c>default</c> on a non-success status, network error, or parse failure. All
-            /// failures are logged with the supplied <paramref name="action"/> label; the calling
-            /// service's logger category identifies which integration it was.
-            /// </summary>
-            public async Task<T?> TryGetFromJsonAsync<T>(
-        string url,
-                ILogger logger,
-                string action,
-                JsonSerializerOptions? options = null,
-                CancellationToken ct = default)
+        /// <summary>
+        /// Performs a GET, deserialises the JSON body to <typeparamref name="T"/> on success, or
+        /// returns <c>default</c> on a non-success status, network error, or parse failure. All
+        /// failures are logged with the supplied <paramref name="action"/> label; the calling
+        /// service's logger category identifies which integration it was.
+        /// </summary>
+        public async Task<T?> TryGetFromJsonAsync<T>(
+    string url,
+            ILogger logger,
+            string action,
+            JsonSerializerOptions? options = null,
+            CancellationToken ct = default)
+        {
+            try
             {
-                try
+                using var response = await client.GetAsync(url, ct);
+                if (!response.IsSuccessStatusCode)
                 {
-                    using var response = await client.GetAsync(url, ct);
-                    if (!response.IsSuccessStatusCode)
-                    {
-                        logger.LogWarning("{Action} returned {StatusCode}", action, response.StatusCode);
-                        return default;
-                    }
-
-                    return await response.Content.ReadFromJsonAsync<T>(options, ct);
-                }
-                catch (Exception ex) when (ex is HttpRequestException or JsonException or TaskCanceledException or NotSupportedException)
-                {
-                    logger.LogError(ex, "{Action} failed", action);
+                    logger.LogWarning("{Action} returned {StatusCode}", action, response.StatusCode);
                     return default;
                 }
+
+                return await response.Content.ReadFromJsonAsync<T>(options, ct);
             }
+            catch (Exception ex) when (ex is HttpRequestException or JsonException or TaskCanceledException or NotSupportedException)
+            {
+                logger.LogError(ex, "{Action} failed", action);
+                return default;
+            }
+        }
     }
 }

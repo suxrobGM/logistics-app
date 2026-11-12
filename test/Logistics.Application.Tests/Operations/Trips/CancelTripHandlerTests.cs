@@ -27,7 +27,10 @@ public class CancelTripHandlerTests
         var truck = new Truck { Number = "TRK-001", Type = TruckType.FreightTruck };
         var dispatcher = new Employee
         {
-            Email = "d@x.com", FirstName = "Dana", LastName = "Disp", Salary = Money.Zero("USD")
+            Email = "d@x.com",
+            FirstName = "Dana",
+            LastName = "Disp",
+            Salary = Money.Zero("USD")
         };
         var address = new Address { Line1 = "1 Main", City = "City", State = "ST", ZipCode = "00000", Country = "US" };
         Load NewLoad() => Load.Create($"Load {Guid.NewGuid():N}", LoadType.GeneralFreight, 1000, address, new GeoPoint(0, 0), address,

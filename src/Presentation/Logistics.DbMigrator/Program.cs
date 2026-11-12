@@ -1,4 +1,4 @@
-﻿using Open.IdentityServer.EntityFramework.DbContexts;
+using Open.IdentityServer.EntityFramework.DbContexts;
 using Open.IdentityServer.EntityFramework.Options;
 using Logistics.Infrastructure.Persistence.Data;
 using Logistics.DbMigrator.Extensions;

@@ -165,7 +165,11 @@ public class TruckLocationRecorderTests
 
     private static readonly Address DallasAddress = new()
     {
-        Line1 = "1 Main St", City = "Dallas", State = "TX", ZipCode = "75201", Country = "US"
+        Line1 = "1 Main St",
+        City = "Dallas",
+        State = "TX",
+        ZipCode = "75201",
+        Country = "US"
     };
 
     [Fact]

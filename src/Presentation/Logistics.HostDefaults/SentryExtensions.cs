@@ -58,23 +58,23 @@ public static class SentryExtensions
 
     extension(LoggerConfiguration loggerConfiguration)
     {
-            /// <summary>
-            /// Routes Serilog into the SDK that <see cref="AddLogisticsSentry"/> initialised.
-            /// </summary>
-            public LoggerConfiguration WriteToSentryIfEnabled(
-        IConfiguration configuration)
+        /// <summary>
+        /// Routes Serilog into the SDK that <see cref="AddLogisticsSentry"/> initialised.
+        /// </summary>
+        public LoggerConfiguration WriteToSentryIfEnabled(
+    IConfiguration configuration)
+        {
+            if (!configuration.IsSentryEnabled())
             {
-                if (!configuration.IsSentryEnabled())
-                {
-                    return loggerConfiguration;
-                }
-
-                return loggerConfiguration.WriteTo.Sentry(options =>
-                {
-                    options.InitializeSdk = false;
-                    options.MinimumEventLevel = LogEventLevel.Error;
-                    options.MinimumBreadcrumbLevel = LogEventLevel.Information;
-                });
+                return loggerConfiguration;
             }
+
+            return loggerConfiguration.WriteTo.Sentry(options =>
+            {
+                options.InitializeSdk = false;
+                options.MinimumEventLevel = LogEventLevel.Error;
+                options.MinimumBreadcrumbLevel = LogEventLevel.Information;
+            });
+        }
     }
 }

@@ -131,13 +131,21 @@ public class LoadChargeServiceTests
     {
         var keep = new LoadAccessorial
         {
-            Load = _load, LoadId = _load.Id, Name = "Lumper", LineItemType = InvoiceLineItemType.Lumper,
-            Unit = AccessorialUnit.Flat, Rate = 100m
+            Load = _load,
+            LoadId = _load.Id,
+            Name = "Lumper",
+            LineItemType = InvoiceLineItemType.Lumper,
+            Unit = AccessorialUnit.Flat,
+            Rate = 100m
         };
         var drop = new LoadAccessorial
         {
-            Load = _load, LoadId = _load.Id, Name = "Layover", LineItemType = InvoiceLineItemType.Layover,
-            Unit = AccessorialUnit.Flat, Rate = 250m
+            Load = _load,
+            LoadId = _load.Id,
+            Name = "Layover",
+            LineItemType = InvoiceLineItemType.Layover,
+            Unit = AccessorialUnit.Flat,
+            Rate = 250m
         };
         _load.Accessorials.AddRange([keep, drop]);
 

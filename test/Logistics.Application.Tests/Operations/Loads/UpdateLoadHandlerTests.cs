@@ -215,7 +215,10 @@ public class UpdateLoadHandlerTests
 
         await Update(new UpdateLoadCommand
         {
-            Id = load.Id, OriginAddress = origin, DestinationLocation = destination, Distance = 2500
+            Id = load.Id,
+            OriginAddress = origin,
+            DestinationLocation = destination,
+            Distance = 2500
         });
 
         var pickup = trip.Stops.Single(s => s.Type == TripStopType.PickUp);

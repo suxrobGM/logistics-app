@@ -11,19 +11,19 @@ public static class Registrar
 {
     extension(IServiceCollection services)
     {
-            /// <summary>
-            ///     Add accounting provider integrations (QuickBooks Online, Demo).
-            /// </summary>
-            public IServiceCollection AddAccountingIntegrations(
-        IConfiguration configuration)
-            {
-                services.AddHttpClient<QuickBooksOAuthClient>();
-                services.AddHttpClient<QuickBooksOnlineService>();
-                services.AddScoped<DemoAccountingService>();
+        /// <summary>
+        ///     Add accounting provider integrations (QuickBooks Online, Demo).
+        /// </summary>
+        public IServiceCollection AddAccountingIntegrations(
+    IConfiguration configuration)
+        {
+            services.AddHttpClient<QuickBooksOAuthClient>();
+            services.AddHttpClient<QuickBooksOnlineService>();
+            services.AddScoped<DemoAccountingService>();
 
-                services.AddProviderIntegration<AccountingOptions, IAccountingProviderFactory, AccountingProviderFactory>(
-                    configuration, AccountingOptions.SectionName);
-                return services;
-            }
+            services.AddProviderIntegration<AccountingOptions, IAccountingProviderFactory, AccountingProviderFactory>(
+                configuration, AccountingOptions.SectionName);
+            return services;
+        }
     }
 }

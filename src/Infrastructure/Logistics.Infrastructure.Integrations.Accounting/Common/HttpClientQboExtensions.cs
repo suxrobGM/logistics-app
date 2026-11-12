@@ -18,24 +18,24 @@ internal static class HttpClientQboExtensions
 
     extension(HttpClient client)
     {
-            public async Task<TResponse> GetQboAsync<TResponse>(
-        string url, string accessToken, string action, CancellationToken ct)
-            {
-                using var request = new HttpRequestMessage(HttpMethod.Get, url);
-                Authorize(request, accessToken);
-                return await SendAsync<TResponse>(client, request, action, ct);
-            }
+        public async Task<TResponse> GetQboAsync<TResponse>(
+    string url, string accessToken, string action, CancellationToken ct)
+        {
+            using var request = new HttpRequestMessage(HttpMethod.Get, url);
+            Authorize(request, accessToken);
+            return await SendAsync<TResponse>(client, request, action, ct);
+        }
 
-            public async Task<TResponse> PostQboAsync<TResponse>(
-        string url, object payload, string accessToken, string action, CancellationToken ct)
+        public async Task<TResponse> PostQboAsync<TResponse>(
+    string url, object payload, string accessToken, string action, CancellationToken ct)
+        {
+            using var request = new HttpRequestMessage(HttpMethod.Post, url)
             {
-                using var request = new HttpRequestMessage(HttpMethod.Post, url)
-                {
-                    Content = JsonContent.Create(payload, payload.GetType(), options: QboJsonOptions.Default)
-                };
-                Authorize(request, accessToken);
-                return await SendAsync<TResponse>(client, request, action, ct);
-            }
+                Content = JsonContent.Create(payload, payload.GetType(), options: QboJsonOptions.Default)
+            };
+            Authorize(request, accessToken);
+            return await SendAsync<TResponse>(client, request, action, ct);
+        }
     }
 
     extension(HttpResponseMessage response)

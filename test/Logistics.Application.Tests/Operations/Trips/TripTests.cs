@@ -9,14 +9,21 @@ public class TripTests
 {
     private static readonly Address Address = new()
     {
-        Line1 = "1 Main", City = "City", State = "ST", ZipCode = "00000", Country = "US"
+        Line1 = "1 Main",
+        City = "City",
+        State = "ST",
+        ZipCode = "00000",
+        Country = "US"
     };
 
     private readonly Truck _truck = new() { Number = "TRK-001", Type = TruckType.FreightTruck };
 
     private readonly Employee _dispatcher = new()
     {
-        Email = "d@x.com", FirstName = "Dana", LastName = "Disp", Salary = Money.Zero("USD")
+        Email = "d@x.com",
+        FirstName = "Dana",
+        LastName = "Disp",
+        Salary = Money.Zero("USD")
     };
 
     private Load NewLoad() => Load.Create(

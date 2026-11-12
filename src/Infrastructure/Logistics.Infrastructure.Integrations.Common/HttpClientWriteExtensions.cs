@@ -14,30 +14,30 @@ public static class HttpClientWriteExtensions
 {
     extension(HttpClient client)
     {
-            public async Task<bool> TryPostAsync<TReq>(
-        string url,
-                TReq body,
-                ILogger logger,
-                string action,
-                CancellationToken ct = default)
+        public async Task<bool> TryPostAsync<TReq>(
+    string url,
+            TReq body,
+            ILogger logger,
+            string action,
+            CancellationToken ct = default)
+        {
+            try
             {
-                try
+                using var response = await client.PostAsJsonAsync(url, body, ct);
+                if (response.IsSuccessStatusCode)
                 {
-                    using var response = await client.PostAsJsonAsync(url, body, ct);
-                    if (response.IsSuccessStatusCode)
-                    {
-                        return true;
-                    }
+                    return true;
+                }
 
-                    logger.LogWarning("{Action} returned {StatusCode}", action, response.StatusCode);
-                    return false;
-                }
-                catch (Exception ex) when (ex is HttpRequestException or JsonException or TaskCanceledException or NotSupportedException)
-                {
-                    logger.LogError(ex, "{Action} failed", action);
-                    return false;
-                }
+                logger.LogWarning("{Action} returned {StatusCode}", action, response.StatusCode);
+                return false;
             }
+            catch (Exception ex) when (ex is HttpRequestException or JsonException or TaskCanceledException or NotSupportedException)
+            {
+                logger.LogError(ex, "{Action} failed", action);
+                return false;
+            }
+        }
     }
 
 }

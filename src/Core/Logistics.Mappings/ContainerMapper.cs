@@ -45,25 +45,25 @@ public static partial class ContainerMapper
                 emptyReturn is null ? null : new TerminalRef(emptyReturn.Name, emptyReturn.Code));
         }
 
-            public ContainerDto ToDto(
-        DateTime now,
-                TerminalRef? currentTerminal,
-                TerminalRef? emptyReturnTerminal)
-            {
-                var dto = entity.ToDtoCore();
-                var freeTime = entity.GetFreeTime(now);
+        public ContainerDto ToDto(
+    DateTime now,
+            TerminalRef? currentTerminal,
+            TerminalRef? emptyReturnTerminal)
+        {
+            var dto = entity.ToDtoCore();
+            var freeTime = entity.GetFreeTime(now);
 
-                dto.CurrentTerminalName = currentTerminal?.Name;
-                dto.CurrentTerminalCode = currentTerminal?.Code;
-                dto.EmptyReturnTerminalName = emptyReturnTerminal?.Name;
-                dto.EmptyReturnTerminalCode = emptyReturnTerminal?.Code;
-                dto.IsAvailableForPickup = entity.IsAvailableForPickup(now);
-                dto.Demurrage = freeTime.Demurrage.ToDto();
-                dto.PerDiem = freeTime.PerDiem.ToDto();
-                dto.Chassis = freeTime.Chassis.ToDto();
-                dto.TotalCharge = freeTime.TotalCharge;
-                return dto;
-            }
+            dto.CurrentTerminalName = currentTerminal?.Name;
+            dto.CurrentTerminalCode = currentTerminal?.Code;
+            dto.EmptyReturnTerminalName = emptyReturnTerminal?.Name;
+            dto.EmptyReturnTerminalCode = emptyReturnTerminal?.Code;
+            dto.IsAvailableForPickup = entity.IsAvailableForPickup(now);
+            dto.Demurrage = freeTime.Demurrage.ToDto();
+            dto.PerDiem = freeTime.PerDiem.ToDto();
+            dto.Chassis = freeTime.Chassis.ToDto();
+            dto.TotalCharge = freeTime.TotalCharge;
+            return dto;
+        }
     }
 
 }

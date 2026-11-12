@@ -404,15 +404,15 @@ public class AccountingSyncServiceTests
 
     private static QboEntityMapping Synced(
         Guid localId, DateTime lastSyncedAt, string qboId = "1", QboLocalEntityType type = QboLocalEntityType.Customer) => new()
-    {
-        LocalId = localId,
-        LocalEntityType = type,
-        QboId = qboId,
-        QboSyncToken = "0",
-        LastSyncedHash = "old",
-        LastSyncedAt = lastSyncedAt,
-        SyncStatus = QboSyncStatus.Synced
-    };
+        {
+            LocalId = localId,
+            LocalEntityType = type,
+            QboId = qboId,
+            QboSyncToken = "0",
+            LastSyncedHash = "old",
+            LastSyncedAt = lastSyncedAt,
+            SyncStatus = QboSyncStatus.Synced
+        };
 
     private static QboEntityMapping Failed(Guid localId) => new()
     {

@@ -27,15 +27,15 @@ public class LoadInvoiceChargesTests
 
     internal static LoadAccessorial Accessorial(Load load, string name, InvoiceLineItemType type, decimal rate,
         decimal quantity = 1, AccessorialUnit unit = AccessorialUnit.Flat) => new()
-    {
-        LoadId = load.Id,
-        Load = load,
-        Name = name,
-        LineItemType = type,
-        Unit = unit,
-        Rate = rate,
-        Quantity = quantity
-    };
+        {
+            LoadId = load.Id,
+            Load = load,
+            Name = name,
+            LineItemType = type,
+            Unit = unit,
+            Rate = rate,
+            Quantity = quantity
+        };
 
     [Fact]
     public void CreateInvoice_LinehaulOnly_HasSingleBaseRateLine()
@@ -98,13 +98,19 @@ public class LoadInvoiceChargesTests
         var invoice = LoadFactory.CreateInvoice(load);
         var manual = new InvoiceLineItem
         {
-            InvoiceId = invoice.Id, Description = "Tarp", Type = InvoiceLineItemType.Other,
-            Amount = new Money { Amount = 40m, Currency = "USD" }, Order = 1
+            InvoiceId = invoice.Id,
+            Description = "Tarp",
+            Type = InvoiceLineItemType.Other,
+            Amount = new Money { Amount = 40m, Currency = "USD" },
+            Order = 1
         };
         var storage = new InvoiceLineItem
         {
-            InvoiceId = invoice.Id, Description = "Storage", Type = InvoiceLineItemType.Storage,
-            Amount = new Money { Amount = 150m, Currency = "USD" }, Order = 2
+            InvoiceId = invoice.Id,
+            Description = "Storage",
+            Type = InvoiceLineItemType.Storage,
+            Amount = new Money { Amount = 150m, Currency = "USD" },
+            Order = 2
         };
         invoice.LineItems.AddRange([manual, storage]);
 

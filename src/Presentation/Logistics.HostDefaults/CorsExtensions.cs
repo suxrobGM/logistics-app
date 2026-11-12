@@ -15,29 +15,29 @@ public static class CorsExtensions
 
     extension(IServiceCollection services)
     {
-            public IServiceCollection AddLogisticsCors(
-        params string[] productionOrigins)
+        public IServiceCollection AddLogisticsCors(
+    params string[] productionOrigins)
+        {
+            services.AddCors(options =>
             {
-                services.AddCors(options =>
+                options.AddPolicy(DefaultCorsPolicy, cors =>
                 {
-                    options.AddPolicy(DefaultCorsPolicy, cors =>
-                    {
-                        cors.SetIsOriginAllowedToAllowWildcardSubdomains()
-                            .WithOrigins(productionOrigins)
-                            .AllowAnyHeader()
-                            .AllowAnyMethod();
-                    });
-
-                    options.AddPolicy(AnyCorsPolicy, cors =>
-                    {
-                        cors.AllowAnyOrigin()
-                            .AllowAnyHeader()
-                            .AllowAnyMethod();
-                    });
+                    cors.SetIsOriginAllowedToAllowWildcardSubdomains()
+                        .WithOrigins(productionOrigins)
+                        .AllowAnyHeader()
+                        .AllowAnyMethod();
                 });
 
-                return services;
-            }
+                options.AddPolicy(AnyCorsPolicy, cors =>
+                {
+                    cors.AllowAnyOrigin()
+                        .AllowAnyHeader()
+                        .AllowAnyMethod();
+                });
+            });
+
+            return services;
+        }
     }
 
     extension(WebApplication app)

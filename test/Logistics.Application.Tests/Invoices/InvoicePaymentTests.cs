@@ -229,9 +229,9 @@ public class InvoicePaymentTests
 
     private static Payment Payment(
         decimal amount, PaymentStatus status = PaymentStatus.Paid, string currency = "USD") => new()
-    {
-        Amount = new Money { Amount = amount, Currency = currency },
-        Status = status,
-        BillingAddress = FactoringTestData.Address
-    };
+        {
+            Amount = new Money { Amount = amount, Currency = currency },
+            Status = status,
+            BillingAddress = FactoringTestData.Address
+        };
 }

@@ -88,13 +88,21 @@ public class AddDrayageChargesHandlerTests
         load.ContainerId = container.Id;
         var lumper = new LoadAccessorial
         {
-            LoadId = load.Id, Load = load, Name = "Lumper", LineItemType = InvoiceLineItemType.Lumper,
-            Unit = AccessorialUnit.Flat, Rate = 100m
+            LoadId = load.Id,
+            Load = load,
+            Name = "Lumper",
+            LineItemType = InvoiceLineItemType.Lumper,
+            Unit = AccessorialUnit.Flat,
+            Rate = 100m
         };
         var oldDemurrage = new LoadAccessorial
         {
-            LoadId = load.Id, Load = load, Name = "Demurrage", LineItemType = InvoiceLineItemType.Demurrage,
-            Unit = AccessorialUnit.PerDay, Rate = 150m
+            LoadId = load.Id,
+            Load = load,
+            Name = "Demurrage",
+            LineItemType = InvoiceLineItemType.Demurrage,
+            Unit = AccessorialUnit.PerDay,
+            Rate = 150m
         };
         load.Accessorials.AddRange([lumper, oldDemurrage]);
 

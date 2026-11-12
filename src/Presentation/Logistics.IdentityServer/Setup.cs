@@ -1,4 +1,4 @@
-﻿using System.Threading.RateLimiting;
+using System.Threading.RateLimiting;
 using Open.IdentityServer;
 using Logistics.Application;
 using Logistics.Application.Modules.IdentityAccess.Users.Services;

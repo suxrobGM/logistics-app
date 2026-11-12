@@ -31,24 +31,24 @@ public static partial class FactoringMapper
 
     extension(FactoringBatch entity)
     {
-            /// <summary>
-            /// The schedule with its totals. Pass the items already loaded for the batch, and their DTOs only for
-            /// the detail read.
-            /// </summary>
-            public FactoringBatchDto ToDto(
-        string? factoringCompanyName, IReadOnlyCollection<FactoringBatchItem> items,
-                IEnumerable<FactoringBatchItemDto>? itemDtos = null)
+        /// <summary>
+        /// The schedule with its totals. Pass the items already loaded for the batch, and their DTOs only for
+        /// the detail read.
+        /// </summary>
+        public FactoringBatchDto ToDto(
+    string? factoringCompanyName, IReadOnlyCollection<FactoringBatchItem> items,
+            IEnumerable<FactoringBatchItemDto>? itemDtos = null)
+        {
+            return entity.ToDtoCore() with
             {
-                return entity.ToDtoCore() with
-                {
-                    FactoringCompanyName = factoringCompanyName,
-                    InvoiceCount = items.Count,
-                    AdvanceTotal = items.Sum(i => i.AdvanceAmount ?? 0m),
-                    FeeTotal = items.Sum(i => i.FeeAmount ?? 0m),
-                    ReserveOutstanding = items.Sum(i => i.ReserveOutstanding),
-                    Items = itemDtos ?? []
-                };
-            }
+                FactoringCompanyName = factoringCompanyName,
+                InvoiceCount = items.Count,
+                AdvanceTotal = items.Sum(i => i.AdvanceAmount ?? 0m),
+                FeeTotal = items.Sum(i => i.FeeAmount ?? 0m),
+                ReserveOutstanding = items.Sum(i => i.ReserveOutstanding),
+                Items = itemDtos ?? []
+            };
+        }
     }
 
     [MapperIgnoreSource(nameof(FactoringBatchItem.DomainEvents))]
@@ -71,18 +71,18 @@ public static partial class FactoringMapper
 
     extension(FactoringBatchItem entity)
     {
-            public FactoringBatchItemDto ToDto(
-        long invoiceNumber, long loadNumber, string? customerName,
-                FactoringAmounts estimate)
+        public FactoringBatchItemDto ToDto(
+    long invoiceNumber, long loadNumber, string? customerName,
+            FactoringAmounts estimate)
+        {
+            return entity.ToDtoCore() with
             {
-                return entity.ToDtoCore() with
-                {
-                    InvoiceNumber = invoiceNumber,
-                    LoadNumber = loadNumber,
-                    CustomerName = customerName,
-                    EstimatedAdvance = estimate.Advance,
-                    EstimatedFee = estimate.Fee
-                };
-            }
+                InvoiceNumber = invoiceNumber,
+                LoadNumber = loadNumber,
+                CustomerName = customerName,
+                EstimatedAdvance = estimate.Advance,
+                EstimatedFee = estimate.Fee
+            };
+        }
     }
 }

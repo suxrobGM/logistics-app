@@ -13,15 +13,15 @@ public static class DataProtectionExtensions
 {
     extension(IServiceCollection services)
     {
-            public IServiceCollection AddLogisticsDataProtection<TContext>(
-        string applicationName)
-                where TContext : DbContext, IDataProtectionKeyContext
-            {
-                services.AddDataProtection()
-                    .PersistKeysToDbContext<TContext>()
-                    .SetApplicationName(applicationName);
+        public IServiceCollection AddLogisticsDataProtection<TContext>(
+    string applicationName)
+            where TContext : DbContext, IDataProtectionKeyContext
+        {
+            services.AddDataProtection()
+                .PersistKeysToDbContext<TContext>()
+                .SetApplicationName(applicationName);
 
-                return services;
-            }
+            return services;
+        }
     }
 }

@@ -72,8 +72,11 @@ public class PayrollServiceTests
         {
             load.Accessorials.Add(new LoadAccessorial
             {
-                Load = load, Name = "Detention", LineItemType = InvoiceLineItemType.Detention,
-                Unit = AccessorialUnit.Flat, Rate = accessorials
+                Load = load,
+                Name = "Detention",
+                LineItemType = InvoiceLineItemType.Detention,
+                Unit = AccessorialUnit.Flat,
+                Rate = accessorials
             });
         }
 
@@ -185,7 +188,10 @@ public class PayrollServiceTests
         _driver.Salary = new Money { Amount = 250m, Currency = "USD" };
         var replacement = new Employee
         {
-            Email = "r@x.com", FirstName = "Raj", LastName = "Rao", SalaryType = SalaryType.PerLoad,
+            Email = "r@x.com",
+            FirstName = "Raj",
+            LastName = "Rao",
+            SalaryType = SalaryType.PerLoad,
             Salary = new Money { Amount = 250m, Currency = "USD" }
         };
         var load = Delivered(1000m);
@@ -214,16 +220,21 @@ public class PayrollServiceTests
         Delivered(3000m);
         _deductions.Add(new RecurringDeduction
         {
-            EmployeeId = _driver.Id, Type = PayDeductionType.TruckLease, Description = "Truck lease", Amount = 500m
+            EmployeeId = _driver.Id,
+            Type = PayDeductionType.TruckLease,
+            Description = "Truck lease",
+            Amount = 500m
         });
         var advance = new CashAdvance
         {
-            EmployeeId = _driver.Id, Amount = new Money { Amount = 300m, Currency = "USD" }
+            EmployeeId = _driver.Id,
+            Amount = new Money { Amount = 300m, Currency = "USD" }
         };
         var earlierInvoiceId = Guid.NewGuid();
         var alreadyDeducted = new CashAdvance
         {
-            EmployeeId = _driver.Id, Amount = new Money { Amount = 999m, Currency = "USD" },
+            EmployeeId = _driver.Id,
+            Amount = new Money { Amount = 999m, Currency = "USD" },
             PayrollInvoiceId = earlierInvoiceId
         };
         _advances.AddRange([advance, alreadyDeducted]);
@@ -267,7 +278,10 @@ public class PayrollServiceTests
     {
         _deductions.Add(new RecurringDeduction
         {
-            EmployeeId = _driver.Id, Type = PayDeductionType.Escrow, Description = "Escrow", Amount = 250m,
+            EmployeeId = _driver.Id,
+            Type = PayDeductionType.Escrow,
+            Description = "Escrow",
+            Amount = 250m,
             EscrowTarget = 1000m
         });
         _payrolls.Add(EarlierSettlement(-400m, InvoiceStatus.Paid));
@@ -306,12 +320,18 @@ public class PayrollServiceTests
         _driver.SalaryType = SalaryType.PerLoad;
         var alreadyPaid = new Employee
         {
-            Email = "p@x.com", FirstName = "Pat", LastName = "Lee", SalaryType = SalaryType.Weekly,
+            Email = "p@x.com",
+            FirstName = "Pat",
+            LastName = "Lee",
+            SalaryType = SalaryType.Weekly,
             Salary = new Money { Amount = 900m, Currency = "USD" }
         };
         var monthly = new Employee
         {
-            Email = "m@x.com", FirstName = "Mo", LastName = "Kim", SalaryType = SalaryType.Monthly,
+            Email = "m@x.com",
+            FirstName = "Mo",
+            LastName = "Kim",
+            SalaryType = SalaryType.Monthly,
             Salary = new Money { Amount = 4000m, Currency = "USD" }
         };
         _employees.AddRange([_driver, alreadyPaid, monthly]);
@@ -362,7 +382,9 @@ public class PayrollServiceTests
         };
         payroll.LineItems.Add(new InvoiceLineItem
         {
-            InvoiceId = payroll.Id, Description = "Escrow", Type = InvoiceLineItemType.Escrow,
+            InvoiceId = payroll.Id,
+            Description = "Escrow",
+            Type = InvoiceLineItemType.Escrow,
             Amount = new Money { Amount = escrowLine, Currency = "USD" }
         });
         return payroll;

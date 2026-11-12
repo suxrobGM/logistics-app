@@ -96,12 +96,17 @@ public class SettlementLinesTests
             1000m, "Gross", [Deduction(PayDeductionType.EldFee, 30m)], 0, [], []));
         payroll.LineItems.Add(new InvoiceLineItem
         {
-            InvoiceId = payroll.Id, Description = "Lumper paid by driver", Type = InvoiceLineItemType.Reimbursement,
-            Amount = new Money { Amount = 120m, Currency = "USD" }, Order = 5
+            InvoiceId = payroll.Id,
+            Description = "Lumper paid by driver",
+            Type = InvoiceLineItemType.Reimbursement,
+            Amount = new Money { Amount = 120m, Currency = "USD" },
+            Order = 5
         });
         payroll.LineItems.Add(new InvoiceLineItem
         {
-            InvoiceId = payroll.Id, Description = "Damaged pallet", Type = InvoiceLineItemType.Deduction,
+            InvoiceId = payroll.Id,
+            Description = "Damaged pallet",
+            Type = InvoiceLineItemType.Deduction,
             Amount = new Money { Amount = PayrollInvoice.SignedLineAmount(InvoiceLineItemType.Deduction, 80m), Currency = "USD" },
             Order = 6
         });

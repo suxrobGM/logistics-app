@@ -15,39 +15,39 @@ public static class TaxCalculationMappings
 {
     extension(IEnumerable<InvoiceLineItem> lineItems)
     {
-            /// <summary>
-            /// Builds calculator-line inputs from invoice line items, using each line's net total
-            /// (Amount * Quantity) as the taxable base.
-            /// </summary>
-            public IReadOnlyList<TaxCalculationLineItem> ToCalculationLines(
-        ) =>
-                lineItems
-                    .Select(li => new TaxCalculationLineItem
-                    {
-                        LineItemId = li.Id,
-                        NetAmount = li.Amount.Amount * li.Quantity,
-                        TaxCode = li.TaxCode,
-                        Description = li.Description
-                    })
-                    .ToList();
+        /// <summary>
+        /// Builds calculator-line inputs from invoice line items, using each line's net total
+        /// (Amount * Quantity) as the taxable base.
+        /// </summary>
+        public IReadOnlyList<TaxCalculationLineItem> ToCalculationLines(
+    ) =>
+            lineItems
+                .Select(li => new TaxCalculationLineItem
+                {
+                    LineItemId = li.Id,
+                    NetAmount = li.Amount.Amount * li.Quantity,
+                    TaxCode = li.TaxCode,
+                    Description = li.Description
+                })
+                .ToList();
     }
 
     extension(IEnumerable<PreviewInvoiceTaxLineItem> lineItems)
     {
-            /// <summary>
-            /// Builds calculator-line inputs from the preview-tax request DTOs.
-            /// </summary>
-            public IReadOnlyList<TaxCalculationLineItem> ToCalculationLines(
-        ) =>
-                lineItems
-                    .Select(li => new TaxCalculationLineItem
-                    {
-                        LineItemId = li.LineItemId,
-                        NetAmount = li.Amount * li.Quantity,
-                        TaxCode = li.TaxCode,
-                        Description = li.Description
-                    })
-                    .ToList();
+        /// <summary>
+        /// Builds calculator-line inputs from the preview-tax request DTOs.
+        /// </summary>
+        public IReadOnlyList<TaxCalculationLineItem> ToCalculationLines(
+    ) =>
+            lineItems
+                .Select(li => new TaxCalculationLineItem
+                {
+                    LineItemId = li.LineItemId,
+                    NetAmount = li.Amount * li.Quantity,
+                    TaxCode = li.TaxCode,
+                    Description = li.Description
+                })
+                .ToList();
     }
 
     extension(TaxCalculationLineResult line)
@@ -69,23 +69,23 @@ public static class TaxCalculationMappings
 
     extension(TaxCalculationResult result)
     {
-            /// <summary>
-            /// Translate a <see cref="TaxCalculationResult"/> into the API's preview response, given the
-            /// invoice currency and pre-tax totals.
-            /// </summary>
-            public PreviewInvoiceTaxResponse ToPreviewResponse(
-        string currency,
-                decimal subtotal,
-                decimal taxTotal,
-                decimal total) => new()
-                {
-                    TaxBehavior = result.TaxBehavior,
-                    Subtotal = new() { Amount = subtotal, Currency = currency },
-                    TaxTotal = new() { Amount = taxTotal, Currency = currency },
-                    Total = new() { Amount = total, Currency = currency },
-                    Breakdown = result.Breakdown.ToDto(),
-                    Lines = result.Lines.ToDto(),
-                    Warning = result.Warning
-                };
+        /// <summary>
+        /// Translate a <see cref="TaxCalculationResult"/> into the API's preview response, given the
+        /// invoice currency and pre-tax totals.
+        /// </summary>
+        public PreviewInvoiceTaxResponse ToPreviewResponse(
+    string currency,
+            decimal subtotal,
+            decimal taxTotal,
+            decimal total) => new()
+            {
+                TaxBehavior = result.TaxBehavior,
+                Subtotal = new() { Amount = subtotal, Currency = currency },
+                TaxTotal = new() { Amount = taxTotal, Currency = currency },
+                Total = new() { Amount = total, Currency = currency },
+                Breakdown = result.Breakdown.ToDto(),
+                Lines = result.Lines.ToDto(),
+                Warning = result.Warning
+            };
     }
 }

@@ -10,7 +10,11 @@ public class TripEtaTests
 {
     private static readonly Address Address = new()
     {
-        Line1 = "1 Main", City = "City", State = "ST", ZipCode = "00000", Country = "US"
+        Line1 = "1 Main",
+        City = "City",
+        State = "ST",
+        ZipCode = "00000",
+        Country = "US"
     };
 
     private static readonly DateTime Now = new(2026, 11, 12, 12, 0, 0, DateTimeKind.Utc);
@@ -21,7 +25,10 @@ public class TripEtaTests
     {
         var dispatcher = new Employee
         {
-            Email = "d@x.com", FirstName = "Dana", LastName = "Disp", Salary = Money.Zero("USD")
+            Email = "d@x.com",
+            FirstName = "Dana",
+            LastName = "Disp",
+            Salary = Money.Zero("USD")
         };
         var load = Load.Create("Load", LoadType.GeneralFreight, 1000, Address, new GeoPoint(0, 0), Address,
             new GeoPoint(1, 1), new Customer { Name = "Acme" }, _truck, dispatcher, "USD");

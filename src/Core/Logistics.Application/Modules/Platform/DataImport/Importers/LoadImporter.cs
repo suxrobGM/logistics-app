@@ -25,22 +25,42 @@ internal sealed class LoadImporter(
 {
     private static readonly IReadOnlyDictionary<string, LoadStatus> StatusAliases = new Dictionary<string, LoadStatus>
     {
-        ["Open"] = LoadStatus.Draft, ["Booked"] = LoadStatus.Draft, ["Available"] = LoadStatus.Draft,
-        ["Planned"] = LoadStatus.Draft, ["Pending"] = LoadStatus.Draft, ["New"] = LoadStatus.Draft,
-        ["Assigned"] = LoadStatus.Dispatched, ["Covered"] = LoadStatus.Dispatched,
-        ["In Transit"] = LoadStatus.PickedUp, ["Loaded"] = LoadStatus.PickedUp, ["Picked"] = LoadStatus.PickedUp,
-        ["Completed"] = LoadStatus.Delivered, ["Complete"] = LoadStatus.Delivered, ["Invoiced"] = LoadStatus.Delivered,
-        ["Paid"] = LoadStatus.Delivered, ["Closed"] = LoadStatus.Delivered, ["Billed"] = LoadStatus.Delivered,
-        ["Canceled"] = LoadStatus.Cancelled, ["TONU"] = LoadStatus.Cancelled, ["Void"] = LoadStatus.Cancelled
+        ["Open"] = LoadStatus.Draft,
+        ["Booked"] = LoadStatus.Draft,
+        ["Available"] = LoadStatus.Draft,
+        ["Planned"] = LoadStatus.Draft,
+        ["Pending"] = LoadStatus.Draft,
+        ["New"] = LoadStatus.Draft,
+        ["Assigned"] = LoadStatus.Dispatched,
+        ["Covered"] = LoadStatus.Dispatched,
+        ["In Transit"] = LoadStatus.PickedUp,
+        ["Loaded"] = LoadStatus.PickedUp,
+        ["Picked"] = LoadStatus.PickedUp,
+        ["Completed"] = LoadStatus.Delivered,
+        ["Complete"] = LoadStatus.Delivered,
+        ["Invoiced"] = LoadStatus.Delivered,
+        ["Paid"] = LoadStatus.Delivered,
+        ["Closed"] = LoadStatus.Delivered,
+        ["Billed"] = LoadStatus.Delivered,
+        ["Canceled"] = LoadStatus.Cancelled,
+        ["TONU"] = LoadStatus.Cancelled,
+        ["Void"] = LoadStatus.Cancelled
     };
 
     private static readonly IReadOnlyDictionary<string, LoadType> TypeAliases = new Dictionary<string, LoadType>
     {
-        ["Dry"] = LoadType.GeneralFreight, ["Dry Van"] = LoadType.GeneralFreight, ["FTL"] = LoadType.GeneralFreight,
-        ["LTL"] = LoadType.GeneralFreight, ["Reefer"] = LoadType.RefrigeratedGoods,
-        ["Hazmat"] = LoadType.HazardousMaterials, ["Oversize"] = LoadType.OversizeHeavy,
-        ["Tanker"] = LoadType.Liquid, ["Auto"] = LoadType.Vehicle, ["Car"] = LoadType.Vehicle,
-        ["Container"] = LoadType.IntermodalContainer, ["Drayage"] = LoadType.IntermodalContainer
+        ["Dry"] = LoadType.GeneralFreight,
+        ["Dry Van"] = LoadType.GeneralFreight,
+        ["FTL"] = LoadType.GeneralFreight,
+        ["LTL"] = LoadType.GeneralFreight,
+        ["Reefer"] = LoadType.RefrigeratedGoods,
+        ["Hazmat"] = LoadType.HazardousMaterials,
+        ["Oversize"] = LoadType.OversizeHeavy,
+        ["Tanker"] = LoadType.Liquid,
+        ["Auto"] = LoadType.Vehicle,
+        ["Car"] = LoadType.Vehicle,
+        ["Container"] = LoadType.IntermodalContainer,
+        ["Drayage"] = LoadType.IntermodalContainer
     };
 
     public override ImportEntityType EntityType => ImportEntityType.Loads;

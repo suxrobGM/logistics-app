@@ -22,54 +22,54 @@ public static class Registrar
 {
     extension(IServiceCollection services)
     {
-            /// <summary>
-            ///     Add communications infrastructure (SignalR, Email, Push Notifications).
-            /// </summary>
-            public IServiceCollection AddCommunicationsInfrastructure(
-        IConfiguration configuration)
+        /// <summary>
+        ///     Add communications infrastructure (SignalR, Email, Push Notifications).
+        /// </summary>
+        public IServiceCollection AddCommunicationsInfrastructure(
+    IConfiguration configuration)
+        {
+            // Hub payloads must match the REST wire contract (snake_case string enums) - the generated
+            // frontend types are string unions, so numeric enums silently fail every status comparison.
+            services.AddSignalR().AddJsonProtocol(options =>
             {
-                // Hub payloads must match the REST wire contract (snake_case string enums) - the generated
-                // frontend types are string unions, so numeric enums silently fail every status comparison.
-                services.AddSignalR().AddJsonProtocol(options =>
-                {
-                    options.PayloadSerializerOptions.Converters.Add(
-                        new JsonStringEnumConverter(JsonNamingPolicy.SnakeCaseLower));
-                });
-                services.AddSingleton<TrackingHubContext>();
+                options.PayloadSerializerOptions.Converters.Add(
+                    new JsonStringEnumConverter(JsonNamingPolicy.SnakeCaseLower));
+            });
+            services.AddSingleton<TrackingHubContext>();
 
-                // SignalR abstractions for Application layer
-                services.AddScoped<IRealtimeMessagingService, SignalRMessagingService>();
-                services.AddScoped<IRealtimeLiveTrackingService, SignalRLiveTrackingService>();
-                services.AddScoped<IRealtimeNotificationService, SignalRNotificationService>();
-                services.AddScoped<ITripTrackingService, SignalRTripTrackingService>();
-                services.AddScoped<IAIDispatchBroadcastService, SignalRAIDispatchBroadcastService>();
-                services.AddScoped<IAICopilotBroadcastService, SignalRAICopilotBroadcastService>();
+            // SignalR abstractions for Application layer
+            services.AddScoped<IRealtimeMessagingService, SignalRMessagingService>();
+            services.AddScoped<IRealtimeLiveTrackingService, SignalRLiveTrackingService>();
+            services.AddScoped<IRealtimeNotificationService, SignalRNotificationService>();
+            services.AddScoped<ITripTrackingService, SignalRTripTrackingService>();
+            services.AddScoped<IAIDispatchBroadcastService, SignalRAIDispatchBroadcastService>();
+            services.AddScoped<IAICopilotBroadcastService, SignalRAICopilotBroadcastService>();
 
-                // Email services (Resend)
-                services.Configure<ResendOptions>(configuration.GetSection(ResendOptions.SectionName));
-                services.AddOptions();
-                services.AddHttpClient<ResendClient>();
-                services.Configure<ResendClientOptions>(o =>
-                {
-                    o.ApiToken = configuration.GetSection(ResendOptions.SectionName)["ApiKey"]
-                                 ?? throw new InvalidOperationException("Resend:ApiKey is not configured");
-                });
-                services.AddTransient<IResend, ResendClient>();
-                services.AddScoped<IEmailSender, ResendEmailSender>();
-                services.AddScoped<IThreadedEmailSender, ResendThreadedEmailSender>();
-                services.AddScoped<IInboundEmailReader, ResendInboundEmailReader>();
-                services.AddScoped<IInboundEmailWebhookVerifier, ResendWebhookVerifier>();
-                services.AddSingleton<IEmailTemplateService, FluidEmailTemplateService>();
+            // Email services (Resend)
+            services.Configure<ResendOptions>(configuration.GetSection(ResendOptions.SectionName));
+            services.AddOptions();
+            services.AddHttpClient<ResendClient>();
+            services.Configure<ResendClientOptions>(o =>
+            {
+                o.ApiToken = configuration.GetSection(ResendOptions.SectionName)["ApiKey"]
+                             ?? throw new InvalidOperationException("Resend:ApiKey is not configured");
+            });
+            services.AddTransient<IResend, ResendClient>();
+            services.AddScoped<IEmailSender, ResendEmailSender>();
+            services.AddScoped<IThreadedEmailSender, ResendThreadedEmailSender>();
+            services.AddScoped<IInboundEmailReader, ResendInboundEmailReader>();
+            services.AddScoped<IInboundEmailWebhookVerifier, ResendWebhookVerifier>();
+            services.AddSingleton<IEmailTemplateService, FluidEmailTemplateService>();
 
-                // Push notifications
-                services.AddScoped<INotificationService, NotificationService>();
-                services.AddSingleton<IPushNotificationService, PushNotificationService>();
+            // Push notifications
+            services.AddScoped<INotificationService, NotificationService>();
+            services.AddSingleton<IPushNotificationService, PushNotificationService>();
 
-                // Google Recaptcha
-                services.Configure<GoogleRecaptchaOptions>(configuration.GetSection(GoogleRecaptchaOptions.SectionName));
-                services.AddSingleton<ICaptchaService, GoogleRecaptchaService>();
+            // Google Recaptcha
+            services.Configure<GoogleRecaptchaOptions>(configuration.GetSection(GoogleRecaptchaOptions.SectionName));
+            services.AddSingleton<ICaptchaService, GoogleRecaptchaService>();
 
-                return services;
-            }
+            return services;
+        }
     }
 }

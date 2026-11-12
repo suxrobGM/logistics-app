@@ -63,61 +63,61 @@ internal static class ImportCells
             return value;
         }
 
-            public TEnum? ReadEnum<TEnum>(
-        string key, string label, IReadOnlyDictionary<string, TEnum>? aliases = null)
-                where TEnum : struct, System.Enum
+        public TEnum? ReadEnum<TEnum>(
+    string key, string label, IReadOnlyDictionary<string, TEnum>? aliases = null)
+            where TEnum : struct, System.Enum
+        {
+            var raw = draft.Row.Get(key);
+            var value = ImportValueParser.ParseEnum(raw, aliases);
+            if (raw is not null && value is null)
             {
-                var raw = draft.Row.Get(key);
-                var value = ImportValueParser.ParseEnum(raw, aliases);
-                if (raw is not null && value is null)
-                {
-                    draft.Errors.Add($"{label} '{raw}' is not recognised.");
-                }
-
-                return value;
+                draft.Errors.Add($"{label} '{raw}' is not recognised.");
             }
 
-            /// <summary>
-            ///     Reads an address group (optionally prefixed, e.g. pickup) and validates it like a form would:
-            ///     with <see cref="AddressValidator"/> and against the tenant's region.
-            /// </summary>
-            public Address? ReadAddress(
-        string? prefix, string label, ImportOptions options, bool required)
+            return value;
+        }
+
+        /// <summary>
+        ///     Reads an address group (optionally prefixed, e.g. pickup) and validates it like a form would:
+        ///     with <see cref="AddressValidator"/> and against the tenant's region.
+        /// </summary>
+        public Address? ReadAddress(
+    string? prefix, string label, ImportOptions options, bool required)
+        {
+            var row = draft.Row;
+            var address = ImportAddressParser.Build(
+                row.Get(ImportFieldKeys.Address(prefix, Street)),
+                row.Get(ImportFieldKeys.Address(prefix, Street2)),
+                row.Get(ImportFieldKeys.Address(prefix, City)),
+                row.Get(ImportFieldKeys.Address(prefix, State)),
+                row.Get(ImportFieldKeys.Address(prefix, Zip)),
+                row.Get(ImportFieldKeys.Address(prefix, Country)),
+                row.Get(ImportFieldKeys.Address(prefix, FullAddress)),
+                options.DefaultCountry);
+
+            if (address is null)
             {
-                var row = draft.Row;
-                var address = ImportAddressParser.Build(
-                    row.Get(ImportFieldKeys.Address(prefix, Street)),
-                    row.Get(ImportFieldKeys.Address(prefix, Street2)),
-                    row.Get(ImportFieldKeys.Address(prefix, City)),
-                    row.Get(ImportFieldKeys.Address(prefix, State)),
-                    row.Get(ImportFieldKeys.Address(prefix, Zip)),
-                    row.Get(ImportFieldKeys.Address(prefix, Country)),
-                    row.Get(ImportFieldKeys.Address(prefix, FullAddress)),
-                    options.DefaultCountry);
-
-                if (address is null)
+                if (required)
                 {
-                    if (required)
-                    {
-                        draft.Errors.Add($"{label} is required.");
-                    }
-
-                    return null;
+                    draft.Errors.Add($"{label} is required.");
                 }
 
-                var validation = AddressValidator.Validate(address);
-                foreach (var error in validation.Errors)
-                {
-                    draft.Errors.Add($"{label}: {error.ErrorMessage}");
-                }
-
-                if (validation.IsValid && !RegionCountries.IsAllowed(options.Region, address.Country))
-                {
-                    draft.Errors.Add($"{label}: country '{address.Country}' is outside your company's {options.Region} region.");
-                }
-
-                return validation.IsValid ? address : null;
+                return null;
             }
+
+            var validation = AddressValidator.Validate(address);
+            foreach (var error in validation.Errors)
+            {
+                draft.Errors.Add($"{label}: {error.ErrorMessage}");
+            }
+
+            if (validation.IsValid && !RegionCountries.IsAllowed(options.Region, address.Country))
+            {
+                draft.Errors.Add($"{label}: country '{address.Country}' is outside your company's {options.Region} region.");
+            }
+
+            return validation.IsValid ? address : null;
+        }
     }
 
 }

@@ -19,19 +19,29 @@ internal sealed class TruckImporter(ITenantUnitOfWork tenantUow, IVehicleTranspo
 {
     private static readonly IReadOnlyDictionary<string, TruckType> TypeAliases = new Dictionary<string, TruckType>
     {
-        ["Tractor"] = TruckType.FreightTruck, ["Semi"] = TruckType.FreightTruck, ["Sleeper"] = TruckType.FreightTruck,
-        ["Day Cab"] = TruckType.FreightTruck, ["Power Unit"] = TruckType.FreightTruck,
-        ["Straight Truck"] = TruckType.BoxTruck, ["Box"] = TruckType.BoxTruck,
-        ["Auto Carrier"] = TruckType.CarHauler, ["Car Carrier"] = TruckType.CarHauler,
-        ["Container"] = TruckType.ContainerTruck, ["Drayage"] = TruckType.ContainerTruck,
-        ["Refrigerated"] = TruckType.Reefer, ["Tank"] = TruckType.Tanker
+        ["Tractor"] = TruckType.FreightTruck,
+        ["Semi"] = TruckType.FreightTruck,
+        ["Sleeper"] = TruckType.FreightTruck,
+        ["Day Cab"] = TruckType.FreightTruck,
+        ["Power Unit"] = TruckType.FreightTruck,
+        ["Straight Truck"] = TruckType.BoxTruck,
+        ["Box"] = TruckType.BoxTruck,
+        ["Auto Carrier"] = TruckType.CarHauler,
+        ["Car Carrier"] = TruckType.CarHauler,
+        ["Container"] = TruckType.ContainerTruck,
+        ["Drayage"] = TruckType.ContainerTruck,
+        ["Refrigerated"] = TruckType.Reefer,
+        ["Tank"] = TruckType.Tanker
     };
 
     private static readonly IReadOnlyDictionary<string, TruckStatus> StatusAliases = new Dictionary<string, TruckStatus>
     {
-        ["Active"] = TruckStatus.Available, ["In Service"] = TruckStatus.Available,
-        ["OOS"] = TruckStatus.OutOfService, ["Inactive"] = TruckStatus.OutOfService,
-        ["Repair"] = TruckStatus.Maintenance, ["Shop"] = TruckStatus.Maintenance
+        ["Active"] = TruckStatus.Available,
+        ["In Service"] = TruckStatus.Available,
+        ["OOS"] = TruckStatus.OutOfService,
+        ["Inactive"] = TruckStatus.OutOfService,
+        ["Repair"] = TruckStatus.Maintenance,
+        ["Shop"] = TruckStatus.Maintenance
     };
 
     public override ImportEntityType EntityType => ImportEntityType.Trucks;

@@ -14,8 +14,14 @@ internal static partial class ImportAddressParser
     /// <summary>Spellings people type that are not the country's display name in <see cref="Countries"/>.</summary>
     private static readonly Dictionary<string, string> CountryAliases = new(StringComparer.OrdinalIgnoreCase)
     {
-        ["USA"] = "US", ["United States of America"] = "US", ["U.S."] = "US", ["U.S.A."] = "US",
-        ["UK"] = "GB", ["Deutschland"] = "DE", ["Polska"] = "PL", ["Czech Republic"] = "CZ"
+        ["USA"] = "US",
+        ["United States of America"] = "US",
+        ["U.S."] = "US",
+        ["U.S.A."] = "US",
+        ["UK"] = "GB",
+        ["Deutschland"] = "DE",
+        ["Polska"] = "PL",
+        ["Czech Republic"] = "CZ"
     };
 
     public static Address? Build(

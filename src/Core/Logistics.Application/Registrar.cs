@@ -97,30 +97,30 @@ public static class Registrar
             return services;
         }
 
-            /// <summary>
-            /// Validators + the mediator with the core pipeline. <paramref name="typeFilter"/> narrows the scan
-            /// to one slice, for hosts that don't want the whole Application layer.
-            /// </summary>
-            private IServiceCollection AddApplicationCommon(
-        Func<Type, bool>? typeFilter = null,
-                bool withFeatureCheck = true)
+        /// <summary>
+        /// Validators + the mediator with the core pipeline. <paramref name="typeFilter"/> narrows the scan
+        /// to one slice, for hosts that don't want the whole Application layer.
+        /// </summary>
+        private IServiceCollection AddApplicationCommon(
+    Func<Type, bool>? typeFilter = null,
+            bool withFeatureCheck = true)
+        {
+            services.AddValidatorsFromAssembly(
+                Assembly.GetExecutingAssembly(),
+                includeInternalTypes: true,
+                filter: typeFilter is null ? null : result => typeFilter(result.ValidatorType));
+
+            services.AddMediator(typeof(Registrar).Assembly, typeFilter);
+
+            // Registration order is pipeline order: the first registered behaviour runs outermost.
+            services.AddTransient(typeof(IPipelineBehavior<,>), typeof(ValidationBehaviour<,>));
+            if (withFeatureCheck)
             {
-                services.AddValidatorsFromAssembly(
-                    Assembly.GetExecutingAssembly(),
-                    includeInternalTypes: true,
-                    filter: typeFilter is null ? null : result => typeFilter(result.ValidatorType));
-
-                services.AddMediator(typeof(Registrar).Assembly, typeFilter);
-
-                // Registration order is pipeline order: the first registered behaviour runs outermost.
-                services.AddTransient(typeof(IPipelineBehavior<,>), typeof(ValidationBehaviour<,>));
-                if (withFeatureCheck)
-                {
-                    services.AddTransient(typeof(IPipelineBehavior<,>), typeof(FeatureCheckBehaviour<,>));
-                }
-
-                return services;
+                services.AddTransient(typeof(IPipelineBehavior<,>), typeof(FeatureCheckBehaviour<,>));
             }
+
+            return services;
+        }
     }
 
 }

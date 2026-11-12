@@ -12,22 +12,22 @@ public static class Registrar
 {
     extension(IServiceCollection services)
     {
-            /// <summary>
-            ///     Add fuel card provider integrations (WEX, EFS, Demo).
-            /// </summary>
-            public IServiceCollection AddFuelCardIntegrations(
-        IConfiguration configuration)
-            {
-                // Fuel card providers (with HttpClient for external APIs)
-                services.AddHttpClient<WexFuelCardService>();
-                services.AddHttpClient<EfsFuelCardService>();
-                services.AddScoped<DemoFuelCardService>();
+        /// <summary>
+        ///     Add fuel card provider integrations (WEX, EFS, Demo).
+        /// </summary>
+        public IServiceCollection AddFuelCardIntegrations(
+    IConfiguration configuration)
+        {
+            // Fuel card providers (with HttpClient for external APIs)
+            services.AddHttpClient<WexFuelCardService>();
+            services.AddHttpClient<EfsFuelCardService>();
+            services.AddScoped<DemoFuelCardService>();
 
-                // Options binding + factory pattern for provider selection
-                services.AddProviderIntegration<FuelCardsOptions, IFuelCardProviderFactory, FuelCardProviderFactory>(
-                    configuration, FuelCardsOptions.SectionName);
+            // Options binding + factory pattern for provider selection
+            services.AddProviderIntegration<FuelCardsOptions, IFuelCardProviderFactory, FuelCardProviderFactory>(
+                configuration, FuelCardsOptions.SectionName);
 
-                return services;
-            }
+            return services;
+        }
     }
 }

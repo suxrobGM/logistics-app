@@ -15,8 +15,12 @@ public class EmployeePayTests
     {
         var employee = new Employee
         {
-            Email = "d@x.com", FirstName = "Ana", LastName = "Diaz", Salary = Money.Zero("USD"),
-            PayExcludesFuelSurcharge = excludeFuel, PayExcludesAccessorials = excludeAccessorials
+            Email = "d@x.com",
+            FirstName = "Ana",
+            LastName = "Diaz",
+            Salary = Money.Zero("USD"),
+            PayExcludesFuelSurcharge = excludeFuel,
+            PayExcludesAccessorials = excludeAccessorials
         };
 
         Assert.Equal(expected, employee.PayableRevenue(linehaul: 2000m, fuelSurcharge: 400m, accessorials: 200m));

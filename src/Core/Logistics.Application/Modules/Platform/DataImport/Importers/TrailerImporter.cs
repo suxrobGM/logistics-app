@@ -22,23 +22,42 @@ internal sealed class TrailerImporter(ITenantUnitOfWork tenantUow, ITrailerHookS
     /// </summary>
     internal static readonly IReadOnlyDictionary<string, TrailerType> TypeAliases = new Dictionary<string, TrailerType>
     {
-        ["Van"] = TrailerType.DryVan, ["V"] = TrailerType.DryVan, ["Dry"] = TrailerType.DryVan,
-        ["53 Van"] = TrailerType.DryVan, ["R"] = TrailerType.Reefer, ["Refrigerated"] = TrailerType.Reefer,
-        ["Refer"] = TrailerType.Reefer, ["F"] = TrailerType.Flatbed, ["FB"] = TrailerType.Flatbed,
-        ["Flat"] = TrailerType.Flatbed, ["SD"] = TrailerType.StepDeck, ["Step"] = TrailerType.StepDeck,
-        ["Drop Deck"] = TrailerType.StepDeck, ["RGN"] = TrailerType.Lowboy, ["Low Boy"] = TrailerType.Lowboy,
-        ["Tank"] = TrailerType.Tanker, ["T"] = TrailerType.Tanker, ["Auto Carrier"] = TrailerType.CarHauler,
-        ["Car Carrier"] = TrailerType.CarHauler, ["Auto"] = TrailerType.CarHauler,
-        ["Container Chassis"] = TrailerType.Chassis, ["C"] = TrailerType.Chassis,
-        ["Curtain"] = TrailerType.Conestoga, ["Curtainside"] = TrailerType.Conestoga
+        ["Van"] = TrailerType.DryVan,
+        ["V"] = TrailerType.DryVan,
+        ["Dry"] = TrailerType.DryVan,
+        ["53 Van"] = TrailerType.DryVan,
+        ["R"] = TrailerType.Reefer,
+        ["Refrigerated"] = TrailerType.Reefer,
+        ["Refer"] = TrailerType.Reefer,
+        ["F"] = TrailerType.Flatbed,
+        ["FB"] = TrailerType.Flatbed,
+        ["Flat"] = TrailerType.Flatbed,
+        ["SD"] = TrailerType.StepDeck,
+        ["Step"] = TrailerType.StepDeck,
+        ["Drop Deck"] = TrailerType.StepDeck,
+        ["RGN"] = TrailerType.Lowboy,
+        ["Low Boy"] = TrailerType.Lowboy,
+        ["Tank"] = TrailerType.Tanker,
+        ["T"] = TrailerType.Tanker,
+        ["Auto Carrier"] = TrailerType.CarHauler,
+        ["Car Carrier"] = TrailerType.CarHauler,
+        ["Auto"] = TrailerType.CarHauler,
+        ["Container Chassis"] = TrailerType.Chassis,
+        ["C"] = TrailerType.Chassis,
+        ["Curtain"] = TrailerType.Conestoga,
+        ["Curtainside"] = TrailerType.Conestoga
     };
 
     private static readonly IReadOnlyDictionary<string, TrailerStatus> StatusAliases = new Dictionary<string, TrailerStatus>
     {
-        ["In Service"] = TrailerStatus.Active, ["Available"] = TrailerStatus.Active,
-        ["OOS"] = TrailerStatus.OutOfService, ["Repair"] = TrailerStatus.OutOfService,
-        ["Maintenance"] = TrailerStatus.OutOfService, ["Retired"] = TrailerStatus.Inactive,
-        ["Sold"] = TrailerStatus.Inactive, ["Disabled"] = TrailerStatus.Inactive
+        ["In Service"] = TrailerStatus.Active,
+        ["Available"] = TrailerStatus.Active,
+        ["OOS"] = TrailerStatus.OutOfService,
+        ["Repair"] = TrailerStatus.OutOfService,
+        ["Maintenance"] = TrailerStatus.OutOfService,
+        ["Retired"] = TrailerStatus.Inactive,
+        ["Sold"] = TrailerStatus.Inactive,
+        ["Disabled"] = TrailerStatus.Inactive
     };
 
     public override ImportEntityType EntityType => ImportEntityType.Trailers;

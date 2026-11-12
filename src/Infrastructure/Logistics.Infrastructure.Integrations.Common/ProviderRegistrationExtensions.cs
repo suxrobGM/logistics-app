@@ -12,20 +12,20 @@ public static class ProviderRegistrationExtensions
 {
     extension(IServiceCollection services)
     {
-            /// <summary>
-            /// Binds <typeparamref name="TOptions"/> to <paramref name="sectionName"/> and registers the
-            /// provider factory (<typeparamref name="TFactoryImplementation"/> as
-            /// <typeparamref name="TFactoryService"/>) with a scoped lifetime.
-            /// </summary>
-            public IServiceCollection AddProviderIntegration<TOptions, TFactoryService, TFactoryImplementation>(
-        IConfiguration configuration, string sectionName)
-                where TOptions : class
-                where TFactoryService : class
-                where TFactoryImplementation : class, TFactoryService
-            {
-                services.Configure<TOptions>(configuration.GetSection(sectionName));
-                services.AddScoped<TFactoryService, TFactoryImplementation>();
-                return services;
-            }
+        /// <summary>
+        /// Binds <typeparamref name="TOptions"/> to <paramref name="sectionName"/> and registers the
+        /// provider factory (<typeparamref name="TFactoryImplementation"/> as
+        /// <typeparamref name="TFactoryService"/>) with a scoped lifetime.
+        /// </summary>
+        public IServiceCollection AddProviderIntegration<TOptions, TFactoryService, TFactoryImplementation>(
+    IConfiguration configuration, string sectionName)
+            where TOptions : class
+            where TFactoryService : class
+            where TFactoryImplementation : class, TFactoryService
+        {
+            services.Configure<TOptions>(configuration.GetSection(sectionName));
+            services.AddScoped<TFactoryService, TFactoryImplementation>();
+            return services;
+        }
     }
 }

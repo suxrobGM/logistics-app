@@ -49,44 +49,44 @@ public static class InvoiceMapper
 
     extension(LoadInvoice loadInvoice)
     {
-            /// <summary>
-            /// Takes the related rows explicitly so a batch of loads can map its invoices without a lazy
-            /// SELECT per invoice for each collection.
-            /// </summary>
-            public InvoiceDto ToDto(
-        IEnumerable<Payment> payments,
-                IEnumerable<InvoiceLineItem> lineItems,
-                long loadNumber,
-                CustomerDto? customer)
+        /// <summary>
+        /// Takes the related rows explicitly so a batch of loads can map its invoices without a lazy
+        /// SELECT per invoice for each collection.
+        /// </summary>
+        public InvoiceDto ToDto(
+    IEnumerable<Payment> payments,
+            IEnumerable<InvoiceLineItem> lineItems,
+            long loadNumber,
+            CustomerDto? customer)
+        {
+            var paymentList = payments.ToList();
+            var amountPaid = Invoice.SumPaid(paymentList, loadInvoice.Total.Currency);
+            return new InvoiceDto
             {
-                var paymentList = payments.ToList();
-                var amountPaid = Invoice.SumPaid(paymentList, loadInvoice.Total.Currency);
-                return new InvoiceDto
-                {
-                    Id = loadInvoice.Id,
-                    Type = InvoiceType.Load,
-                    Number = loadInvoice.Number,
-                    Status = loadInvoice.Status,
-                    CreatedDate = loadInvoice.CreatedAt,
-                    Subtotal = loadInvoice.Subtotal,
-                    TaxTotal = loadInvoice.TaxTotal,
-                    Total = loadInvoice.Total,
-                    TaxBehavior = loadInvoice.TaxBehavior,
-                    TaxBreakdown = loadInvoice.GetTaxBreakdown().ToDto(),
-                    DueDate = loadInvoice.DueDate,
-                    Notes = loadInvoice.Notes,
-                    Payments = paymentList.Select(i => i.ToDto()),
-                    AmountPaid = amountPaid,
-                    AmountDue = loadInvoice.Total.Amount - amountPaid,
-                    LineItems = lineItems.Select(i => i.ToDto()),
-                    SentAt = loadInvoice.SentAt,
-                    SentToEmail = loadInvoice.SentToEmail,
-                    LoadId = loadInvoice.LoadId,
-                    LoadNumber = loadNumber,
-                    CustomerId = loadInvoice.CustomerId,
-                    Customer = customer,
-                    FactoringStatus = loadInvoice.FactoringStatus
-                };
-            }
+                Id = loadInvoice.Id,
+                Type = InvoiceType.Load,
+                Number = loadInvoice.Number,
+                Status = loadInvoice.Status,
+                CreatedDate = loadInvoice.CreatedAt,
+                Subtotal = loadInvoice.Subtotal,
+                TaxTotal = loadInvoice.TaxTotal,
+                Total = loadInvoice.Total,
+                TaxBehavior = loadInvoice.TaxBehavior,
+                TaxBreakdown = loadInvoice.GetTaxBreakdown().ToDto(),
+                DueDate = loadInvoice.DueDate,
+                Notes = loadInvoice.Notes,
+                Payments = paymentList.Select(i => i.ToDto()),
+                AmountPaid = amountPaid,
+                AmountDue = loadInvoice.Total.Amount - amountPaid,
+                LineItems = lineItems.Select(i => i.ToDto()),
+                SentAt = loadInvoice.SentAt,
+                SentToEmail = loadInvoice.SentToEmail,
+                LoadId = loadInvoice.LoadId,
+                LoadNumber = loadNumber,
+                CustomerId = loadInvoice.CustomerId,
+                Customer = customer,
+                FactoringStatus = loadInvoice.FactoringStatus
+            };
+        }
     }
 }

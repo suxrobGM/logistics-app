@@ -15,37 +15,37 @@ public static class EncryptedColumnsExtensions
 
     extension(ModelBuilder builder)
     {
-            /// <summary>
-            ///     Encrypt at rest every string property flagged with <see cref="EncryptedSecretAttribute"/>
-            ///     across the model. Applied after entity configurations so it overrides their string
-            ///     mappings. Driven off the attribute (like the auditable/tenant marker conventions in this
-            ///     folder) so a new provider-config secret column is encrypted by annotation alone.
-            ///     If <paramref name="dataProtectionProvider"/> is null (e.g. design-time / tests),
-            ///     columns stay plaintext - the converter never changes the store type, so the schema
-            ///     is identical either way.
-            /// </summary>
-            public void ApplyEncryptedSecretColumns(
-        IDataProtectionProvider? dataProtectionProvider)
+        /// <summary>
+        ///     Encrypt at rest every string property flagged with <see cref="EncryptedSecretAttribute"/>
+        ///     across the model. Applied after entity configurations so it overrides their string
+        ///     mappings. Driven off the attribute (like the auditable/tenant marker conventions in this
+        ///     folder) so a new provider-config secret column is encrypted by annotation alone.
+        ///     If <paramref name="dataProtectionProvider"/> is null (e.g. design-time / tests),
+        ///     columns stay plaintext - the converter never changes the store type, so the schema
+        ///     is identical either way.
+        /// </summary>
+        public void ApplyEncryptedSecretColumns(
+    IDataProtectionProvider? dataProtectionProvider)
+        {
+            if (dataProtectionProvider is null)
             {
-                if (dataProtectionProvider is null)
-                {
-                    return;
-                }
+                return;
+            }
 
-                var converter = new EncryptedStringConverter(
-                    dataProtectionProvider.CreateProtector(ProtectorPurpose));
+            var converter = new EncryptedStringConverter(
+                dataProtectionProvider.CreateProtector(ProtectorPurpose));
 
-                foreach (var entityType in builder.Model.GetEntityTypes())
+            foreach (var entityType in builder.Model.GetEntityTypes())
+            {
+                foreach (var property in entityType.GetProperties())
                 {
-                    foreach (var property in entityType.GetProperties())
+                    if (property.ClrType == typeof(string) &&
+                        property.PropertyInfo?.IsDefined(typeof(EncryptedSecretAttribute), inherit: false) == true)
                     {
-                        if (property.ClrType == typeof(string) &&
-                            property.PropertyInfo?.IsDefined(typeof(EncryptedSecretAttribute), inherit: false) == true)
-                        {
-                            property.SetValueConverter(converter);
-                        }
+                        property.SetValueConverter(converter);
                     }
                 }
             }
+        }
     }
 }

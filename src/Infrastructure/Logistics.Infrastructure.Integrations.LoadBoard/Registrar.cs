@@ -12,24 +12,24 @@ public static class Registrar
 {
     extension(IServiceCollection services)
     {
-            /// <summary>
-            ///     Add LoadBoard provider integrations (DAT, Demo).
-            /// </summary>
-            public IServiceCollection AddLoadBoardIntegrations(
-        IConfiguration configuration)
-            {
-                services.AddHttpClient<DatLoadBoardService>();
-                services.AddScoped<DemoLoadBoardService>();
+        /// <summary>
+        ///     Add LoadBoard provider integrations (DAT, Demo).
+        /// </summary>
+        public IServiceCollection AddLoadBoardIntegrations(
+    IConfiguration configuration)
+        {
+            services.AddHttpClient<DatLoadBoardService>();
+            services.AddScoped<DemoLoadBoardService>();
 
-                services.AddProviderIntegration<LoadBoardOptions, ILoadBoardProviderFactory, LoadBoardProviderFactory>(
-                    configuration, LoadBoardOptions.SectionName);
+            services.AddProviderIntegration<LoadBoardOptions, ILoadBoardProviderFactory, LoadBoardProviderFactory>(
+                configuration, LoadBoardOptions.SectionName);
 
-                // Broker credit check (cache -> demo/FMCSA authority fallback)
-                services.Configure<FmcsaOptions>(configuration.GetSection(FmcsaOptions.SectionName));
-                services.AddHttpClient<FmcsaClient>();
-                services.AddScoped<IBrokerCreditService, BrokerCreditService>();
+            // Broker credit check (cache -> demo/FMCSA authority fallback)
+            services.Configure<FmcsaOptions>(configuration.GetSection(FmcsaOptions.SectionName));
+            services.AddHttpClient<FmcsaClient>();
+            services.AddScoped<IBrokerCreditService, BrokerCreditService>();
 
-                return services;
-            }
+            return services;
+        }
     }
 }

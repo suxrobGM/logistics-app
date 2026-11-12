@@ -19,57 +19,57 @@ public static class Registrar
 {
     extension(IServiceCollection services)
     {
-            /// <summary>
-            ///   Add Telegram Bot services and handlers
-            /// </summary>
-            /// <param name="services">The service collection</param>
-            /// <param name="configuration">The configuration</param>
-            /// <param name="isDevelopment">If true, uses long polling instead of webhook (for local development)</param>
-            public IServiceCollection AddTelegramBotInfrastructure(
-        IConfiguration configuration, bool isDevelopment = false)
-            {
-                var section = configuration.GetSection(TelegramBotOptions.SectionName);
-                services.Configure<TelegramBotOptions>(section);
+        /// <summary>
+        ///   Add Telegram Bot services and handlers
+        /// </summary>
+        /// <param name="services">The service collection</param>
+        /// <param name="configuration">The configuration</param>
+        /// <param name="isDevelopment">If true, uses long polling instead of webhook (for local development)</param>
+        public IServiceCollection AddTelegramBotInfrastructure(
+    IConfiguration configuration, bool isDevelopment = false)
+        {
+            var section = configuration.GetSection(TelegramBotOptions.SectionName);
+            services.Configure<TelegramBotOptions>(section);
 
-                var botOptions = section.Get<TelegramBotOptions>();
-                if (string.IsNullOrEmpty(botOptions?.BotToken))
-                    return services;
-
-                // Telegram bot client (singleton - thread-safe)
-                services.AddSingleton<ITelegramBotClient>(new TelegramBotClient(botOptions.BotToken));
-
-                // Authentication
-                services.AddScoped<TelegramAuthService>();
-
-                // Handlers
-                services.AddScoped<TelegramUpdateDispatcher>();
-                services.AddScoped<CommandRouter>();
-                services.AddScoped<CallbackQueryHandler>();
-
-                // Commands
-                services.AddScoped<ITelegramCommand, StartCommand>();
-                services.AddScoped<ITelegramCommand, DisconnectCommand>();
-                services.AddScoped<ITelegramCommand, LoadsCommand>();
-                services.AddScoped<ITelegramCommand, TrucksCommand>();
-                services.AddScoped<ITelegramCommand, TripsCommand>();
-                services.AddScoped<ITelegramCommand, HosCommand>();
-                services.AddScoped<ITelegramCommand, NotifyCommand>();
-                services.AddScoped<ITelegramCommand, HelpCommand>();
-
-                // Services
-                services.AddSingleton<ITelegramNotificationService, TelegramNotificationService>();
-
-                // Background services
-                services.AddHostedService<TelegramChatCacheWarmer>();
-
-                // Development mode: use long polling
-                if (isDevelopment)
-                {
-                    services.AddHostedService<TelegramPollingService>();
-                }
-
+            var botOptions = section.Get<TelegramBotOptions>();
+            if (string.IsNullOrEmpty(botOptions?.BotToken))
                 return services;
+
+            // Telegram bot client (singleton - thread-safe)
+            services.AddSingleton<ITelegramBotClient>(new TelegramBotClient(botOptions.BotToken));
+
+            // Authentication
+            services.AddScoped<TelegramAuthService>();
+
+            // Handlers
+            services.AddScoped<TelegramUpdateDispatcher>();
+            services.AddScoped<CommandRouter>();
+            services.AddScoped<CallbackQueryHandler>();
+
+            // Commands
+            services.AddScoped<ITelegramCommand, StartCommand>();
+            services.AddScoped<ITelegramCommand, DisconnectCommand>();
+            services.AddScoped<ITelegramCommand, LoadsCommand>();
+            services.AddScoped<ITelegramCommand, TrucksCommand>();
+            services.AddScoped<ITelegramCommand, TripsCommand>();
+            services.AddScoped<ITelegramCommand, HosCommand>();
+            services.AddScoped<ITelegramCommand, NotifyCommand>();
+            services.AddScoped<ITelegramCommand, HelpCommand>();
+
+            // Services
+            services.AddSingleton<ITelegramNotificationService, TelegramNotificationService>();
+
+            // Background services
+            services.AddHostedService<TelegramChatCacheWarmer>();
+
+            // Development mode: use long polling
+            if (isDevelopment)
+            {
+                services.AddHostedService<TelegramPollingService>();
             }
+
+            return services;
+        }
     }
 
     extension(WebApplication app)

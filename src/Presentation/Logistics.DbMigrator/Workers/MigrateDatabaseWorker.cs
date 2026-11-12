@@ -1,4 +1,4 @@
-﻿using Open.IdentityServer.EntityFramework.DbContexts;
+using Open.IdentityServer.EntityFramework.DbContexts;
 using Logistics.Domain.Entities;
 using Logistics.Infrastructure.Persistence.Data;
 using Microsoft.EntityFrameworkCore;
