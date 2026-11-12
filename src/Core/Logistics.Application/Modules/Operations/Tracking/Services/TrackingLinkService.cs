@@ -2,6 +2,7 @@ using Logistics.Application.Utilities;
 using Logistics.Domain.Entities;
 using Logistics.Domain.Options;
 using Logistics.Domain.Persistence;
+using Logistics.Shared.Models;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
 
@@ -15,6 +16,28 @@ internal sealed class TrackingLinkService(
 
     /// <summary>Replaced this close to expiry, so an emailed link lasts the rest of the shipment.</summary>
     private static readonly TimeSpan MinRemainingLifetime = TimeSpan.FromDays(7);
+
+    public async Task<Result<TrackingLink>> OpenPublicLinkAsync(Guid tenantId, string token, CancellationToken ct = default)
+    {
+        try
+        {
+            await tenantUow.SetCurrentTenantByIdAsync(tenantId);
+        }
+        catch (InvalidOperationException)
+        {
+            return Result<TrackingLink>.Fail("Invalid tracking link.");
+        }
+
+        var link = await tenantUow.Repository<TrackingLink>().GetAsync(t => t.Token == token, ct);
+        if (link is null)
+        {
+            return Result<TrackingLink>.Fail("Tracking link not found.");
+        }
+
+        return link.IsValid
+            ? Result<TrackingLink>.Ok(link)
+            : Result<TrackingLink>.Fail("This tracking link has expired or been revoked.");
+    }
 
     public async Task<TrackingLink> GetOrCreateAsync(Guid loadId, CancellationToken ct = default)
     {

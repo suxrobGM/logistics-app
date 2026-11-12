@@ -1,4 +1,5 @@
 using Logistics.Application.Abstractions;
+using Logistics.Application.Modules.Operations.Tracking.Services;
 using Logistics.Domain.Entities;
 using Logistics.Domain.Persistence;
 using Logistics.Domain.Primitives.Enums;
@@ -9,6 +10,7 @@ using Logistics.Application.Modules.Integrations.Documents.Services;
 namespace Logistics.Application.Modules.Operations.Tracking.Queries;
 
 internal sealed class DownloadPublicTrackingDocumentHandler(
+    ITrackingLinkService trackingLinkService,
     ITenantUnitOfWork tenantUow,
     IDocumentDownloadService documentDownloads)
     : IRequestHandler<DownloadPublicTrackingDocumentQuery, Result<DocumentDownloadDto>>
@@ -17,29 +19,13 @@ internal sealed class DownloadPublicTrackingDocumentHandler(
         DownloadPublicTrackingDocumentQuery req,
         CancellationToken ct)
     {
-        // Set tenant context for the query
-        try
+        var opened = await trackingLinkService.OpenPublicLinkAsync(req.TenantId, req.Token, ct);
+        if (!opened.IsSuccess)
         {
-            await tenantUow.SetCurrentTenantByIdAsync(req.TenantId);
-        }
-        catch (InvalidOperationException)
-        {
-            return Result<DocumentDownloadDto>.Fail("Invalid tracking link.");
+            return Result<DocumentDownloadDto>.Fail(opened.Error!);
         }
 
-        // Find the tracking link
-        var trackingLink = await tenantUow.Repository<TrackingLink>()
-            .GetAsync(t => t.Token == req.Token, ct);
-
-        if (trackingLink is null)
-        {
-            return Result<DocumentDownloadDto>.Fail("Tracking link not found.");
-        }
-
-        if (!trackingLink.IsValid)
-        {
-            return Result<DocumentDownloadDto>.Fail("This tracking link has expired or been revoked.");
-        }
+        var trackingLink = opened.Value!;
 
         // Get the document and verify it belongs to the load
         var document = await tenantUow.Repository<LoadDocument>()

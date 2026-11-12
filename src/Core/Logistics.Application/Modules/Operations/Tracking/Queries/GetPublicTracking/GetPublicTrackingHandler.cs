@@ -1,4 +1,5 @@
 using Logistics.Application.Abstractions;
+using Logistics.Application.Modules.Operations.Tracking.Services;
 using Logistics.Application.Abstractions.BackgroundJobs;
 using Logistics.Application.Modules.Common.Constants;
 using Logistics.Domain.Entities;
@@ -12,6 +13,7 @@ using Logistics.Application.Modules.Operations.Tracking.Commands;
 namespace Logistics.Application.Modules.Operations.Tracking.Queries;
 
 internal sealed class GetPublicTrackingHandler(
+    ITrackingLinkService trackingLinkService,
     ITenantUnitOfWork tenantUow,
     IBlobStorageService blobStorageService,
     ICommandEnqueuer commandEnqueuer)
@@ -21,30 +23,14 @@ internal sealed class GetPublicTrackingHandler(
         GetPublicTrackingQuery req,
         CancellationToken ct)
     {
-        // Set tenant context for the query
-        Tenant tenant;
-        try
+        var opened = await trackingLinkService.OpenPublicLinkAsync(req.TenantId, req.Token, ct);
+        if (!opened.IsSuccess)
         {
-            tenant = await tenantUow.SetCurrentTenantByIdAsync(req.TenantId);
-        }
-        catch (InvalidOperationException)
-        {
-            return Result<PublicTrackingDto>.Fail("Invalid tracking link.");
+            return Result<PublicTrackingDto>.Fail(opened.Error!);
         }
 
-        // Find the tracking link
-        var trackingLink = await tenantUow.Repository<TrackingLink>()
-            .GetAsync(t => t.Token == req.Token, ct);
-
-        if (trackingLink is null)
-        {
-            return Result<PublicTrackingDto>.Fail("Tracking link not found.");
-        }
-
-        if (!trackingLink.IsValid)
-        {
-            return Result<PublicTrackingDto>.Fail("This tracking link has expired or been revoked.");
-        }
+        var trackingLink = opened.Value!;
+        var tenant = tenantUow.GetCurrentTenant();
 
         // Defer access bookkeeping so the read path stays write-free.
         commandEnqueuer.Enqueue(new RecordTrackingAccessCommand
