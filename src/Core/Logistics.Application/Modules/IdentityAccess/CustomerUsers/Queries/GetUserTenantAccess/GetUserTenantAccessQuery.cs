@@ -1,6 +1,6 @@
 using Logistics.Shared.Models;
 
-namespace Logistics.Application.Modules.Platform.Portal.Queries;
+namespace Logistics.Application.Modules.IdentityAccess.CustomerUsers.Queries;
 
 /// <summary>
 /// Query to get all tenant access records for a portal user.

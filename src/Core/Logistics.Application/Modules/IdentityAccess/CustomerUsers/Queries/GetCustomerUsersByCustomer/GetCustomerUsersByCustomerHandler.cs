@@ -6,7 +6,7 @@ using Logistics.Mediator;
 using Logistics.Shared.Models;
 using Microsoft.EntityFrameworkCore;
 
-namespace Logistics.Application.Modules.Platform.Portal.Queries;
+namespace Logistics.Application.Modules.IdentityAccess.CustomerUsers.Queries;
 
 internal sealed class GetCustomerUsersByCustomerHandler(ITenantUnitOfWork tenantUow)
     : IRequestHandler<GetCustomerUsersByCustomerQuery, Result<IEnumerable<CustomerUserDto>>>

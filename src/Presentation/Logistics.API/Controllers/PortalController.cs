@@ -8,6 +8,7 @@ using Microsoft.AspNetCore.Mvc;
 using Logistics.Application.Modules.Platform.Portal.Queries;
 using Logistics.Application.Modules.Operations.Loads.Queries;
 using Logistics.Shared.Identity.Claims;
+using Logistics.Application.Modules.IdentityAccess.CustomerUsers.Queries;
 
 namespace Logistics.API.Controllers;
 

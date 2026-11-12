@@ -1,6 +1,6 @@
 using Logistics.Shared.Models;
 
-namespace Logistics.Application.Modules.Platform.Portal.Queries;
+namespace Logistics.Application.Modules.IdentityAccess.CustomerUsers.Queries;
 
 /// <summary>
 /// Query to get a CustomerUser by ID.

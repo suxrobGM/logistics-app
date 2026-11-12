@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Logistics.Application.Modules.IdentityAccess.CustomerUsers.Commands;
 using Logistics.Application.Modules.Platform.Portal.Queries;
+using Logistics.Application.Modules.IdentityAccess.CustomerUsers.Queries;
 
 namespace Logistics.API.Controllers;
 
