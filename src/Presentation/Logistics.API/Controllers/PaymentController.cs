@@ -45,7 +45,7 @@ public class PaymentController(IMediator mediator) : ControllerBase
     [HttpPost("process-payment", Name = "ProcessPayment")]
     [ProducesResponseType(StatusCodes.Status204NoContent)]
     [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status400BadRequest)]
-    [AllowAnonymous]
+    [Authorize(Policy = Permission.Payment.Manage)]
     public async Task<IActionResult> ProcessPayment([FromBody] ProcessPaymentCommand request)
     {
         var result = await mediator.Send(request);

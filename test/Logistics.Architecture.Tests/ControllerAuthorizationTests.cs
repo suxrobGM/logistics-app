@@ -52,6 +52,57 @@ public class ControllerAuthorizationTests
         Assert.Empty(unguarded);
     }
 
+    /// <summary>
+    /// Every controller action reachable without authentication. The global AuthorizeFilter makes
+    /// authenticated the default, so each entry here is a deliberate opt-out and has to carry its own
+    /// protection: a verified webhook signature, a tenant-scoped token in the route, or genuinely
+    /// public content. The list must shrink, never grow.
+    /// </summary>
+    private static readonly string[] AnonymousActions =
+    [
+        "AccountingController.Callback",
+        "AccountingController.Disconnected",
+        "BlogPostController.GetPublishedBlogPostBySlug",
+        "BlogPostController.GetPublishedBlogPosts",
+        "ContactController.CreateContactSubmission",
+        "DefaultController.Get",
+        "DemoRequestController.CreateDemoRequest",
+        "InvitationController.Accept",
+        "InvitationController.ValidateToken",
+        "ProductLicenseController.GetProductLicenseDiscovery",
+        "ProductLicenseController.RecordProductLicenseHeartbeat",
+        "PublicPaymentController.CreateCheckoutSession",
+        "PublicPaymentController.GetInvoice",
+        "TrackingController.DownloadDocument",
+        "TrackingController.GetDocuments",
+        "TrackingController.GetPublicTracking",
+        "WebhookController.GeotabWebhook",
+        "WebhookController.MotiveWebhook",
+        "WebhookController.Resend",
+        "WebhookController.SamsaraWebhook",
+        "WebhookController.Stripe"
+    ];
+
+    /// <summary>
+    /// Every_action_declares_its_authorization treats [AllowAnonymous] as a valid declaration and
+    /// skips it, so it can never catch an endpoint that is anonymous by mistake. This closes that
+    /// gap: adding [AllowAnonymous] anywhere now fails until it is reviewed and listed above.
+    /// </summary>
+    [Fact]
+    public void Anonymous_actions_are_an_explicit_allowlist()
+    {
+        var anonymous = Controllers
+            .SelectMany(c => ActionsOf(c).Select(a => (Controller: c, Action: a)))
+            .Where(x =>
+                x.Action.GetCustomAttribute<AllowAnonymousAttribute>() is not null ||
+                x.Controller.GetCustomAttribute<AllowAnonymousAttribute>() is not null)
+            .Select(x => $"{x.Controller.Name}.{x.Action.Name}")
+            .OrderBy(name => name, StringComparer.Ordinal)
+            .ToArray();
+
+        Assert.Equal(AnonymousActions.OrderBy(n => n, StringComparer.Ordinal).ToArray(), anonymous);
+    }
+
     [Fact]
     public void Billing_mutations_are_limited_to_billing_roles()
     {
