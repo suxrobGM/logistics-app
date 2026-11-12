@@ -7,16 +7,4 @@ public class SearchableQuery(
     int pageSize = 10) : PagedQuery(orderBy, page, pageSize)
 {
     public string? Search { get; init; } = search;
-
-    public override IDictionary<string, string> ToDictionary()
-    {
-        var queryDict = base.ToDictionary();
-
-        if (!string.IsNullOrEmpty(Search))
-        {
-            queryDict.Add("search", Search);
-        }
-
-        return queryDict;
-    }
 }

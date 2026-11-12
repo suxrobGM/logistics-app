@@ -74,14 +74,4 @@ public partial class Trip : AuditableEntity, ITenantEntity
             .Where(s => s.Type == TripStopType.DropOff)
             .Sum(s => s.Load.DeliveryCost.Amount);
     }
-
-    /// <summary>
-    /// Calculates the total driver share from all loads in the trip.
-    /// </summary>
-    public decimal CalcDriversShare()
-    {
-        return Stops
-            .Where(s => s.Type == TripStopType.DropOff)
-            .Sum(s => s.Load.CalcDriverShare());
-    }
 }

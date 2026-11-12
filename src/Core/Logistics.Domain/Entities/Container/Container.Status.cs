@@ -8,10 +8,6 @@ namespace Logistics.Domain.Entities;
 /// </summary>
 public partial class Container
 {
-    public bool CanTransitionTo(ContainerStatus next)
-    {
-        return ContainerStatusMachine.CanTransition(Status, next);
-    }
 
     /// <summary>
     /// Enforces valid status transitions and updates timestamps accordingly.

@@ -17,14 +17,9 @@ public static class ContainerStatusMachine
         [ContainerStatus.Returned] = [ContainerStatus.Empty]
     };
 
-    public static bool CanTransition(ContainerStatus current, ContainerStatus target)
+    private static bool CanTransition(ContainerStatus current, ContainerStatus target)
     {
         return AllowedTransitions.TryGetValue(current, out var allowed) && allowed.Contains(target);
-    }
-
-    public static ContainerStatus[] GetAllowedTransitions(ContainerStatus current)
-    {
-        return AllowedTransitions.TryGetValue(current, out var allowed) ? allowed : [];
     }
 
     /// <summary>

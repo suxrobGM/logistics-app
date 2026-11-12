@@ -69,14 +69,4 @@ public abstract class Expense : AuditableEntity, ITenantEntity
         ApprovedAt = DateTime.UtcNow;
         RejectionReason = reason;
     }
-
-    public void MarkAsPaid()
-    {
-        if (Status != ExpenseStatus.Approved)
-        {
-            throw new InvalidOperationException("Only approved expenses can be marked as paid.");
-        }
-
-        Status = ExpenseStatus.Paid;
-    }
 }

@@ -10,16 +10,4 @@ public abstract class AuditableEntity : Entity, IAuditableEntity
     public string? CreatedBy { get; set; }
     public DateTime? UpdatedAt { get; set; }
     public string? UpdatedBy { get; set; }
-
-    public void SetCreated(string? userId)
-    {
-        CreatedAt = DateTime.UtcNow;
-        CreatedBy = userId;
-    }
-
-    public void SetUpdated(string? userId)
-    {
-        UpdatedAt = DateTime.UtcNow;
-        UpdatedBy = userId;
-    }
 }

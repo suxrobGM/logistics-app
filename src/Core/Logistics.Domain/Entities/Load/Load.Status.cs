@@ -8,13 +8,6 @@ namespace Logistics.Domain.Entities;
 /// </summary>
 public partial class Load
 {
-    /// <summary>
-    /// Checks if transitioning to the specified status is allowed.
-    /// </summary>
-    public bool CanTransitionTo(LoadStatus next)
-    {
-        return LoadStatusMachine.CanTransition(Status, next);
-    }
 
     /// <summary>
     /// Enforces valid status transitions and sets timestamps accordingly.

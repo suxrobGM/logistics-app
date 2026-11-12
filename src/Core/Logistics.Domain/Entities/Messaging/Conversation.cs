@@ -48,23 +48,6 @@ public class Conversation : Entity, ITenantEntity
     public virtual List<Message> Messages { get; set; } = [];
 
     /// <summary>
-    /// Creates a new conversation between two participants.
-    /// </summary>
-    public static Conversation CreateDirectConversation(Guid participant1Id, Guid participant2Id, Guid? loadId = null)
-    {
-        var conversation = new Conversation
-        {
-            LoadId = loadId,
-            Participants =
-            [
-                new ConversationParticipant { EmployeeId = participant1Id },
-                new ConversationParticipant { EmployeeId = participant2Id }
-            ]
-        };
-        return conversation;
-    }
-
-    /// <summary>
     /// Creates a tenant-wide group chat.
     /// </summary>
     public static Conversation CreateTenantChat(string tenantName)

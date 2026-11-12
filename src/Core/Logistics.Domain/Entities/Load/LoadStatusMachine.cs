@@ -19,17 +19,9 @@ public static class LoadStatusMachine
     /// <summary>
     /// Checks if transitioning from the current status to the target status is allowed.
     /// </summary>
-    public static bool CanTransition(LoadStatus current, LoadStatus target)
+    private static bool CanTransition(LoadStatus current, LoadStatus target)
     {
         return AllowedTransitions.TryGetValue(current, out var allowed) && allowed.Contains(target);
-    }
-
-    /// <summary>
-    /// Gets all valid next statuses from the current status.
-    /// </summary>
-    public static LoadStatus[] GetAllowedTransitions(LoadStatus current)
-    {
-        return AllowedTransitions.TryGetValue(current, out var allowed) ? allowed : [];
     }
 
     /// <summary>

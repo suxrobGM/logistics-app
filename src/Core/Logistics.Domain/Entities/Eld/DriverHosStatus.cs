@@ -60,24 +60,4 @@ public class DriverHosStatus : Entity, ITenantEntity
     {
         return !IsInViolation && DrivingMinutesRemaining >= minimumDrivingMinutes;
     }
-
-    /// <summary>
-    /// Gets a formatted string of remaining driving time
-    /// </summary>
-    public string GetDrivingTimeRemainingDisplay()
-    {
-        var hours = DrivingMinutesRemaining / 60;
-        var minutes = DrivingMinutesRemaining % 60;
-        return $"{hours}h {minutes}m";
-    }
-
-    /// <summary>
-    /// Gets a formatted string of remaining on-duty time
-    /// </summary>
-    public string GetOnDutyTimeRemainingDisplay()
-    {
-        var hours = OnDutyMinutesRemaining / 60;
-        var minutes = OnDutyMinutesRemaining % 60;
-        return $"{hours}h {minutes}m";
-    }
 }
