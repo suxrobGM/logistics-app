@@ -15,9 +15,6 @@ public static partial class EmployeeMapper
     [MapperIgnoreSource(nameof(Employee.PayrollInvoices))]
     [MapperIgnoreSource(nameof(Employee.TimeEntries))]
     [MapperIgnoreTarget(nameof(EmployeeDto.Role))]
-    [MapperIgnoreTarget(nameof(EmployeeDto.LastKnownLocation))]
-    [MapperIgnoreTarget(nameof(EmployeeDto.LastKnownLocationLat))]
-    [MapperIgnoreTarget(nameof(EmployeeDto.LastKnownLocationLng))]
     [MapPropertyFromSource(nameof(EmployeeDto.FullName), Use = nameof(GetFullName))]
     private static partial EmployeeDto MapEmployee(Employee entity);
 

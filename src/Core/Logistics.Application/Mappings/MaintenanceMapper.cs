@@ -20,8 +20,6 @@ public static partial class MaintenanceMapper
     private static partial MaintenanceRecordDto MapMaintenanceRecord(MaintenanceRecord entity);
 
     [MapperIgnoreSource(nameof(MaintenancePart.MaintenanceRecord))]
-    [MapperIgnoreTarget(nameof(MaintenancePartDto.Vendor))]
-    [MapperIgnoreTarget(nameof(MaintenancePartDto.WarrantyInfo))]
     [MapProperty(nameof(MaintenancePart.PartNumber), nameof(MaintenancePartDto.PartNumber), Use = nameof(@MappingConversions.DefaultToEmpty))]
     public static partial MaintenancePartDto ToDto(this MaintenancePart entity);
 

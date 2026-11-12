@@ -12,9 +12,6 @@ public class EmployeeDto
     public string? PhoneNumber { get; set; }
     public string? FullName { get; set; }
     public Address? Address { get; set; }
-    public string? LastKnownLocation { get; set; }
-    public double? LastKnownLocationLat { get; set; }
-    public double? LastKnownLocationLng { get; set; }
     public decimal Salary { get; set; }
     public SalaryType SalaryType { get; set; }
     public EmployeeStatus Status { get; set; }

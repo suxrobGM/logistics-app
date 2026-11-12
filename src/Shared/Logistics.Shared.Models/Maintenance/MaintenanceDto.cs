@@ -39,8 +39,6 @@ public class MaintenancePartDto
     public int Quantity { get; set; }
     public decimal UnitCost { get; set; }
     public decimal TotalCost { get; set; }
-    public string? Vendor { get; set; }
-    public string? WarrantyInfo { get; set; }
 }
 
 #region Request DTOs

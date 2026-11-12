@@ -34,16 +34,9 @@ public class AccidentReportDto
     public bool InjuriesReported { get; set; }
     public int? NumberOfInjuries { get; set; }
     public string? InjuryDescription { get; set; }
-    public bool FatalitiesReported { get; set; }
-    public int? NumberOfFatalities { get; set; }
 
-    public bool VehicleTowed { get; set; }
-    public string? TowCompany { get; set; }
     public decimal? EstimatedDamage { get; set; }
     public string? DamageDescription { get; set; }
-
-    public bool HazmatInvolved { get; set; }
-    public string? HazmatDescription { get; set; }
 
     public string? InsuranceClaimNumber { get; set; }
     public DateTime? InsuranceNotifiedAt { get; set; }
@@ -69,7 +62,6 @@ public class AccidentWitnessDto
     public string? Email { get; set; }
     public string? Address { get; set; }
     public string? Statement { get; set; }
-    public DateTime? StatementDate { get; set; }
 }
 
 public class AccidentThirdPartyDto
@@ -78,21 +70,17 @@ public class AccidentThirdPartyDto
     public string DriverName { get; set; } = string.Empty;
     public string? DriverPhone { get; set; }
     public string? DriverLicense { get; set; }
-    public string? DriverLicenseState { get; set; }
 
     public string? VehicleMake { get; set; }
     public string? VehicleModel { get; set; }
     public string? VehicleYear { get; set; }
     public string? VehicleColor { get; set; }
     public string? LicensePlate { get; set; }
-    public string? LicensePlateState { get; set; }
     public string? VinNumber { get; set; }
 
     public string? InsuranceCompany { get; set; }
     public string? InsurancePolicyNumber { get; set; }
     public string? InsurancePhone { get; set; }
-
-    public string? Notes { get; set; }
 }
 
 public class AccidentSummaryDto

@@ -18,12 +18,6 @@ public static partial class AccidentMapper
     [MapperIgnoreTarget(nameof(AccidentReportDto.ReviewedByName))]
     [MapperIgnoreTarget(nameof(AccidentReportDto.Witnesses))]
     [MapperIgnoreTarget(nameof(AccidentReportDto.ThirdParties))]
-    [MapperIgnoreTarget(nameof(AccidentReportDto.FatalitiesReported))]
-    [MapperIgnoreTarget(nameof(AccidentReportDto.NumberOfFatalities))]
-    [MapperIgnoreTarget(nameof(AccidentReportDto.VehicleTowed))]
-    [MapperIgnoreTarget(nameof(AccidentReportDto.TowCompany))]
-    [MapperIgnoreTarget(nameof(AccidentReportDto.HazmatInvolved))]
-    [MapperIgnoreTarget(nameof(AccidentReportDto.HazmatDescription))]
     [MapProperty(nameof(AccidentReport.AccidentType), nameof(AccidentReportDto.Type))]
     [MapProperty(nameof(AccidentReport.AccidentType), nameof(AccidentReportDto.TypeDisplay), Use = nameof(@MappingConversions.Describe))]
     [MapProperty(nameof(AccidentReport.Severity), nameof(AccidentReportDto.SeverityDisplay), Use = nameof(@MappingConversions.Describe))]
@@ -36,14 +30,10 @@ public static partial class AccidentMapper
     private static partial AccidentReportDto MapAccidentReport(AccidentReport entity);
 
     [MapperIgnoreSource(nameof(AccidentWitness.AccidentReport))]
-    [MapperIgnoreTarget(nameof(AccidentWitnessDto.StatementDate))]
     [MapProperty(nameof(AccidentWitness.PhoneNumber), nameof(AccidentWitnessDto.Phone))]
     public static partial AccidentWitnessDto ToDto(this AccidentWitness entity);
 
     [MapperIgnoreSource(nameof(AccidentThirdParty.AccidentReport))]
-    [MapperIgnoreTarget(nameof(AccidentThirdPartyDto.DriverLicenseState))]
-    [MapperIgnoreTarget(nameof(AccidentThirdPartyDto.LicensePlateState))]
-    [MapperIgnoreTarget(nameof(AccidentThirdPartyDto.Notes))]
     [MapProperty(nameof(AccidentThirdParty.Name), nameof(AccidentThirdPartyDto.DriverName))]
     [MapProperty(nameof(AccidentThirdParty.PhoneNumber), nameof(AccidentThirdPartyDto.DriverPhone))]
     [MapProperty(nameof(AccidentThirdParty.VehicleLicensePlate), nameof(AccidentThirdPartyDto.LicensePlate))]

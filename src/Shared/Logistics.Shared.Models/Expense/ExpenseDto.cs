@@ -23,14 +23,12 @@ public record ExpenseDto
 
     // Approval info
     public string? ApprovedById { get; init; }
-    public string? ApprovedByName { get; init; }
     public DateTime? ApprovedAt { get; init; }
     public string? RejectionReason { get; init; }
 
     // Audit fields
     public DateTime CreatedAt { get; init; }
     public string? CreatedBy { get; init; }
-    public string? CreatedByName { get; init; }
 
     // CompanyExpense fields
     public CompanyExpenseCategory? CompanyCategory { get; init; }

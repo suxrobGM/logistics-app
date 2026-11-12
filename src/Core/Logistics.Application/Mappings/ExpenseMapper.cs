@@ -10,8 +10,6 @@ public static partial class ExpenseMapper
 {
     [MapperIgnoreTarget(nameof(ExpenseDto.Type))]
     [MapperIgnoreTarget(nameof(ExpenseDto.ReceiptDownloadUrl))]
-    [MapperIgnoreTarget(nameof(ExpenseDto.ApprovedByName))]
-    [MapperIgnoreTarget(nameof(ExpenseDto.CreatedByName))]
     [MapperIgnoreTarget(nameof(ExpenseDto.CompanyCategory))]
     [MapperIgnoreTarget(nameof(ExpenseDto.TruckId))]
     [MapperIgnoreTarget(nameof(ExpenseDto.Truck))]
