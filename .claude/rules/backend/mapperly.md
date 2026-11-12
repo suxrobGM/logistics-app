@@ -8,8 +8,15 @@ paths:
 
 - All mapping via Riok.Mapperly mappers in `src/Core/Logistics.Mappings/` - no manual mapping in handlers
 - Extension method pattern: `entity.ToDto()`
-- `[MapperIgnoreSource]` for navigation properties, internal fields
+- `[MapperIgnoreSource]` for navigation properties only. `MapperDefaults.cs` sets
+  `RequiredMappingStrategy.Target` assembly-wide, so an unmapped entity column is fine and only an
+  unfilled DTO field warns (RMG012)
 - `[MapperIgnoreTarget]` for computed fields set manually after mapping
+- Display strings and null defaults go through `MappingConversions` (`Describe`, `DefaultToEmpty`,
+  `HasText`) via `Use = nameof(@MappingConversions.X)`. A `Use` method must accept the member's exact
+  type, nullability included - a non-nullable parameter on a nullable member makes Mapperly throw on null
+- When the public `ToDto` takes extra arguments or reads a navigation, make the partial a private
+  `MapX(Entity entity)` and fill the rest in the public method
 
 ```csharp
 [Mapper]
