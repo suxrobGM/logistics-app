@@ -18,8 +18,5 @@ internal sealed class MaintenancePartEntityConfiguration : IEntityTypeConfigurat
 
         builder.Property(i => i.PartNumber)
             .HasMaxLength(100);
-
-        builder.Property(i => i.UnitCost).HasPrecision(18, 2);
-        builder.Property(i => i.TotalCost).HasPrecision(18, 2);
     }
 }

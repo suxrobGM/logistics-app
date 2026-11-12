@@ -29,3 +29,10 @@ turns the mistake into an immediate, named error - fix the call site, don't remo
 Tenant entities have no concurrency tokens - a `DbUpdateConcurrencyException` on tenant data means
 a missing row (usually this trap), not a write conflict. Only master `User` / `AppRole` carry a
 `ConcurrencyStamp` and can conflict for real.
+
+## Decimal and currency defaults
+
+Both DbContexts set every `decimal` to `numeric(18,2)` and every `Money.Currency` to length 3 in
+`ConfigureConventions`, so don't repeat `HasPrecision(18, 2)`. A column that needs another scale
+says so with `HasPrecision(p, s)`; one that must stay unbounded `numeric` (AI cost, fuel volume)
+uses `Property(x).Metadata.SetPrecision(null)`.

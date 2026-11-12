@@ -36,16 +36,9 @@ internal sealed class LaneRateFloorEntityConfiguration : IEntityTypeConfiguratio
         builder.Property(f => f.DestinationState)
             .HasMaxLength(3);
 
-        builder.Property(f => f.MinRatePerMile)
-            .HasPrecision(18, 2);
-
         builder.Property(f => f.Notes)
             .HasMaxLength(2000);
 
-        builder.ComplexProperty(f => f.MinTotalRate, money =>
-        {
-            money.Property(m => m.Amount).HasPrecision(18, 2);
-            money.Property(m => m.Currency).HasMaxLength(3);
-        });
+        builder.ComplexProperty(f => f.MinTotalRate);
     }
 }

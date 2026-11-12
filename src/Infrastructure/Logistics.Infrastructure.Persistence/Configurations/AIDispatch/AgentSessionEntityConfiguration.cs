@@ -15,6 +15,9 @@ internal sealed class AgentSessionEntityConfiguration : IEntityTypeConfiguration
         builder.Property(s => s.ErrorMessage)
             .HasMaxLength(2000);
 
+        // Turn costs are fractions of a cent, so this column opts out of the (18,2) decimal convention.
+        builder.Property(s => s.EstimatedCostUsd).Metadata.SetPrecision(null);
+
         builder.HasMany(s => s.Decisions)
             .WithOne(d => d.Session)
             .HasForeignKey(d => d.SessionId)

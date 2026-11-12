@@ -43,26 +43,11 @@ internal sealed class RateNegotiationEntityConfiguration : IEntityTypeConfigurat
         builder.Property(n => n.CloseReason)
             .HasMaxLength(1000);
 
-        builder.Property(n => n.FloorRatePerMile)
-            .HasPrecision(18, 2);
+        builder.ComplexProperty(n => n.FloorTotalRate);
 
-        builder.ComplexProperty(n => n.FloorTotalRate, money =>
-        {
-            money.Property(m => m.Amount).HasPrecision(18, 2);
-            money.Property(m => m.Currency).HasMaxLength(3);
-        });
+        builder.ComplexProperty(n => n.LatestCounterOffer);
 
-        builder.ComplexProperty(n => n.LatestCounterOffer, money =>
-        {
-            money.Property(m => m.Amount).HasPrecision(18, 2);
-            money.Property(m => m.Currency).HasMaxLength(3);
-        });
-
-        builder.ComplexProperty(n => n.LatestBrokerOffer, money =>
-        {
-            money.Property(m => m.Amount).HasPrecision(18, 2);
-            money.Property(m => m.Currency).HasMaxLength(3);
-        });
+        builder.ComplexProperty(n => n.LatestBrokerOffer);
 
         builder.HasOne(n => n.LoadBoardListing)
             .WithMany()

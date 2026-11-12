@@ -10,17 +10,9 @@ internal sealed class SubscriptionPlanEntityConfiguration : IEntityTypeConfigura
     {
         builder.ToTable("subscription_plans");
 
-        builder.ComplexProperty(i => i.Price, money =>
-        {
-            money.Property(m => m.Amount).HasPrecision(18, 2);
-            money.Property(m => m.Currency).HasMaxLength(3);
-        });
+        builder.ComplexProperty(i => i.Price);
 
-        builder.ComplexProperty(i => i.PerTruckPrice, money =>
-        {
-            money.Property(m => m.Amount).HasPrecision(18, 2);
-            money.Property(m => m.Currency).HasMaxLength(3);
-        });
+        builder.ComplexProperty(i => i.PerTruckPrice);
 
         builder.Property(i => i.WeeklyAIBudgetUsd)
             .HasPrecision(10, 2);

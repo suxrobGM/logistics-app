@@ -11,11 +11,7 @@ internal sealed class LoadEntityConfiguration : IEntityTypeConfiguration<Load>
     {
         builder.ToTable("loads");
 
-        builder.ComplexProperty(i => i.DeliveryCost, money =>
-        {
-            money.Property(m => m.Amount).HasPrecision(18, 2);
-            money.Property(m => m.Currency).HasMaxLength(3);
-        });
+        builder.ComplexProperty(i => i.DeliveryCost);
 
         builder.ComplexCollection(i => i.Vehicles, vehicles => vehicles.ToJson("vehicles"));
         builder.ComplexCollection(i => i.CustomerUpdates, updates => updates.ToJson("customer_updates"));
@@ -47,7 +43,6 @@ internal sealed class LoadEntityConfiguration : IEntityTypeConfiguration<Load>
             .HasMaxLength(2000);
 
         // Hazmat / ADR
-        builder.Property(i => i.FuelSurcharge).HasPrecision(18, 2);
         builder.Property(i => i.NmfcCode).HasMaxLength(20);
         builder.Property(i => i.Dimensions).HasMaxLength(100);
 

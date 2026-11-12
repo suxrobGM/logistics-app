@@ -34,13 +34,6 @@ internal sealed class NegotiationMessageEntityConfiguration : IEntityTypeConfigu
         builder.Property(m => m.InReplyToMessageId)
             .HasMaxLength(200);
 
-        builder.Property(m => m.ProposedRatePerMile)
-            .HasPrecision(18, 2);
-
-        builder.ComplexProperty(m => m.ProposedTotalRate, money =>
-        {
-            money.Property(v => v.Amount).HasPrecision(18, 2);
-            money.Property(v => v.Currency).HasMaxLength(3);
-        });
+        builder.ComplexProperty(m => m.ProposedTotalRate);
     }
 }

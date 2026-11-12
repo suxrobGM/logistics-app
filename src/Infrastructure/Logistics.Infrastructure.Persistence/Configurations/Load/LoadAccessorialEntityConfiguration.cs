@@ -11,7 +11,6 @@ internal sealed class LoadAccessorialEntityConfiguration : IEntityTypeConfigurat
         builder.ToTable("load_accessorials");
 
         builder.Property(a => a.Name).HasMaxLength(200).IsRequired();
-        builder.Property(a => a.Rate).HasPrecision(18, 2);
         builder.Property(a => a.Quantity).HasPrecision(12, 2);
         builder.Ignore(a => a.Total);
 

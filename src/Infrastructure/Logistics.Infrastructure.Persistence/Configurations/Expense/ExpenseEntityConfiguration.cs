@@ -29,11 +29,7 @@ internal sealed class ExpenseEntityConfiguration : IEntityTypeConfiguration<Expe
         builder.HasIndex(e => e.Number)
             .IsUnique();
 
-        builder.ComplexProperty(e => e.Amount, money =>
-        {
-            money.Property(m => m.Amount).HasPrecision(18, 2);
-            money.Property(m => m.Currency).HasMaxLength(3);
-        });
+        builder.ComplexProperty(e => e.Amount);
 
         builder.Property(e => e.VendorName).HasMaxLength(255);
         builder.Property(e => e.ReceiptBlobPath).HasMaxLength(500);
@@ -74,6 +70,8 @@ internal sealed class ExpenseEntityConfiguration : IEntityTypeConfiguration<Expe
         {
             builder.Property(e => e.ExternalTransactionId).HasMaxLength(100);
             builder.Property(e => e.PricePerUnit).HasPrecision(18, 4);
+            // Fuel volume keeps the unbounded numeric it was created with, outside the (18,2) decimal convention.
+            builder.Property(e => e.Quantity).Metadata.SetPrecision(null);
 
             // Belt-and-suspenders idempotency for fuel-card imports (the staging table's
             // unique index is the primary guard).

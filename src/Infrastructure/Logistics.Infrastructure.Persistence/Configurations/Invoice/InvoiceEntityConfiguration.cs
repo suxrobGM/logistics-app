@@ -25,23 +25,11 @@ internal sealed class InvoiceEntityConfiguration : IEntityTypeConfiguration<Invo
         builder.HasIndex(i => i.Number)
             .IsUnique();
 
-        builder.ComplexProperty(i => i.Subtotal, money =>
-        {
-            money.Property(m => m.Amount).HasPrecision(18, 2);
-            money.Property(m => m.Currency).HasMaxLength(3);
-        });
+        builder.ComplexProperty(i => i.Subtotal);
 
-        builder.ComplexProperty(i => i.TaxTotal, money =>
-        {
-            money.Property(m => m.Amount).HasPrecision(18, 2);
-            money.Property(m => m.Currency).HasMaxLength(3);
-        });
+        builder.ComplexProperty(i => i.TaxTotal);
 
-        builder.ComplexProperty(i => i.Total, money =>
-        {
-            money.Property(m => m.Amount).HasPrecision(18, 2);
-            money.Property(m => m.Currency).HasMaxLength(3);
-        });
+        builder.ComplexProperty(i => i.Total);
 
         builder.Property(i => i.TaxBehavior)
             .HasDefaultValue(TaxBehavior.Exclusive);

@@ -10,11 +10,7 @@ internal sealed class PaymentEntityConfiguration : IEntityTypeConfiguration<Paym
     {
         builder.ToTable("payments");
 
-        builder.ComplexProperty(i => i.Amount, money =>
-        {
-            money.Property(m => m.Amount).HasPrecision(18, 2);
-            money.Property(m => m.Currency).HasMaxLength(3);
-        });
+        builder.ComplexProperty(i => i.Amount);
 
         builder.HasIndex(p => p.StripePaymentIntentId)
             .IsUnique()

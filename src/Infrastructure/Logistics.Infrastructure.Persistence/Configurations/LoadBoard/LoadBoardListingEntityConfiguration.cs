@@ -20,14 +20,7 @@ internal sealed class LoadBoardListingEntityConfiguration : IEntityTypeConfigura
             .HasMaxLength(100)
             .IsRequired();
 
-        builder.Property(i => i.RatePerMile)
-            .HasPrecision(18, 2);
-
-        builder.ComplexProperty(i => i.TotalRate, money =>
-        {
-            money.Property(m => m.Amount).HasPrecision(18, 2);
-            money.Property(m => m.Currency).HasMaxLength(3);
-        });
+        builder.ComplexProperty(i => i.TotalRate);
 
         builder.Property(i => i.Commodity)
             .HasMaxLength(200);

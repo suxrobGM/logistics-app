@@ -57,6 +57,5 @@ internal sealed class AccidentReportEntityConfiguration : IEntityTypeConfigurati
         builder.Property(i => i.InsuranceClaimNumber).HasMaxLength(100);
         builder.Property(i => i.DriverStatement).HasMaxLength(4000);
         builder.Property(i => i.ReviewNotes).HasMaxLength(2000);
-        builder.Property(i => i.EstimatedDamageCost).HasPrecision(18, 2);
     }
 }

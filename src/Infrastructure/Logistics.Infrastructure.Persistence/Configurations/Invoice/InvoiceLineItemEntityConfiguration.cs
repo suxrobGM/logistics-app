@@ -17,17 +17,10 @@ internal sealed class InvoiceLineItemEntityConfiguration : IEntityTypeConfigurat
         builder.Property(i => i.Notes)
             .HasMaxLength(1000);
 
-        builder.ComplexProperty(i => i.Amount, money =>
-        {
-            money.Property(m => m.Amount).HasPrecision(18, 2);
-            money.Property(m => m.Currency).HasMaxLength(3);
-        });
+        builder.ComplexProperty(i => i.Amount);
 
         builder.Property(i => i.TaxRatePercent)
             .HasPrecision(7, 4);
-
-        builder.Property(i => i.TaxAmount)
-            .HasPrecision(18, 2);
 
         builder.Property(i => i.TaxCode)
             .HasMaxLength(50);

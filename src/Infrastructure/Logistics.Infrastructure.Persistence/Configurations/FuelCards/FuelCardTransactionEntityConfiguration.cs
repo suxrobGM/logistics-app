@@ -21,11 +21,7 @@ internal sealed class FuelCardTransactionEntityConfiguration : IEntityTypeConfig
             .HasMaxLength(100)
             .IsRequired();
 
-        builder.ComplexProperty(i => i.Amount, money =>
-        {
-            money.Property(m => m.Amount).HasPrecision(18, 2);
-            money.Property(m => m.Currency).HasMaxLength(3);
-        });
+        builder.ComplexProperty(i => i.Amount);
 
         builder.Property(i => i.Quantity).HasPrecision(18, 3);
         builder.Property(i => i.PricePerUnit).HasPrecision(18, 4);

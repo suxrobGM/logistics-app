@@ -12,6 +12,5 @@ internal sealed class AccessorialChargeEntityConfiguration : IEntityTypeConfigur
 
         builder.Property(a => a.Name).HasMaxLength(200).IsRequired();
         builder.HasIndex(a => a.Name).IsUnique();
-        builder.Property(a => a.DefaultAmount).HasPrecision(18, 2);
     }
 }

@@ -42,9 +42,5 @@ internal sealed class MaintenanceRecordEntityConfiguration : IEntityTypeConfigur
 
         builder.Property(i => i.WorkPerformed)
             .HasMaxLength(2000);
-
-        builder.Property(i => i.LaborCost).HasPrecision(18, 2);
-        builder.Property(i => i.PartsCost).HasPrecision(18, 2);
-        builder.Property(i => i.TotalCost).HasPrecision(18, 2);
     }
 }

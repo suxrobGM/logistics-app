@@ -83,6 +83,8 @@ public class TenantDbContext : DbContext
     protected override void ConfigureConventions(ModelConfigurationBuilder configurationBuilder)
     {
         configurationBuilder.Conventions.Add(_ => new SnakeCaseEnumConvention());
+        configurationBuilder.Conventions.Add(_ => new MoneyCurrencyLengthConvention());
+        configurationBuilder.Properties<decimal>().HavePrecision(18, 2);
     }
 
     protected override void OnModelCreating(ModelBuilder builder)

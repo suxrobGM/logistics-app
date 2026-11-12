@@ -17,11 +17,7 @@ internal sealed class FactoringBatchEntityConfiguration : IEntityTypeConfigurati
             .Metadata.SetAfterSaveBehavior(PropertySaveBehavior.Ignore);
         builder.HasIndex(b => b.Number).IsUnique();
 
-        builder.ComplexProperty(b => b.Total, money =>
-        {
-            money.Property(m => m.Amount).HasPrecision(18, 2);
-            money.Property(m => m.Currency).HasMaxLength(3);
-        });
+        builder.ComplexProperty(b => b.Total);
 
         builder.Property(b => b.SubmittedToEmail).HasMaxLength(320).IsRequired();
         builder.Property(b => b.Notes).HasMaxLength(2000);

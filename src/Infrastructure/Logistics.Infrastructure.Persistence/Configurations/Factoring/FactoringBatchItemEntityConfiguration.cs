@@ -10,16 +10,8 @@ internal sealed class FactoringBatchItemEntityConfiguration : IEntityTypeConfigu
     {
         builder.ToTable("factoring_batch_items");
 
-        builder.ComplexProperty(i => i.Amount, money =>
-        {
-            money.Property(m => m.Amount).HasPrecision(18, 2);
-            money.Property(m => m.Currency).HasMaxLength(3);
-        });
+        builder.ComplexProperty(i => i.Amount);
 
-        builder.Property(i => i.AdvanceAmount).HasPrecision(18, 2);
-        builder.Property(i => i.FeeAmount).HasPrecision(18, 2);
-        builder.Property(i => i.ReserveAmount).HasPrecision(18, 2);
-        builder.Property(i => i.ReserveReleasedAmount).HasPrecision(18, 2);
         builder.Property(i => i.RejectionReason).HasMaxLength(1000);
         builder.Ignore(i => i.ReserveOutstanding);
 

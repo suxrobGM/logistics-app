@@ -11,8 +11,6 @@ internal sealed class RecurringDeductionEntityConfiguration : IEntityTypeConfigu
         builder.ToTable("recurring_deductions");
 
         builder.Property(d => d.Description).HasMaxLength(200).IsRequired();
-        builder.Property(d => d.Amount).HasPrecision(18, 2);
-        builder.Property(d => d.EscrowTarget).HasPrecision(18, 2);
 
         builder.HasOne(d => d.Employee)
             .WithMany(e => e.RecurringDeductions)

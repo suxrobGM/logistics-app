@@ -28,10 +28,6 @@ internal sealed class TenantEntityConfiguration : IEntityTypeConfiguration<Tenan
         builder.PrimitiveCollection(t => t.Presets)
             .ElementType(e => e.HasConversion<SnakeCaseEnumConverter<TenantPreset>>());
 
-        builder.ComplexProperty(t => t.Settings, settings =>
-        {
-            settings.Property(s => s.DefaultRateFloorPerMile).HasPrecision(18, 2);
-            settings.Property(s => s.DetentionRatePerHour).HasPrecision(18, 2);
-        });
+        builder.ComplexProperty(t => t.Settings);
     }
 }

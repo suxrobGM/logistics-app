@@ -13,7 +13,6 @@ internal sealed class CustomerEntityConfiguration : IEntityTypeConfiguration<Cus
         builder.Property(c => c.TaxId)
             .HasMaxLength(50);
 
-        builder.Property(c => c.DetentionRatePerHour).HasPrecision(18, 2);
         builder.ComplexProperty(c => c.UpdatePreferences);
     }
 }
