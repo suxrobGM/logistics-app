@@ -1,0 +1,28 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <IsPackable>false</IsPackable>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="NSubstitute" />
+    <PackageReference Include="MockQueryable.NSubstitute" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.InMemory" />
+    <PackageReference Include="QuestPDF" />
+    <PackageReference Include="xunit.v3" />
+    <PackageReference Include="coverlet.MTP" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\src\Core\Logistics.Domain\Logistics.Domain.csproj" />
+    <ProjectReference Include="..\..\src\Infrastructure\Logistics.Infrastructure.Communications\Logistics.Infrastructure.Communications.csproj" />
+    <ProjectReference Include="..\..\src\Infrastructure\Logistics.Infrastructure.Documents\Logistics.Infrastructure.Documents.csproj" />
+    <ProjectReference Include="..\..\src\Infrastructure\Logistics.Infrastructure.Integrations\Logistics.Infrastructure.Integrations.csproj" />
+    <ProjectReference Include="..\..\src\Infrastructure\Logistics.Infrastructure.Payments\Logistics.Infrastructure.Payments.csproj" />
+    <ProjectReference Include="..\..\src\Infrastructure\Logistics.Infrastructure.Persistence\Logistics.Infrastructure.Persistence.csproj" />
+    <ProjectReference Include="..\..\src\Infrastructure\Logistics.Infrastructure.Routing\Logistics.Infrastructure.Routing.csproj" />
+    <ProjectReference Include="..\..\src\Presentation\Logistics.HostDefaults\Logistics.HostDefaults.csproj" />
+  </ItemGroup>
+
+</Project>

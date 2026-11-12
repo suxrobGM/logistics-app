@@ -10,8 +10,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <InternalsVisibleTo Include="Logistics.Infrastructure.Integrations.Tests" />
-    <InternalsVisibleTo Include="Logistics.Infrastructure.Vin.Tests" />
+    <InternalsVisibleTo Include="Logistics.Infrastructure.Tests" />
     <InternalsVisibleTo Include="DynamicProxyGenAssembly2" />
   </ItemGroup>
 

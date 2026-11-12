@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <ItemGroup>
-    <InternalsVisibleTo Include="Logistics.Infrastructure.Routing.Tests"/>
+    <InternalsVisibleTo Include="Logistics.Infrastructure.Tests"/>
   </ItemGroup>
 
   <ItemGroup>
