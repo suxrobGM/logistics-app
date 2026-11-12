@@ -1,11 +1,30 @@
 using Logistics.Domain.Entities.Maintenance;
-using Logistics.Domain.Primitives.Enums;
 using Logistics.Shared.Models;
+using Riok.Mapperly.Abstractions;
 
 namespace Logistics.Mappings;
 
-public static class MaintenanceMapper
+[Mapper]
+public static partial class MaintenanceMapper
 {
+    [MapperIgnoreSource(nameof(MaintenanceRecord.Truck))]
+    [MapperIgnoreSource(nameof(MaintenanceRecord.PerformedBy))]
+    [MapperIgnoreSource(nameof(MaintenanceRecord.Parts))]
+    [MapperIgnoreTarget(nameof(MaintenanceRecordDto.TruckNumber))]
+    [MapperIgnoreTarget(nameof(MaintenanceRecordDto.PerformedByName))]
+    [MapperIgnoreTarget(nameof(MaintenanceRecordDto.Parts))]
+    [MapProperty(nameof(MaintenanceRecord.MaintenanceType), nameof(MaintenanceRecordDto.Type))]
+    [MapProperty(nameof(MaintenanceRecord.MaintenanceType), nameof(MaintenanceRecordDto.TypeDisplay), Use = nameof(@MappingConversions.Describe))]
+    [MapProperty(nameof(MaintenanceRecord.Description), nameof(MaintenanceRecordDto.Description), Use = nameof(@MappingConversions.DefaultToEmpty))]
+    [MapProperty(nameof(MaintenanceRecord.WorkPerformed), nameof(MaintenanceRecordDto.Notes))]
+    private static partial MaintenanceRecordDto MapMaintenanceRecord(MaintenanceRecord entity);
+
+    [MapperIgnoreSource(nameof(MaintenancePart.MaintenanceRecord))]
+    [MapperIgnoreTarget(nameof(MaintenancePartDto.Vendor))]
+    [MapperIgnoreTarget(nameof(MaintenancePartDto.WarrantyInfo))]
+    [MapProperty(nameof(MaintenancePart.PartNumber), nameof(MaintenancePartDto.PartNumber), Use = nameof(@MappingConversions.DefaultToEmpty))]
+    public static partial MaintenancePartDto ToDto(this MaintenancePart entity);
+
     extension(MaintenanceRecord entity)
     {
         /// <summary>For one row: reads the related names off the navigations. Lists pass them in
@@ -16,44 +35,11 @@ public static class MaintenanceMapper
         public MaintenanceRecordDto ToDto(
             string? truckNumber, string? performedByName, IEnumerable<MaintenancePartDto> parts)
         {
-            return new MaintenanceRecordDto
-            {
-                Id = entity.Id,
-                TruckId = entity.TruckId,
-                TruckNumber = truckNumber ?? string.Empty,
-                Type = entity.MaintenanceType,
-                TypeDisplay = entity.MaintenanceType.GetDescription(),
-                Description = entity.Description ?? string.Empty,
-                ServiceDate = entity.ServiceDate,
-                OdometerReading = entity.OdometerReading,
-                EngineHours = entity.EngineHours,
-                VendorName = entity.VendorName,
-                InvoiceNumber = entity.InvoiceNumber,
-                LaborCost = entity.LaborCost,
-                PartsCost = entity.PartsCost,
-                TotalCost = entity.TotalCost,
-                PerformedById = entity.PerformedById,
-                PerformedByName = performedByName,
-                Notes = entity.WorkPerformed,
-                Parts = parts.ToList(),
-                CreatedAt = entity.CreatedAt
-            };
-        }
-    }
-
-    extension(MaintenancePart entity)
-    {
-        public MaintenancePartDto ToDto()
-        {
-            return new MaintenancePartDto
-            {
-                Id = entity.Id,
-                PartNumber = entity.PartNumber ?? string.Empty,
-                PartName = entity.PartName,
-                Quantity = entity.Quantity,
-                UnitCost = entity.UnitCost,
-                TotalCost = entity.TotalCost
-            };
+            var dto = MapMaintenanceRecord(entity);
+            dto.TruckNumber = truckNumber ?? string.Empty;
+            dto.PerformedByName = performedByName;
+            dto.Parts = parts.ToList();
+            return dto;
         }
     }
 }

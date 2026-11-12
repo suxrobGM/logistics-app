@@ -1,11 +1,56 @@
 using Logistics.Domain.Entities.Safety;
-using Logistics.Domain.Primitives.Enums;
 using Logistics.Shared.Models;
+using Riok.Mapperly.Abstractions;
 
 namespace Logistics.Mappings;
 
-public static class AccidentMapper
+[Mapper]
+public static partial class AccidentMapper
 {
+    [MapperIgnoreSource(nameof(AccidentReport.Truck))]
+    [MapperIgnoreSource(nameof(AccidentReport.Driver))]
+    [MapperIgnoreSource(nameof(AccidentReport.ReviewedBy))]
+    [MapperIgnoreSource(nameof(AccidentReport.Trip))]
+    [MapperIgnoreSource(nameof(AccidentReport.Witnesses))]
+    [MapperIgnoreSource(nameof(AccidentReport.ThirdParties))]
+    [MapperIgnoreTarget(nameof(AccidentReportDto.TruckNumber))]
+    [MapperIgnoreTarget(nameof(AccidentReportDto.DriverName))]
+    [MapperIgnoreTarget(nameof(AccidentReportDto.ReviewedByName))]
+    [MapperIgnoreTarget(nameof(AccidentReportDto.Witnesses))]
+    [MapperIgnoreTarget(nameof(AccidentReportDto.ThirdParties))]
+    [MapperIgnoreTarget(nameof(AccidentReportDto.FatalitiesReported))]
+    [MapperIgnoreTarget(nameof(AccidentReportDto.NumberOfFatalities))]
+    [MapperIgnoreTarget(nameof(AccidentReportDto.VehicleTowed))]
+    [MapperIgnoreTarget(nameof(AccidentReportDto.TowCompany))]
+    [MapperIgnoreTarget(nameof(AccidentReportDto.HazmatInvolved))]
+    [MapperIgnoreTarget(nameof(AccidentReportDto.HazmatDescription))]
+    [MapProperty(nameof(AccidentReport.AccidentType), nameof(AccidentReportDto.Type))]
+    [MapProperty(nameof(AccidentReport.AccidentType), nameof(AccidentReportDto.TypeDisplay), Use = nameof(@MappingConversions.Describe))]
+    [MapProperty(nameof(AccidentReport.Severity), nameof(AccidentReportDto.SeverityDisplay), Use = nameof(@MappingConversions.Describe))]
+    [MapProperty(nameof(AccidentReport.Status), nameof(AccidentReportDto.StatusDisplay), Use = nameof(@MappingConversions.Describe))]
+    [MapProperty(nameof(AccidentReport.Address), nameof(AccidentReportDto.Location), Use = nameof(@MappingConversions.DefaultToEmpty))]
+    [MapProperty(nameof(AccidentReport.Description), nameof(AccidentReportDto.Description), Use = nameof(@MappingConversions.DefaultToEmpty))]
+    [MapProperty(nameof(AccidentReport.AnyInjuries), nameof(AccidentReportDto.InjuriesReported))]
+    [MapProperty(nameof(AccidentReport.EstimatedDamageCost), nameof(AccidentReportDto.EstimatedDamage))]
+    [MapProperty(nameof(AccidentReport.VehicleDamageDescription), nameof(AccidentReportDto.DamageDescription))]
+    private static partial AccidentReportDto MapAccidentReport(AccidentReport entity);
+
+    [MapperIgnoreSource(nameof(AccidentWitness.AccidentReport))]
+    [MapperIgnoreTarget(nameof(AccidentWitnessDto.StatementDate))]
+    [MapProperty(nameof(AccidentWitness.PhoneNumber), nameof(AccidentWitnessDto.Phone))]
+    public static partial AccidentWitnessDto ToDto(this AccidentWitness entity);
+
+    [MapperIgnoreSource(nameof(AccidentThirdParty.AccidentReport))]
+    [MapperIgnoreTarget(nameof(AccidentThirdPartyDto.DriverLicenseState))]
+    [MapperIgnoreTarget(nameof(AccidentThirdPartyDto.LicensePlateState))]
+    [MapperIgnoreTarget(nameof(AccidentThirdPartyDto.Notes))]
+    [MapProperty(nameof(AccidentThirdParty.Name), nameof(AccidentThirdPartyDto.DriverName))]
+    [MapProperty(nameof(AccidentThirdParty.PhoneNumber), nameof(AccidentThirdPartyDto.DriverPhone))]
+    [MapProperty(nameof(AccidentThirdParty.VehicleLicensePlate), nameof(AccidentThirdPartyDto.LicensePlate))]
+    [MapProperty(nameof(AccidentThirdParty.VehicleVin), nameof(AccidentThirdPartyDto.VinNumber))]
+    [MapProperty(nameof(AccidentThirdParty.InsuranceAgentPhone), nameof(AccidentThirdPartyDto.InsurancePhone))]
+    public static partial AccidentThirdPartyDto ToDto(this AccidentThirdParty entity);
+
     extension(AccidentReport entity)
     {
         /// <summary>For one row: reads the related names off the navigations. Lists pass them in
@@ -24,85 +69,13 @@ public static class AccidentMapper
             IEnumerable<AccidentWitnessDto> witnesses,
             IEnumerable<AccidentThirdPartyDto> thirdParties)
         {
-            return new AccidentReportDto
-            {
-                Id = entity.Id,
-                TruckId = entity.TruckId,
-                TruckNumber = truckNumber ?? string.Empty,
-                DriverId = entity.DriverId,
-                DriverName = driverName ?? string.Empty,
-                Type = entity.AccidentType,
-                TypeDisplay = entity.AccidentType.GetDescription(),
-                Severity = entity.Severity,
-                SeverityDisplay = entity.Severity.GetDescription(),
-                Status = entity.Status,
-                StatusDisplay = entity.Status.GetDescription(),
-                AccidentDateTime = entity.AccidentDateTime,
-                Location = entity.Address ?? string.Empty,
-                Latitude = entity.Latitude,
-                Longitude = entity.Longitude,
-                Description = entity.Description ?? string.Empty,
-                WeatherConditions = entity.WeatherConditions,
-                RoadConditions = entity.RoadConditions,
-                PoliceReportFiled = entity.PoliceReportFiled,
-                PoliceReportNumber = entity.PoliceReportNumber,
-                PoliceOfficerName = entity.PoliceOfficerName,
-                PoliceDepartment = entity.PoliceDepartment,
-                InjuriesReported = entity.AnyInjuries,
-                NumberOfInjuries = entity.NumberOfInjuries,
-                InjuryDescription = entity.InjuryDescription,
-                EstimatedDamage = entity.EstimatedDamageCost,
-                DamageDescription = entity.VehicleDamageDescription,
-                InsuranceClaimNumber = entity.InsuranceClaimNumber,
-                InsuranceNotifiedAt = entity.InsuranceNotifiedAt,
-                ReviewedById = entity.ReviewedById,
-                ReviewedByName = reviewerName,
-                ReviewedAt = entity.ReviewedAt,
-                ReviewNotes = entity.ReviewNotes,
-                TripId = entity.TripId,
-                Witnesses = witnesses.ToList(),
-                ThirdParties = thirdParties.ToList(),
-                CreatedAt = entity.CreatedAt
-            };
-        }
-    }
-
-    extension(AccidentWitness entity)
-    {
-        public AccidentWitnessDto ToDto()
-        {
-            return new AccidentWitnessDto
-            {
-                Id = entity.Id,
-                Name = entity.Name,
-                Phone = entity.PhoneNumber,
-                Email = entity.Email,
-                Address = entity.Address,
-                Statement = entity.Statement
-            };
-        }
-    }
-
-    extension(AccidentThirdParty entity)
-    {
-        public AccidentThirdPartyDto ToDto()
-        {
-            return new AccidentThirdPartyDto
-            {
-                Id = entity.Id,
-                DriverName = entity.Name,
-                DriverPhone = entity.PhoneNumber,
-                DriverLicense = entity.DriverLicense,
-                VehicleMake = entity.VehicleMake,
-                VehicleModel = entity.VehicleModel,
-                VehicleYear = entity.VehicleYear?.ToString(),
-                VehicleColor = entity.VehicleColor,
-                LicensePlate = entity.VehicleLicensePlate,
-                VinNumber = entity.VehicleVin,
-                InsuranceCompany = entity.InsuranceCompany,
-                InsurancePolicyNumber = entity.InsurancePolicyNumber,
-                InsurancePhone = entity.InsuranceAgentPhone
-            };
+            var dto = MapAccidentReport(entity);
+            dto.TruckNumber = truckNumber ?? string.Empty;
+            dto.DriverName = driverName ?? string.Empty;
+            dto.ReviewedByName = reviewerName;
+            dto.Witnesses = witnesses.ToList();
+            dto.ThirdParties = thirdParties.ToList();
+            return dto;
         }
     }
 }

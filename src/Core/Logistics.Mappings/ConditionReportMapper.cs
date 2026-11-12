@@ -1,29 +1,21 @@
 using Logistics.Domain.Entities;
 using Logistics.Domain.Primitives.Enums;
 using Logistics.Shared.Models;
+using Riok.Mapperly.Abstractions;
 
 namespace Logistics.Mappings;
 
-public static class ConditionReportMapper
+[Mapper]
+public static partial class ConditionReportMapper
 {
-    extension(ConditionDefect entity)
-    {
-        public ConditionDefectDto ToDto()
-        {
-            return new ConditionDefectDto
-            {
-                Id = entity.Id,
-                PartCategory = entity.PartCategory,
-                PartCategoryDisplay = entity.PartCategory.GetDescription(),
-                Description = entity.Description,
-                Severity = entity.Severity,
-                SeverityDisplay = entity.Severity.GetDescription(),
-                Zone = entity.Zone,
-                ZoneDisplay = entity.Zone?.GetDescription(),
-                DamageType = entity.DamageType,
-                DamageCode = entity.DamageType?.GetCode(),
-                PhotoDocumentId = entity.PhotoDocumentId
-            };
-        }
-    }
+    [MapperIgnoreSource(nameof(ConditionDefect.LoadConditionReport))]
+    [MapProperty(nameof(ConditionDefect.PartCategory), nameof(ConditionDefectDto.PartCategoryDisplay), Use = nameof(@MappingConversions.Describe))]
+    [MapProperty(nameof(ConditionDefect.Severity), nameof(ConditionDefectDto.SeverityDisplay), Use = nameof(@MappingConversions.Describe))]
+    [MapProperty(nameof(ConditionDefect.Zone), nameof(ConditionDefectDto.ZoneDisplay), Use = nameof(DescribeZone))]
+    [MapProperty(nameof(ConditionDefect.DamageType), nameof(ConditionDefectDto.DamageCode), Use = nameof(GetDamageCode))]
+    public static partial ConditionDefectDto ToDto(this ConditionDefect entity);
+
+    private static string? DescribeZone(VehicleDamageZone? zone) => zone?.GetDescription();
+
+    private static string? GetDamageCode(VehicleDamageType? type) => type?.GetCode();
 }

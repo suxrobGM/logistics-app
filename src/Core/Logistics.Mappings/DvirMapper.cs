@@ -1,11 +1,32 @@
 using Logistics.Domain.Entities.Safety;
-using Logistics.Domain.Primitives.Enums;
 using Logistics.Shared.Models;
+using Riok.Mapperly.Abstractions;
 
 namespace Logistics.Mappings;
 
-public static class DvirMapper
+[Mapper]
+public static partial class DvirMapper
 {
+    [MapperIgnoreSource(nameof(DvirReport.Truck))]
+    [MapperIgnoreSource(nameof(DvirReport.Driver))]
+    [MapperIgnoreSource(nameof(DvirReport.ReviewedBy))]
+    [MapperIgnoreSource(nameof(DvirReport.Trip))]
+    [MapperIgnoreSource(nameof(DvirReport.Defects))]
+    [MapperIgnoreTarget(nameof(DvirReportDto.TruckNumber))]
+    [MapperIgnoreTarget(nameof(DvirReportDto.DriverName))]
+    [MapperIgnoreTarget(nameof(DvirReportDto.ReviewedByName))]
+    [MapperIgnoreTarget(nameof(DvirReportDto.Defects))]
+    [MapProperty(nameof(DvirReport.DriverSignature), nameof(DvirReportDto.HasDriverSignature), Use = nameof(@MappingConversions.HasText))]
+    [MapProperty(nameof(DvirReport.MechanicSignature), nameof(DvirReportDto.HasMechanicSignature), Use = nameof(@MappingConversions.HasText))]
+    private static partial DvirReportDto MapDvirReport(DvirReport entity);
+
+    [MapperIgnoreSource(nameof(DvirDefect.DvirReport))]
+    [MapperIgnoreSource(nameof(DvirDefect.CorrectedBy))]
+    [MapperIgnoreTarget(nameof(DvirDefectDto.CorrectedByName))]
+    [MapProperty(nameof(DvirDefect.Category), nameof(DvirDefectDto.CategoryDisplay), Use = nameof(@MappingConversions.Describe))]
+    [MapProperty(nameof(DvirDefect.Severity), nameof(DvirDefectDto.SeverityDisplay), Use = nameof(@MappingConversions.Describe))]
+    private static partial DvirDefectDto MapDvirDefect(DvirDefect entity);
+
     extension(DvirReport entity)
     {
         /// <summary>For one row: reads the related names off the navigations. Lists pass them in
@@ -19,32 +40,12 @@ public static class DvirMapper
         public DvirReportDto ToDto(
             string? truckNumber, string? driverName, string? reviewerName, IEnumerable<DvirDefectDto> defects)
         {
-            return new DvirReportDto
-            {
-                Id = entity.Id,
-                TruckId = entity.TruckId,
-                TruckNumber = truckNumber ?? string.Empty,
-                DriverId = entity.DriverId,
-                DriverName = driverName ?? string.Empty,
-                Type = entity.Type,
-                Status = entity.Status,
-                InspectionDate = entity.InspectionDate,
-                Latitude = entity.Latitude,
-                Longitude = entity.Longitude,
-                OdometerReading = entity.OdometerReading,
-                HasDefects = entity.HasDefects,
-                HasDriverSignature = !string.IsNullOrEmpty(entity.DriverSignature),
-                DriverNotes = entity.DriverNotes,
-                ReviewedById = entity.ReviewedById,
-                ReviewedByName = reviewerName,
-                ReviewedAt = entity.ReviewedAt,
-                HasMechanicSignature = !string.IsNullOrEmpty(entity.MechanicSignature),
-                MechanicNotes = entity.MechanicNotes,
-                DefectsCorrected = entity.DefectsCorrected,
-                TripId = entity.TripId,
-                Defects = defects.ToList(),
-                CreatedAt = entity.CreatedAt
-            };
+            var dto = MapDvirReport(entity);
+            dto.TruckNumber = truckNumber ?? string.Empty;
+            dto.DriverName = driverName ?? string.Empty;
+            dto.ReviewedByName = reviewerName;
+            dto.Defects = defects.ToList();
+            return dto;
         }
     }
 
@@ -54,20 +55,9 @@ public static class DvirMapper
 
         public DvirDefectDto ToDto(string? correctedByName)
         {
-            return new DvirDefectDto
-            {
-                Id = entity.Id,
-                Category = entity.Category,
-                CategoryDisplay = entity.Category.GetDescription(),
-                Description = entity.Description,
-                Severity = entity.Severity,
-                SeverityDisplay = entity.Severity.GetDescription(),
-                IsCorrected = entity.IsCorrected,
-                CorrectionNotes = entity.CorrectionNotes,
-                CorrectedAt = entity.CorrectedAt,
-                CorrectedById = entity.CorrectedById,
-                CorrectedByName = correctedByName
-            };
+            var dto = MapDvirDefect(entity);
+            dto.CorrectedByName = correctedByName;
+            return dto;
         }
     }
 }

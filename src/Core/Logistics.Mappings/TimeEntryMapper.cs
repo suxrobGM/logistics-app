@@ -1,10 +1,21 @@
 using Logistics.Domain.Entities;
+using Logistics.Domain.Primitives.Enums;
 using Logistics.Shared.Models;
+using Riok.Mapperly.Abstractions;
 
 namespace Logistics.Mappings;
 
-public static class TimeEntryMapper
+[Mapper]
+public static partial class TimeEntryMapper
 {
+    [MapperIgnoreSource(nameof(TimeEntry.Employee))]
+    [MapperIgnoreSource(nameof(TimeEntry.PayrollInvoice))]
+    [MapperIgnoreTarget(nameof(TimeEntryDto.EmployeeName))]
+    [MapProperty(nameof(TimeEntry.Type), nameof(TimeEntryDto.Type), Use = nameof(ToLowerName))]
+    private static partial TimeEntryDto MapTimeEntry(TimeEntry entity);
+
+    private static string ToLowerName(TimeEntryType type) => type.ToString().ToLowerInvariant();
+
     extension(TimeEntry entity)
     {
         /// <summary>For one row: reads the related names off the navigations. Lists pass them in
@@ -13,20 +24,9 @@ public static class TimeEntryMapper
 
         public TimeEntryDto ToDto(string? employeeName)
         {
-            return new TimeEntryDto
-            {
-                Id = entity.Id.ToString(),
-                EmployeeId = entity.EmployeeId.ToString(),
-                EmployeeName = employeeName,
-                Date = entity.Date,
-                StartTime = entity.StartTime,
-                EndTime = entity.EndTime,
-                TotalHours = entity.TotalHours,
-                Type = entity.Type.ToString().ToLowerInvariant(),
-                PayrollInvoiceId = entity.PayrollInvoiceId?.ToString(),
-                Notes = entity.Notes,
-                CreatedAt = entity.CreatedAt
-            };
+            var dto = MapTimeEntry(entity);
+            dto.EmployeeName = employeeName;
+            return dto;
         }
     }
 }

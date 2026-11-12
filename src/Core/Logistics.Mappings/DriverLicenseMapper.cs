@@ -1,31 +1,20 @@
 using Logistics.Domain.Entities;
 using Logistics.Domain.Primitives.Enums;
 using Logistics.Shared.Models;
+using Riok.Mapperly.Abstractions;
 
 namespace Logistics.Mappings;
 
-public static class DriverLicenseMapper
+[Mapper]
+public static partial class DriverLicenseMapper
 {
-    extension(DriverLicense entity)
-    {
-        public DriverLicenseDto ToDto()
-        {
-            return new DriverLicenseDto
-            {
-                Id = entity.Id,
-                EmployeeId = entity.EmployeeId,
-                LicenseNumber = entity.LicenseNumber,
-                LicenseClass = entity.LicenseClass,
-                Endorsements = entity.Endorsements.ToArray(),
-                IssuingCountry = entity.IssuingCountry,
-                IssuingRegion = entity.IssuingRegion,
-                IssuedDate = entity.IssuedDate,
-                ExpiresAt = entity.ExpiresAt,
-                MedicalCertExpiresAt = entity.MedicalCertExpiresAt,
-                Status = entity.Status,
-                DocumentId = entity.DocumentId,
-                DaysUntilExpiry = entity.ExpiresAt.DayNumber - DateOnly.FromDateTime(DateTime.UtcNow).DayNumber
-            };
-        }
-    }
+    [MapperIgnoreSource(nameof(DriverLicense.Employee))]
+    [MapperIgnoreSource(nameof(DriverLicense.Document))]
+    [MapProperty(nameof(DriverLicense.Endorsements), nameof(DriverLicenseDto.Endorsements), Use = nameof(ExpandEndorsements))]
+    [MapProperty(nameof(DriverLicense.ExpiresAt), nameof(DriverLicenseDto.DaysUntilExpiry), Use = nameof(CountDaysUntil))]
+    public static partial DriverLicenseDto ToDto(this DriverLicense entity);
+
+    private static LicenseEndorsement[] ExpandEndorsements(LicenseEndorsement endorsements) => endorsements.ToArray();
+
+    private static int CountDaysUntil(DateOnly date) => date.DayNumber - DateOnly.FromDateTime(DateTime.UtcNow).DayNumber;
 }
