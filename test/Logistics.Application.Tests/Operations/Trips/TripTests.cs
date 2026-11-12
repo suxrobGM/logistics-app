@@ -49,6 +49,18 @@ public class TripTests
         Assert.Equal(150, trip.TotalDistance);
     }
 
+    /// <summary>The trip decides its loads' truck, so moving the trip moves every load with it.</summary>
+    [Fact]
+    public void AssignToTruck_MovesEveryLoadToTheNewTruck()
+    {
+        var trip = Trip.Create("Trip", _truck, [NewLoad(), NewLoad()]);
+        var newTruck = new Truck { Number = "TRK-002", Type = TruckType.FreightTruck };
+
+        trip.AssignToTruck(newTruck);
+
+        Assert.All(trip.GetLoads(), load => Assert.Equal(newTruck.Id, load.AssignedTruckId));
+    }
+
     #endregion
 
     #region Dispatch

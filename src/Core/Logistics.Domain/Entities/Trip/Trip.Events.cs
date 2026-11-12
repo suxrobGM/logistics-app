@@ -27,6 +27,13 @@ public partial class Trip
         Truck = newTruck;
         TrailerId = newTruck.CurrentTrailerId;
 
+        // The trip decides its loads' truck.
+        foreach (var load in GetLoads())
+        {
+            load.AssignedTruckId = newTruck.Id;
+            load.AssignedTruck = newTruck;
+        }
+
         if (Status != TripStatus.Draft)
         {
             RecordDrivers();
