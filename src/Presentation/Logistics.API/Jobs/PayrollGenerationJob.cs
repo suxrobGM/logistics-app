@@ -1,21 +1,31 @@
-using Logistics.Application.Modules.Financial.Payroll.Services;
 using Hangfire;
-
+using Logistics.Application.Modules.Financial.Payroll.Services;
 
 namespace Logistics.API.Jobs;
 
-public static class PayrollGenerationJob
+/// <summary>Drafts last period's settlements for every tenant at the start of each month and week.</summary>
+public class PayrollGenerationJob(
+    ILogger<PayrollGenerationJob> logger,
+    IServiceScopeFactory scopeFactory)
 {
     public static void ScheduleJobs()
     {
-        // Schedule GenerateMonthlyPayrollsAsync to run at the start of each month
-        RecurringJob.AddOrUpdate<IPayrollService>("GenerateMonthlyPayrolls",
-            x => x.GenerateMonthlyPayrollsAsync(),
+        RecurringJob.AddOrUpdate<PayrollGenerationJob>("GenerateMonthlyPayrolls",
+            job => job.GenerateMonthlyAsync(CancellationToken.None),
             Cron.Monthly());
 
-        // Schedule GenerateWeeklyPayrollsAsync to run at the start of each week
-        RecurringJob.AddOrUpdate<IPayrollService>("GenerateWeeklyPayrolls",
-            x => x.GenerateWeeklyPayrollsAsync(),
+        RecurringJob.AddOrUpdate<PayrollGenerationJob>("GenerateWeeklyPayrolls",
+            job => job.GenerateWeeklyAsync(CancellationToken.None),
             Cron.Weekly());
     }
+
+    public Task GenerateMonthlyAsync(CancellationToken ct) =>
+        TenantJobRunner.ForEachTenantAsync(scopeFactory, logger, "monthly payroll generation",
+            (scope, _, token) => scope.ServiceProvider.GetRequiredService<IPayrollService>().GenerateMonthlyPayrollsAsync(token),
+            ct);
+
+    public Task GenerateWeeklyAsync(CancellationToken ct) =>
+        TenantJobRunner.ForEachTenantAsync(scopeFactory, logger, "weekly payroll generation",
+            (scope, _, token) => scope.ServiceProvider.GetRequiredService<IPayrollService>().GenerateWeeklyPayrollsAsync(token),
+            ct);
 }

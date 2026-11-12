@@ -11,8 +11,11 @@ public interface IPayrollService : IApplicationService
     /// <summary>Salary types <see cref="GenerateWeeklyPayrollsAsync"/> pays.</summary>
     static readonly SalaryType[] WeeklySalaryTypes = [SalaryType.Weekly, SalaryType.PerLoad, SalaryType.PerStop];
 
-    Task GenerateMonthlyPayrollsAsync();
-    Task GenerateWeeklyPayrollsAsync();
+    /// <summary>Drafts last month's settlements for the current tenant's monthly-paid employees.</summary>
+    Task GenerateMonthlyPayrollsAsync(CancellationToken ct = default);
+
+    /// <summary>Drafts last week's settlements for the current tenant's weekly-paid employees.</summary>
+    Task GenerateWeeklyPayrollsAsync(CancellationToken ct = default);
 
     /// <summary>
     /// Builds a settlement for the period - gross pay, recurring deductions, escrow, owed cash

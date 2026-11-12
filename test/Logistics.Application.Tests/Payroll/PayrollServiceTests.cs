@@ -22,7 +22,6 @@ public class PayrollServiceTests
     private static readonly DateOnly StartDay = DateOnly.FromDateTime(Start);
     private static readonly DateOnly EndDay = DateOnly.FromDateTime(End);
 
-    private readonly IMasterUnitOfWork _masterUow = Substitute.For<IMasterUnitOfWork>();
     private readonly ITenantUnitOfWork _tenantUow = Substitute.For<ITenantUnitOfWork>();
     private readonly List<Load> _loads = [];
     private readonly List<Truck> _trucks = [];
@@ -53,7 +52,7 @@ public class PayrollServiceTests
         Wire(new List<TimeEntry>());
         _tenantUow.Repository<InvoiceLineItem>().Returns(Substitute.For<ITenantRepository<InvoiceLineItem, Guid>>());
 
-        _sut = new PayrollService(_masterUow, _tenantUow, NullLogger<PayrollService>.Instance);
+        _sut = new PayrollService(_tenantUow, NullLogger<PayrollService>.Instance);
     }
 
     private void Wire<T>(List<T> items) where T : class, IEntity<Guid>, ITenantEntity
@@ -304,11 +303,6 @@ public class PayrollServiceTests
     {
         var today = DateOnly.FromDateTime(DateTime.UtcNow);
         var lastWeekStart = today.AddDays(-((int)today.DayOfWeek + 7));
-        var tenants = Substitute.For<IMasterRepository<Tenant, Guid>>();
-        tenants.GetListAsync(Arg.Any<ISpecification<Tenant>?>(), Arg.Any<CancellationToken>())
-            .Returns([TestTenant.Create()]);
-        _masterUow.Repository<Tenant>().Returns(tenants);
-
         _driver.SalaryType = SalaryType.PerLoad;
         var alreadyPaid = new Employee
         {

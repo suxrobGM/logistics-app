@@ -8,25 +8,24 @@ using Microsoft.Extensions.Logging;
 namespace Logistics.Application.Modules.Financial.Payroll.Services;
 
 internal partial class PayrollService(
-    IMasterUnitOfWork masterUow,
     ITenantUnitOfWork tenantUow,
     ILogger<PayrollService> logger)
     : IPayrollService
 {
-    public Task GenerateMonthlyPayrollsAsync()
+    public Task GenerateMonthlyPayrollsAsync(CancellationToken ct = default)
     {
         var today = DateOnly.FromDateTime(DateTime.UtcNow);
         var start = new DateOnly(today.Year, today.Month, 1).AddMonths(-1);
-        return GenerateForEveryTenantAsync("monthly", start, start.AddMonths(1).AddDays(-1),
-            IPayrollService.MonthlySalaryTypes);
+        return GenerateAsync("monthly", start, start.AddMonths(1).AddDays(-1),
+            IPayrollService.MonthlySalaryTypes, ct);
     }
 
-    public Task GenerateWeeklyPayrollsAsync()
+    public Task GenerateWeeklyPayrollsAsync(CancellationToken ct = default)
     {
         var today = DateOnly.FromDateTime(DateTime.UtcNow);
         var start = today.AddDays(-((int)today.DayOfWeek + 7));
-        return GenerateForEveryTenantAsync("weekly", start, start.AddDays(6),
-            IPayrollService.WeeklySalaryTypes);
+        return GenerateAsync("weekly", start, start.AddDays(6),
+            IPayrollService.WeeklySalaryTypes, ct);
     }
 
     public async Task<PayrollInvoice> BuildPayrollInvoiceAsync(
@@ -90,33 +89,26 @@ internal partial class PayrollService(
         logger.LogInformation("Linked {Count} time entries to payroll {PayrollId}", timeEntries.Count, payroll.Id);
     }
 
-    private async Task GenerateForEveryTenantAsync(
-        string cadence, DateOnly startDate, DateOnly endDate, SalaryType[] salaryTypes)
+    private async Task GenerateAsync(
+        string cadence, DateOnly startDate, DateOnly endDate, SalaryType[] salaryTypes, CancellationToken ct)
     {
-        var tenants = await masterUow.Repository<Tenant>().GetListAsync();
+        var alreadyGenerated = await tenantUow.Repository<PayrollInvoice>().Query()
+            .Where(p => p.PeriodStart >= startDate && p.PeriodEnd <= endDate)
+            .Select(p => p.EmployeeId)
+            .ToHashSetAsync(ct);
+        var employees = await tenantUow.Repository<Employee>()
+            .GetListAsync(e => salaryTypes.Contains(e.SalaryType), ct);
 
-        foreach (var tenant in tenants)
+        foreach (var employee in employees.Where(e => !alreadyGenerated.Contains(e.Id)))
         {
-            tenantUow.SetCurrentTenant(tenant);
-
-            var alreadyGenerated = await tenantUow.Repository<PayrollInvoice>().Query()
-                .Where(p => p.PeriodStart >= startDate && p.PeriodEnd <= endDate)
-                .Select(p => p.EmployeeId)
-                .ToHashSetAsync();
-            var employees = await tenantUow.Repository<Employee>()
-                .GetListAsync(e => salaryTypes.Contains(e.SalaryType));
-
-            foreach (var employee in employees.Where(e => !alreadyGenerated.Contains(e.Id)))
-            {
-                var payroll = await CreatePayrollInvoiceAsync(employee, startDate, endDate);
-                await tenantUow.Repository<PayrollInvoice>().AddAsync(payroll);
-            }
-
-            logger.LogInformation(
-                "Generated {Cadence} payrolls for the tenant: {TenantName}, date range: {StartDate} - {EndDate}",
-                cadence, tenant.Name, startDate.ToShortDateString(), endDate.ToShortDateString());
-            await tenantUow.SaveChangesAsync();
+            var payroll = await CreatePayrollInvoiceAsync(employee, startDate, endDate, ct);
+            await tenantUow.Repository<PayrollInvoice>().AddAsync(payroll, ct);
         }
+
+        await tenantUow.SaveChangesAsync(ct);
+        logger.LogInformation(
+            "Generated {Cadence} payrolls for tenant {TenantName}, {StartDate} - {EndDate}",
+            cadence, tenantUow.GetCurrentTenant().Name, startDate, endDate);
     }
 
     private PayrollInvoice NewDraft(Employee employee, DateOnly startDate, DateOnly endDate)
