@@ -21,14 +21,9 @@ internal sealed class UpdateLineItemHandler(
             return Result<InvoiceLineItemDto>.Fail("Invoice not found.");
         }
 
-        if (invoice.Status == InvoiceStatus.Paid)
+        if (invoice.EditBlockedReason() is { } editBlocked)
         {
-            return Result<InvoiceLineItemDto>.Fail("Cannot modify a paid invoice.");
-        }
-
-        if (invoice.Status == InvoiceStatus.Cancelled)
-        {
-            return Result<InvoiceLineItemDto>.Fail("Cannot modify a cancelled invoice.");
+            return Result<InvoiceLineItemDto>.Fail(editBlocked);
         }
 
         var lineItem = invoice.LineItems.FirstOrDefault(li => li.Id == req.LineItemId);

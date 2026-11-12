@@ -20,14 +20,9 @@ internal sealed class DeleteLineItemHandler(
             return Result.Fail("Invoice not found.");
         }
 
-        if (invoice.Status == InvoiceStatus.Paid)
+        if (invoice.EditBlockedReason() is { } editBlocked)
         {
-            return Result.Fail("Cannot modify a paid invoice.");
-        }
-
-        if (invoice.Status == InvoiceStatus.Cancelled)
-        {
-            return Result.Fail("Cannot modify a cancelled invoice.");
+            return Result.Fail(editBlocked);
         }
 
         var lineItem = invoice.LineItems.FirstOrDefault(li => li.Id == req.LineItemId);

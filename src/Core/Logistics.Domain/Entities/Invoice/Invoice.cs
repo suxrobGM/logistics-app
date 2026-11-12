@@ -86,6 +86,60 @@ public abstract partial class Invoice : AuditableEntity, ITenantEntity, IAuditab
 
     public decimal AmountDue => Total.Amount - AmountPaid;
 
+    /// <summary>Why the invoice's lines can't change - it is paid or cancelled - or null when they can.</summary>
+    public string? EditBlockedReason() => Status switch
+    {
+        InvoiceStatus.Paid => "Cannot modify a paid invoice.",
+        InvoiceStatus.Cancelled => "Cannot modify a cancelled invoice.",
+        _ => null
+    };
+
+    /// <summary>Why a payment of <paramref name="amount" /> can't be taken against this invoice, or null when it can.</summary>
+    public string? PaymentBlockedReason(decimal amount)
+    {
+        if (Status == InvoiceStatus.Paid)
+        {
+            return "This invoice has already been paid.";
+        }
+
+        if (Status == InvoiceStatus.Cancelled)
+        {
+            return "This invoice has been cancelled.";
+        }
+
+        if (amount <= 0)
+        {
+            return "Payment amount must be greater than zero.";
+        }
+
+        return amount > AmountDue
+            ? $"Payment amount cannot exceed amount due ({Money.Format(AmountDue, Total.Currency)})."
+            : null;
+    }
+
+    /// <summary>
+    /// Appends a hand-entered line after the existing ones. On a payroll the amount is signed by
+    /// <paramref name="type" />, so a deduction always lowers the pay. The caller adds the line to its repository.
+    /// </summary>
+    public InvoiceLineItem AddLineItem(
+        string description, InvoiceLineItemType type, decimal amount, int quantity, string? notes)
+    {
+        var signedAmount = this is PayrollInvoice ? PayrollInvoice.SignedLineAmount(type, amount) : amount;
+        var lineItem = new InvoiceLineItem
+        {
+            InvoiceId = Id,
+            Description = description,
+            Type = type,
+            Amount = Total with { Amount = signedAmount },
+            Quantity = quantity,
+            Order = LineItems.Count > 0 ? LineItems.Max(li => li.Order) + 1 : 0,
+            Notes = notes
+        };
+
+        LineItems.Add(lineItem);
+        return lineItem;
+    }
+
     /// <summary>
     /// What settled payments add up to: only <see cref="PaymentStatus.Paid"/> payments in
     /// <paramref name="currency"/> count. Pending, failed, cancelled and refunded payments stay on the

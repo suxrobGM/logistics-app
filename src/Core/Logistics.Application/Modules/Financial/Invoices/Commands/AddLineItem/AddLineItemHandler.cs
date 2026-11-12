@@ -21,34 +21,13 @@ internal sealed class AddLineItemHandler(
             return Result<InvoiceLineItemDto>.Fail("Invoice not found.");
         }
 
-        if (invoice.Status == InvoiceStatus.Paid)
+        if (invoice.EditBlockedReason() is { } editBlocked)
         {
-            return Result<InvoiceLineItemDto>.Fail("Cannot modify a paid invoice.");
+            return Result<InvoiceLineItemDto>.Fail(editBlocked);
         }
 
-        if (invoice.Status == InvoiceStatus.Cancelled)
-        {
-            return Result<InvoiceLineItemDto>.Fail("Cannot modify a cancelled invoice.");
-        }
-
-        var nextOrder = invoice.LineItems.Any() ? invoice.LineItems.Max(li => li.Order) + 1 : 0;
-
-        var lineItem = new InvoiceLineItem
-        {
-            InvoiceId = invoice.Id,
-            Description = req.Description,
-            Type = req.Type,
-            Amount = invoice.Total with
-            {
-                Amount = invoice is PayrollInvoice ? PayrollInvoice.SignedLineAmount(req.Type, req.Amount) : req.Amount
-            },
-            Quantity = req.Quantity,
-            Order = nextOrder,
-            Notes = req.Notes
-        };
-
+        var lineItem = invoice.AddLineItem(req.Description, req.Type, req.Amount, req.Quantity, req.Notes);
         await tenantUow.Repository<InvoiceLineItem>().AddAsync(lineItem, ct);
-        invoice.LineItems.Add(lineItem);
 
         await taxApplier.ApplyAsync(invoice, ct);
 

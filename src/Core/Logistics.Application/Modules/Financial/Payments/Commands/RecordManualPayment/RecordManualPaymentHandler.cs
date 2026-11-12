@@ -37,28 +37,9 @@ internal sealed class RecordManualPaymentHandler(
             return Result.Fail("Invoice not found.");
         }
 
-        if (invoice.Status == InvoiceStatus.Paid)
+        if (invoice.PaymentBlockedReason(req.Amount) is { } paymentBlocked)
         {
-            return Result.Fail("This invoice has already been paid.");
-        }
-
-        if (invoice.Status == InvoiceStatus.Cancelled)
-        {
-            return Result.Fail("This invoice has been cancelled.");
-        }
-
-        // Validate amount
-        if (req.Amount <= 0)
-        {
-            return Result.Fail("Payment amount must be greater than zero.");
-        }
-
-        // Calculate amount due
-        var amountDue = invoice.AmountDue;
-
-        if (req.Amount > amountDue)
-        {
-            return Result.Fail($"Payment amount cannot exceed amount due ({Money.Format(amountDue, invoice.Total.Currency)}).");
+            return Result.Fail(paymentBlocked);
         }
 
         var tenant = tenantUow.GetCurrentTenant();

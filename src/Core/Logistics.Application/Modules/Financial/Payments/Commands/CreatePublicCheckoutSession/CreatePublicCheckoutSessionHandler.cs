@@ -55,34 +55,16 @@ internal sealed class CreatePublicCheckoutSessionHandler(
             return Result<PublicCheckoutSessionDto>.Fail("Invoice not found.");
         }
 
-        if (invoice.Status == InvoiceStatus.Paid)
-        {
-            return Result<PublicCheckoutSessionDto>.Fail("This invoice has already been paid.");
-        }
-
-        if (invoice.Status == InvoiceStatus.Cancelled)
-        {
-            return Result<PublicCheckoutSessionDto>.Fail("This invoice has been cancelled.");
-        }
-
         if (invoice is LoadInvoice { AssignedFactor: { } factor })
         {
             return Result<PublicCheckoutSessionDto>.Fail(
                 $"This invoice was assigned to {factor.Name}. Please pay {factor.Name} directly.");
         }
 
-        var amountDue = invoice.AmountDue;
-        var paymentAmount = req.Amount ?? amountDue;
-
-        if (paymentAmount <= 0)
+        var paymentAmount = req.Amount ?? invoice.AmountDue;
+        if (invoice.PaymentBlockedReason(paymentAmount) is { } paymentBlocked)
         {
-            return Result<PublicCheckoutSessionDto>.Fail("Payment amount must be greater than zero.");
-        }
-
-        if (paymentAmount > amountDue)
-        {
-            return Result<PublicCheckoutSessionDto>.Fail(
-                $"Payment amount cannot exceed amount due ({Money.Format(amountDue, invoice.Total.Currency)}).");
+            return Result<PublicCheckoutSessionDto>.Fail(paymentBlocked);
         }
 
         try
