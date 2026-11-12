@@ -23,6 +23,27 @@ public class TripTests
         $"Load {Guid.NewGuid():N}", LoadType.GeneralFreight, 1000, Address, new GeoPoint(0, 0), Address, new GeoPoint(1, 1),
         new Customer { Name = "Acme" }, _truck, _dispatcher, "USD");
 
+    #region Loads
+
+    /// <summary>Before the insert every load number is 0, so loads must be told apart by id.</summary>
+    [Fact]
+    public void GetLoads_TwoUnsavedLoadsWithSameName_ReturnsBoth()
+    {
+        var first = NewLoad();
+        var second = NewLoad();
+        second.Name = first.Name;
+        var trip = Trip.Create("Trip", _truck, [first, second]);
+        first.Distance = 100;
+        second.Distance = 50;
+
+        trip.RecalculateDistance();
+
+        Assert.Equal(2, trip.GetLoads().Count);
+        Assert.Equal(150, trip.TotalDistance);
+    }
+
+    #endregion
+
     #region Dispatch
 
     [Fact]

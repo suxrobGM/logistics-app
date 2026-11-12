@@ -13,7 +13,7 @@ public partial class Trip
         return Stops
             .Select(s => s.Load)
             .Where(i => i is not null)
-            .Distinct(new LoadComparer())
+            .DistinctBy(l => l.Id)
             .ToArray();
     }
 
