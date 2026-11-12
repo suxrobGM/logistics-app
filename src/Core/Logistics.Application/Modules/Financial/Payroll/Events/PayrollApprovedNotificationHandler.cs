@@ -2,6 +2,7 @@ using Logistics.Application.Abstractions;
 using Logistics.Application.Abstractions.Email.Models;
 using Logistics.Application.Abstractions.Email;
 using Logistics.Domain.Events;
+using Logistics.Domain.Primitives.ValueObjects;
 using Logistics.Mediator;
 using Microsoft.Extensions.Logging;
 using Logistics.Application.Abstractions.Notifications;
@@ -37,7 +38,7 @@ internal sealed class PayrollApprovedNotificationHandler(
         {
             await pushNotificationService.SendNotificationAsync(
                 "Payroll Approved",
-                $"Your payroll #{@event.PayrollNumber} for {@event.TotalAmount:C} has been approved",
+                $"Your payroll #{@event.PayrollNumber} for {Money.Format(@event.TotalAmount, @event.Currency)} has been approved",
                 @event.EmployeeDeviceToken,
                 data);
         }
@@ -56,7 +57,7 @@ internal sealed class PayrollApprovedNotificationHandler(
                 {
                     EmployeeName = @event.EmployeeName,
                     PayrollNumber = @event.PayrollNumber,
-                    TotalAmount = @event.TotalAmount.ToString("C"),
+                    TotalAmount = Money.Format(@event.TotalAmount, @event.Currency),
                     Currency = @event.Currency,
                     PeriodStart = @event.PeriodStart.ToString("MMMM d, yyyy"),
                     PeriodEnd = @event.PeriodEnd.ToString("MMMM d, yyyy")

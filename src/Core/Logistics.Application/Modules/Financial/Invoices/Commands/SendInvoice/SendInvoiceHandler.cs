@@ -3,6 +3,7 @@ using Logistics.Application.Abstractions.Email.Models;
 using Logistics.Application.Abstractions.Email;
 using Logistics.Application.Utilities;
 using Logistics.Domain.Entities;
+using Logistics.Domain.Primitives.ValueObjects;
 using Logistics.Domain.Options;
 using Logistics.Domain.Persistence;
 using Logistics.Domain.Primitives.Enums;
@@ -80,9 +81,9 @@ internal sealed class SendInvoiceHandler(
         var lineItems = invoice.LineItems.Select(li => new InvoiceLineItemEmailModel
         {
             Description = li.Description,
-            Amount = li.Amount.Amount.ToString("C"),
+            Amount = li.Amount.Format(),
             Quantity = li.Quantity,
-            Total = (li.Amount.Amount * li.Quantity).ToString("C")
+            Total = Money.Format(li.Amount.Amount * li.Quantity, li.Amount.Currency)
         }).ToList();
 
         // Get additional details based on invoice type
@@ -98,8 +99,8 @@ internal sealed class SendInvoiceHandler(
         {
             CompanyName = companyName,
             InvoiceNumber = invoice.Number,
-            Total = invoice.Total.Amount.ToString("C"),
-            AmountDue = amountDue.ToString("C"),
+            Total = invoice.Total.Format(),
+            AmountDue = Money.Format(amountDue, invoice.Total.Currency),
             Currency = invoice.Total.Currency,
             DueDate = invoice.DueDate?.ToString("MMMM dd, yyyy"),
             CustomerName = customerName,

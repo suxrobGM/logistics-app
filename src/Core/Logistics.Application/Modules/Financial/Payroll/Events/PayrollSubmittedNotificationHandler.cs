@@ -1,5 +1,6 @@
 using Logistics.Application.Abstractions;
 using Logistics.Domain.Events;
+using Logistics.Domain.Primitives.ValueObjects;
 using Logistics.Domain.Persistence;
 using Logistics.Domain.Primitives.Enums;
 using Logistics.Mediator;
@@ -28,7 +29,7 @@ internal sealed class PayrollSubmittedNotificationHandler(
         // Send in-app notification for managers
         await notificationService.SendNotificationAsync(
             "Payroll Pending Approval",
-            $"Payroll #{@event.PayrollNumber} for {@event.EmployeeName} ({@event.TotalAmount:C}) requires approval");
+            $"Payroll #{@event.PayrollNumber} for {@event.EmployeeName} ({Money.Format(@event.TotalAmount, @event.Currency)}) requires approval");
 
         // Send Telegram notification to dispatchers/managers
         try
@@ -36,7 +37,7 @@ internal sealed class PayrollSubmittedNotificationHandler(
             await telegramNotificationService.SendNotificationAsync(
                 tenantUow.GetCurrentTenant().Id,
                 "Payroll Pending Approval",
-                $"Payroll #{@event.PayrollNumber} for {@event.EmployeeName} ({@event.TotalAmount:C}) requires approval",
+                $"Payroll #{@event.PayrollNumber} for {@event.EmployeeName} ({Money.Format(@event.TotalAmount, @event.Currency)}) requires approval",
                 TelegramChatRole.Dispatcher,
                 cancellationToken);
         }

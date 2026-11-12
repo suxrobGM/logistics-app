@@ -2,6 +2,7 @@ using System.Globalization;
 using System.Text;
 using System.Text.RegularExpressions;
 using Logistics.Application.Abstractions.Common;
+using Logistics.Domain.Primitives.ValueObjects;
 using Logistics.Application.Abstractions.Email;
 using Logistics.Application.Abstractions.Email.Models;
 
@@ -39,9 +40,9 @@ internal sealed class NegotiationEmailComposer(IEmailTemplateService emailTempla
             DestinationState = request.DestinationState,
             PickupDate = request.PickupDate.ToString("MMMM dd, yyyy", CultureInfo.InvariantCulture),
             EquipmentType = request.EquipmentType,
-            OfferTotal = FormatCurrency(request.OfferAmount, request.Currency),
+            OfferTotal = Money.Format(request.OfferAmount, request.Currency),
             OfferPerMile = request.OfferPerMile is { } perMile
-                ? FormatCurrency(perMile, request.Currency)
+                ? Money.Format(perMile, request.Currency)
                 : null,
             Message = sanitizedMessage,
             CompanyName = request.CompanyName,
@@ -57,12 +58,6 @@ internal sealed class NegotiationEmailComposer(IEmailTemplateService emailTempla
         return new ComposedNegotiationEmail(subject, htmlBody, sanitizedMessage);
     }
 
-    private static string FormatCurrency(decimal amount, string currency)
-    {
-        return currency.Equals("USD", StringComparison.OrdinalIgnoreCase)
-            ? amount.ToString("C", CultureInfo.GetCultureInfo("en-US"))
-            : $"{amount.ToString("N2", CultureInfo.InvariantCulture)} {currency}";
-    }
 
     internal static string SanitizeMessage(string raw)
     {

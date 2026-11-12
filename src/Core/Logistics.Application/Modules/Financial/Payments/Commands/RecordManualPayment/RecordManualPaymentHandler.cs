@@ -58,7 +58,7 @@ internal sealed class RecordManualPaymentHandler(
 
         if (req.Amount > amountDue)
         {
-            return Result.Fail($"Payment amount cannot exceed amount due ({amountDue:C}).");
+            return Result.Fail($"Payment amount cannot exceed amount due ({Money.Format(amountDue, invoice.Total.Currency)}).");
         }
 
         var tenant = tenantUow.GetCurrentTenant();

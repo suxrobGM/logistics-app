@@ -2,6 +2,7 @@ using Logistics.Application.Abstractions;
 using Logistics.Application.Abstractions.Email.Models;
 using Logistics.Application.Abstractions.Email;
 using Logistics.Domain.Events;
+using Logistics.Domain.Primitives.ValueObjects;
 using Logistics.Mediator;
 using Microsoft.Extensions.Logging;
 using Logistics.Application.Abstractions.Notifications;
@@ -34,8 +35,8 @@ internal sealed class PayrollPaidNotificationHandler(
 
         var title = @event.IsFullyPaid ? "Payroll Paid" : "Payroll Payment Received";
         var message = @event.IsFullyPaid
-            ? $"Your payroll #{@event.PayrollNumber} for {@event.TotalAmount:C} has been paid in full"
-            : $"Payment of {@event.PaymentAmount:C} received for payroll #{@event.PayrollNumber}. Outstanding: {@event.OutstandingAmount:C}";
+            ? $"Your payroll #{@event.PayrollNumber} for {Money.Format(@event.TotalAmount, @event.Currency)} has been paid in full"
+            : $"Payment of {Money.Format(@event.PaymentAmount, @event.Currency)} received for payroll #{@event.PayrollNumber}. Outstanding: {Money.Format(@event.OutstandingAmount, @event.Currency)}";
 
         // Send push notification to employee
         if (!string.IsNullOrEmpty(@event.EmployeeDeviceToken))
@@ -59,9 +60,9 @@ internal sealed class PayrollPaidNotificationHandler(
                 {
                     EmployeeName = @event.EmployeeName,
                     PayrollNumber = @event.PayrollNumber,
-                    PaymentAmount = @event.PaymentAmount.ToString("C"),
-                    TotalAmount = @event.TotalAmount.ToString("C"),
-                    OutstandingAmount = @event.OutstandingAmount.ToString("C"),
+                    PaymentAmount = Money.Format(@event.PaymentAmount, @event.Currency),
+                    TotalAmount = Money.Format(@event.TotalAmount, @event.Currency),
+                    OutstandingAmount = Money.Format(@event.OutstandingAmount, @event.Currency),
                     Currency = @event.Currency,
                     IsFullyPaid = @event.IsFullyPaid,
                     PeriodStart = @event.PeriodStart.ToString("MMMM d, yyyy"),

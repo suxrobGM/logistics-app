@@ -82,7 +82,7 @@ internal sealed class CreatePublicCheckoutSessionHandler(
         if (paymentAmount > amountDue)
         {
             return Result<PublicCheckoutSessionDto>.Fail(
-                $"Payment amount cannot exceed amount due ({amountDue:C}).");
+                $"Payment amount cannot exceed amount due ({Money.Format(amountDue, invoice.Total.Currency)}).");
         }
 
         try
