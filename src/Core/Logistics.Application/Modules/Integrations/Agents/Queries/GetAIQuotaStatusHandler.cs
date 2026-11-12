@@ -7,7 +7,7 @@ using Logistics.Mappings;
 using Logistics.Mediator;
 using Logistics.Shared.Models;
 
-namespace Logistics.Application.Modules.Integrations.Agents;
+namespace Logistics.Application.Modules.Integrations.Agents.Queries;
 
 /// <summary>One handler for both surfaces' quota queries; only the feature gate differs per query.</summary>
 internal sealed class GetAIQuotaStatusHandler(

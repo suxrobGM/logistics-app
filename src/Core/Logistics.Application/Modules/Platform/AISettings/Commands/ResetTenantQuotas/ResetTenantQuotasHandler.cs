@@ -4,7 +4,7 @@ using Logistics.Domain.Persistence;
 using Logistics.Mediator;
 using Logistics.Shared.Models;
 
-namespace Logistics.Application.Modules.Integrations.AIDispatch.Commands;
+namespace Logistics.Application.Modules.Platform.AISettings.Commands;
 
 internal sealed class ResetTenantQuotasHandler(
     IMasterUnitOfWork masterUow) : IRequestHandler<ResetTenantQuotasCommand, Result>

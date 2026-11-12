@@ -9,6 +9,8 @@ using Logistics.Application.Modules.IdentityAccess.Tenants.Commands;
 using Logistics.Application.Modules.IdentityAccess.Tenants.Queries;
 using Logistics.Application.Modules.Integrations.AIDispatch.Commands;
 using Logistics.Application.Modules.Integrations.AIDispatch.Queries;
+using Logistics.Application.Modules.Platform.AISettings.Queries;
+using Logistics.Application.Modules.Platform.AISettings.Commands;
 
 namespace Logistics.API.Controllers;
 

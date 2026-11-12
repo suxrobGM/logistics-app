@@ -1,6 +1,6 @@
 using Logistics.Shared.Models;
 
-namespace Logistics.Application.Modules.Integrations.AIDispatch.Commands;
+namespace Logistics.Application.Modules.Platform.AISettings.Commands;
 
 public sealed class ResetTenantQuotasCommand : ICommand<Result>
 {

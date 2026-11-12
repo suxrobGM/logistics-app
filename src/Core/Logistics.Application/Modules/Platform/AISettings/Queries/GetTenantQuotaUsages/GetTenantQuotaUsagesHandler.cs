@@ -9,7 +9,7 @@ using Logistics.Shared.Models;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 
-namespace Logistics.Application.Modules.Integrations.AIDispatch.Queries;
+namespace Logistics.Application.Modules.Platform.AISettings.Queries;
 
 internal sealed class GetTenantQuotaUsagesHandler(
     IMasterUnitOfWork masterUow,
