@@ -150,7 +150,7 @@ internal sealed class UpdateTripHandler(
         }
 
         var created = await loadService.CreateLoadsAsync(
-            newLoadCommands.Select(c => c.ToCreateLoadParameters(trip.TruckId, trip.Id)));
+            newLoadCommands.Select(c => new NewLoad(c, trip.TruckId, trip.Id)));
 
         if (!created.IsSuccess)
         {

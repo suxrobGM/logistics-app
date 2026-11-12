@@ -9,7 +9,7 @@ namespace Logistics.Application.Modules.Operations.Trips.Commands;
 ///     Nested load payload for trip create/update; not a dispatched command. Carries the same fields as
 ///     <see cref="CreateLoadCommand"/> except the truck, which the trip sets.
 /// </summary>
-public record CreateTripLoadCommand : ILoadChargeFields
+public record CreateTripLoadCommand : ILoadDetails, ILoadChargeFields
 {
     /// <summary>Client-side id that optimized stops use to reference this load before it exists.</summary>
     public string? TempId { get; set; }

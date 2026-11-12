@@ -129,26 +129,28 @@ internal sealed class ImportLoadFromPdfHandler(
         }
 
         // Step 7: Create the load
-        var createLoadParameters = new CreateLoadParameters(
-            extractedData.GetLoadName(),
-            LoadType.Vehicle,
-            (extractedData.OriginAddress!, originLocation),
-            (extractedData.DestinationAddress!, destinationLocation),
-            extractedData.PaymentAmount ?? 0,
-            0, // Will be calculated from coordinates
-            customer.Id,
-            truckId,
-            dispatcher.Id,
-            Source: LoadSource.Pdf,
-            RequestedPickupDate: extractedData.PickupDate,
-            RequestedDeliveryDate: extractedData.DeliveryDate,
-            PickupAppointmentFrom: extractedData.PickupAppointmentFrom,
-            PickupAppointmentTo: extractedData.PickupAppointmentTo,
-            DeliveryAppointmentFrom: extractedData.DeliveryAppointmentFrom,
-            DeliveryAppointmentTo: extractedData.DeliveryAppointmentTo,
-            Vehicles: extractedData.Vehicles.ToLoadVehicles());
+        var details = new CreateLoadCommand
+        {
+            Name = extractedData.GetLoadName(),
+            Type = LoadType.Vehicle,
+            OriginAddress = extractedData.OriginAddress!,
+            OriginLocation = originLocation,
+            DestinationAddress = extractedData.DestinationAddress!,
+            DestinationLocation = destinationLocation,
+            DeliveryCost = extractedData.PaymentAmount ?? 0,
+            CustomerId = customer.Id,
+            AssignedDispatcherId = dispatcher.Id,
+            Source = LoadSource.Pdf,
+            RequestedPickupDate = extractedData.PickupDate,
+            RequestedDeliveryDate = extractedData.DeliveryDate,
+            PickupAppointmentFrom = extractedData.PickupAppointmentFrom,
+            PickupAppointmentTo = extractedData.PickupAppointmentTo,
+            DeliveryAppointmentFrom = extractedData.DeliveryAppointmentFrom,
+            DeliveryAppointmentTo = extractedData.DeliveryAppointmentTo,
+            Vehicles = extractedData.Vehicles
+        };
 
-        var created = await loadService.CreateLoadAsync(createLoadParameters, ct: ct);
+        var created = await loadService.CreateLoadAsync(new NewLoad(details, truckId), ct: ct);
         if (!created.IsSuccess)
         {
             logger.LogError("Error creating load from PDF import: {Error}", created.Error);

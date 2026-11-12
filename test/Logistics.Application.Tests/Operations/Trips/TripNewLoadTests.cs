@@ -9,63 +9,6 @@ namespace Logistics.Application.Tests.Operations.Trips;
 
 public class TripNewLoadTests
 {
-    #region Mapping
-
-    [Fact]
-    public void ToCreateLoadParameters_FullLoad_CarriesEveryField()
-    {
-        var truckId = Guid.NewGuid();
-        var tripId = Guid.NewGuid();
-        var load = ValidLoad() with
-        {
-            Source = LoadSource.Pdf,
-            RequestedPickupDate = new DateTime(2026, 10, 20, 8, 0, 0, DateTimeKind.Utc),
-            RequestedDeliveryDate = new DateTime(2026, 10, 22, 8, 0, 0, DateTimeKind.Utc),
-            Notes = "Dock 4",
-            ContainerId = Guid.NewGuid(),
-            OriginTerminalId = Guid.NewGuid(),
-            DestinationTerminalId = Guid.NewGuid(),
-            HazmatClass = HazmatClass.Class2,
-            UnNumber = "UN1203",
-            FuelSurcharge = 120,
-            Accessorials = [new LoadAccessorialDto { Name = "Lumper", Rate = 75 }],
-            FreightClass = FreightClass.Class70,
-            NmfcCode = "123456",
-            PalletCount = 10,
-            PieceCount = 40,
-            Weight = 8000,
-            Dimensions = "48x40x60",
-            IsStackable = true
-        };
-
-        var p = load.ToCreateLoadParameters(truckId, tripId);
-
-        Assert.Equal(truckId, p.TruckId);
-        Assert.Equal(tripId, p.TripId);
-        Assert.Equal(load.CustomerId, p.CustomerId);
-        Assert.Equal(load.AssignedDispatcherId, p.DispatcherId);
-        Assert.Equal(LoadSource.Pdf, p.Source);
-        Assert.Equal(load.RequestedPickupDate, p.RequestedPickupDate);
-        Assert.Equal(load.RequestedDeliveryDate, p.RequestedDeliveryDate);
-        Assert.Equal("Dock 4", p.Notes);
-        Assert.Equal(load.ContainerId, p.ContainerId);
-        Assert.Equal(load.OriginTerminalId, p.OriginTerminalId);
-        Assert.Equal(load.DestinationTerminalId, p.DestinationTerminalId);
-        Assert.Equal(HazmatClass.Class2, p.HazmatClass);
-        Assert.Equal("UN1203", p.UnNumber);
-        Assert.Equal(120, p.FuelSurcharge);
-        Assert.Equal("Lumper", Assert.Single(p.Accessorials!).Name);
-        Assert.Equal(FreightClass.Class70, p.FreightClass);
-        Assert.Equal("123456", p.NmfcCode);
-        Assert.Equal(10, p.PalletCount);
-        Assert.Equal(40, p.PieceCount);
-        Assert.Equal(8000, p.Weight);
-        Assert.Equal("48x40x60", p.Dimensions);
-        Assert.True(p.IsStackable);
-    }
-
-    #endregion
-
     #region Validation
 
     [Fact]
@@ -114,7 +57,7 @@ public class TripNewLoadTests
 
     #endregion
 
-    private static CreateTripLoadCommand ValidLoad() => new()
+    internal static CreateTripLoadCommand ValidLoad() => new()
     {
         Name = "Freight",
         Type = LoadType.GeneralFreight,

@@ -12,13 +12,13 @@ public interface ILoadService : IApplicationService
     ///     Creates a load and stores it when <paramref name="saveChanges" /> is true. Fails when a referenced
     ///     dispatcher, truck or customer is missing, or when a vehicle load needs a feature the tenant does not have.
     /// </summary>
-    Task<Result<Load>> CreateLoadAsync(CreateLoadParameters parameters, bool saveChanges = true,
+    Task<Result<Load>> CreateLoadAsync(NewLoad newLoad, bool saveChanges = true,
         CancellationToken ct = default);
 
     /// <summary>
     ///     Creates loads in one batch and returns them in the order given. Fails as a whole, for the same reasons as
     ///     <see cref="CreateLoadAsync" />.
     /// </summary>
-    Task<Result<IReadOnlyList<Load>>> CreateLoadsAsync(IEnumerable<CreateLoadParameters> parameters,
+    Task<Result<IReadOnlyList<Load>>> CreateLoadsAsync(IEnumerable<NewLoad> newLoads,
         bool saveChanges = true, CancellationToken ct = default);
 }
