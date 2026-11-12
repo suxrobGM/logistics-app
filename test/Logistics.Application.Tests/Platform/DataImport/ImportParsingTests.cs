@@ -9,15 +9,20 @@ public class ImportParsingTests
 {
     #region Numbers and dates
 
-    [Theory]
-    [InlineData("$1,250.00", 1250.00)]
-    [InlineData("1 250,50 €", 1250.50)]
-    [InlineData("1.234", 1234)]
-    [InlineData("12,5", 12.5)]
-    [InlineData("900", 900)]
-    public void ParseDecimal_FormattedAmounts_ParsesValue(string value, double expected)
+    public static TheoryData<string, decimal> FormattedAmounts => new()
     {
-        Assert.Equal((decimal)expected, ImportValueParser.ParseDecimal(value));
+        { "$1,250.00", 1250.00m },
+        { "1 250,50 €", 1250.50m },
+        { "1.234", 1234m },
+        { "12,5", 12.5m },
+        { "900", 900m },
+    };
+
+    [Theory]
+    [MemberData(nameof(FormattedAmounts))]
+    public void ParseDecimal_FormattedAmounts_ParsesValue(string value, decimal expected)
+    {
+        Assert.Equal(expected, ImportValueParser.ParseDecimal(value));
     }
 
     [Fact]
