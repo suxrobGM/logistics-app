@@ -13,7 +13,7 @@ namespace Logistics.Application.Modules.Operations.Trucks.Commands;
 
 internal sealed class UpdateTruckHandler(
     ITenantUnitOfWork tenantUow,
-    IVehicleTransportGuard vehicleTransportGuard,
+    IVehicleTransportCheck vehicleTransportCheck,
     ITrailerHookService trailerHookService,
     ITruckDriverFinder driverFinder) : IRequestHandler<UpdateTruckCommand, Result>
 {
@@ -30,7 +30,7 @@ internal sealed class UpdateTruckHandler(
 
         // Only a change is checked, so existing car haulers stay editable after the feature is turned off.
         var typeCheck =
-            await vehicleTransportGuard.CheckTruckTypeAsync(req.TruckType == truck.Type ? null : req.TruckType);
+            await vehicleTransportCheck.CheckTruckTypeAsync(req.TruckType == truck.Type ? null : req.TruckType);
         if (!typeCheck.IsSuccess)
         {
             return typeCheck;

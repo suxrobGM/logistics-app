@@ -14,7 +14,7 @@ namespace Logistics.Application.Modules.Platform.DataImport.Importers;
 ///     Trucks match on number. The driver cell links the main driver; the plan's truck limit and the
 ///     vehicle-transport feature gate apply as they do in the truck form.
 /// </summary>
-internal sealed class TruckImporter(ITenantUnitOfWork tenantUow, IVehicleTransportGuard vehicleTransportGuard)
+internal sealed class TruckImporter(ITenantUnitOfWork tenantUow, IVehicleTransportCheck vehicleTransportCheck)
     : EntityImporter<TruckImporter.Draft>
 {
     private static readonly IReadOnlyDictionary<string, TruckType> TypeAliases = new Dictionary<string, TruckType>
@@ -177,7 +177,7 @@ internal sealed class TruckImporter(ITenantUnitOfWork tenantUow, IVehicleTranspo
             return null;
         }
 
-        var typeCheck = await vehicleTransportGuard.CheckTruckTypeAsync(type);
+        var typeCheck = await vehicleTransportCheck.CheckTruckTypeAsync(type);
         return typeCheck.IsSuccess ? null : typeCheck.Error;
     }
 

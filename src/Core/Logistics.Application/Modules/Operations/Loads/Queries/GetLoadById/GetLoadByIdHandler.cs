@@ -8,6 +8,7 @@ using Logistics.Domain.Primitives.Enums;
 using Logistics.Mappings;
 using Logistics.Mediator;
 using Logistics.Shared.Models;
+using Logistics.Application.Modules.Operations.Loads.Services;
 
 namespace Logistics.Application.Modules.Operations.Loads.Queries;
 

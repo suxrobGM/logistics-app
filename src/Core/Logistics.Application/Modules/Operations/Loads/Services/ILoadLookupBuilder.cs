@@ -1,7 +1,7 @@
 using Logistics.Domain.Entities;
 using Logistics.Mappings;
 
-namespace Logistics.Application.Modules.Operations.Loads;
+namespace Logistics.Application.Modules.Operations.Loads.Services;
 
 /// <summary>
 /// Builds everything <c>LoadMapper</c> shows for a batch of loads in a fixed number of queries,

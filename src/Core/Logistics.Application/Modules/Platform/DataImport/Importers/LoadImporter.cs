@@ -20,7 +20,7 @@ namespace Logistics.Application.Modules.Platform.DataImport.Importers;
 internal sealed class LoadImporter(
     ITenantUnitOfWork tenantUow,
     IGeocodingService geocodingService,
-    IVehicleTransportGuard vehicleTransportGuard,
+    IVehicleTransportCheck vehicleTransportCheck,
     ICurrentUserService currentUserService) : EntityImporter<LoadImporter.Draft>
 {
     private static readonly IReadOnlyDictionary<string, LoadStatus> StatusAliases = new Dictionary<string, LoadStatus>
@@ -109,7 +109,7 @@ internal sealed class LoadImporter(
         var drivers = new EmployeeMatcher(await tenantUow.Repository<Employee>().Query().ToListAsync(ct));
 
         var hasVehicleLoads = drafts.Any(d => d.Type == LoadType.Vehicle);
-        if (hasVehicleLoads && await vehicleTransportGuard.CheckLoadTypeAsync(LoadType.Vehicle) is { IsSuccess: false } typeCheck)
+        if (hasVehicleLoads && await vehicleTransportCheck.CheckLoadTypeAsync(LoadType.Vehicle) is { IsSuccess: false } typeCheck)
         {
             foreach (var draft in drafts.Where(d => d.Type == LoadType.Vehicle))
             {

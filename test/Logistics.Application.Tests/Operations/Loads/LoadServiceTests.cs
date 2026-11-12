@@ -17,7 +17,7 @@ namespace Logistics.Application.Tests.Operations.Loads;
 public class LoadServiceTests
 {
     private readonly ITenantUnitOfWork _tenantUow = Substitute.For<ITenantUnitOfWork>();
-    private readonly IVehicleTransportGuard _guard = Substitute.For<IVehicleTransportGuard>();
+    private readonly IVehicleTransportCheck _guard = Substitute.For<IVehicleTransportCheck>();
     private readonly Employee _dispatcher = new()
     {
         Email = "d@x.com", FirstName = "Dana", LastName = "Disp", Salary = Money.Zero("USD")

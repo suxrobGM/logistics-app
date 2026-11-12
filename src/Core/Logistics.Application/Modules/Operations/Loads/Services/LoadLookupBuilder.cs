@@ -4,7 +4,7 @@ using Logistics.Mappings;
 using Logistics.Shared.Models;
 using Microsoft.EntityFrameworkCore;
 
-namespace Logistics.Application.Modules.Operations.Loads;
+namespace Logistics.Application.Modules.Operations.Loads.Services;
 
 internal sealed class LoadLookupBuilder(ITenantUnitOfWork uow) : ILoadLookupBuilder
 {

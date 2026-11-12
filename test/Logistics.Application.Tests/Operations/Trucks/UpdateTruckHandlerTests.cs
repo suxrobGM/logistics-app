@@ -19,7 +19,7 @@ public class UpdateTruckHandlerTests
     private readonly ITenantUnitOfWork _tenantUow = Substitute.For<ITenantUnitOfWork>();
     private readonly ITenantRepository<Truck, Guid> _truckRepo = Substitute.For<ITenantRepository<Truck, Guid>>();
     private readonly ITenantRepository<Employee, Guid> _employeeRepo = Substitute.For<ITenantRepository<Employee, Guid>>();
-    private readonly IVehicleTransportGuard _guard = Substitute.For<IVehicleTransportGuard>();
+    private readonly IVehicleTransportCheck _guard = Substitute.For<IVehicleTransportCheck>();
     private readonly List<Truck> _trucks = [];
     private readonly UpdateTruckHandler _sut;
 

@@ -19,7 +19,7 @@ namespace Logistics.Application.Modules.Integrations.LoadBoard.Commands;
 
 internal sealed class BookLoadBoardLoadHandler(
     ITenantUnitOfWork tenantUow,
-    IVehicleTransportGuard vehicleTransportGuard,
+    IVehicleTransportCheck vehicleTransportCheck,
     ICurrentUserService currentUser,
     IBrokerCreditChecker brokerCreditChecker,
     IInboundEmailRouteRegistry routeRegistry,
@@ -50,7 +50,7 @@ internal sealed class BookLoadBoardLoadHandler(
             _ => LoadType.GeneralFreight
         };
 
-        var typeCheck = await vehicleTransportGuard.CheckLoadTypeAsync(loadType);
+        var typeCheck = await vehicleTransportCheck.CheckLoadTypeAsync(loadType);
         if (!typeCheck.IsSuccess)
         {
             return Result<LoadBoardBookingResultDto>.Fail(typeCheck.Error!, typeCheck.ErrorCode!);

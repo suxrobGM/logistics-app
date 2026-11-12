@@ -1,6 +1,5 @@
 using System.Linq.Expressions;
 using Logistics.Application.Modules.Operations.Loads.Queries;
-using Logistics.Application.Modules.Operations.Loads;
 using Logistics.Application.Tests.TestKit;
 using Logistics.Domain.Entities;
 using Logistics.Domain.Persistence;
@@ -9,6 +8,7 @@ using Logistics.Domain.Primitives.ValueObjects;
 using MockQueryable;
 using NSubstitute;
 using Xunit;
+using Logistics.Application.Modules.Operations.Loads.Services;
 
 namespace Logistics.Application.Tests.Operations.Loads;
 

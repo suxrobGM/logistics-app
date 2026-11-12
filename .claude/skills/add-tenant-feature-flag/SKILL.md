@@ -88,7 +88,7 @@ tenant whose plan excludes it.
 
 When the feature is a field **value** on a shared request (a load type, a truck type), the attribute
 cannot express it. Check it in the shared write path through a guard that calls
-`IFeatureService.CheckFeatureAsync`, as `IVehicleTransportGuard` does from `LoadService`. That keeps the
+`IFeatureService.CheckFeatureAsync`, as `IVehicleTransportCheck` does from `LoadService`. That keeps the
 error codes the same as `[RequiresFeature]`, so the client still shows the upgrade prompt.
 
 ### 4b. Backend: gate the jobs
