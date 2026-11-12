@@ -8,13 +8,19 @@ public static class MaintenanceMapper
 {
     extension(MaintenanceRecord entity)
     {
-        public MaintenanceRecordDto ToDto()
+        /// <summary>For one row: reads the related names off the navigations. Lists pass them in
+        /// through the overload instead, looked up for the whole page at once.</summary>
+        public MaintenanceRecordDto ToDto() => entity.ToDto(
+            entity.Truck?.Number, entity.PerformedBy?.GetFullName(), entity.Parts.Select(p => p.ToDto()));
+
+        public MaintenanceRecordDto ToDto(
+            string? truckNumber, string? performedByName, IEnumerable<MaintenancePartDto> parts)
         {
             return new MaintenanceRecordDto
             {
                 Id = entity.Id,
                 TruckId = entity.TruckId,
-                TruckNumber = entity.Truck?.Number ?? string.Empty,
+                TruckNumber = truckNumber ?? string.Empty,
                 Type = entity.MaintenanceType,
                 TypeDisplay = entity.MaintenanceType.GetDescription(),
                 Description = entity.Description ?? string.Empty,
@@ -27,9 +33,9 @@ public static class MaintenanceMapper
                 PartsCost = entity.PartsCost,
                 TotalCost = entity.TotalCost,
                 PerformedById = entity.PerformedById,
-                PerformedByName = entity.PerformedBy?.GetFullName(),
+                PerformedByName = performedByName,
                 Notes = entity.WorkPerformed,
-                Parts = entity.Parts.Select(p => p.ToDto()).ToList(),
+                Parts = parts.ToList(),
                 CreatedAt = entity.CreatedAt
             };
         }

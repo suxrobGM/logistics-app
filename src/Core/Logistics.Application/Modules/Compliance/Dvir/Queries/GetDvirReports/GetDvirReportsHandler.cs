@@ -5,10 +5,11 @@ using Logistics.Domain.Persistence;
 using Logistics.Mappings;
 using Logistics.Mediator;
 using Logistics.Shared.Models;
+using Logistics.Application.Modules.Compliance.Dvir.Services;
 
 namespace Logistics.Application.Modules.Compliance.Dvir.Queries;
 
-internal sealed class GetDvirReportsHandler(ITenantUnitOfWork tenantUow)
+internal sealed class GetDvirReportsHandler(ITenantUnitOfWork tenantUow, IDvirReportListMapper listMapper)
     : IRequestHandler<GetDvirReportsQuery, PagedResult<DvirReportDto>>
 {
     public async Task<PagedResult<DvirReportDto>> Handle(GetDvirReportsQuery req, CancellationToken ct)
@@ -45,6 +46,6 @@ internal sealed class GetDvirReportsHandler(ITenantUnitOfWork tenantUow)
             baseQuery = baseQuery.Where(r => r.InspectionDate <= req.ToDate);
         }
 
-        return await baseQuery.ToPagedResultAsync(req, r => r.ToDto(), ct, defaultOrderBy: "-InspectionDate");
+        return await baseQuery.ToPagedResultAsync(req, listMapper.MapAsync, ct, defaultOrderBy: "-InspectionDate");
     }
 }

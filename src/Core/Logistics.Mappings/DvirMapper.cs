@@ -8,15 +8,24 @@ public static class DvirMapper
 {
     extension(DvirReport entity)
     {
-        public DvirReportDto ToDto()
+        /// <summary>For one row: reads the related names off the navigations. Lists pass them in
+        /// through the overload instead, looked up for the whole page at once.</summary>
+        public DvirReportDto ToDto() => entity.ToDto(
+            entity.Truck?.Number,
+            entity.Driver?.GetFullName(),
+            entity.ReviewedBy?.GetFullName(),
+            entity.Defects.Select(d => d.ToDto()));
+
+        public DvirReportDto ToDto(
+            string? truckNumber, string? driverName, string? reviewerName, IEnumerable<DvirDefectDto> defects)
         {
             return new DvirReportDto
             {
                 Id = entity.Id,
                 TruckId = entity.TruckId,
-                TruckNumber = entity.Truck?.Number ?? string.Empty,
+                TruckNumber = truckNumber ?? string.Empty,
                 DriverId = entity.DriverId,
-                DriverName = entity.Driver?.GetFullName() ?? string.Empty,
+                DriverName = driverName ?? string.Empty,
                 Type = entity.Type,
                 Status = entity.Status,
                 InspectionDate = entity.InspectionDate,
@@ -27,13 +36,13 @@ public static class DvirMapper
                 HasDriverSignature = !string.IsNullOrEmpty(entity.DriverSignature),
                 DriverNotes = entity.DriverNotes,
                 ReviewedById = entity.ReviewedById,
-                ReviewedByName = entity.ReviewedBy?.GetFullName(),
+                ReviewedByName = reviewerName,
                 ReviewedAt = entity.ReviewedAt,
                 HasMechanicSignature = !string.IsNullOrEmpty(entity.MechanicSignature),
                 MechanicNotes = entity.MechanicNotes,
                 DefectsCorrected = entity.DefectsCorrected,
                 TripId = entity.TripId,
-                Defects = entity.Defects.Select(d => d.ToDto()).ToList(),
+                Defects = defects.ToList(),
                 CreatedAt = entity.CreatedAt
             };
         }
@@ -41,7 +50,9 @@ public static class DvirMapper
 
     extension(DvirDefect entity)
     {
-        public DvirDefectDto ToDto()
+        public DvirDefectDto ToDto() => entity.ToDto(entity.CorrectedBy?.GetFullName());
+
+        public DvirDefectDto ToDto(string? correctedByName)
         {
             return new DvirDefectDto
             {
@@ -55,7 +66,7 @@ public static class DvirMapper
                 CorrectionNotes = entity.CorrectionNotes,
                 CorrectedAt = entity.CorrectedAt,
                 CorrectedById = entity.CorrectedById,
-                CorrectedByName = entity.CorrectedBy?.GetFullName()
+                CorrectedByName = correctedByName
             };
         }
     }

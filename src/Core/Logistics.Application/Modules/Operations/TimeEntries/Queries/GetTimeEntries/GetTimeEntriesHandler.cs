@@ -6,10 +6,12 @@ using Logistics.Mappings;
 using Logistics.Mediator;
 using Logistics.Shared.Models;
 using Microsoft.EntityFrameworkCore;
+using Logistics.Application.Modules.Operations.Common.Services;
+using Logistics.Application.Utilities;
 
 namespace Logistics.Application.Modules.Operations.TimeEntries.Queries;
 
-internal sealed class GetTimeEntriesHandler(ITenantUnitOfWork tenantUow)
+internal sealed class GetTimeEntriesHandler(ITenantUnitOfWork tenantUow, IDisplayNameLookup names)
     : IRequestHandler<GetTimeEntriesQuery, PagedResult<TimeEntryDto>>
 {
     public async Task<PagedResult<TimeEntryDto>> Handle(GetTimeEntriesQuery req, CancellationToken ct)
@@ -45,35 +47,10 @@ internal sealed class GetTimeEntriesHandler(ITenantUnitOfWork tenantUow)
             query = query.Where(t => t.PayrollInvoiceId == null);
         }
 
-        // Get total count for pagination
-        var totalItems = await query.CountAsync(ct);
-
-        // Apply sorting
-        if (!string.IsNullOrWhiteSpace(req.OrderBy))
+        return await query.ToPagedResultAsync(req, async (page, token) =>
         {
-            var isDescending = req.OrderBy.StartsWith("-");
-            var sortField = isDescending ? req.OrderBy[1..] : req.OrderBy;
-
-            query = sortField.ToLowerInvariant() switch
-            {
-                "date" => isDescending ? query.OrderByDescending(t => t.Date) : query.OrderBy(t => t.Date),
-                "totalhours" => isDescending ? query.OrderByDescending(t => t.TotalHours) : query.OrderBy(t => t.TotalHours),
-                "createdat" => isDescending ? query.OrderByDescending(t => t.CreatedAt) : query.OrderBy(t => t.CreatedAt),
-                _ => query.OrderByDescending(t => t.Date)
-            };
-        }
-        else
-        {
-            query = query.OrderByDescending(t => t.Date);
-        }
-
-        // Apply pagination
-        var skip = (req.Page - 1) * req.PageSize;
-        query = query.Skip(skip).Take(req.PageSize);
-
-        var timeEntries = query.ToList();
-        var dtos = timeEntries.Select(t => t.ToDto()).ToArray();
-
-        return PagedResult<TimeEntryDto>.Ok(dtos, totalItems, req.PageSize);
+            var employeeNames = await names.GetEmployeeNamesAsync(page.Select(t => (Guid?)t.EmployeeId), token);
+            return page.Select(t => t.ToDto(employeeNames.Find(t.EmployeeId)));
+        }, ct, defaultOrderBy: "-Date");
     }
 }

@@ -7,13 +7,17 @@ public static class TimeEntryMapper
 {
     extension(TimeEntry entity)
     {
-        public TimeEntryDto ToDto()
+        /// <summary>For one row: reads the related names off the navigations. Lists pass them in
+        /// through the overload instead, looked up for the whole page at once.</summary>
+        public TimeEntryDto ToDto() => entity.ToDto(entity.Employee.GetFullName());
+
+        public TimeEntryDto ToDto(string? employeeName)
         {
             return new TimeEntryDto
             {
                 Id = entity.Id.ToString(),
                 EmployeeId = entity.EmployeeId.ToString(),
-                EmployeeName = entity.Employee.GetFullName(),
+                EmployeeName = employeeName,
                 Date = entity.Date,
                 StartTime = entity.StartTime,
                 EndTime = entity.EndTime,

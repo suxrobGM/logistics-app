@@ -5,10 +5,11 @@ using Logistics.Domain.Persistence;
 using Logistics.Mappings;
 using Logistics.Mediator;
 using Logistics.Shared.Models;
+using Logistics.Application.Modules.Operations.Common.Services;
 
 namespace Logistics.Application.Modules.Compliance.Accidents.Queries;
 
-internal sealed class GetAccidentReportsHandler(ITenantUnitOfWork tenantUow)
+internal sealed class GetAccidentReportsHandler(ITenantUnitOfWork tenantUow, IDisplayNameLookup names)
     : IRequestHandler<GetAccidentReportsQuery, PagedResult<AccidentReportDto>>
 {
     public async Task<PagedResult<AccidentReportDto>> Handle(GetAccidentReportsQuery req, CancellationToken ct)
@@ -45,6 +46,26 @@ internal sealed class GetAccidentReportsHandler(ITenantUnitOfWork tenantUow)
             baseQuery = baseQuery.Where(r => r.AccidentDateTime <= req.ToDate);
         }
 
-        return await baseQuery.ToPagedResultAsync(req, r => r.ToDto(), ct, defaultOrderBy: "-AccidentDateTime");
+        return await baseQuery.ToPagedResultAsync(req, MapPageAsync, ct, defaultOrderBy: "-AccidentDateTime");
+    }
+    private async Task<IEnumerable<AccidentReportDto>> MapPageAsync(
+        IReadOnlyList<AccidentReport> reports, CancellationToken ct)
+    {
+        var reportIds = reports.Select(r => r.Id).ToArray();
+        var witnesses = (await tenantUow.Repository<AccidentWitness>()
+            .GetListAsync(w => reportIds.Contains(w.AccidentReportId), ct)).ToLookup(w => w.AccidentReportId);
+        var thirdParties = (await tenantUow.Repository<AccidentThirdParty>()
+            .GetListAsync(tp => reportIds.Contains(tp.AccidentReportId), ct)).ToLookup(tp => tp.AccidentReportId);
+
+        var employeeNames = await names.GetEmployeeNamesAsync(
+            reports.SelectMany(r => new Guid?[] { r.DriverId, r.ReviewedById }), ct);
+        var truckNumbers = await names.GetTruckNumbersAsync(reports.Select(r => (Guid?)r.TruckId), ct);
+
+        return reports.Select(r => r.ToDto(
+            truckNumbers.Find(r.TruckId),
+            employeeNames.Find(r.DriverId),
+            employeeNames.Find(r.ReviewedById),
+            witnesses[r.Id].Select(w => w.ToDto()),
+            thirdParties[r.Id].Select(tp => tp.ToDto())));
     }
 }

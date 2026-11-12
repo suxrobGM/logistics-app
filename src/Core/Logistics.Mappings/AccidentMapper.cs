@@ -8,15 +8,29 @@ public static class AccidentMapper
 {
     extension(AccidentReport entity)
     {
-        public AccidentReportDto ToDto()
+        /// <summary>For one row: reads the related names off the navigations. Lists pass them in
+        /// through the overload instead, looked up for the whole page at once.</summary>
+        public AccidentReportDto ToDto() => entity.ToDto(
+            entity.Truck?.Number,
+            entity.Driver?.GetFullName(),
+            entity.ReviewedBy?.GetFullName(),
+            entity.Witnesses.Select(w => w.ToDto()),
+            entity.ThirdParties.Select(tp => tp.ToDto()));
+
+        public AccidentReportDto ToDto(
+            string? truckNumber,
+            string? driverName,
+            string? reviewerName,
+            IEnumerable<AccidentWitnessDto> witnesses,
+            IEnumerable<AccidentThirdPartyDto> thirdParties)
         {
             return new AccidentReportDto
             {
                 Id = entity.Id,
                 TruckId = entity.TruckId,
-                TruckNumber = entity.Truck?.Number ?? string.Empty,
+                TruckNumber = truckNumber ?? string.Empty,
                 DriverId = entity.DriverId,
-                DriverName = entity.Driver?.GetFullName() ?? string.Empty,
+                DriverName = driverName ?? string.Empty,
                 Type = entity.AccidentType,
                 TypeDisplay = entity.AccidentType.GetDescription(),
                 Severity = entity.Severity,
@@ -42,12 +56,12 @@ public static class AccidentMapper
                 InsuranceClaimNumber = entity.InsuranceClaimNumber,
                 InsuranceNotifiedAt = entity.InsuranceNotifiedAt,
                 ReviewedById = entity.ReviewedById,
-                ReviewedByName = entity.ReviewedBy?.GetFullName(),
+                ReviewedByName = reviewerName,
                 ReviewedAt = entity.ReviewedAt,
                 ReviewNotes = entity.ReviewNotes,
                 TripId = entity.TripId,
-                Witnesses = entity.Witnesses.Select(w => w.ToDto()).ToList(),
-                ThirdParties = entity.ThirdParties.Select(tp => tp.ToDto()).ToList(),
+                Witnesses = witnesses.ToList(),
+                ThirdParties = thirdParties.ToList(),
                 CreatedAt = entity.CreatedAt
             };
         }
