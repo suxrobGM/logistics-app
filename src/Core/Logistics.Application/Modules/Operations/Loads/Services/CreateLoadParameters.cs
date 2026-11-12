@@ -21,6 +21,10 @@ namespace Logistics.Application.Modules.Operations.Loads.Services;
 /// <param name="Source">How this load entered the system. Defaults to Manual.</param>
 /// <param name="RequestedPickupDate">Customer-requested pickup window date.</param>
 /// <param name="RequestedDeliveryDate">Customer-requested delivery window date.</param>
+/// <param name="PickupAppointmentFrom">Start of the pickup appointment window.</param>
+/// <param name="PickupAppointmentTo">End of the pickup appointment window.</param>
+/// <param name="DeliveryAppointmentFrom">Start of the delivery appointment window.</param>
+/// <param name="DeliveryAppointmentTo">End of the delivery appointment window.</param>
 /// <param name="Notes">Free-form notes for dispatcher / driver.</param>
 /// <param name="ContainerId">Optional intermodal container being moved by this load.</param>
 /// <param name="OriginTerminalId">Optional origin terminal (port / rail / depot).</param>
@@ -42,6 +46,10 @@ public record CreateLoadParameters(
     LoadSource Source = LoadSource.Manual,
     DateTime? RequestedPickupDate = null,
     DateTime? RequestedDeliveryDate = null,
+    DateTime? PickupAppointmentFrom = null,
+    DateTime? PickupAppointmentTo = null,
+    DateTime? DeliveryAppointmentFrom = null,
+    DateTime? DeliveryAppointmentTo = null,
     string? Notes = null,
     Guid? ContainerId = null,
     Guid? OriginTerminalId = null,

@@ -139,6 +139,13 @@ internal sealed class ImportLoadFromPdfHandler(
             customer.Id,
             truckId,
             dispatcher.Id,
+            Source: LoadSource.Pdf,
+            RequestedPickupDate: extractedData.PickupDate,
+            RequestedDeliveryDate: extractedData.DeliveryDate,
+            PickupAppointmentFrom: extractedData.PickupAppointmentFrom,
+            PickupAppointmentTo: extractedData.PickupAppointmentTo,
+            DeliveryAppointmentFrom: extractedData.DeliveryAppointmentFrom,
+            DeliveryAppointmentTo: extractedData.DeliveryAppointmentTo,
             Vehicles: extractedData.Vehicles.ToLoadVehicles());
 
         var created = await loadService.CreateLoadAsync(createLoadParameters, ct: ct);

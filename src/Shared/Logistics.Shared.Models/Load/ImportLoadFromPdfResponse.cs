@@ -63,6 +63,10 @@ public record ExtractedLoadDataDto
     public string? DestinationContactPhone { get; init; }
     public DateTime? PickupDate { get; init; }
     public DateTime? DeliveryDate { get; init; }
+    public DateTime? PickupAppointmentFrom { get; init; }
+    public DateTime? PickupAppointmentTo { get; init; }
+    public DateTime? DeliveryAppointmentFrom { get; init; }
+    public DateTime? DeliveryAppointmentTo { get; init; }
     public decimal? PaymentAmount { get; init; }
     public string? ShipperName { get; init; }
     public string? ShipperPhone { get; init; }

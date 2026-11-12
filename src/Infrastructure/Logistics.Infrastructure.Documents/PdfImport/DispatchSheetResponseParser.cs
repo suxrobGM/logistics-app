@@ -59,6 +59,10 @@ internal static class DispatchSheetResponseParser
         DestinationContactPhone = parsed.DestinationContactPhone,
         PickupDate = ParseDate(parsed.PickupDate),
         DeliveryDate = ParseDate(parsed.DeliveryDate),
+        PickupAppointmentFrom = ParseDate(parsed.PickupAppointmentFrom),
+        PickupAppointmentTo = ParseDate(parsed.PickupAppointmentTo),
+        DeliveryAppointmentFrom = ParseDate(parsed.DeliveryAppointmentFrom),
+        DeliveryAppointmentTo = ParseDate(parsed.DeliveryAppointmentTo),
         PaymentAmount = ParseAmount(parsed.PaymentAmount),
         ShipperName = parsed.ShipperName,
         ShipperPhone = parsed.ShipperPhone,
@@ -146,6 +150,10 @@ internal static class DispatchSheetResponseParser
         public string? DestinationContactPhone { get; init; }
         public string? PickupDate { get; init; }
         public string? DeliveryDate { get; init; }
+        public string? PickupAppointmentFrom { get; init; }
+        public string? PickupAppointmentTo { get; init; }
+        public string? DeliveryAppointmentFrom { get; init; }
+        public string? DeliveryAppointmentTo { get; init; }
         public string? PaymentAmount { get; init; }
         public string? ShipperName { get; init; }
         public string? ShipperPhone { get; init; }

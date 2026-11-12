@@ -18,7 +18,7 @@ namespace Logistics.Infrastructure.Persistence.Migrations.Tenant
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasAnnotation("ProductVersion", "10.0.13")
+                .HasAnnotation("ProductVersion", "10.0.15")
                 .HasAnnotation("Proxies:ChangeTracking", false)
                 .HasAnnotation("Proxies:CheckEquality", false)
                 .HasAnnotation("Proxies:LazyLoading", true)
@@ -2996,6 +2996,14 @@ namespace Logistics.Infrastructure.Persistence.Migrations.Tenant
                         .HasColumnType("timestamp with time zone")
                         .HasColumnName("delivered_at");
 
+                    b.Property<DateTime?>("DeliveryAppointmentFrom")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("delivery_appointment_from");
+
+                    b.Property<DateTime?>("DeliveryAppointmentTo")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("delivery_appointment_to");
+
                     b.Property<Guid?>("DestinationTerminalId")
                         .HasColumnType("uuid")
                         .HasColumnName("destination_terminal_id");
@@ -3072,6 +3080,14 @@ namespace Logistics.Infrastructure.Persistence.Migrations.Tenant
                     b.Property<DateTime?>("PickedUpAt")
                         .HasColumnType("timestamp with time zone")
                         .HasColumnName("picked_up_at");
+
+                    b.Property<DateTime?>("PickupAppointmentFrom")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("pickup_appointment_from");
+
+                    b.Property<DateTime?>("PickupAppointmentTo")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("pickup_appointment_to");
 
                     b.Property<int?>("PieceCount")
                         .HasColumnType("integer")
@@ -5978,6 +5994,14 @@ namespace Logistics.Infrastructure.Persistence.Migrations.Tenant
                         .HasColumnType("uuid")
                         .HasColumnName("driver_id");
 
+                    b.Property<DateTime?>("EtaUpdatedAt")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("eta_updated_at");
+
+                    b.Property<DateTime?>("HosShortfallFlaggedAt")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("hos_shortfall_flagged_at");
+
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasColumnType("text")
@@ -6063,6 +6087,14 @@ namespace Logistics.Infrastructure.Persistence.Migrations.Tenant
                     b.Property<DateTime?>("DetentionAlertedAt")
                         .HasColumnType("timestamp with time zone")
                         .HasColumnName("detention_alerted_at");
+
+                    b.Property<DateTime?>("EstimatedArrivalAt")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("estimated_arrival_at");
+
+                    b.Property<DateTime?>("LateNotifiedAt")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("late_notified_at");
 
                     b.Property<Guid>("LoadId")
                         .HasColumnType("uuid")

@@ -1,5 +1,6 @@
 using Logistics.Application.Abstractions.Geocoding;
 using Logistics.Application.Modules.Compliance.Ifta.Services;
+using Logistics.Application.Modules.Operations.Trips.Services;
 using Logistics.Domain.Entities;
 using Logistics.Domain.Persistence;
 using Logistics.Domain.Primitives.Enums;
@@ -37,7 +38,8 @@ public class TruckLocationRecorderTests
         _resolver.Resolve(Arg.Any<GeoPoint>())
             .Returns(new TaxJurisdiction { CountryCode = "US", Region = "TX" });
 
-        _sut = new TruckLocationRecorder(_tenantUow, _resolver, NullLogger<TruckLocationRecorder>.Instance);
+        _sut = new TruckLocationRecorder(
+            _tenantUow, _resolver, Substitute.For<IEtaService>(), NullLogger<TruckLocationRecorder>.Instance);
     }
 
     private decimal AccruedMiles => (decimal)_upsert!.GetArgument(3)!;

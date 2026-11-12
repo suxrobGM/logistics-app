@@ -18,7 +18,7 @@ namespace Logistics.Infrastructure.Persistence.Migrations.Master
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasAnnotation("ProductVersion", "10.0.13")
+                .HasAnnotation("ProductVersion", "10.0.15")
                 .HasAnnotation("Proxies:ChangeTracking", false)
                 .HasAnnotation("Proxies:CheckEquality", false)
                 .HasAnnotation("Proxies:LazyLoading", true)
@@ -1428,6 +1428,10 @@ namespace Logistics.Infrastructure.Persistence.Migrations.Master
                                 .IsRequired()
                                 .HasColumnType("text")
                                 .HasColumnName("settings_region");
+
+                            b1.Property<int?>("StopDwellMinutes")
+                                .HasColumnType("integer")
+                                .HasColumnName("settings_stop_dwell_minutes");
 
                             b1.Property<string>("TemperatureUnit")
                                 .IsRequired()

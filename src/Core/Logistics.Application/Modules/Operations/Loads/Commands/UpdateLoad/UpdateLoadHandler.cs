@@ -67,6 +67,10 @@ internal sealed class UpdateLoadHandler(
             // Nullable<T>-to-Nullable<T> assignments - PropertyUpdater's T : struct constraint can't take Nullable<T> as T.
             if (req.RequestedPickupDate.HasValue) load.RequestedPickupDate = req.RequestedPickupDate;
             if (req.RequestedDeliveryDate.HasValue) load.RequestedDeliveryDate = req.RequestedDeliveryDate;
+            if (req.PickupAppointmentFrom.HasValue) load.PickupAppointmentFrom = req.PickupAppointmentFrom;
+            if (req.PickupAppointmentTo.HasValue) load.PickupAppointmentTo = req.PickupAppointmentTo;
+            if (req.DeliveryAppointmentFrom.HasValue) load.DeliveryAppointmentFrom = req.DeliveryAppointmentFrom;
+            if (req.DeliveryAppointmentTo.HasValue) load.DeliveryAppointmentTo = req.DeliveryAppointmentTo;
             if (req.ContainerId.HasValue) load.ContainerId = req.ContainerId;
             if (req.OriginTerminalId.HasValue) load.OriginTerminalId = req.OriginTerminalId;
             if (req.DestinationTerminalId.HasValue) load.DestinationTerminalId = req.DestinationTerminalId;

@@ -1,62 +1,40 @@
-using Logistics.Application.Abstractions;
-using Logistics.Application.Utilities;
+using Logistics.Application.Modules.Operations.Tracking.Services;
 using Logistics.Domain.Entities;
 using Logistics.Domain.Persistence;
-using Logistics.Domain.Options;
 using Logistics.Mediator;
 using Logistics.Shared.Models;
-using Microsoft.Extensions.Options;
-using Logistics.Application.Abstractions.CurrentUser;
 
 namespace Logistics.Application.Modules.Operations.Tracking.Commands;
 
 internal sealed class CreateTrackingLinkHandler(
     ITenantUnitOfWork tenantUow,
-    ICurrentUserService currentUserService,
-    IOptions<CustomerPortalOptions> portalOptions)
+    ITrackingLinkService trackingLinks)
     : IRequestHandler<CreateTrackingLinkCommand, Result<TrackingLinkDto>>
 {
-    private const int DefaultExpirationDays = 30;
-
     public async Task<Result<TrackingLinkDto>> Handle(CreateTrackingLinkCommand req, CancellationToken ct)
     {
-        var currentUserId = currentUserService.GetUserId();
-        if (currentUserId is null)
-        {
-            return Result<TrackingLinkDto>.Fail("User not authenticated.");
-        }
-
         var load = await tenantUow.Repository<Load>().GetByIdAsync(req.LoadId, ct);
         if (load is null)
         {
             return Result<TrackingLinkDto>.Fail("Load not found.");
         }
 
-        var trackingLink = new TrackingLink
-        {
-            Token = TokenGenerator.GenerateSecureToken(64),
-            LoadId = req.LoadId,
-            ExpiresAt = DateTime.UtcNow.AddDays(DefaultExpirationDays)
-        };
-
-        await tenantUow.Repository<TrackingLink>().AddAsync(trackingLink, ct);
+        var trackingLink = await trackingLinks.GetOrCreateAsync(load.Id, ct);
         await tenantUow.SaveChangesAsync(ct);
-
-        var tenant = tenantUow.GetCurrentTenant();
 
         return Result<TrackingLinkDto>.Ok(new TrackingLinkDto
         {
             Id = trackingLink.Id,
             Token = trackingLink.Token,
-            Url = $"{portalOptions.Value.BaseUrl}/track/{tenant.Id}/{trackingLink.Token}",
+            Url = trackingLinks.GetUrl(trackingLink),
             LoadId = load.Id,
             LoadNumber = load.Number,
             LoadName = load.Name,
             ExpiresAt = trackingLink.ExpiresAt,
             IsActive = trackingLink.IsActive,
             IsExpired = false,
-            AccessCount = 0,
-            LastAccessedAt = null,
+            AccessCount = trackingLink.AccessCount,
+            LastAccessedAt = trackingLink.LastAccessedAt,
             CreatedAt = trackingLink.CreatedAt
         });
     }

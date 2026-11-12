@@ -37,6 +37,10 @@ internal static class ImportFieldKeys
     public const string Truck = "truck";
     public const string PickupDate = "pickupDate";
     public const string DeliveryDate = "deliveryDate";
+    public const string PickupAppointmentFrom = "pickupAppointmentFrom";
+    public const string PickupAppointmentTo = "pickupAppointmentTo";
+    public const string DeliveryAppointmentFrom = "deliveryAppointmentFrom";
+    public const string DeliveryAppointmentTo = "deliveryAppointmentTo";
 
     public const string Street = "street";
     public const string Street2 = "street2";

@@ -58,4 +58,9 @@ public record TenantSettings
     /// alert still fires).
     /// </summary>
     public decimal? DetentionRatePerHour { get; set; }
+
+    /// <summary>
+    /// Minutes the ETA allows at each stop for loading or unloading. Null means one hour.
+    /// </summary>
+    public int? StopDwellMinutes { get; set; }
 }

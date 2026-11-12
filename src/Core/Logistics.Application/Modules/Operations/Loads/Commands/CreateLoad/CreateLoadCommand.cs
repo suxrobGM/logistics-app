@@ -21,6 +21,10 @@ public partial class CreateLoadCommand : ICommand
     public LoadSource Source { get; set; } = LoadSource.Manual;
     public DateTime? RequestedPickupDate { get; set; }
     public DateTime? RequestedDeliveryDate { get; set; }
+    public DateTime? PickupAppointmentFrom { get; set; }
+    public DateTime? PickupAppointmentTo { get; set; }
+    public DateTime? DeliveryAppointmentFrom { get; set; }
+    public DateTime? DeliveryAppointmentTo { get; set; }
     public string? Notes { get; set; }
     public Guid? ContainerId { get; set; }
     public Guid? OriginTerminalId { get; set; }

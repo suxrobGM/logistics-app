@@ -1,4 +1,5 @@
 using Logistics.Application.Abstractions.Geocoding;
+using Logistics.Application.Modules.Operations.Trips.Services;
 using Logistics.Domain.Entities;
 using Logistics.Domain.Persistence;
 using Logistics.Domain.Primitives;
@@ -12,6 +13,7 @@ namespace Logistics.Application.Modules.Compliance.Ifta.Services;
 internal sealed class TruckLocationRecorder(
     ITenantUnitOfWork tenantUow,
     IJurisdictionResolver jurisdictionResolver,
+    IEtaService etaService,
     ILogger<TruckLocationRecorder> logger) : ITruckLocationRecorder
 {
     private const double MetersPerMile = 1609.344;
@@ -62,6 +64,7 @@ internal sealed class TruckLocationRecorder(
         }
 
         truck.CurrentLocation = location;
+        await etaService.RefreshAsync(truck, timestampUtc, ct);
 
         if (previous is not null)
         {

@@ -1,3 +1,4 @@
+using Logistics.Domain.Events;
 using Logistics.Domain.Primitives.Enums;
 
 namespace Logistics.Domain.Entities;
@@ -17,11 +18,13 @@ public partial class Load
 
     /// <summary>
     /// Enforces valid status transitions and sets timestamps accordingly.
+    /// Raises <see cref="LoadStatusChangedEvent"/> when the status actually changes.
     /// </summary>
     /// <param name="newStatus">Target status.</param>
     /// <exception cref="InvalidOperationException">Thrown for invalid transitions.</exception>
     public void UpdateStatus(LoadStatus newStatus)
     {
+        var oldStatus = Status;
         var timestamps = new LoadStatusTimestamps(
             DispatchedAt,
             PickedUpAt,
@@ -35,6 +38,11 @@ public partial class Load
         PickedUpAt = result.Timestamps.PickedUpAt;
         DeliveredAt = result.Timestamps.DeliveredAt;
         CancelledAt = result.Timestamps.CancelledAt;
+
+        if (Status != oldStatus)
+        {
+            DomainEvents.Add(new LoadStatusChangedEvent(Id, oldStatus, Status));
+        }
     }
 
     /// <summary>

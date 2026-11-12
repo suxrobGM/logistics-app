@@ -96,6 +96,26 @@ public partial class Load : AuditableEntity, ITenantEntity
     public DateTime? RequestedDeliveryDate { get; set; }
 
     /// <summary>
+    /// Start of the pickup appointment window, as booked with the shipper.
+    /// </summary>
+    public DateTime? PickupAppointmentFrom { get; set; }
+
+    /// <summary>
+    /// End of the pickup appointment window.
+    /// </summary>
+    public DateTime? PickupAppointmentTo { get; set; }
+
+    /// <summary>
+    /// Start of the delivery appointment window, as booked with the receiver.
+    /// </summary>
+    public DateTime? DeliveryAppointmentFrom { get; set; }
+
+    /// <summary>
+    /// End of the delivery appointment window. Late detection compares the ETA against this.
+    /// </summary>
+    public DateTime? DeliveryAppointmentTo { get; set; }
+
+    /// <summary>
     /// Free-form dispatcher / driver notes.
     /// </summary>
     public string? Notes { get; set; }

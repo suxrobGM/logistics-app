@@ -65,6 +65,10 @@ internal sealed class LoadImporter(
         draft.Type = draft.ReadEnum(ImportFieldKeys.Type, "Load type", TypeAliases) ?? LoadType.GeneralFreight;
         draft.PickupDate = draft.ReadDate(PickupDate, "Pickup date", options);
         draft.DeliveryDate = draft.ReadDate(DeliveryDate, "Delivery date", options);
+        draft.PickupAppointmentFrom = draft.ReadDate(PickupAppointmentFrom, "Pickup appointment from", options);
+        draft.PickupAppointmentTo = draft.ReadDate(PickupAppointmentTo, "Pickup appointment to", options);
+        draft.DeliveryAppointmentFrom = draft.ReadDate(DeliveryAppointmentFrom, "Delivery appointment from", options);
+        draft.DeliveryAppointmentTo = draft.ReadDate(DeliveryAppointmentTo, "Delivery appointment to", options);
         draft.Origin = draft.ReadAddress(PickupPrefix, "Pickup address", options, required: true);
         draft.Destination = draft.ReadAddress(DeliveryPrefix, "Delivery address", options, required: true);
         return draft;
@@ -144,6 +148,10 @@ internal sealed class LoadImporter(
 
                 load.RequestedPickupDate = draft.PickupDate ?? load.RequestedPickupDate;
                 load.RequestedDeliveryDate = draft.DeliveryDate ?? load.RequestedDeliveryDate;
+                load.PickupAppointmentFrom = draft.PickupAppointmentFrom ?? load.PickupAppointmentFrom;
+                load.PickupAppointmentTo = draft.PickupAppointmentTo ?? load.PickupAppointmentTo;
+                load.DeliveryAppointmentFrom = draft.DeliveryAppointmentFrom ?? load.DeliveryAppointmentFrom;
+                load.DeliveryAppointmentTo = draft.DeliveryAppointmentTo ?? load.DeliveryAppointmentTo;
                 load.Notes = draft.Row.Get(Notes) ?? load.Notes;
                 if (draft.Row.Get(Status) is not null)
                 {
@@ -170,6 +178,10 @@ internal sealed class LoadImporter(
             created.ExternalSourceId = draft.Key;
             created.RequestedPickupDate = draft.PickupDate;
             created.RequestedDeliveryDate = draft.DeliveryDate;
+            created.PickupAppointmentFrom = draft.PickupAppointmentFrom;
+            created.PickupAppointmentTo = draft.PickupAppointmentTo;
+            created.DeliveryAppointmentFrom = draft.DeliveryAppointmentFrom;
+            created.DeliveryAppointmentTo = draft.DeliveryAppointmentTo;
             created.Notes = draft.Row.Get(Notes);
             created.RestoreImportedStatus(draft.Status, draft.PickupDate, draft.DeliveryDate);
             await tenantUow.Repository<Load>().AddAsync(created, ct);
@@ -228,6 +240,10 @@ internal sealed class LoadImporter(
         public LoadType Type { get; set; }
         public DateTime? PickupDate { get; set; }
         public DateTime? DeliveryDate { get; set; }
+        public DateTime? PickupAppointmentFrom { get; set; }
+        public DateTime? PickupAppointmentTo { get; set; }
+        public DateTime? DeliveryAppointmentFrom { get; set; }
+        public DateTime? DeliveryAppointmentTo { get; set; }
         public Address? Origin { get; set; }
         public Address? Destination { get; set; }
         public Customer? Customer { get; set; }

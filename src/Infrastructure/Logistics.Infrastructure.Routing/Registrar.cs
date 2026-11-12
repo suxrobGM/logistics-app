@@ -27,6 +27,7 @@ public static class Registrar
             services.AddSingleton<HeuristicTripOptimizer>();
             services.AddSingleton<MapboxMatrixTripOptimizer>();
             services.AddSingleton<ITripOptimizer, CompositeTripOptimizer>();
+            services.AddTransient<IRouteDurationService, MapboxRouteDurationService>();
             return services;
         }
     }

@@ -27,6 +27,10 @@ public class LoadDto
     public LoadSource Source { get; set; }
     public DateTime? RequestedPickupDate { get; set; }
     public DateTime? RequestedDeliveryDate { get; set; }
+    public DateTime? PickupAppointmentFrom { get; set; }
+    public DateTime? PickupAppointmentTo { get; set; }
+    public DateTime? DeliveryAppointmentFrom { get; set; }
+    public DateTime? DeliveryAppointmentTo { get; set; }
     public string? Notes { get; set; }
     public HazmatClass? HazmatClass { get; set; }
     public string? UnNumber { get; set; }

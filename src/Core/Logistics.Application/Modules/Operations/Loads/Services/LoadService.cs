@@ -117,6 +117,10 @@ internal sealed class LoadService(ITenantUnitOfWork tenantUow, IVehicleTransport
             load.Source = p.Source;
             load.RequestedPickupDate = p.RequestedPickupDate;
             load.RequestedDeliveryDate = p.RequestedDeliveryDate;
+            load.PickupAppointmentFrom = p.PickupAppointmentFrom;
+            load.PickupAppointmentTo = p.PickupAppointmentTo;
+            load.DeliveryAppointmentFrom = p.DeliveryAppointmentFrom;
+            load.DeliveryAppointmentTo = p.DeliveryAppointmentTo;
             load.Notes = p.Notes;
             load.ContainerId = p.ContainerId;
             load.OriginTerminalId = p.OriginTerminalId;

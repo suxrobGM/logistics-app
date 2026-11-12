@@ -33,6 +33,10 @@ internal static class DispatchSheetPrompt
           "destinationContactPhone": string | null,
           "pickupDate": string | null,
           "deliveryDate": string | null,
+          "pickupAppointmentFrom": string | null,
+          "pickupAppointmentTo": string | null,
+          "deliveryAppointmentFrom": string | null,
+          "deliveryAppointmentTo": string | null,
           "paymentAmount": string | null,
           "shipperName": string | null,
           "shipperPhone": string | null,
@@ -41,6 +45,7 @@ internal static class DispatchSheetPrompt
 
         Rules:
         - Use ISO 8601 (YYYY-MM-DD) for dates. Convert any other date format.
+        - The appointment fields are the booked pickup or delivery window (e.g. "08:00-14:00 on 10/20"). Use ISO 8601 date-time (YYYY-MM-DDTHH:mm) for them. A single appointment time goes in both From and To. Leave them null when the sheet gives only a date.
         - paymentAmount is the total carrier pay as a plain number string (e.g. "1250.00") - strip currency symbols and thousands separators.
         - List every vehicle on the sheet, one object each; use an empty array when there are none.
         - lotNumber is the auction lot, stock or buyer number of that vehicle.
