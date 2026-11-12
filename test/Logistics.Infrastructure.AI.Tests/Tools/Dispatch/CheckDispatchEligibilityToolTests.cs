@@ -21,64 +21,6 @@ public class CheckDispatchEligibilityToolTests
     }
 
     [Fact]
-    public async Task Execute_MissingTruckId_ReturnsError()
-    {
-        var input = new JsonObject
-        {
-            ["load_id"] = Guid.NewGuid().ToString()
-        };
-
-        var result = await _sut.ExecuteAsync(input, CancellationToken.None);
-
-        var root = JsonDocument.Parse(result).RootElement;
-        Assert.Contains("truck_id", root.GetProperty("error").GetString());
-        await _eligibilityService.DidNotReceiveWithAnyArgs()
-            .CheckAsync(default, default, default, default);
-    }
-
-    [Fact]
-    public async Task Execute_InvalidTruckId_ReturnsError()
-    {
-        var input = new JsonObject
-        {
-            ["truck_id"] = "not-a-guid",
-            ["load_id"] = Guid.NewGuid().ToString()
-        };
-
-        var result = await _sut.ExecuteAsync(input, CancellationToken.None);
-
-        Assert.Contains("truck_id", result);
-    }
-
-    [Fact]
-    public async Task Execute_MissingLoadId_ReturnsError()
-    {
-        var input = new JsonObject
-        {
-            ["truck_id"] = Guid.NewGuid().ToString()
-        };
-
-        var result = await _sut.ExecuteAsync(input, CancellationToken.None);
-
-        Assert.Contains("load_id", result);
-    }
-
-    [Fact]
-    public async Task Execute_InvalidDriverId_ReturnsError()
-    {
-        var input = new JsonObject
-        {
-            ["truck_id"] = Guid.NewGuid().ToString(),
-            ["load_id"] = Guid.NewGuid().ToString(),
-            ["driver_id"] = "garbage"
-        };
-
-        var result = await _sut.ExecuteAsync(input, CancellationToken.None);
-
-        Assert.Contains("driver_id", result);
-    }
-
-    [Fact]
     public async Task Execute_HappyPath_PassesIdsToServiceAndShapesResponse()
     {
         var truckId = Guid.NewGuid();

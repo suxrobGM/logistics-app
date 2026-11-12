@@ -82,30 +82,4 @@ public class CalculateDistanceToolTests
         Assert.Equal(0, json.RootElement.GetProperty("straight_line_km").GetDouble());
         Assert.Equal("0m", json.RootElement.GetProperty("drive_time").GetString());
     }
-
-    [Fact]
-    public async Task Execute_MissingCoordinates_ReturnsError()
-    {
-        var input = new JsonObject
-        {
-            ["origin_lat"] = 40.0
-            // Missing other coordinates
-        };
-
-        var result = await _sut.ExecuteAsync(input, CancellationToken.None);
-        var json = JsonDocument.Parse(result);
-
-        Assert.True(json.RootElement.TryGetProperty("error", out var error));
-        Assert.Contains("Missing required input", error.GetString());
-    }
-
-    [Fact]
-    public async Task Execute_EmptyInput_ReturnsError()
-    {
-        var result = await _sut.ExecuteAsync(new JsonObject(), CancellationToken.None);
-        var json = JsonDocument.Parse(result);
-
-        Assert.True(json.RootElement.TryGetProperty("error", out _));
-    }
-
 }

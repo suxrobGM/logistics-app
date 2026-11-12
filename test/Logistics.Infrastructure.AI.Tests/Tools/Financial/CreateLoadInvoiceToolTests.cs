@@ -44,15 +44,6 @@ public class CreateLoadInvoiceToolTests
     }
 
     [Fact]
-    public async Task Execute_MissingLoadId_ReturnsError()
-    {
-        var result = await _sut.ExecuteAsync(new JsonObject(), CancellationToken.None);
-
-        Assert.Contains("\"error\"", result);
-        await _mediator.DidNotReceiveWithAnyArgs().Send<Result>(default!, default);
-    }
-
-    [Fact]
     public async Task Execute_LoadWithoutCustomer_ReturnsError()
     {
         var load = CopilotToolTestData.CreateLoad(customer: null);

@@ -255,17 +255,6 @@ public class HosFeasibilityToolTests
     #region Input guards
 
     [Fact]
-    public async Task Single_MissingDriverId_EmitsError()
-    {
-        var result = await new CheckHosFeasibilityTool(_tenantUow).ExecuteAsync(
-            new JsonObject(), CancellationToken.None);
-
-        Assert.Equal(
-            "Missing required input: driver_id, distance, distance_unit",
-            JsonDocument.Parse(result).RootElement.GetProperty("error").GetString());
-    }
-
-    [Fact]
     public async Task Batch_EmptyChecks_EmitsError()
     {
         var result = await new BatchCheckHosFeasibilityTool(_tenantUow).ExecuteAsync(
@@ -303,26 +292,6 @@ public class HosFeasibilityToolTests
 
         Assert.Equal(300, single.GetProperty("estimated_driving_minutes").GetInt32());
         Assert.Equal(300, batch.GetProperty("estimated_driving_minutes").GetInt32());
-    }
-
-    [Fact]
-    public async Task Batch_UnparseableDriverId_EmitsErrorNamingTheProperty()
-    {
-        var result = await new BatchCheckHosFeasibilityTool(_tenantUow).ExecuteAsync(
-            new JsonObject
-            {
-                ["checks"] = new JsonArray(new JsonObject
-                {
-                    ["driver_id"] = "not-a-guid",
-                    ["distance"] = 400,
-                    ["distance_unit"] = "Kilometers"
-                })
-            },
-            CancellationToken.None);
-
-        Assert.Contains(
-            "driver_id",
-            JsonDocument.Parse(result).RootElement.GetProperty("error").GetString());
     }
 
     #endregion

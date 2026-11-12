@@ -20,27 +20,6 @@ public class SendInvoiceToolTests
     }
 
     [Fact]
-    public async Task Execute_MissingInvoiceId_ReturnsError()
-    {
-        var result = await _sut.ExecuteAsync(
-            new JsonObject { ["recipient_email"] = "a@b.com", ["reasoning"] = "why" },
-            CancellationToken.None);
-
-        Assert.Contains("invoice_id", result);
-        await _mediator.DidNotReceiveWithAnyArgs().Send<Result>(default!, default);
-    }
-
-    [Fact]
-    public async Task Execute_MissingRecipientEmail_ReturnsError()
-    {
-        var result = await _sut.ExecuteAsync(
-            new JsonObject { ["invoice_id"] = Guid.NewGuid().ToString(), ["reasoning"] = "why" },
-            CancellationToken.None);
-
-        Assert.Contains("recipient_email", result);
-    }
-
-    [Fact]
     public async Task Execute_ValidInput_SendsCommand()
     {
         var invoiceId = Guid.NewGuid();

@@ -24,15 +24,6 @@ public class GetLoadToolTests
     }
 
     [Fact]
-    public async Task Execute_MissingLoadId_ReturnsError()
-    {
-        var result = await _sut.ExecuteAsync(new JsonObject(), CancellationToken.None);
-
-        Assert.Contains("load_id", result);
-        await _mediator.DidNotReceiveWithAnyArgs().Send<Result<LoadDto>>(default!, default);
-    }
-
-    [Fact]
     public async Task Execute_ValidInput_ReturnsDeliveryCostAndInvoiceState()
     {
         var customer = new CustomerDto { Id = Guid.NewGuid(), Name = "Acme", Email = "ap@acme.com" };

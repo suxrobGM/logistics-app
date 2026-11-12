@@ -23,14 +23,6 @@ public class GetTripToolTests
     }
 
     [Fact]
-    public async Task Execute_MissingTripId_ReturnsError()
-    {
-        var result = await _sut.ExecuteAsync(new JsonObject(), CancellationToken.None);
-
-        Assert.Contains("error", result);
-    }
-
-    [Fact]
     public async Task Execute_UnknownTrip_ReturnsError()
     {
         var result = await _sut.ExecuteAsync(

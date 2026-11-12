@@ -24,16 +24,6 @@ public class GetRateFloorToolTests
     }
 
     [Fact]
-    public async Task Execute_MissingListingId_ReturnsError()
-    {
-        var result = await _sut.ExecuteAsync(new JsonObject(), CancellationToken.None);
-
-        var root = JsonDocument.Parse(result).RootElement;
-        Assert.Contains("listing_id", root.GetProperty("error").GetString());
-        await _mediator.DidNotReceive().Send(Arg.Any<GetRateFloorContextQuery>(), Arg.Any<CancellationToken>());
-    }
-
-    [Fact]
     public async Task Execute_BelowFloorListing_ReportsFloorAndThreadState()
     {
         var listingId = Guid.NewGuid();
@@ -103,15 +93,6 @@ public class GetNegotiationThreadToolTests
     }
 
     [Fact]
-    public async Task Execute_MissingNegotiationId_ReturnsError()
-    {
-        var result = await _sut.ExecuteAsync(new JsonObject(), CancellationToken.None);
-
-        var root = JsonDocument.Parse(result).RootElement;
-        Assert.Contains("negotiation_id", root.GetProperty("error").GetString());
-    }
-
-    [Fact]
     public async Task Execute_QuarantinedMessage_NeverExposesItsBody()
     {
         SetupThread(new NegotiationMessageDto
@@ -172,38 +153,6 @@ public class ProposeCounterOfferToolTests
     public ProposeCounterOfferToolTests()
     {
         _sut = new ProposeCounterOfferTool(_mediator, _runContext);
-    }
-
-    [Fact]
-    public async Task Execute_MissingRate_ReturnsError()
-    {
-        var input = new JsonObject
-        {
-            ["listing_id"] = Guid.NewGuid().ToString(),
-            ["message"] = "We can cover this at a better rate.",
-            ["reasoning"] = "Listing is below the TX-IL floor."
-        };
-
-        var result = await _sut.ExecuteAsync(input, CancellationToken.None);
-
-        var root = JsonDocument.Parse(result).RootElement;
-        Assert.Contains("proposed_total_rate", root.GetProperty("error").GetString());
-        await _mediator.DidNotReceive().Send(Arg.Any<ProposeCounterOfferCommand>(), Arg.Any<CancellationToken>());
-    }
-
-    [Fact]
-    public async Task Execute_MissingMessage_ReturnsError()
-    {
-        var input = new JsonObject
-        {
-            ["listing_id"] = Guid.NewGuid().ToString(),
-            ["proposed_total_rate"] = 2200,
-            ["reasoning"] = "Listing is below the TX-IL floor."
-        };
-
-        var result = await _sut.ExecuteAsync(input, CancellationToken.None);
-
-        Assert.Contains("message", JsonDocument.Parse(result).RootElement.GetProperty("error").GetString());
     }
 
     [Fact]

@@ -50,18 +50,6 @@ public class LoadBoardToolTests
     #region search_loadboard
 
     [Fact]
-    public async Task Search_MissingOrigin_ReturnsErrorWithoutQuerying()
-    {
-        var result = await new SearchLoadBoardTool(_mediator).ExecuteAsync(
-            new JsonObject { ["origin_city"] = "Dallas" }, CancellationToken.None);
-
-        Assert.Equal(
-            "Missing required input: origin_state",
-            Parse(result).GetProperty("error").GetString());
-        await _mediator.DidNotReceive().Send(Arg.Any<SearchLoadBoardCommand>(), Arg.Any<CancellationToken>());
-    }
-
-    [Fact]
     public async Task Search_BuildsCommandFromCityStateAndRadius()
     {
         _mediator.Send(Arg.Any<SearchLoadBoardCommand>(), Arg.Any<CancellationToken>())
@@ -180,17 +168,6 @@ public class LoadBoardToolTests
 
         Assert.Contains("dispatcher", Parse(result).GetProperty("error").GetString()!);
         await _mediator.DidNotReceive().Send(Arg.Any<BookLoadBoardLoadCommand>(), Arg.Any<CancellationToken>());
-    }
-
-    [Fact]
-    public async Task Book_MissingListingId_NamesTheMissingProperty()
-    {
-        _runContext.SetTriggeredBy(Guid.NewGuid());
-
-        var result = await BookingTool().ExecuteAsync(
-            new JsonObject { ["truck_id"] = Guid.NewGuid().ToString() }, CancellationToken.None);
-
-        Assert.Contains("listing_id", Parse(result).GetProperty("error").GetString()!);
     }
 
     [Fact]

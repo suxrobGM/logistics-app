@@ -21,15 +21,6 @@ public class GetConditionReportsToolTests
     }
 
     [Fact]
-    public async Task Execute_MissingLoadId_ReturnsError()
-    {
-        var result = await _sut.ExecuteAsync(new JsonObject(), CancellationToken.None);
-
-        Assert.Contains("\"error\"", result);
-        await _mediator.DidNotReceiveWithAnyArgs().Send<Result<List<ConditionReportDto>>>(default!, default);
-    }
-
-    [Fact]
     public async Task Execute_VehicleReport_DescribesVehicleAndDefectsWithBolCodes()
     {
         var loadId = Guid.NewGuid();

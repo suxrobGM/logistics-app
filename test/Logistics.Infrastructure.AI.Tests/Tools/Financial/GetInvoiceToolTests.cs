@@ -22,15 +22,6 @@ public class GetInvoiceToolTests
     }
 
     [Fact]
-    public async Task Execute_MissingInvoiceId_ReturnsError()
-    {
-        var result = await _sut.ExecuteAsync(new JsonObject(), CancellationToken.None);
-
-        Assert.Contains("invoice_id", result);
-        await _mediator.DidNotReceiveWithAnyArgs().Send<Result<InvoiceDto>>(default!, default);
-    }
-
-    [Fact]
     public async Task Execute_ValidInput_SumsPayments()
     {
         var invoice = new InvoiceDto

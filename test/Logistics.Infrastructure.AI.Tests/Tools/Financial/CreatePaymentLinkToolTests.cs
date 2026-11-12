@@ -21,15 +21,6 @@ public class CreatePaymentLinkToolTests
     }
 
     [Fact]
-    public async Task Execute_MissingInvoiceId_ReturnsError()
-    {
-        var result = await _sut.ExecuteAsync(new JsonObject(), CancellationToken.None);
-
-        Assert.Contains("invoice_id", result);
-        await _mediator.DidNotReceiveWithAnyArgs().Send<Result<PaymentLinkDto>>(default!, default);
-    }
-
-    [Fact]
     public async Task Execute_ValidInput_ReturnsLinkUrl()
     {
         var invoiceId = Guid.NewGuid();

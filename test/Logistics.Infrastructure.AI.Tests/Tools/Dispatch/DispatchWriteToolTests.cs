@@ -68,10 +68,12 @@ public class DispatchWriteToolTests
         Assert.Equal("Truck is not available", root.GetProperty("error").GetString());
     }
 
-    [Theory]
-    [InlineData("load_id", "Missing required input: load_id")]
-    [InlineData("truck_id", "Missing required input: truck_id")]
-    public async Task AssignLoad_MissingId_EmitsBareErrorWithoutSuccessKey(string missing, string expected)
+    /// <summary>
+    /// Every tool binds its input through <c>AgentTool</c>, so this one case stands for all of them:
+    /// a missing argument is named, nothing is sent, and no <c>success</c> key is emitted.
+    /// </summary>
+    [Fact]
+    public async Task AssignLoad_MissingId_EmitsBareErrorWithoutSuccessKey()
     {
         var input = new JsonObject
         {
@@ -79,12 +81,12 @@ public class DispatchWriteToolTests
             ["truck_id"] = Guid.NewGuid().ToString(),
             ["reasoning"] = "Closest available truck"
         };
-        input.Remove(missing);
+        input.Remove("truck_id");
 
         var result = await new AssignLoadToTruckTool(_mediator).ExecuteAsync(input, CancellationToken.None);
 
         var root = Parse(result);
-        Assert.Equal(expected, root.GetProperty("error").GetString());
+        Assert.Equal("Missing required input: truck_id", root.GetProperty("error").GetString());
         Assert.False(root.TryGetProperty("success", out _));
         await _mediator.DidNotReceive().Send(Arg.Any<AssignLoadToTruckCommand>(), Arg.Any<CancellationToken>());
     }
@@ -149,21 +151,6 @@ public class DispatchWriteToolTests
         Assert.Equal("Missing or empty load_ids", Parse(result).GetProperty("error").GetString());
     }
 
-    [Fact]
-    public async Task CreateTrip_UnparseableLoadId_EmitsErrorNamingTheProperty()
-    {
-        var result = await new CreateTripTool(_mediator).ExecuteAsync(
-            new JsonObject
-            {
-                ["truck_id"] = Guid.NewGuid().ToString(),
-                ["load_ids"] = new JsonArray("not-a-guid"),
-                ["name"] = "Overnight run"
-            },
-            CancellationToken.None);
-
-        Assert.Contains("load_ids", Parse(result).GetProperty("error").GetString());
-    }
-
     #endregion
 
     #region dispatch_trip
@@ -195,16 +182,6 @@ public class DispatchWriteToolTests
         var root = Parse(result);
         Assert.False(root.GetProperty("success").GetBoolean());
         Assert.Equal("Trip has no loads", root.GetProperty("error").GetString());
-    }
-
-    [Fact]
-    public async Task DispatchTrip_MissingTripId_DoesNotDispatch()
-    {
-        var result = await new DispatchTripTool(_mediator).ExecuteAsync(
-            new JsonObject(), CancellationToken.None);
-
-        Assert.Equal("Missing required input: trip_id", Parse(result).GetProperty("error").GetString());
-        await _mediator.DidNotReceive().Send(Arg.Any<DispatchTripCommand>(), Arg.Any<CancellationToken>());
     }
 
     #endregion

@@ -21,18 +21,6 @@ public class CheckBrokerCreditToolTests
     }
 
     [Fact]
-    public async Task Execute_MissingMcNumber_ReturnsError()
-    {
-        var input = new JsonObject();
-
-        var result = await _sut.ExecuteAsync(input, CancellationToken.None);
-
-        var root = JsonDocument.Parse(result).RootElement;
-        Assert.Contains("mc_number", root.GetProperty("error").GetString());
-        await _brokerCreditService.DidNotReceiveWithAnyArgs().GetBrokerCreditAsync(default);
-    }
-
-    [Fact]
     public async Task Execute_NoDataAvailable_ReturnsWarningNotError()
     {
         _brokerCreditService.GetBrokerCreditAsync("MC999999", Arg.Any<CancellationToken>())

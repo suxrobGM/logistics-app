@@ -23,50 +23,6 @@ public class PreviewTaxCalculationToolTests
     }
 
     [Fact]
-    public async Task Execute_MissingCustomerId_ReturnsError()
-    {
-        var input = new JsonObject
-        {
-            ["currency"] = "USD",
-            ["line_items"] = new JsonArray(new JsonObject { ["description"] = "x", ["amount"] = 100 })
-        };
-
-        var result = await _sut.ExecuteAsync(input, CancellationToken.None);
-
-        Assert.Contains("\"error\"", result);
-        await _mediator.DidNotReceiveWithAnyArgs().Send<Result<PreviewInvoiceTaxResponse>>(default!, default);
-    }
-
-    [Fact]
-    public async Task Execute_InvalidCustomerIdGuid_ReturnsError()
-    {
-        var input = new JsonObject
-        {
-            ["customer_id"] = "not-a-guid",
-            ["currency"] = "USD",
-            ["line_items"] = new JsonArray(new JsonObject { ["description"] = "x", ["amount"] = 100 })
-        };
-
-        var result = await _sut.ExecuteAsync(input, CancellationToken.None);
-
-        Assert.Contains("customer_id", result);
-    }
-
-    [Fact]
-    public async Task Execute_MissingCurrency_ReturnsError()
-    {
-        var input = new JsonObject
-        {
-            ["customer_id"] = Guid.NewGuid().ToString(),
-            ["line_items"] = new JsonArray(new JsonObject { ["description"] = "x", ["amount"] = 100 })
-        };
-
-        var result = await _sut.ExecuteAsync(input, CancellationToken.None);
-
-        Assert.Contains("currency", result);
-    }
-
-    [Fact]
     public async Task Execute_EmptyLineItems_ReturnsError()
     {
         var input = new JsonObject

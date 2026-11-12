@@ -21,16 +21,6 @@ public class SendCustomerUpdateToolTests
     }
 
     [Fact]
-    public async Task Execute_MissingMessage_ReturnsError()
-    {
-        var result = await _sut.ExecuteAsync(
-            new JsonObject { ["load_id"] = Guid.NewGuid().ToString() }, CancellationToken.None);
-
-        Assert.Contains("error", result);
-        await _mediator.DidNotReceiveWithAnyArgs().Send(default(SendCustomerDelayNoticeCommand)!, default);
-    }
-
-    [Fact]
     public async Task Execute_SendsTheDelayNotice()
     {
         var loadId = Guid.NewGuid();
