@@ -7,188 +7,71 @@ namespace Logistics.Infrastructure.Persistence.Tests.Converters;
 
 public class SnakeCaseEnumConverterTests
 {
-    #region Test enums
+    public enum NameShape { Draft, InTransit, USD, ApiAccess, USDate, ELDProvider, HoSLog, Gpt54 }
 
-    public enum SimpleEnum { Draft, Active, Completed }
-    public enum TwoWordEnum { InTransit, PickedUp, OnHold }
-    public enum AcronymEnum { USD, US, API }
-    public enum MixedAcronymEnum { ApiAccess, USDate, ELDProvider, HoSLog }
-    public enum SingleValueEnum { Default }
-    public enum NumberSuffixEnum { Gpt54, Version2 }
+    public enum ShipmentState { None, InTransit, PickedUp }
 
     [Flags]
     public enum FlagsEnum { None = 0, A = 1, B = 2, C = 4 }
 
-    #endregion
-
-    #region Enum to snake_case (serialization)
-
     [Theory]
-    [InlineData(SimpleEnum.Draft, "draft")]
-    [InlineData(SimpleEnum.Active, "active")]
-    [InlineData(SimpleEnum.Completed, "completed")]
-    public void ToSnakeCase_SimpleWords(SimpleEnum value, string expected)
+    [InlineData(NameShape.Draft, "draft")]
+    [InlineData(NameShape.InTransit, "in_transit")]
+    [InlineData(NameShape.USD, "usd")]
+    [InlineData(NameShape.ApiAccess, "api_access")]
+    [InlineData(NameShape.USDate, "us_date")]
+    [InlineData(NameShape.ELDProvider, "eld_provider")]
+    [InlineData(NameShape.HoSLog, "ho_s_log")]
+    [InlineData(NameShape.Gpt54, "gpt54")]
+    public void ToProvider_WritesSnakeCase(NameShape value, string expected)
     {
-        var converter = new SnakeCaseEnumConverter<SimpleEnum>();
-        var result = ToProvider(converter, value);
-        Assert.Equal(expected, result);
+        Assert.Equal(expected, ToProvider(new SnakeCaseEnumConverter<NameShape>(), value));
     }
 
+    /// <summary>
+    /// Empty and null read as the default: rows can carry a "" left over from an AddColumn
+    /// migration (e.g. trucks.adr_equipment_allowed_classes).
+    /// </summary>
     [Theory]
-    [InlineData(TwoWordEnum.InTransit, "in_transit")]
-    [InlineData(TwoWordEnum.PickedUp, "picked_up")]
-    [InlineData(TwoWordEnum.OnHold, "on_hold")]
-    public void ToSnakeCase_MultiWordValues(TwoWordEnum value, string expected)
+    [InlineData("in_transit", ShipmentState.InTransit)]
+    [InlineData("IN_TRANSIT", ShipmentState.InTransit)]
+    [InlineData("PickedUp", ShipmentState.PickedUp)]
+    [InlineData("2", ShipmentState.PickedUp)]
+    [InlineData("", ShipmentState.None)]
+    [InlineData(null, ShipmentState.None)]
+    public void FromProvider_ReadsAnyCaseNumbersAndBlanks(string? stored, ShipmentState expected)
     {
-        var converter = new SnakeCaseEnumConverter<TwoWordEnum>();
-        var result = ToProvider(converter, value);
-        Assert.Equal(expected, result);
+        Assert.Equal(expected, FromProvider(new SnakeCaseEnumConverter<ShipmentState>(), stored!));
     }
 
-    [Theory]
-    [InlineData(AcronymEnum.USD, "usd")]
-    [InlineData(AcronymEnum.US, "us")]
-    [InlineData(AcronymEnum.API, "api")]
-    public void ToSnakeCase_Acronyms_NotSplit(AcronymEnum value, string expected)
+    public static TheoryData<Enum, string> StoredDomainNames => new()
     {
-        var converter = new SnakeCaseEnumConverter<AcronymEnum>();
-        var result = ToProvider(converter, value);
-        Assert.Equal(expected, result);
+        { LicenseClass.EUC1E, "euc1e" },
+        { HosViolationType.EUContinuousDriving4_5h, "eu_continuous_driving4_5h" },
+    };
+
+    /// <summary>
+    /// Existing rows hold these strings. <c>euc1e</c> is a legacy spelling the naming policy would now
+    /// write as <c>euc1_e</c>.
+    /// </summary>
+    [Theory]
+    [MemberData(nameof(StoredDomainNames))]
+    public void StoredDomainName_WritesAndReadsTheSameString(Enum value, string stored)
+    {
+        var converter = ConverterFor(value.GetType());
+
+        Assert.Equal(stored, converter.ConvertToProvider(value));
+        Assert.Equal(value, converter.ConvertFromProvider(stored));
     }
 
-    [Theory]
-    [InlineData(MixedAcronymEnum.ApiAccess, "api_access")]
-    [InlineData(MixedAcronymEnum.USDate, "us_date")]
-    [InlineData(MixedAcronymEnum.ELDProvider, "eld_provider")]
-    [InlineData(MixedAcronymEnum.HoSLog, "ho_s_log")]
-    public void ToSnakeCase_MixedAcronyms(MixedAcronymEnum value, string expected)
-    {
-        var converter = new SnakeCaseEnumConverter<MixedAcronymEnum>();
-        var result = ToProvider(converter, value);
-        Assert.Equal(expected, result);
-    }
-
+    /// <summary>Stored flag combinations separate the names with ", _".</summary>
     [Fact]
-    public void ToSnakeCase_SingleValue()
-    {
-        var converter = new SnakeCaseEnumConverter<SingleValueEnum>();
-        var result = ToProvider(converter, SingleValueEnum.Default);
-        Assert.Equal("default", result);
-    }
-
-    [Theory]
-    [InlineData(NumberSuffixEnum.Gpt54, "gpt54")]
-    [InlineData(NumberSuffixEnum.Version2, "version2")]
-    public void ToSnakeCase_NumberSuffix(NumberSuffixEnum value, string expected)
-    {
-        var converter = new SnakeCaseEnumConverter<NumberSuffixEnum>();
-        var result = ToProvider(converter, value);
-        Assert.Equal(expected, result);
-    }
-
-    #endregion
-
-    #region Snake_case to enum (deserialization)
-
-    [Theory]
-    [InlineData("draft", SimpleEnum.Draft)]
-    [InlineData("active", SimpleEnum.Active)]
-    [InlineData("completed", SimpleEnum.Completed)]
-    public void FromSnakeCase_SimpleWords(string input, SimpleEnum expected)
-    {
-        var converter = new SnakeCaseEnumConverter<SimpleEnum>();
-        var result = FromProvider(converter, input);
-        Assert.Equal(expected, result);
-    }
-
-    [Theory]
-    [InlineData("in_transit", TwoWordEnum.InTransit)]
-    [InlineData("picked_up", TwoWordEnum.PickedUp)]
-    [InlineData("on_hold", TwoWordEnum.OnHold)]
-    public void FromSnakeCase_MultiWordValues(string input, TwoWordEnum expected)
-    {
-        var converter = new SnakeCaseEnumConverter<TwoWordEnum>();
-        var result = FromProvider(converter, input);
-        Assert.Equal(expected, result);
-    }
-
-    [Theory]
-    [InlineData("usd", AcronymEnum.USD)]
-    [InlineData("us", AcronymEnum.US)]
-    [InlineData("api", AcronymEnum.API)]
-    public void FromSnakeCase_Acronyms(string input, AcronymEnum expected)
-    {
-        var converter = new SnakeCaseEnumConverter<AcronymEnum>();
-        var result = FromProvider(converter, input);
-        Assert.Equal(expected, result);
-    }
-
-    [Theory]
-    [InlineData("api_access", MixedAcronymEnum.ApiAccess)]
-    [InlineData("eld_provider", MixedAcronymEnum.ELDProvider)]
-    public void FromSnakeCase_MixedAcronyms(string input, MixedAcronymEnum expected)
-    {
-        var converter = new SnakeCaseEnumConverter<MixedAcronymEnum>();
-        var result = FromProvider(converter, input);
-        Assert.Equal(expected, result);
-    }
-
-    [Fact]
-    public void FromSnakeCase_EmptyString_ReturnsDefault()
-    {
-        // Existing rows can carry a "" default left over from an AddColumn migration
-        // (e.g. trucks.adr_equipment_allowed_classes). Must not throw.
-        var converter = new SnakeCaseEnumConverter<FlagsEnum>();
-        var result = FromProvider(converter, "");
-        Assert.Equal(FlagsEnum.None, result);
-    }
-
-    [Fact]
-    public void FromSnakeCase_NullString_ReturnsDefault()
+    public void FlagsCombination_WritesCommaUnderscoreSeparatorAndReadsBack()
     {
         var converter = new SnakeCaseEnumConverter<FlagsEnum>();
-        var result = FromProvider(converter, null!);
-        Assert.Equal(FlagsEnum.None, result);
-    }
 
-    #endregion
-
-    #region Roundtrip
-
-    [Theory]
-    [InlineData(SimpleEnum.Draft)]
-    [InlineData(SimpleEnum.Active)]
-    [InlineData(SimpleEnum.Completed)]
-    public void Roundtrip_SimpleEnum(SimpleEnum value)
-    {
-        var converter = new SnakeCaseEnumConverter<SimpleEnum>();
-        var serialized = ToProvider(converter, value);
-        var deserialized = FromProvider(converter, serialized);
-        Assert.Equal(value, deserialized);
-    }
-
-    [Theory]
-    [InlineData(TwoWordEnum.InTransit)]
-    [InlineData(TwoWordEnum.PickedUp)]
-    [InlineData(TwoWordEnum.OnHold)]
-    public void Roundtrip_MultiWordEnum(TwoWordEnum value)
-    {
-        var converter = new SnakeCaseEnumConverter<TwoWordEnum>();
-        var serialized = ToProvider(converter, value);
-        var deserialized = FromProvider(converter, serialized);
-        Assert.Equal(value, deserialized);
-    }
-
-    [Theory]
-    [InlineData(AcronymEnum.USD)]
-    [InlineData(AcronymEnum.US)]
-    [InlineData(AcronymEnum.API)]
-    public void Roundtrip_AcronymEnum(AcronymEnum value)
-    {
-        var converter = new SnakeCaseEnumConverter<AcronymEnum>();
-        var serialized = ToProvider(converter, value);
-        var deserialized = FromProvider(converter, serialized);
-        Assert.Equal(value, deserialized);
+        Assert.Equal("a, _c", ToProvider(converter, FlagsEnum.A | FlagsEnum.C));
+        Assert.Equal(FlagsEnum.A | FlagsEnum.C, FromProvider(converter, "a, _c"));
     }
 
     public static TheoryData<Type> DomainEnums()
@@ -206,8 +89,7 @@ public class SnakeCaseEnumConverterTests
     [MemberData(nameof(DomainEnums))]
     public void Roundtrip_EveryDomainEnumMember(Type enumType)
     {
-        var converter = (ValueConverter)Activator.CreateInstance(
-            typeof(SnakeCaseEnumConverter<>).MakeGenericType(enumType))!;
+        var converter = ConverterFor(enumType);
 
         foreach (var value in Enum.GetValues(enumType))
         {
@@ -216,31 +98,14 @@ public class SnakeCaseEnumConverterTests
         }
     }
 
-    [Fact]
-    public void FromSnakeCase_MemberWithUnderscoreAndDigits_ReadsBack()
-    {
-        var converter = new SnakeCaseEnumConverter<HosViolationType>();
-        Assert.Equal(HosViolationType.EUContinuousDriving4_5h, FromProvider(converter, "eu_continuous_driving4_5h"));
-    }
-
-    #endregion
-
-    #region Helpers
+    private static ValueConverter ConverterFor(Type enumType) =>
+        (ValueConverter)Activator.CreateInstance(typeof(SnakeCaseEnumConverter<>).MakeGenericType(enumType))!;
 
     private static string ToProvider<T>(SnakeCaseEnumConverter<T> converter, T value)
-        where T : struct, Enum
-    {
-        // Access the converter's ConvertToProviderExpression and compile it
-        var func = converter.ConvertToProviderExpression.Compile();
-        return func(value);
-    }
+        where T : struct, Enum =>
+        converter.ConvertToProviderExpression.Compile()(value);
 
     private static T FromProvider<T>(SnakeCaseEnumConverter<T> converter, string value)
-        where T : struct, Enum
-    {
-        var func = converter.ConvertFromProviderExpression.Compile();
-        return func(value);
-    }
-
-    #endregion
+        where T : struct, Enum =>
+        converter.ConvertFromProviderExpression.Compile()(value);
 }
