@@ -50,6 +50,7 @@ internal static class Setup
             // Application services used directly by Razor pages. Still not the full Application
             // stack - just UserService (Manage Profile) and the Privacy slice (Manage Privacy).
             services.AddScoped<IUserService, UserService>();
+            services.AddScoped<TelegramLoginService>();
             services.AddApplicationPrivacyServices();
 
             services.AddRazorPages();
