@@ -48,7 +48,7 @@ internal sealed class StripePaymentService(ILogger<StripePaymentService> logger)
 
         var createOptions = new PaymentIntentCreateOptions
         {
-            Amount = (long)(payment.Amount.Amount * 100), // Convert to cents
+            Amount = StripeMoneyConversion.ToMinorUnits(payment.Amount.Amount, payment.Amount.Currency),
             Currency = payment.Amount.Currency.ToLower(),
             Customer = tenant.StripeCustomerId,
             PaymentMethod = payment.StripePaymentMethodId,

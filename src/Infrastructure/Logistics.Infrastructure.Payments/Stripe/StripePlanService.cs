@@ -40,11 +40,11 @@ internal sealed class StripePlanService(
 
         // 2. Create base price
         var basePrice = await CreateLicensedPriceAsync(priceService, product.Id, plan,
-            plan.Price * 100, plan.Price.Currency, "base");
+            StripeMoneyConversion.ToMinorUnits(plan.Price.Amount, plan.Price.Currency), plan.Price.Currency, "base");
 
         // 3. Create per-truck price
         var perTruckPrice = await CreateLicensedPriceAsync(priceService, product.Id, plan,
-            plan.PerTruckPrice * 100, plan.PerTruckPrice.Currency, "per_truck");
+            StripeMoneyConversion.ToMinorUnits(plan.PerTruckPrice.Amount, plan.PerTruckPrice.Currency), plan.PerTruckPrice.Currency, "per_truck");
 
         // 4. Create the AI overage metered price - every plan has a budget to run past
         var aiOveragePrice = await CreateMeteredOveragePriceAsync(priceService, product.Id, plan);
@@ -112,7 +112,7 @@ internal sealed class StripePlanService(
 
         // Check if base price needs recreation
         var activeBasePrice = await RecreateIfChangedAsync(priceService, plan, plan.StripePriceId,
-            plan.Price * 100, plan.Price.Currency, "base");
+            StripeMoneyConversion.ToMinorUnits(plan.Price.Amount, plan.Price.Currency), plan.Price.Currency, "base");
         if (activeBasePrice.Id != plan.StripePriceId)
             plan.StripePriceId = activeBasePrice.Id;
 
@@ -121,14 +121,14 @@ internal sealed class StripePlanService(
         if (!string.IsNullOrEmpty(plan.StripePerTruckPriceId))
         {
             activePerTruckPrice = await RecreateIfChangedAsync(priceService, plan, plan.StripePerTruckPriceId,
-                plan.PerTruckPrice * 100, plan.PerTruckPrice.Currency, "per_truck");
+                StripeMoneyConversion.ToMinorUnits(plan.PerTruckPrice.Amount, plan.PerTruckPrice.Currency), plan.PerTruckPrice.Currency, "per_truck");
             if (activePerTruckPrice.Id != plan.StripePerTruckPriceId)
                 plan.StripePerTruckPriceId = activePerTruckPrice.Id;
         }
         else
         {
             activePerTruckPrice = await CreateLicensedPriceAsync(priceService, plan.StripeProductId, plan,
-                plan.PerTruckPrice * 100, plan.PerTruckPrice.Currency, "per_truck");
+                StripeMoneyConversion.ToMinorUnits(plan.PerTruckPrice.Amount, plan.PerTruckPrice.Currency), plan.PerTruckPrice.Currency, "per_truck");
             plan.StripePerTruckPriceId = activePerTruckPrice.Id;
         }
 

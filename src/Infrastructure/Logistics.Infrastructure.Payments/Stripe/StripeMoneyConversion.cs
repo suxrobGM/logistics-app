@@ -1,10 +1,10 @@
-namespace Logistics.Infrastructure.Tax.Stripe;
+namespace Logistics.Infrastructure.Payments.Stripe;
 
 /// <summary>
 /// Stripe accepts and returns amounts as integer minor units (cents). Most ISO-4217 currencies
 /// have 2 fractional digits; JPY/KRW are zero-decimal.
 /// </summary>
-internal static class StripeMoneyConversion
+public static class StripeMoneyConversion
 {
     private static readonly HashSet<string> ZeroDecimal =
         [with(StringComparer.OrdinalIgnoreCase), "JPY", "KRW", "VND", "CLP", "PYG"];

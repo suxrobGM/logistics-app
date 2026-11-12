@@ -150,7 +150,7 @@ internal sealed class StripeConnectService(ILogger<StripeConnectService> logger)
 
     public async Task<Session> CreateConnectedCheckoutSessionAsync(CheckoutSessionRequest request)
     {
-        var amountInCents = (long)(request.Amount.Amount * 100);
+        var amountInCents = StripeMoneyConversion.ToMinorUnits(request.Amount.Amount, request.Amount.Currency);
 
         var paymentIntentData = new SessionPaymentIntentDataOptions
         {
