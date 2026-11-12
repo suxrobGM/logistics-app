@@ -1,3 +1,4 @@
+using Logistics.Application.Tests.TestKit;
 using System.Linq.Expressions;
 using System.Text.Json;
 using System.Text.Json.Nodes;
@@ -35,7 +36,7 @@ public class GetDispatchCandidatesToolTests
         _tenantUow.Repository<Truck>().Returns(_truckRepo);
         _tenantUow.Repository<DriverHosStatus>().Returns(_hosRepo);
         _tenantUow.Repository<Employee>().Returns(_employeeRepo);
-        _tenantUow.GetCurrentTenant().Returns(TestTenants.Create());
+        _tenantUow.GetCurrentTenant().Returns(TestTenant.Create());
         _sut = new GetDispatchCandidatesTool(_mediator, _tenantUow, _eligibility, new AvailableTruckLoader(_tenantUow));
     }
 

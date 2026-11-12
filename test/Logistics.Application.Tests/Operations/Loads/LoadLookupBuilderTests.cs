@@ -30,9 +30,7 @@ public class LoadLookupBuilderTests
 
     private void Returns<T>(params T[] rows) where T : class, IEntity<Guid>, ITenantEntity
     {
-        var repo = Substitute.For<ITenantRepository<T, Guid>>();
-        repo.Query().Returns(rows.BuildMock());
-        _tenantUow.Repository<T>().Returns(repo);
+        _tenantUow.Stub<T>(rows);
     }
 
     [Fact]

@@ -30,13 +30,9 @@ public class DataRetentionServiceTests
             CreatedDate = DateTime.UtcNow - PrivacyDefaults.NotificationRetention - TimeSpan.FromDays(1)
         };
         var recent = new Notification { Title = "Recent", Message = "Never read" };
-        var notificationRepo = Substitute.For<ITenantRepository<Notification, Guid>>();
-        notificationRepo.Query().Returns(_ => new List<Notification> { old, recent }.BuildMock());
-        tenantUow.Repository<Notification>().Returns(notificationRepo);
+        var notificationRepo = tenantUow.Stub<Notification>(old, recent);
 
-        var sessionRepo = Substitute.For<ITenantRepository<AgentSession, Guid>>();
-        sessionRepo.Query().Returns(_ => new List<AgentSession>().BuildMock());
-        tenantUow.Repository<AgentSession>().Returns(sessionRepo);
+        tenantUow.Stub<AgentSession>();
 
         await new DataRetentionService(masterUow, tenantUow, NullLogger<DataRetentionService>.Instance)
             .PurgeAsync(CancellationToken.None);

@@ -1,3 +1,4 @@
+using Logistics.Application.Tests.TestKit;
 using Logistics.Application.Abstractions.AIDispatch;
 using Logistics.Application.Abstractions.CurrentUser;
 using Logistics.Application.Abstractions.LoadBoard;
@@ -44,13 +45,7 @@ public class BookLoadBoardLoadHandlerTests
 
     public BookLoadBoardLoadHandlerTests()
     {
-        _tenant = new Tenant
-        {
-            Name = "test",
-            DatabaseName = "test",
-            BillingEmail = "billing@test.com",
-            CompanyAddress = new Address { Line1 = "1 Test St", City = "Test", State = "TX", ZipCode = "00000", Country = "US" }
-        };
+        _tenant = TestTenant.Create();
         _listing = CreateListing();
 
         var truck = new Truck { Number = "T-100", Type = TruckType.FreightTruck };

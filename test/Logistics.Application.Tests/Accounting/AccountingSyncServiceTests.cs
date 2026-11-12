@@ -376,9 +376,7 @@ public class AccountingSyncServiceTests
 
     private void Queryable<T>(List<T> rows) where T : class, Domain.Core.IEntity<Guid>, Domain.Core.ITenantEntity
     {
-        var repo = Substitute.For<ITenantRepository<T, Guid>>();
-        repo.Query().Returns(_ => rows.BuildMock());
-        _tenantUow.Repository<T>().Returns(repo);
+        _tenantUow.Stub<T>(rows);
     }
 
     private static Customer NewCustomer(string name, CustomerStatus status = CustomerStatus.Active, DateTime? updatedAt = null) => new()

@@ -41,14 +41,13 @@ public class BrokerCreditCheckerTests
         int? minScore, int? liveScore, bool? authorityActive, int? storedScore, bool overrideCheck, bool allowed)
     {
         _tenant.Settings.MinBrokerCreditScore = minScore;
-        var address = new Address { Line1 = "1 St", City = "Dallas", State = "TX", ZipCode = "75001", Country = "US" };
         var listing = new LoadBoardListing
         {
             ExternalListingId = "EXT-1",
             ProviderType = LoadBoardProviderType.Demo,
-            OriginAddress = address,
+            OriginAddress = TestData.Address(),
             OriginLocation = new GeoPoint(-96.8, 32.8),
-            DestinationAddress = address,
+            DestinationAddress = TestData.Address(),
             DestinationLocation = new GeoPoint(-87.6, 41.9),
             BrokerName = "Test Broker",
             BrokerMcNumber = "MC123456",

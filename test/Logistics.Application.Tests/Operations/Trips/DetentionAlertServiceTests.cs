@@ -26,9 +26,7 @@ public class DetentionAlertServiceTests
         var truck = new Truck { Number = "T-7", Type = TruckType.FreightTruck };
         _trip = Trip.Create("Trip", truck, [LoadInvoiceChargesTests.NewLoad()]);
 
-        var stopRepo = Substitute.For<ITenantRepository<TripStop, Guid>>();
-        stopRepo.Query().Returns(_ => _trip.Stops.BuildMock());
-        _tenantUow.Repository<TripStop>().Returns(stopRepo);
+        _tenantUow.Stub<TripStop>(_trip.Stops);
         _tenantUow.GetCurrentTenant().Returns(TestTenant.Create());
 
         _sut = new DetentionAlertService(_tenantUow, _notifications, _alerts);

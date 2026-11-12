@@ -1,4 +1,5 @@
 using Logistics.Application.Abstractions.Agents;
+using Logistics.Application.Tests.TestKit;
 using Logistics.Infrastructure.AI.Agents;
 using Logistics.Infrastructure.AI.Agents.Dispatch;
 using System.Text.Json.Nodes;
@@ -89,15 +90,9 @@ public class AIDispatchConversationBuilderTests
 
     private void SetTenant(params TenantPreset[] presets)
     {
-        _tenantUow.GetCurrentTenant().Returns(new Tenant
-        {
-            Id = Guid.NewGuid(),
-            Name = "Test Fleet",
-            DatabaseName = "test",
-            BillingEmail = "test@test.com",
-            CompanyAddress = new() { Line1 = "123 Test St", City = "Test", State = "TX", ZipCode = "12345", Country = "US" },
-            Presets = [.. presets]
-        });
+        var tenant = TestTenant.Create();
+        tenant.Presets = [.. presets];
+        _tenantUow.GetCurrentTenant().Returns(tenant);
     }
 
     private void SetPolicies(params AIDispatchPolicy[] policies)

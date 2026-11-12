@@ -1,3 +1,4 @@
+using Logistics.Application.Tests.TestKit;
 using Logistics.Application.Abstractions.AI;
 using Logistics.Application.Modules.Integrations.AIDispatch.Services;
 using Logistics.Domain.Entities;
@@ -26,20 +27,7 @@ public class AIDispatchPolicyLearnerTests
 
     public AIDispatchPolicyLearnerTests()
     {
-        _tenantUow.GetCurrentTenant().Returns(new Tenant
-        {
-            Name = "Test Fleet",
-            DatabaseName = "test",
-            BillingEmail = "billing@test.com",
-            CompanyAddress = new Address
-            {
-                Line1 = "1 Test St",
-                City = "Test",
-                State = "TX",
-                ZipCode = "00000",
-                Country = "US"
-            }
-        });
+        _tenantUow.GetCurrentTenant().Returns(TestTenant.Create());
 
         _tenantUow.Repository<AgentDecision>().Returns(_decisionRepo);
         _tenantUow.Repository<AIDispatchPolicy>().Returns(_policyRepo);

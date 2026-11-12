@@ -29,9 +29,7 @@ public class DeleteEmployeeHandlerTests
         employeeRepo.GetByIdAsync(employee.Id, Arg.Any<CancellationToken>()).Returns(employee);
         tenantUow.Repository<Employee>().Returns(employeeRepo);
 
-        var loadRepo = Substitute.For<ITenantRepository<Load, Guid>>();
-        loadRepo.Query().Returns(new List<Load>().BuildMock());
-        tenantUow.Repository<Load>().Returns(loadRepo);
+        tenantUow.Stub<Load>();
 
         var result = await new DeleteEmployeeHandler(masterUow, tenantUow).Handle(
             new DeleteEmployeeCommand { UserId = employee.Id }, CancellationToken.None);

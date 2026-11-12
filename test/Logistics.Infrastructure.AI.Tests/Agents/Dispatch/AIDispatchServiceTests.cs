@@ -1,3 +1,4 @@
+using Logistics.Application.Tests.TestKit;
 using Logistics.Application.Modules.Integrations.AIDispatch.Services;
 using Logistics.Application.Abstractions.Agents;
 using Logistics.Application.Modules.Integrations.Agents.Services;
@@ -46,14 +47,7 @@ public class AIDispatchServiceTests
 
     public AIDispatchServiceTests()
     {
-        _tenant = new Tenant
-        {
-            Id = Guid.NewGuid(),
-            Name = "Test",
-            DatabaseName = "test",
-            BillingEmail = "test@test.com",
-            CompanyAddress = new() { Line1 = "123 Test St", City = "Test", State = "TX", ZipCode = "12345", Country = "US" }
-        };
+        _tenant = TestTenant.Create();
 
         _tenantUow.Repository<AgentSession>().Returns(_sessionRepo);
         _tenantUow.Repository<AgentConversation>().Returns(_conversationRepo);

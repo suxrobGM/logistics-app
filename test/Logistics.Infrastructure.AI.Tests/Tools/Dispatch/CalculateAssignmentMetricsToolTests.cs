@@ -1,3 +1,4 @@
+using Logistics.Application.Tests.TestKit;
 using Logistics.Infrastructure.AI.Tools.Dispatch;
 using System.Linq.Expressions;
 using System.Text.Json;
@@ -25,7 +26,7 @@ public class CalculateAssignmentMetricsToolTests
     {
         _tenantUow.Repository<Load>().Returns(_loadRepo);
         _tenantUow.Repository<Truck>().Returns(_truckRepo);
-        _tenantUow.GetCurrentTenant().Returns(TestTenants.Create());
+        _tenantUow.GetCurrentTenant().Returns(TestTenant.Create());
         _sut = new CalculateAssignmentMetricsTool(_tenantUow);
     }
 
@@ -125,7 +126,7 @@ public class CalculateAssignmentMetricsToolTests
     public async Task Execute_KilometreTenant_ReportsKilometreKeys()
     {
         // The prompt converts only _km keys; a miles figure under a km tenant was converted twice.
-        _tenantUow.GetCurrentTenant().Returns(TestTenants.Create(DistanceUnit.Kilometers));
+        _tenantUow.GetCurrentTenant().Returns(TestTenant.Create(distanceUnit: DistanceUnit.Kilometers));
         var loadId = Guid.NewGuid();
         var truckId = Guid.NewGuid();
         Setup([CreateLoad(loadId, "Dallas run", 100_000, 1000m)], [CreateTruck(truckId, "T-1")]);

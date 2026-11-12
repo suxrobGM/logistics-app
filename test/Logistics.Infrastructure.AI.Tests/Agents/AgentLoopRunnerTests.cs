@@ -1,3 +1,4 @@
+using Logistics.Application.Tests.TestKit;
 using Logistics.Application.Modules.Integrations.AIDispatch.Services;
 using Logistics.Application.Abstractions.Agents;
 using Logistics.Application.Modules.Integrations.Agents.Services;
@@ -40,14 +41,7 @@ public class AgentLoopRunnerTests
             .Returns(Substitute.For<ITenantRepository<AgentDecision, Guid>>());
         _tenantUow.Repository<AgentSession>().Returns(_sessionRepo);
         SessionInDatabase();
-        _tenantUow.GetCurrentTenant().Returns(new Tenant
-        {
-            Id = Guid.NewGuid(),
-            Name = "Test Tenant",
-            DatabaseName = "test",
-            BillingEmail = "test@test.com",
-            CompanyAddress = new() { Line1 = "1 Main", City = "Dallas", State = "TX", ZipCode = "75201", Country = "US" }
-        });
+        _tenantUow.GetCurrentTenant().Returns(TestTenant.Create());
 
         var processor = new AgentDecisionProcessor(
             _toolExecutor, new AgentToolRegistry(), _tenantUow,

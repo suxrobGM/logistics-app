@@ -122,9 +122,7 @@ public class GetLoadByIdHandlerTests
         var load = CreateLoad(assignedTruck: null);
         load.ContainerId = container.Id;
         _loadRepo.GetByIdAsync(load.Id, Arg.Any<CancellationToken>()).Returns(load);
-        var containerRepo = Substitute.For<ITenantRepository<Container, Guid>>();
-        containerRepo.Query().Returns(new[] { container }.BuildMock());
-        _tenantUow.Repository<Container>().Returns(containerRepo);
+        _tenantUow.Stub<Container>(container);
 
         var result = await _sut.Handle(new GetLoadByIdQuery { Id = load.Id }, CancellationToken.None);
 

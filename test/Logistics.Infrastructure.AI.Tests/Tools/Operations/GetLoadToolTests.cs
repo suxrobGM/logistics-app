@@ -1,3 +1,4 @@
+using Logistics.Application.Tests.TestKit;
 using Logistics.Infrastructure.AI.Tools.Operations;
 using System.Text.Json;
 using System.Text.Json.Nodes;
@@ -19,7 +20,7 @@ public class GetLoadToolTests
     public GetLoadToolTests()
     {
         var tenantUow = Substitute.For<ITenantUnitOfWork>();
-        tenantUow.GetCurrentTenant().Returns(TestTenants.Create());
+        tenantUow.GetCurrentTenant().Returns(TestTenant.Create());
         _sut = new GetLoadTool(_mediator, tenantUow);
     }
 

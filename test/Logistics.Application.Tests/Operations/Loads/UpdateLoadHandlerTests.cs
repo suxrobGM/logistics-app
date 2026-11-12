@@ -1,3 +1,4 @@
+using Logistics.Application.Tests.TestKit;
 using Logistics.Application.Modules.Operations.Common.Services;
 using Logistics.Application.Modules.Operations.Loads.Commands;
 using Logistics.Application.Modules.Operations.Loads.Services;
@@ -216,18 +217,7 @@ public class UpdateLoadHandlerTests
 
     private Load Load(LoadType type)
     {
-        var address = new Address { Line1 = "1 Main", City = "Dallas", State = "TX", ZipCode = "75201", Country = "US" };
-        var load = new Load
-        {
-            Name = "Test Load",
-            Type = type,
-            Customer = null!,
-            OriginAddress = address,
-            OriginLocation = new GeoPoint(0, 0),
-            DestinationAddress = address,
-            DestinationLocation = new GeoPoint(0, 0),
-            DeliveryCost = new Money { Amount = 1000m, Currency = "USD" }
-        };
+        var load = TestData.Load(type);
         _loadRepo.GetByIdAsync(load.Id, Arg.Any<CancellationToken>()).Returns(load);
         return load;
     }

@@ -1,3 +1,4 @@
+using Logistics.Application.Tests.TestKit;
 using Logistics.Application.Modules.Platform.Notifications.Services;
 using Logistics.Domain.Entities;
 using Logistics.Domain.Persistence;
@@ -19,13 +20,9 @@ public class TelegramRecipientsTests
 
     public TelegramRecipientsTests()
     {
-        var chatRepo = Substitute.For<ITenantRepository<TelegramChat, Guid>>();
-        chatRepo.Query().Returns(_ => _chats.BuildMock());
-        _tenantUow.Repository<TelegramChat>().Returns(chatRepo);
+        _tenantUow.Stub<TelegramChat>(_chats);
 
-        var employeeRepo = Substitute.For<ITenantRepository<Employee, Guid>>();
-        employeeRepo.Query().Returns(_ => _employees.BuildMock());
-        _tenantUow.Repository<Employee>().Returns(employeeRepo);
+        _tenantUow.Stub<Employee>(_employees);
         _sut = new TelegramRecipients(_tenantUow);
     }
 

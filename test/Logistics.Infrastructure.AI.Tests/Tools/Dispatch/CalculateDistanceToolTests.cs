@@ -1,3 +1,4 @@
+using Logistics.Application.Tests.TestKit;
 using Logistics.Infrastructure.AI.Tools.Dispatch;
 using System.Text.Json;
 using System.Text.Json.Nodes;
@@ -16,7 +17,7 @@ public class CalculateDistanceToolTests
 
     public CalculateDistanceToolTests()
     {
-        _tenantUow.GetCurrentTenant().Returns(TestTenants.Create(DistanceUnit.Kilometers));
+        _tenantUow.GetCurrentTenant().Returns(TestTenant.Create(distanceUnit: DistanceUnit.Kilometers));
         _sut = new CalculateDistanceTool(_tenantUow);
     }
 
@@ -49,7 +50,7 @@ public class CalculateDistanceToolTests
     [Fact]
     public async Task Execute_MilesTenant_NamesAndConvertsTheDistanceInMiles()
     {
-        _tenantUow.GetCurrentTenant().Returns(TestTenants.Create(DistanceUnit.Miles));
+        _tenantUow.GetCurrentTenant().Returns(TestTenant.Create(distanceUnit: DistanceUnit.Miles));
         var input = new JsonObject
         {
             ["origin_lat"] = 40.7128,

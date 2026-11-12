@@ -1,3 +1,4 @@
+using Logistics.Application.Tests.TestKit;
 using Logistics.Application.Modules.Operations.Tracking.Services;
 using Logistics.Application.Modules.Platform.Portal.Queries;
 using Logistics.Application.Tests.Operations.Loads;
@@ -19,9 +20,7 @@ public class GetPortalLoadHandlerTests
 
     public GetPortalLoadHandlerTests()
     {
-        var loadRepo = Substitute.For<ITenantRepository<Load, Guid>>();
-        loadRepo.Query().Returns(_ => new List<Load> { _load }.BuildMock());
-        _tenantUow.Repository<Load>().Returns(loadRepo);
+        _tenantUow.Stub<Load>(_load);
         _sut = new GetPortalLoadHandler(_tenantUow, _trackingLinks);
     }
 

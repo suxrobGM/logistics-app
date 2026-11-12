@@ -35,12 +35,8 @@ public class CustomerUpdateServiceTests
     {
         _load.Customer!.Email = "ops@acme.test";
 
-        var userRepo = Substitute.For<ITenantRepository<CustomerUser, Guid>>();
-        userRepo.Query().Returns(_ => _portalUsers.BuildMock());
-        _tenantUow.Repository<CustomerUser>().Returns(userRepo);
-        var documentRepo = Substitute.For<ITenantRepository<DeliveryDocument, Guid>>();
-        documentRepo.Query().Returns(_ => new List<DeliveryDocument>().BuildMock());
-        _tenantUow.Repository<DeliveryDocument>().Returns(documentRepo);
+        _tenantUow.Stub<CustomerUser>(_portalUsers);
+        _tenantUow.Stub<DeliveryDocument>();
         _tenantUow.GetCurrentTenant().Returns(TestTenant.Create("Acme Trucking"));
 
         _features.IsFeatureEnabledAsync(Arg.Any<Guid>(), TenantFeature.CustomerUpdates).Returns(true);

@@ -1,3 +1,4 @@
+using Logistics.Application.Tests.TestKit;
 using Logistics.Domain.Entities;
 using Logistics.Domain.Primitives.Enums;
 using Logistics.Domain.Primitives.ValueObjects;
@@ -7,23 +8,8 @@ namespace Logistics.Application.Tests.Operations.Loads;
 
 public class LoadInvoiceChargesTests
 {
-    internal static Load NewLoad(decimal linehaul = 2000m)
-    {
-        var address = new Address { Line1 = "1 Main", City = "City", State = "TX", ZipCode = "00000", Country = "US" };
-        var customer = new Customer { Name = "Acme Freight" };
-        return new Load
-        {
-            Name = "Test",
-            Type = LoadType.GeneralFreight,
-            Customer = customer,
-            CustomerId = customer.Id,
-            OriginAddress = address,
-            OriginLocation = new GeoPoint(0, 0),
-            DestinationAddress = address,
-            DestinationLocation = new GeoPoint(0, 0),
-            DeliveryCost = new Money { Amount = linehaul, Currency = "USD" }
-        };
-    }
+    internal static Load NewLoad(decimal linehaul = 2000m) =>
+        TestData.Load(deliveryCost: linehaul, customer: new Customer { Name = "Acme Freight" });
 
     internal static LoadAccessorial Accessorial(Load load, string name, InvoiceLineItemType type, decimal rate,
         decimal quantity = 1, AccessorialUnit unit = AccessorialUnit.Flat) => new()

@@ -1,3 +1,4 @@
+using Logistics.Application.Tests.TestKit;
 using Logistics.Application.Abstractions.CurrentUser;
 using Logistics.Application.Modules.Platform.Notifications.Commands;
 using Logistics.Application.Modules.Platform.Notifications.Queries;
@@ -19,13 +20,9 @@ public class NotificationReadTests
 
     public NotificationReadTests()
     {
-        var notificationRepo = Substitute.For<ITenantRepository<Notification, Guid>>();
-        notificationRepo.Query().Returns(_ => _notifications.BuildMock());
-        _tenantUow.Repository<Notification>().Returns(notificationRepo);
+        _tenantUow.Stub<Notification>(_notifications);
 
-        var readRepo = Substitute.For<ITenantRepository<NotificationRead, Guid>>();
-        readRepo.Query().Returns(_ => _reads.BuildMock());
-        _tenantUow.Repository<NotificationRead>().Returns(readRepo);
+        _tenantUow.Stub<NotificationRead>(_reads);
 
         _currentUser.GetUserId().Returns(_userId);
     }

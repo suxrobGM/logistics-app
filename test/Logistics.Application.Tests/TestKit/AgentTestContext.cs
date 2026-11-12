@@ -63,14 +63,7 @@ internal sealed class AgentTestContext
 
     public Guid UserId { get; } = Guid.NewGuid();
 
-    public Tenant Tenant { get; } = new()
-    {
-        Id = Guid.NewGuid(),
-        Name = "Test Tenant",
-        DatabaseName = "test",
-        BillingEmail = "test@test.com",
-        CompanyAddress = new() { Line1 = "1 Main", City = "Dallas", State = "TX", ZipCode = "75201", Country = "US" }
-    };
+    public Tenant Tenant { get; } = TestTenant.Create();
 
     public AgentTestContext()
     {

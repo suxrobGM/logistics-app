@@ -1,3 +1,4 @@
+using Logistics.Application.Tests.TestKit;
 using System.Text.Json;
 using Logistics.Infrastructure.AI.Tools;
 using Logistics.Infrastructure.AI.Tools.Dispatch;
@@ -16,7 +17,7 @@ public class AgentToolExecutorTests
     private static AgentToolExecutor Executor()
     {
         var tenantUow = Substitute.For<ITenantUnitOfWork>();
-        tenantUow.GetCurrentTenant().Returns(TestTenants.Create(DistanceUnit.Kilometers));
+        tenantUow.GetCurrentTenant().Returns(TestTenant.Create(distanceUnit: DistanceUnit.Kilometers));
         var services = new ServiceCollection()
             .AddScoped<CalculateDistanceTool>()
             .AddSingleton(tenantUow);

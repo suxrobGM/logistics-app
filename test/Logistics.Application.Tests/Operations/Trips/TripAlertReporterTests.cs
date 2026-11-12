@@ -29,9 +29,7 @@ public class TripAlertReporterTests
         _trip = Trip.Create("Trip", truck, [LoadInvoiceChargesTests.NewLoad()]);
         _trip.Dispatch();
 
-        var tripRepo = Substitute.For<ITenantRepository<Trip, Guid>>();
-        tripRepo.Query().Returns(_ => new List<Trip> { _trip }.BuildMock());
-        _tenantUow.Repository<Trip>().Returns(tripRepo);
+        _tenantUow.Stub<Trip>(_trip);
         _tenantUow.GetCurrentTenant().Returns(TestTenant.Create());
 
         _features.IsFeatureEnabledAsync(Arg.Any<Guid>(), TenantFeature.AITripAlerts).Returns(true);

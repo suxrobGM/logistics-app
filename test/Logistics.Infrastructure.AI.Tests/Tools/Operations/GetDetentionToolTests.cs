@@ -1,3 +1,4 @@
+using Logistics.Application.Tests.TestKit;
 using System.Text.Json;
 using System.Text.Json.Nodes;
 using Logistics.Application.Modules.Operations.Loads.Queries;
@@ -24,7 +25,7 @@ public class GetDetentionToolTests
     public GetDetentionToolTests()
     {
         _tenantUow.Repository<TripStop>().Returns(_stopRepo);
-        _tenantUow.GetCurrentTenant().Returns(TestTenants.Create());
+        _tenantUow.GetCurrentTenant().Returns(TestTenant.Create());
         _sut = new GetDetentionTool(_mediator, _tenantUow);
     }
 

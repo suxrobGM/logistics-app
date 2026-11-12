@@ -1,3 +1,4 @@
+using Logistics.Application.Tests.TestKit;
 using Logistics.Application.Abstractions.CurrentUser;
 using Logistics.Application.Abstractions.Geocoding;
 using Logistics.Application.Modules.Operations.Common.Services;
@@ -171,9 +172,7 @@ public class ImportImporterTests
     [Fact]
     public async Task CustomerImporter_IncompleteAddressAndForeignCountry_AreRowErrors()
     {
-        var customerRepo = Substitute.For<ITenantRepository<Customer, Guid>>();
-        customerRepo.Query().Returns(_ => new List<Customer>().BuildMock());
-        _tenantUow.Repository<Customer>().Returns(customerRepo);
+        _tenantUow.Stub<Customer>();
         var sut = new CustomerImporter(_tenantUow);
 
         var results = await sut.ImportAsync(

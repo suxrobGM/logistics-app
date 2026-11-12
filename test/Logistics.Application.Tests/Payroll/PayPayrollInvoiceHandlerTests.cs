@@ -1,3 +1,4 @@
+using Logistics.Application.Tests.TestKit;
 using Logistics.Domain.Entities;
 using Logistics.Domain.Persistence;
 using Logistics.Domain.Primitives.Enums;
@@ -37,20 +38,7 @@ public class PayPayrollInvoiceHandlerTests
         _tenantUow.Repository<Invoice>().Returns(_invoiceRepo);
         _tenantUow.Repository<Employee>().Returns(_employeeRepo);
         _tenantUow.Repository<Payment>().Returns(_paymentRepo);
-        _tenantUow.GetCurrentTenant().Returns(new Tenant
-        {
-            Name = "Test Tenant",
-            DatabaseName = "test",
-            BillingEmail = "test@test.com",
-            CompanyAddress = new Address
-            {
-                Line1 = "123 Main St",
-                City = "NYC",
-                State = "NY",
-                ZipCode = "10001",
-                Country = "US"
-            }
-        });
+        _tenantUow.GetCurrentTenant().Returns(TestTenant.Create());
 
         _sut = new PayPayrollInvoiceHandler(_tenantUow, _stripeConnectService, _logger);
     }

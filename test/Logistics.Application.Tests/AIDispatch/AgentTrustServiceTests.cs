@@ -1,3 +1,4 @@
+using Logistics.Application.Tests.TestKit;
 using Logistics.Application.Abstractions.Agents;
 using Logistics.Application.Modules.Integrations.AIDispatch.Services;
 using Logistics.Domain.Entities;
@@ -27,13 +28,9 @@ public class AgentTrustServiceTests
 
     public AgentTrustServiceTests()
     {
-        var decisionRepo = Substitute.For<ITenantRepository<AgentDecision, Guid>>();
-        decisionRepo.Query().Returns(_ => _decisions.BuildMock());
-        _tenantUow.Repository<AgentDecision>().Returns(decisionRepo);
+        _tenantUow.Stub<AgentDecision>(_decisions);
 
-        var policyRepo = Substitute.For<ITenantRepository<AIDispatchPolicy, Guid>>();
-        policyRepo.Query().Returns(_ => _policies.BuildMock());
-        _tenantUow.Repository<AIDispatchPolicy>().Returns(policyRepo);
+        _tenantUow.Stub<AIDispatchPolicy>(_policies);
         _policies.Add(_policy);
 
         _sut = new AgentTrustService(_tenantUow);

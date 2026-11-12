@@ -1,3 +1,4 @@
+using Logistics.Application.Tests.TestKit;
 using Logistics.Application.Modules.Compliance.Dvir.Services;
 using Logistics.Application.Modules.Operations.Common.Services;
 using Logistics.Domain.Entities.Safety;
@@ -36,9 +37,7 @@ public class DvirReportListMapperTests
             Description = "Cracked mirror",
             CorrectedById = mechanicId
         };
-        var defectRepo = Substitute.For<ITenantRepository<DvirDefect, Guid>>();
-        defectRepo.Query().Returns(new List<DvirDefect> { defect }.BuildMock());
-        _tenantUow.Repository<DvirDefect>().Returns(defectRepo);
+        _tenantUow.Stub<DvirDefect>(defect);
         _names.GetEmployeeNamesAsync(Arg.Any<IEnumerable<Guid?>>(), Arg.Any<CancellationToken>())
             .Returns(new Dictionary<Guid, string> { [driverId] = "Dana Driver", [mechanicId] = "Max Mechanic" });
         _names.GetTruckNumbersAsync(Arg.Any<IEnumerable<Guid?>>(), Arg.Any<CancellationToken>())

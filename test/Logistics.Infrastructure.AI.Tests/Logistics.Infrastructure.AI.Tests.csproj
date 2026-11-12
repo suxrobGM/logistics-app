@@ -18,4 +18,9 @@
     <ProjectReference Include="..\..\src\Infrastructure\Logistics.Infrastructure.AI\Logistics.Infrastructure.AI.csproj"/>
   </ItemGroup>
 
+  <ItemGroup>
+    <Compile Include="..\Logistics.Application.Tests\TestKit\TestData.cs" Link="TestKit\TestData.cs" />
+    <Compile Include="..\Logistics.Application.Tests\TestKit\TestTenant.cs" Link="TestKit\TestTenant.cs" />
+  </ItemGroup>
+
 </Project>

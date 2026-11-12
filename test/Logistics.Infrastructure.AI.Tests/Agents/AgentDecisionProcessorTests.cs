@@ -1,3 +1,4 @@
+using Logistics.Application.Tests.TestKit;
 using Logistics.Application.Modules.Integrations.AIDispatch.Services;
 using Logistics.Application.Abstractions.Agents;
 using Logistics.Application.Modules.Integrations.Agents.Services;
@@ -46,14 +47,7 @@ public class AgentDecisionProcessorTests
         _tenantUow.Repository<Truck>().Returns(_truckRepo);
         _loadRepo.Query().Returns(new List<Load>().BuildMock());
         _truckRepo.Query().Returns(new List<Truck>().BuildMock());
-        _tenantUow.GetCurrentTenant().Returns(new Tenant
-        {
-            Id = Guid.NewGuid(),
-            Name = "Test Tenant",
-            DatabaseName = "test",
-            BillingEmail = "test@test.com",
-            CompanyAddress = new() { Line1 = "123 Test St", City = "Test", State = "TX", ZipCode = "12345", Country = "US" }
-        });
+        _tenantUow.GetCurrentTenant().Returns(TestTenant.Create());
         _sut = new AgentDecisionProcessor(_toolExecutor, _toolRegistry, _tenantUow, _broadcastService, new AgentDecisionDtoMapper(_tenantUow), _trust, _runContext, _logger);
     }
 
@@ -370,18 +364,9 @@ public class AgentDecisionProcessorTests
     [Fact]
     public async Task ProcessToolCalls_WriteTool_BroadcastsLoadNameAndTruckNumber()
     {
-        var load = new Load
-        {
-            Name = "Load 42",
-            Type = LoadType.GeneralFreight,
-            Customer = null!,
-            OriginAddress = new Address { Line1 = "1 Origin", City = "City", State = "ST", ZipCode = "00000", Country = "US" },
-            OriginLocation = new GeoPoint(0, 0),
-            DestinationAddress = new Address { Line1 = "1 Dest", City = "City", State = "ST", ZipCode = "00000", Country = "US" },
-            DestinationLocation = new GeoPoint(0, 0),
-            DeliveryCost = Money.Zero("USD")
-        };
-        var truck = new Truck { Number = "T-100", Type = TruckType.FreightTruck };
+        var load = TestData.Load();
+        load.Name = "Load 42";
+        var truck = TestData.Truck(number: "T-100");
         _loadRepo.Query().Returns(new List<Load> { load }.BuildMock());
         _truckRepo.Query().Returns(new List<Truck> { truck }.BuildMock());
         var toolUse = CreateToolUse("assign_load_to_truck", new JsonObject
