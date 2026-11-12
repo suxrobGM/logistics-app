@@ -1,4 +1,5 @@
 using Logistics.Application.Abstractions;
+using Logistics.Domain.Entities;
 using Logistics.Domain.Events;
 using Logistics.Domain.Persistence;
 using Logistics.Domain.Primitives.Enums;
@@ -26,40 +27,39 @@ internal sealed class LoadAssignedToTruckNotificationHandler(
             "Load {LoadId} assigned to truck {TruckId}, sending notifications",
             @event.LoadId, @event.TruckId);
 
+        // Read the number off the tracked load: the event is raised before the insert assigns it.
+        var load = await tenantUow.Repository<Load>().GetByIdAsync(@event.LoadId, cancellationToken);
+        var loadNumber = load?.Number;
         var data = new Dictionary<string, string> { ["loadId"] = @event.LoadId.ToString() };
 
-        // Send push notification to main driver
         if (!string.IsNullOrEmpty(@event.MainDriverDeviceToken))
         {
             await pushNotificationService.SendNotificationAsync(
                 "Received a load",
-                $"A new load #{@event.LoadNumber} has been assigned to you",
+                $"A new load #{loadNumber} has been assigned to you",
                 @event.MainDriverDeviceToken,
                 data);
         }
 
-        // Send push notification to secondary driver
         if (!string.IsNullOrEmpty(@event.SecondaryDriverDeviceToken))
         {
             await pushNotificationService.SendNotificationAsync(
                 "Received a load",
-                $"A new load #{@event.LoadNumber} has been assigned to you",
+                $"A new load #{loadNumber} has been assigned to you",
                 @event.SecondaryDriverDeviceToken,
                 data);
         }
 
-        // Send in-app notification for TMS portal users
         await notificationService.SendNotificationAsync(
             "Load assigned",
-            $"Load #{@event.LoadNumber} has been assigned to {@event.DriverDisplayName}");
+            $"Load #{loadNumber} has been assigned to {@event.DriverDisplayName}");
 
-        // Send Telegram notification to drivers
         try
         {
             await telegramNotificationService.SendNotificationAsync(
                 tenantUow.GetCurrentTenant().Id,
                 "Load Assigned",
-                $"Load #{@event.LoadNumber} has been assigned to {@event.DriverDisplayName}",
+                $"Load #{loadNumber} has been assigned to {@event.DriverDisplayName}",
                 TelegramChatRole.Driver,
                 cancellationToken);
         }

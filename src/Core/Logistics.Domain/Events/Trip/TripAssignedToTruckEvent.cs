@@ -8,7 +8,6 @@ namespace Logistics.Domain.Events;
 /// </summary>
 public record TripAssignedToTruckEvent(
     Guid TripId,
-    long TripNumber,
     string TripName,
     Guid NewTruckId,
     string NewTruckNumber,

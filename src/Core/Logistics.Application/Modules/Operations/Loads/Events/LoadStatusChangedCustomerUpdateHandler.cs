@@ -8,7 +8,7 @@ using Logistics.Mediator;
 
 namespace Logistics.Application.Modules.Operations.Loads.Events;
 
-/// <summary>Queued, because domain events run inside SaveChangesAsync and the send is SMTP round trips.</summary>
+/// <summary>Queued, because the send is SMTP round trips and would hold up the request.</summary>
 internal sealed class LoadStatusChangedCustomerUpdateHandler(
     ITenantUnitOfWork tenantUow,
     ICommandEnqueuer commandEnqueuer)

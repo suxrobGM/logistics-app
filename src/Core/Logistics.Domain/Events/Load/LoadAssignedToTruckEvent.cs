@@ -8,7 +8,6 @@ namespace Logistics.Domain.Events;
 /// </summary>
 public record LoadAssignedToTruckEvent(
     Guid LoadId,
-    long LoadNumber,
     Guid TruckId,
     string TruckNumber,
     string? MainDriverDeviceToken,

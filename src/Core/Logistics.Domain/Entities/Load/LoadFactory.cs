@@ -61,7 +61,6 @@ public static class LoadFactory
             var driverDisplayName = assignedTruck.MainDriver?.GetFullName() ?? assignedTruck.Number;
             load.DomainEvents.Add(new LoadAssignedToTruckEvent(
                 load.Id,
-                load.Number,
                 assignedTruck.Id,
                 assignedTruck.Number,
                 assignedTruck.MainDriver?.DeviceToken,

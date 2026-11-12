@@ -1,4 +1,5 @@
 using Logistics.Application.Abstractions;
+using Logistics.Domain.Entities;
 using Logistics.Domain.Events;
 using Logistics.Domain.Persistence;
 using Logistics.Domain.Primitives.Enums;
@@ -31,37 +32,37 @@ internal sealed class TripAssignedToTruckNotificationHandler(
             isReassignment ? "reassigned to" : "assigned to",
             @event.NewTruckId);
 
-        // Send push notification to new driver
+        // Read the number off the tracked trip: the event is raised before the insert assigns it.
+        var trip = await tenantUow.Repository<Trip>().GetByIdAsync(@event.TripId, cancellationToken);
+        var tripNumber = trip?.Number;
+
         if (!string.IsNullOrEmpty(@event.NewDriverDeviceToken))
         {
             await pushNotificationService.SendNotificationAsync(
                 "New trip assigned",
-                $"Trip #{@event.TripNumber} '{@event.TripName}' has been assigned to you",
+                $"Trip #{tripNumber} '{@event.TripName}' has been assigned to you",
                 @event.NewDriverDeviceToken);
         }
 
-        // If reassigned, notify the old driver
         if (isReassignment && !string.IsNullOrEmpty(@event.OldDriverDeviceToken))
         {
             await pushNotificationService.SendNotificationAsync(
                 "Trip reassigned",
-                $"Trip #{@event.TripNumber} '{@event.TripName}' has been reassigned to another truck",
+                $"Trip #{tripNumber} '{@event.TripName}' has been reassigned to another truck",
                 @event.OldDriverDeviceToken);
         }
 
-        // Send in-app notification for TMS portal users
         var title = isReassignment ? "Trip reassigned" : "Trip assigned";
         await notificationService.SendNotificationAsync(
             title,
-            $"Trip #{@event.TripNumber} has been assigned to {@event.NewDriverDisplayName}");
+            $"Trip #{tripNumber} has been assigned to {@event.NewDriverDisplayName}");
 
-        // Send Telegram notification to drivers
         try
         {
             await telegramNotificationService.SendNotificationAsync(
                 tenantUow.GetCurrentTenant().Id,
                 title,
-                $"Trip #{@event.TripNumber} '{@event.TripName}' has been assigned to {@event.NewDriverDisplayName}",
+                $"Trip #{tripNumber} '{@event.TripName}' has been assigned to {@event.NewDriverDisplayName}",
                 TelegramChatRole.Driver,
                 cancellationToken);
         }

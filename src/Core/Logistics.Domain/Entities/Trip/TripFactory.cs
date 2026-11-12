@@ -99,7 +99,6 @@ public static class TripFactory
 
         trip.DomainEvents.Add(new TripAssignedToTruckEvent(
             trip.Id,
-            trip.Number,
             trip.Name,
             newTruck.Id,
             newTruck.Number,

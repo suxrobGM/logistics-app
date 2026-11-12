@@ -75,7 +75,6 @@ public partial class Load
 
         DomainEvents.Add(new LoadAssignedToTruckEvent(
             Id,
-            Number,
             truck.Id,
             truck.Number,
             truck.MainDriver?.DeviceToken,
