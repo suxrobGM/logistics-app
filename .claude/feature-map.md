@@ -256,7 +256,7 @@ registry, `AgentLoopRunner`, decisions, and quota. Gated by `TenantFeature.AICop
 - Domain: `ProductLicenseHeartbeat` (master), `Options/ProductLicenseOptions.cs` (`License__Key`, `License__HeartbeatUrl`, `License__HeartbeatEnabled`)
 - Application: `Modules/Platform/ProductLicense/` - `Services/ProductLicenseKeyValidator` (ES256 JWT against the embedded public key), `ProductLicenseService` (env var wins over `SystemSettings`, 5 min cache), `ProductLicenseHeartbeatService` (builds the report, sends it through `IProductLicenseHeartbeatSender`); commands `SetProductLicenseKey`, `RecordProductLicenseHeartbeat`; queries `GetProductLicenseStatus`, `GetProductLicenseDiscovery`
 - Infrastructure: `Logistics.Infrastructure.Licensing` - `ProductLicenseHeartbeatSender` posts the daily report
-- API/UI: `ProductLicenseController.cs` (`/license`, `/license/key`, anonymous `/license/heartbeat` and `/.well-known/logisticsx.json`), `Jobs/ProductLicenseHeartbeatJob.cs`, `HostDefaults/ProductVersionHeaderExtensions.cs` (`X-LogisticsX-Version`), `shared/services/product-license.service.ts` + `ui-license-banner` (all three portals), `admin-portal/pages/license/`
+- API/UI: `ProductLicenseController.cs` (`/license`, `/license/key`, anonymous `/license/heartbeat` and `/.well-known/logisticsx.json`), `product-license-heartbeat` in `Jobs/RecurringJobs.cs`, `HostDefaults/ProductVersionHeaderExtensions.cs` (`X-LogisticsX-Version`), `shared/services/product-license.service.ts` + `ui-license-banner` (all three portals), `admin-portal/pages/license/`
 - Keys are issued with `tools/Logistics.LicenseIssuer` (`keygen`, `issue`, `inspect`); legal text in `COMMERCIAL-LICENSE.md`, `CLA.md`
 
 ### Background runner
@@ -321,7 +321,7 @@ registry, `AgentLoopRunner`, decisions, and quota. Gated by `TenantFeature.AICop
 - Domain: `Entities/Employee/DriverLicense.cs`
 - Application: `Modules/IdentityAccess/Employees/Commands/{Create,Update,Delete}DriverLicense/`, `Application.Abstractions/Dispatch/IDispatchEligibilityService`, `Modules/Compliance/Safety/Services/LicenseExpiryReminderService`
 - Infrastructure: `Infrastructure.AI/Tools/Dispatch/CheckDispatchEligibilityTool.cs`
-- API/UI: `EmployeeController` (extended), `tms-portal/pages/employees/components/driver-licenses-tab/`, mobile `feature/more/LicensesScreen.kt`, `Jobs/LicenseExpiryReminderJob.cs`
+- API/UI: `EmployeeController` (extended), `tms-portal/pages/employees/components/driver-licenses-tab/`, mobile `feature/more/LicensesScreen.kt`, `ProcessLicenseExpiryReminders` in `Jobs/RecurringJobs.cs`
 
 ### ADR / Hazmat
 
@@ -335,14 +335,14 @@ registry, `AgentLoopRunner`, decisions, and quota. Gated by `TenantFeature.AICop
 - Application: `Modules/Compliance/Ifta/` (`TruckLocationRecorder`, `IftaReportService`, quarter-close + filing-reminder services, `IftaQuarters`), `Modules/Compliance/Ifta/TaxRates/` (admin rate CRUD), `Modules/Platform/Reports/Queries/Ifta/`
 - Infrastructure: `Infrastructure.Routing/Geospatial/JurisdictionResolver.cs` (NTS + embedded boundaries, built once at startup by `JurisdictionResolverWarmup`); `Infrastructure.Documents/Pdf/Ifta/`
 - **Traps**: closed quarters are served verbatim from `IftaQuarterSnapshot.ReportJson` (sole source of truth, deliberately not denormalized into columns). Tax-rate `(Year, Quarter, Jurisdiction)` and mileage `(Truck, Date, Jurisdiction)` uniqueness are raw-SQL unique indexes (NULLS NOT DISTINCT on region) created in migrations, not EF config - complex-type members can't be in an EF index, so a model rebuild won't recreate them. Write paths still probe `IftaTaxRateUniqueness.FindConflictAsync` for a readable error; `TruckLocationRecorder` upserts mileage with `ON CONFLICT`, which needs the index
-- API/UI: `ReportController` `/reports/ifta` + `/reports/ifta/pdf`, `IftaTaxRateController.cs` `/ifta/rates`, `Jobs/IftaQuarterCloseJob.cs`, `Jobs/IftaFilingReminderJob.cs`, `tms-portal/pages/reports/ifta-report/`, `admin-portal/pages/ifta-rates/`
+- API/UI: `ReportController` `/reports/ifta` + `/reports/ifta/pdf`, `IftaTaxRateController.cs` `/ifta/rates`, `Jobs/IftaQuarterCloseJob.cs`, `ifta-filing-reminders` in `Jobs/RecurringJobs.cs`, `tms-portal/pages/reports/ifta-report/`, `admin-portal/pages/ifta-rates/`
 
 ### Privacy (GDPR)
 
 - Domain: `Entities/Privacy/`
 - Application: `Modules/Compliance/Privacy/` (Commands, Queries, Services)
 - Infrastructure: `Infrastructure.Documents/Privacy/`, `Infrastructure.Persistence/Services/Privacy/DataAnonymizer.cs`
-- API/UI: `PrivacyController.cs`, `Jobs/Data{ExportProcessing,Deletion,Retention,ExportExpiry}Job.cs`, `<ui-cookie-banner>`, `admin-portal/pages/data-requests/`
+- API/UI: `PrivacyController.cs`, `privacy-*` entries in `Jobs/RecurringJobs.cs`, `<ui-cookie-banner>`, `admin-portal/pages/data-requests/`
 
 ## Financial
 
@@ -417,7 +417,7 @@ registry, `AgentLoopRunner`, decisions, and quota. Gated by `TenantFeature.AICop
 
 - Domain: `Entities/Invoice/PayrollInvoice.cs`
 - Application: `Modules/Financial/Payroll/` (Commands, Queries, Services)
-- API/UI: `tms-portal/pages/payroll/`, `Jobs/PayrollGenerationJob.cs`
+- API/UI: `InvoicesPayrollController.cs` (`/invoices/payrolls/*`), `tms-portal/pages/payroll/`, `Jobs/PayrollGenerationJob.cs`
 - Settlements: `Entities/Invoice/PayrollInvoice.Settlement.cs` (`ReplaceSettlementLines`, signed deduction lines; `SettlementInputs`), `Entities/Employee/RecurringDeduction.cs`, `CashAdvance.cs`, `Employee.PayExcludesFuelSurcharge`/`PayExcludesAccessorials`/`DeductFuelCardCharges`, `FuelCardTransaction.PayrollInvoiceId`; `Services/PayrollService.cs` (generation, build/create/recalculate) with partials `.GrossPay.cs` (gross by salary type incl. `PerLoad`/`PerStop`, credited to `Trip.DriverId`/`SecondaryDriverId` recorded at dispatch - a load on no trip goes to its truck's current drivers) and `.Deductions.cs` (escrow balance, claims/releases advances and fuel); period math in `PayrollInvoice.PeriodWeeks`/`PeriodMonths`/`PeriodUtcRange`, share-of-gross basis in `Employee.PayableRevenue`; commands `UpdateDriverPayProfile`, `IssueCashAdvance`, `DeleteCashAdvance`; queries `GetDriverPayProfile`, `GetCashAdvances`. API: `EmployeeController` (`/employees/{id}/payprofile`), `CashAdvanceController` (`/cashadvances`: list, issue, delete). PDF: `Infrastructure.Documents/Pdf/Payroll/PayrollEarningsSection.cs`. UI: `pages/employees/components/driver-pay-profile/`, `cash-advances-panel/`, `pages/payroll/components/line-items-table/` (generated lines locked)
 
 ### Expenses
@@ -587,7 +587,7 @@ registry, `AgentLoopRunner`, decisions, and quota. Gated by `TenantFeature.AICop
 
 ### Background sync
 
-- API/UI: `Jobs/LoadBoardSyncJob.cs` (reconciles active posts with the board every 30 min; hourly expiry cleanup)
+- API/UI: `Jobs/LoadBoardSyncJob.cs` -> `LoadBoard/Services/LoadBoardSyncService.cs` (reconciles active posts with the board every 30 min; hourly expiry cleanup)
 
 ## Settings & integrations
 
@@ -640,7 +640,7 @@ registry, `AgentLoopRunner`, decisions, and quota. Gated by `TenantFeature.AICop
 ### Telegram bot
 
 - Domain: `Entities/TelegramChat.cs`, `TelegramLoginState.cs`
-- API/UI: `Logistics.TelegramBot/`
+- API/UI: `Logistics.TelegramBot/`; login link page `IdentityServer/Pages/Telegram/Login` -> `IdentityServer/Services/TelegramLoginService.cs`
 
 ## Hosting
 

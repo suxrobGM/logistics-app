@@ -102,12 +102,12 @@ These were confirmed by a name-usage scan of `src/`, `test/`, `tools/` and the p
 - [x] **ELD providers:** the base URL is defaulted twice (in options and again with `??`), `DefaultRequestHeaders.Add` is called with no Remove (Motive), and the `ValidateCredentialsAsync` try/catch appears 4×. Set `BaseAddress` once in `AddHttpClient`. Done for Motive and TT ELD; Samsara picks its host per tenant region and Geotab switches to a federated server after login, so they keep building URLs (Geotab now defaults once). Shared `HttpClient.ValidateCredentialsAsync` and `EldWebhookResultDto.Invalid`.
 - [x] **US states listed 3× and EU-27 listed 3×** (tax tables, `TaxJurisdictionsProvider`, `RegionCountries`, `EUVatRules`). Derive them from one source. Done: `RegionCountries.EUMemberStates` and `USSalesTaxRates.StateCodes`; `TaxJurisdictionsProviderTests` pins the list. The rate tables keep their own rows (one rate per country).
 - [x] **`LlmPricing` repeats the model ids in `LlmModelCatalog`,** with a parity test to keep them in step. Put the prices on `LlmModelInfo`. Done: `LlmModelInfo.Prices` + `LlmModelCatalog.CalculateCost`; the cost tests moved to `LlmModelCatalogTests`.
-- [ ] **361 hand-written `IsSuccess ? Ok/NoContent : BadRequest/NotFound` ternaries in controllers.** Add `ErrorCodes.NotFound` and one `ToActionResult()` extension, mainly for consistent 404s. Keep controllers: OpenAPI generation and `ControllerAuthorizationTests` depend on them.
-- [ ] **`LoadBoardSyncJob`** holds domain logic and row-by-row deletes. Move the logic to an Application service and use `ExecuteDeleteAsync`. The **10 jobs that are a single `RecurringJob.AddOrUpdate`** line can collapse into one `RecurringJobs.cs` (10 files).
-- [ ] **`IdentityServer/Setup.AddAuthSchemes`** hand-registers the 4 Identity cookies; use `AddIdentityCookies()`. **`Pages/Telegram/Login.cshtml.cs`** has a 100-line `OnGet` that writes to both databases; move it into `TelegramAuthService`.
-- [ ] **TelegramBot:** the Loads/Trucks/Trips commands repeat the paging-callback and send-or-edit logic (~100 lines). Switching from MarkdownV2 to `ParseMode.Html` would drop most `Escape()` calls and the risk of truncating mid-escape.
-- [ ] **Photo `IFormFile` → `FileUpload` loop ×3** (Document and Inspection controllers). Add a `ToFileUploads()` extension.
-- [ ] **Seeders:** give `SeederBase.random` a fixed seed (demo data then reproduces). `DemoEldService` uses `string.GetHashCode()`, so demo names change on every restart.
+- [x] **361 hand-written `IsSuccess ? Ok/NoContent : BadRequest/NotFound` ternaries in controllers.** Add `ErrorCodes.NotFound` and one `ToActionResult()` extension, mainly for consistent 404s. Keep controllers: OpenAPI generation and `ControllerAuthorizationTests` depend on them. Done: handler not-found failures carry `ErrorCodes.NotFound`; 321 one-line ternaries became `ToActionResult()`. The multi-line ones, a `Result<T>` that answers 204, and the public payment and tracking link lookups keep their ternaries. The OpenAPI document is byte-identical. `NOT_FOUND` is not yet mirrored in the private `upgrade-handler.ts`; no client branches on it.
+- [x] **`LoadBoardSyncJob`** holds domain logic and row-by-row deletes. Move the logic to an Application service and use `ExecuteDeleteAsync`. The **10 jobs that are a single `RecurringJob.AddOrUpdate`** line can collapse into one `RecurringJobs.cs` (10 files). Done: `LoadBoardSyncService`; 9 static job classes moved into `Jobs/RecurringJobs.cs` (job classes with a tenant fan-out stay).
+- [x] **`IdentityServer/Setup.AddAuthSchemes`** hand-registers the 4 Identity cookies; use `AddIdentityCookies()`. **`Pages/Telegram/Login.cshtml.cs`** has a 100-line `OnGet` that writes to both databases; move it into `TelegramAuthService`. Done: `TelegramAuthService` lives in the TelegramBot project, which IdentityServer does not reference, so the page uses a new `IdentityServer/Services/TelegramLoginService`.
+- [x] **TelegramBot:** the Loads/Trucks/Trips commands repeat the paging-callback and send-or-edit logic (~100 lines). Switching from MarkdownV2 to `ParseMode.Html` would drop most `Escape()` calls and the risk of truncating mid-escape. Done: `PagedListExtensions` (`TryGetPage`, `SendOrEditPageAsync`). Skipped the switch to `ParseMode.Html`: out of scope for this pass.
+- [x] **Photo `IFormFile` → `FileUpload` loop ×3** (Document and Inspection controllers). Add a `ToFileUploads()` extension.
+- [x] **Seeders:** give `SeederBase.random` a fixed seed (demo data then reproduces). `DemoEldService` uses `string.GetHashCode()`, so demo names change on every restart. Done: fixed seed, and `DemoEldService` hashes the id itself. The region profiles keep their own unseeded `Random`.
 
 ## 3. Large methods and long parameter lists
 
@@ -123,10 +123,10 @@ These were confirmed by a name-usage scan of `src/`, `test/`, `tools/` and the p
 | `CreateConditionReportHandler.Handle` | ~110 lines | shared uploader |
 | `BookLoadBoardLoad` / `ProposeCounterOffer` | ~140 / 160 lines | listing entity methods, `ICustomerFinder` |
 | `GetExpenseStatsHandler` | 138 lines | group on the server |
-| `AgentTurnService.RunTurnAsync` | 105 lines | extract the gate check and the persistence step |
+| ~~`AgentTurnService.RunTurnAsync`~~ | 105 lines | Done: `CheckTurnAllowedAsync` + `SaveTurnAsync` |
 | `GetContainerStatusTool`, `MapboxMatrixTripOptimizer`, `FactoringSchedulePdfService` | 94-107 lines | split into named sections |
-| `NegotiationSeeder.BuildThreadAsync`, `SubscriptionPlanSeeder.SeedAsync` | 146 / 163 lines | one method per scenario or plan |
-| `InvoicesController` | 424 lines | `PayrollInvoicesController` (same routes) |
+| ~~`NegotiationSeeder.BuildThreadAsync`, `SubscriptionPlanSeeder.SeedAsync`~~ | 146 / 163 lines | Done: one method per negotiation scenario. The plans are data rows, so that seeder splits into create, update fields and sync features instead |
+| ~~`InvoicesController`~~ | 424 lines | Done as `InvoicesPayrollController`: the name sorts next to `InvoicesController`, so the OpenAPI path order stays the same |
 
 Partial `.Split` files: `Load` is ~600 lines over 8 partials, each partial covers one area, so **keep them**. Don't move Freight or appointments into complex types until they gain behaviour. Removing the factories and state machines above takes ~280 lines out of `Load` anyway.
 

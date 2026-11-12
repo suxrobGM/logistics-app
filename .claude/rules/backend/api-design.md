@@ -17,7 +17,7 @@ paths:
 - Route: `[Route("resources")]`, `[Produces("application/json")]`
 - Primary constructor for DI, `[ProducesResponseType]` for all responses
 - Auth: `[Authorize(Policy = Permission.{Entity}.View|Manage)]`
-- Errors: `ErrorResponse.FromResult(result)`, appropriate status codes, no internal details
+- Results: `return result.ToActionResult();` answers 200 with the value (204 for a plain `Result`), 404 when the failure carries `ErrorCodes.NotFound`, otherwise 400. Fail a missing record with `Result.Fail(message, ErrorCodes.NotFound)`. Write `ErrorResponse.FromResult(result)` by hand only for other status codes. No internal details in error messages
 
 ## Request binding
 

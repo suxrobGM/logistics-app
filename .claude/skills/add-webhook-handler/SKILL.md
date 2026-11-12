@@ -156,7 +156,7 @@ Order matters:
 3. **Dispatch** by event type; unknown event types should log and return 200, not crash.
 4. **Record the event key** after the work so a retry short-circuits. The unique `(Provider, EventKey)` index is the backstop if two deliveries race.
 
-`WebhookEventCleanupJob` prunes old ledger rows daily, so the table doesn't grow unbounded.
+The `webhook-event-cleanup` entry in `Jobs/RecurringJobs.cs` prunes old ledger rows daily, so the table doesn't grow unbounded.
 
 ### 5. Config
 
