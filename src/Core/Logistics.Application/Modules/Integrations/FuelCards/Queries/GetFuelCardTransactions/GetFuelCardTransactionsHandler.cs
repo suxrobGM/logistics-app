@@ -45,7 +45,7 @@ internal sealed class GetFuelCardTransactionsHandler(ITenantUnitOfWork tenantUow
         var totalItems = await query.CountAsync(ct);
 
         var transactions = await query
-            .OrderBy(req.OrderBy ?? "-TransactionDate")
+            .OrderBy(req.OrderBy, x => x.Id, defaultOrderBy: "-TransactionDate")
             .ApplyPaging(req.Page, req.PageSize)
             .ToListAsync(ct);
 

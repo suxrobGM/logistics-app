@@ -33,7 +33,7 @@ internal sealed class GetEmployeesHandler(ITenantUnitOfWork tenantUow) : IReques
         var totalItems = query.Count();
 
         var employeeDto = query
-            .OrderBy(req.OrderBy)
+            .OrderBy(req.OrderBy, x => x.Id)
             .ApplyPaging(req.Page, req.PageSize)
             .Select(employeeEntity => employeeEntity.ToDto())
             .ToArray();

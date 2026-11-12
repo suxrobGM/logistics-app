@@ -42,8 +42,8 @@ internal sealed class GetIftaTaxRatesHandler(
         // Default sort is a nested owned-type path (Jurisdiction.CountryCode), which the string
         // OrderBy overload can't resolve, so apply it with a typed selector.
         var ordered = string.IsNullOrEmpty(req.OrderBy)
-            ? query.OrderBy(x => x.Jurisdiction.CountryCode)
-            : query.OrderBy(req.OrderBy);
+            ? query.OrderBy(x => x.Jurisdiction.CountryCode).ThenBy(x => x.Id)
+            : query.OrderBy(req.OrderBy, x => x.Id);
 
         var items = ordered
             .ApplyPaging(req.Page, req.PageSize)

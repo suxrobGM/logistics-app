@@ -36,7 +36,7 @@ internal sealed class GetTrailersHandler(ITenantUnitOfWork tenantUow)
 
         var totalItems = await query.CountAsync(ct);
         var trailers = await query
-            .OrderBy(req.OrderBy)
+            .OrderBy(req.OrderBy, x => x.Id)
             .ApplyPaging(req.Page, req.PageSize)
             .ToArrayAsync(ct);
 

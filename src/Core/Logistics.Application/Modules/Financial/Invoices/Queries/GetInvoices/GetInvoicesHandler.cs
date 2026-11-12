@@ -42,7 +42,7 @@ internal sealed class GetInvoicesHandler(ITenantUnitOfWork tenantUow)
         var totalItems = query.Count();
 
         var invoicesDto = query
-            .OrderBy(req.OrderBy)
+            .OrderBy(req.OrderBy, x => x.Id)
             .ApplyPaging(req.Page, req.PageSize)
             .Select(i => i.ToDto())
             .ToArray();

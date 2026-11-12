@@ -29,7 +29,7 @@ internal sealed class GetTrucksHandler(ITenantUnitOfWork tenantUow, ILoadLookupB
                               i.SecondaryDriver.LastName.ToLower().Contains(search))));
         }
 
-        baseQuery = baseQuery.OrderBy(req.OrderBy);
+        baseQuery = baseQuery.OrderBy(req.OrderBy, x => x.Id);
 
         if (req.Statuses?.Length > 0)
         {

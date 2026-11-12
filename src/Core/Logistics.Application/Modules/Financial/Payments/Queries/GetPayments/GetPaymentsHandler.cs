@@ -20,7 +20,7 @@ internal sealed class GetPaymentsHandler(ITenantUnitOfWork tenantUow)
         var totalItems = query.Count();
 
         var payments = query
-            .OrderBy(req.OrderBy)
+            .OrderBy(req.OrderBy, x => x.Id)
             .ApplyPaging(req.Page, req.PageSize)
             .Select(i => i.ToDto())
             .ToArray();

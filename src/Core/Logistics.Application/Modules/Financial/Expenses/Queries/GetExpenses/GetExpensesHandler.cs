@@ -58,7 +58,7 @@ internal sealed class GetExpensesHandler(ITenantUnitOfWork tenantUow)
         var totalItems = await query.CountAsync(ct);
 
         var expenses = await query
-            .OrderBy(req.OrderBy ?? "-ExpenseDate")
+            .OrderBy(req.OrderBy, x => x.Id, defaultOrderBy: "-ExpenseDate")
             .ApplyPaging(req.Page, req.PageSize)
             .ToListAsync(ct);
 

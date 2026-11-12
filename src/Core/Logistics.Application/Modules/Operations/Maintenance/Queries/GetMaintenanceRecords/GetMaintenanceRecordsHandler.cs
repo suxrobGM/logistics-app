@@ -34,7 +34,7 @@ internal sealed class GetMaintenanceRecordsHandler(ITenantUnitOfWork tenantUow)
             baseQuery = baseQuery.Where(r => r.ServiceDate <= req.ToDate);
         }
 
-        baseQuery = baseQuery.OrderBy(req.OrderBy ?? "-ServiceDate");
+        baseQuery = baseQuery.OrderBy(req.OrderBy, x => x.Id, defaultOrderBy: "-ServiceDate");
 
         var totalItems = baseQuery.Count();
         baseQuery = baseQuery.ApplyPaging(req.Page, req.PageSize);

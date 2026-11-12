@@ -29,7 +29,7 @@ internal sealed class GetUsersHandler(IMasterUnitOfWork masterUow)
         var totalItems = query.Count();
 
         var users = query
-            .OrderBy(req.OrderBy)
+            .OrderBy(req.OrderBy, x => x.Id)
             .ApplyPaging(req.Page, req.PageSize)
             .Select(i => i.ToDto())
             .ToArray();

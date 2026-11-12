@@ -27,7 +27,7 @@ internal sealed class GetNegotiationsHandler(ITenantUnitOfWork tenantUow, INegot
         var totalItems = await query.CountAsync(ct);
 
         var negotiations = await query
-            .OrderBy(req.OrderBy ?? "-CreatedAt")
+            .OrderBy(req.OrderBy, x => x.Id, defaultOrderBy: "-CreatedAt")
             .ApplyPaging(req.Page, req.PageSize)
             .ToListAsync(ct);
 

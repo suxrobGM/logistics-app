@@ -45,7 +45,7 @@ internal sealed class GetContainersHandler(ITenantUnitOfWork tenantUow)
         var totalItems = query.Count();
 
         var containers = query
-            .OrderBy(req.OrderBy)
+            .OrderBy(req.OrderBy, x => x.Id)
             .ApplyPaging(req.Page, req.PageSize)
             .ToArray();
 

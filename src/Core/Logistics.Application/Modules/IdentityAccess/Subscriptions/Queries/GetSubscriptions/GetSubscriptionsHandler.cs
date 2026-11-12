@@ -18,7 +18,7 @@ internal sealed class GetSubscriptionsHandler(IMasterUnitOfWork masterUow)
         var totalItems = query.Count();
 
         var items = query
-            .OrderBy(req.OrderBy)
+            .OrderBy(req.OrderBy, x => x.Id)
             .ApplyPaging(req.Page, req.PageSize)
             .Select(i => i.ToDto())
             .ToArray();

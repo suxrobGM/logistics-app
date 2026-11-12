@@ -50,7 +50,7 @@ internal sealed class GetTripsHandler(ITenantUnitOfWork tenantUow)
         var totalItems = query.Count();
 
         var trips = query
-            .OrderBy(req.OrderBy)
+            .OrderBy(req.OrderBy, x => x.Id)
             .ApplyPaging(req.Page, req.PageSize)
             .ToArray();
 

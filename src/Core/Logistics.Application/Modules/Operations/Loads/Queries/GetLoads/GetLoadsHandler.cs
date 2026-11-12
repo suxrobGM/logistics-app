@@ -85,7 +85,7 @@ internal sealed class GetLoadsHandler(
 
         var totalItems = await baseQuery.CountAsync(ct);
 
-        baseQuery = baseQuery.OrderBy(req.OrderBy);
+        baseQuery = baseQuery.OrderBy(req.OrderBy, x => x.Id);
 
         if (!req.LoadAllPages)
         {
