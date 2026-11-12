@@ -6,6 +6,7 @@ using Logistics.Infrastructure.Integrations.Eld.Providers.Samsara;
 using Logistics.Infrastructure.Integrations.Eld.Providers.TtEld;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Options;
 using Logistics.Application.Abstractions.Eld;
 using Logistics.Domain.Primitives.Enums;
 
@@ -22,8 +23,16 @@ public static class Registrar
             IConfiguration configuration)
         {
             services.AddHttpClient<SamsaraEldService>();
-            services.AddHttpClient<MotiveEldService>();
-            services.AddHttpClient<TtEldService>();
+            services.AddHttpClient<MotiveEldService>((sp, client) =>
+            {
+                var motive = sp.GetRequiredService<IOptions<EldOptions>>().Value.Motive ?? new MotiveOptions();
+                client.BaseAddress = ToBaseAddress(motive.BaseUrl);
+            });
+            services.AddHttpClient<TtEldService>((sp, client) =>
+            {
+                var ttEld = sp.GetRequiredService<IOptions<EldOptions>>().Value.TtEld ?? new TtEldOptions();
+                client.BaseAddress = ToBaseAddress(ttEld.BaseUrl);
+            });
             services.AddHttpClient<GeotabClient>();
             services.AddScoped<GeotabEldService>();
             services.AddScoped<DemoEldService>();
@@ -40,4 +49,9 @@ public static class Registrar
             return services;
         }
     }
+
+    /// <summary>
+    /// The trailing slash keeps a path base such as Motive's <c>/v1</c> when a relative URL is resolved.
+    /// </summary>
+    private static Uri ToBaseAddress(string baseUrl) => new($"{baseUrl.TrimEnd('/')}/");
 }

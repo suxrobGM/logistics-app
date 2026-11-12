@@ -3,7 +3,6 @@ using Logistics.Domain.Primitives.Enums;
 using Logistics.Infrastructure.Integrations.Common;
 using Logistics.Shared.Models;
 using Microsoft.Extensions.Logging;
-using Microsoft.Extensions.Options;
 using Logistics.Application.Abstractions.Eld;
 
 namespace Logistics.Infrastructure.Integrations.Eld.Providers.TtEld;
@@ -15,11 +14,9 @@ namespace Logistics.Infrastructure.Integrations.Eld.Providers.TtEld;
 /// </summary>
 internal class TtEldService(
     HttpClient httpClient,
-    IOptions<EldOptions> options,
     ILogger<TtEldService> logger)
     : IEldProviderService, IEldGpsTrackingProvider
 {
-    private readonly string _baseUrl = options.Value.TtEld?.BaseUrl ?? "https://read.tteld.com";
     private string? _usdot;
 
     public EldProviderType ProviderType => EldProviderType.TtEld;
@@ -36,21 +33,11 @@ internal class TtEldService(
 
     public async Task<bool> ValidateCredentialsAsync(string apiKey, string? apiSecret)
     {
-        try
-        {
-            using var request = new HttpRequestMessage(HttpMethod.Get,
-                $"{_baseUrl}/api/externalservice/drivers-list/{_usdot}?page=1&perPage=1&is_active=true");
-            request.Headers.Add("x-api-key", apiKey);
-            request.Headers.Add("provider-token", apiSecret);
-
-            var response = await httpClient.SendAsync(request);
-            return response.IsSuccessStatusCode;
-        }
-        catch (HttpRequestException ex)
-        {
-            logger.LogError(ex, "Failed to validate TT ELD credentials");
-            return false;
-        }
+        using var request = new HttpRequestMessage(HttpMethod.Get,
+            $"api/externalservice/drivers-list/{_usdot}?page=1&perPage=1&is_active=true");
+        request.Headers.Add("x-api-key", apiKey);
+        request.Headers.Add("provider-token", apiSecret);
+        return await httpClient.ValidateCredentialsAsync(request, logger, "TT ELD");
     }
 
     #region HOS Methods (not supported by TT ELD)
@@ -82,7 +69,7 @@ internal class TtEldService(
     public async Task<IEnumerable<EldDriverDto>> GetAllDriversAsync()
     {
         return await GetAllPaginatedAsync<TtEldDriversResponse, TtEldDriverData, EldDriverDto>(
-            page => $"{_baseUrl}/api/externalservice/drivers-list/{_usdot}?page={page}&perPage=100&is_active=true",
+            page => $"api/externalservice/drivers-list/{_usdot}?page={page}&perPage=100&is_active=true",
             r => r.Data,
             r => r.Meta?.TotalPages ?? 1,
             TtEldMapper.MapToDriverDto,
@@ -92,7 +79,7 @@ internal class TtEldService(
     public async Task<IEnumerable<EldVehicleDto>> GetAllVehiclesAsync()
     {
         return await GetAllPaginatedAsync<TtEldUnitsResponse, TtEldUnitData, EldVehicleDto>(
-            page => $"{_baseUrl}/api/externalservice/current-units/{_usdot}?page={page}&perPage=100&is_active=true",
+            page => $"api/externalservice/current-units/{_usdot}?page={page}&perPage=100&is_active=true",
             r => r.Data,
             r => r.Meta?.TotalPages ?? 1,
             TtEldMapper.MapToVehicleDto,
@@ -101,13 +88,7 @@ internal class TtEldService(
 
     public Task<EldWebhookResultDto> ProcessWebhookAsync(EldWebhookRequestDto request, string? webhookSecret)
     {
-        // TT ELD does not support webhooks
-        return Task.FromResult(new EldWebhookResultDto
-        {
-            EventType = EldWebhookEventType.Unknown,
-            IsValid = false,
-            ErrorMessage = "TT ELD does not support webhooks"
-        });
+        return Task.FromResult(EldWebhookResultDto.Invalid("TT ELD does not support webhooks"));
     }
 
     #region GPS Tracking (IEldGpsTrackingProvider)
@@ -115,7 +96,7 @@ internal class TtEldService(
     public async Task<IEnumerable<EldVehicleLocationDto>> GetAllVehicleLocationsAsync(CancellationToken ct = default)
     {
         var result = await httpClient.TryGetFromJsonAsync<TtEldTrackingV2Response>(
-            $"{_baseUrl}/api/v2/units-by-usdot/{_usdot}",
+            $"api/v2/units-by-usdot/{_usdot}",
             logger,
             "TT ELD vehicle locations",
             IntegrationJsonOptions.CamelCase,

@@ -101,6 +101,14 @@ public record EldWebhookResultDto
     /// webhook handler for idempotency; when null the handler falls back to a hash of the body.
     /// </summary>
     public string? ExternalEventId { get; set; }
+
+    /// <summary>A rejected webhook: unknown event, not valid, with the reason.</summary>
+    public static EldWebhookResultDto Invalid(string error) => new()
+    {
+        EventType = EldWebhookEventType.Unknown,
+        IsValid = false,
+        ErrorMessage = error
+    };
 }
 
 public enum EldWebhookEventType

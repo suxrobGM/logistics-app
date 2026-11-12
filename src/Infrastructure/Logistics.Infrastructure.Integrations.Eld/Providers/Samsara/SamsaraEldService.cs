@@ -36,19 +36,9 @@ internal class SamsaraEldService(
 
     public async Task<bool> ValidateCredentialsAsync(string apiKey, string? apiSecret)
     {
-        try
-        {
-            using var request = new HttpRequestMessage(HttpMethod.Get, $"{BaseUrl}/fleet/drivers?limit=1");
-            request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", apiKey);
-
-            using var response = await httpClient.SendAsync(request);
-            return response.IsSuccessStatusCode;
-        }
-        catch (HttpRequestException ex)
-        {
-            logger.LogError(ex, "Failed to validate Samsara credentials");
-            return false;
-        }
+        using var request = new HttpRequestMessage(HttpMethod.Get, $"{BaseUrl}/fleet/drivers?limit=1");
+        request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", apiKey);
+        return await httpClient.ValidateCredentialsAsync(request, logger, "Samsara");
     }
 
     public async Task<EldDriverHosDataDto?> GetDriverHosStatusAsync(string externalDriverId)
@@ -124,20 +114,20 @@ internal class SamsaraEldService(
         if (!WebhookSignature.VerifySamsara(request.Body, request.Timestamp, request.Signature, webhookSecret))
         {
             logger.LogWarning("Rejected Samsara webhook with invalid or unverifiable signature");
-            return Task.FromResult(InvalidWebhook("Invalid webhook signature"));
+            return Task.FromResult(EldWebhookResultDto.Invalid("Invalid webhook signature"));
         }
 
         try
         {
             var webhook = JsonSerializer.Deserialize<SamsaraWebhookPayload>(request.Body, IntegrationJsonOptions.CamelCase);
             return Task.FromResult(webhook is null
-                ? InvalidWebhook("Failed to parse webhook payload")
+                ? EldWebhookResultDto.Invalid("Failed to parse webhook payload")
                 : SamsaraMapper.MapToWebhookResult(webhook));
         }
         catch (JsonException ex)
         {
             logger.LogWarning(ex, "Unparseable Samsara webhook payload");
-            return Task.FromResult(InvalidWebhook("Failed to parse webhook payload"));
+            return Task.FromResult(EldWebhookResultDto.Invalid("Failed to parse webhook payload"));
         }
     }
 
@@ -178,11 +168,4 @@ internal class SamsaraEldService(
     private static string Rfc3339(DateTime value) =>
         (value.Kind == DateTimeKind.Local ? value.ToUniversalTime() : value)
         .ToString("yyyy-MM-dd'T'HH:mm:ss'Z'", CultureInfo.InvariantCulture);
-
-    private static EldWebhookResultDto InvalidWebhook(string error) => new()
-    {
-        EventType = EldWebhookEventType.Unknown,
-        IsValid = false,
-        ErrorMessage = error
-    };
 }

@@ -24,12 +24,13 @@ internal class GeotabEldService(
     ILogger<GeotabEldService> logger)
     : IEldProviderService
 {
+    private readonly string _baseUrl = (options.Value.Geotab ?? new GeotabOptions()).BaseUrl;
+
     public EldProviderType ProviderType => EldProviderType.Geotab;
 
     public void Initialize(EldProviderConfiguration configuration)
     {
-        var baseUrl = options.Value.Geotab?.BaseUrl ?? "https://my.geotab.com";
-        client.SetBaseUrl(baseUrl);
+        client.SetBaseUrl(_baseUrl);
 
         // Geotab credentials are encoded as "database|userName" in ApiKey, password in ApiSecret.
         var (database, userName) = ParseAccount(configuration.ApiKey);
@@ -47,8 +48,7 @@ internal class GeotabEldService(
 
     public async Task<bool> ValidateCredentialsAsync(string apiKey, string? apiSecret)
     {
-        var baseUrl = options.Value.Geotab?.BaseUrl ?? "https://my.geotab.com";
-        client.SetBaseUrl(baseUrl);
+        client.SetBaseUrl(_baseUrl);
         var (database, userName) = ParseAccount(apiKey);
         return !string.IsNullOrEmpty(database)
                && !string.IsNullOrEmpty(userName)
@@ -129,7 +129,7 @@ internal class GeotabEldService(
         if (!WebhookSignature.VerifyHmacSha256(request.Body, request.Signature, webhookSecret))
         {
             logger.LogWarning("Rejected Geotab webhook with invalid or unverifiable signature");
-            return Task.FromResult(InvalidWebhook("Invalid webhook signature"));
+            return Task.FromResult(EldWebhookResultDto.Invalid("Invalid webhook signature"));
         }
 
         try
@@ -137,7 +137,7 @@ internal class GeotabEldService(
             var webhook = JsonSerializer.Deserialize<GeotabWebhookPayload>(request.Body, IntegrationJsonOptions.CamelCase);
             if (webhook is null)
             {
-                return Task.FromResult(InvalidWebhook("Failed to parse webhook payload"));
+                return Task.FromResult(EldWebhookResultDto.Invalid("Failed to parse webhook payload"));
             }
 
             var eventType = webhook.EventType?.ToLowerInvariant() switch
@@ -160,16 +160,9 @@ internal class GeotabEldService(
         catch (JsonException ex)
         {
             logger.LogError(ex, "Error processing Geotab webhook");
-            return Task.FromResult(InvalidWebhook(ex.Message));
+            return Task.FromResult(EldWebhookResultDto.Invalid(ex.Message));
         }
     }
-
-    private static EldWebhookResultDto InvalidWebhook(string error) => new()
-    {
-        EventType = EldWebhookEventType.Unknown,
-        IsValid = false,
-        ErrorMessage = error
-    };
 
     private static (string? database, string? userName) ParseAccount(string apiKey)
     {

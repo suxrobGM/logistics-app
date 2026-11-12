@@ -4,7 +4,6 @@ using Logistics.Domain.Primitives.Enums;
 using Logistics.Infrastructure.Integrations.Common;
 using Logistics.Shared.Models;
 using Microsoft.Extensions.Logging;
-using Microsoft.Extensions.Options;
 using Logistics.Application.Abstractions.Eld;
 
 namespace Logistics.Infrastructure.Integrations.Eld.Providers.Motive;
@@ -15,40 +14,28 @@ namespace Logistics.Infrastructure.Integrations.Eld.Providers.Motive;
 /// </summary>
 internal class MotiveEldService(
     HttpClient httpClient,
-    IOptions<EldOptions> options,
     ILogger<MotiveEldService> logger)
     : IEldProviderService
 {
-    private readonly string _baseUrl = options.Value.Motive?.BaseUrl ?? "https://api.keeptruckin.com/v1";
-
     public EldProviderType ProviderType => EldProviderType.Motive;
 
     public void Initialize(EldProviderConfiguration configuration)
     {
+        httpClient.DefaultRequestHeaders.Remove("X-Api-Key");
         httpClient.DefaultRequestHeaders.Add("X-Api-Key", configuration.ApiKey);
     }
 
     public async Task<bool> ValidateCredentialsAsync(string apiKey, string? apiSecret)
     {
-        try
-        {
-            using var request = new HttpRequestMessage(HttpMethod.Get, $"{_baseUrl}/users");
-            request.Headers.Add("X-Api-Key", apiKey);
-
-            var response = await httpClient.SendAsync(request);
-            return response.IsSuccessStatusCode;
-        }
-        catch (HttpRequestException ex)
-        {
-            logger.LogError(ex, "Failed to validate Motive credentials");
-            return false;
-        }
+        using var request = new HttpRequestMessage(HttpMethod.Get, "users");
+        request.Headers.Add("X-Api-Key", apiKey);
+        return await httpClient.ValidateCredentialsAsync(request, logger, "Motive");
     }
 
     public async Task<EldDriverHosDataDto?> GetDriverHosStatusAsync(string externalDriverId)
     {
         var result = await httpClient.TryGetFromJsonAsync<MotiveHosResponse>(
-            $"{_baseUrl}/hours_of_service?driver_ids={externalDriverId}",
+            $"hours_of_service?driver_ids={externalDriverId}",
             logger,
             $"Motive HOS for driver {externalDriverId}",
             IntegrationJsonOptions.SnakeCase);
@@ -59,7 +46,7 @@ internal class MotiveEldService(
     public async Task<IEnumerable<EldDriverHosDataDto>> GetAllDriversHosStatusAsync()
     {
         var result = await httpClient.TryGetFromJsonAsync<MotiveHosResponse>(
-            $"{_baseUrl}/hours_of_service",
+            "hours_of_service",
             logger,
             "Motive HOS (all drivers)",
             IntegrationJsonOptions.SnakeCase);
@@ -75,7 +62,7 @@ internal class MotiveEldService(
         var endStr = endDate.ToString("yyyy-MM-dd");
 
         var result = await httpClient.TryGetFromJsonAsync<MotiveDriverLogsResponse>(
-            $"{_baseUrl}/driver_logs?driver_ids={externalDriverId}&start_date={startStr}&end_date={endStr}",
+            $"driver_logs?driver_ids={externalDriverId}&start_date={startStr}&end_date={endStr}",
             logger,
             $"Motive HOS logs for driver {externalDriverId}",
             IntegrationJsonOptions.SnakeCase);
@@ -92,7 +79,7 @@ internal class MotiveEldService(
         var endStr = endDate.ToString("yyyy-MM-dd");
 
         var result = await httpClient.TryGetFromJsonAsync<MotiveViolationsResponse>(
-            $"{_baseUrl}/hos_violations?driver_ids={externalDriverId}&start_date={startStr}&end_date={endStr}",
+            $"hos_violations?driver_ids={externalDriverId}&start_date={startStr}&end_date={endStr}",
             logger,
             $"Motive violations for driver {externalDriverId}",
             IntegrationJsonOptions.SnakeCase);
@@ -102,7 +89,7 @@ internal class MotiveEldService(
     public async Task<IEnumerable<EldDriverDto>> GetAllDriversAsync()
     {
         var result = await httpClient.TryGetFromJsonAsync<MotiveUsersResponse>(
-            $"{_baseUrl}/users?role=driver",
+            "users?role=driver",
             logger,
             "Motive users (drivers)",
             IntegrationJsonOptions.SnakeCase);
@@ -112,7 +99,7 @@ internal class MotiveEldService(
     public async Task<IEnumerable<EldVehicleDto>> GetAllVehiclesAsync()
     {
         var result = await httpClient.TryGetFromJsonAsync<MotiveVehiclesResponse>(
-            $"{_baseUrl}/vehicles",
+            "vehicles",
             logger,
             "Motive vehicles",
             IntegrationJsonOptions.SnakeCase);
@@ -124,7 +111,7 @@ internal class MotiveEldService(
         if (!WebhookSignature.VerifyHmacSha256(request.Body, request.Signature, webhookSecret))
         {
             logger.LogWarning("Rejected Motive webhook with invalid or unverifiable signature");
-            return Task.FromResult(InvalidWebhook("Invalid webhook signature"));
+            return Task.FromResult(EldWebhookResultDto.Invalid("Invalid webhook signature"));
         }
 
         try
@@ -132,7 +119,7 @@ internal class MotiveEldService(
             var webhook = JsonSerializer.Deserialize<MotiveWebhookPayload>(request.Body, IntegrationJsonOptions.SnakeCase);
             if (webhook is null)
             {
-                return Task.FromResult(InvalidWebhook("Failed to parse webhook payload"));
+                return Task.FromResult(EldWebhookResultDto.Invalid("Failed to parse webhook payload"));
             }
 
             var eventType = webhook.EventType switch
@@ -157,14 +144,7 @@ internal class MotiveEldService(
         catch (JsonException ex)
         {
             logger.LogError(ex, "Error processing Motive webhook");
-            return Task.FromResult(InvalidWebhook(ex.Message));
+            return Task.FromResult(EldWebhookResultDto.Invalid(ex.Message));
         }
     }
-
-    private static EldWebhookResultDto InvalidWebhook(string error) => new()
-    {
-        EventType = EldWebhookEventType.Unknown,
-        IsValid = false,
-        ErrorMessage = error
-    };
 }

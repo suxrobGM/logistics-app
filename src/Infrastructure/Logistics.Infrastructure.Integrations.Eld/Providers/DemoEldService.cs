@@ -141,13 +141,7 @@ internal class DemoEldService(ILogger<DemoEldService> logger) : IEldProviderServ
 
     public Task<EldWebhookResultDto> ProcessWebhookAsync(EldWebhookRequestDto request, string? webhookSecret)
     {
-        // Demo provider doesn't process real webhooks
-        return Task.FromResult(new EldWebhookResultDto
-        {
-            EventType = EldWebhookEventType.Unknown,
-            IsValid = false,
-            ErrorMessage = "Demo provider does not support webhooks"
-        });
+        return Task.FromResult(EldWebhookResultDto.Invalid("Demo provider does not support webhooks"));
     }
 
     #region Data Generation
