@@ -1,26 +1,30 @@
 using Logistics.Domain.Entities;
 using Logistics.Shared.Models;
+using Riok.Mapperly.Abstractions;
 
 namespace Logistics.Mappings;
 
-public static class SubscriptionMapper
+[Mapper]
+public static partial class SubscriptionMapper
 {
+    [MapperIgnoreSource(nameof(Subscription.Tenant))]
+    [MapperIgnoreSource(nameof(Subscription.Plan))]
+    [MapperIgnoreTarget(nameof(SubscriptionDto.Tenant))]
+    [MapperIgnoreTarget(nameof(SubscriptionDto.Plan))]
+    private static partial SubscriptionDto MapSubscription(Subscription entity);
+
     extension(Subscription entity)
     {
         public SubscriptionDto ToDto()
         {
-            return new SubscriptionDto
-            {
-                Id = entity.Id,
-                Status = entity.Status,
-                Tenant = GetTenantDto(entity.Tenant),
-                Plan = entity.Plan.ToDto(),
-                CancelAtPeriodEnd = entity.CancelAtPeriodEnd,
-                StripeSubscriptionId = entity.StripeSubscriptionId,
-            };
+            var dto = MapSubscription(entity);
+            return dto with { Tenant = GetTenantDto(entity.Tenant), Plan = entity.Plan.ToDto() };
         }
     }
 
+    /// <summary>
+    /// A trimmed tenant: <see cref="TenantMapper"/> would map the tenant's subscription back into it.
+    /// </summary>
     private static TenantDto GetTenantDto(Tenant entity)
     {
         return new TenantDto

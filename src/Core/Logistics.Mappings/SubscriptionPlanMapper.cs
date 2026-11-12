@@ -1,28 +1,23 @@
 using Logistics.Domain.Entities;
 using Logistics.Shared.Models;
+using Riok.Mapperly.Abstractions;
 
 namespace Logistics.Mappings;
 
-public static class SubscriptionPlanMapper
+[Mapper]
+public static partial class SubscriptionPlanMapper
 {
+    [MapperIgnoreSource(nameof(SubscriptionPlan.Subscriptions))]
+    [MapperIgnoreSource(nameof(SubscriptionPlan.Features))]
+    [MapperIgnoreTarget(nameof(SubscriptionPlanDto.Features))]
+    private static partial SubscriptionPlanDto MapPlan(SubscriptionPlan entity);
+
     extension(SubscriptionPlan entity)
     {
         public SubscriptionPlanDto ToDto()
         {
-            return new SubscriptionPlanDto
-            {
-                Id = entity.Id,
-                Name = entity.Name,
-                Description = entity.Description,
-                Tier = entity.Tier,
-                Price = entity.Price,
-                PerTruckPrice = entity.PerTruckPrice,
-                MaxTrucks = entity.MaxTrucks,
-                Interval = entity.Interval,
-                IntervalCount = entity.IntervalCount,
-                WeeklyAIBudgetUsd = entity.WeeklyAIBudgetUsd,
-                Features = entity.Features.Select(f => f.Feature).ToList()
-            };
+            var dto = MapPlan(entity);
+            return dto with { Features = entity.Features.Select(f => f.Feature).ToList() };
         }
     }
 }

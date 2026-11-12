@@ -1,31 +1,57 @@
 using Logistics.Domain.Entities;
-using Logistics.Domain.Primitives.Enums;
 using Logistics.Domain.Primitives.ValueObjects;
 using Logistics.Shared.Models;
+using Riok.Mapperly.Abstractions;
 
 namespace Logistics.Mappings;
 
-public static class EldMapper
+[Mapper]
+public static partial class EldMapper
 {
+    [MapperIgnoreTarget(nameof(EldProviderConfigurationDto.MappedDriversCount))]
+    [MapperIgnoreTarget(nameof(EldProviderConfigurationDto.MappedVehiclesCount))]
+    [MapProperty(nameof(EldProviderConfiguration.ProviderType), nameof(EldProviderConfigurationDto.ProviderName), Use = nameof(@MappingConversions.Describe))]
+    [MapPropertyFromSource(nameof(EldProviderConfigurationDto.IsConnected), Use = nameof(IsConnected))]
+    [MapProperty(nameof(EldProviderConfiguration.WebhookSecret), nameof(EldProviderConfigurationDto.HasWebhookSecret), Use = nameof(@MappingConversions.HasText))]
+    private static partial EldProviderConfigurationDto MapProviderConfiguration(EldProviderConfiguration entity);
+
+    [MapperIgnoreSource(nameof(DriverHosStatus.Employee))]
+    [MapperIgnoreTarget(nameof(DriverHosStatusDto.EmployeeName))]
+    [MapperIgnoreTarget(nameof(DriverHosStatusDto.IsAvailableForDispatch))]
+    [MapProperty(nameof(DriverHosStatus.CurrentDutyStatus), nameof(DriverHosStatusDto.CurrentDutyStatusDisplay), Use = nameof(@MappingConversions.Describe))]
+    [MapProperty(nameof(DriverHosStatus.DrivingMinutesRemaining), nameof(DriverHosStatusDto.DrivingTimeRemainingDisplay), Use = nameof(FormatMinutes))]
+    [MapProperty(nameof(DriverHosStatus.OnDutyMinutesRemaining), nameof(DriverHosStatusDto.OnDutyTimeRemainingDisplay), Use = nameof(FormatMinutes))]
+    [MapProperty(nameof(DriverHosStatus.CycleMinutesRemaining), nameof(DriverHosStatusDto.CycleTimeRemainingDisplay), Use = nameof(FormatMinutes))]
+    private static partial DriverHosStatusDto MapHosStatus(DriverHosStatus entity);
+
+    [MapperIgnoreSource(nameof(EldDriverMapping.Employee))]
+    [MapperIgnoreTarget(nameof(EldDriverMappingDto.EmployeeName))]
+    private static partial EldDriverMappingDto MapDriverMapping(EldDriverMapping entity);
+
+    [MapperIgnoreSource(nameof(EldVehicleMapping.Truck))]
+    [MapperIgnoreTarget(nameof(EldVehicleMappingDto.TruckNumber))]
+    private static partial EldVehicleMappingDto MapVehicleMapping(EldVehicleMapping entity);
+
+    [MapperIgnoreSource(nameof(HosLog.Employee))]
+    [MapperIgnoreTarget(nameof(HosLogDto.EmployeeName))]
+    [MapProperty(nameof(HosLog.DutyStatus), nameof(HosLogDto.DutyStatusDisplay), Use = nameof(@MappingConversions.Describe))]
+    [MapProperty(nameof(HosLog.DurationMinutes), nameof(HosLogDto.DurationDisplay), Use = nameof(FormatMinutes))]
+    private static partial HosLogDto MapHosLog(HosLog entity);
+
+    [MapperIgnoreSource(nameof(HosViolation.Employee))]
+    [MapperIgnoreTarget(nameof(HosViolationDto.EmployeeName))]
+    [MapProperty(nameof(HosViolation.ViolationType), nameof(HosViolationDto.ViolationTypeDisplay), Use = nameof(@MappingConversions.Describe))]
+    private static partial HosViolationDto MapHosViolation(HosViolation entity);
+
+    public static partial HosLimitsDto ToDto(this HosLimits limits);
+
     extension(EldProviderConfiguration entity)
     {
         public EldProviderConfigurationDto ToDto(int mappedDriversCount = 0,
             int mappedVehiclesCount = 0)
         {
-            return new EldProviderConfigurationDto
-            {
-                Id = entity.Id,
-                ProviderType = entity.ProviderType,
-                ProviderName = entity.ProviderType.GetDescription(),
-                IsActive = entity.IsActive,
-                LastSyncedAt = entity.LastSyncedAt,
-                IsConnected = entity.IsActive && !string.IsNullOrEmpty(entity.ApiKey),
-                MappedDriversCount = mappedDriversCount,
-                MappedVehiclesCount = mappedVehiclesCount,
-                ExternalAccountId = entity.ExternalAccountId,
-                Region = entity.Region,
-                HasWebhookSecret = !string.IsNullOrEmpty(entity.WebhookSecret)
-            };
+            var dto = MapProviderConfiguration(entity);
+            return dto with { MappedDriversCount = mappedDriversCount, MappedVehiclesCount = mappedVehiclesCount };
         }
     }
 
@@ -33,24 +59,11 @@ public static class EldMapper
     {
         public DriverHosStatusDto ToDto(string? employeeName = null)
         {
-            return new DriverHosStatusDto
+            var dto = MapHosStatus(entity);
+            return dto with
             {
-                EmployeeId = entity.EmployeeId,
                 EmployeeName = employeeName ?? entity.Employee?.GetFullName(),
-                CurrentDutyStatus = entity.CurrentDutyStatus,
-                CurrentDutyStatusDisplay = entity.CurrentDutyStatus.GetDescription(),
-                StatusChangedAt = entity.StatusChangedAt,
-                DrivingMinutesRemaining = entity.DrivingMinutesRemaining,
-                OnDutyMinutesRemaining = entity.OnDutyMinutesRemaining,
-                CycleMinutesRemaining = entity.CycleMinutesRemaining,
-                DrivingTimeRemainingDisplay = FormatMinutes(entity.DrivingMinutesRemaining),
-                OnDutyTimeRemainingDisplay = FormatMinutes(entity.OnDutyMinutesRemaining),
-                CycleTimeRemainingDisplay = FormatMinutes(entity.CycleMinutesRemaining),
-                TimeUntilBreakRequired = entity.TimeUntilBreakRequired,
-                IsInViolation = entity.IsInViolation,
-                IsAvailableForDispatch = entity.IsAvailableForDispatch(),
-                LastUpdatedAt = entity.LastUpdatedAt,
-                NextMandatoryBreakAt = entity.NextMandatoryBreakAt
+                IsAvailableForDispatch = entity.IsAvailableForDispatch()
             };
         }
     }
@@ -59,17 +72,8 @@ public static class EldMapper
     {
         public EldDriverMappingDto ToDto(string? employeeName = null)
         {
-            return new EldDriverMappingDto
-            {
-                Id = entity.Id,
-                EmployeeId = entity.EmployeeId,
-                EmployeeName = employeeName ?? entity.Employee?.GetFullName(),
-                ProviderType = entity.ProviderType,
-                ExternalDriverId = entity.ExternalDriverId,
-                ExternalDriverName = entity.ExternalDriverName,
-                IsSyncEnabled = entity.IsSyncEnabled,
-                LastSyncedAt = entity.LastSyncedAt
-            };
+            var dto = MapDriverMapping(entity);
+            return dto with { EmployeeName = employeeName ?? entity.Employee?.GetFullName() };
         }
     }
 
@@ -77,17 +81,8 @@ public static class EldMapper
     {
         public EldVehicleMappingDto ToDto(string? truckNumber = null)
         {
-            return new EldVehicleMappingDto
-            {
-                Id = entity.Id,
-                TruckId = entity.TruckId,
-                TruckNumber = truckNumber ?? entity.Truck?.Number,
-                ProviderType = entity.ProviderType,
-                ExternalVehicleId = entity.ExternalVehicleId,
-                ExternalVehicleName = entity.ExternalVehicleName,
-                IsSyncEnabled = entity.IsSyncEnabled,
-                LastSyncedAt = entity.LastSyncedAt
-            };
+            var dto = MapVehicleMapping(entity);
+            return dto with { TruckNumber = truckNumber ?? entity.Truck?.Number };
         }
     }
 
@@ -95,24 +90,8 @@ public static class EldMapper
     {
         public HosLogDto ToDto(string? employeeName = null)
         {
-            return new HosLogDto
-            {
-                Id = entity.Id,
-                EmployeeId = entity.EmployeeId,
-                EmployeeName = employeeName ?? entity.Employee?.GetFullName(),
-                LogDate = entity.LogDate,
-                DutyStatus = entity.DutyStatus,
-                DutyStatusDisplay = entity.DutyStatus.GetDescription(),
-                StartTime = entity.StartTime,
-                EndTime = entity.EndTime,
-                DurationMinutes = entity.DurationMinutes,
-                DurationDisplay = FormatMinutes(entity.DurationMinutes),
-                Location = entity.Location,
-                Latitude = entity.Latitude,
-                Longitude = entity.Longitude,
-                Remark = entity.Remark,
-                ProviderType = entity.ProviderType
-            };
+            var dto = MapHosLog(entity);
+            return dto with { EmployeeName = employeeName ?? entity.Employee?.GetFullName() };
         }
     }
 
@@ -120,43 +99,13 @@ public static class EldMapper
     {
         public HosViolationDto ToDto(string? employeeName = null)
         {
-            return new HosViolationDto
-            {
-                Id = entity.Id,
-                EmployeeId = entity.EmployeeId,
-                EmployeeName = employeeName ?? entity.Employee?.GetFullName(),
-                ViolationDate = entity.ViolationDate,
-                ViolationType = entity.ViolationType,
-                ViolationTypeDisplay = entity.ViolationType.GetDescription(),
-                Description = entity.Description,
-                SeverityLevel = entity.SeverityLevel,
-                IsResolved = entity.IsResolved,
-                ResolvedAt = entity.ResolvedAt,
-                ProviderType = entity.ProviderType,
-                RuleSetCode = entity.RuleSetCode
-            };
+            var dto = MapHosViolation(entity);
+            return dto with { EmployeeName = employeeName ?? entity.Employee?.GetFullName() };
         }
     }
 
-    extension(HosLimits limits)
-    {
-        public HosLimitsDto ToDto()
-        {
-            return new HosLimitsDto
-            {
-                RuleSetCode = limits.RuleSetCode,
-                MaxDailyDrivingMinutes = limits.MaxDailyDrivingMinutes,
-                MaxDailyOnDutyMinutes = limits.MaxDailyOnDutyMinutes,
-                MaxWeeklyDrivingMinutes = limits.MaxWeeklyDrivingMinutes,
-                MaxBiweeklyDrivingMinutes = limits.MaxBiweeklyDrivingMinutes,
-                MaxContinuousDrivingMinutes = limits.MaxContinuousDrivingMinutes,
-                MinDailyRestMinutes = limits.MinDailyRestMinutes,
-                MinWeeklyRestMinutes = limits.MinWeeklyRestMinutes,
-                RequiredBreakAfterMinutes = limits.RequiredBreakAfterMinutes,
-                CycleDays = limits.CycleDays
-            };
-        }
-    }
+    private static bool IsConnected(EldProviderConfiguration entity) =>
+        entity.IsActive && !string.IsNullOrEmpty(entity.ApiKey);
 
     private static string FormatMinutes(int totalMinutes)
     {

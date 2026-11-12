@@ -1,26 +1,23 @@
 using Logistics.Domain.Entities;
 using Logistics.Shared.Models;
+using Riok.Mapperly.Abstractions;
 
 namespace Logistics.Mappings;
 
-public static class UserMapper
+[Mapper]
+public static partial class UserMapper
 {
+    [MapperIgnoreSource(nameof(User.Tenant))]
+    [MapperIgnoreTarget(nameof(UserDto.TenantName))]
+    [MapperIgnoreTarget(nameof(UserDto.Role))]
+    private static partial UserDto MapUser(User entity);
+
     extension(User entity)
     {
         public UserDto ToDto(string? role = null)
         {
-            var dto = new UserDto
-            {
-                Id = entity.Id,
-                FirstName = entity.FirstName,
-                LastName = entity.LastName,
-                Role = role,
-                Email = entity.Email,
-                PhoneNumber = entity.PhoneNumber,
-                TenantId = entity.TenantId,
-                TenantName = entity.Tenant?.Name
-            };
-            return dto;
+            var dto = MapUser(entity);
+            return dto with { Role = role, TenantName = entity.Tenant?.Name };
         }
     }
 }
