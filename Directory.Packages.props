@@ -50,9 +50,9 @@
     <PackageVersion Include="NetTopologySuite.IO.GeoJSON4STJ" Version="4.0.0" />
     <PackageVersion Include="Npgsql.EntityFrameworkCore.PostgreSQL" Version="10.0.3" />
     <PackageVersion Include="NSubstitute" Version="6.2.0" />
-    <PackageVersion Include="Open.IdentityServer.AspNetIdentity" Version="2.0.0" />
-    <PackageVersion Include="Open.IdentityServer.EntityFramework" Version="2.0.0" />
-    <PackageVersion Include="Open.IdentityServer.EntityFramework.Storage" Version="2.0.0" />
+    <PackageVersion Include="Open.IdentityServer.AspNetIdentity" Version="3.1.5" />
+    <PackageVersion Include="Open.IdentityServer.EntityFramework" Version="3.1.5" />
+    <PackageVersion Include="Open.IdentityServer.EntityFramework.Storage" Version="3.1.5" />
     <PackageVersion Include="OpenAI" Version="2.15.0" />
     <PackageVersion Include="PdfPig" Version="0.1.16" />
     <PackageVersion Include="QuestPDF" Version="2026.9.1" />
