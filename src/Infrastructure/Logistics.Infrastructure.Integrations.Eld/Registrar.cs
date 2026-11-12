@@ -16,9 +16,6 @@ public static class Registrar
 {
     extension(IServiceCollection services)
     {
-        /// <summary>
-        ///     Add ELD provider integrations (Samsara, Motive, TT ELD, Demo).
-        /// </summary>
         public IServiceCollection AddEldIntegrations(
             IConfiguration configuration)
         {
@@ -43,15 +40,12 @@ public static class Registrar
             services.AddKeyedProvider<IEldProviderService, DemoEldService>(EldProviderType.Demo);
             services.AddKeyedProvider<IEldProviderService, GeotabEldService>(EldProviderType.Geotab);
 
-            // Options binding + factory pattern for provider selection
             services.AddProviderIntegration<EldOptions, IEldProviderFactory, EldProviderFactory>(
                 configuration, EldOptions.SectionName);
             return services;
         }
     }
 
-    /// <summary>
-    /// The trailing slash keeps a path base such as Motive's <c>/v1</c> when a relative URL is resolved.
-    /// </summary>
+    /// <summary>The trailing slash keeps a path base such as Motive's <c>/v1</c> when resolving relative URLs.</summary>
     private static Uri ToBaseAddress(string baseUrl) => new($"{baseUrl.TrimEnd('/')}/");
 }

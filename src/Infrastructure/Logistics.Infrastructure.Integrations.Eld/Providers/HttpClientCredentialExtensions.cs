@@ -6,10 +6,7 @@ internal static class HttpClientCredentialExtensions
 {
     extension(HttpClient httpClient)
     {
-        /// <summary>
-        /// Sends an authenticated probe and reports whether the vendor accepted it. A transport failure
-        /// is logged and reported as invalid credentials.
-        /// </summary>
+        /// <summary>A transport failure is logged and reported as invalid credentials.</summary>
         public async Task<bool> ValidateCredentialsAsync(HttpRequestMessage request, ILogger logger, string providerName)
         {
             try

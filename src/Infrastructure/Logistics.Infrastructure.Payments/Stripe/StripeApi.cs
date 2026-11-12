@@ -5,10 +5,7 @@ namespace Logistics.Infrastructure.Payments.Stripe;
 
 internal static class StripeApi
 {
-    /// <summary>
-    /// Runs a Stripe SDK call and rethrows its <see cref="StripeException"/> as the SDK-free
-    /// <see cref="StripeApiException"/> that the ports promise their callers.
-    /// </summary>
+    /// <summary>Rethrows <see cref="StripeException"/> as the SDK-free <see cref="StripeApiException"/> the ports promise.</summary>
     public static async Task<T> CallAsync<T>(Func<Task<T>> call)
     {
         try

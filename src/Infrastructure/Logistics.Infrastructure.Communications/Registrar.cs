@@ -22,14 +22,10 @@ public static class Registrar
 {
     extension(IServiceCollection services)
     {
-        /// <summary>
-        ///     Add communications infrastructure (SignalR, Email, Push Notifications).
-        /// </summary>
         public IServiceCollection AddCommunicationsInfrastructure(
             IConfiguration configuration)
         {
-            // Hub payloads must match the REST wire contract (snake_case string enums) - the generated
-            // frontend types are string unions, so numeric enums silently fail every status comparison.
+            // Snake_case string enums like REST: the frontend's string unions fail every comparison against numbers.
             services.AddSignalR().AddJsonProtocol(options =>
             {
                 options.PayloadSerializerOptions.Converters.Add(
@@ -37,7 +33,6 @@ public static class Registrar
             });
             services.AddSingleton<TrackingHubContext>();
 
-            // SignalR abstractions for Application layer
             services.AddScoped<IRealtimeMessagingService, SignalRMessagingService>();
             services.AddScoped<IRealtimeLiveTrackingService, SignalRLiveTrackingService>();
             services.AddScoped<IRealtimeNotificationService, SignalRNotificationService>();
@@ -45,7 +40,6 @@ public static class Registrar
             services.AddScoped<IAIDispatchBroadcastService, SignalRAIDispatchBroadcastService>();
             services.AddScoped<IAICopilotBroadcastService, SignalRAICopilotBroadcastService>();
 
-            // Email services (Resend)
             services.Configure<ResendOptions>(configuration.GetSection(ResendOptions.SectionName));
             services.AddOptions();
             services.AddHttpClient<ResendClient>();
@@ -61,11 +55,9 @@ public static class Registrar
             services.AddScoped<IInboundEmailWebhookVerifier, ResendWebhookVerifier>();
             services.AddSingleton<IEmailTemplateService, FluidEmailTemplateService>();
 
-            // Push notifications
             services.AddScoped<INotificationService, NotificationService>();
             services.AddSingleton<IPushNotificationService, PushNotificationService>();
 
-            // Google Recaptcha
             services.Configure<GoogleRecaptchaOptions>(configuration.GetSection(GoogleRecaptchaOptions.SectionName));
             services.AddSingleton<ICaptchaService, GoogleRecaptchaService>();
 

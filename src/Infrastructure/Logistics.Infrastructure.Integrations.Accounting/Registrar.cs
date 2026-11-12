@@ -12,9 +12,6 @@ public static class Registrar
 {
     extension(IServiceCollection services)
     {
-        /// <summary>
-        ///     Add accounting provider integrations (QuickBooks Online, Demo).
-        /// </summary>
         public IServiceCollection AddAccountingIntegrations(
             IConfiguration configuration)
         {

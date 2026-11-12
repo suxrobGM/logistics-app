@@ -12,11 +12,7 @@ public static class Registrar
 {
     extension(IServiceCollection services)
     {
-        /// <summary>
-        /// Registers <c>ITaxCalculator</c> per <c>Tax:Provider</c> ("stripe" | "manual").
-        /// Defaults to Stripe. Always registers <c>IStripeTaxConfigService</c> so the API can
-        /// expose Stripe Tax onboarding info regardless of which calculator is selected.
-        /// </summary>
+        /// <summary><c>Tax:Provider</c> "manual" selects the manual calculator; anything else uses Stripe.</summary>
         public IServiceCollection AddTaxInfrastructure(
             IConfiguration configuration)
         {

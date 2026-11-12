@@ -4,25 +4,12 @@ using Microsoft.Extensions.Logging;
 
 namespace Logistics.Infrastructure.Integrations.Common;
 
-/// <summary>
-/// HttpClient JSON helpers shared by the third-party integration providers (load board, fuel
-/// card, ELD). These wrap the "send + status check + JSON deserialise + log on failure" pattern
-/// so provider services stay focused on URL composition and DTO mapping.
-///
-/// Note the contract: these never throw - a failure is logged and returns <c>default</c>. Push
-/// paths that must surface an error to the caller (e.g. the QuickBooks helpers in
-/// Integrations.Accounting) deliberately do NOT belong here.
-/// </summary>
+/// <summary>Never throw: a failure is logged and returns <c>default</c>, so calls that must surface errors don't belong here.</summary>
 public static class HttpClientJsonExtensions
 {
     extension(HttpClient client)
     {
-        /// <summary>
-        /// Performs a GET, deserialises the JSON body to <typeparamref name="T"/> on success, or
-        /// returns <c>default</c> on a non-success status, network error, or parse failure. All
-        /// failures are logged with the supplied <paramref name="action"/> label; the calling
-        /// service's logger category identifies which integration it was.
-        /// </summary>
+        /// <summary>Returns <c>default</c> on any failure, logged under the <paramref name="action"/> label.</summary>
         public async Task<T?> TryGetFromJsonAsync<T>(
             string url,
             ILogger logger,

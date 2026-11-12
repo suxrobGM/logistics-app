@@ -5,18 +5,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace Logistics.Infrastructure.Persistence.Converters;
 
-/// <summary>
-/// EF Core value converter that stores enum values as snake_case strings in the database,
-/// named by <see cref="JsonNamingPolicy.SnakeCaseLower"/>. E.g., LoadStatus.PickedUp -> "picked_up".
-/// Reading is case-insensitive and also accepts PascalCase and numeric values.
-/// </summary>
+/// <summary>Stores enums as snake_case strings; reading also accepts any case and numeric values.</summary>
 public class SnakeCaseEnumConverter<TEnum> : ValueConverter<TEnum, string>
     where TEnum : struct, Enum
 {
-    /// <summary>
-    /// Members stored before the BCL policy was used. The old converter did not split a capital
-    /// that follows a digit, and existing rows keep that spelling.
-    /// </summary>
+    /// <summary>Spellings existing rows keep, where a capital after a digit was not split.</summary>
     private static readonly FrozenDictionary<Enum, string> LegacyNames = new Dictionary<Enum, string>
     {
         [LicenseClass.EUC1E] = "euc1e"

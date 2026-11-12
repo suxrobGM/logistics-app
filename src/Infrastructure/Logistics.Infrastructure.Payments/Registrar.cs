@@ -10,22 +10,15 @@ public static class Registrar
 {
     extension(IServiceCollection services)
     {
-        /// <summary>
-        ///     Add payment infrastructure (Stripe standard + Connect).
-        /// </summary>
         public IServiceCollection AddPaymentsInfrastructure(
             IConfiguration configuration)
         {
-            // Configuration
             services.Configure<StripeOptions>(
                 configuration.GetSection(StripeOptions.SectionName));
 
-            // Bootstraps Stripe.NET's static StripeConfiguration.ApiKey once at host startup so
-            // every Stripe-using service (here and in Logistics.Infrastructure.Tax) can rely on it
-            // without repeating the init.
+            // Sets Stripe.NET's static API key once; the services here and in Infrastructure.Tax rely on it.
             services.AddHostedService<StripeApiKeyInitializer>();
 
-            // Stripe services
             services.AddSingleton<IStripeWebhookParser, StripeWebhookParser>();
             services.AddSingleton<IStripeCustomerService, StripeCustomerService>();
             services.AddScoped<IStripeSubscriptionService, StripeSubscriptionService>();

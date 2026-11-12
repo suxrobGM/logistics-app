@@ -8,9 +8,8 @@ using Logistics.Application.Abstractions.LoadBoard;
 namespace Logistics.Infrastructure.Integrations.LoadBoard;
 
 /// <summary>
-/// Sends a load board request and throws <see cref="LoadBoardApiException"/> with the vendor's
-/// own error text on any failure. Deliberately not the never-throwing
-/// <c>Integrations.Common</c> helpers: a swallowed failure reads as "no freight" to a dispatcher.
+/// Throws <see cref="LoadBoardApiException"/> with the vendor's error text, since a swallowed failure would
+/// read as "no freight" to a dispatcher.
 /// </summary>
 internal static class LoadBoardHttp
 {
@@ -23,10 +22,6 @@ internal static class LoadBoardHttp
 
     extension(HttpClient client)
     {
-        /// <summary>
-        /// Sends <paramref name="body"/> as JSON (when not null) with an optional bearer token and
-        /// reads the response body as <typeparamref name="T"/>.
-        /// </summary>
         public async Task<T> SendJsonAsync<T>(
             HttpMethod method,
             string url,
@@ -47,9 +42,6 @@ internal static class LoadBoardHttp
             }
         }
 
-        /// <summary>
-        /// Sends a request whose response body is not needed.
-        /// </summary>
         public async Task SendJsonAsync(
             HttpMethod method,
             string url,

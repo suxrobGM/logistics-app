@@ -5,10 +5,7 @@ using Microsoft.EntityFrameworkCore.Metadata.Conventions;
 
 namespace Logistics.Infrastructure.Persistence.Conventions;
 
-/// <summary>
-/// Limits <see cref="Money.Currency"/> to the three letters of an ISO 4217 code on every
-/// <see cref="Money"/> complex property, including nested ones.
-/// </summary>
+/// <summary>Caps <see cref="Money.Currency"/> at 3 (ISO 4217) on every <see cref="Money"/>, nested ones included.</summary>
 public class MoneyCurrencyLengthConvention : IModelFinalizingConvention
 {
     public void ProcessModelFinalizing(
