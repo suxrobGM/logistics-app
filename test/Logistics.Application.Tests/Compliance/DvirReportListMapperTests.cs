@@ -20,10 +20,7 @@ public class DvirReportListMapperTests
         _sut = new DvirReportListMapper(_tenantUow, _names);
     }
 
-    /// <summary>
-    /// The navigations are left unset, so a lazy read would come back empty: every name and defect must
-    /// come from the page-wide lookups, matched to the right report.
-    /// </summary>
+    /// <summary>Navigations stay unset, so a lazy read would come back empty.</summary>
     [Fact]
     public async Task MapAsync_FillsNamesAndDefectsFromThePageLookups()
     {

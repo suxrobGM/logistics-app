@@ -4,17 +4,11 @@ using Microsoft.AspNetCore.RateLimiting;
 
 namespace Logistics.HostDefaults;
 
-/// <summary>
-/// Shared rate-limiting building blocks for the presentation hosts.
-/// </summary>
 public static class RateLimitingExtensions
 {
     extension(RateLimiterOptions options)
     {
-        /// <summary>
-        /// Adds a strict per-IP fixed-window policy (no queue), used by both hosts to throttle the
-        /// impersonation endpoints.
-        /// </summary>
+        /// <summary>Per-IP fixed window with no queue: excess requests are rejected at once.</summary>
         public RateLimiterOptions AddIpFixedWindowPolicy(
             string policyName, int permitLimit, TimeSpan window)
         {

@@ -19,12 +19,7 @@ public static class Registrar
 {
     extension(IServiceCollection services)
     {
-        /// <summary>
-        ///   Add Telegram Bot services and handlers
-        /// </summary>
-        /// <param name="services">The service collection</param>
-        /// <param name="configuration">The configuration</param>
-        /// <param name="isDevelopment">If true, uses long polling instead of webhook (for local development)</param>
+        /// <summary>Registers nothing without a bot token; <paramref name="isDevelopment"/> long-polls instead of using the webhook.</summary>
         public IServiceCollection AddTelegramBotInfrastructure(
             IConfiguration configuration, bool isDevelopment = false)
         {
@@ -35,18 +30,14 @@ public static class Registrar
             if (string.IsNullOrEmpty(botOptions?.BotToken))
                 return services;
 
-            // Telegram bot client (singleton - thread-safe)
             services.AddSingleton<ITelegramBotClient>(new TelegramBotClient(botOptions.BotToken));
 
-            // Authentication
             services.AddScoped<TelegramAuthService>();
 
-            // Handlers
             services.AddScoped<TelegramUpdateDispatcher>();
             services.AddScoped<CommandRouter>();
             services.AddScoped<CallbackQueryHandler>();
 
-            // Commands
             services.AddScoped<ITelegramCommand, StartCommand>();
             services.AddScoped<ITelegramCommand, DisconnectCommand>();
             services.AddScoped<ITelegramCommand, LoadsCommand>();
@@ -56,13 +47,10 @@ public static class Registrar
             services.AddScoped<ITelegramCommand, NotifyCommand>();
             services.AddScoped<ITelegramCommand, HelpCommand>();
 
-            // Services
             services.AddSingleton<ITelegramNotificationService, TelegramNotificationService>();
 
-            // Background services
             services.AddHostedService<TelegramChatCacheWarmer>();
 
-            // Development mode: use long polling
             if (isDevelopment)
             {
                 services.AddHostedService<TelegramPollingService>();

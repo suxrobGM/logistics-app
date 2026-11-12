@@ -10,10 +10,7 @@ using Serilog.Events;
 
 namespace Logistics.HostDefaults;
 
-/// <summary>
-/// Error tracking for the presentation hosts. Off unless <c>Sentry:Dsn</c> is configured; when on,
-/// Serilog <c>Error</c>+ entries become Sentry events and lower levels ride along as breadcrumbs.
-/// </summary>
+/// <summary>Off unless <c>Sentry:Dsn</c> is set; then Serilog errors become events and lower levels breadcrumbs.</summary>
 public static class SentryExtensions
 {
     private const string DsnKey = "Sentry:Dsn";
@@ -26,11 +23,7 @@ public static class SentryExtensions
 
     extension(WebApplicationBuilder builder)
     {
-        /// <summary>
-        /// Initialises the SDK from the <c>Sentry</c> configuration section. Environment falls back to
-        /// <c>SENTRY_ENVIRONMENT</c>, then the host environment; release to <c>SENTRY_RELEASE</c>, then
-        /// the product version. The portals read the same two variables, so all events line up.
-        /// </summary>
+        /// <summary>Reads <c>SENTRY_ENVIRONMENT</c> and <c>SENTRY_RELEASE</c> like the portals do, so their events line up.</summary>
         public WebApplicationBuilder AddLogisticsSentry()
         {
             if (!builder.Configuration.IsSentryEnabled())
@@ -58,9 +51,7 @@ public static class SentryExtensions
 
     extension(LoggerConfiguration loggerConfiguration)
     {
-        /// <summary>
-        /// Routes Serilog into the SDK that <see cref="AddLogisticsSentry"/> initialised.
-        /// </summary>
+        /// <summary>Relies on the SDK that <see cref="AddLogisticsSentry"/> initialised.</summary>
         public LoggerConfiguration WriteToSentryIfEnabled(
             IConfiguration configuration)
         {
