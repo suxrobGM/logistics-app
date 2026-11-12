@@ -1,3 +1,4 @@
+using Logistics.API.Extensions;
 using Logistics.Application.Modules.Platform.ProductLicense.Commands;
 using Logistics.Application.Modules.Platform.ProductLicense.Queries;
 using Logistics.Shared.Identity.Policies;
@@ -23,7 +24,7 @@ public class ProductLicenseController(IMediator mediator) : ControllerBase
     public async Task<IActionResult> GetProductLicenseStatus()
     {
         var result = await mediator.Send(new GetProductLicenseStatusQuery());
-        return result.IsSuccess ? Ok(result.Value) : BadRequest(ErrorResponse.FromResult(result));
+        return result.ToActionResult();
     }
 
     [HttpPut("key", Name = "SetProductLicenseKey")]
@@ -33,7 +34,7 @@ public class ProductLicenseController(IMediator mediator) : ControllerBase
     public async Task<IActionResult> SetProductLicenseKey([FromBody] SetProductLicenseKeyCommand command)
     {
         var result = await mediator.Send(command);
-        return result.IsSuccess ? Ok(result.Value) : BadRequest(ErrorResponse.FromResult(result));
+        return result.ToActionResult();
     }
 
     [HttpPost("heartbeat", Name = "RecordProductLicenseHeartbeat")]
@@ -44,7 +45,7 @@ public class ProductLicenseController(IMediator mediator) : ControllerBase
     public async Task<IActionResult> RecordProductLicenseHeartbeat([FromBody] ProductLicenseHeartbeatDto report)
     {
         var result = await mediator.Send(new RecordProductLicenseHeartbeatCommand(report));
-        return result.IsSuccess ? NoContent() : BadRequest(ErrorResponse.FromResult(result));
+        return result.ToActionResult();
     }
 
     /// <summary>
@@ -56,6 +57,6 @@ public class ProductLicenseController(IMediator mediator) : ControllerBase
     public async Task<IActionResult> GetProductLicenseDiscovery()
     {
         var result = await mediator.Send(new GetProductLicenseDiscoveryQuery());
-        return result.IsSuccess ? Ok(result.Value) : BadRequest(ErrorResponse.FromResult(result));
+        return result.ToActionResult();
     }
 }

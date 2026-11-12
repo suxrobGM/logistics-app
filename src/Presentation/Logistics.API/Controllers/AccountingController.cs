@@ -1,3 +1,4 @@
+using Logistics.API.Extensions;
 using Logistics.Application.Modules.Integrations.Accounting.Commands;
 using Logistics.Application.Modules.Integrations.Accounting.Queries;
 using Logistics.Infrastructure.Integrations.Accounting;
@@ -25,7 +26,7 @@ public class AccountingController(
     public async Task<IActionResult> GetConnection()
     {
         var result = await mediator.Send(new GetQuickBooksConnectionQuery());
-        return result.IsSuccess ? Ok(result.Value) : BadRequest(ErrorResponse.FromResult(result));
+        return result.ToActionResult();
     }
 
     [HttpGet("quickbooks/connect", Name = "ConnectQuickBooks")]
@@ -35,7 +36,7 @@ public class AccountingController(
     public async Task<IActionResult> Connect()
     {
         var result = await mediator.Send(new GetQuickBooksAuthUrlQuery());
-        return result.IsSuccess ? Ok(result.Value) : BadRequest(ErrorResponse.FromResult(result));
+        return result.ToActionResult();
     }
 
     [HttpDelete("quickbooks", Name = "DisconnectQuickBooks")]
@@ -45,7 +46,7 @@ public class AccountingController(
     public async Task<IActionResult> Disconnect()
     {
         var result = await mediator.Send(new DisconnectQuickBooksCommand());
-        return result.IsSuccess ? NoContent() : BadRequest(ErrorResponse.FromResult(result));
+        return result.ToActionResult();
     }
 
     [HttpGet("quickbooks/lookups", Name = "GetQuickBooksLookups")]
@@ -55,7 +56,7 @@ public class AccountingController(
     public async Task<IActionResult> GetLookups()
     {
         var result = await mediator.Send(new GetQuickBooksLookupsQuery());
-        return result.IsSuccess ? Ok(result.Value) : BadRequest(ErrorResponse.FromResult(result));
+        return result.ToActionResult();
     }
 
     [HttpPut("quickbooks/settings", Name = "UpdateQuickBooksSettings")]
@@ -65,7 +66,7 @@ public class AccountingController(
     public async Task<IActionResult> UpdateSettings([FromBody] UpdateQuickBooksSettingsCommand request)
     {
         var result = await mediator.Send(request);
-        return result.IsSuccess ? NoContent() : BadRequest(ErrorResponse.FromResult(result));
+        return result.ToActionResult();
     }
 
     [HttpPost("quickbooks/sync", Name = "SyncQuickBooks")]
@@ -85,7 +86,7 @@ public class AccountingController(
     public async Task<IActionResult> GetSyncIssues()
     {
         var result = await mediator.Send(new GetQuickBooksSyncIssuesQuery());
-        return result.IsSuccess ? Ok(result.Value) : BadRequest(ErrorResponse.FromResult(result));
+        return result.ToActionResult();
     }
 
     /// <summary>

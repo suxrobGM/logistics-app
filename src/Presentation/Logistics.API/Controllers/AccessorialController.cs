@@ -1,3 +1,4 @@
+using Logistics.API.Extensions;
 using Logistics.Application.Modules.Financial.Accessorials.Commands;
 using Logistics.Application.Modules.Financial.Accessorials.Queries;
 using Logistics.Mediator;
@@ -32,7 +33,7 @@ public class AccessorialController(IMediator mediator) : ControllerBase
     public async Task<IActionResult> Create([FromBody] CreateAccessorialChargeCommand request)
     {
         var result = await mediator.Send(request);
-        return result.IsSuccess ? Ok(result.Value) : BadRequest(ErrorResponse.FromResult(result));
+        return result.ToActionResult();
     }
 
     [HttpPut("{id:guid}", Name = "UpdateAccessorialCharge")]
@@ -43,7 +44,7 @@ public class AccessorialController(IMediator mediator) : ControllerBase
     {
         request.Id = id;
         var result = await mediator.Send(request);
-        return result.IsSuccess ? NoContent() : BadRequest(ErrorResponse.FromResult(result));
+        return result.ToActionResult();
     }
 
     [HttpDelete("{id:guid}", Name = "DeleteAccessorialCharge")]
@@ -53,6 +54,6 @@ public class AccessorialController(IMediator mediator) : ControllerBase
     public async Task<IActionResult> Delete(Guid id)
     {
         var result = await mediator.Send(new DeleteAccessorialChargeCommand { Id = id });
-        return result.IsSuccess ? NoContent() : NotFound(ErrorResponse.FromResult(result));
+        return result.ToActionResult();
     }
 }

@@ -1,3 +1,4 @@
+using Logistics.API.Extensions;
 using Logistics.Shared.Identity.Policies;
 using Logistics.Shared.Models;
 using Logistics.Mediator;
@@ -22,7 +23,7 @@ public class CustomerController(IMediator mediator) : ControllerBase
     public async Task<IActionResult> GetById(Guid id)
     {
         var result = await mediator.Send(new GetCustomerByIdQuery { Id = id });
-        return result.IsSuccess ? Ok(result.Value) : NotFound(ErrorResponse.FromResult(result));
+        return result.ToActionResult();
     }
 
     [HttpGet(Name = "GetCustomers")]
@@ -41,7 +42,7 @@ public class CustomerController(IMediator mediator) : ControllerBase
     public async Task<IActionResult> Create([FromBody] CreateCustomerCommand request)
     {
         var result = await mediator.Send(request);
-        return result.IsSuccess ? Ok(result.Value) : BadRequest(ErrorResponse.FromResult(result));
+        return result.ToActionResult();
     }
 
     [HttpPut("{id:guid}", Name = "UpdateCustomer")]
@@ -52,7 +53,7 @@ public class CustomerController(IMediator mediator) : ControllerBase
     {
         request.Id = id;
         var result = await mediator.Send(request);
-        return result.IsSuccess ? NoContent() : BadRequest(ErrorResponse.FromResult(result));
+        return result.ToActionResult();
     }
 
     [HttpDelete("{id:guid}", Name = "DeleteCustomer")]
@@ -62,7 +63,7 @@ public class CustomerController(IMediator mediator) : ControllerBase
     public async Task<IActionResult> Delete(Guid id)
     {
         var result = await mediator.Send(new DeleteCustomerCommand { Id = id });
-        return result.IsSuccess ? NoContent() : NotFound(ErrorResponse.FromResult(result));
+        return result.ToActionResult();
     }
 
     /// <summary>
@@ -75,7 +76,7 @@ public class CustomerController(IMediator mediator) : ControllerBase
     public async Task<IActionResult> GetDetentionTerms(Guid id)
     {
         var result = await mediator.Send(new GetCustomerDetentionTermsQuery { CustomerId = id });
-        return result.IsSuccess ? Ok(result.Value) : NotFound(ErrorResponse.FromResult(result));
+        return result.ToActionResult();
     }
 
     [HttpPut("{id:guid}/detention", Name = "UpdateCustomerDetentionTerms")]
@@ -86,7 +87,7 @@ public class CustomerController(IMediator mediator) : ControllerBase
     {
         request.CustomerId = id;
         var result = await mediator.Send(request);
-        return result.IsSuccess ? NoContent() : BadRequest(ErrorResponse.FromResult(result));
+        return result.ToActionResult();
     }
 
     [HttpPut("{id:guid}/preferences", Name = "SetCustomerUpdatePreferences")]
@@ -97,6 +98,6 @@ public class CustomerController(IMediator mediator) : ControllerBase
     {
         request.CustomerId = id;
         var result = await mediator.Send(request);
-        return result.IsSuccess ? NoContent() : BadRequest(ErrorResponse.FromResult(result));
+        return result.ToActionResult();
     }
 }

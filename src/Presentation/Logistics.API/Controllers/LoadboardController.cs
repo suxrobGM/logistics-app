@@ -1,3 +1,4 @@
+using Logistics.API.Extensions;
 using Logistics.Shared.Identity.Policies;
 using Logistics.Shared.Models;
 using Logistics.Mediator;
@@ -21,7 +22,7 @@ public class LoadBoardController(IMediator mediator) : ControllerBase
     public async Task<IActionResult> GetProviders()
     {
         var result = await mediator.Send(new GetLoadBoardConfigurationsQuery());
-        return result.IsSuccess ? Ok(result.Value) : BadRequest(ErrorResponse.FromResult(result));
+        return result.ToActionResult();
     }
 
     [HttpPost("providers", Name = "CreateLoadBoardProvider")]
@@ -31,7 +32,7 @@ public class LoadBoardController(IMediator mediator) : ControllerBase
     public async Task<IActionResult> CreateProvider([FromBody] CreateLoadBoardConfigurationCommand request)
     {
         var result = await mediator.Send(request);
-        return result.IsSuccess ? NoContent() : BadRequest(ErrorResponse.FromResult(result));
+        return result.ToActionResult();
     }
 
     [HttpPut("providers/{providerId:guid}", Name = "UpdateLoadBoardProvider")]
@@ -42,7 +43,7 @@ public class LoadBoardController(IMediator mediator) : ControllerBase
     {
         request.Id = providerId;
         var result = await mediator.Send(request);
-        return result.IsSuccess ? NoContent() : BadRequest(ErrorResponse.FromResult(result));
+        return result.ToActionResult();
     }
 
     [HttpPost("providers/{providerId:guid}/test", Name = "TestLoadBoardProvider")]
@@ -52,7 +53,7 @@ public class LoadBoardController(IMediator mediator) : ControllerBase
     public async Task<IActionResult> TestProvider(Guid providerId)
     {
         var result = await mediator.Send(new TestLoadBoardConnectionCommand { Id = providerId });
-        return result.IsSuccess ? NoContent() : BadRequest(ErrorResponse.FromResult(result));
+        return result.ToActionResult();
     }
 
     [HttpDelete("providers/{providerId:guid}", Name = "DeleteLoadBoardProvider")]
@@ -62,7 +63,7 @@ public class LoadBoardController(IMediator mediator) : ControllerBase
     public async Task<IActionResult> DeleteProvider(Guid providerId)
     {
         var result = await mediator.Send(new DeleteLoadBoardConfigurationCommand { Id = providerId });
-        return result.IsSuccess ? NoContent() : BadRequest(ErrorResponse.FromResult(result));
+        return result.ToActionResult();
     }
 
     #endregion
@@ -76,7 +77,7 @@ public class LoadBoardController(IMediator mediator) : ControllerBase
     public async Task<IActionResult> SearchLoads([FromBody] SearchLoadBoardCommand request)
     {
         var result = await mediator.Send(request);
-        return result.IsSuccess ? Ok(result.Value) : BadRequest(ErrorResponse.FromResult(result));
+        return result.ToActionResult();
     }
 
     [HttpGet("brokers/{mcNumber}/credit", Name = "GetBrokerCredit")]
@@ -86,7 +87,7 @@ public class LoadBoardController(IMediator mediator) : ControllerBase
     public async Task<IActionResult> GetBrokerCredit(string mcNumber, [FromQuery] Guid? listingId)
     {
         var result = await mediator.Send(new GetBrokerCreditQuery { McNumber = mcNumber, ListingId = listingId });
-        return result.IsSuccess ? Ok(result.Value) : BadRequest(ErrorResponse.FromResult(result));
+        return result.ToActionResult();
     }
 
     [HttpPost("listings/{listingId:guid}/book", Name = "BookLoadBoardListing")]
@@ -105,7 +106,7 @@ public class LoadBoardController(IMediator mediator) : ControllerBase
             Notes = request.Notes,
             OverrideCreditCheck = request.OverrideCreditCheck
         });
-        return result.IsSuccess ? Ok(result.Value) : BadRequest(ErrorResponse.FromResult(result));
+        return result.ToActionResult();
     }
 
     #endregion
@@ -118,7 +119,7 @@ public class LoadBoardController(IMediator mediator) : ControllerBase
     public async Task<IActionResult> GetPostedTrucks([FromQuery] GetPostedTrucksQuery query)
     {
         var result = await mediator.Send(query);
-        return result.IsSuccess ? Ok(result.Value) : BadRequest(ErrorResponse.FromResult(result));
+        return result.ToActionResult();
     }
 
     [HttpPost("trucks", Name = "PostTruckToLoadBoard")]
@@ -128,7 +129,7 @@ public class LoadBoardController(IMediator mediator) : ControllerBase
     public async Task<IActionResult> PostTruck([FromBody] PostTruckToLoadBoardCommand request)
     {
         var result = await mediator.Send(request);
-        return result.IsSuccess ? Ok(result.Value) : BadRequest(ErrorResponse.FromResult(result));
+        return result.ToActionResult();
     }
 
     [HttpDelete("trucks/{postedTruckId:guid}", Name = "RemovePostedTruck")]
@@ -138,7 +139,7 @@ public class LoadBoardController(IMediator mediator) : ControllerBase
     public async Task<IActionResult> RemovePostedTruck(Guid postedTruckId)
     {
         var result = await mediator.Send(new RemovePostedTruckCommand { PostedTruckId = postedTruckId });
-        return result.IsSuccess ? NoContent() : BadRequest(ErrorResponse.FromResult(result));
+        return result.ToActionResult();
     }
 
     #endregion

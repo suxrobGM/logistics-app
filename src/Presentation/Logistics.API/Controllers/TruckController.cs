@@ -1,3 +1,4 @@
+using Logistics.API.Extensions;
 using Logistics.Shared.Identity.Policies;
 using Logistics.Shared.Models;
 using Logistics.Mediator;
@@ -21,7 +22,7 @@ public class TruckController(IMediator mediator) : ControllerBase
     {
         request.TruckOrDriverId = truckOrDriverId;
         var result = await mediator.Send(request);
-        return result.IsSuccess ? Ok(result.Value) : NotFound(ErrorResponse.FromResult(result));
+        return result.ToActionResult();
     }
 
     [HttpGet(Name = "GetTrucks")]
@@ -40,7 +41,7 @@ public class TruckController(IMediator mediator) : ControllerBase
     public async Task<IActionResult> Create([FromBody] CreateTruckCommand request)
     {
         var result = await mediator.Send(request);
-        return result.IsSuccess ? NoContent() : BadRequest(ErrorResponse.FromResult(result));
+        return result.ToActionResult();
     }
 
     [HttpPut("{id:guid}", Name = "UpdateTruck")]
@@ -51,7 +52,7 @@ public class TruckController(IMediator mediator) : ControllerBase
     {
         request.Id = id;
         var result = await mediator.Send(request);
-        return result.IsSuccess ? NoContent() : BadRequest(ErrorResponse.FromResult(result));
+        return result.ToActionResult();
     }
 
     [HttpDelete("{id:guid}", Name = "DeleteTruck")]
@@ -61,6 +62,6 @@ public class TruckController(IMediator mediator) : ControllerBase
     public async Task<IActionResult> Delete(Guid id)
     {
         var result = await mediator.Send(new DeleteTruckCommand { Id = id });
-        return result.IsSuccess ? NoContent() : NotFound(ErrorResponse.FromResult(result));
+        return result.ToActionResult();
     }
 }

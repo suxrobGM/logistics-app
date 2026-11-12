@@ -1,3 +1,4 @@
+using Logistics.API.Extensions;
 using Logistics.Shared.Identity.Policies;
 using Logistics.Shared.Models;
 using Logistics.Mediator;
@@ -22,7 +23,7 @@ public class DriverController(IMediator mediator) : ControllerBase
     public async Task<IActionResult> GetById(Guid userId)
     {
         var result = await mediator.Send(new GetEmployeeByIdQuery { UserId = userId });
-        return result.IsSuccess ? Ok(result.Value) : NotFound(ErrorResponse.FromResult(result));
+        return result.ToActionResult();
     }
 
     [HttpPost("{userId:guid}/device-token", Name = "SetDriverDeviceToken")]
@@ -33,7 +34,7 @@ public class DriverController(IMediator mediator) : ControllerBase
     {
         request.UserId = userId;
         var result = await mediator.Send(request);
-        return result.IsSuccess ? NoContent() : BadRequest(ErrorResponse.FromResult(result));
+        return result.ToActionResult();
     }
 
     [HttpPost("confirm-load-status", Name = "ConfirmLoadStatus")]
@@ -43,7 +44,7 @@ public class DriverController(IMediator mediator) : ControllerBase
     public async Task<IActionResult> ConfirmLoadStatus([FromBody] ConfirmLoadStatusCommand request)
     {
         var result = await mediator.Send(request);
-        return result.IsSuccess ? NoContent() : BadRequest(ErrorResponse.FromResult(result));
+        return result.ToActionResult();
     }
 
     [HttpPost("update-load-proximity", Name = "UpdateLoadProximity")]
@@ -53,7 +54,7 @@ public class DriverController(IMediator mediator) : ControllerBase
     public async Task<IActionResult> UpdateLoadProximity([FromBody] UpdateLoadProximityCommand request)
     {
         var result = await mediator.Send(request);
-        return result.IsSuccess ? NoContent() : BadRequest(ErrorResponse.FromResult(result));
+        return result.ToActionResult();
     }
 
     [HttpPost("trips/{tripId:guid}/stops/{stopId:guid}/arrive", Name = "DriverMarkStopArrived")]
@@ -63,7 +64,7 @@ public class DriverController(IMediator mediator) : ControllerBase
     public async Task<IActionResult> MarkStopArrived(Guid tripId, Guid stopId)
     {
         var result = await mediator.Send(new MarkStopArrivedCommand { TripId = tripId, StopId = stopId });
-        return result.IsSuccess ? NoContent() : BadRequest(ErrorResponse.FromResult(result));
+        return result.ToActionResult();
     }
 
     [HttpPost("trips/{tripId:guid}/stops/{stopId:guid}/depart", Name = "DriverMarkStopDeparted")]
@@ -73,6 +74,6 @@ public class DriverController(IMediator mediator) : ControllerBase
     public async Task<IActionResult> MarkStopDeparted(Guid tripId, Guid stopId)
     {
         var result = await mediator.Send(new MarkStopDepartedCommand { TripId = tripId, StopId = stopId });
-        return result.IsSuccess ? NoContent() : BadRequest(ErrorResponse.FromResult(result));
+        return result.ToActionResult();
     }
 }

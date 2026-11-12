@@ -1,3 +1,4 @@
+using Logistics.API.Extensions;
 using Logistics.Shared.Identity.Policies;
 using Logistics.Shared.Models;
 using Logistics.Mediator;
@@ -19,7 +20,7 @@ public class StatController(IMediator mediator) : ControllerBase
     public async Task<IActionResult> GetDailyGrosses([FromQuery] GetDailyGrossesQuery request)
     {
         var result = await mediator.Send(request);
-        return result.IsSuccess ? Ok(result.Value) : BadRequest(ErrorResponse.FromResult(result));
+        return result.ToActionResult();
     }
 
     [HttpGet("monthly-grosses", Name = "GetMonthlyGrosses")]
@@ -29,7 +30,7 @@ public class StatController(IMediator mediator) : ControllerBase
     public async Task<IActionResult> GetMonthlyGrosses([FromQuery] GetMonthlyGrossesQuery request)
     {
         var result = await mediator.Send(request);
-        return result.IsSuccess ? Ok(result.Value) : BadRequest(ErrorResponse.FromResult(result));
+        return result.ToActionResult();
     }
 
     [HttpGet("company", Name = "GetCompanyStats")]
@@ -39,7 +40,7 @@ public class StatController(IMediator mediator) : ControllerBase
     public async Task<IActionResult> GetCompanyStats([FromQuery] GetCompanyStatsQuery request)
     {
         var result = await mediator.Send(request);
-        return result.IsSuccess ? Ok(result.Value) : BadRequest(ErrorResponse.FromResult(result));
+        return result.ToActionResult();
     }
 
     [HttpGet("trucks", Name = "GetTrucksStats")]
@@ -59,6 +60,6 @@ public class StatController(IMediator mediator) : ControllerBase
     {
         request.UserId = userId;
         var result = await mediator.Send(request);
-        return result.IsSuccess ? Ok(result.Value) : BadRequest(ErrorResponse.FromResult(result));
+        return result.ToActionResult();
     }
 }

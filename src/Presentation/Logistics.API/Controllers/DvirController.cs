@@ -1,3 +1,4 @@
+using Logistics.API.Extensions;
 using Logistics.Shared.Identity.Policies;
 using Logistics.Shared.Models;
 using Logistics.Mediator;
@@ -35,7 +36,7 @@ public class DvirController(IMediator mediator) : ControllerBase
     public async Task<IActionResult> GetById(Guid id)
     {
         var result = await mediator.Send(new GetDvirReportByIdQuery(id));
-        return result.IsSuccess ? Ok(result.Value) : NotFound(ErrorResponse.FromResult(result));
+        return result.ToActionResult();
     }
 
     /// <summary>
@@ -47,7 +48,7 @@ public class DvirController(IMediator mediator) : ControllerBase
     public async Task<IActionResult> GetPendingReviews()
     {
         var result = await mediator.Send(new GetPendingDvirReviewsQuery());
-        return result.IsSuccess ? Ok(result.Value) : BadRequest(ErrorResponse.FromResult(result));
+        return result.ToActionResult();
     }
 
     /// <summary>
@@ -60,7 +61,7 @@ public class DvirController(IMediator mediator) : ControllerBase
     public async Task<IActionResult> GetTruckOpenDefects(Guid truckId)
     {
         var result = await mediator.Send(new GetTruckOpenDvirDefectsQuery(truckId));
-        return result.IsSuccess ? Ok(result.Value) : BadRequest(ErrorResponse.FromResult(result));
+        return result.ToActionResult();
     }
 
     /// <summary>
@@ -92,7 +93,7 @@ public class DvirController(IMediator mediator) : ControllerBase
     {
         request.ReportId = id;
         var result = await mediator.Send(request);
-        return result.IsSuccess ? Ok(result.Value) : BadRequest(ErrorResponse.FromResult(result));
+        return result.ToActionResult();
     }
 
     /// <summary>
@@ -106,7 +107,7 @@ public class DvirController(IMediator mediator) : ControllerBase
     {
         request.ReportId = id;
         var result = await mediator.Send(request);
-        return result.IsSuccess ? Ok(result.Value) : BadRequest(ErrorResponse.FromResult(result));
+        return result.ToActionResult();
     }
 
     /// <summary>
@@ -124,7 +125,7 @@ public class DvirController(IMediator mediator) : ControllerBase
             Notes = request.Notes
         };
         var result = await mediator.Send(command);
-        return result.IsSuccess ? Ok(result.Value) : BadRequest(ErrorResponse.FromResult(result));
+        return result.ToActionResult();
     }
 
     /// <summary>
@@ -142,7 +143,7 @@ public class DvirController(IMediator mediator) : ControllerBase
             RejectionReason = request.RejectionReason
         };
         var result = await mediator.Send(command);
-        return result.IsSuccess ? Ok(result.Value) : BadRequest(ErrorResponse.FromResult(result));
+        return result.ToActionResult();
     }
 }
 

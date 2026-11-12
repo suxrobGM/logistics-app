@@ -1,3 +1,4 @@
+using Logistics.API.Extensions;
 using Logistics.Shared.Identity.Policies;
 using Logistics.Shared.Models;
 using Logistics.Mediator;
@@ -31,7 +32,7 @@ public class BlogPostController(IMediator mediator) : ControllerBase
     public async Task<IActionResult> GetPublishedBlogPostBySlug(string slug)
     {
         var result = await mediator.Send(new GetPublishedBlogPostBySlugQuery { Slug = slug });
-        return result.IsSuccess ? Ok(result.Value) : NotFound(ErrorResponse.FromResult(result));
+        return result.ToActionResult();
     }
 
     #endregion
@@ -45,7 +46,7 @@ public class BlogPostController(IMediator mediator) : ControllerBase
     public async Task<IActionResult> GetBlogPostById(Guid id)
     {
         var result = await mediator.Send(new GetBlogPostQuery { Id = id });
-        return result.IsSuccess ? Ok(result.Value) : NotFound(ErrorResponse.FromResult(result));
+        return result.ToActionResult();
     }
 
     [HttpGet(Name = "GetBlogPosts")]
@@ -77,7 +78,7 @@ public class BlogPostController(IMediator mediator) : ControllerBase
     {
         request.Id = id;
         var result = await mediator.Send(request);
-        return result.IsSuccess ? NoContent() : BadRequest(ErrorResponse.FromResult(result));
+        return result.ToActionResult();
     }
 
     [HttpPost("{id:guid}/publish", Name = "PublishBlogPost")]
@@ -87,7 +88,7 @@ public class BlogPostController(IMediator mediator) : ControllerBase
     public async Task<IActionResult> PublishBlogPost(Guid id)
     {
         var result = await mediator.Send(new PublishBlogPostCommand { Id = id });
-        return result.IsSuccess ? NoContent() : NotFound(ErrorResponse.FromResult(result));
+        return result.ToActionResult();
     }
 
     [HttpPost("{id:guid}/unpublish", Name = "UnpublishBlogPost")]
@@ -97,7 +98,7 @@ public class BlogPostController(IMediator mediator) : ControllerBase
     public async Task<IActionResult> UnpublishBlogPost(Guid id)
     {
         var result = await mediator.Send(new UnpublishBlogPostCommand { Id = id });
-        return result.IsSuccess ? NoContent() : NotFound(ErrorResponse.FromResult(result));
+        return result.ToActionResult();
     }
 
     [HttpDelete("{id:guid}", Name = "DeleteBlogPost")]
@@ -107,7 +108,7 @@ public class BlogPostController(IMediator mediator) : ControllerBase
     public async Task<IActionResult> DeleteBlogPost(Guid id)
     {
         var result = await mediator.Send(new DeleteBlogPostCommand { Id = id });
-        return result.IsSuccess ? NoContent() : NotFound(ErrorResponse.FromResult(result));
+        return result.ToActionResult();
     }
 
     #endregion

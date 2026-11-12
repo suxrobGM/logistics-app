@@ -1,3 +1,4 @@
+using Logistics.API.Extensions;
 using Logistics.Shared.Identity.Policies;
 using Logistics.Shared.Models;
 using Logistics.Mediator;
@@ -35,7 +36,7 @@ public class AccidentController(IMediator mediator) : ControllerBase
     public async Task<IActionResult> GetById(Guid id)
     {
         var result = await mediator.Send(new GetAccidentReportByIdQuery(id));
-        return result.IsSuccess ? Ok(result.Value) : NotFound(ErrorResponse.FromResult(result));
+        return result.ToActionResult();
     }
 
     /// <summary>
@@ -67,7 +68,7 @@ public class AccidentController(IMediator mediator) : ControllerBase
     {
         request.Id = id;
         var result = await mediator.Send(request);
-        return result.IsSuccess ? Ok(result.Value) : BadRequest(ErrorResponse.FromResult(result));
+        return result.ToActionResult();
     }
 
     /// <summary>
@@ -80,7 +81,7 @@ public class AccidentController(IMediator mediator) : ControllerBase
     public async Task<IActionResult> Submit(Guid id)
     {
         var result = await mediator.Send(new SubmitAccidentReportCommand { ReportId = id });
-        return result.IsSuccess ? Ok(result.Value) : BadRequest(ErrorResponse.FromResult(result));
+        return result.ToActionResult();
     }
 
     /// <summary>
@@ -98,7 +99,7 @@ public class AccidentController(IMediator mediator) : ControllerBase
             ReviewNotes = request.ReviewNotes
         };
         var result = await mediator.Send(command);
-        return result.IsSuccess ? Ok(result.Value) : BadRequest(ErrorResponse.FromResult(result));
+        return result.ToActionResult();
     }
 
     /// <summary>
@@ -116,7 +117,7 @@ public class AccidentController(IMediator mediator) : ControllerBase
             ResolutionNotes = request.ResolutionNotes
         };
         var result = await mediator.Send(command);
-        return result.IsSuccess ? Ok(result.Value) : BadRequest(ErrorResponse.FromResult(result));
+        return result.ToActionResult();
     }
 }
 

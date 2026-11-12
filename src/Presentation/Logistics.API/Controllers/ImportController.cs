@@ -1,3 +1,4 @@
+using Logistics.API.Extensions;
 using System.Text;
 using System.Text.Json;
 using Logistics.Application.Modules.Platform.DataImport.Commands;
@@ -52,7 +53,7 @@ public class ImportController(IMediator mediator) : ControllerBase
             FileSizeBytes = request.File.Length,
             EntityType = request.EntityType
         });
-        return result.IsSuccess ? Ok(result.Value) : BadRequest(ErrorResponse.FromResult(result));
+        return result.ToActionResult();
     }
 
     [HttpPost("validate", Name = "ValidateImport")]
@@ -99,7 +100,7 @@ public class ImportController(IMediator mediator) : ControllerBase
             UpdateExisting = request.UpdateExisting,
             SendInvitations = request.SendInvitations
         });
-        return result.IsSuccess ? Ok(result.Value) : BadRequest(ErrorResponse.FromResult(result));
+        return result.ToActionResult();
     }
 
     /// <summary>

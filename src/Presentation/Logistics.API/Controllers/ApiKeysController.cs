@@ -1,3 +1,4 @@
+using Logistics.API.Extensions;
 using Logistics.Shared.Identity.Policies;
 using Logistics.Shared.Models;
 using Logistics.Mediator;
@@ -41,6 +42,6 @@ public class ApiKeysController(IMediator mediator) : ControllerBase
     public async Task<IActionResult> RevokeApiKey(Guid id)
     {
         var result = await mediator.Send(new RevokeApiKeyCommand { Id = id });
-        return result.IsSuccess ? NoContent() : NotFound(ErrorResponse.FromResult(result));
+        return result.ToActionResult();
     }
 }

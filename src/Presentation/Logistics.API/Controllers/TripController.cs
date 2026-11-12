@@ -1,3 +1,4 @@
+using Logistics.API.Extensions;
 using Logistics.Shared.Identity.Policies;
 using Logistics.Shared.Models;
 using Logistics.Mediator;
@@ -20,7 +21,7 @@ public class TripController(IMediator mediator) : ControllerBase
     public async Task<IActionResult> GetById(Guid tripId)
     {
         var result = await mediator.Send(new GetTripQuery { TripId = tripId });
-        return result.IsSuccess ? Ok(result.Value) : NotFound(ErrorResponse.FromResult(result));
+        return result.ToActionResult();
     }
 
     [HttpGet(Name = "GetTrips")]
@@ -49,7 +50,7 @@ public class TripController(IMediator mediator) : ControllerBase
     public async Task<IActionResult> OptimizeTripStops([FromBody] OptimizeTripStopsCommand request)
     {
         var result = await mediator.Send(request);
-        return result.IsSuccess ? Ok(result.Value) : BadRequest(ErrorResponse.FromResult(result));
+        return result.ToActionResult();
     }
 
     [HttpPut("{id:guid}", Name = "UpdateTrip")]
@@ -60,7 +61,7 @@ public class TripController(IMediator mediator) : ControllerBase
     {
         request.TripId = id;
         var result = await mediator.Send(request);
-        return result.IsSuccess ? NoContent() : BadRequest(ErrorResponse.FromResult(result));
+        return result.ToActionResult();
     }
 
     [HttpDelete("{id:guid}", Name = "DeleteTrip")]
@@ -70,7 +71,7 @@ public class TripController(IMediator mediator) : ControllerBase
     public async Task<IActionResult> DeleteTrip(Guid id)
     {
         var result = await mediator.Send(new DeleteTripCommand { Id = id });
-        return result.IsSuccess ? NoContent() : NotFound(ErrorResponse.FromResult(result));
+        return result.ToActionResult();
     }
 
     [HttpPost("{tripId:guid}/dispatch", Name = "DispatchTrip")]
@@ -80,7 +81,7 @@ public class TripController(IMediator mediator) : ControllerBase
     public async Task<IActionResult> DispatchTrip(Guid tripId)
     {
         var result = await mediator.Send(new DispatchTripCommand { TripId = tripId });
-        return result.IsSuccess ? NoContent() : BadRequest(ErrorResponse.FromResult(result));
+        return result.ToActionResult();
     }
 
     [HttpPost("{tripId:guid}/cancel", Name = "CancelTrip")]
@@ -92,7 +93,7 @@ public class TripController(IMediator mediator) : ControllerBase
         var command = request ?? new CancelTripCommand();
         command.TripId = tripId;
         var result = await mediator.Send(command);
-        return result.IsSuccess ? NoContent() : BadRequest(ErrorResponse.FromResult(result));
+        return result.ToActionResult();
     }
 
     [HttpPost("{tripId:guid}/stops/{stopId:guid}/arrive", Name = "MarkStopArrived")]
@@ -102,7 +103,7 @@ public class TripController(IMediator mediator) : ControllerBase
     public async Task<IActionResult> MarkStopArrived(Guid tripId, Guid stopId)
     {
         var result = await mediator.Send(new MarkStopArrivedCommand { TripId = tripId, StopId = stopId });
-        return result.IsSuccess ? NoContent() : BadRequest(ErrorResponse.FromResult(result));
+        return result.ToActionResult();
     }
 
     [HttpGet("{tripId:guid}/timeline", Name = "GetTripTimeline")]
@@ -112,6 +113,6 @@ public class TripController(IMediator mediator) : ControllerBase
     public async Task<IActionResult> GetTripTimeline(Guid tripId)
     {
         var result = await mediator.Send(new GetTripTimelineQuery { TripId = tripId });
-        return result.IsSuccess ? Ok(result.Value) : NotFound(ErrorResponse.FromResult(result));
+        return result.ToActionResult();
     }
 }

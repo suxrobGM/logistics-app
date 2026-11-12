@@ -1,3 +1,4 @@
+using Logistics.API.Extensions;
 using Logistics.Shared.Identity.Policies;
 using Logistics.Shared.Models;
 using Logistics.Mediator;
@@ -20,7 +21,7 @@ public class NotificationController(IMediator mediator) : ControllerBase
     public async Task<IActionResult> GetList([FromQuery] GetNotificationsQuery request)
     {
         var result = await mediator.Send(request);
-        return result.IsSuccess ? Ok(result.Value) : BadRequest(ErrorResponse.FromResult(result));
+        return result.ToActionResult();
     }
 
     [HttpPost("read", Name = "MarkNotificationsRead")]
@@ -30,6 +31,6 @@ public class NotificationController(IMediator mediator) : ControllerBase
     public async Task<IActionResult> MarkRead([FromBody] MarkNotificationsReadCommand request)
     {
         var result = await mediator.Send(request);
-        return result.IsSuccess ? NoContent() : BadRequest(ErrorResponse.FromResult(result));
+        return result.ToActionResult();
     }
 }

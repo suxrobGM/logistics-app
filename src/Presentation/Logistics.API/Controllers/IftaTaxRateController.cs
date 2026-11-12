@@ -1,3 +1,4 @@
+using Logistics.API.Extensions;
 using Logistics.Application.Modules.Compliance.Ifta.TaxRates.Commands;
 using Logistics.Application.Modules.Compliance.Ifta.TaxRates.Queries;
 using Logistics.Shared.Identity.Policies;
@@ -29,7 +30,7 @@ public class IftaTaxRateController(IMediator mediator) : ControllerBase
     public async Task<IActionResult> GetIftaTaxRateById(Guid id)
     {
         var result = await mediator.Send(new GetIftaTaxRateQuery { Id = id });
-        return result.IsSuccess ? Ok(result.Value) : NotFound(ErrorResponse.FromResult(result));
+        return result.ToActionResult();
     }
 
     [HttpPost(Name = "CreateIftaTaxRate")]
@@ -52,7 +53,7 @@ public class IftaTaxRateController(IMediator mediator) : ControllerBase
     {
         request.Id = id;
         var result = await mediator.Send(request);
-        return result.IsSuccess ? NoContent() : BadRequest(ErrorResponse.FromResult(result));
+        return result.ToActionResult();
     }
 
     [HttpDelete("{id:guid}", Name = "DeleteIftaTaxRate")]
@@ -62,6 +63,6 @@ public class IftaTaxRateController(IMediator mediator) : ControllerBase
     public async Task<IActionResult> DeleteIftaTaxRate(Guid id)
     {
         var result = await mediator.Send(new DeleteIftaTaxRateCommand { Id = id });
-        return result.IsSuccess ? NoContent() : NotFound(ErrorResponse.FromResult(result));
+        return result.ToActionResult();
     }
 }

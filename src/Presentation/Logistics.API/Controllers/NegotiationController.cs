@@ -1,3 +1,4 @@
+using Logistics.API.Extensions;
 using Logistics.Application.Modules.Integrations.Negotiation.Commands;
 using Logistics.Application.Modules.Integrations.Negotiation.Queries;
 using Logistics.Shared.Identity.Policies;
@@ -33,7 +34,7 @@ public class NegotiationController(IMediator mediator) : ControllerBase
     public async Task<IActionResult> GetNegotiationById(Guid id)
     {
         var result = await mediator.Send(new GetNegotiationByIdQuery { Id = id });
-        return result.IsSuccess ? Ok(result.Value) : NotFound(ErrorResponse.FromResult(result));
+        return result.ToActionResult();
     }
 
     [HttpGet("decisions/{decisionId:guid}/preview", Name = "PreviewCounterOffer")]
@@ -43,7 +44,7 @@ public class NegotiationController(IMediator mediator) : ControllerBase
     public async Task<IActionResult> PreviewCounterOffer(Guid decisionId)
     {
         var result = await mediator.Send(new PreviewCounterOfferQuery { DecisionId = decisionId });
-        return result.IsSuccess ? Ok(result.Value) : BadRequest(ErrorResponse.FromResult(result));
+        return result.ToActionResult();
     }
 
     [HttpPost("{id:guid}/close", Name = "CloseNegotiation")]
@@ -54,6 +55,6 @@ public class NegotiationController(IMediator mediator) : ControllerBase
     {
         request.Id = id;
         var result = await mediator.Send(request);
-        return result.IsSuccess ? NoContent() : BadRequest(ErrorResponse.FromResult(result));
+        return result.ToActionResult();
     }
 }

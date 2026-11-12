@@ -1,3 +1,4 @@
+using Logistics.API.Extensions;
 using Logistics.Application.Modules.IdentityAccess.Admins.Commands;
 using Logistics.Application.Modules.IdentityAccess.Admins.Queries;
 using Logistics.Shared.Identity.Policies;
@@ -38,7 +39,7 @@ public class AdminController(IMediator mediator) : ControllerBase
     public async Task<IActionResult> AddAdmin([FromBody] AddAdminCommand request)
     {
         var result = await mediator.Send(request);
-        return result.IsSuccess ? Ok(result.Value) : BadRequest(ErrorResponse.FromResult(result));
+        return result.ToActionResult();
     }
 
     /// <summary>
@@ -50,7 +51,7 @@ public class AdminController(IMediator mediator) : ControllerBase
     public async Task<IActionResult> RevokeAdmin(Guid userId)
     {
         var result = await mediator.Send(new RevokeAdminCommand { UserId = userId });
-        return result.IsSuccess ? NoContent() : BadRequest(ErrorResponse.FromResult(result));
+        return result.ToActionResult();
     }
 
     /// <summary>
@@ -73,7 +74,7 @@ public class AdminController(IMediator mediator) : ControllerBase
     public async Task<IActionResult> ResendAdminInvitation(Guid id)
     {
         var result = await mediator.Send(new ResendAdminInvitationCommand { Id = id });
-        return result.IsSuccess ? NoContent() : BadRequest(ErrorResponse.FromResult(result));
+        return result.ToActionResult();
     }
 
     /// <summary>
@@ -85,6 +86,6 @@ public class AdminController(IMediator mediator) : ControllerBase
     public async Task<IActionResult> CancelAdminInvitation(Guid id)
     {
         var result = await mediator.Send(new CancelAdminInvitationCommand { Id = id });
-        return result.IsSuccess ? NoContent() : BadRequest(ErrorResponse.FromResult(result));
+        return result.ToActionResult();
     }
 }

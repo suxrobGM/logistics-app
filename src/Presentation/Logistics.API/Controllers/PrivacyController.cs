@@ -30,7 +30,7 @@ public class PrivacyController(IMediator mediator) : ControllerBase
     public async Task<IActionResult> RequestExport()
     {
         var result = await mediator.Send(new RequestDataExportCommand());
-        return result.IsSuccess ? Ok(result.Value) : BadRequest(ErrorResponse.FromResult(result));
+        return result.ToActionResult();
     }
 
     /// <summary>
@@ -56,7 +56,7 @@ public class PrivacyController(IMediator mediator) : ControllerBase
     public async Task<IActionResult> GetExport(Guid id)
     {
         var result = await mediator.Send(new GetDataExportRequestQuery { Id = id });
-        return result.IsSuccess ? Ok(result.Value) : NotFound(ErrorResponse.FromResult(result));
+        return result.ToActionResult();
     }
 
     /// <summary>
@@ -70,7 +70,7 @@ public class PrivacyController(IMediator mediator) : ControllerBase
     public async Task<IActionResult> RequestDeletion([FromBody] RequestDataDeletionCommand request)
     {
         var result = await mediator.Send(request);
-        return result.IsSuccess ? Ok(result.Value) : BadRequest(ErrorResponse.FromResult(result));
+        return result.ToActionResult();
     }
 
     /// <summary>
@@ -83,7 +83,7 @@ public class PrivacyController(IMediator mediator) : ControllerBase
     public async Task<IActionResult> CancelDeletion(Guid id)
     {
         var result = await mediator.Send(new CancelDataDeletionCommand { Id = id });
-        return result.IsSuccess ? NoContent() : BadRequest(ErrorResponse.FromResult(result));
+        return result.ToActionResult();
     }
 
     /// <summary>
@@ -117,7 +117,7 @@ public class PrivacyController(IMediator mediator) : ControllerBase
         };
 
         var result = await mediator.Send(command);
-        return result.IsSuccess ? Ok(result.Value) : BadRequest(ErrorResponse.FromResult(result));
+        return result.ToActionResult();
     }
 
     /// <summary>

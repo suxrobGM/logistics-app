@@ -1,3 +1,4 @@
+using Logistics.API.Extensions;
 using Logistics.Application.Modules.Financial.Payroll.Commands;
 using Logistics.Application.Modules.Financial.Payroll.Queries;
 using Logistics.Mediator;
@@ -23,7 +24,7 @@ public class CashAdvanceController(IMediator mediator) : ControllerBase
     public async Task<IActionResult> GetList([FromQuery] GetCashAdvancesQuery query)
     {
         var result = await mediator.Send(query);
-        return result.IsSuccess ? Ok(result.Value) : BadRequest(ErrorResponse.FromResult(result));
+        return result.ToActionResult();
     }
 
     [HttpPost(Name = "IssueCashAdvance")]
@@ -33,7 +34,7 @@ public class CashAdvanceController(IMediator mediator) : ControllerBase
     public async Task<IActionResult> Issue([FromBody] IssueCashAdvanceCommand request)
     {
         var result = await mediator.Send(request);
-        return result.IsSuccess ? Ok(result.Value) : BadRequest(ErrorResponse.FromResult(result));
+        return result.ToActionResult();
     }
 
     [HttpDelete("{id:guid}", Name = "DeleteCashAdvance")]
@@ -43,6 +44,6 @@ public class CashAdvanceController(IMediator mediator) : ControllerBase
     public async Task<IActionResult> Delete(Guid id)
     {
         var result = await mediator.Send(new DeleteCashAdvanceCommand { Id = id });
-        return result.IsSuccess ? NoContent() : BadRequest(ErrorResponse.FromResult(result));
+        return result.ToActionResult();
     }
 }

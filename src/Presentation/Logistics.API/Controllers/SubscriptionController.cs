@@ -23,7 +23,7 @@ public class SubscriptionController(IMediator mediator) : ControllerBase
     public async Task<IActionResult> GetSubscriptionById(Guid id)
     {
         var result = await mediator.Send(new GetSubscriptionQuery { Id = id });
-        return result.IsSuccess ? Ok(result.Value) : NotFound(ErrorResponse.FromResult(result));
+        return result.ToActionResult();
     }
 
     [HttpGet(Name = "GetSubscriptions")]
@@ -42,7 +42,7 @@ public class SubscriptionController(IMediator mediator) : ControllerBase
     public async Task<IActionResult> CreateSubscription([FromBody] CreateSubscriptionCommand request)
     {
         var result = await mediator.Send(request);
-        return result.IsSuccess ? NoContent() : BadRequest(ErrorResponse.FromResult(result));
+        return result.ToActionResult();
     }
 
     [HttpPut("{id:guid}/cancel", Name = "CancelSubscription")]
@@ -53,7 +53,7 @@ public class SubscriptionController(IMediator mediator) : ControllerBase
     {
         request.Id = id;
         var result = await mediator.Send(request);
-        return result.IsSuccess ? NoContent() : BadRequest(ErrorResponse.FromResult(result));
+        return result.ToActionResult();
     }
 
     [HttpPut("{id:guid}/change-plan", Name = "ChangeSubscriptionPlan")]
@@ -64,7 +64,7 @@ public class SubscriptionController(IMediator mediator) : ControllerBase
     {
         request.SubscriptionId = id;
         var result = await mediator.Send(request);
-        return result.IsSuccess ? NoContent() : BadRequest(ErrorResponse.FromResult(result));
+        return result.ToActionResult();
     }
 
     [HttpPut("{id:guid}/renew", Name = "RenewSubscription")]
@@ -75,7 +75,7 @@ public class SubscriptionController(IMediator mediator) : ControllerBase
     {
         request.Id = id;
         var result = await mediator.Send(request);
-        return result.IsSuccess ? NoContent() : BadRequest(ErrorResponse.FromResult(result));
+        return result.ToActionResult();
     }
 
     [HttpDelete("{id:guid}", Name = "DeleteSubscription")]
@@ -85,7 +85,7 @@ public class SubscriptionController(IMediator mediator) : ControllerBase
     public async Task<IActionResult> DeleteSubscription(Guid id)
     {
         var result = await mediator.Send(new DeleteSubscriptionCommand { Id = id });
-        return result.IsSuccess ? NoContent() : NotFound(ErrorResponse.FromResult(result));
+        return result.ToActionResult();
     }
 
     [HttpGet("billing-portal", Name = "GetBillingPortalUrl")]
@@ -95,7 +95,7 @@ public class SubscriptionController(IMediator mediator) : ControllerBase
     public async Task<IActionResult> GetBillingPortalUrl([FromQuery] string returnUrl)
     {
         var result = await mediator.Send(new GetBillingPortalUrlQuery { ReturnUrl = returnUrl });
-        return result.IsSuccess ? Ok(result.Value) : BadRequest(ErrorResponse.FromResult(result));
+        return result.ToActionResult();
     }
 
     #endregion
@@ -109,7 +109,7 @@ public class SubscriptionController(IMediator mediator) : ControllerBase
     public async Task<IActionResult> GetSubscriptionPlanById(Guid id)
     {
         var result = await mediator.Send(new GetSubscriptionPlanQuery { Id = id });
-        return result.IsSuccess ? Ok(result.Value) : NotFound(ErrorResponse.FromResult(result));
+        return result.ToActionResult();
     }
 
     [HttpGet("plans", Name = "GetSubscriptionPlans")]
@@ -128,7 +128,7 @@ public class SubscriptionController(IMediator mediator) : ControllerBase
     public async Task<IActionResult> CreateSubscriptionPlan([FromBody] CreateSubscriptionPlanCommand request)
     {
         var result = await mediator.Send(request);
-        return result.IsSuccess ? NoContent() : BadRequest(ErrorResponse.FromResult(result));
+        return result.ToActionResult();
     }
 
     [HttpPut("plans/{id:guid}", Name = "UpdateSubscriptionPlan")]
@@ -139,7 +139,7 @@ public class SubscriptionController(IMediator mediator) : ControllerBase
     {
         request.Id = id;
         var result = await mediator.Send(request);
-        return result.IsSuccess ? NoContent() : BadRequest(ErrorResponse.FromResult(result));
+        return result.ToActionResult();
     }
 
     [HttpDelete("plans/{id:guid}", Name = "DeleteSubscriptionPlan")]
@@ -149,7 +149,7 @@ public class SubscriptionController(IMediator mediator) : ControllerBase
     public async Task<IActionResult> DeleteSubscriptionPlan(Guid id)
     {
         var result = await mediator.Send(new DeleteSubscriptionPlanCommand { Id = id });
-        return result.IsSuccess ? NoContent() : NotFound(ErrorResponse.FromResult(result));
+        return result.ToActionResult();
     }
 
     #endregion

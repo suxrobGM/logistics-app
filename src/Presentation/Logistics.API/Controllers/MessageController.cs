@@ -25,7 +25,7 @@ public class MessageController(IMediator mediator) : ControllerBase
     public async Task<IActionResult> GetConversations([FromQuery] GetConversationsQuery request)
     {
         var result = await mediator.Send(request);
-        return result.IsSuccess ? Ok(result.Value) : BadRequest(ErrorResponse.FromResult(result));
+        return result.ToActionResult();
     }
 
     [HttpPost("conversations", Name = "CreateConversation")]
@@ -60,7 +60,7 @@ public class MessageController(IMediator mediator) : ControllerBase
 
         var command = new OpenTenantChatCommand { EmployeeId = employeeId.Value };
         var result = await mediator.Send(command);
-        return result.IsSuccess ? Ok(result.Value) : BadRequest(ErrorResponse.FromResult(result));
+        return result.ToActionResult();
     }
 
     [HttpGet("conversations/{conversationId:guid}", Name = "GetMessages")]
@@ -81,7 +81,7 @@ public class MessageController(IMediator mediator) : ControllerBase
             Before = before
         };
         var result = await mediator.Send(query);
-        return result.IsSuccess ? Ok(result.Value) : BadRequest(ErrorResponse.FromResult(result));
+        return result.ToActionResult();
     }
 
     #endregion
@@ -130,7 +130,7 @@ public class MessageController(IMediator mediator) : ControllerBase
             ReadById = readerId.Value
         };
         var result = await mediator.Send(command);
-        return result.IsSuccess ? NoContent() : BadRequest(ErrorResponse.FromResult(result));
+        return result.ToActionResult();
     }
 
     #endregion
@@ -151,7 +151,7 @@ public class MessageController(IMediator mediator) : ControllerBase
 
         var query = new GetUnreadCountQuery { EmployeeId = employeeId.Value };
         var result = await mediator.Send(query);
-        return result.IsSuccess ? Ok(result.Value) : BadRequest(ErrorResponse.FromResult(result));
+        return result.ToActionResult();
     }
 
     #endregion

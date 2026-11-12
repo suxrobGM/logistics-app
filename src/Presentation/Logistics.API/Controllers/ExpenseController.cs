@@ -1,3 +1,4 @@
+using Logistics.API.Extensions;
 using Logistics.Shared.Identity.Policies;
 using Logistics.Shared.Models;
 using Logistics.Mediator;
@@ -25,7 +26,7 @@ public class ExpenseController(IMediator mediator) : ControllerBase
     public async Task<IActionResult> GetById(Guid id)
     {
         var result = await mediator.Send(new GetExpenseByIdQuery { Id = id });
-        return result.IsSuccess ? Ok(result.Value) : NotFound(ErrorResponse.FromResult(result));
+        return result.ToActionResult();
     }
 
     [HttpGet("{id:guid}/receipt", Name = "DownloadExpenseReceipt")]
@@ -66,7 +67,7 @@ public class ExpenseController(IMediator mediator) : ControllerBase
     public async Task<IActionResult> GetStats([FromQuery] GetExpenseStatsQuery query)
     {
         var result = await mediator.Send(query);
-        return result.IsSuccess ? Ok(result.Value) : BadRequest(ErrorResponse.FromResult(result));
+        return result.ToActionResult();
     }
 
     #endregion
@@ -151,7 +152,7 @@ public class ExpenseController(IMediator mediator) : ControllerBase
     {
         request.Id = id;
         var result = await mediator.Send(request);
-        return result.IsSuccess ? NoContent() : BadRequest(ErrorResponse.FromResult(result));
+        return result.ToActionResult();
     }
 
     [HttpDelete("{id:guid}", Name = "DeleteExpense")]
@@ -161,7 +162,7 @@ public class ExpenseController(IMediator mediator) : ControllerBase
     public async Task<IActionResult> Delete(Guid id)
     {
         var result = await mediator.Send(new DeleteExpenseCommand { Id = id });
-        return result.IsSuccess ? NoContent() : NotFound(ErrorResponse.FromResult(result));
+        return result.ToActionResult();
     }
 
     #endregion
@@ -175,7 +176,7 @@ public class ExpenseController(IMediator mediator) : ControllerBase
     public async Task<IActionResult> Approve(Guid id)
     {
         var result = await mediator.Send(new ApproveExpenseCommand { Id = id, ApproverId = UserId });
-        return result.IsSuccess ? NoContent() : BadRequest(ErrorResponse.FromResult(result));
+        return result.ToActionResult();
     }
 
     [HttpPost("{id:guid}/reject", Name = "RejectExpense")]
@@ -190,7 +191,7 @@ public class ExpenseController(IMediator mediator) : ControllerBase
             ApproverId = UserId,
             Reason = request.Reason
         });
-        return result.IsSuccess ? NoContent() : BadRequest(ErrorResponse.FromResult(result));
+        return result.ToActionResult();
     }
 
     #endregion

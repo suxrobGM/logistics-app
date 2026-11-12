@@ -1,3 +1,4 @@
+using Logistics.API.Extensions;
 using Logistics.Shared.Identity.Policies;
 using Logistics.Shared.Models;
 using Logistics.Mediator;
@@ -48,7 +49,7 @@ public class MaintenanceController(IMediator mediator) : ControllerBase
     public async Task<IActionResult> GetRecordById(Guid id)
     {
         var result = await mediator.Send(new GetMaintenanceRecordByIdQuery { Id = id });
-        return result.IsSuccess ? Ok(result.Value) : NotFound(ErrorResponse.FromResult(result));
+        return result.ToActionResult();
     }
 
     /// <summary>

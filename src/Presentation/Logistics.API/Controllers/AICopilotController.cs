@@ -1,3 +1,4 @@
+using Logistics.API.Extensions;
 using Logistics.Application.Modules.Integrations.AICopilot.Commands;
 using Logistics.Application.Modules.Integrations.AICopilot.Queries;
 using Logistics.Shared.Identity.Policies;
@@ -20,7 +21,7 @@ public class AICopilotController(IMediator mediator) : ControllerBase
     public async Task<IActionResult> CreateConversation()
     {
         var result = await mediator.Send(new CreateAICopilotConversationCommand());
-        return result.IsSuccess ? Ok(result.Value) : BadRequest(ErrorResponse.FromResult(result));
+        return result.ToActionResult();
     }
 
     [HttpGet("conversations", Name = "GetCopilotConversations")]
@@ -39,7 +40,7 @@ public class AICopilotController(IMediator mediator) : ControllerBase
     public async Task<IActionResult> GetConversationById(Guid conversationId)
     {
         var result = await mediator.Send(new GetAICopilotConversationByIdQuery { Id = conversationId });
-        return result.IsSuccess ? Ok(result.Value) : BadRequest(ErrorResponse.FromResult(result));
+        return result.ToActionResult();
     }
 
     /// <summary>
@@ -66,7 +67,7 @@ public class AICopilotController(IMediator mediator) : ControllerBase
     public async Task<IActionResult> GetQuotaStatus()
     {
         var result = await mediator.Send(new GetAICopilotQuotaStatusQuery());
-        return result.IsSuccess ? Ok(result.Value) : BadRequest(ErrorResponse.FromResult(result));
+        return result.ToActionResult();
     }
 
     [HttpPost("conversations/{conversationId:guid}/cancel", Name = "CancelCopilotTurn")]
@@ -76,7 +77,7 @@ public class AICopilotController(IMediator mediator) : ControllerBase
     public async Task<IActionResult> CancelTurn(Guid conversationId)
     {
         var result = await mediator.Send(new CancelAICopilotTurnCommand { ConversationId = conversationId });
-        return result.IsSuccess ? NoContent() : BadRequest(ErrorResponse.FromResult(result));
+        return result.ToActionResult();
     }
 
     [HttpPut("conversations/{conversationId:guid}", Name = "RenameCopilotConversation")]
@@ -88,7 +89,7 @@ public class AICopilotController(IMediator mediator) : ControllerBase
     {
         request.ConversationId = conversationId;
         var result = await mediator.Send(request);
-        return result.IsSuccess ? NoContent() : BadRequest(ErrorResponse.FromResult(result));
+        return result.ToActionResult();
     }
 
     [HttpDelete("conversations/{conversationId:guid}", Name = "DeleteCopilotConversation")]
@@ -98,7 +99,7 @@ public class AICopilotController(IMediator mediator) : ControllerBase
     public async Task<IActionResult> DeleteConversation(Guid conversationId)
     {
         var result = await mediator.Send(new DeleteAICopilotConversationCommand { ConversationId = conversationId });
-        return result.IsSuccess ? NoContent() : BadRequest(ErrorResponse.FromResult(result));
+        return result.ToActionResult();
     }
 
     [HttpPost("decisions/{decisionId:guid}/approve", Name = "ApproveCopilotDecision")]
@@ -108,7 +109,7 @@ public class AICopilotController(IMediator mediator) : ControllerBase
     public async Task<IActionResult> ApproveDecision(Guid decisionId)
     {
         var result = await mediator.Send(new ApproveAICopilotDecisionCommand { DecisionId = decisionId });
-        return result.IsSuccess ? NoContent() : BadRequest(ErrorResponse.FromResult(result));
+        return result.ToActionResult();
     }
 
     [HttpPost("decisions/{decisionId:guid}/reject", Name = "RejectCopilotDecision")]
@@ -119,6 +120,6 @@ public class AICopilotController(IMediator mediator) : ControllerBase
     {
         request.DecisionId = decisionId;
         var result = await mediator.Send(request);
-        return result.IsSuccess ? NoContent() : BadRequest(ErrorResponse.FromResult(result));
+        return result.ToActionResult();
     }
 }

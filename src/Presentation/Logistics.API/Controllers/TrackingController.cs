@@ -1,3 +1,4 @@
+using Logistics.API.Extensions;
 using Logistics.Shared.Identity.Policies;
 using Logistics.Shared.Models;
 using Logistics.Mediator;
@@ -84,7 +85,7 @@ public class TrackingController(IMediator mediator) : ControllerBase
     public async Task<IActionResult> GetTrackingLinksForLoad(Guid loadId)
     {
         var result = await mediator.Send(new GetTrackingLinksForLoadQuery { LoadId = loadId });
-        return result.IsSuccess ? Ok(result.Value) : NotFound(ErrorResponse.FromResult(result));
+        return result.ToActionResult();
     }
 
     /// <summary>
@@ -97,7 +98,7 @@ public class TrackingController(IMediator mediator) : ControllerBase
     public async Task<IActionResult> Create([FromBody] CreateTrackingLinkCommand request)
     {
         var result = await mediator.Send(request);
-        return result.IsSuccess ? Ok(result.Value) : BadRequest(ErrorResponse.FromResult(result));
+        return result.ToActionResult();
     }
 
     /// <summary>
@@ -110,7 +111,7 @@ public class TrackingController(IMediator mediator) : ControllerBase
     public async Task<IActionResult> Revoke(Guid id)
     {
         var result = await mediator.Send(new RevokeTrackingLinkCommand { Id = id });
-        return result.IsSuccess ? NoContent() : NotFound(ErrorResponse.FromResult(result));
+        return result.ToActionResult();
     }
 
     /// <summary>
@@ -128,7 +129,7 @@ public class TrackingController(IMediator mediator) : ControllerBase
             RecipientEmail = request.Email,
             PersonalMessage = request.PersonalMessage
         });
-        return result.IsSuccess ? NoContent() : BadRequest(ErrorResponse.FromResult(result));
+        return result.ToActionResult();
     }
 }
 

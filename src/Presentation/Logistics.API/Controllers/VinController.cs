@@ -1,3 +1,4 @@
+using Logistics.API.Extensions;
 using Logistics.Application.Modules.Compliance.Inspections.Commands;
 using Logistics.Shared.Models;
 using Logistics.Mediator;
@@ -18,6 +19,6 @@ public class VinsController(IMediator mediator) : ControllerBase
     public async Task<IActionResult> DecodeVin(string vin)
     {
         var result = await mediator.Send(new DecodeVinCommand { Vin = vin });
-        return result.IsSuccess ? Ok(result.Value) : BadRequest(ErrorResponse.FromResult(result));
+        return result.ToActionResult();
     }
 }

@@ -1,3 +1,4 @@
+using Logistics.API.Extensions;
 using Logistics.Application.Modules.Financial.Factoring.Commands;
 using Logistics.Application.Modules.Financial.Factoring.Queries;
 using Logistics.Mediator;
@@ -34,7 +35,7 @@ public class FactoringController(IMediator mediator) : ControllerBase
     public async Task<IActionResult> CreateCompany([FromBody] CreateFactoringCompanyCommand request)
     {
         var result = await mediator.Send(request);
-        return result.IsSuccess ? Ok(result.Value) : BadRequest(ErrorResponse.FromResult(result));
+        return result.ToActionResult();
     }
 
     [HttpPut("companies/{id:guid}", Name = "UpdateFactoringCompany")]
@@ -45,7 +46,7 @@ public class FactoringController(IMediator mediator) : ControllerBase
     {
         request.Id = id;
         var result = await mediator.Send(request);
-        return result.IsSuccess ? NoContent() : BadRequest(ErrorResponse.FromResult(result));
+        return result.ToActionResult();
     }
 
     [HttpDelete("companies/{id:guid}", Name = "DeleteFactoringCompany")]
@@ -55,7 +56,7 @@ public class FactoringController(IMediator mediator) : ControllerBase
     public async Task<IActionResult> DeleteCompany(Guid id)
     {
         var result = await mediator.Send(new DeleteFactoringCompanyCommand { Id = id });
-        return result.IsSuccess ? NoContent() : BadRequest(ErrorResponse.FromResult(result));
+        return result.ToActionResult();
     }
 
     #endregion
@@ -78,7 +79,7 @@ public class FactoringController(IMediator mediator) : ControllerBase
     public async Task<IActionResult> GetBatchById(Guid id)
     {
         var result = await mediator.Send(new GetFactoringBatchByIdQuery { Id = id });
-        return result.IsSuccess ? Ok(result.Value) : NotFound(ErrorResponse.FromResult(result));
+        return result.ToActionResult();
     }
 
     /// <summary>
@@ -107,7 +108,7 @@ public class FactoringController(IMediator mediator) : ControllerBase
     public async Task<IActionResult> Submit([FromBody] SubmitInvoicesToFactorCommand request)
     {
         var result = await mediator.Send(request);
-        return result.IsSuccess ? Ok(result.Value) : BadRequest(ErrorResponse.FromResult(result));
+        return result.ToActionResult();
     }
 
     /// <summary>
@@ -121,7 +122,7 @@ public class FactoringController(IMediator mediator) : ControllerBase
     {
         request.BatchId = id;
         var result = await mediator.Send(request);
-        return result.IsSuccess ? NoContent() : BadRequest(ErrorResponse.FromResult(result));
+        return result.ToActionResult();
     }
 
     [HttpPost("batches/{id:guid}/items/{itemId:guid}/reserverelease", Name = "ReleaseFactoringReserve")]
@@ -133,7 +134,7 @@ public class FactoringController(IMediator mediator) : ControllerBase
         request.BatchId = id;
         request.ItemId = itemId;
         var result = await mediator.Send(request);
-        return result.IsSuccess ? NoContent() : BadRequest(ErrorResponse.FromResult(result));
+        return result.ToActionResult();
     }
 
     [HttpPost("batches/{id:guid}/items/{itemId:guid}/chargeback", Name = "ChargeBackFactoredInvoice")]
@@ -143,7 +144,7 @@ public class FactoringController(IMediator mediator) : ControllerBase
     public async Task<IActionResult> ChargeBack(Guid id, Guid itemId)
     {
         var result = await mediator.Send(new ChargeBackFactoredInvoiceCommand { BatchId = id, ItemId = itemId });
-        return result.IsSuccess ? NoContent() : BadRequest(ErrorResponse.FromResult(result));
+        return result.ToActionResult();
     }
 
     #endregion

@@ -1,3 +1,4 @@
+using Logistics.API.Extensions;
 using Logistics.Shared.Identity.Policies;
 using Logistics.Shared.Models;
 using Logistics.Mediator;
@@ -23,7 +24,7 @@ public class TaxRatesController(IMediator mediator) : ControllerBase
     public async Task<IActionResult> GetList()
     {
         var result = await mediator.Send(new GetTenantTaxRatesQuery());
-        return result.IsSuccess ? Ok(result.Value) : BadRequest(ErrorResponse.FromResult(result));
+        return result.ToActionResult();
     }
 
     [HttpPost(Name = "CreateTenantTaxRate")]
@@ -33,7 +34,7 @@ public class TaxRatesController(IMediator mediator) : ControllerBase
     public async Task<IActionResult> Create([FromBody] CreateTenantTaxRateCommand request)
     {
         var result = await mediator.Send(request);
-        return result.IsSuccess ? Ok(result.Value) : BadRequest(ErrorResponse.FromResult(result));
+        return result.ToActionResult();
     }
 
     [HttpPut("{id:guid}", Name = "UpdateTenantTaxRate")]
@@ -44,7 +45,7 @@ public class TaxRatesController(IMediator mediator) : ControllerBase
     {
         request.Id = id;
         var result = await mediator.Send(request);
-        return result.IsSuccess ? Ok(result.Value) : NotFound(ErrorResponse.FromResult(result));
+        return result.ToActionResult();
     }
 
     [HttpDelete("{id:guid}", Name = "DeleteTenantTaxRate")]
@@ -54,6 +55,6 @@ public class TaxRatesController(IMediator mediator) : ControllerBase
     public async Task<IActionResult> Delete(Guid id)
     {
         var result = await mediator.Send(new DeleteTenantTaxRateCommand(id));
-        return result.IsSuccess ? NoContent() : NotFound(ErrorResponse.FromResult(result));
+        return result.ToActionResult();
     }
 }

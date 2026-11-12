@@ -50,7 +50,7 @@ public class UserController(IMediator mediator, IUserPermissionService userPermi
         }
 
         var result = await mediator.Send(new GetUserByIdQuery { UserId = userId.ToString() });
-        return result.IsSuccess ? Ok(result.Value) : NotFound(ErrorResponse.FromResult(result));
+        return result.ToActionResult();
     }
 
     [HttpGet("{id:guid}", Name = "GetUserById")]
@@ -60,7 +60,7 @@ public class UserController(IMediator mediator, IUserPermissionService userPermi
     public async Task<IActionResult> GetById(string id)
     {
         var result = await mediator.Send(new GetUserByIdQuery { UserId = id });
-        return result.IsSuccess ? Ok(result.Value) : NotFound(ErrorResponse.FromResult(result));
+        return result.ToActionResult();
     }
 
     [HttpGet(Name = "GetUsers")]
@@ -79,7 +79,7 @@ public class UserController(IMediator mediator, IUserPermissionService userPermi
     public async Task<IActionResult> GetUserCurrentTenant(Guid id)
     {
         var result = await mediator.Send(new GetUserCurrentTenantQuery { UserId = id });
-        return result.IsSuccess ? Ok(result.Value) : NotFound(ErrorResponse.FromResult(result));
+        return result.ToActionResult();
     }
 
     [HttpPut("me", Name = "UpdateCurrentUser")]
@@ -95,7 +95,7 @@ public class UserController(IMediator mediator, IUserPermissionService userPermi
 
         request.Id = userId;
         var result = await mediator.Send(request);
-        return result.IsSuccess ? NoContent() : BadRequest(ErrorResponse.FromResult(result));
+        return result.ToActionResult();
     }
 
     [HttpPut("{id:guid}", Name = "UpdateUser")]
@@ -106,6 +106,6 @@ public class UserController(IMediator mediator, IUserPermissionService userPermi
     {
         request.Id = id;
         var result = await mediator.Send(request);
-        return result.IsSuccess ? NoContent() : BadRequest(ErrorResponse.FromResult(result));
+        return result.ToActionResult();
     }
 }

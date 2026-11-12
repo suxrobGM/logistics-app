@@ -1,3 +1,4 @@
+using Logistics.API.Extensions;
 using Logistics.Application.Modules.Platform.Onboarding.Queries;
 using Logistics.Shared.Identity.Policies;
 using Logistics.Shared.Models;
@@ -21,6 +22,6 @@ public class OnboardingController(IMediator mediator) : ControllerBase
     public async Task<IActionResult> GetOnboardingProgress([FromQuery] GetOnboardingProgressQuery request)
     {
         var result = await mediator.Send(request);
-        return result.IsSuccess ? Ok(result.Value) : BadRequest(ErrorResponse.FromResult(result));
+        return result.ToActionResult();
     }
 }

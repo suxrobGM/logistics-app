@@ -1,3 +1,4 @@
+using Logistics.API.Extensions;
 using Logistics.Shared.Identity.Policies;
 using Logistics.Shared.Models;
 using Logistics.Mediator;
@@ -19,7 +20,7 @@ public class ReportController(IMediator mediator) : ControllerBase
     public async Task<IActionResult> GetLoadsReport([FromQuery] LoadsReportQuery request)
     {
         var result = await mediator.Send(request);
-        return result.IsSuccess ? Ok(result.Value) : BadRequest(ErrorResponse.FromResult(result));
+        return result.ToActionResult();
     }
 
 
@@ -39,7 +40,7 @@ public class ReportController(IMediator mediator) : ControllerBase
     public async Task<IActionResult> GetIftaReport([FromQuery] IftaReportQuery request)
     {
         var result = await mediator.Send(request);
-        return result.IsSuccess ? Ok(result.Value) : BadRequest(ErrorResponse.FromResult(result));
+        return result.ToActionResult();
     }
 
     [HttpGet("ifta/pdf", Name = "ExportIftaReportPdf")]
@@ -61,7 +62,7 @@ public class ReportController(IMediator mediator) : ControllerBase
     public async Task<IActionResult> GetFinancialsReport([FromQuery] FinancialsReportQuery request)
     {
         var result = await mediator.Send(request);
-        return result.IsSuccess ? Ok(result.Value) : BadRequest(ErrorResponse.FromResult(result));
+        return result.ToActionResult();
     }
 
     [HttpGet("drivers/dashboard", Name = "GetDriverDashboard")]
@@ -71,7 +72,7 @@ public class ReportController(IMediator mediator) : ControllerBase
     public async Task<IActionResult> GetDriverDashboard([FromQuery] DriverDashboardQuery request)
     {
         var result = await mediator.Send(request);
-        return result.IsSuccess ? Ok(result.Value) : BadRequest(ErrorResponse.FromResult(result));
+        return result.ToActionResult();
     }
 
     [HttpGet("payroll", Name = "GetPayrollReport")]
@@ -81,7 +82,7 @@ public class ReportController(IMediator mediator) : ControllerBase
     public async Task<IActionResult> GetPayrollReport([FromQuery] PayrollReportQuery request)
     {
         var result = await mediator.Send(request);
-        return result.IsSuccess ? Ok(result.Value) : BadRequest(ErrorResponse.FromResult(result));
+        return result.ToActionResult();
     }
 
     /// <summary>
@@ -94,7 +95,7 @@ public class ReportController(IMediator mediator) : ControllerBase
     public async Task<IActionResult> GetSafetyReport([FromQuery] SafetyReportQuery request)
     {
         var result = await mediator.Send(request);
-        return result.IsSuccess ? Ok(result.Value) : BadRequest(ErrorResponse.FromResult(result));
+        return result.ToActionResult();
     }
 
     /// <summary>
@@ -107,6 +108,6 @@ public class ReportController(IMediator mediator) : ControllerBase
     public async Task<IActionResult> GetMaintenanceReport([FromQuery] MaintenanceReportQuery request)
     {
         var result = await mediator.Send(request);
-        return result.IsSuccess ? Ok(result.Value) : BadRequest(ErrorResponse.FromResult(result));
+        return result.ToActionResult();
     }
 }

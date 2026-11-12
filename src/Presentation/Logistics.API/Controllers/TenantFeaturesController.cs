@@ -1,3 +1,4 @@
+using Logistics.API.Extensions;
 using Logistics.Shared.Models;
 using Logistics.Mediator;
 using Microsoft.AspNetCore.Authorization;
@@ -23,6 +24,6 @@ public class TenantFeaturesController(IMediator mediator) : ControllerBase
     public async Task<IActionResult> GetFeatures()
     {
         var result = await mediator.Send(new GetTenantFeaturesQuery());
-        return result.IsSuccess ? Ok(result.Value) : BadRequest(ErrorResponse.FromResult(result));
+        return result.ToActionResult();
     }
 }

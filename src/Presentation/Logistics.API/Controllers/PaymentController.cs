@@ -1,3 +1,4 @@
+using Logistics.API.Extensions;
 using Logistics.Shared.Identity.Policies;
 using Logistics.Shared.Models;
 using Logistics.Mediator;
@@ -20,7 +21,7 @@ public class PaymentController(IMediator mediator) : ControllerBase
     public async Task<IActionResult> GetById(Guid id)
     {
         var result = await mediator.Send(new GetPaymentQuery { Id = id });
-        return result.IsSuccess ? Ok(result.Value) : NotFound(ErrorResponse.FromResult(result));
+        return result.ToActionResult();
     }
 
     [HttpGet(Name = "GetPayments")]
@@ -39,7 +40,7 @@ public class PaymentController(IMediator mediator) : ControllerBase
     public async Task<IActionResult> Create([FromBody] CreatePaymentCommand request)
     {
         var result = await mediator.Send(request);
-        return result.IsSuccess ? NoContent() : BadRequest(ErrorResponse.FromResult(result));
+        return result.ToActionResult();
     }
 
     [HttpPost("process-payment", Name = "ProcessPayment")]
@@ -49,7 +50,7 @@ public class PaymentController(IMediator mediator) : ControllerBase
     public async Task<IActionResult> ProcessPayment([FromBody] ProcessPaymentCommand request)
     {
         var result = await mediator.Send(request);
-        return result.IsSuccess ? NoContent() : BadRequest(ErrorResponse.FromResult(result));
+        return result.ToActionResult();
     }
 
     [HttpPut("{id:guid}", Name = "UpdatePayment")]
@@ -60,7 +61,7 @@ public class PaymentController(IMediator mediator) : ControllerBase
     {
         request.Id = id;
         var result = await mediator.Send(request);
-        return result.IsSuccess ? NoContent() : BadRequest(ErrorResponse.FromResult(result));
+        return result.ToActionResult();
     }
 
     [HttpDelete("{id:guid}", Name = "DeletePayment")]
@@ -70,7 +71,7 @@ public class PaymentController(IMediator mediator) : ControllerBase
     public async Task<IActionResult> Delete(Guid id)
     {
         var result = await mediator.Send(new DeletePaymentCommand { Id = id });
-        return result.IsSuccess ? NoContent() : NotFound(ErrorResponse.FromResult(result));
+        return result.ToActionResult();
     }
 
     [HttpPost("methods/setup-intent", Name = "CreateSetupIntent")]
@@ -80,6 +81,6 @@ public class PaymentController(IMediator mediator) : ControllerBase
     public async Task<IActionResult> CreateSetupIntent()
     {
         var result = await mediator.Send(new CreateSetupIntentCommand());
-        return result.IsSuccess ? Ok(result.Value) : BadRequest(ErrorResponse.FromResult(result));
+        return result.ToActionResult();
     }
 }

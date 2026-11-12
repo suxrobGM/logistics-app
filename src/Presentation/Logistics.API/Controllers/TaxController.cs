@@ -1,3 +1,4 @@
+using Logistics.API.Extensions;
 using Logistics.Shared.Identity.Policies;
 using Logistics.Shared.Models;
 using Logistics.Mediator;
@@ -21,6 +22,6 @@ public class TaxController(IMediator mediator) : ControllerBase
     public async Task<IActionResult> GetJurisdictions()
     {
         var result = await mediator.Send(new GetTaxJurisdictionsQuery());
-        return result.IsSuccess ? Ok(result.Value) : BadRequest(ErrorResponse.FromResult(result));
+        return result.ToActionResult();
     }
 }

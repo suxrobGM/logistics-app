@@ -1,3 +1,4 @@
+using Logistics.API.Extensions;
 using Logistics.Shared.Identity.Roles;
 using Logistics.Shared.Models;
 using Logistics.Mediator;
@@ -28,7 +29,7 @@ public class FeaturesController(IMediator mediator) : ControllerBase
     public async Task<IActionResult> GetTenantFeatures(Guid tenantId)
     {
         var result = await mediator.Send(new GetTenantFeaturesQuery { TenantId = tenantId });
-        return result.IsSuccess ? Ok(result.Value) : NotFound(ErrorResponse.FromResult(result));
+        return result.ToActionResult();
     }
 
     /// <summary>
@@ -42,7 +43,7 @@ public class FeaturesController(IMediator mediator) : ControllerBase
     {
         request.TenantId = tenantId;
         var result = await mediator.Send(request);
-        return result.IsSuccess ? NoContent() : BadRequest(ErrorResponse.FromResult(result));
+        return result.ToActionResult();
     }
 
     #endregion

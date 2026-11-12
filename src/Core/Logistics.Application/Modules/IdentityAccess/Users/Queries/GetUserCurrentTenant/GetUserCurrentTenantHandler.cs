@@ -23,7 +23,7 @@ internal sealed class GetUserCurrentTenantHandler(IMasterUnitOfWork masterUow) :
 
         if (user.Tenant is null)
         {
-            return Result<TenantDto>.Fail($"User with ID '{req.UserId}' does not have a tenant");
+            return Result<TenantDto>.Fail($"User with ID '{req.UserId}' does not have a tenant", ErrorCodes.NotFound);
         }
 
         var tenantDto = user.Tenant.ToDto();

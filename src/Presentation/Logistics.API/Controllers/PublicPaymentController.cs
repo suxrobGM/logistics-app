@@ -1,3 +1,4 @@
+using Logistics.API.Extensions;
 using Logistics.Shared.Models;
 using Logistics.Mediator;
 using Microsoft.AspNetCore.Authorization;
@@ -50,7 +51,7 @@ public class PublicPaymentController(IMediator mediator) : ControllerBase
             CancelUrl = request.CancelUrl,
             Amount = request.Amount
         });
-        return result.IsSuccess ? Ok(result.Value) : BadRequest(ErrorResponse.FromResult(result));
+        return result.ToActionResult();
     }
 }
 

@@ -1,3 +1,4 @@
+using Logistics.API.Extensions;
 using Logistics.Shared.Identity.Policies;
 using Logistics.Shared.Models;
 using Logistics.Mediator;
@@ -21,7 +22,7 @@ public class EldController(IMediator mediator) : ControllerBase
     public async Task<IActionResult> GetProviders()
     {
         var result = await mediator.Send(new GetEldProviderConfigurationsQuery());
-        return result.IsSuccess ? Ok(result.Value) : BadRequest(ErrorResponse.FromResult(result));
+        return result.ToActionResult();
     }
 
     [HttpPost("providers", Name = "CreateEldProvider")]
@@ -31,7 +32,7 @@ public class EldController(IMediator mediator) : ControllerBase
     public async Task<IActionResult> CreateProvider([FromBody] CreateEldProviderConfigurationCommand request)
     {
         var result = await mediator.Send(request);
-        return result.IsSuccess ? NoContent() : BadRequest(ErrorResponse.FromResult(result));
+        return result.ToActionResult();
     }
 
     [HttpDelete("providers/{providerId:guid}", Name = "DeleteEldProvider")]
@@ -41,7 +42,7 @@ public class EldController(IMediator mediator) : ControllerBase
     public async Task<IActionResult> DeleteProvider(Guid providerId)
     {
         var result = await mediator.Send(new DeleteEldProviderConfigurationCommand { ProviderId = providerId });
-        return result.IsSuccess ? NoContent() : BadRequest(ErrorResponse.FromResult(result));
+        return result.ToActionResult();
     }
 
     [HttpGet("providers/{providerId:guid}/drivers", Name = "GetEldProviderDrivers")]
@@ -50,7 +51,7 @@ public class EldController(IMediator mediator) : ControllerBase
     public async Task<IActionResult> GetProviderDrivers(Guid providerId)
     {
         var result = await mediator.Send(new GetEldProviderDriversQuery { ProviderId = providerId });
-        return result.IsSuccess ? Ok(result.Value) : BadRequest(ErrorResponse.FromResult(result));
+        return result.ToActionResult();
     }
 
     #endregion
@@ -63,7 +64,7 @@ public class EldController(IMediator mediator) : ControllerBase
     public async Task<IActionResult> GetDriverMappings(Guid providerId)
     {
         var result = await mediator.Send(new GetEldDriverMappingsQuery { ProviderId = providerId });
-        return result.IsSuccess ? Ok(result.Value) : BadRequest(ErrorResponse.FromResult(result));
+        return result.ToActionResult();
     }
 
     [HttpPost("drivers/mappings", Name = "MapEldDriver")]
@@ -73,7 +74,7 @@ public class EldController(IMediator mediator) : ControllerBase
     public async Task<IActionResult> MapDriver([FromBody] MapEldDriverCommand request)
     {
         var result = await mediator.Send(request);
-        return result.IsSuccess ? NoContent() : BadRequest(ErrorResponse.FromResult(result));
+        return result.ToActionResult();
     }
 
     [HttpDelete("drivers/mappings/{mappingId:guid}", Name = "DeleteEldDriverMapping")]
@@ -83,7 +84,7 @@ public class EldController(IMediator mediator) : ControllerBase
     public async Task<IActionResult> DeleteDriverMapping(Guid mappingId)
     {
         var result = await mediator.Send(new DeleteEldDriverMappingCommand { MappingId = mappingId });
-        return result.IsSuccess ? NoContent() : BadRequest(ErrorResponse.FromResult(result));
+        return result.ToActionResult();
     }
 
     #endregion
@@ -96,7 +97,7 @@ public class EldController(IMediator mediator) : ControllerBase
     public async Task<IActionResult> GetProviderVehicles(Guid providerId)
     {
         var result = await mediator.Send(new GetEldProviderVehiclesQuery { ProviderId = providerId });
-        return result.IsSuccess ? Ok(result.Value) : BadRequest(ErrorResponse.FromResult(result));
+        return result.ToActionResult();
     }
 
     [HttpGet("providers/{providerId:guid}/vehicles/mappings", Name = "GetEldVehicleMappings")]
@@ -105,7 +106,7 @@ public class EldController(IMediator mediator) : ControllerBase
     public async Task<IActionResult> GetVehicleMappings(Guid providerId)
     {
         var result = await mediator.Send(new GetEldVehicleMappingsQuery { ProviderId = providerId });
-        return result.IsSuccess ? Ok(result.Value) : BadRequest(ErrorResponse.FromResult(result));
+        return result.ToActionResult();
     }
 
     [HttpPost("vehicles/mappings", Name = "MapEldVehicle")]
@@ -115,7 +116,7 @@ public class EldController(IMediator mediator) : ControllerBase
     public async Task<IActionResult> MapVehicle([FromBody] MapEldVehicleCommand request)
     {
         var result = await mediator.Send(request);
-        return result.IsSuccess ? NoContent() : BadRequest(ErrorResponse.FromResult(result));
+        return result.ToActionResult();
     }
 
     [HttpDelete("vehicles/mappings/{mappingId:guid}", Name = "DeleteEldVehicleMapping")]
@@ -125,7 +126,7 @@ public class EldController(IMediator mediator) : ControllerBase
     public async Task<IActionResult> DeleteVehicleMapping(Guid mappingId)
     {
         var result = await mediator.Send(new DeleteEldVehicleMappingCommand { MappingId = mappingId });
-        return result.IsSuccess ? NoContent() : BadRequest(ErrorResponse.FromResult(result));
+        return result.ToActionResult();
     }
 
     #endregion
@@ -138,7 +139,7 @@ public class EldController(IMediator mediator) : ControllerBase
     public async Task<IActionResult> GetMappingSuggestions(Guid providerId)
     {
         var result = await mediator.Send(new GetEldMappingSuggestionsQuery { ProviderId = providerId });
-        return result.IsSuccess ? Ok(result.Value) : BadRequest(ErrorResponse.FromResult(result));
+        return result.ToActionResult();
     }
 
     [HttpPost("providers/{providerId:guid}/suggestions/apply", Name = "ApplyEldMappingSuggestions")]
@@ -148,7 +149,7 @@ public class EldController(IMediator mediator) : ControllerBase
     public async Task<IActionResult> ApplyMappingSuggestions(Guid providerId)
     {
         var result = await mediator.Send(new ApplyEldMappingSuggestionsCommand { ProviderId = providerId });
-        return result.IsSuccess ? Ok(result.Value) : BadRequest(ErrorResponse.FromResult(result));
+        return result.ToActionResult();
     }
 
     #endregion
@@ -161,7 +162,7 @@ public class EldController(IMediator mediator) : ControllerBase
     public async Task<IActionResult> GetAllDriversHos()
     {
         var result = await mediator.Send(new GetAllDriversHosStatusQuery());
-        return result.IsSuccess ? Ok(result.Value) : BadRequest(ErrorResponse.FromResult(result));
+        return result.ToActionResult();
     }
 
     [HttpGet("drivers/{employeeId:guid}/logs", Name = "GetDriverHosLogs")]
@@ -184,7 +185,7 @@ public class EldController(IMediator mediator) : ControllerBase
     public async Task<IActionResult> GetHosLimits()
     {
         var result = await mediator.Send(new GetHosLimitsQuery());
-        return result.IsSuccess ? Ok(result.Value) : BadRequest(ErrorResponse.FromResult(result));
+        return result.ToActionResult();
     }
 
     #endregion
@@ -198,7 +199,7 @@ public class EldController(IMediator mediator) : ControllerBase
     public async Task<IActionResult> SyncAllDriversHos()
     {
         var result = await mediator.Send(new SyncAllDriversHosStatusCommand());
-        return result.IsSuccess ? NoContent() : BadRequest(ErrorResponse.FromResult(result));
+        return result.ToActionResult();
     }
 
     #endregion

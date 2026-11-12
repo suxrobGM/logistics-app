@@ -22,7 +22,7 @@ public class InspectionsController(IMediator mediator) : ControllerBase
     public async Task<IActionResult> GetInspections([FromQuery] Guid? loadId)
     {
         var result = await mediator.Send(new GetConditionReportsQuery { LoadId = loadId });
-        return result.IsSuccess ? Ok(result.Value) : BadRequest(ErrorResponse.FromResult(result));
+        return result.ToActionResult();
     }
 
     [HttpGet("parts", Name = "GetInspectionParts")]
@@ -32,7 +32,7 @@ public class InspectionsController(IMediator mediator) : ControllerBase
     public async Task<IActionResult> GetInspectionParts([FromQuery] LoadType loadType)
     {
         var result = await mediator.Send(new GetInspectionPartCatalogQuery { LoadType = loadType });
-        return result.IsSuccess ? Ok(result.Value) : BadRequest(ErrorResponse.FromResult(result));
+        return result.ToActionResult();
     }
 
     [HttpGet("{id:guid}", Name = "GetInspection")]
@@ -109,7 +109,7 @@ public class InspectionsController(IMediator mediator) : ControllerBase
         };
 
         var result = await mediator.Send(cmd);
-        return result.IsSuccess ? Ok(result.Value) : BadRequest(ErrorResponse.FromResult(result));
+        return result.ToActionResult();
     }
 }
 

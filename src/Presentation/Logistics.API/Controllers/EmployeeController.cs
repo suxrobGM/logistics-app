@@ -1,3 +1,4 @@
+using Logistics.API.Extensions;
 using Logistics.Shared.Identity.Policies;
 using Logistics.Shared.Models;
 using Logistics.Mediator;
@@ -22,7 +23,7 @@ public class EmployeeController(IMediator mediator) : ControllerBase
     public async Task<IActionResult> GetById(Guid userId)
     {
         var result = await mediator.Send(new GetEmployeeByIdQuery { UserId = userId });
-        return result.IsSuccess ? Ok(result.Value) : NotFound(ErrorResponse.FromResult(result));
+        return result.ToActionResult();
     }
 
     [HttpGet(Name = "GetEmployees")]
@@ -41,7 +42,7 @@ public class EmployeeController(IMediator mediator) : ControllerBase
     public async Task<IActionResult> Create([FromBody] CreateEmployeeCommand request)
     {
         var result = await mediator.Send(request);
-        return result.IsSuccess ? NoContent() : BadRequest(ErrorResponse.FromResult(result));
+        return result.ToActionResult();
     }
 
     [HttpPut("{userId:guid}", Name = "UpdateEmployee")]
@@ -52,7 +53,7 @@ public class EmployeeController(IMediator mediator) : ControllerBase
     {
         request.UserId = userId;
         var result = await mediator.Send(request);
-        return result.IsSuccess ? NoContent() : BadRequest(ErrorResponse.FromResult(result));
+        return result.ToActionResult();
     }
 
     [HttpDelete("{userId:guid}", Name = "DeleteEmployee")]
@@ -62,7 +63,7 @@ public class EmployeeController(IMediator mediator) : ControllerBase
     public async Task<IActionResult> Delete(Guid userId)
     {
         var result = await mediator.Send(new DeleteEmployeeCommand { UserId = userId });
-        return result.IsSuccess ? NoContent() : NotFound(ErrorResponse.FromResult(result));
+        return result.ToActionResult();
     }
 
     #region Driver licenses
@@ -91,7 +92,7 @@ public class EmployeeController(IMediator mediator) : ControllerBase
     {
         request.EmployeeId = userId;
         var result = await mediator.Send(request);
-        return result.IsSuccess ? Ok(result.Value) : BadRequest(ErrorResponse.FromResult(result));
+        return result.ToActionResult();
     }
 
     [HttpPut("{userId:guid}/licenses/{licenseId:guid}", Name = "UpdateDriverLicense")]
@@ -103,7 +104,7 @@ public class EmployeeController(IMediator mediator) : ControllerBase
     {
         request.LicenseId = licenseId;
         var result = await mediator.Send(request);
-        return result.IsSuccess ? NoContent() : BadRequest(ErrorResponse.FromResult(result));
+        return result.ToActionResult();
     }
 
     [HttpDelete("{userId:guid}/licenses/{licenseId:guid}", Name = "DeleteDriverLicense")]
@@ -113,7 +114,7 @@ public class EmployeeController(IMediator mediator) : ControllerBase
     public async Task<IActionResult> DeleteDriverLicense(Guid userId, Guid licenseId)
     {
         var result = await mediator.Send(new DeleteDriverLicenseCommand { LicenseId = licenseId });
-        return result.IsSuccess ? NoContent() : NotFound(ErrorResponse.FromResult(result));
+        return result.ToActionResult();
     }
 
     #endregion
@@ -130,7 +131,7 @@ public class EmployeeController(IMediator mediator) : ControllerBase
     public async Task<IActionResult> SetupEmployeePayout(Guid userId)
     {
         var result = await mediator.Send(new SetupEmployeePayoutCommand { EmployeeId = userId });
-        return result.IsSuccess ? NoContent() : BadRequest(ErrorResponse.FromResult(result));
+        return result.ToActionResult();
     }
 
     /// <summary>
@@ -149,7 +150,7 @@ public class EmployeeController(IMediator mediator) : ControllerBase
             ReturnUrl = returnUrl,
             RefreshUrl = refreshUrl
         });
-        return result.IsSuccess ? Ok(result.Value) : BadRequest(ErrorResponse.FromResult(result));
+        return result.ToActionResult();
     }
 
     #endregion
@@ -167,7 +168,7 @@ public class EmployeeController(IMediator mediator) : ControllerBase
     public async Task<IActionResult> GetPayProfile(Guid userId)
     {
         var result = await mediator.Send(new GetDriverPayProfileQuery { EmployeeId = userId });
-        return result.IsSuccess ? Ok(result.Value) : NotFound(ErrorResponse.FromResult(result));
+        return result.ToActionResult();
     }
 
     [HttpPut("{userId:guid}/payprofile", Name = "UpdateDriverPayProfile")]
@@ -178,7 +179,7 @@ public class EmployeeController(IMediator mediator) : ControllerBase
     {
         request.EmployeeId = userId;
         var result = await mediator.Send(request);
-        return result.IsSuccess ? NoContent() : BadRequest(ErrorResponse.FromResult(result));
+        return result.ToActionResult();
     }
 
     #endregion

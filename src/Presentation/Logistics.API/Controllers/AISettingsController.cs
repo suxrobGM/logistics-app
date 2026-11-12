@@ -1,3 +1,4 @@
+using Logistics.API.Extensions;
 using Logistics.Application.Modules.Platform.AISettings.Commands;
 using Logistics.Application.Modules.Platform.AISettings.Queries;
 using Logistics.Shared.Identity.Policies;
@@ -20,7 +21,7 @@ public class AISettingsController(IMediator mediator) : ControllerBase
     public async Task<IActionResult> GetAISettings()
     {
         var result = await mediator.Send(new GetAISettingsQuery());
-        return result.IsSuccess ? Ok(result.Value) : BadRequest(ErrorResponse.FromResult(result));
+        return result.ToActionResult();
     }
 
     [HttpPut(Name = "UpdateAISettings")]
@@ -30,6 +31,6 @@ public class AISettingsController(IMediator mediator) : ControllerBase
     public async Task<IActionResult> UpdateAISettings([FromBody] UpdateAISettingsCommand command)
     {
         var result = await mediator.Send(command);
-        return result.IsSuccess ? NoContent() : BadRequest(ErrorResponse.FromResult(result));
+        return result.ToActionResult();
     }
 }

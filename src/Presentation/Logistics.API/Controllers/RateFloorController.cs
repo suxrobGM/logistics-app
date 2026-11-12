@@ -1,3 +1,4 @@
+using Logistics.API.Extensions;
 using Logistics.Application.Modules.Integrations.Negotiation.Commands;
 using Logistics.Application.Modules.Integrations.Negotiation.Queries;
 using Logistics.Shared.Identity.Policies;
@@ -19,7 +20,7 @@ public class RateFloorController(IMediator mediator) : ControllerBase
     public async Task<IActionResult> GetLaneRateFloors()
     {
         var result = await mediator.Send(new GetLaneRateFloorsQuery());
-        return result.IsSuccess ? Ok(result.Value) : BadRequest(ErrorResponse.FromResult(result));
+        return result.ToActionResult();
     }
 
     [HttpPost(Name = "CreateLaneRateFloor")]
@@ -29,7 +30,7 @@ public class RateFloorController(IMediator mediator) : ControllerBase
     public async Task<IActionResult> CreateLaneRateFloor([FromBody] CreateLaneRateFloorCommand request)
     {
         var result = await mediator.Send(request);
-        return result.IsSuccess ? Ok(result.Value) : BadRequest(ErrorResponse.FromResult(result));
+        return result.ToActionResult();
     }
 
     [HttpPut("{id:guid}", Name = "UpdateLaneRateFloor")]
@@ -40,7 +41,7 @@ public class RateFloorController(IMediator mediator) : ControllerBase
     {
         request.Id = id;
         var result = await mediator.Send(request);
-        return result.IsSuccess ? NoContent() : BadRequest(ErrorResponse.FromResult(result));
+        return result.ToActionResult();
     }
 
     [HttpDelete("{id:guid}", Name = "DeleteLaneRateFloor")]
@@ -50,6 +51,6 @@ public class RateFloorController(IMediator mediator) : ControllerBase
     public async Task<IActionResult> DeleteLaneRateFloor(Guid id)
     {
         var result = await mediator.Send(new DeleteLaneRateFloorCommand { Id = id });
-        return result.IsSuccess ? NoContent() : BadRequest(ErrorResponse.FromResult(result));
+        return result.ToActionResult();
     }
 }

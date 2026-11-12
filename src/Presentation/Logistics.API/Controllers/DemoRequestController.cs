@@ -1,3 +1,4 @@
+using Logistics.API.Extensions;
 using Logistics.Shared.Identity.Roles;
 using Logistics.Shared.Models;
 using Logistics.Mediator;
@@ -20,7 +21,7 @@ public class DemoRequestController(IMediator mediator) : ControllerBase
     public async Task<IActionResult> GetDemoRequestById(Guid id)
     {
         var result = await mediator.Send(new GetDemoRequestQuery { Id = id });
-        return result.IsSuccess ? Ok(result.Value) : NotFound(ErrorResponse.FromResult(result));
+        return result.ToActionResult();
     }
 
     [HttpGet(Name = "GetDemoRequests")]
@@ -39,7 +40,7 @@ public class DemoRequestController(IMediator mediator) : ControllerBase
     public async Task<IActionResult> CreateDemoRequest([FromBody] CreateDemoRequestCommand request)
     {
         var result = await mediator.Send(request);
-        return result.IsSuccess ? NoContent() : BadRequest(ErrorResponse.FromResult(result));
+        return result.ToActionResult();
     }
 
     [HttpPut("{id:guid}", Name = "UpdateDemoRequest")]
@@ -50,7 +51,7 @@ public class DemoRequestController(IMediator mediator) : ControllerBase
     {
         request.Id = id;
         var result = await mediator.Send(request);
-        return result.IsSuccess ? NoContent() : BadRequest(ErrorResponse.FromResult(result));
+        return result.ToActionResult();
     }
 
     [HttpDelete("{id:guid}", Name = "DeleteDemoRequest")]
@@ -60,6 +61,6 @@ public class DemoRequestController(IMediator mediator) : ControllerBase
     public async Task<IActionResult> DeleteDemoRequest(Guid id)
     {
         var result = await mediator.Send(new DeleteDemoRequestCommand { Id = id });
-        return result.IsSuccess ? NoContent() : NotFound(ErrorResponse.FromResult(result));
+        return result.ToActionResult();
     }
 }

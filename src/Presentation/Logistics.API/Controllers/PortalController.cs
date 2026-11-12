@@ -59,7 +59,7 @@ public class PortalController(IMediator mediator) : ControllerBase
         }
 
         var result = await mediator.Send(new GetCustomerUserQuery { UserId = userId.Value });
-        return result.IsSuccess ? Ok(result.Value) : NotFound(ErrorResponse.FromResult(result));
+        return result.ToActionResult();
     }
 
     /// <summary>
@@ -114,7 +114,7 @@ public class PortalController(IMediator mediator) : ControllerBase
             CustomerId = customerId.Value
         });
 
-        return result.IsSuccess ? Ok(result.Value) : NotFound(ErrorResponse.FromResult(result));
+        return result.ToActionResult();
     }
 
     /// <summary>
@@ -133,7 +133,7 @@ public class PortalController(IMediator mediator) : ControllerBase
         }
 
         var result = await mediator.Send(new GetPortalDocumentsQuery { CustomerId = customerId.Value });
-        return result.IsSuccess ? Ok(result.Value) : NotFound(ErrorResponse.FromResult(result));
+        return result.ToActionResult();
     }
 
     /// <summary>
@@ -157,7 +157,7 @@ public class PortalController(IMediator mediator) : ControllerBase
             CustomerId = customerId.Value
         });
 
-        return result.IsSuccess ? Ok(result.Value) : NotFound(ErrorResponse.FromResult(result));
+        return result.ToActionResult();
     }
 
     /// <summary>

@@ -24,7 +24,7 @@ public class LoadController(IMediator mediator) : ControllerBase
     public async Task<IActionResult> GetById(Guid id)
     {
         var result = await mediator.Send(new GetLoadByIdQuery { Id = id });
-        return result.IsSuccess ? Ok(result.Value) : NotFound(ErrorResponse.FromResult(result));
+        return result.ToActionResult();
     }
 
     [HttpGet(Name = "GetLoads")]
@@ -52,7 +52,7 @@ public class LoadController(IMediator mediator) : ControllerBase
     public async Task<IActionResult> Create([FromBody] CreateLoadCommand request)
     {
         var result = await mediator.Send(request);
-        return result.IsSuccess ? NoContent() : BadRequest(ErrorResponse.FromResult(result));
+        return result.ToActionResult();
     }
 
     [HttpPut("{id:guid}", Name = "UpdateLoad")]
@@ -63,7 +63,7 @@ public class LoadController(IMediator mediator) : ControllerBase
     {
         request.Id = id;
         var result = await mediator.Send(request);
-        return result.IsSuccess ? NoContent() : BadRequest(ErrorResponse.FromResult(result));
+        return result.ToActionResult();
     }
 
     [HttpDelete("{id:guid}", Name = "DeleteLoad")]
@@ -73,7 +73,7 @@ public class LoadController(IMediator mediator) : ControllerBase
     public async Task<IActionResult> Delete(Guid id)
     {
         var result = await mediator.Send(new DeleteLoadCommand { Id = id });
-        return result.IsSuccess ? NoContent() : NotFound(ErrorResponse.FromResult(result));
+        return result.ToActionResult();
     }
 
     [HttpPost("import", Name = "ImportLoadFromPdf")]
@@ -104,7 +104,7 @@ public class LoadController(IMediator mediator) : ControllerBase
         };
 
         var result = await mediator.Send(cmd);
-        return result.IsSuccess ? Ok(result.Value) : BadRequest(ErrorResponse.FromResult(result));
+        return result.ToActionResult();
     }
 
     [HttpPut("{id:guid}/container", Name = "SetLoadContainer")]
@@ -115,7 +115,7 @@ public class LoadController(IMediator mediator) : ControllerBase
     {
         request.LoadId = id;
         var result = await mediator.Send(request);
-        return result.IsSuccess ? NoContent() : BadRequest(ErrorResponse.FromResult(result));
+        return result.ToActionResult();
     }
 
     [HttpPost("{id:guid}/drayagecharges", Name = "AddLoadDrayageCharges")]
@@ -125,7 +125,7 @@ public class LoadController(IMediator mediator) : ControllerBase
     public async Task<IActionResult> AddDrayageCharges(Guid id)
     {
         var result = await mediator.Send(new AddDrayageChargesCommand { LoadId = id });
-        return result.IsSuccess ? NoContent() : BadRequest(ErrorResponse.FromResult(result));
+        return result.ToActionResult();
     }
 
     [HttpPost("{id:guid}/dispatch", Name = "DispatchLoad")]
@@ -135,7 +135,7 @@ public class LoadController(IMediator mediator) : ControllerBase
     public async Task<IActionResult> Dispatch(Guid id)
     {
         var result = await mediator.Send(new DispatchLoadCommand { Id = id });
-        return result.IsSuccess ? NoContent() : BadRequest(ErrorResponse.FromResult(result));
+        return result.ToActionResult();
     }
 
     /// <summary>
@@ -158,7 +158,7 @@ public class LoadController(IMediator mediator) : ControllerBase
             LoadId = id,
             DriverId = driverId
         });
-        return result.IsSuccess ? Ok(result.Value) : BadRequest(ErrorResponse.FromResult(result));
+        return result.ToActionResult();
     }
 
     /// <summary>
@@ -187,7 +187,7 @@ public class LoadController(IMediator mediator) : ControllerBase
             LoadId = id,
             TruckId = request.TruckId
         });
-        return result.IsSuccess ? NoContent() : BadRequest(ErrorResponse.FromResult(result));
+        return result.ToActionResult();
     }
 
     [HttpPost("bulk-assign", Name = "BulkAssignLoads")]
@@ -201,7 +201,7 @@ public class LoadController(IMediator mediator) : ControllerBase
             LoadIds = request.LoadIds,
             TruckId = request.TruckId
         });
-        return result.IsSuccess ? NoContent() : BadRequest(ErrorResponse.FromResult(result));
+        return result.ToActionResult();
     }
 
     [HttpGet("{id:guid}/exceptions", Name = "GetLoadExceptions")]
@@ -240,7 +240,7 @@ public class LoadController(IMediator mediator) : ControllerBase
             ExceptionId = exceptionId,
             Resolution = request.Resolution
         });
-        return result.IsSuccess ? NoContent() : BadRequest(ErrorResponse.FromResult(result));
+        return result.ToActionResult();
     }
 
     [HttpPost("bulk-dispatch", Name = "BulkDispatchLoads")]
@@ -253,7 +253,7 @@ public class LoadController(IMediator mediator) : ControllerBase
         {
             LoadIds = request.LoadIds
         });
-        return result.IsSuccess ? NoContent() : BadRequest(ErrorResponse.FromResult(result));
+        return result.ToActionResult();
     }
 
     [HttpDelete("bulk-delete", Name = "BulkDeleteLoads")]
@@ -266,7 +266,7 @@ public class LoadController(IMediator mediator) : ControllerBase
         {
             LoadIds = request.LoadIds
         });
-        return result.IsSuccess ? NoContent() : BadRequest(ErrorResponse.FromResult(result));
+        return result.ToActionResult();
     }
 
     /// <summary>
@@ -279,7 +279,7 @@ public class LoadController(IMediator mediator) : ControllerBase
     public async Task<IActionResult> GetDetention(Guid id)
     {
         var result = await mediator.Send(new GetLoadDetentionQuery { LoadId = id });
-        return result.IsSuccess ? Ok(result.Value) : NotFound(ErrorResponse.FromResult(result));
+        return result.ToActionResult();
     }
 }
 

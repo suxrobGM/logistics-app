@@ -1,3 +1,4 @@
+using Logistics.API.Extensions;
 using Logistics.Shared.Identity.Policies;
 using Logistics.Shared.Models;
 using Logistics.Mediator;
@@ -38,7 +39,7 @@ public class InvitationController(IMediator mediator) : ControllerBase
     public async Task<IActionResult> GetById(Guid id)
     {
         var result = await mediator.Send(new GetInvitationByIdQuery { Id = id });
-        return result.IsSuccess ? Ok(result.Value) : NotFound(ErrorResponse.FromResult(result));
+        return result.ToActionResult();
     }
 
     /// <summary>
@@ -51,7 +52,7 @@ public class InvitationController(IMediator mediator) : ControllerBase
     public async Task<IActionResult> Create([FromBody] CreateInvitationCommand request)
     {
         var result = await mediator.Send(request);
-        return result.IsSuccess ? Ok(result.Value) : BadRequest(ErrorResponse.FromResult(result));
+        return result.ToActionResult();
     }
 
     /// <summary>
@@ -64,7 +65,7 @@ public class InvitationController(IMediator mediator) : ControllerBase
     public async Task<IActionResult> Resend(Guid id)
     {
         var result = await mediator.Send(new ResendInvitationCommand { Id = id });
-        return result.IsSuccess ? NoContent() : BadRequest(ErrorResponse.FromResult(result));
+        return result.ToActionResult();
     }
 
     /// <summary>
@@ -77,7 +78,7 @@ public class InvitationController(IMediator mediator) : ControllerBase
     public async Task<IActionResult> Cancel(Guid id)
     {
         var result = await mediator.Send(new CancelInvitationCommand { Id = id });
-        return result.IsSuccess ? NoContent() : NotFound(ErrorResponse.FromResult(result));
+        return result.ToActionResult();
     }
 
     /// <summary>
@@ -108,6 +109,6 @@ public class InvitationController(IMediator mediator) : ControllerBase
     public async Task<IActionResult> Accept([FromBody] AcceptInvitationCommand request)
     {
         var result = await mediator.Send(request);
-        return result.IsSuccess ? Ok(result.Value) : BadRequest(ErrorResponse.FromResult(result));
+        return result.ToActionResult();
     }
 }

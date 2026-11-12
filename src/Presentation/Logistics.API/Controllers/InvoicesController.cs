@@ -1,3 +1,4 @@
+using Logistics.API.Extensions;
 using Logistics.Shared.Identity.Policies;
 using Logistics.Shared.Models;
 using Logistics.Mediator;
@@ -24,7 +25,7 @@ public class InvoicesController(IMediator mediator) : ControllerBase
     public async Task<IActionResult> GetById(Guid id)
     {
         var result = await mediator.Send(new GetInvoiceByIdQuery { Id = id });
-        return result.IsSuccess ? Ok(result.Value) : NotFound(ErrorResponse.FromResult(result));
+        return result.ToActionResult();
     }
 
     [HttpGet(Name = "GetInvoices")]
@@ -45,7 +46,7 @@ public class InvoicesController(IMediator mediator) : ControllerBase
     public async Task<IActionResult> GetDashboard()
     {
         var result = await mediator.Send(new GetInvoiceDashboardQuery());
-        return result.IsSuccess ? Ok(result.Value) : BadRequest(ErrorResponse.FromResult(result));
+        return result.ToActionResult();
     }
 
     [HttpPut("{id:guid}", Name = "UpdateInvoice")]
@@ -56,7 +57,7 @@ public class InvoicesController(IMediator mediator) : ControllerBase
     {
         request.Id = id;
         var result = await mediator.Send(request);
-        return result.IsSuccess ? NoContent() : BadRequest(ErrorResponse.FromResult(result));
+        return result.ToActionResult();
     }
 
     [HttpDelete("{id:guid}", Name = "DeleteInvoice")]
@@ -66,7 +67,7 @@ public class InvoicesController(IMediator mediator) : ControllerBase
     public async Task<IActionResult> Delete(Guid id)
     {
         var result = await mediator.Send(new DeleteInvoiceCommand { Id = id });
-        return result.IsSuccess ? NoContent() : NotFound(ErrorResponse.FromResult(result));
+        return result.ToActionResult();
     }
 
     #region Load Invoice
@@ -123,7 +124,7 @@ public class InvoicesController(IMediator mediator) : ControllerBase
             Notes = request.Notes,
             ReceivedDate = request.ReceivedDate
         });
-        return result.IsSuccess ? NoContent() : BadRequest(ErrorResponse.FromResult(result));
+        return result.ToActionResult();
     }
 
     #endregion
@@ -145,7 +146,7 @@ public class InvoicesController(IMediator mediator) : ControllerBase
             RecipientEmail = request.Email,
             PersonalMessage = request.PersonalMessage
         });
-        return result.IsSuccess ? NoContent() : BadRequest(ErrorResponse.FromResult(result));
+        return result.ToActionResult();
     }
 
     #endregion
@@ -163,7 +164,7 @@ public class InvoicesController(IMediator mediator) : ControllerBase
     public async Task<IActionResult> PreviewTax([FromBody] PreviewInvoiceTaxRequest request)
     {
         var result = await mediator.Send(new PreviewInvoiceTaxQuery { Request = request });
-        return result.IsSuccess ? Ok(result.Value) : BadRequest(ErrorResponse.FromResult(result));
+        return result.ToActionResult();
     }
 
     #endregion
@@ -188,7 +189,7 @@ public class InvoicesController(IMediator mediator) : ControllerBase
             Quantity = request.Quantity,
             Notes = request.Notes
         });
-        return result.IsSuccess ? Ok(result.Value) : BadRequest(ErrorResponse.FromResult(result));
+        return result.ToActionResult();
     }
 
     /// <summary>
@@ -210,7 +211,7 @@ public class InvoicesController(IMediator mediator) : ControllerBase
             Quantity = request.Quantity,
             Notes = request.Notes
         });
-        return result.IsSuccess ? Ok(result.Value) : BadRequest(ErrorResponse.FromResult(result));
+        return result.ToActionResult();
     }
 
     /// <summary>
@@ -223,7 +224,7 @@ public class InvoicesController(IMediator mediator) : ControllerBase
     public async Task<IActionResult> DeleteLineItem(Guid invoiceId, Guid lineItemId)
     {
         var result = await mediator.Send(new DeleteLineItemCommand(invoiceId, lineItemId));
-        return result.IsSuccess ? NoContent() : NotFound(ErrorResponse.FromResult(result));
+        return result.ToActionResult();
     }
 
     #endregion
@@ -246,7 +247,7 @@ public class InvoicesController(IMediator mediator) : ControllerBase
         }
 
         var result = await mediator.Send(command);
-        return result.IsSuccess ? Ok(result.Value) : BadRequest(ErrorResponse.FromResult(result));
+        return result.ToActionResult();
     }
 
     /// <summary>
@@ -259,7 +260,7 @@ public class InvoicesController(IMediator mediator) : ControllerBase
     public async Task<IActionResult> RevokePaymentLink(Guid invoiceId, Guid linkId)
     {
         var result = await mediator.Send(new RevokePaymentLinkCommand(linkId));
-        return result.IsSuccess ? NoContent() : NotFound(ErrorResponse.FromResult(result));
+        return result.ToActionResult();
     }
 
     #endregion
@@ -273,7 +274,7 @@ public class InvoicesController(IMediator mediator) : ControllerBase
     public async Task<IActionResult> PreviewPayrollInvoice([FromQuery] PreviewPayrollInvoiceQuery request)
     {
         var result = await mediator.Send(request);
-        return result.IsSuccess ? Ok(result.Value) : BadRequest(ErrorResponse.FromResult(result));
+        return result.ToActionResult();
     }
 
     [HttpPost("payrolls/previews", Name = "PreviewPayrollInvoices")]
@@ -283,7 +284,7 @@ public class InvoicesController(IMediator mediator) : ControllerBase
     public async Task<IActionResult> PreviewPayrollInvoices([FromBody] PreviewPayrollInvoicesQuery request)
     {
         var result = await mediator.Send(request);
-        return result.IsSuccess ? Ok(result.Value) : BadRequest(ErrorResponse.FromResult(result));
+        return result.ToActionResult();
     }
 
     [HttpPost("payrolls", Name = "CreatePayrollInvoice")]
@@ -293,7 +294,7 @@ public class InvoicesController(IMediator mediator) : ControllerBase
     public async Task<IActionResult> CreatePayrollInvoice([FromBody] CreatePayrollInvoiceCommand request)
     {
         var result = await mediator.Send(request);
-        return result.IsSuccess ? NoContent() : BadRequest(ErrorResponse.FromResult(result));
+        return result.ToActionResult();
     }
 
     /// <summary>
@@ -311,7 +312,7 @@ public class InvoicesController(IMediator mediator) : ControllerBase
             PeriodStart = request.PeriodStart,
             PeriodEnd = request.PeriodEnd
         });
-        return result.IsSuccess ? Ok(result.Value) : BadRequest(ErrorResponse.FromResult(result));
+        return result.ToActionResult();
     }
 
     [HttpPut("payrolls/{id:guid}", Name = "UpdatePayrollInvoice")]
@@ -322,7 +323,7 @@ public class InvoicesController(IMediator mediator) : ControllerBase
     {
         request.Id = id;
         var result = await mediator.Send(request);
-        return result.IsSuccess ? NoContent() : BadRequest(ErrorResponse.FromResult(result));
+        return result.ToActionResult();
     }
 
     /// <summary>
@@ -335,7 +336,7 @@ public class InvoicesController(IMediator mediator) : ControllerBase
     public async Task<IActionResult> SubmitPayrollForApproval(Guid id)
     {
         var result = await mediator.Send(new SubmitPayrollForApprovalCommand { Id = id });
-        return result.IsSuccess ? NoContent() : BadRequest(ErrorResponse.FromResult(result));
+        return result.ToActionResult();
     }
 
     /// <summary>
@@ -352,7 +353,7 @@ public class InvoicesController(IMediator mediator) : ControllerBase
             Id = id,
             Notes = request?.Notes
         });
-        return result.IsSuccess ? NoContent() : BadRequest(ErrorResponse.FromResult(result));
+        return result.ToActionResult();
     }
 
     /// <summary>
@@ -369,7 +370,7 @@ public class InvoicesController(IMediator mediator) : ControllerBase
             Id = id,
             Reason = request.Reason
         });
-        return result.IsSuccess ? NoContent() : BadRequest(ErrorResponse.FromResult(result));
+        return result.ToActionResult();
     }
 
     /// <summary>
@@ -386,7 +387,7 @@ public class InvoicesController(IMediator mediator) : ControllerBase
             Ids = request.Ids,
             Notes = request.Notes
         });
-        return result.IsSuccess ? NoContent() : BadRequest(ErrorResponse.FromResult(result));
+        return result.ToActionResult();
     }
 
     /// <summary>
@@ -399,7 +400,7 @@ public class InvoicesController(IMediator mediator) : ControllerBase
     public async Task<IActionResult> PayPayrollInvoice(Guid id)
     {
         var result = await mediator.Send(new PayPayrollInvoiceCommand { InvoiceId = id });
-        return result.IsSuccess ? NoContent() : BadRequest(ErrorResponse.FromResult(result));
+        return result.ToActionResult();
     }
 
     /// <summary>

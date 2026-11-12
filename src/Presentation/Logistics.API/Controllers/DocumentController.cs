@@ -1,3 +1,4 @@
+using Logistics.API.Extensions;
 using Logistics.Domain.Primitives.Enums;
 using Logistics.Shared.Identity.Policies;
 using Logistics.Shared.Models;
@@ -24,7 +25,7 @@ public class DocumentController(IMediator mediator) : ControllerBase
     public async Task<IActionResult> GetDocuments([FromQuery] GetDocumentsQuery query)
     {
         var result = await mediator.Send(query);
-        return result.IsSuccess ? Ok(result.Value) : BadRequest(ErrorResponse.FromResult(result));
+        return result.ToActionResult();
     }
 
     // GET /documents/{documentId}
@@ -70,7 +71,7 @@ public class DocumentController(IMediator mediator) : ControllerBase
         };
 
         var result = await mediator.Send(cmd);
-        return result.IsSuccess ? Ok(result.Value) : BadRequest(ErrorResponse.FromResult(result));
+        return result.ToActionResult();
     }
 
     // GET /documents/{documentId}/download
@@ -100,7 +101,7 @@ public class DocumentController(IMediator mediator) : ControllerBase
         request.DocumentId = documentId;
 
         var result = await mediator.Send(request);
-        return result.IsSuccess ? NoContent() : BadRequest(ErrorResponse.FromResult(result));
+        return result.ToActionResult();
     }
 
     // DELETE /documents/{documentId}
@@ -115,7 +116,7 @@ public class DocumentController(IMediator mediator) : ControllerBase
             DocumentId = documentId
         });
 
-        return result.IsSuccess ? NoContent() : NotFound(ErrorResponse.FromResult(result));
+        return result.ToActionResult();
     }
 
     // POST /documents/pod
@@ -159,7 +160,7 @@ public class DocumentController(IMediator mediator) : ControllerBase
         };
 
         var result = await mediator.Send(cmd);
-        return result.IsSuccess ? Ok(result.Value) : BadRequest(ErrorResponse.FromResult(result));
+        return result.ToActionResult();
     }
 
     // POST /documents/bol
@@ -203,7 +204,7 @@ public class DocumentController(IMediator mediator) : ControllerBase
         };
 
         var result = await mediator.Send(cmd);
-        return result.IsSuccess ? Ok(result.Value) : BadRequest(ErrorResponse.FromResult(result));
+        return result.ToActionResult();
     }
 }
 

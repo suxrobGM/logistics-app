@@ -1,3 +1,4 @@
+using Logistics.API.Extensions;
 using Logistics.Shared.Identity.Policies;
 using Logistics.Shared.Models;
 using Logistics.Mediator;
@@ -26,7 +27,7 @@ public class StripeConnectController(IMediator mediator) : ControllerBase
     public async Task<IActionResult> CreateAccount()
     {
         var result = await mediator.Send(new CreateConnectAccountCommand());
-        return result.IsSuccess ? Ok(result.Value) : BadRequest(ErrorResponse.FromResult(result));
+        return result.ToActionResult();
     }
 
     /// <summary>
@@ -42,7 +43,7 @@ public class StripeConnectController(IMediator mediator) : ControllerBase
         [FromQuery] string refreshUrl)
     {
         var result = await mediator.Send(new GetOnboardingLinkQuery(returnUrl, refreshUrl));
-        return result.IsSuccess ? Ok(result.Value) : BadRequest(ErrorResponse.FromResult(result));
+        return result.ToActionResult();
     }
 
     /// <summary>
@@ -56,7 +57,7 @@ public class StripeConnectController(IMediator mediator) : ControllerBase
     public async Task<IActionResult> RefreshStatus()
     {
         var result = await mediator.Send(new RefreshConnectStatusCommand());
-        return result.IsSuccess ? Ok(result.Value) : BadRequest(ErrorResponse.FromResult(result));
+        return result.ToActionResult();
     }
 
     /// <summary>
@@ -69,6 +70,6 @@ public class StripeConnectController(IMediator mediator) : ControllerBase
     public async Task<IActionResult> GetDashboardLink()
     {
         var result = await mediator.Send(new GetDashboardLinkQuery());
-        return result.IsSuccess ? Ok(result.Value) : BadRequest(ErrorResponse.FromResult(result));
+        return result.ToActionResult();
     }
 }

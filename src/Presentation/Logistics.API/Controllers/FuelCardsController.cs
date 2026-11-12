@@ -1,3 +1,4 @@
+using Logistics.API.Extensions;
 using Logistics.Application.Modules.Integrations.FuelCards.Commands;
 using Logistics.Application.Modules.Integrations.FuelCards.Queries;
 using Logistics.Shared.Identity.Policies;
@@ -21,7 +22,7 @@ public class FuelCardsController(IMediator mediator) : ControllerBase
     public async Task<IActionResult> GetProviders()
     {
         var result = await mediator.Send(new GetFuelCardProviderConfigurationsQuery());
-        return result.IsSuccess ? Ok(result.Value) : BadRequest(ErrorResponse.FromResult(result));
+        return result.ToActionResult();
     }
 
     [HttpPost("providers", Name = "CreateFuelCardProvider")]
@@ -31,7 +32,7 @@ public class FuelCardsController(IMediator mediator) : ControllerBase
     public async Task<IActionResult> CreateProvider([FromBody] CreateFuelCardProviderConfigurationCommand request)
     {
         var result = await mediator.Send(request);
-        return result.IsSuccess ? NoContent() : BadRequest(ErrorResponse.FromResult(result));
+        return result.ToActionResult();
     }
 
     [HttpDelete("providers/{providerId:guid}", Name = "DeleteFuelCardProvider")]
@@ -41,7 +42,7 @@ public class FuelCardsController(IMediator mediator) : ControllerBase
     public async Task<IActionResult> DeleteProvider(Guid providerId)
     {
         var result = await mediator.Send(new DeleteFuelCardProviderConfigurationCommand { Id = providerId });
-        return result.IsSuccess ? NoContent() : BadRequest(ErrorResponse.FromResult(result));
+        return result.ToActionResult();
     }
 
     [HttpPost("sync", Name = "SyncFuelCardTransactions")]
@@ -51,7 +52,7 @@ public class FuelCardsController(IMediator mediator) : ControllerBase
     public async Task<IActionResult> Sync([FromBody] SyncFuelCardTransactionsCommand request)
     {
         var result = await mediator.Send(request);
-        return result.IsSuccess ? Ok(result.Value) : BadRequest(ErrorResponse.FromResult(result));
+        return result.ToActionResult();
     }
 
     #endregion
@@ -74,7 +75,7 @@ public class FuelCardsController(IMediator mediator) : ControllerBase
     public async Task<IActionResult> AssignTransactions([FromBody] AssignFuelCardTransactionTruckCommand request)
     {
         var result = await mediator.Send(request);
-        return result.IsSuccess ? NoContent() : BadRequest(ErrorResponse.FromResult(result));
+        return result.ToActionResult();
     }
 
     [HttpPost("transactions/ignore", Name = "IgnoreFuelCardTransaction")]
@@ -84,7 +85,7 @@ public class FuelCardsController(IMediator mediator) : ControllerBase
     public async Task<IActionResult> IgnoreTransactions([FromBody] IgnoreFuelCardTransactionCommand request)
     {
         var result = await mediator.Send(request);
-        return result.IsSuccess ? NoContent() : BadRequest(ErrorResponse.FromResult(result));
+        return result.ToActionResult();
     }
 
     #endregion
