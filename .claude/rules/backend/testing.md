@@ -30,6 +30,7 @@ Other `Logistics.Infrastructure.*.Tests` projects cover their own infrastructure
 - Use `#region` blocks to group related tests (e.g., `#region Session counting`)
 - Field naming: `_sut` for the system under test
 - Use `[Fact]` for single cases, `[Theory]` + `[InlineData]` for parameterized tests
+- A theory with a `decimal` parameter takes `[MemberData]` over a `TheoryData<...>` with `m` literals, never `[InlineData(8.10)]`: attributes can't hold decimals, so the double literal is converted, and since .NET 11 that conversion keeps binary noise (8.0999999999999996…)
 - Inject mocked dependencies via constructor, wire them in the constructor body
 
 ## Architecture tests

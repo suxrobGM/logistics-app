@@ -159,10 +159,15 @@ public class ManualTaxCalculatorTests
         Assert.NotNull(result.Warning);
     }
 
+    public static TheoryData<string, decimal> Calculate_OtherCountry_AppliesCountryDefaultCases => new()
+    {
+        { "AU", 10.00m },
+        { "NZ", 15.00m },
+        { "CA", 5.00m },
+    };
+
     [Theory]
-    [InlineData("AU", 10.00)]
-    [InlineData("NZ", 15.00)]
-    [InlineData("CA", 5.00)]
+    [MemberData(nameof(Calculate_OtherCountry_AppliesCountryDefaultCases))]
     public async Task Calculate_OtherCountry_AppliesCountryDefault(string country, decimal expectedRate)
     {
         var request = Request(country: country, state: "", tenantRegion: Region.US, lineAmounts: [100m]);

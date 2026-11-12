@@ -4,14 +4,19 @@ namespace Logistics.Infrastructure.Tax.Tests.Data;
 
 public class RateTableTests
 {
+    public static TheoryData<string, decimal> EUVatRates_KnownCountries_ReturnExpectedRateCases => new()
+    {
+        { "DE", 19.00m },
+        { "FR", 20.00m },
+        { "NL", 21.00m },
+        { "HU", 27.00m }, // highest standard EU VAT
+        { "LU", 17.00m }, // lowest standard EU VAT
+        { "GB", 20.00m }, // post-Brexit UK
+        { "CH", 8.10m }, // Swiss
+    };
+
     [Theory]
-    [InlineData("DE", 19.00)]
-    [InlineData("FR", 20.00)]
-    [InlineData("NL", 21.00)]
-    [InlineData("HU", 27.00)] // highest standard EU VAT
-    [InlineData("LU", 17.00)] // lowest standard EU VAT
-    [InlineData("GB", 20.00)] // post-Brexit UK
-    [InlineData("CH", 8.10)]  // Swiss
+    [MemberData(nameof(EUVatRates_KnownCountries_ReturnExpectedRateCases))]
     public void EUVatRates_KnownCountries_ReturnExpectedRate(string country, decimal expected)
     {
         Assert.Equal(expected, EUVatRates.GetStandardRate(country));
@@ -27,13 +32,18 @@ public class RateTableTests
         Assert.Null(EUVatRates.GetStandardRate(country));
     }
 
+    public static TheoryData<string, decimal> USSalesTaxRates_KnownStates_ReturnExpectedRateCases => new()
+    {
+        { "CA", 7.25m },
+        { "TX", 6.25m },
+        { "NY", 4.00m },
+        { "AK", 0.00m }, // no statewide sales tax
+        { "DE", 0.00m }, // Delaware, not Germany
+        { "DC", 6.00m },
+    };
+
     [Theory]
-    [InlineData("CA", 7.25)]
-    [InlineData("TX", 6.25)]
-    [InlineData("NY", 4.00)]
-    [InlineData("AK", 0.00)] // no statewide sales tax
-    [InlineData("DE", 0.00)] // Delaware, not Germany
-    [InlineData("DC", 6.00)]
+    [MemberData(nameof(USSalesTaxRates_KnownStates_ReturnExpectedRateCases))]
     public void USSalesTaxRates_KnownStates_ReturnExpectedRate(string state, decimal expected)
     {
         Assert.Equal(expected, USSalesTaxRates.GetStateBaseRate(state));
@@ -48,13 +58,18 @@ public class RateTableTests
         Assert.Null(USSalesTaxRates.GetStateBaseRate(state));
     }
 
+    public static TheoryData<string, decimal> OtherCountryRates_KnownCountries_ReturnExpectedRateCases => new()
+    {
+        { "AU", 10.00m },
+        { "NZ", 15.00m },
+        { "CA", 5.00m }, // GST only
+        { "JP", 10.00m },
+        { "IN", 18.00m },
+        { "MX", 16.00m },
+    };
+
     [Theory]
-    [InlineData("AU", 10.00)]
-    [InlineData("NZ", 15.00)]
-    [InlineData("CA", 5.00)]   // GST only
-    [InlineData("JP", 10.00)]
-    [InlineData("IN", 18.00)]
-    [InlineData("MX", 16.00)]
+    [MemberData(nameof(OtherCountryRates_KnownCountries_ReturnExpectedRateCases))]
     public void OtherCountryRates_KnownCountries_ReturnExpectedRate(string country, decimal expected)
     {
         Assert.Equal(expected, OtherCountryRates.GetRate(country));

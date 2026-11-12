@@ -6,17 +6,22 @@ namespace Logistics.Infrastructure.AI.Tests.Llm;
 
 public class LlmPricingTests
 {
+    public static TheoryData<string, int, int, int, int, decimal> Calculate_BaseTokenPricing_ReturnsCorrectCostCases => new()
+    {
+        { "claude-sonnet-5-5", 1_000_000, 0, 0, 0, 2.0m },
+        { "claude-sonnet-5-5", 0, 1_000_000, 0, 0, 10.0m },
+        { "claude-haiku-5-5", 1_000_000, 0, 0, 0, 0.10m },
+        { "claude-haiku-5-5", 0, 1_000_000, 0, 0, 0.50m },
+        { "gpt-6.1-sol", 1_000_000, 0, 0, 0, 2.0m },
+        { "gpt-6.1-sol", 0, 1_000_000, 0, 0, 10.0m },
+        { "gpt-6-luna", 1_000_000, 0, 0, 0, 0.10m },
+        { "gpt-6-luna", 0, 1_000_000, 0, 0, 0.50m },
+        { "deepseek-flash", 1_000_000, 0, 0, 0, 0.30m },
+        { "deepseek-flash", 0, 1_000_000, 0, 0, 1.20m },
+    };
+
     [Theory]
-    [InlineData("claude-sonnet-5-5", 1_000_000, 0, 0, 0, 2.0)]
-    [InlineData("claude-sonnet-5-5", 0, 1_000_000, 0, 0, 10.0)]
-    [InlineData("claude-haiku-5-5", 1_000_000, 0, 0, 0, 0.10)]
-    [InlineData("claude-haiku-5-5", 0, 1_000_000, 0, 0, 0.50)]
-    [InlineData("gpt-6.1-sol", 1_000_000, 0, 0, 0, 2.0)]
-    [InlineData("gpt-6.1-sol", 0, 1_000_000, 0, 0, 10.0)]
-    [InlineData("gpt-6-luna", 1_000_000, 0, 0, 0, 0.10)]
-    [InlineData("gpt-6-luna", 0, 1_000_000, 0, 0, 0.50)]
-    [InlineData("deepseek-flash", 1_000_000, 0, 0, 0, 0.30)]
-    [InlineData("deepseek-flash", 0, 1_000_000, 0, 0, 1.20)]
+    [MemberData(nameof(Calculate_BaseTokenPricing_ReturnsCorrectCostCases))]
     public void Calculate_BaseTokenPricing_ReturnsCorrectCost(
         string model, int input, int output, int cacheRead, int cacheWrite, decimal expected)
     {
@@ -25,9 +30,14 @@ public class LlmPricingTests
         Assert.Equal(expected, result);
     }
 
+    public static TheoryData<string, decimal, decimal> Calculate_CacheTokens_IncludedInCostCases => new()
+    {
+        { "claude-sonnet-5-5", 0.20m, 2.50m },
+        { "gpt-6-luna", 0.01m, 0.125m },
+    };
+
     [Theory]
-    [InlineData("claude-sonnet-5-5", 0.20, 2.50)]
-    [InlineData("gpt-6-luna", 0.01, 0.125)]
+    [MemberData(nameof(Calculate_CacheTokens_IncludedInCostCases))]
     public void Calculate_CacheTokens_IncludedInCost(string model, decimal cacheRead, decimal cacheWrite)
     {
         var result = LlmPricing.Calculate(

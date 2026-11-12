@@ -38,14 +38,19 @@ public class ImportParsingTests
         Assert.Equal(DateTimeKind.Utc, date.Value.Kind);
     }
 
-    [Theory]
-    [InlineData("Length (ft)", Region.EU, 53, 16.15)]
-    [InlineData("Length (m)", Region.US, 13.6, 13.6)]
-    [InlineData("Length", Region.US, 53, 16.15)]
-    [InlineData("Length", Region.EU, 13.6, 13.6)]
-    public void ToMeters_HeaderUnitWinsOverRegion(string header, Region region, double length, double expected)
+    public static TheoryData<string, Region, decimal, decimal> ToMeters_HeaderUnitWinsOverRegionCases => new()
     {
-        Assert.Equal((decimal)expected, ImportValueParser.ToMeters((decimal)length, header, region));
+        { "Length (ft)", Region.EU, 53m, 16.15m },
+        { "Length (m)", Region.US, 13.6m, 13.6m },
+        { "Length", Region.US, 53m, 16.15m },
+        { "Length", Region.EU, 13.6m, 13.6m },
+    };
+
+    [Theory]
+    [MemberData(nameof(ToMeters_HeaderUnitWinsOverRegionCases))]
+    public void ToMeters_HeaderUnitWinsOverRegion(string header, Region region, decimal length, decimal expected)
+    {
+        Assert.Equal(expected, ImportValueParser.ToMeters(length, header, region));
     }
 
     [Theory]

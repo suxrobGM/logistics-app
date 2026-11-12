@@ -1,5 +1,6 @@
 using System.ComponentModel.DataAnnotations.Schema;
 using Logistics.Domain.Core;
+using Logistics.Domain.Primitives;
 using Logistics.Domain.Primitives.Enums;
 using Logistics.Domain.Primitives.ValueObjects;
 
@@ -179,6 +180,6 @@ public partial class Load : AuditableEntity, ITenantEntity
 
     public decimal CalcDriverShare()
     {
-        return DeliveryCost * (decimal)(AssignedTruck?.GetDriversShareRatio() ?? 0);
+        return DeliveryCost * (AssignedTruck?.GetDriversShareRatio() ?? 0).ToDecimal();
     }
 }

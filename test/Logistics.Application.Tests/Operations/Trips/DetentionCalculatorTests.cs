@@ -9,12 +9,17 @@ public class DetentionCalculatorTests
     private static readonly DateTime Arrived = new(2026, 10, 12, 8, 0, 0, DateTimeKind.Utc);
     private static readonly DetentionTerms TwoHoursAt50 = new(120, 50m);
 
+    public static TheoryData<int, decimal, decimal> Calculate_Departed_BillsWholeQuarterHoursPastFreeTimeCases => new()
+    {
+        { 120, 0m, 0m }, // exactly the free time
+        { 134, 0m, 0m }, // 14 minutes over: under one billing increment
+        { 135, 0.25m, 12.5m }, // 15 minutes over
+        { 200, 1.25m, 62.5m }, // 80 minutes over: rounds down to 75
+        { 60, 0m, 0m }, // inside free time
+    };
+
     [Theory]
-    [InlineData(120, 0, 0)]       // exactly the free time
-    [InlineData(134, 0, 0)]       // 14 minutes over: under one billing increment
-    [InlineData(135, 0.25, 12.5)] // 15 minutes over
-    [InlineData(200, 1.25, 62.5)] // 80 minutes over: rounds down to 75
-    [InlineData(60, 0, 0)]        // inside free time
+    [MemberData(nameof(Calculate_Departed_BillsWholeQuarterHoursPastFreeTimeCases))]
     public void Calculate_Departed_BillsWholeQuarterHoursPastFreeTime(int dwellMinutes, decimal hours, decimal charge)
     {
         var detention = DetentionCalculator.Calculate(Arrived, Arrived.AddMinutes(dwellMinutes), Arrived, TwoHoursAt50);

@@ -1,4 +1,5 @@
 using Logistics.Domain.Core;
+using Logistics.Domain.Primitives;
 using Logistics.Domain.Primitives.Enums;
 
 namespace Logistics.Domain.Entities;
@@ -53,6 +54,6 @@ public class TimeEntry : AuditableEntity, ITenantEntity
     public void CalculateTotalHours()
     {
         var duration = EndTime - StartTime;
-        TotalHours = (decimal)duration.TotalHours;
+        TotalHours = duration.TotalHours.ToDecimal();
     }
 }

@@ -12,6 +12,7 @@ surrounding file and let the build tell you. What follows is the part no tool ch
 
 - Primary constructors for DI; one type per file matching the filename.
 - `Async` suffix on async methods (**except** request handlers). Always accept `CancellationToken`; never `.Result` / `.Wait()`.
+- Never cast `double`/`float` to `decimal` with `(decimal)x`. Since .NET 11 the cast keeps the exact binary value (`(decimal)0.3f` is 0.300000011920928955…), which leaks into money math and flips midpoint rounding. Use `x.ToDecimal()` from `Logistics.Domain.Primitives.FloatingPointExtensions`.
 
 ## Domain Events
 

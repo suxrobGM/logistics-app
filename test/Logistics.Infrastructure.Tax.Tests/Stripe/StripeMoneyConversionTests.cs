@@ -4,24 +4,34 @@ namespace Logistics.Infrastructure.Tax.Tests.Stripe;
 
 public class StripeMoneyConversionTests
 {
+    public static TheoryData<decimal, string, long> ToMinorUnits_TwoDecimalCurrencies_ScalesByHundredCases => new()
+    {
+        { 10.00m, "USD", 1000 },
+        { 0.01m, "USD", 1 },
+        { 123.45m, "EUR", 12345 },
+        { 1.005m, "USD", 101 }, // banker's-style? AwayFromZero rounds half up
+        { 0.00m, "USD", 0 },
+        { -5.00m, "USD", -500 },
+    };
+
     [Theory]
-    [InlineData(10.00, "USD", 1000)]
-    [InlineData(0.01, "USD", 1)]
-    [InlineData(123.45, "EUR", 12345)]
-    [InlineData(1.005, "USD", 101)]   // banker's-style? AwayFromZero rounds half up
-    [InlineData(0.00, "USD", 0)]
-    [InlineData(-5.00, "USD", -500)]
+    [MemberData(nameof(ToMinorUnits_TwoDecimalCurrencies_ScalesByHundredCases))]
     public void ToMinorUnits_TwoDecimalCurrencies_ScalesByHundred(decimal amount, string currency, long expected)
     {
         Assert.Equal(expected, StripeMoneyConversion.ToMinorUnits(amount, currency));
     }
 
+    public static TheoryData<decimal, string, long> ToMinorUnits_ZeroDecimalCurrencies_NoScalingCases => new()
+    {
+        { 1000m, "JPY", 1000 },
+        { 150m, "KRW", 150 },
+        { 500m, "VND", 500 },
+        { 1.6m, "JPY", 2 }, // rounds to nearest whole unit
+        { 1.4m, "JPY", 1 },
+    };
+
     [Theory]
-    [InlineData(1000, "JPY", 1000)]
-    [InlineData(150, "KRW", 150)]
-    [InlineData(500, "VND", 500)]
-    [InlineData(1.6, "JPY", 2)]   // rounds to nearest whole unit
-    [InlineData(1.4, "JPY", 1)]
+    [MemberData(nameof(ToMinorUnits_ZeroDecimalCurrencies_NoScalingCases))]
     public void ToMinorUnits_ZeroDecimalCurrencies_NoScaling(decimal amount, string currency, long expected)
     {
         Assert.Equal(expected, StripeMoneyConversion.ToMinorUnits(amount, currency));
@@ -43,10 +53,15 @@ public class StripeMoneyConversionTests
         Assert.Equal(100, StripeMoneyConversion.ToMinorUnits(100m, currency));
     }
 
+    public static TheoryData<long, string, decimal> FromMinorUnits_TwoDecimalCurrencies_DividesByHundredCases => new()
+    {
+        { 1234, "USD", 12.34m },
+        { 0, "USD", 0m },
+        { 1, "USD", 0.01m },
+    };
+
     [Theory]
-    [InlineData(1234, "USD", 12.34)]
-    [InlineData(0, "USD", 0)]
-    [InlineData(1, "USD", 0.01)]
+    [MemberData(nameof(FromMinorUnits_TwoDecimalCurrencies_DividesByHundredCases))]
     public void FromMinorUnits_TwoDecimalCurrencies_DividesByHundred(long minor, string currency, decimal expected)
     {
         Assert.Equal(expected, StripeMoneyConversion.FromMinorUnits(minor, currency));

@@ -1,6 +1,7 @@
 using Logistics.Application.Abstractions.Common;
 using Logistics.Domain.Entities;
 using Logistics.Domain.Persistence;
+using Logistics.Domain.Primitives;
 using Logistics.Domain.Primitives.Enums;
 using Logistics.Domain.Primitives.ValueObjects;
 using Logistics.Shared.Models;
@@ -96,18 +97,18 @@ internal sealed class LaneRateFloorResolver(ITenantUnitOfWork tenantUow) : ILane
     {
         var distanceMiles = listing.Distance;
         decimal? floorTotal = distanceMiles is > 0
-            ? Math.Max(minRatePerMile * (decimal)distanceMiles.Value, minTotalRate?.Amount ?? 0M)
+            ? Math.Max(minRatePerMile * distanceMiles.Value.ToDecimal(), minTotalRate?.Amount ?? 0M)
             : minTotalRate?.Amount;
 
         var listingTotal = listing.TotalRate?.Amount
             ?? (listing.RatePerMile.HasValue && distanceMiles is > 0
-                ? listing.RatePerMile.Value * (decimal)distanceMiles.Value
+                ? listing.RatePerMile.Value * distanceMiles.Value.ToDecimal()
                 : null);
 
         if (floorTotal.HasValue && listingTotal.HasValue)
         {
             var gapTotal = floorTotal.Value - listingTotal.Value;
-            var gapPerMile = distanceMiles is > 0 ? gapTotal / (decimal)distanceMiles.Value : (decimal?)null;
+            var gapPerMile = distanceMiles is > 0 ? gapTotal / distanceMiles.Value.ToDecimal() : (decimal?)null;
             return (floorTotal, gapTotal > 0, gapPerMile);
         }
 

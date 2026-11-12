@@ -98,10 +98,15 @@ public class AIQuotaServiceTests
 
     #region Budget from plan
 
+    public static TheoryData<decimal> GetQuotaStatus_ReturnsCorrectBudgetFromPlanCases => new()
+    {
+        { 5m },
+        { 25m },
+        { 75.50m },
+    };
+
     [Theory]
-    [InlineData(5)]
-    [InlineData(25)]
-    [InlineData(75.50)]
+    [MemberData(nameof(GetQuotaStatus_ReturnsCorrectBudgetFromPlanCases))]
     public async Task GetQuotaStatus_ReturnsCorrectBudgetFromPlan(decimal budget)
     {
         var tenantId = Guid.NewGuid();

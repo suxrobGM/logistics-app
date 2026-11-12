@@ -1,5 +1,6 @@
 using System.Globalization;
 using Logistics.Domain.Entities;
+using Logistics.Domain.Primitives;
 using Logistics.Domain.Primitives.Enums;
 using Microsoft.EntityFrameworkCore;
 
@@ -35,7 +36,7 @@ internal partial class PayrollService
                 var meters = loads.Sum(l => l.Distance);
                 var unit = tenantUow.GetCurrentTenant().Settings.DistanceUnit;
                 var distance = unit.FromMeters(meters);
-                return new GrossPay((decimal)distance * rate,
+                return new GrossPay(distance.ToDecimal() * rate,
                     $"{loads.Count} load(s), {distance:0} {unit.Abbreviation()} x {rate:0.00}",
                     Distance: meters);
             }

@@ -1,3 +1,4 @@
+using Logistics.Domain.Primitives;
 using Logistics.Domain.Primitives.Enums;
 using Logistics.Domain.Primitives.ValueObjects;
 using Logistics.Shared.Models;
@@ -59,7 +60,7 @@ internal static class DatMapper
             return (null, null);
         }
 
-        var miles = distance is > 0 ? (decimal)distance.Value : (decimal?)null;
+        var miles = distance is > 0 ? distance.Value.ToDecimal() : (decimal?)null;
         return rate.RateBasedOn?.ToUpperInvariant() == "PER_MILE"
             ? (miles is { } m ? Math.Round(amount * m, 2) : null, amount)
             : (amount, miles is { } n ? Math.Round(amount / n, 2) : null);

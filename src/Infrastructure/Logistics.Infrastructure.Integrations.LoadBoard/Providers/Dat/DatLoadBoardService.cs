@@ -1,6 +1,7 @@
 using System.Net;
 using Logistics.Application.Abstractions.LoadBoard;
 using Logistics.Domain.Entities;
+using Logistics.Domain.Primitives;
 using Logistics.Domain.Primitives.Enums;
 using Logistics.Shared.Models;
 using Microsoft.Extensions.Logging;
@@ -236,7 +237,7 @@ internal sealed class DatLoadBoardService(
         var perTrip = rate?.PerTrip?.RateUsd;
         if (perMile is null && perTrip is not null && rate?.Mileage is > 0)
         {
-            perMile = Math.Round(perTrip.Value / (decimal)rate.Mileage.Value, 2);
+            perMile = Math.Round(perTrip.Value / rate.Mileage.Value.ToDecimal(), 2);
         }
 
         return perMile is { } value

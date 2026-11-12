@@ -12,13 +12,18 @@ public class AIOverageBillingTests
         Assert.Equal(1, AIOverageBilling.UnitsFor(0m));
     }
 
+    public static TheoryData<decimal, int> UnitsFor_MarksUpCostAndRoundsUpToWholeUnitsCases => new()
+    {
+        { 0.01m, 1 }, // 0.03 marked-up -> ceil to 1 unit
+        { 0.03m, 1 }, // 0.09 -> 1 unit
+        { 0.04m, 2 }, // 0.12 -> 2 units
+        { 0.10m, 3 }, // 0.30 -> exactly 3 units, no overshoot
+        { 0.11m, 4 }, // 0.33 -> 4 units
+        { 1.00m, 30 }, // 3.00 -> 30 units
+    };
+
     [Theory]
-    [InlineData(0.01, 1)]  // 0.03 marked-up -> ceil to 1 unit
-    [InlineData(0.03, 1)]  // 0.09 -> 1 unit
-    [InlineData(0.04, 2)]  // 0.12 -> 2 units
-    [InlineData(0.10, 3)]  // 0.30 -> exactly 3 units, no overshoot
-    [InlineData(0.11, 4)]  // 0.33 -> 4 units
-    [InlineData(1.00, 30)] // 3.00 -> 30 units
+    [MemberData(nameof(UnitsFor_MarksUpCostAndRoundsUpToWholeUnitsCases))]
     public void UnitsFor_MarksUpCostAndRoundsUpToWholeUnits(decimal costUsd, int expectedUnits)
     {
         Assert.Equal(expectedUnits, AIOverageBilling.UnitsFor(costUsd));

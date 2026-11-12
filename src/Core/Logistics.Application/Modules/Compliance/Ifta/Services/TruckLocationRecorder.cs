@@ -1,6 +1,7 @@
 using Logistics.Application.Abstractions.Geocoding;
 using Logistics.Domain.Entities;
 using Logistics.Domain.Persistence;
+using Logistics.Domain.Primitives;
 using Logistics.Domain.Primitives.Enums;
 using Logistics.Domain.Primitives.ValueObjects;
 using Microsoft.EntityFrameworkCore;
@@ -76,7 +77,7 @@ internal sealed class TruckLocationRecorder(
         int? odometerReading,
         CancellationToken ct)
     {
-        var haversineMiles = (decimal)(previous.Location.DistanceTo(location) / MetersPerMile);
+        var haversineMiles = (previous.Location.DistanceTo(location) / MetersPerMile).ToDecimal();
         var miles = ResolveSegmentMiles(previous.OdometerReading, odometerReading, haversineMiles);
 
         if (miles < MinSegmentMiles)
