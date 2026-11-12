@@ -13,6 +13,11 @@ public interface ITrackingLinkService : IApplicationService
     Task<TrackingLink> GetOrCreateAsync(Guid loadId, CancellationToken ct = default);
 
     /// <summary>
+    /// The load's newest valid link, or null. Never creates one.
+    /// </summary>
+    Task<TrackingLink?> FindActiveAsync(Guid loadId, CancellationToken ct = default);
+
+    /// <summary>
     /// The customer-portal URL that opens the link for the current tenant.
     /// </summary>
     string GetUrl(TrackingLink link);

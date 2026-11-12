@@ -1,4 +1,5 @@
 using Logistics.Application.Abstractions;
+using Logistics.Application.Modules.Operations.Tracking.Services;
 using Logistics.Domain.Entities;
 using Logistics.Domain.Persistence;
 using Logistics.Domain.Primitives.Enums;
@@ -9,7 +10,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Logistics.Application.Modules.Platform.Portal.Queries;
 
-internal sealed class GetPortalLoadHandler(ITenantUnitOfWork tenantUow)
+internal sealed class GetPortalLoadHandler(ITenantUnitOfWork tenantUow, ITrackingLinkService trackingLinks)
     : IRequestHandler<GetPortalLoadQuery, Result<PortalLoadDto>>
 {
     public async Task<Result<PortalLoadDto>> Handle(
@@ -24,6 +25,12 @@ internal sealed class GetPortalLoadHandler(ITenantUnitOfWork tenantUow)
         {
             return Result<PortalLoadDto>.Fail("Load not found or access denied.");
         }
+
+        var nextStop = load.TripStops
+            .Where(s => s.ArrivedAt == null)
+            .OrderBy(s => s.Order)
+            .FirstOrDefault();
+        var trackingLink = await trackingLinks.FindActiveAsync(load.Id, ct);
 
         var dto = new PortalLoadDto
         {
@@ -47,7 +54,20 @@ internal sealed class GetPortalLoadHandler(ITenantUnitOfWork tenantUow)
             TruckNumber = load.AssignedTruck?.Number,
             DocumentCount = load.Documents.Count,
             HasProofOfDelivery = load.Documents.Any(d => d.Type == DocumentType.ProofOfDelivery),
-            HasBillOfLading = load.Documents.Any(d => d.Type == DocumentType.BillOfLading)
+            HasBillOfLading = load.Documents.Any(d => d.Type == DocumentType.BillOfLading),
+            PickupAppointmentFrom = load.PickupAppointmentFrom,
+            PickupAppointmentTo = load.PickupAppointmentTo,
+            DeliveryAppointmentFrom = load.DeliveryAppointmentFrom,
+            DeliveryAppointmentTo = load.DeliveryAppointmentTo,
+            EstimatedArrivalAt = nextStop?.EstimatedArrivalAt,
+            IsRunningLate = nextStop?.LateNotifiedAt is not null,
+            TrackingUrl = trackingLink is null ? null : trackingLinks.GetUrl(trackingLink),
+            Updates =
+            [
+                .. load.CustomerUpdates
+                    .Where(u => u.Outcome == CustomerUpdateOutcome.Sent)
+                    .Select(u => new PortalShipmentUpdateDto { Event = u.Event, At = u.At })
+            ]
         };
 
         return Result<PortalLoadDto>.Ok(dto);

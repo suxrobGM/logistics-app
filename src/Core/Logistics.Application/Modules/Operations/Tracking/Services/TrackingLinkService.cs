@@ -42,6 +42,15 @@ internal sealed class TrackingLinkService(
         return link;
     }
 
+    public async Task<TrackingLink?> FindActiveAsync(Guid loadId, CancellationToken ct = default)
+    {
+        var now = DateTime.UtcNow;
+        return await tenantUow.Repository<TrackingLink>().Query()
+            .Where(l => l.LoadId == loadId && l.IsActive && l.ExpiresAt > now)
+            .OrderByDescending(l => l.ExpiresAt)
+            .FirstOrDefaultAsync(ct);
+    }
+
     public string GetUrl(TrackingLink link)
     {
         var tenantId = tenantUow.GetCurrentTenant().Id;
