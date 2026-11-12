@@ -14,11 +14,11 @@ internal sealed class CreateSetupIntentHandler(
     {
         var tenant = tenantUow.GetCurrentTenant();
 
-        var setupIntent = await stripePaymentService.CreateSetupIntentAsync(tenant);
+        var clientSecret = await stripePaymentService.CreateSetupIntentAsync(tenant);
 
         var dto = new SetupIntentDto
         {
-            ClientSecret = setupIntent.ClientSecret
+            ClientSecret = clientSecret
         };
         return Result<SetupIntentDto>.Ok(dto);
     }

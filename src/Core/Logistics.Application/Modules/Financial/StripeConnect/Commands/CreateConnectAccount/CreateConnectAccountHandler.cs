@@ -33,10 +33,10 @@ internal sealed class CreateConnectAccountHandler(
         try
         {
             // Create the connected account in Stripe
-            var account = await stripeConnectService.CreateConnectedAccountAsync(tenant);
+            var accountId = await stripeConnectService.CreateConnectedAccountAsync(tenant);
 
             // Update tenant with the connected account ID
-            tenant.StripeConnectedAccountId = account.Id;
+            tenant.StripeConnectedAccountId = accountId;
             tenant.ConnectStatus = Domain.Primitives.Enums.StripeConnectStatus.Pending;
 
             masterUow.Repository<Domain.Entities.Tenant>().Update(tenant);
@@ -44,14 +44,14 @@ internal sealed class CreateConnectAccountHandler(
 
             logger.LogInformation(
                 "Created Stripe Connect account {AccountId} for tenant {TenantId}",
-                account.Id, tenant.Id);
+                accountId, tenant.Id);
 
             return Result<CreateConnectAccountDto>.Ok(new CreateConnectAccountDto
             {
-                AccountId = account.Id
+                AccountId = accountId
             });
         }
-        catch (Stripe.StripeException ex)
+        catch (StripeApiException ex)
         {
             logger.LogError(ex, "Failed to create Stripe Connect account for tenant {TenantId}", tenant.Id);
             return Result<CreateConnectAccountDto>.Fail($"Failed to create Stripe Connect account: {ex.Message}");

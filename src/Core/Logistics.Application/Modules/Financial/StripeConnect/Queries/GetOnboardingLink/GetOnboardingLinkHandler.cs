@@ -37,7 +37,7 @@ internal sealed class GetOnboardingLinkHandler(
                 ExpiresAt = accountLink.ExpiresAt
             });
         }
-        catch (Stripe.StripeException ex)
+        catch (StripeApiException ex)
         {
             logger.LogError(ex, "Failed to create onboarding link for tenant {TenantId}", tenant.Id);
             return Result<OnboardingLinkDto>.Fail($"Failed to create onboarding link: {ex.Message}");

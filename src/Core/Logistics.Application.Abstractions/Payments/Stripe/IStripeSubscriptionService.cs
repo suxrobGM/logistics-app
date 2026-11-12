@@ -1,8 +1,4 @@
 using Logistics.Domain.Entities;
-using Stripe;
-using Logistics.Application.Abstractions.Payments.Stripe;
-using StripeSubscription = Stripe.Subscription;
-using Subscription = Logistics.Domain.Entities.Subscription;
 
 namespace Logistics.Application.Abstractions.Payments.Stripe;
 
@@ -11,15 +7,19 @@ namespace Logistics.Application.Abstractions.Payments.Stripe;
 /// </summary>
 public interface IStripeSubscriptionService
 {
-    Task<StripeSubscription> CreateSubscriptionAsync(SubscriptionPlan plan, Tenant tenant, int truckCount,
+    Task<StripeSubscriptionInfo> CreateSubscriptionAsync(SubscriptionPlan plan, Tenant tenant, int truckCount,
         int? trialDays = null);
 
-    Task<StripeSubscription> CancelSubscriptionAsync(string stripeSubscriptionId, bool cancelImmediately = true);
+    Task<StripeSubscriptionInfo> CancelSubscriptionAsync(string stripeSubscriptionId, bool cancelImmediately = true);
 
-    Task<StripeSubscription> RenewSubscriptionAsync(
+    /// <summary>
+    /// Reactivates, recreates, or bills the subscription, whichever its Stripe state calls for.
+    /// </summary>
+    /// <exception cref="StripeApiException">Stripe rejected the renewal, for example for a missing payment method.</exception>
+    Task<StripeSubscriptionInfo> RenewSubscriptionAsync(
         Subscription? subEntity, SubscriptionPlan plan, Tenant tenant, int truckCount);
 
-    Task<StripeSubscription> ChangeSubscriptionPlanAsync(
+    Task<StripeSubscriptionInfo> ChangeSubscriptionPlanAsync(
         string stripeSubscriptionId, SubscriptionPlan newPlan, int truckCount);
 
     /// <summary>

@@ -1,6 +1,4 @@
 using Logistics.Domain.Entities;
-using Stripe;
-using Logistics.Application.Abstractions.Payments.Stripe;
 
 namespace Logistics.Application.Abstractions.Payments.Stripe;
 
@@ -29,7 +27,7 @@ public interface IStripePlanService
 }
 
 public record StripePlanResult(
-    Product Product,
-    Price BasePrice,
-    Price PerTruckPrice,
-    Price? AIOveragePrice = null);
+    string ProductId,
+    string BasePriceId,
+    string PerTruckPriceId,
+    string? AIOveragePriceId = null);

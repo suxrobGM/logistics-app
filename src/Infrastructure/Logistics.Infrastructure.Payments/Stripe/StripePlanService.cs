@@ -50,7 +50,7 @@ internal sealed class StripePlanService(
         var aiOveragePrice = await CreateMeteredOveragePriceAsync(priceService, product.Id, plan);
 
         logger.LogInformation("Created Stripe prices for plan {PlanId}", plan.Id);
-        return new StripePlanResult(product, basePrice, perTruckPrice, aiOveragePrice);
+        return new StripePlanResult(product.Id, basePrice.Id, perTruckPrice.Id, aiOveragePrice?.Id);
     }
 
     public async Task<StripePlanResult> SyncPlanAsync(SubscriptionPlan plan)
@@ -78,10 +78,10 @@ internal sealed class StripePlanService(
         }
 
         var created = await CreatePlanAsync(plan);
-        plan.StripeProductId = created.Product.Id;
-        plan.StripePriceId = created.BasePrice.Id;
-        plan.StripePerTruckPriceId = created.PerTruckPrice.Id;
-        plan.StripeAIOveragePriceId = created.AIOveragePrice?.Id;
+        plan.StripeProductId = created.ProductId;
+        plan.StripePriceId = created.BasePriceId;
+        plan.StripePerTruckPriceId = created.PerTruckPriceId;
+        plan.StripeAIOveragePriceId = created.AIOveragePriceId;
         return created;
     }
 
@@ -136,7 +136,7 @@ internal sealed class StripePlanService(
         if (activeOveragePrice is not null && activeOveragePrice.Id != plan.StripeAIOveragePriceId)
             plan.StripeAIOveragePriceId = activeOveragePrice.Id;
 
-        return new StripePlanResult(product, activeBasePrice, activePerTruckPrice, activeOveragePrice);
+        return new StripePlanResult(product.Id, activeBasePrice.Id, activePerTruckPrice.Id, activeOveragePrice?.Id);
     }
 
     /// <summary>

@@ -7,7 +7,7 @@ namespace Logistics.Infrastructure.Payments.Stripe;
 
 internal sealed class StripePaymentService(ILogger<StripePaymentService> logger) : IStripePaymentService
 {
-    public async Task<SetupIntent> CreateSetupIntentAsync(Tenant tenant)
+    public async Task<string> CreateSetupIntentAsync(Tenant tenant)
     {
         if (string.IsNullOrEmpty(tenant.StripeCustomerId))
         {
@@ -31,10 +31,10 @@ internal sealed class StripePaymentService(ILogger<StripePaymentService> logger)
         var setupIntentService = new SetupIntentService();
         var setupIntent = await setupIntentService.CreateAsync(createOptions);
         logger.LogInformation("Created SetupIntent for tenant {TenantId}", tenant.Id);
-        return setupIntent;
+        return setupIntent.ClientSecret;
     }
 
-    public async Task<PaymentIntent> CreatePaymentIntentAsync(Payment payment, Tenant tenant)
+    public async Task<StripePaymentIntentInfo> CreatePaymentIntentAsync(Payment payment, Tenant tenant)
     {
         if (string.IsNullOrEmpty(tenant.StripeCustomerId))
         {
@@ -62,9 +62,9 @@ internal sealed class StripePaymentService(ILogger<StripePaymentService> logger)
             }
         };
 
-        var paymentIntent = await new PaymentIntentService().CreateAsync(createOptions);
+        var paymentIntent = await StripeApi.CallAsync(() => new PaymentIntentService().CreateAsync(createOptions));
         logger.LogInformation("Created PaymentIntent {PaymentIntentId} for tenant {TenantId}",
             paymentIntent.Id, tenant.Id);
-        return paymentIntent;
+        return paymentIntent.ToInfo();
     }
 }

@@ -13,7 +13,6 @@ using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Logging.Abstractions;
 using NSubstitute;
 using NSubstitute.ExceptionExtensions;
-using Stripe;
 using Xunit;
 using Address = Logistics.Domain.Primitives.ValueObjects.Address;
 using Subscription = Logistics.Domain.Entities.Subscription;
@@ -73,7 +72,7 @@ public class RenewSubscriptionHandlerTests
         _currentUserService.GetTenantId().Returns(tenantId);
         _stripeSubscriptionService
             .RenewSubscriptionAsync(Arg.Any<Subscription?>(), Arg.Any<SubscriptionPlan>(), Arg.Any<Tenant>(), Arg.Any<int>())
-            .ThrowsAsync(new StripeException("no payment method"));
+            .ThrowsAsync(new StripeApiException("no payment method"));
 
         var command = new RenewSubscriptionCommand
         {
@@ -95,7 +94,7 @@ public class RenewSubscriptionHandlerTests
         _currentUserService.IsInRole(AppRoles.SuperAdmin, AppRoles.Admin).Returns(true);
         _stripeSubscriptionService
             .RenewSubscriptionAsync(Arg.Any<Subscription?>(), Arg.Any<SubscriptionPlan>(), Arg.Any<Tenant>(), Arg.Any<int>())
-            .ThrowsAsync(new StripeException("no payment method"));
+            .ThrowsAsync(new StripeApiException("no payment method"));
 
         var command = new RenewSubscriptionCommand
         {

@@ -5,7 +5,6 @@ using Logistics.Domain.Primitives.Enums;
 using Logistics.Mediator;
 using Logistics.Shared.Models;
 using Microsoft.Extensions.Logging;
-using Stripe;
 using Logistics.Application.Abstractions.Payments.Stripe;
 
 namespace Logistics.Application.Modules.Financial.Payments.Commands;
@@ -52,7 +51,7 @@ internal sealed class ProcessPaymentHandler(
 
             if (payment.Status == PaymentStatus.Failed)
             {
-                return Result.Fail($"Payment failed: {paymentIntent.LastPaymentError?.Message ?? "Unknown error"}");
+                return Result.Fail($"Payment failed: {paymentIntent.LastErrorMessage ?? "Unknown error"}");
             }
 
             logger.LogInformation(
@@ -61,7 +60,7 @@ internal sealed class ProcessPaymentHandler(
 
             return Result.Ok();
         }
-        catch (StripeException ex)
+        catch (StripeApiException ex)
         {
             payment.Status = PaymentStatus.Failed;
             await tenantUow.SaveChangesAsync(ct);

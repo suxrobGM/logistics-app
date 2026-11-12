@@ -6,9 +6,7 @@ using Logistics.Domain.Persistence;
 using Logistics.Mediator;
 using Logistics.Shared.Models;
 using Microsoft.Extensions.Logging;
-using Stripe;
 using Logistics.Application.Abstractions.Payments.Stripe;
-using Subscription = Logistics.Domain.Entities.Subscription;
 
 namespace Logistics.Application.Modules.IdentityAccess.Subscriptions.Commands;
 
@@ -49,11 +47,11 @@ internal sealed class RenewSubscriptionHandler(
             logger.LogInformation("Renewed subscription {SubscriptionId}", subscription.Id);
             return Result.Ok();
         }
-        catch (StripeException ex)
+        catch (StripeApiException ex)
         {
             logger.LogError(ex, "Stripe error renewing subscription {SubscriptionId}", subscription.Id);
 
-            var message = ex.StripeError?.Code switch
+            var message = ex.Code switch
             {
                 "resource_missing" => "No payment method on file. Please add a payment method in Manage Billing before resuming.",
                 _ when ex.Message.Contains("payment source or default payment method") =>

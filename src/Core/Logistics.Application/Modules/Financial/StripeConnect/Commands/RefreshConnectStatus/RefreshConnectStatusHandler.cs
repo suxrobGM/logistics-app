@@ -48,7 +48,7 @@ internal sealed class RefreshConnectStatusHandler(
                 PayoutsEnabled = tenant.PayoutsEnabled
             });
         }
-        catch (Stripe.StripeException ex)
+        catch (StripeApiException ex)
         {
             logger.LogError(ex, "Failed to refresh Connect status for tenant {TenantId}", tenant.Id);
 

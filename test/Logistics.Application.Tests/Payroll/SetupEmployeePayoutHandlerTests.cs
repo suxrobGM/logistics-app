@@ -8,8 +8,6 @@ using NSubstitute.ExceptionExtensions;
 using Xunit;
 using Logistics.Application.Abstractions.Payments.Stripe;
 using Address = Logistics.Domain.Primitives.ValueObjects.Address;
-using StripeAccount = Stripe.Account;
-using StripeException = Stripe.StripeException;
 using Logistics.Application.Modules.Financial.Payroll.Commands;
 
 namespace Logistics.Application.Tests.Payroll;
@@ -65,7 +63,7 @@ public class SetupEmployeePayoutHandlerTests
         var employee = CreateEmployee();
         _employeeRepo.GetByIdAsync(employee.Id, Arg.Any<CancellationToken>()).Returns(employee);
         _stripeConnectService.CreateEmployeeConnectedAccountAsync(employee, Arg.Any<Address>())
-            .Returns(new StripeAccount { Id = "acct_new_123" });
+            .Returns("acct_new_123");
 
         var result = await _sut.Handle(
             new SetupEmployeePayoutCommand { EmployeeId = employee.Id }, CancellationToken.None);
@@ -108,7 +106,7 @@ public class SetupEmployeePayoutHandlerTests
         var employee = CreateEmployee();
         _employeeRepo.GetByIdAsync(employee.Id, Arg.Any<CancellationToken>()).Returns(employee);
         _stripeConnectService.CreateEmployeeConnectedAccountAsync(employee, Arg.Any<Address>())
-            .ThrowsAsync(new StripeException("Account creation failed"));
+            .ThrowsAsync(new StripeApiException("Account creation failed"));
 
         var result = await _sut.Handle(
             new SetupEmployeePayoutCommand { EmployeeId = employee.Id }, CancellationToken.None);

@@ -24,7 +24,7 @@ internal sealed class GetDashboardLinkHandler(
 
         try
         {
-            var loginLink = await stripeConnectService.CreateLoginLinkAsync(tenant.StripeConnectedAccountId);
+            var dashboardUrl = await stripeConnectService.CreateLoginLinkAsync(tenant.StripeConnectedAccountId);
 
             logger.LogInformation(
                 "Created dashboard link for tenant {TenantId}",
@@ -32,10 +32,10 @@ internal sealed class GetDashboardLinkHandler(
 
             return Result<DashboardLinkDto>.Ok(new DashboardLinkDto
             {
-                Url = loginLink.Url
+                Url = dashboardUrl
             });
         }
-        catch (Stripe.StripeException ex)
+        catch (StripeApiException ex)
         {
             logger.LogError(ex, "Failed to create dashboard link for tenant {TenantId}", tenant.Id);
             return Result<DashboardLinkDto>.Fail($"Failed to create dashboard link: {ex.Message}");

@@ -55,7 +55,7 @@ internal sealed class PayPayrollInvoiceHandler(
         try
         {
             var amountInCents = (long)(amountDue * 100);
-            var transfer = await stripeConnectService.CreateTransferAsync(
+            var transferId = await stripeConnectService.CreateTransferAsync(
                 amountInCents,
                 payrollInvoice.Total.Currency,
                 employee.StripeConnectedAccountId,
@@ -66,7 +66,7 @@ internal sealed class PayPayrollInvoiceHandler(
                 Amount = new Money { Amount = amountDue, Currency = payrollInvoice.Total.Currency },
                 Status = PaymentStatus.Paid,
                 StripePaymentMethodId = null,
-                StripeTransferId = transfer.Id,
+                StripeTransferId = transferId,
                 Description = $"Stripe payout for Payroll #{payrollInvoice.Number}",
                 BillingAddress = tenant.CompanyAddress
             };
@@ -78,11 +78,11 @@ internal sealed class PayPayrollInvoiceHandler(
 
             logger.LogInformation(
                 "Paid payroll invoice {InvoiceId} for employee {EmployeeId} via Stripe Transfer {TransferId}, amount {Amount}",
-                payrollInvoice.Id, employee.Id, transfer.Id, amountDue);
+                payrollInvoice.Id, employee.Id, transferId, amountDue);
 
             return Result.Ok();
         }
-        catch (Stripe.StripeException ex)
+        catch (StripeApiException ex)
         {
             logger.LogError(ex, "Failed to pay payroll invoice {InvoiceId} for employee {EmployeeId}",
                 payrollInvoice.Id, employee.Id);

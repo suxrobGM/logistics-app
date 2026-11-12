@@ -88,11 +88,11 @@ internal sealed class CreatePublicCheckoutSessionHandler(
 
             logger.LogInformation(
                 "Created public Checkout Session {SessionId} for invoice {InvoiceId}",
-                session.Id, invoice.Id);
+                session.SessionId, invoice.Id);
 
             return Result<PublicCheckoutSessionDto>.Ok(new PublicCheckoutSessionDto { Url = session.Url });
         }
-        catch (Stripe.StripeException ex)
+        catch (StripeApiException ex)
         {
             logger.LogError(ex, "Failed to create public Checkout Session for invoice {InvoiceId}", invoice.Id);
             return Result<PublicCheckoutSessionDto>.Fail($"Failed to start payment: {ex.Message}");

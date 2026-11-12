@@ -32,18 +32,18 @@ internal sealed class SetupEmployeePayoutHandler(
 
         try
         {
-            var account = await stripeConnectService.CreateEmployeeConnectedAccountAsync(
+            var accountId = await stripeConnectService.CreateEmployeeConnectedAccountAsync(
                 employee, tenant.CompanyAddress);
-            employee.StripeConnectedAccountId = account.Id;
+            employee.StripeConnectedAccountId = accountId;
             await tenantUow.SaveChangesAsync(ct);
 
             logger.LogInformation(
                 "Created Stripe Connect account {AccountId} for employee {EmployeeId}",
-                account.Id, employee.Id);
+                accountId, employee.Id);
 
             return Result.Ok();
         }
-        catch (Stripe.StripeException ex)
+        catch (StripeApiException ex)
         {
             logger.LogError(ex, "Failed to create Stripe Connect account for employee {EmployeeId}", employee.Id);
             return Result.Fail($"Failed to create payout account: {ex.Message}");

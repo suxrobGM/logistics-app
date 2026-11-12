@@ -4,8 +4,8 @@ using Logistics.Shared.Geo;
 using Microsoft.Extensions.Logging;
 using Stripe;
 using Stripe.Checkout;
-using Logistics.Application.Abstractions.Payments.Stripe;
 using Logistics.Application.Abstractions.Payments;
+using Logistics.Application.Abstractions.Payments.Stripe;
 using Address = Logistics.Domain.Primitives.ValueObjects.Address;
 
 namespace Logistics.Infrastructure.Payments.Stripe;
@@ -15,8 +15,7 @@ namespace Logistics.Infrastructure.Payments.Stripe;
 /// </summary>
 internal sealed class StripeConnectService(ILogger<StripeConnectService> logger) : IStripeConnectService
 {
-
-    public async Task<Account> CreateConnectedAccountAsync(Tenant tenant)
+    public async Task<string> CreateConnectedAccountAsync(Tenant tenant)
     {
         var country = GetCountryFromAddress(tenant.CompanyAddress);
         var options = new AccountCreateOptions
@@ -36,15 +35,15 @@ internal sealed class StripeConnectService(ILogger<StripeConnectService> logger)
             Metadata = new Dictionary<string, string> { [StripeMetadataKeys.TenantId] = tenant.Id.ToString() }
         };
 
-        var account = await new AccountService().CreateAsync(options);
+        var account = await StripeApi.CallAsync(() => new AccountService().CreateAsync(options));
         logger.LogInformation(
             "Created Stripe Connect account {AccountId} for tenant {TenantId}",
             account.Id, tenant.Id);
 
-        return account;
+        return account.Id;
     }
 
-    public async Task<Account> CreateEmployeeConnectedAccountAsync(Employee employee, Address fallbackAddress)
+    public async Task<string> CreateEmployeeConnectedAccountAsync(Employee employee, Address fallbackAddress)
     {
         var address = employee.Address ?? fallbackAddress;
         var country = GetCountryFromAddress(address);
@@ -74,15 +73,15 @@ internal sealed class StripeConnectService(ILogger<StripeConnectService> logger)
             }
         };
 
-        var account = await new AccountService().CreateAsync(options);
+        var account = await StripeApi.CallAsync(() => new AccountService().CreateAsync(options));
         logger.LogInformation(
             "Created Stripe Connect account {AccountId} for employee {EmployeeId}",
             account.Id, employee.Id);
 
-        return account;
+        return account.Id;
     }
 
-    public async Task<AccountLink> CreateEmployeeAccountLinkAsync(
+    public async Task<StripeAccountLink> CreateEmployeeAccountLinkAsync(
         string stripeConnectedAccountId, string returnUrl, string refreshUrl)
     {
         var options = new AccountLinkCreateOptions
@@ -93,15 +92,15 @@ internal sealed class StripeConnectService(ILogger<StripeConnectService> logger)
             Type = "account_onboarding"
         };
 
-        var accountLink = await new AccountLinkService().CreateAsync(options);
+        var accountLink = await StripeApi.CallAsync(() => new AccountLinkService().CreateAsync(options));
         logger.LogInformation(
             "Created account link for employee account {AccountId}",
             stripeConnectedAccountId);
 
-        return accountLink;
+        return new StripeAccountLink(accountLink.Url, accountLink.ExpiresAt);
     }
 
-    public async Task<AccountLink> CreateAccountLinkAsync(Tenant tenant, string returnUrl, string refreshUrl)
+    public async Task<StripeAccountLink> CreateAccountLinkAsync(Tenant tenant, string returnUrl, string refreshUrl)
     {
         if (string.IsNullOrEmpty(tenant.StripeConnectedAccountId))
         {
@@ -116,25 +115,23 @@ internal sealed class StripeConnectService(ILogger<StripeConnectService> logger)
             Type = "account_onboarding"
         };
 
-        var accountLink = await new AccountLinkService().CreateAsync(options);
+        var accountLink = await StripeApi.CallAsync(() => new AccountLinkService().CreateAsync(options));
         logger.LogInformation(
             "Created account link for tenant {TenantId}, expires at {ExpiresAt}, link: {Link}",
             tenant.Id, accountLink.ExpiresAt, accountLink.Url);
 
-        return accountLink;
+        return new StripeAccountLink(accountLink.Url, accountLink.ExpiresAt);
     }
 
-    public async Task<Account> GetConnectedAccountAsync(string accountId) =>
-        await new AccountService().GetAsync(accountId);
-
-    public async Task<Account> SyncConnectedAccountStatusAsync(Tenant tenant)
+    public async Task SyncConnectedAccountStatusAsync(Tenant tenant)
     {
         if (string.IsNullOrEmpty(tenant.StripeConnectedAccountId))
         {
             throw new ArgumentException("Tenant must have a StripeConnectedAccountId");
         }
 
-        var account = await GetConnectedAccountAsync(tenant.StripeConnectedAccountId);
+        var accountId = tenant.StripeConnectedAccountId;
+        var account = await StripeApi.CallAsync(() => new AccountService().GetAsync(accountId));
 
         // Update tenant's connect status based on account capabilities
         tenant.ChargesEnabled = account.ChargesEnabled;
@@ -144,11 +141,9 @@ internal sealed class StripeConnectService(ILogger<StripeConnectService> logger)
         logger.LogInformation(
             "Synced Connect status for tenant {TenantId}: Status={Status}, ChargesEnabled={ChargesEnabled}, PayoutsEnabled={PayoutsEnabled}",
             tenant.Id, tenant.ConnectStatus, tenant.ChargesEnabled, tenant.PayoutsEnabled);
-
-        return account;
     }
 
-    public async Task<Session> CreateConnectedCheckoutSessionAsync(CheckoutSessionRequest request)
+    public async Task<StripeCheckoutLink> CreateConnectedCheckoutSessionAsync(CheckoutSessionRequest request)
     {
         var amountInCents = StripeMoneyConversion.ToMinorUnits(request.Amount.Amount, request.Amount.Currency);
 
@@ -200,15 +195,15 @@ internal sealed class StripeConnectService(ILogger<StripeConnectService> logger)
                 : [with(request.Metadata)]
         };
 
-        var session = await new SessionService().CreateAsync(options);
+        var session = await StripeApi.CallAsync(() => new SessionService().CreateAsync(options));
         logger.LogInformation(
             "Created Checkout Session {SessionId} for amount {Amount} {Currency} to account {AccountId}",
             session.Id, request.Amount.Amount, request.Amount.Currency, request.ConnectedAccountId);
 
-        return session;
+        return new StripeCheckoutLink(session.Id, session.Url);
     }
 
-    public async Task<Transfer> CreateTransferAsync(
+    public async Task<string> CreateTransferAsync(
         long amount,
         string currency,
         string connectedAccountId,
@@ -222,19 +217,19 @@ internal sealed class StripeConnectService(ILogger<StripeConnectService> logger)
             Description = description
         };
 
-        var transfer = await new TransferService().CreateAsync(options);
+        var transfer = await StripeApi.CallAsync(() => new TransferService().CreateAsync(options));
         logger.LogInformation(
             "Created transfer {TransferId} for amount {Amount} {Currency} to account {AccountId}",
             transfer.Id, amount, currency, connectedAccountId);
 
-        return transfer;
+        return transfer.Id;
     }
 
-    public async Task<LoginLink> CreateLoginLinkAsync(string connectedAccountId)
+    public async Task<string> CreateLoginLinkAsync(string connectedAccountId)
     {
-        var loginLink = await new AccountLoginLinkService().CreateAsync(connectedAccountId);
+        var loginLink = await StripeApi.CallAsync(() => new AccountLoginLinkService().CreateAsync(connectedAccountId));
         logger.LogInformation("Created login link for connected account {AccountId}", connectedAccountId);
-        return loginLink;
+        return loginLink.Url;
     }
 
     #region Helpers

@@ -50,8 +50,7 @@ internal sealed class CreateSubscriptionHandler(
 
     private async Task CreateStripeCustomerAsync(Tenant tenant)
     {
-        var stripeCustomer = await stripeCustomerService.CreateCustomerAsync(tenant);
-        tenant.StripeCustomerId = stripeCustomer.Id;
+        tenant.StripeCustomerId = await stripeCustomerService.CreateCustomerAsync(tenant);
         masterUow.Repository<Tenant>().Update(tenant);
         await masterUow.SaveChangesAsync();
     }

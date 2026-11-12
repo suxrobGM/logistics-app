@@ -2,13 +2,12 @@ using Logistics.Domain.Entities;
 using Microsoft.Extensions.Logging;
 using Stripe;
 using Logistics.Application.Abstractions.Payments.Stripe;
-using StripeCustomer = Stripe.Customer;
 
 namespace Logistics.Infrastructure.Payments.Stripe;
 
 internal sealed class StripeCustomerService(ILogger<StripeCustomerService> logger) : IStripeCustomerService
 {
-    public async Task<StripeCustomer> CreateCustomerAsync(Tenant tenant)
+    public async Task<string> CreateCustomerAsync(Tenant tenant)
     {
         // ReSharper disable once UseObjectOrCollectionInitializer
         var options = new CustomerCreateOptions
@@ -22,10 +21,10 @@ internal sealed class StripeCustomerService(ILogger<StripeCustomerService> logge
 
         var customer = await new CustomerService().CreateAsync(options);
         logger.LogInformation("Created Stripe customer for tenant {TenantId}", tenant.Id);
-        return customer;
+        return customer.Id;
     }
 
-    public Task<StripeCustomer> UpdateCustomerAsync(Tenant tenant)
+    public Task UpdateCustomerAsync(Tenant tenant)
     {
         if (tenant.StripeCustomerId is null)
         {

@@ -29,10 +29,10 @@ internal sealed class CreateSubscriptionPlanHandler(
 
         var result = await stripePlanService.CreatePlanAsync(subscriptionPlan);
 
-        subscriptionPlan.StripeProductId = result.Product.Id;
-        subscriptionPlan.StripePriceId = result.BasePrice.Id;
-        subscriptionPlan.StripePerTruckPriceId = result.PerTruckPrice.Id;
-        subscriptionPlan.StripeAIOveragePriceId = result.AIOveragePrice?.Id;
+        subscriptionPlan.StripeProductId = result.ProductId;
+        subscriptionPlan.StripePriceId = result.BasePriceId;
+        subscriptionPlan.StripePerTruckPriceId = result.PerTruckPriceId;
+        subscriptionPlan.StripeAIOveragePriceId = result.AIOveragePriceId;
         await masterUow.Repository<SubscriptionPlan>().AddAsync(subscriptionPlan, ct);
         await masterUow.SaveChangesAsync(ct);
         return Result.Ok();

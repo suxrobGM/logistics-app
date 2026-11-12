@@ -6,7 +6,6 @@ using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Logging.Abstractions;
 using NSubstitute;
 using NSubstitute.ExceptionExtensions;
-using Stripe;
 using Xunit;
 using Logistics.Application.Abstractions.Payments.Stripe;
 using Address = Logistics.Domain.Primitives.ValueObjects.Address;
@@ -93,7 +92,7 @@ public class PayPayrollInvoiceHandlerTests
         _employeeRepo.GetByIdAsync(employee.Id, Arg.Any<CancellationToken>()).Returns(employee);
         _stripeConnectService.CreateTransferAsync(
                 150000, "USD", "acct_123", Arg.Any<string>())
-            .Returns(new Transfer { Id = "tr_123" });
+            .Returns("tr_123");
 
         var result = await _sut.Handle(
             new PayPayrollInvoiceCommand { InvoiceId = invoice.Id }, CancellationToken.None);
@@ -163,7 +162,7 @@ public class PayPayrollInvoiceHandlerTests
         _employeeRepo.GetByIdAsync(employee.Id, Arg.Any<CancellationToken>()).Returns(employee);
         _stripeConnectService.CreateTransferAsync(
                 Arg.Any<long>(), Arg.Any<string>(), Arg.Any<string>(), Arg.Any<string?>())
-            .ThrowsAsync(new StripeException("Insufficient funds"));
+            .ThrowsAsync(new StripeApiException("Insufficient funds"));
 
         var result = await _sut.Handle(
             new PayPayrollInvoiceCommand { InvoiceId = invoice.Id }, CancellationToken.None);

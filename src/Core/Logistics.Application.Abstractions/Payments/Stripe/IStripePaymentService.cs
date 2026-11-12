@@ -1,6 +1,4 @@
 using Logistics.Domain.Entities;
-using Stripe;
-using Logistics.Application.Abstractions.Payments.Stripe;
 
 namespace Logistics.Application.Abstractions.Payments.Stripe;
 
@@ -9,10 +7,12 @@ public interface IStripePaymentService
     /// <summary>
     ///     Creates a new SetupIntent for the given tenant.
     /// </summary>
-    Task<SetupIntent> CreateSetupIntentAsync(Tenant tenant);
+    /// <returns>The SetupIntent's client secret, which the browser confirms the card with.</returns>
+    Task<string> CreateSetupIntentAsync(Tenant tenant);
 
     /// <summary>
-    ///     Creates a PaymentIntent for processing a payment.
+    ///     Creates and confirms a PaymentIntent for the payment.
     /// </summary>
-    Task<PaymentIntent> CreatePaymentIntentAsync(Payment payment, Tenant tenant);
+    /// <exception cref="StripeApiException">Stripe rejected the payment.</exception>
+    Task<StripePaymentIntentInfo> CreatePaymentIntentAsync(Payment payment, Tenant tenant);
 }

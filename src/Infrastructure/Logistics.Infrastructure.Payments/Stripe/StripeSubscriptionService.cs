@@ -2,7 +2,6 @@ using Logistics.Domain.Entities;
 using Microsoft.Extensions.Logging;
 using Stripe;
 using Logistics.Application.Abstractions.Payments.Stripe;
-using StripeSubscription = Stripe.Subscription;
 using Subscription = Logistics.Domain.Entities.Subscription;
 
 namespace Logistics.Infrastructure.Payments.Stripe;
@@ -12,7 +11,7 @@ namespace Logistics.Infrastructure.Payments.Stripe;
 /// </summary>
 internal sealed class StripeSubscriptionService(ILogger<StripeSubscriptionService> logger) : IStripeSubscriptionService
 {
-    public async Task<StripeSubscription> CreateSubscriptionAsync(
+    public async Task<StripeSubscriptionInfo> CreateSubscriptionAsync(
         SubscriptionPlan plan, Tenant tenant, int truckCount, int? trialDays = null)
     {
         if (tenant.StripeCustomerId is null)
@@ -45,10 +44,10 @@ internal sealed class StripeSubscriptionService(ILogger<StripeSubscriptionServic
 
         var subscription = await new SubscriptionService().CreateAsync(createOptions);
         logger.LogInformation("Created Stripe subscription for tenant {TenantId}", tenant.Id);
-        return subscription;
+        return subscription.ToInfo();
     }
 
-    public async Task<StripeSubscription> CancelSubscriptionAsync(
+    public async Task<StripeSubscriptionInfo> CancelSubscriptionAsync(
         string stripeSubscriptionId, bool cancelImmediately = true)
     {
         var service = new SubscriptionService();
@@ -61,7 +60,7 @@ internal sealed class StripeSubscriptionService(ILogger<StripeSubscriptionServic
                 Prorate = true
             });
             logger.LogInformation("Canceled immediately Stripe subscription {SubscriptionId}", stripeSubscriptionId);
-            return cancelled;
+            return cancelled.ToInfo();
         }
 
         var updated = await service.UpdateAsync(stripeSubscriptionId, new SubscriptionUpdateOptions
@@ -69,10 +68,14 @@ internal sealed class StripeSubscriptionService(ILogger<StripeSubscriptionServic
             CancelAtPeriodEnd = true
         });
         logger.LogInformation("Canceled at period end Stripe subscription {SubscriptionId}", stripeSubscriptionId);
-        return updated;
+        return updated.ToInfo();
     }
 
-    public async Task<StripeSubscription> RenewSubscriptionAsync(
+    public Task<StripeSubscriptionInfo> RenewSubscriptionAsync(
+        Subscription? subEntity, SubscriptionPlan plan, Tenant tenant, int truckCount) =>
+        StripeApi.CallAsync(() => RenewAsync(subEntity, plan, tenant, truckCount));
+
+    private async Task<StripeSubscriptionInfo> RenewAsync(
         Subscription? subEntity, SubscriptionPlan plan, Tenant tenant, int truckCount)
     {
         if (string.IsNullOrEmpty(tenant.StripeCustomerId))
@@ -104,7 +107,7 @@ internal sealed class StripeSubscriptionService(ILogger<StripeSubscriptionServic
 
             var reactivated = await subSvc.UpdateAsync(stripeSub.Id, updateOptions);
             logger.LogInformation("Tenant {TenantId} reactivated subscription", tenant.Id);
-            return reactivated;
+            return reactivated.ToInfo();
         }
 
         // Already canceled → start fresh
@@ -126,10 +129,10 @@ internal sealed class StripeSubscriptionService(ILogger<StripeSubscriptionServic
         if (invoice.Status == "draft")
             await invSvc.FinalizeInvoiceAsync(invoice.Id);
 
-        return stripeSub;
+        return stripeSub.ToInfo();
     }
 
-    public async Task<StripeSubscription> ChangeSubscriptionPlanAsync(
+    public async Task<StripeSubscriptionInfo> ChangeSubscriptionPlanAsync(
         string stripeSubscriptionId, SubscriptionPlan newPlan, int truckCount)
     {
         var subSvc = new SubscriptionService();
@@ -154,7 +157,7 @@ internal sealed class StripeSubscriptionService(ILogger<StripeSubscriptionServic
 
         logger.LogInformation("Changed subscription {SubscriptionId} to plan {PlanId} with {TruckCount} trucks",
             stripeSubscriptionId, newPlan.Id, truckCount);
-        return updated;
+        return updated.ToInfo();
     }
 
     public async Task<int> SyncAIOverageItemAsync(SubscriptionPlan plan)

@@ -39,7 +39,7 @@ internal sealed class GetEmployeePayoutOnboardingLinkHandler(
             return Result<EmployeePayoutOnboardingLinkDto>.Ok(
                 new EmployeePayoutOnboardingLinkDto { Url = accountLink.Url });
         }
-        catch (Stripe.StripeException ex)
+        catch (StripeApiException ex)
         {
             logger.LogError(ex, "Failed to create onboarding link for employee {EmployeeId}", employee.Id);
             return Result<EmployeePayoutOnboardingLinkDto>.Fail(
