@@ -15,15 +15,18 @@ internal sealed class GetInvoiceDashboardHandler(ITenantUnitOfWork tenantUow)
     {
         var invoiceRepo = tenantUow.Repository<Invoice>();
 
-        // Get all load invoices (not payroll/subscription)
-        var invoices = await invoiceRepo.GetListAsync(
-            i => i is LoadInvoice,
-            ct);
+        var invoices = await invoiceRepo.GetListAsync(i => i is LoadInvoice, ct);
+
+        // One query for every invoice's payments; AmountDue would lazy-load them per invoice.
+        var payments = await tenantUow.Repository<Payment>()
+            .GetListAsync(p => p.Invoice is LoadInvoice, ct);
+        var paymentsByInvoice = payments.ToLookup(p => p.InvoiceId);
+        decimal Outstanding(Invoice invoice) =>
+            invoice.Total.Amount - Invoice.SumPaid(paymentsByInvoice[invoice.Id], invoice.Total.Currency);
 
         var now = DateTime.UtcNow;
         var firstOfMonth = new DateTime(now.Year, now.Month, 1, 0, 0, 0, DateTimeKind.Utc);
 
-        // Calculate stats
         var draftInvoices = invoices.Where(i => i.Status == InvoiceStatus.Draft).ToList();
         var openInvoices = invoices.Where(i => InvoiceStatuses.Open.Contains(i.Status)).ToList();
         var overdueInvoices = openInvoices.Where(i => i.DueDate < now).ToList();
@@ -35,13 +38,10 @@ internal sealed class GetInvoiceDashboardHandler(ITenantUnitOfWork tenantUow)
         var overdueRemaining = overdueInvoices.Sum(Outstanding);
         var partiallyPaidRemaining = partiallyPaidInvoices.Sum(Outstanding);
 
-        // Calculate payments this month
-        var paymentsThisMonth = invoices
-            .SelectMany(i => i.Payments)
+        var paymentsThisMonth = payments
             .Where(p => p.Status == PaymentStatus.Paid && p.CreatedAt >= firstOfMonth)
             .Sum(p => p.Amount.Amount);
 
-        // Get recent invoices (last 10)
         var recentInvoices = invoices
             .OrderByDescending(i => i.CreatedAt)
             .Take(10)
@@ -75,7 +75,4 @@ internal sealed class GetInvoiceDashboardHandler(ITenantUnitOfWork tenantUow)
 
         return Result<InvoiceDashboardDto>.Ok(dashboard);
     }
-
-    private static decimal Outstanding(Invoice invoice) =>
-        invoice.AmountDue;
 }

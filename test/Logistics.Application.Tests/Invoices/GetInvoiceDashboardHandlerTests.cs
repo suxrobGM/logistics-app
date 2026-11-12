@@ -15,6 +15,7 @@ public class GetInvoiceDashboardHandlerTests
 {
     private readonly ITenantUnitOfWork _tenantUow = Substitute.For<ITenantUnitOfWork>();
     private readonly ITenantRepository<Invoice, Guid> _invoiceRepo = Substitute.For<ITenantRepository<Invoice, Guid>>();
+    private readonly ITenantRepository<Payment, Guid> _paymentRepo = Substitute.For<ITenantRepository<Payment, Guid>>();
     private readonly GetInvoiceDashboardHandler _sut;
 
     public GetInvoiceDashboardHandlerTests()
@@ -23,13 +24,18 @@ public class GetInvoiceDashboardHandlerTests
         fundedRepo.GetListAsync(Arg.Any<Expression<Func<FactoringBatchItem, bool>>>(), Arg.Any<CancellationToken>())
             .Returns([]);
         _tenantUow.Repository<Invoice>().Returns(_invoiceRepo);
+        _tenantUow.Repository<Payment>().Returns(_paymentRepo);
         _tenantUow.Repository<FactoringBatchItem>().Returns(fundedRepo);
         _sut = new GetInvoiceDashboardHandler(_tenantUow);
     }
 
-    private void GivenInvoices(params Invoice[] invoices) =>
+    private void GivenInvoices(params Invoice[] invoices)
+    {
         _invoiceRepo.GetListAsync(Arg.Any<Expression<Func<Invoice, bool>>>(), Arg.Any<CancellationToken>())
             .Returns(invoices.ToList());
+        _paymentRepo.GetListAsync(Arg.Any<Expression<Func<Payment, bool>>>(), Arg.Any<CancellationToken>())
+            .Returns(invoices.SelectMany(i => i.Payments).ToList());
+    }
 
     private static LoadInvoice PastDue(InvoiceStatus status, decimal total = 1000m)
     {
@@ -72,6 +78,7 @@ public class GetInvoiceDashboardHandlerTests
         var invoice = PastDue(InvoiceStatus.PartiallyPaid);
         invoice.Payments.Add(new Payment
         {
+            InvoiceId = invoice.Id,
             Amount = new Money { Amount = 400m, Currency = "USD" },
             Status = PaymentStatus.Paid,
             BillingAddress = FactoringTestData.Address
