@@ -15,7 +15,6 @@ internal sealed class UpdateSubscriptionPlanHandler(
     IStripeSubscriptionService stripeSubscriptionService,
     ILogger<UpdateSubscriptionPlanHandler> logger) : IRequestHandler<UpdateSubscriptionPlanCommand, Result>
 {
-
     public async Task<Result> Handle(
         UpdateSubscriptionPlanCommand req, CancellationToken ct)
     {
@@ -48,7 +47,6 @@ internal sealed class UpdateSubscriptionPlanHandler(
         // SyncPlanAsync writes the refreshed price ids onto the plan itself.
         var previousOveragePriceId = subscriptionPlan.StripeAIOveragePriceId;
         await stripePlanService.SyncPlanAsync(subscriptionPlan);
-        masterUow.Repository<SubscriptionPlan>().Update(subscriptionPlan);
         await masterUow.SaveChangesAsync(ct);
 
         // A recreated overage price leaves live subscriptions billing against the deactivated one.

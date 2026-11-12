@@ -34,7 +34,6 @@ internal sealed class RecordPaymentLinkAccessHandler(
         }
 
         paymentLink.RecordAccess();
-        tenantUow.Repository<PaymentLink>().Update(paymentLink);
         await tenantUow.SaveChangesAsync(ct);
 
         return Result.Ok();

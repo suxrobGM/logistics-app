@@ -45,7 +45,6 @@ public class Index(
 
         // Mark token as used
         impersonationToken.UsedAt = DateTime.UtcNow;
-        masterUow.Repository<ImpersonationToken>().Update(impersonationToken);
         await masterUow.SaveChangesAsync();
 
         // Find target user

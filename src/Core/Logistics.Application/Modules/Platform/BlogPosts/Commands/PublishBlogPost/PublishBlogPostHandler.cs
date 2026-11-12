@@ -25,7 +25,6 @@ internal sealed class PublishBlogPostHandler(
         blogPost.PublishedAt ??= DateTime.UtcNow;
         blogPost.UpdatedAt = DateTime.UtcNow;
 
-        masterUow.Repository<BlogPost>().Update(blogPost);
         await masterUow.SaveChangesAsync(ct);
 
         logger.LogInformation("Published blog post {Id} at {PublishedAt}", req.Id, blogPost.PublishedAt);

@@ -23,7 +23,6 @@ internal sealed class UpdateInvoiceHandler(ITenantUnitOfWork tenantUow) : IReque
             invoice.Status = req.InvoiceStatus.Value;
         }
 
-        tenantUow.Repository<Invoice>().Update(invoice);
         await tenantUow.SaveChangesAsync();
         return Result.Ok();
     }

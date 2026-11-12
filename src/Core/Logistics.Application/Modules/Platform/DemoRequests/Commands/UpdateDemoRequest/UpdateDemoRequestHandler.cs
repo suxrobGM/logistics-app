@@ -25,7 +25,6 @@ internal sealed class UpdateDemoRequestHandler(
         demoRequest.Notes = req.Notes;
         demoRequest.UpdatedAt = DateTime.UtcNow;
 
-        masterUow.Repository<DemoRequest>().Update(demoRequest);
         await masterUow.SaveChangesAsync(ct);
 
         logger.LogInformation("Updated demo request {Id} to status {Status}", req.Id, demoRequest.Status);

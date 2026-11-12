@@ -62,7 +62,6 @@ internal sealed class UpdateMaintenanceRecordHandler(ITenantUnitOfWork tenantUow
         record.TotalCost = req.LaborCost + req.PartsCost;
         record.WorkPerformed = req.Notes;
 
-        tenantUow.Repository<MaintenanceRecord>().Update(record);
         await tenantUow.SaveChangesAsync(ct);
 
         return Result<MaintenanceRecordDto>.Ok(record.ToDto());

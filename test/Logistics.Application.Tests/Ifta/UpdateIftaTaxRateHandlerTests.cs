@@ -67,7 +67,6 @@ public class UpdateIftaTaxRateHandlerTests
 
         Assert.True(result.IsSuccess);
         Assert.Equal(0.21m, rate.RatePerGallon);
-        _rateRepo.Received(1).Update(rate);
         await _masterUow.Received(1).SaveChangesAsync(Arg.Any<CancellationToken>());
     }
 

@@ -62,7 +62,6 @@ internal sealed class ReviewDvirReportHandler(
             report.Status = DvirStatus.RequiresRepair;
         }
 
-        tenantUow.Repository<DvirReport>().Update(report);
         await tenantUow.SaveChangesAsync(ct);
 
         return Result<DvirReportDto>.Ok(report.ToDto());

@@ -45,7 +45,6 @@ internal sealed class UpdateCustomerUserHandler(
             }
         }
 
-        tenantUow.Repository<CustomerUser>().Update(customerUser);
         await tenantUow.SaveChangesAsync(ct);
 
         return Result.Ok();

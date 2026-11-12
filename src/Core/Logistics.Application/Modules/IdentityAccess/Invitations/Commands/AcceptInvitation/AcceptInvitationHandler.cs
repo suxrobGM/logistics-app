@@ -41,7 +41,6 @@ internal sealed class AcceptInvitationHandler(
         if (invitation.IsExpired)
         {
             invitation.Status = InvitationStatus.Expired;
-            masterUow.Repository<Invitation>().Update(invitation);
             await masterUow.SaveChangesAsync(ct);
             return Result<AcceptInvitationResult>.Fail("This invitation has expired.");
         }

@@ -42,7 +42,6 @@ internal sealed class UpdateCustomerHandler(
         customerEntity.IsVatExempt = PropertyUpdater.UpdateIfChanged(req.IsVatExempt, customerEntity.IsVatExempt);
         customerEntity.FactoringCompanyId = req.FactoringCompanyId;
 
-        tenantUow.Repository<Customer>().Update(customerEntity);
         await tenantUow.SaveChangesAsync(ct);
 
         if (customerEntity.Name != previousName)

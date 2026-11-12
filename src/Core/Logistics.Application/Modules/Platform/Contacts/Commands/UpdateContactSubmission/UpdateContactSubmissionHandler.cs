@@ -24,7 +24,6 @@ internal sealed class UpdateContactSubmissionHandler(
         submission.Notes = req.Notes;
         submission.UpdatedAt = DateTime.UtcNow;
 
-        masterUow.Repository<ContactSubmission>().Update(submission);
         await masterUow.SaveChangesAsync(ct);
 
         logger.LogInformation("Updated contact submission {Id} to status {Status}", req.Id, submission.Status);

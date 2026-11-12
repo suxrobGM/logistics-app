@@ -70,8 +70,6 @@ internal sealed class UpdateLineItemHandler(
 
         await taxApplier.ApplyAsync(invoice, ct);
 
-        tenantUow.Repository<Invoice>().Update(invoice);
-
         await tenantUow.SaveChangesAsync(ct);
 
         return Result<InvoiceLineItemDto>.Ok(lineItem.ToDto());

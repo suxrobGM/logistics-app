@@ -72,7 +72,6 @@ public class SetupEmployeePayoutHandlerTests
 
         Assert.True(result.IsSuccess);
         Assert.Equal("acct_new_123", employee.StripeConnectedAccountId);
-        _employeeRepo.Received(1).Update(employee);
         await _tenantUow.Received().SaveChangesAsync(Arg.Any<CancellationToken>());
     }
 

@@ -31,7 +31,6 @@ internal sealed class CancelInvitationHandler(
 
         invitation.Status = InvitationStatus.Cancelled;
 
-        masterUow.Repository<Invitation>().Update(invitation);
         await masterUow.SaveChangesAsync(ct);
 
         return Result.Ok();

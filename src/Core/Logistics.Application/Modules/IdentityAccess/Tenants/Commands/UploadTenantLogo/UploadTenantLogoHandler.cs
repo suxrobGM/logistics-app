@@ -50,7 +50,6 @@ internal sealed class UploadTenantLogoHandler(
 
             // Update tenant's logo path
             tenant.LogoPath = blobPath;
-            masterUow.Repository<Tenant>().Update(tenant);
             await masterUow.SaveChangesAsync(ct);
 
             return Result<string>.Ok(blobPath);

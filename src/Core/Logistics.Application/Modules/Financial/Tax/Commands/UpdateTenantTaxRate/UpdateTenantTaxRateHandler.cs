@@ -27,7 +27,6 @@ internal sealed class UpdateTenantTaxRateHandler(
         if (req.EffectiveFrom.HasValue) rate.EffectiveFrom = req.EffectiveFrom.Value;
         rate.EffectiveTo = req.EffectiveTo;
 
-        masterUow.Repository<TenantTaxRate>().Update(rate);
         await masterUow.SaveChangesAsync(ct);
 
         return Result<TenantTaxRateDto>.Ok(rate.ToDto());

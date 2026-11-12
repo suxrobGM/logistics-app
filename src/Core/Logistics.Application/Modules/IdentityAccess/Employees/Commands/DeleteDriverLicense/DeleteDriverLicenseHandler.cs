@@ -23,7 +23,6 @@ internal sealed class DeleteDriverLicenseHandler(ITenantUnitOfWork tenantUow)
         }
 
         license.Status = DriverLicenseStatus.Revoked;
-        tenantUow.Repository<DriverLicense>().Update(license);
         await tenantUow.SaveChangesAsync(ct);
         return Result.Ok();
     }

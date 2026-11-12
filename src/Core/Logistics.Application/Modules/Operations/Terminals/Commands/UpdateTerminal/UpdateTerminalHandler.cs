@@ -37,7 +37,6 @@ internal sealed class UpdateTerminalHandler(ITenantUnitOfWork tenantUow)
         terminal.Address = PropertyUpdater.UpdateIfChanged(req.Address, terminal.Address);
         terminal.Notes = PropertyUpdater.UpdateIfChanged(req.Notes, terminal.Notes);
 
-        tenantUow.Repository<Terminal>().Update(terminal);
         await tenantUow.SaveChangesAsync(ct);
         return Result.Ok();
     }

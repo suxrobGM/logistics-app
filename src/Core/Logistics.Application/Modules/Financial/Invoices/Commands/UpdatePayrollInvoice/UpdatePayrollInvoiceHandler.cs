@@ -62,7 +62,6 @@ internal sealed class UpdatePayrollInvoiceHandler(
             await payrollService.RecalculatePayrollAsync(payroll, ct);
         }
 
-        tenantUow.Repository<PayrollInvoice>().Update(payroll);
         await tenantUow.SaveChangesAsync();
         return Result.Ok();
     }

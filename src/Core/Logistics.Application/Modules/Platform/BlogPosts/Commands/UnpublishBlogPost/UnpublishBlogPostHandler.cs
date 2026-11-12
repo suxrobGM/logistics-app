@@ -24,7 +24,6 @@ internal sealed class UnpublishBlogPostHandler(
         blogPost.Status = BlogPostStatus.Draft;
         blogPost.UpdatedAt = DateTime.UtcNow;
 
-        masterUow.Repository<BlogPost>().Update(blogPost);
         await masterUow.SaveChangesAsync(ct);
 
         logger.LogInformation("Unpublished blog post {Id}", req.Id);

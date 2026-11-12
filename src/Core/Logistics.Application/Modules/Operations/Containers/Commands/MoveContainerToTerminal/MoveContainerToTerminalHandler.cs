@@ -25,7 +25,6 @@ internal sealed class MoveContainerToTerminalHandler(ITenantUnitOfWork tenantUow
 
         container.MoveToTerminal(terminal);
 
-        tenantUow.Repository<Container>().Update(container);
         await tenantUow.SaveChangesAsync(ct);
         return Result.Ok();
     }

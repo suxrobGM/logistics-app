@@ -39,7 +39,6 @@ internal sealed class UpdateContainerHandler(ITenantUnitOfWork tenantUow)
         container.GrossWeight = PropertyUpdater.UpdateIfChanged(req.GrossWeight, container.GrossWeight);
         container.Notes = PropertyUpdater.UpdateIfChanged(req.Notes, container.Notes);
 
-        tenantUow.Repository<Container>().Update(container);
         await tenantUow.SaveChangesAsync(ct);
         return Result.Ok();
     }

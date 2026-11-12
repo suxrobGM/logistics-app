@@ -25,7 +25,6 @@ internal sealed class SubmitPayrollForApprovalHandler(ITenantUnitOfWork tenantUo
         }
 
         payroll.SubmitForApproval();
-        tenantUow.Repository<PayrollInvoice>().Update(payroll);
         await tenantUow.SaveChangesAsync();
 
         return Result.Ok();

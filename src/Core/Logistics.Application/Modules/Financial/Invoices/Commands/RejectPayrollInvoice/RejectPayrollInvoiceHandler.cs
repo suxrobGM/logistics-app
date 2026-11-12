@@ -32,7 +32,6 @@ internal sealed class RejectPayrollInvoiceHandler(
         var currentUserId = currentUserService.GetUserId() ?? Guid.Empty;
         payroll.Reject(currentUserId, req.Reason);
         await payrollService.ReleaseDeductionsAsync(payroll, ct);
-        tenantUow.Repository<PayrollInvoice>().Update(payroll);
         await tenantUow.SaveChangesAsync();
 
         return Result.Ok();

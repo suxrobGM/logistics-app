@@ -39,7 +39,6 @@ internal sealed class RejectDvirReportHandler(
         report.ReviewedAt = DateTime.UtcNow;
         report.MechanicNotes = $"Rejected: {req.RejectionReason}";
 
-        tenantUow.Repository<DvirReport>().Update(report);
         await tenantUow.SaveChangesAsync(ct);
 
         return Result<DvirReportDto>.Ok(report.ToDto());

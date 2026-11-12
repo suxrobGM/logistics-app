@@ -48,7 +48,6 @@ internal sealed class UpdateTimeEntryHandler(ITenantUnitOfWork tenantUow)
             timeEntry.CalculateTotalHours();
         }
 
-        tenantUow.Repository<TimeEntry>().Update(timeEntry);
         await tenantUow.SaveChangesAsync(ct);
 
         return Result.Ok();

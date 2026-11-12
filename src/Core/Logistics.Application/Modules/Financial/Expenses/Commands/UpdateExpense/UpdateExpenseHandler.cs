@@ -64,7 +64,6 @@ internal sealed class UpdateExpenseHandler(ITenantUnitOfWork tenantUow)
                 break;
         }
 
-        tenantUow.Repository<Expense>().Update(expense);
         await tenantUow.SaveChangesAsync(ct);
 
         return Result.Ok();

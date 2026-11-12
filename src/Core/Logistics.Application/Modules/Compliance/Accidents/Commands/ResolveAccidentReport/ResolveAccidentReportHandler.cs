@@ -37,7 +37,6 @@ internal sealed class ResolveAccidentReportHandler(ITenantUnitOfWork tenantUow)
                 : $"{report.ReviewNotes}\n\nResolution: {req.ResolutionNotes}";
         }
 
-        tenantUow.Repository<AccidentReport>().Update(report);
         await tenantUow.SaveChangesAsync(ct);
 
         return Result<AccidentReportDto>.Ok(report.ToDto());

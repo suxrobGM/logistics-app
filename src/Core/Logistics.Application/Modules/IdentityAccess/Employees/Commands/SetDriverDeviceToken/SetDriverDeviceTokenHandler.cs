@@ -25,7 +25,6 @@ internal sealed class SetDriverDeviceTokenHandler(ITenantUnitOfWork tenantUow)
         }
 
         driver.DeviceToken = req.DeviceToken;
-        tenantUow.Repository<Employee>().Update(driver);
         await tenantUow.SaveChangesAsync();
         return Result.Ok();
     }

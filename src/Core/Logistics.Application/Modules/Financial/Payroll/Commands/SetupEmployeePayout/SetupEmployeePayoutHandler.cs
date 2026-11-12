@@ -35,7 +35,6 @@ internal sealed class SetupEmployeePayoutHandler(
             var account = await stripeConnectService.CreateEmployeeConnectedAccountAsync(
                 employee, tenant.CompanyAddress);
             employee.StripeConnectedAccountId = account.Id;
-            tenantUow.Repository<Employee>().Update(employee);
             await tenantUow.SaveChangesAsync(ct);
 
             logger.LogInformation(

@@ -38,7 +38,6 @@ internal sealed class UpdateBlogPostHandler(
         blogPost.IsFeatured = req.IsFeatured;
         blogPost.UpdatedAt = DateTime.UtcNow;
 
-        masterUow.Repository<BlogPost>().Update(blogPost);
         await masterUow.SaveChangesAsync(ct);
 
         logger.LogInformation("Updated blog post {Id} with title '{Title}'", req.Id, req.Title);

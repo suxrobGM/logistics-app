@@ -26,7 +26,6 @@ internal sealed class ApproveExpenseHandler(ITenantUnitOfWork tenantUow)
 
         expense.Approve(req.ApproverId);
 
-        tenantUow.Repository<Expense>().Update(expense);
         await tenantUow.SaveChangesAsync(ct);
 
         return Result.Ok();

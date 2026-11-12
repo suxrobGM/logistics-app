@@ -33,7 +33,6 @@ internal sealed class RecordTrackingAccessHandler(
         }
 
         trackingLink.RecordAccess();
-        tenantUow.Repository<TrackingLink>().Update(trackingLink);
         await tenantUow.SaveChangesAsync(ct);
 
         return Result.Ok();

@@ -42,7 +42,6 @@ internal sealed class CreateEmployeeHandler(
         }
 
         await tenantUow.Repository<Employee>().AddAsync(employee);
-        masterUow.Repository<User>().Update(user);
 
         await masterUow.SaveChangesAsync();
         await tenantUow.SaveChangesAsync();

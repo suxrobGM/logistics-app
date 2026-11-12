@@ -62,7 +62,6 @@ internal sealed class UpdateDriverLicenseHandler(ITenantUnitOfWork tenantUow)
             return Result.Fail("Expiry must be after issued date.");
         }
 
-        tenantUow.Repository<DriverLicense>().Update(license);
         await tenantUow.SaveChangesAsync(ct);
         return Result.Ok();
     }

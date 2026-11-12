@@ -38,7 +38,6 @@ internal sealed class ReviewAccidentReportHandler(
         report.ReviewedAt = DateTime.UtcNow;
         report.ReviewNotes = req.ReviewNotes;
 
-        tenantUow.Repository<AccidentReport>().Update(report);
         await tenantUow.SaveChangesAsync(ct);
 
         return Result<AccidentReportDto>.Ok(report.ToDto());

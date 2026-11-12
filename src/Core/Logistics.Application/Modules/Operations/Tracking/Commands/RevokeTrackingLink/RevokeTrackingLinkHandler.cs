@@ -19,7 +19,6 @@ internal sealed class RevokeTrackingLinkHandler(ITenantUnitOfWork tenantUow)
         }
 
         trackingLink.IsActive = false;
-        tenantUow.Repository<TrackingLink>().Update(trackingLink);
         await tenantUow.SaveChangesAsync(ct);
 
         return Result.Ok();

@@ -21,7 +21,6 @@ internal sealed class UpdateLoadProximityHandler(ITenantUnitOfWork tenantUow)
         // UpdateProximity raises LoadProximityChangedEvent for notifications
         load.UpdateProximity(req.IsInProximity);
 
-        tenantUow.Repository<Load>().Update(load);
         await tenantUow.SaveChangesAsync(ct);
 
         return Result.Ok();

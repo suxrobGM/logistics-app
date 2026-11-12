@@ -115,7 +115,6 @@ internal sealed class SendInvoiceHandler(
         // Update invoice sent status
         invoice.SentAt = DateTime.UtcNow;
         invoice.SentToEmail = req.RecipientEmail;
-        tenantUow.Repository<Invoice>().Update(invoice);
         await tenantUow.SaveChangesAsync(ct);
 
         logger.LogInformation(

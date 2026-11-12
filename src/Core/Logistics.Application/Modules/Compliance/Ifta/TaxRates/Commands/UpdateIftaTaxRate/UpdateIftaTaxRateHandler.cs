@@ -39,7 +39,6 @@ internal sealed class UpdateIftaTaxRateHandler(
         rate.SurchargeRatePerGallon = req.SurchargeRatePerGallon;
         rate.UpdatedAt = DateTime.UtcNow;
 
-        masterUow.Repository<IftaTaxRate>().Update(rate);
         await masterUow.SaveChangesAsync(ct);
 
         logger.LogInformation(

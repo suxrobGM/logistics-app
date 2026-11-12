@@ -61,7 +61,6 @@ internal sealed class UpdateEmployeeHandler(
             employeeEntity.Address = req.Address;
         }
 
-        tenantUow.Repository<Employee>().Update(employeeEntity);
         await tenantUow.SaveChangesAsync(ct);
         return Result.Ok();
     }

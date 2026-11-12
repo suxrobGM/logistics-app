@@ -26,7 +26,6 @@ internal sealed class SubmitAccidentReportHandler(ITenantUnitOfWork tenantUow)
 
         report.Status = AccidentReportStatus.Submitted;
 
-        tenantUow.Repository<AccidentReport>().Update(report);
         await tenantUow.SaveChangesAsync(ct);
 
         return Result<AccidentReportDto>.Ok(report.ToDto());

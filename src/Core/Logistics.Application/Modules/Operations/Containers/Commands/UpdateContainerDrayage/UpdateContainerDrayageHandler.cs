@@ -51,7 +51,6 @@ internal sealed class UpdateContainerDrayageHandler(ITenantUnitOfWork tenantUow)
         container.ChassisProvider = req.ChassisProvider;
         container.ChassisRatePerDay = req.ChassisRatePerDay;
 
-        tenantUow.Repository<Container>().Update(container);
         await tenantUow.SaveChangesAsync(ct);
         return Result.Ok();
     }

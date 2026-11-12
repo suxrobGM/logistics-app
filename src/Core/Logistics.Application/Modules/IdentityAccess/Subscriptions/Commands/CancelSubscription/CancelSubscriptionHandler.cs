@@ -42,7 +42,6 @@ internal sealed class CancelSubscriptionHandler(
 
         subscription.Status = status ?? SubscriptionStatus.Cancelled;
 
-        masterUow.Repository<Subscription>().Update(subscription);
         await masterUow.SaveChangesAsync(ct);
         logger.LogInformation("Cancelled subscription {SubscriptionId}", subscription.Id);
         return Result.Ok();

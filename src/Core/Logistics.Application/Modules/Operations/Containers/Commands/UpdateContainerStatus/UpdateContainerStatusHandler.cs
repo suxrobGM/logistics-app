@@ -64,7 +64,6 @@ internal sealed class UpdateContainerStatusHandler(ITenantUnitOfWork tenantUow)
             return Result.Fail(ex.Message);
         }
 
-        tenantUow.Repository<Container>().Update(container);
         await tenantUow.SaveChangesAsync(ct);
         return Result.Ok();
     }

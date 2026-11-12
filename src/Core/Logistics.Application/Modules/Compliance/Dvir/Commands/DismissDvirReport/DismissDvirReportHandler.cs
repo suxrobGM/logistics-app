@@ -41,7 +41,6 @@ internal sealed class DismissDvirReportHandler(
             : req.Notes;
         report.DefectsCorrected = !report.HasDefects || report.Defects.Count == 0;
 
-        tenantUow.Repository<DvirReport>().Update(report);
         await tenantUow.SaveChangesAsync(ct);
 
         return Result<DvirReportDto>.Ok(report.ToDto());

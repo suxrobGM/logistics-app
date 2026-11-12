@@ -26,7 +26,6 @@ internal sealed class RejectExpenseHandler(ITenantUnitOfWork tenantUow)
 
         expense.Reject(req.ApproverId, req.Reason);
 
-        tenantUow.Repository<Expense>().Update(expense);
         await tenantUow.SaveChangesAsync();
 
         return Result.Ok();

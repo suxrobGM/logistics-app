@@ -66,7 +66,6 @@ internal sealed class ChangeSubscriptionPlanHandler(
         subscription.PlanId = newPlan.Id;
         subscription.Status = StripeObjectMapper.GetSubscriptionStatus(stripeSubscription.Status);
 
-        masterUow.Repository<Subscription>().Update(subscription);
         await masterUow.SaveChangesAsync(ct);
 
         logger.LogInformation(

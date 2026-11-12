@@ -26,7 +26,6 @@ internal sealed class LinkContainerToLoadHandler(ITenantUnitOfWork tenantUow)
         load.ContainerId = container.Id;
         load.Container = container;
 
-        tenantUow.Repository<Load>().Update(load);
         await tenantUow.SaveChangesAsync(ct);
         return Result.Ok();
     }

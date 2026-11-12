@@ -45,7 +45,6 @@ internal sealed class RenewSubscriptionHandler(
             subscription.Status = StripeObjectMapper.GetSubscriptionStatus(stripeSubscription.Status);
             subscription.CancelAtPeriodEnd = stripeSubscription.CancelAtPeriodEnd;
 
-            masterUow.Repository<Subscription>().Update(subscription);
             await masterUow.SaveChangesAsync(ct);
             logger.LogInformation("Renewed subscription {SubscriptionId}", subscription.Id);
             return Result.Ok();

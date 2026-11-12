@@ -43,7 +43,6 @@ internal sealed class UpdateTenantHandler(
             await stripeCustomerService.UpdateCustomerAsync(tenant);
         }
 
-        masterUow.Repository<Tenant>().Update(tenant);
         await masterUow.SaveChangesAsync(ct);
         return Result.Ok();
     }

@@ -47,7 +47,6 @@ internal sealed class SubmitDvirReportHandler(
         }
 
         report.Status = report.HasDefects ? DvirStatus.Submitted : DvirStatus.Cleared;
-        tenantUow.Repository<DvirReport>().Update(report);
         await tenantUow.SaveChangesAsync(ct);
 
         return Result<DvirReportDto>.Ok(report.ToDto());

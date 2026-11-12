@@ -70,8 +70,6 @@ internal sealed class RecordManualPaymentHandler(
             invoice.ApplyPayment(payment);
         }
 
-        tenantUow.Repository<Invoice>().Update(invoice);
-
         await tenantUow.SaveChangesAsync(ct);
 
         logger.LogInformation(

@@ -57,7 +57,6 @@ internal sealed class UpdateAccidentReportHandler(ITenantUnitOfWork tenantUow)
         report.VehicleDamageDescription = req.DamageDescription;
         report.TripId = req.TripId;
 
-        tenantUow.Repository<AccidentReport>().Update(report);
         await tenantUow.SaveChangesAsync(ct);
 
         return Result<AccidentReportDto>.Ok(report.ToDto());

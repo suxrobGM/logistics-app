@@ -22,7 +22,6 @@ internal sealed class RevokePaymentLinkHandler(
 
         paymentLink.Revoke();
 
-        tenantUow.Repository<PaymentLink>().Update(paymentLink);
         await tenantUow.SaveChangesAsync(ct);
 
         logger.LogInformation("Revoked payment link {LinkId}", paymentLink.Id);

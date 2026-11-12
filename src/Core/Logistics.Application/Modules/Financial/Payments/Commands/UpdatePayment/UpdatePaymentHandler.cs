@@ -39,7 +39,6 @@ internal sealed class UpdatePaymentHandler(ITenantUnitOfWork tenantUow) : IReque
             payment.Invoice?.RecalculatePaymentStatus(DateTime.UtcNow);
         }
 
-        tenantUow.Repository<Payment>().Update(payment);
         await tenantUow.SaveChangesAsync(ct);
         return Result.Ok();
     }

@@ -48,7 +48,6 @@ internal sealed class ProcessPaymentHandler(
                 _ => PaymentStatus.Failed
             };
 
-            tenantUow.Repository<Payment>().Update(payment);
             await tenantUow.SaveChangesAsync(ct);
 
             if (payment.Status == PaymentStatus.Failed)
@@ -65,7 +64,6 @@ internal sealed class ProcessPaymentHandler(
         catch (StripeException ex)
         {
             payment.Status = PaymentStatus.Failed;
-            tenantUow.Repository<Payment>().Update(payment);
             await tenantUow.SaveChangesAsync(ct);
 
             logger.LogError(ex, "Stripe error processing payment {PaymentId}: {Message}",

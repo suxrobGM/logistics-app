@@ -30,7 +30,6 @@ internal sealed class UpdateLaneRateFloorHandler(ITenantUnitOfWork tenantUow, IL
         req.ApplyTo(floor);
         floor.UpdatedAt = DateTime.UtcNow;
 
-        tenantUow.Repository<LaneRateFloor>().Update(floor);
         await tenantUow.SaveChangesAsync(ct);
 
         return Result.Ok();
