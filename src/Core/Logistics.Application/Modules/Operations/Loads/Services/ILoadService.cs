@@ -21,10 +21,4 @@ public interface ILoadService : IApplicationService
     /// </summary>
     Task<Result<IReadOnlyList<Load>>> CreateLoadsAsync(IEnumerable<CreateLoadParameters> parameters,
         bool saveChanges = true, CancellationToken ct = default);
-
-    /// <summary>
-    ///     Deletes the specified load.
-    /// </summary>
-    /// <param name="loadId">Load ID to delete</param>
-    Task DeleteLoadAsync(Guid loadId);
 }

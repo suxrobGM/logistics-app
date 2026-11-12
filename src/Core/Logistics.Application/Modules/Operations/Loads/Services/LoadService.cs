@@ -164,11 +164,4 @@ internal sealed class LoadService(ITenantUnitOfWork tenantUow, IVehicleTransport
 
         return Result<IReadOnlyList<Load>>.Ok(loads);
     }
-
-    public async Task DeleteLoadAsync(Guid loadId)
-    {
-        var load = await tenantUow.Repository<Load>().GetByIdAsync(loadId);
-        tenantUow.Repository<Load>().Delete(load);
-        await tenantUow.SaveChangesAsync();
-    }
 }
