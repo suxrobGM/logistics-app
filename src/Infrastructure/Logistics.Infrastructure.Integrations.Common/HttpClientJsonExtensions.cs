@@ -32,7 +32,7 @@ public static class HttpClientJsonExtensions
             {
                 try
                 {
-                    var response = await client.GetAsync(url, ct);
+                    using var response = await client.GetAsync(url, ct);
                     if (!response.IsSuccessStatusCode)
                     {
                         logger.LogWarning("{Action} returned {StatusCode}", action, response.StatusCode);

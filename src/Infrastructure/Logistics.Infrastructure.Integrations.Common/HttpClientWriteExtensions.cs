@@ -27,7 +27,7 @@ public static class HttpClientWriteExtensions
             {
                 try
                 {
-                    var response = await client.PostAsJsonAsync(url, body, ct);
+                    using var response = await client.PostAsJsonAsync(url, body, ct);
                     if (!response.IsSuccessStatusCode)
                     {
                         var error = await response.Content.ReadAsStringAsync(ct);
@@ -54,7 +54,7 @@ public static class HttpClientWriteExtensions
             {
                 try
                 {
-                    var response = await client.PostAsJsonAsync(url, body, ct);
+                    using var response = await client.PostAsJsonAsync(url, body, ct);
                     if (response.IsSuccessStatusCode)
                     {
                         return true;
@@ -79,7 +79,7 @@ public static class HttpClientWriteExtensions
             {
                 try
                 {
-                    var response = await client.PutAsJsonAsync(url, body, ct);
+                    using var response = await client.PutAsJsonAsync(url, body, ct);
                     if (response.IsSuccessStatusCode)
                     {
                         return true;
@@ -103,7 +103,7 @@ public static class HttpClientWriteExtensions
             {
                 try
                 {
-                    var response = await client.DeleteAsync(url, ct);
+                    using var response = await client.DeleteAsync(url, ct);
                     if (response.IsSuccessStatusCode)
                     {
                         return true;
