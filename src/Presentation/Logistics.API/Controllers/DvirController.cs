@@ -121,7 +121,6 @@ public class DvirController(IMediator mediator) : ControllerBase
         var command = new DismissDvirReportCommand
         {
             ReportId = id,
-            DismissedById = request.DismissedById,
             Notes = request.Notes
         };
         var result = await mediator.Send(command);
@@ -140,7 +139,6 @@ public class DvirController(IMediator mediator) : ControllerBase
         var command = new RejectDvirReportCommand
         {
             ReportId = id,
-            RejectedById = request.RejectedById,
             RejectionReason = request.RejectionReason
         };
         var result = await mediator.Send(command);
@@ -148,5 +146,5 @@ public class DvirController(IMediator mediator) : ControllerBase
     }
 }
 
-public record DismissDvirReportRequest(Guid DismissedById, string? Notes);
-public record RejectDvirReportRequest(Guid RejectedById, string RejectionReason);
+public record DismissDvirReportRequest(string? Notes);
+public record RejectDvirReportRequest(string RejectionReason);

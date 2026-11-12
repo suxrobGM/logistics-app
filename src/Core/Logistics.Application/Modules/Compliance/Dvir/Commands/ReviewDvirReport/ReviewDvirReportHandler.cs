@@ -1,4 +1,5 @@
 using Logistics.Application.Abstractions;
+using Logistics.Application.Abstractions.CurrentUser;
 using Logistics.Domain.Entities;
 using Logistics.Domain.Entities.Safety;
 using Logistics.Domain.Persistence;
@@ -9,7 +10,9 @@ using Logistics.Shared.Models;
 
 namespace Logistics.Application.Modules.Compliance.Dvir.Commands;
 
-internal sealed class ReviewDvirReportHandler(ITenantUnitOfWork tenantUow)
+internal sealed class ReviewDvirReportHandler(
+    ITenantUnitOfWork tenantUow,
+    ICurrentUserService currentUserService)
     : IRequestHandler<ReviewDvirReportCommand, Result<DvirReportDto>>
 {
     public async Task<Result<DvirReportDto>> Handle(ReviewDvirReportCommand req, CancellationToken ct)
@@ -25,13 +28,19 @@ internal sealed class ReviewDvirReportHandler(ITenantUnitOfWork tenantUow)
             return Result<DvirReportDto>.Fail("Only submitted reports or reports requiring repair can be reviewed.");
         }
 
-        var reviewer = await tenantUow.Repository<Employee>().GetByIdAsync(req.ReviewedById, ct);
+        var reviewerId = currentUserService.GetUserId();
+        if (reviewerId is null)
+        {
+            return Result<DvirReportDto>.Fail("Unable to determine the current user.");
+        }
+
+        var reviewer = await tenantUow.Repository<Employee>().GetByIdAsync(reviewerId.Value, ct);
         if (reviewer is null)
         {
             return Result<DvirReportDto>.Fail("Reviewer not found.");
         }
 
-        report.ReviewedById = req.ReviewedById;
+        report.ReviewedById = reviewer.Id;
         report.ReviewedBy = reviewer;
         report.ReviewedAt = DateTime.UtcNow;
         report.DefectsCorrected = req.DefectsCorrected;
@@ -45,7 +54,7 @@ internal sealed class ReviewDvirReportHandler(ITenantUnitOfWork tenantUow)
             {
                 defect.IsCorrected = true;
                 defect.CorrectedAt = DateTime.UtcNow;
-                defect.CorrectedById = req.ReviewedById;
+                defect.CorrectedById = reviewer.Id;
             }
         }
         else

@@ -8,7 +8,6 @@ namespace Logistics.Application.Modules.Compliance.Dvir.Commands;
 public record ReviewDvirReportCommand : ICommand<Result<DvirReportDto>>
 {
     public required Guid ReportId { get; set; }
-    public required Guid ReviewedById { get; set; }
     public required bool DefectsCorrected { get; set; }
     public string? MechanicSignature { get; set; }
     public string? MechanicNotes { get; set; }

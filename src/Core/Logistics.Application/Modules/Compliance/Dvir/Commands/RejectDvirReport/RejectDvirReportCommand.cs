@@ -11,6 +11,5 @@ namespace Logistics.Application.Modules.Compliance.Dvir.Commands;
 public record RejectDvirReportCommand : ICommand<Result<DvirReportDto>>
 {
     public required Guid ReportId { get; set; }
-    public required Guid RejectedById { get; set; }
     public required string RejectionReason { get; set; }
 }

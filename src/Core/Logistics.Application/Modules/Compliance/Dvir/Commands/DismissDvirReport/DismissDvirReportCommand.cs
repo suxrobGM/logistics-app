@@ -11,6 +11,5 @@ namespace Logistics.Application.Modules.Compliance.Dvir.Commands;
 public record DismissDvirReportCommand : ICommand<Result<DvirReportDto>>
 {
     public required Guid ReportId { get; set; }
-    public required Guid DismissedById { get; set; }
     public string? Notes { get; set; }
 }

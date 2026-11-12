@@ -1,4 +1,5 @@
 using Logistics.Application.Abstractions;
+using Logistics.Application.Abstractions.CurrentUser;
 using Logistics.Domain.Entities.Safety;
 using Logistics.Domain.Persistence;
 using Logistics.Domain.Primitives.Enums.Safety;
@@ -8,7 +9,9 @@ using Logistics.Shared.Models;
 
 namespace Logistics.Application.Modules.Compliance.Accidents.Commands;
 
-internal sealed class ReviewAccidentReportHandler(ITenantUnitOfWork tenantUow)
+internal sealed class ReviewAccidentReportHandler(
+    ITenantUnitOfWork tenantUow,
+    ICurrentUserService currentUserService)
     : IRequestHandler<ReviewAccidentReportCommand, Result<AccidentReportDto>>
 {
     public async Task<Result<AccidentReportDto>> Handle(ReviewAccidentReportCommand req, CancellationToken ct)
@@ -24,8 +27,14 @@ internal sealed class ReviewAccidentReportHandler(ITenantUnitOfWork tenantUow)
             return Result<AccidentReportDto>.Fail("Only submitted reports can be reviewed.");
         }
 
+        var reviewerId = currentUserService.GetUserId();
+        if (reviewerId is null)
+        {
+            return Result<AccidentReportDto>.Fail("Unable to determine the current user.");
+        }
+
         report.Status = AccidentReportStatus.UnderReview;
-        report.ReviewedById = req.ReviewedById;
+        report.ReviewedById = reviewerId.Value;
         report.ReviewedAt = DateTime.UtcNow;
         report.ReviewNotes = req.ReviewNotes;
 

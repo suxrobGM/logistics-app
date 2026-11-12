@@ -95,7 +95,6 @@ public class AccidentController(IMediator mediator) : ControllerBase
         var command = new ReviewAccidentReportCommand
         {
             ReportId = id,
-            ReviewedById = request.ReviewedById,
             ReviewNotes = request.ReviewNotes
         };
         var result = await mediator.Send(command);
@@ -121,5 +120,5 @@ public class AccidentController(IMediator mediator) : ControllerBase
     }
 }
 
-public record ReviewAccidentReportRequest(Guid ReviewedById, string? ReviewNotes);
+public record ReviewAccidentReportRequest(string? ReviewNotes);
 public record ResolveAccidentReportRequest(string? ResolutionNotes);

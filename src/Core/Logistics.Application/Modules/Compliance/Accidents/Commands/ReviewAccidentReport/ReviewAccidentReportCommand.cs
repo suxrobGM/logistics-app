@@ -11,6 +11,5 @@ namespace Logistics.Application.Modules.Compliance.Accidents.Commands;
 public record ReviewAccidentReportCommand : ICommand<Result<AccidentReportDto>>
 {
     public required Guid ReportId { get; init; }
-    public required Guid ReviewedById { get; init; }
     public string? ReviewNotes { get; init; }
 }
