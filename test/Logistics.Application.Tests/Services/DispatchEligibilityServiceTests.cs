@@ -1,6 +1,7 @@
 using Logistics.Application.Modules.Integrations.AIDispatch.Services;
 using Logistics.Application.Abstractions.Dispatch;
 using Logistics.Application.Modules.Operations.Common.Services;
+using Logistics.Application.Tests.TestKit;
 using Logistics.Domain.Entities;
 using Logistics.Domain.Persistence;
 using Logistics.Domain.Primitives.Enums;
@@ -22,10 +23,7 @@ public class DispatchEligibilityServiceTests
 
     private readonly DispatchEligibilityService _sut;
 
-    private static readonly Guid TruckId = Guid.NewGuid();
     private static readonly Guid DriverId = Guid.NewGuid();
-    private static readonly Guid LoadId = Guid.NewGuid();
-    private static readonly Guid CustomerId = Guid.NewGuid();
     private static readonly DateOnly Today = DateOnly.FromDateTime(DateTime.UtcNow);
 
     public DispatchEligibilityServiceTests()
@@ -37,314 +35,159 @@ public class DispatchEligibilityServiceTests
             _tenantUow, _capacityChecker, NullLogger<DispatchEligibilityService>.Instance);
     }
 
-    [Fact]
-    public async Task CheckAsync_NonHazmatLoad_ValidUSCdl_ReturnsEligible()
+    #region Scenario table
+
+    /// <summary>
+    /// One driver, truck and load per row. <see cref="Expected"/> empty means eligible with no
+    /// issues at all; on an eligible row a code is a warning, on a blocked row the result must carry
+    /// one of the codes.
+    /// </summary>
+    private sealed record Scenario(
+        DriverLicense[] Licenses,
+        bool Eligible,
+        EligibilityIssueCode[] Expected,
+        HazmatClass? Hazmat = null,
+        string Origin = "US",
+        string Destination = "US",
+        bool Placarded = false,
+        AdrEquipment? Adr = null,
+        bool TruckHasNoMainDriver = false,
+        bool PassDriverId = false,
+        EmployeeStatus DriverStatus = EmployeeStatus.Active);
+
+    private static readonly Dictionary<string, Scenario> Scenarios = new()
     {
-        var driver = CreateDriver(license: BuildLicense("US", LicenseClass.USClassA));
-        var truck = CreateTruck(driver);
-        var load = CreateLoad();
+        ["US CDL, ordinary freight on an EU route"] = new(
+            [License("US", LicenseClass.USClassA)], true, [], Origin: "DE", Destination: "FR"),
+        ["US hazmat, no hazmat endorsement"] = new(
+            [License("US", LicenseClass.USClassA)], false, [EligibilityIssueCode.MissingHazmatEndorsement],
+            HazmatClass.Class3, Placarded: true),
+        ["US hazmat, endorsed driver, truck not placarded"] = new(
+            [License("US", LicenseClass.USClassA, LicenseEndorsement.Hazmat)], false,
+            [EligibilityIssueCode.HazmatPlacardingRequired], HazmatClass.Class3),
+        ["US hazmat, endorsed driver, placarded truck without ADR equipment"] = new(
+            [License("US", LicenseClass.USClassA, LicenseEndorsement.Hazmat)], true, [],
+            HazmatClass.Class3, Placarded: true),
+        ["US hazmat, EU licence only, so the ADR rules apply"] = new(
+            [License("DE", LicenseClass.EUCE)], false, [EligibilityIssueCode.MissingAdrEndorsement],
+            HazmatClass.Class3, Placarded: true),
+        ["US hazmat, EU and US licences, the US one is picked"] = new(
+            [License("DE", LicenseClass.EUCE, LicenseEndorsement.Adr), License("US", LicenseClass.USClassA, LicenseEndorsement.Hazmat)],
+            true, [], HazmatClass.Class3, Placarded: true),
+        ["EU class 7 with basic ADR only"] = new(
+            [License("DE", LicenseClass.EUCE, LicenseEndorsement.Adr)], false,
+            [EligibilityIssueCode.MissingAdrClass7Endorsement], HazmatClass.Class7, "DE", "FR",
+            Adr: AdrTruck(HazmatClassFlags.Class7, DateTime.UtcNow.AddYears(1))),
+        ["EU truck not certified for the class"] = new(
+            [License("DE", LicenseClass.EUCE, LicenseEndorsement.Adr)], false,
+            [EligibilityIssueCode.TruckClassNotAllowed], HazmatClass.Class6, "DE", "FR",
+            Adr: AdrTruck(HazmatClassFlags.Class3, DateTime.UtcNow.AddYears(1))),
+        ["EU truck ADR certificate expired"] = new(
+            [License("DE", LicenseClass.EUCE, LicenseEndorsement.Adr)], false,
+            [EligibilityIssueCode.AdrCertExpired], HazmatClass.Class3, "DE", "FR",
+            Adr: AdrTruck(HazmatClassFlags.Class3, DateTime.UtcNow.AddDays(-1))),
+        // The expired licence may be filtered out (no active licence) or kept and flagged; both block.
+        ["licence expired yesterday"] = new(
+            [License("US", LicenseClass.USClassA, expiresAt: Today.AddDays(-1))], false,
+            [EligibilityIssueCode.LicenseExpired, EligibilityIssueCode.NoActiveLicense]),
+        ["licence expires today"] = new(
+            [License("US", LicenseClass.USClassA, expiresAt: Today)], true, []),
+        ["medical certificate expired"] = new(
+            [License("US", LicenseClass.USClassA, medicalCertExpiresAt: Today.AddDays(-1))], false,
+            [EligibilityIssueCode.MedicalCertExpired]),
+        ["medical certificate expires within 7 days"] = new(
+            [License("US", LicenseClass.USClassA, medicalCertExpiresAt: Today.AddDays(3))], true,
+            [EligibilityIssueCode.MedicalCertExpiringSoon]),
+        ["US class A CDL"] = new([License("US", LicenseClass.USClassA)], true, []),
+        ["US class B CDL"] = new([License("US", LicenseClass.USClassB)], true, []),
+        ["US class C CDL"] = new([License("US", LicenseClass.USClassC)], true, []),
+        ["truck has no main driver and none is given"] = new(
+            [License("US", LicenseClass.USClassA)], false, [EligibilityIssueCode.DriverNotAssigned],
+            TruckHasNoMainDriver: true),
+        ["truck has no main driver, but one is given"] = new(
+            [License("US", LicenseClass.USClassA, LicenseEndorsement.Hazmat)], true, [],
+            HazmatClass.Class3, Placarded: true, TruckHasNoMainDriver: true, PassDriverId: true),
+        ["driver suspended"] = new(
+            [License("US", LicenseClass.USClassA)], false, [EligibilityIssueCode.DriverNotActive],
+            DriverStatus: EmployeeStatus.Suspended),
+        ["driver terminated"] = new(
+            [License("US", LicenseClass.USClassA)], false, [EligibilityIssueCode.DriverNotActive],
+            DriverStatus: EmployeeStatus.Terminated),
+        ["driver on leave"] = new(
+            [License("US", LicenseClass.USClassA)], false, [EligibilityIssueCode.DriverNotActive],
+            DriverStatus: EmployeeStatus.OnLeave),
+    };
 
-        WireRepos(truck, load, driver);
-
-        var result = await _sut.CheckAsync(TruckId, LoadId);
-
-        Assert.True(result.IsEligible);
-        Assert.Empty(result.Issues);
-    }
-
-    [Fact]
-    public async Task CheckAsync_HazmatLoad_USDriverWithoutHazmatEndorsement_Blocked()
-    {
-        var driver = CreateDriver(license: BuildLicense("US", LicenseClass.USClassA));
-        var truck = CreateTruck(driver, isHazmatPlacarded: true);
-        var load = CreateLoad(hazmatClass: HazmatClass.Class3, originCountry: "US", destCountry: "US");
-
-        WireRepos(truck, load, driver);
-
-        var result = await _sut.CheckAsync(TruckId, LoadId);
-
-        Assert.False(result.IsEligible);
-        Assert.Contains(result.Issues, i => i.Code == EligibilityIssueCode.MissingHazmatEndorsement);
-    }
-
-    [Fact]
-    public async Task CheckAsync_AdrLoad_EUDriverWithBasicAdr_Class7Load_Blocked()
-    {
-        var driver = CreateDriver(license: BuildLicense("DE", LicenseClass.EUCE,
-            LicenseEndorsement.Adr));
-        var truck = CreateAdrTruck(driver, allowedClasses: HazmatClassFlags.Class7,
-            certExpiry: DateTime.UtcNow.AddYears(1));
-        var load = CreateLoad(hazmatClass: HazmatClass.Class7,
-            originCountry: "DE", destCountry: "FR");
-
-        WireRepos(truck, load, driver);
-
-        var result = await _sut.CheckAsync(TruckId, LoadId);
-
-        Assert.False(result.IsEligible);
-        Assert.Contains(result.Issues, i => i.Code == EligibilityIssueCode.MissingAdrClass7Endorsement);
-    }
-
-    [Fact]
-    public async Task CheckAsync_AdrLoad_EUTruckNotCertifiedForClass_Blocked()
-    {
-        var driver = CreateDriver(license: BuildLicense("DE", LicenseClass.EUCE,
-            LicenseEndorsement.Adr));
-        var truck = CreateAdrTruck(driver, allowedClasses: HazmatClassFlags.Class3,
-            certExpiry: DateTime.UtcNow.AddYears(1));
-        var load = CreateLoad(hazmatClass: HazmatClass.Class6,
-            originCountry: "DE", destCountry: "FR");
-
-        WireRepos(truck, load, driver);
-
-        var result = await _sut.CheckAsync(TruckId, LoadId);
-
-        Assert.False(result.IsEligible);
-        Assert.Contains(result.Issues, i => i.Code == EligibilityIssueCode.TruckClassNotAllowed);
-    }
-
-    [Fact]
-    public async Task CheckAsync_AdrCertExpired_Blocked()
-    {
-        var driver = CreateDriver(license: BuildLicense("DE", LicenseClass.EUCE,
-            LicenseEndorsement.Adr));
-        var truck = CreateAdrTruck(driver, allowedClasses: HazmatClassFlags.Class3,
-            certExpiry: DateTime.UtcNow.AddDays(-1));
-        var load = CreateLoad(hazmatClass: HazmatClass.Class3,
-            originCountry: "DE", destCountry: "FR");
-
-        WireRepos(truck, load, driver);
-
-        var result = await _sut.CheckAsync(TruckId, LoadId);
-
-        Assert.False(result.IsEligible);
-        Assert.Contains(result.Issues, i => i.Code == EligibilityIssueCode.AdrCertExpired);
-    }
-
-    [Fact]
-    public async Task CheckAsync_LicenseExpired_Blocked()
-    {
-        var driver = CreateDriver(license: BuildLicense("US", LicenseClass.USClassA,
-            expiresAt: Today.AddDays(-1),
-            status: DriverLicenseStatus.Active));
-        var truck = CreateTruck(driver);
-        var load = CreateLoad();
-
-        WireRepos(truck, load, driver);
-
-        var result = await _sut.CheckAsync(TruckId, LoadId);
-
-        Assert.False(result.IsEligible);
-        // Either NoActiveLicense (filtered out) or LicenseExpired (kept and flagged) - both are valid blocks
-        Assert.Contains(result.Issues,
-            i => i.Code is EligibilityIssueCode.LicenseExpired or EligibilityIssueCode.NoActiveLicense);
-    }
-
-    [Fact]
-    public async Task CheckAsync_MedicalCertExpired_Blocked()
-    {
-        var driver = CreateDriver(license: BuildLicense("US", LicenseClass.USClassA,
-            medicalCertExpiresAt: Today.AddDays(-1)));
-        var truck = CreateTruck(driver);
-        var load = CreateLoad();
-
-        WireRepos(truck, load, driver);
-
-        var result = await _sut.CheckAsync(TruckId, LoadId);
-
-        Assert.False(result.IsEligible);
-        Assert.Contains(result.Issues, i => i.Code == EligibilityIssueCode.MedicalCertExpired);
-    }
-
-    [Fact]
-    public async Task CheckAsync_TruckNotFound_BlockedWithReason()
-    {
-        _truckRepo.GetByIdAsync(TruckId, Arg.Any<CancellationToken>()).Returns((Truck?)null);
-
-        var result = await _sut.CheckAsync(TruckId, LoadId);
-
-        Assert.False(result.IsEligible);
-        Assert.Single(result.Issues);
-        Assert.Equal(EligibilityIssueCode.TruckNotFound, result.Issues[0].Code);
-    }
-
-    #region US-specific scenarios
-
-    [Fact]
-    public async Task CheckAsync_USHazmatRoute_DriverHasHazmat_TruckNotPlacarded_Blocked()
-    {
-        var driver = CreateDriver(license: BuildLicense("US", LicenseClass.USClassA, LicenseEndorsement.Hazmat));
-        // Truck not placarded - required for US Hazmat transport.
-        var truck = CreateTruck(driver, isHazmatPlacarded: false);
-        var load = CreateLoad(hazmatClass: HazmatClass.Class3,
-            originCountry: "US", destCountry: "US");
-
-        WireRepos(truck, load, driver);
-
-        var result = await _sut.CheckAsync(TruckId, LoadId);
-
-        Assert.False(result.IsEligible);
-        Assert.Contains(result.Issues, i => i.Code == EligibilityIssueCode.HazmatPlacardingRequired);
-    }
-
-    [Fact]
-    public async Task CheckAsync_USHazmatRoute_DoesNotRequireAdrCertOnTruck()
-    {
-        // US-issued license with Hazmat + a non-ADR-certified but placarded truck ->
-        // should pass even though truck.AdrEquipment.IsAdrCertified == false.
-        var driver = CreateDriver(license: BuildLicense("US", LicenseClass.USClassA, LicenseEndorsement.Hazmat));
-        var truck = CreateTruck(driver, isHazmatPlacarded: true);
-        // Explicitly assert no ADR equipment.
-        Assert.False(truck.AdrEquipment.IsAdrCertified);
-
-        var load = CreateLoad(hazmatClass: HazmatClass.Class3,
-            originCountry: "US", destCountry: "US");
-
-        WireRepos(truck, load, driver);
-
-        var result = await _sut.CheckAsync(TruckId, LoadId);
-
-        Assert.True(result.IsEligible);
-        Assert.DoesNotContain(result.Issues, i => i.Code == EligibilityIssueCode.TruckNotAdrCertified);
-        Assert.DoesNotContain(result.Issues, i => i.Code == EligibilityIssueCode.AdrCertExpired);
-    }
+    public static TheoryData<string> ScenarioNames => [.. Scenarios.Keys];
 
     [Theory]
-    [InlineData(LicenseClass.USClassA)]
-    [InlineData(LicenseClass.USClassB)]
-    [InlineData(LicenseClass.USClassC)]
-    public async Task CheckAsync_NonHazmatUSLoad_AnyCdlClass_Eligible(LicenseClass cls)
+    [MemberData(nameof(ScenarioNames))]
+    public async Task CheckAsync_Scenario_GivesTheExpectedVerdict(string name)
     {
-        var driver = CreateDriver(license: BuildLicense("US", cls));
-        var truck = CreateTruck(driver);
-        var load = CreateLoad(originCountry: "US", destCountry: "US");
-
-        WireRepos(truck, load, driver);
-
-        var result = await _sut.CheckAsync(TruckId, LoadId);
-
-        Assert.True(result.IsEligible);
-    }
-
-    [Fact]
-    public async Task CheckAsync_USRoute_TruckHasNoMainDriver_AndNoOverride_Blocked()
-    {
-        var driver = CreateDriver(license: BuildLicense("US", LicenseClass.USClassA));
-        var truck = CreateTruck(driver);
-        truck.MainDriver = null;
-        truck.MainDriverId = null;
-        var load = CreateLoad(originCountry: "US", destCountry: "US");
-
-        WireRepos(truck, load, driver);
-
-        var result = await _sut.CheckAsync(TruckId, LoadId);
-
-        Assert.False(result.IsEligible);
-        Assert.Contains(result.Issues, i => i.Code == EligibilityIssueCode.DriverNotAssigned);
-    }
-
-    [Fact]
-    public async Task CheckAsync_USRoute_ExplicitDriverIdOverride_UsesProvidedDriver()
-    {
-        // Truck has no main driver assigned but caller passes driverId explicitly
-        // (e.g., simulating "would secondary driver X be eligible?" planning).
-        var driver = CreateDriver(license: BuildLicense("US", LicenseClass.USClassA, LicenseEndorsement.Hazmat));
-        var truck = CreateTruck(driver, isHazmatPlacarded: true);
-        truck.MainDriver = null;
-        truck.MainDriverId = null;
-        var load = CreateLoad(hazmatClass: HazmatClass.Class3,
-            originCountry: "US", destCountry: "US");
-
-        WireRepos(truck, load, driver);
-
-        var result = await _sut.CheckAsync(TruckId, LoadId, DriverId);
-
-        Assert.True(result.IsEligible);
-    }
-
-    [Fact]
-    public async Task CheckAsync_USRoute_DriverHasOnlyEULicense_NoUSCdl_Blocked()
-    {
-        // Driver only holds an EU license; load is US domestic. No US CDL on file ->
-        // primary-license picker still selects the EU license (it's the only active one),
-        // and the US Hazmat-endorsement gate doesn't apply (license is non-US), so on a
-        // non-hazmat US load this passes. But on a US Hazmat load, the EU branch fires
-        // and demands ADR - which the truck doesn't have -> blocked.
-        var driver = CreateDriver(license: BuildLicense("DE", LicenseClass.EUCE));
-        var truck = CreateTruck(driver, isHazmatPlacarded: true);
-        var load = CreateLoad(hazmatClass: HazmatClass.Class3,
-            originCountry: "US", destCountry: "US");
-
-        WireRepos(truck, load, driver);
-
-        var result = await _sut.CheckAsync(TruckId, LoadId);
-
-        Assert.False(result.IsEligible);
-        Assert.Contains(result.Issues, i => i.Code == EligibilityIssueCode.MissingAdrEndorsement);
-    }
-
-    [Fact]
-    public async Task CheckAsync_USRoute_MultipleLicenses_PrefersUSIssuedForUSRoute()
-    {
-        // Driver holds both an EU CE license (no Hazmat) and a US CDL with Hazmat.
-        // For a US route + Hazmat load, the picker should prefer the US license - and so
-        // the US Hazmat-endorsement gate should pass.
-        var euLicense = BuildLicense("DE", LicenseClass.EUCE, LicenseEndorsement.Adr);
-        var usLicense = BuildLicense("US", LicenseClass.USClassA, LicenseEndorsement.Hazmat);
-        var driver = new Employee
+        var scenario = Scenarios[name];
+        var driver = TestData.Driver(DriverId, scenario.Licenses);
+        driver.Status = scenario.DriverStatus;
+        var truck = TestData.Truck(driver);
+        truck.IsHazmatPlacarded = scenario.Placarded;
+        if (scenario.Adr is not null)
         {
-            Id = DriverId,
-            Salary = Money.Zero("USD"),
-            Email = "driver@test.com",
-            FirstName = "John",
-            LastName = "Doe",
-            Licenses = [euLicense, usLicense]
-        };
-        var truck = CreateTruck(driver, isHazmatPlacarded: true);
-        var load = CreateLoad(hazmatClass: HazmatClass.Class3,
-            originCountry: "US", destCountry: "US");
+            truck.AdrEquipment = scenario.Adr;
+        }
 
-        WireRepos(truck, load, driver);
+        if (scenario.TruckHasNoMainDriver)
+        {
+            truck.MainDriver = null;
+            truck.MainDriverId = null;
+        }
 
-        var result = await _sut.CheckAsync(TruckId, LoadId);
+        var load = TestData.Load(originCountry: scenario.Origin, destinationCountry: scenario.Destination);
+        load.HazmatClass = scenario.Hazmat;
+        Wire(truck, load, driver);
 
-        Assert.True(result.IsEligible);
-    }
+        var result = scenario.PassDriverId
+            ? await _sut.CheckAsync(truck.Id, load.Id, DriverId)
+            : await _sut.CheckAsync(truck.Id, load.Id);
 
-    [Fact]
-    public async Task CheckAsync_USCdl_MedicalCertExpiringWithin7Days_WarningNotError()
-    {
-        var driver = CreateDriver(license: BuildLicense("US", LicenseClass.USClassA,
-            medicalCertExpiresAt: Today.AddDays(3)));
-        var truck = CreateTruck(driver);
-        var load = CreateLoad(originCountry: "US", destCountry: "US");
-
-        WireRepos(truck, load, driver);
-
-        var result = await _sut.CheckAsync(TruckId, LoadId);
-
-        // Eligible (no Error severity), but a Warning is surfaced.
-        Assert.True(result.IsEligible);
-        Assert.Contains(result.Issues, i =>
-            i.Code == EligibilityIssueCode.MedicalCertExpiringSoon
-            && i.Severity == EligibilitySeverity.Warning);
+        Assert.Equal(scenario.Eligible, result.IsEligible);
+        if (scenario.Expected.Length == 0)
+        {
+            Assert.Empty(result.Issues);
+        }
+        else if (scenario.Eligible)
+        {
+            var warning = Assert.Single(result.Issues, i => scenario.Expected.Contains(i.Code));
+            Assert.Equal(EligibilitySeverity.Warning, warning.Severity);
+        }
+        else
+        {
+            Assert.Contains(result.Issues, i => scenario.Expected.Contains(i.Code));
+        }
     }
 
     #endregion
 
     [Fact]
+    public async Task CheckAsync_TruckNotFound_BlockedWithReason()
+    {
+        _truckRepo.GetByIdAsync(Arg.Any<Guid>(), Arg.Any<CancellationToken>()).Returns((Truck?)null);
+
+        var result = await _sut.CheckAsync(Guid.NewGuid(), Guid.NewGuid());
+
+        Assert.False(result.IsEligible);
+        Assert.Equal(EligibilityIssueCode.TruckNotFound, Assert.Single(result.Issues).Code);
+    }
+
+    [Fact]
     public async Task CheckAsync_VehicleLoadOverTruckCapacity_WarnsButStaysEligible()
     {
-        var driver = CreateDriver(license: BuildLicense("US", LicenseClass.USClassA));
-        var truck = CreateTruck(driver);
-        truck.Type = TruckType.CarHauler;
-        var load = CreateLoad();
-        load.Type = LoadType.Vehicle;
-        WireRepos(truck, load, driver);
+        var driver = TestData.Driver(DriverId, License("US", LicenseClass.USClassA));
+        var truck = TestData.Truck(driver, TruckType.CarHauler);
+        var load = TestData.Load(LoadType.Vehicle);
+        Wire(truck, load, driver);
         _capacityChecker.GetWarningAsync(truck, load, Arg.Any<CancellationToken>())
             .Returns("Truck T-1 carries up to 7 vehicles, but its open loads have 9.");
 
-        var result = await _sut.CheckAsync(TruckId, LoadId);
+        var result = await _sut.CheckAsync(truck.Id, load.Id);
 
         Assert.True(result.IsEligible);
         var issue = Assert.Single(result.Issues);
@@ -355,13 +198,12 @@ public class DispatchEligibilityServiceTests
     [Fact]
     public async Task CheckAsync_ContainerLoadOnFreightTruck_BlockedAsIncompatible()
     {
-        var driver = CreateDriver(license: BuildLicense("US", LicenseClass.USClassA));
-        var truck = CreateTruck(driver);
-        var load = CreateLoad();
-        load.Type = LoadType.IntermodalContainer;
-        WireRepos(truck, load, driver);
+        var driver = TestData.Driver(DriverId, License("US", LicenseClass.USClassA));
+        var truck = TestData.Truck(driver);
+        var load = TestData.Load(LoadType.IntermodalContainer);
+        Wire(truck, load, driver);
 
-        var result = await _sut.CheckAsync(TruckId, LoadId);
+        var result = await _sut.CheckAsync(truck.Id, load.Id);
 
         Assert.False(result.IsEligible);
         var issue = Assert.Single(result.Issues);
@@ -369,53 +211,21 @@ public class DispatchEligibilityServiceTests
         Assert.Equal(EligibilitySeverity.Error, issue.Severity);
     }
 
-    [Fact]
-    public async Task CheckAsync_LicenseExpiresToday_StillEligible()
+    private void Wire(Truck truck, Load load, Employee driver)
     {
-        var driver = CreateDriver(license: BuildLicense("US", LicenseClass.USClassA, expiresAt: Today));
-        var truck = CreateTruck(driver);
-        var load = CreateLoad();
-        WireRepos(truck, load, driver);
-
-        var result = await _sut.CheckAsync(TruckId, LoadId);
-
-        Assert.True(result.IsEligible);
+        _truckRepo.GetByIdAsync(truck.Id, Arg.Any<CancellationToken>()).Returns(truck);
+        _loadRepo.GetByIdAsync(load.Id, Arg.Any<CancellationToken>()).Returns(load);
+        _employeeRepo.GetByIdAsync(driver.Id, Arg.Any<CancellationToken>()).Returns(driver);
     }
 
-    [Theory]
-    [InlineData(EmployeeStatus.Suspended)]
-    [InlineData(EmployeeStatus.Terminated)]
-    [InlineData(EmployeeStatus.OnLeave)]
-    public async Task CheckAsync_DriverNotActive_Blocked(EmployeeStatus status)
-    {
-        var driver = CreateDriver(license: BuildLicense("US", LicenseClass.USClassA));
-        driver.Status = status;
-        var truck = CreateTruck(driver);
-        var load = CreateLoad();
-        WireRepos(truck, load, driver);
-
-        var result = await _sut.CheckAsync(TruckId, LoadId);
-
-        Assert.False(result.IsEligible);
-        Assert.Equal(EligibilityIssueCode.DriverNotActive, Assert.Single(result.Issues).Code);
-    }
-
-    private void WireRepos(Truck truck, Load load, Employee driver)
-    {
-        _truckRepo.GetByIdAsync(TruckId, Arg.Any<CancellationToken>()).Returns(truck);
-        _loadRepo.GetByIdAsync(LoadId, Arg.Any<CancellationToken>()).Returns(load);
-        _employeeRepo.GetByIdAsync(DriverId, Arg.Any<CancellationToken>()).Returns(driver);
-    }
-
-    private static DriverLicense BuildLicense(
+    private static DriverLicense License(
         string country,
         LicenseClass cls,
         LicenseEndorsement endorsements = LicenseEndorsement.None,
         DateOnly? expiresAt = null,
-        DateOnly? medicalCertExpiresAt = null,
-        DriverLicenseStatus status = DriverLicenseStatus.Active)
+        DateOnly? medicalCertExpiresAt = null)
     {
-        var license = DriverLicense.Create(
+        return DriverLicense.Create(
             DriverId,
             "LIC-" + Guid.NewGuid().ToString("N")[..6],
             cls,
@@ -424,81 +234,13 @@ public class DispatchEligibilityServiceTests
             expiresAt ?? Today.AddYears(2),
             endorsements,
             medicalCertExpiresAt: medicalCertExpiresAt);
-        license.Status = status;
-        return license;
     }
 
-    private static Employee CreateDriver(DriverLicense license)
+    private static AdrEquipment AdrTruck(HazmatClassFlags allowedClasses, DateTime certExpiry) => new()
     {
-        return new Employee
-        {
-            Id = DriverId,
-            Salary = Money.Zero("USD"),
-            Email = "driver@test.com",
-            FirstName = "John",
-            LastName = "Doe",
-            Licenses = [license]
-        };
-    }
-
-    private static Truck CreateTruck(Employee driver, bool isHazmatPlacarded = false)
-    {
-        return new Truck
-        {
-            Id = TruckId,
-            Number = "TRK-001",
-            Type = TruckType.FreightTruck,
-            MainDriver = driver,
-            MainDriverId = driver.Id,
-            IsHazmatPlacarded = isHazmatPlacarded
-        };
-    }
-
-    private static Truck CreateAdrTruck(Employee driver, HazmatClassFlags allowedClasses, DateTime certExpiry)
-    {
-        var truck = CreateTruck(driver);
-        truck.AdrEquipment = new AdrEquipment
-        {
-            IsAdrCertified = true,
-            AdrCertExpiresAt = certExpiry,
-            AllowedClasses = allowedClasses,
-            OrangePlateNumber = "30/1203"
-        };
-        return truck;
-    }
-
-    private static Load CreateLoad(
-        HazmatClass? hazmatClass = null,
-        string originCountry = "DE",
-        string destCountry = "FR")
-    {
-        return new Load
-        {
-            Id = LoadId,
-            Name = "Test Load",
-            Type = LoadType.GeneralFreight,
-            CustomerId = CustomerId,
-            Customer = null!,
-            OriginAddress = new Address
-            {
-                Line1 = "1 Origin",
-                City = "City",
-                State = "ST",
-                ZipCode = "00000",
-                Country = originCountry
-            },
-            OriginLocation = new GeoPoint(0, 0),
-            DestinationAddress = new Address
-            {
-                Line1 = "1 Dest",
-                City = "City",
-                State = "ST",
-                ZipCode = "00000",
-                Country = destCountry
-            },
-            DestinationLocation = new GeoPoint(0, 0),
-            DeliveryCost = Money.Zero("USD"),
-            HazmatClass = hazmatClass
-        };
-    }
+        IsAdrCertified = true,
+        AdrCertExpiresAt = certExpiry,
+        AllowedClasses = allowedClasses,
+        OrangePlateNumber = "30/1203"
+    };
 }
