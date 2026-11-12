@@ -54,13 +54,13 @@ public interface IStripeConnectService
     /// Creates a transfer to move funds from the platform account to a connected account.
     /// Use this for payouts or manual fund transfers.
     /// </summary>
-    /// <param name="amount">Amount to transfer in the smallest currency unit (e.g., cents).</param>
+    /// <param name="amount">Amount to transfer in major units; converted to the currency's minor units here.</param>
     /// <param name="currency">Currency code (e.g., "usd").</param>
     /// <param name="connectedAccountId">Destination connected account ID.</param>
     /// <param name="description">Optional description for the transfer.</param>
     /// <returns>The transfer ID.</returns>
     Task<string> CreateTransferAsync(
-        long amount,
+        decimal amount,
         string currency,
         string connectedAccountId,
         string? description = null);

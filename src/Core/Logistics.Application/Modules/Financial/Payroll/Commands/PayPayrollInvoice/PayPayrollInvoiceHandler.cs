@@ -54,9 +54,8 @@ internal sealed class PayPayrollInvoiceHandler(
 
         try
         {
-            var amountInCents = (long)(amountDue * 100);
             var transferId = await stripeConnectService.CreateTransferAsync(
-                amountInCents,
+                amountDue,
                 payrollInvoice.Total.Currency,
                 employee.StripeConnectedAccountId,
                 $"Payroll #{payrollInvoice.Number} for {employee.GetFullName()}");

@@ -204,14 +204,14 @@ internal sealed class StripeConnectService(ILogger<StripeConnectService> logger)
     }
 
     public async Task<string> CreateTransferAsync(
-        long amount,
+        decimal amount,
         string currency,
         string connectedAccountId,
         string? description = null)
     {
         var options = new TransferCreateOptions
         {
-            Amount = amount,
+            Amount = StripeMoneyConversion.ToMinorUnits(amount, currency),
             Currency = currency.ToLower(),
             Destination = connectedAccountId,
             Description = description

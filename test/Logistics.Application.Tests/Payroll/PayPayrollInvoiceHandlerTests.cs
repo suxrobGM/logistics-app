@@ -91,7 +91,7 @@ public class PayPayrollInvoiceHandlerTests
         _invoiceRepo.GetByIdAsync(invoice.Id, Arg.Any<CancellationToken>()).Returns(invoice);
         _employeeRepo.GetByIdAsync(employee.Id, Arg.Any<CancellationToken>()).Returns(employee);
         _stripeConnectService.CreateTransferAsync(
-                150000, "USD", "acct_123", Arg.Any<string>())
+                1500m, "USD", "acct_123", Arg.Any<string>())
             .Returns("tr_123");
 
         var result = await _sut.Handle(
@@ -161,7 +161,7 @@ public class PayPayrollInvoiceHandlerTests
         _invoiceRepo.GetByIdAsync(invoice.Id, Arg.Any<CancellationToken>()).Returns(invoice);
         _employeeRepo.GetByIdAsync(employee.Id, Arg.Any<CancellationToken>()).Returns(employee);
         _stripeConnectService.CreateTransferAsync(
-                Arg.Any<long>(), Arg.Any<string>(), Arg.Any<string>(), Arg.Any<string?>())
+                Arg.Any<decimal>(), Arg.Any<string>(), Arg.Any<string>(), Arg.Any<string?>())
             .ThrowsAsync(new StripeApiException("Insufficient funds"));
 
         var result = await _sut.Handle(
