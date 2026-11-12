@@ -17,26 +17,50 @@ public partial class Load
     /// <exception cref="InvalidOperationException">Thrown for invalid transitions.</exception>
     public void UpdateStatus(LoadStatus newStatus)
     {
-        var oldStatus = Status;
-        var timestamps = new LoadStatusTimestamps(
-            DispatchedAt,
-            PickedUpAt,
-            DeliveredAt,
-            CancelledAt);
-
-        var result = LoadStatusMachine.Apply(Status, newStatus, timestamps);
-
-        Status = result.Status;
-        DispatchedAt = result.Timestamps.DispatchedAt;
-        PickedUpAt = result.Timestamps.PickedUpAt;
-        DeliveredAt = result.Timestamps.DeliveredAt;
-        CancelledAt = result.Timestamps.CancelledAt;
-
-        if (Status != oldStatus)
+        if (newStatus == Status)
         {
-            DomainEvents.Add(new LoadStatusChangedEvent(Id, oldStatus, Status));
+            return;
         }
+
+        if (!AllowedTransitions.TryGetValue(Status, out var allowed) || !allowed.Contains(newStatus))
+        {
+            throw new InvalidOperationException($"Cannot change load status from '{Status}' to '{newStatus}'.");
+        }
+
+        var oldStatus = Status;
+        var now = DateTime.UtcNow;
+        switch (newStatus)
+        {
+            case LoadStatus.Dispatched:
+                // A re-dispatch keeps the first dispatch time but starts the run over.
+                DispatchedAt ??= now;
+                PickedUpAt = null;
+                DeliveredAt = null;
+                CancelledAt = null;
+                break;
+            case LoadStatus.PickedUp:
+                PickedUpAt ??= now;
+                break;
+            case LoadStatus.Delivered:
+                DeliveredAt ??= now;
+                break;
+            case LoadStatus.Cancelled:
+                CancelledAt ??= now;
+                break;
+        }
+
+        Status = newStatus;
+        DomainEvents.Add(new LoadStatusChangedEvent(Id, oldStatus, Status));
     }
+
+    private static readonly Dictionary<LoadStatus, LoadStatus[]> AllowedTransitions = new()
+    {
+        [LoadStatus.Draft] = [LoadStatus.Dispatched, LoadStatus.Cancelled],
+        [LoadStatus.Dispatched] = [LoadStatus.PickedUp, LoadStatus.Cancelled],
+        [LoadStatus.PickedUp] = [LoadStatus.Delivered, LoadStatus.Cancelled],
+        [LoadStatus.Delivered] = [],
+        [LoadStatus.Cancelled] = []
+    };
 
     /// <summary>
     /// Sets the status of a load imported from another system, dating each milestone from the source

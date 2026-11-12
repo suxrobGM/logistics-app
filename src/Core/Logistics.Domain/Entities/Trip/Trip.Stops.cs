@@ -24,7 +24,7 @@ public partial class Trip
     /// <exception cref="InvalidOperationException">Thrown if the trip status is not Draft.</exception>
     public void AddLoads(IEnumerable<Load> loads)
     {
-        if (!TripStatusMachine.CanModify(Status))
+        if (!CanModify)
         {
             throw new InvalidOperationException("Cannot modify loads unless trip is Draft.");
         }
@@ -40,7 +40,7 @@ public partial class Trip
     /// <exception cref="InvalidOperationException">Thrown if the trip status is not Draft.</exception>
     public void RemoveLoad(Guid loadId)
     {
-        if (!TripStatusMachine.CanModify(Status))
+        if (!CanModify)
         {
             throw new InvalidOperationException("Cannot modify loads unless trip is Draft.");
         }

@@ -22,7 +22,7 @@ internal sealed class UpdateTripHandler(
             return Result.Fail($"Trip '{req.TripId}' not found.");
         }
 
-        if (!TripStatusMachine.CanModify(trip.Status))
+        if (!trip.CanModify)
         {
             return Result.Fail("Only trips in 'Draft' or 'Dispatched' status can be updated.");
         }

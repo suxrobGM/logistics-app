@@ -15,7 +15,7 @@ public partial class Trip
     /// <exception cref="InvalidOperationException">Thrown if trip is not in Draft status.</exception>
     public void AssignToTruck(Truck newTruck)
     {
-        if (!TripStatusMachine.CanModify(Status))
+        if (!CanModify)
         {
             throw new InvalidOperationException("Cannot change truck assignment unless trip is Draft.");
         }
@@ -53,7 +53,7 @@ public partial class Trip
     /// </exception>
     public void AssignTrailer(Trailer trailer)
     {
-        if (!TripStatusMachine.CanModify(Status))
+        if (!CanModify)
         {
             throw new InvalidOperationException("Cannot change trailer assignment unless trip is Draft or Dispatched.");
         }

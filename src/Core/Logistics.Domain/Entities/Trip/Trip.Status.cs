@@ -8,6 +8,13 @@ namespace Logistics.Domain.Entities;
 /// </summary>
 public partial class Trip
 {
+    /// <summary>Loads can be added or removed and the truck changed while the trip is Draft or Dispatched.</summary>
+    public bool CanModify => Status is TripStatus.Draft or TripStatus.Dispatched;
+
+    public bool CanCancel => Status != TripStatus.Completed;
+
+    public bool CanDispatch => Status == TripStatus.Draft;
+
     /// <summary>
     /// Dispatches the trip and each of its loads still in Draft, which issues their invoices, and records
     /// the truck's drivers.
@@ -15,7 +22,7 @@ public partial class Trip
     /// <exception cref="InvalidOperationException">Thrown if trip is not in Draft status.</exception>
     public void Dispatch()
     {
-        if (!TripStatusMachine.CanDispatch(Status))
+        if (!CanDispatch)
         {
             throw new InvalidOperationException("Trip already dispatched");
         }
@@ -41,7 +48,7 @@ public partial class Trip
     /// </exception>
     public void Cancel()
     {
-        if (!TripStatusMachine.CanCancel(Status))
+        if (!CanCancel)
         {
             throw new InvalidOperationException("Cannot cancel a completed trip");
         }
