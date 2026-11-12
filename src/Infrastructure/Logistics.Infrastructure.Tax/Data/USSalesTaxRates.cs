@@ -65,6 +65,9 @@ internal static class USSalesTaxRates
         ["DC"] = 6.00m
     };
 
+    /// <summary>The 50 states and DC, in table order.</summary>
+    public static IEnumerable<string> StateCodes => StateBaseRates.Keys;
+
     public static decimal? GetStateBaseRate(string? stateCode)
     {
         if (string.IsNullOrEmpty(stateCode)) return null;
