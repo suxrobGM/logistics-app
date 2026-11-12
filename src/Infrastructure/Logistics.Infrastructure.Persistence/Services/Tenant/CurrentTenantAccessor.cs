@@ -161,15 +161,15 @@ internal class CurrentTenantAccessor(
     /// </summary>
     private bool ShouldBypassSubscriptionCheck()
     {
-        var path = _httpContext?.Request.Path;
+        var path = _httpContext?.Request.Path.Value;
 
-        if (!path.HasValue)
+        if (path is null)
         {
             return false;
         }
 
-        return path.Value.Value.StartsWith("/payments/methods", StringComparison.OrdinalIgnoreCase)
-               || path.Value.Value.StartsWith("/subscriptions", StringComparison.OrdinalIgnoreCase);
+        return path.StartsWith("/payments/methods", StringComparison.OrdinalIgnoreCase)
+               || path.StartsWith("/subscriptions", StringComparison.OrdinalIgnoreCase);
     }
 
     private void CheckSubscription(Tenant? tenant)
