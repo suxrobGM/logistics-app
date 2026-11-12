@@ -1,4 +1,5 @@
 using Logistics.Application.Abstractions;
+using Logistics.Application.Utilities;
 using Logistics.Domain.Entities;
 using Logistics.Domain.Persistence;
 using Logistics.Mappings;
@@ -55,15 +56,6 @@ internal sealed class GetExpensesHandler(ITenantUnitOfWork tenantUow)
                 (e.Notes ?? "").ToLower().Contains(search));
         }
 
-        var totalItems = await query.CountAsync(ct);
-
-        var expenses = await query
-            .OrderBy(req.OrderBy, x => x.Id, defaultOrderBy: "-ExpenseDate")
-            .ApplyPaging(req.Page, req.PageSize)
-            .ToListAsync(ct);
-
-        var dtos = expenses.Select(e => e.ToDto()).ToArray();
-
-        return PagedResult<ExpenseDto>.Ok(dtos, totalItems, req.PageSize);
+        return await query.ToPagedResultAsync(req, e => e.ToDto(), ct, defaultOrderBy: "-ExpenseDate");
     }
 }

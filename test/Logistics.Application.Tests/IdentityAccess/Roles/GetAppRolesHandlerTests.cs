@@ -1,6 +1,7 @@
 using Logistics.Application.Modules.IdentityAccess.Roles.Queries;
 using Logistics.Domain.Entities;
 using Logistics.Domain.Persistence;
+using MockQueryable;
 using NSubstitute;
 using Xunit;
 
@@ -26,7 +27,7 @@ public class GetAppRolesHandlerTests
     {
         var zeta = new AppRole("zeta");
         var alpha = new AppRole("alpha");
-        _roleRepo.Query().Returns(new[] { zeta, alpha }.AsQueryable());
+        _roleRepo.Query().Returns(new[] { zeta, alpha }.BuildMock());
 
         var result = await _sut.Handle(new GetAppRolesQuery(), CancellationToken.None);
 
@@ -38,7 +39,7 @@ public class GetAppRolesHandlerTests
     {
         var alpha = new AppRole("alpha");
         var zeta = new AppRole("zeta");
-        _roleRepo.Query().Returns(new[] { alpha, zeta }.AsQueryable());
+        _roleRepo.Query().Returns(new[] { alpha, zeta }.BuildMock());
 
         var result = await _sut.Handle(new GetAppRolesQuery { OrderBy = "-Name" }, CancellationToken.None);
 
@@ -60,7 +61,7 @@ public class GetAppRolesHandlerTests
             Id = Guid.Parse("11111111-1111-1111-1111-111111111111"),
             DisplayName = "first"
         };
-        _roleRepo.Query().Returns(new[] { second, first }.AsQueryable());
+        _roleRepo.Query().Returns(new[] { second, first }.BuildMock());
 
         var result = await _sut.Handle(new GetAppRolesQuery { PageSize = 1 }, CancellationToken.None);
 

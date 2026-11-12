@@ -1,4 +1,5 @@
 using Logistics.Application.Abstractions;
+using Logistics.Application.Utilities;
 using Logistics.Domain.Entities.Safety;
 using Logistics.Domain.Persistence;
 using Logistics.Mappings;
@@ -10,7 +11,7 @@ namespace Logistics.Application.Modules.Compliance.Dvir.Queries;
 internal sealed class GetDvirReportsHandler(ITenantUnitOfWork tenantUow)
     : IRequestHandler<GetDvirReportsQuery, PagedResult<DvirReportDto>>
 {
-    public Task<PagedResult<DvirReportDto>> Handle(GetDvirReportsQuery req, CancellationToken ct)
+    public async Task<PagedResult<DvirReportDto>> Handle(GetDvirReportsQuery req, CancellationToken ct)
     {
         var baseQuery = tenantUow.Repository<DvirReport>().Query();
 
@@ -44,13 +45,6 @@ internal sealed class GetDvirReportsHandler(ITenantUnitOfWork tenantUow)
             baseQuery = baseQuery.Where(r => r.InspectionDate <= req.ToDate);
         }
 
-        baseQuery = baseQuery.OrderBy(req.OrderBy, x => x.Id, defaultOrderBy: "-InspectionDate");
-
-        var totalItems = baseQuery.Count();
-        baseQuery = baseQuery.ApplyPaging(req.Page, req.PageSize);
-
-        var dtos = baseQuery.Select(r => r.ToDto()).ToArray();
-
-        return Task.FromResult(PagedResult<DvirReportDto>.Ok(dtos, totalItems, req.PageSize));
+        return await baseQuery.ToPagedResultAsync(req, r => r.ToDto(), ct, defaultOrderBy: "-InspectionDate");
     }
 }

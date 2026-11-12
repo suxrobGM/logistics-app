@@ -1,4 +1,5 @@
 using Logistics.Application.Abstractions;
+using Logistics.Application.Utilities;
 using Logistics.Domain.Entities;
 using Logistics.Domain.Persistence;
 using Logistics.Mappings;
@@ -10,7 +11,7 @@ namespace Logistics.Application.Modules.IdentityAccess.Roles.Queries;
 internal sealed class GetAppRolesHandler(IMasterUnitOfWork masterUow)
     : IRequestHandler<GetAppRolesQuery, PagedResult<RoleDto>>
 {
-    public Task<PagedResult<RoleDto>> Handle(
+    public async Task<PagedResult<RoleDto>> Handle(
         GetAppRolesQuery req, CancellationToken ct)
     {
         var query = masterUow.Repository<AppRole>().Query();
@@ -23,14 +24,6 @@ internal sealed class GetAppRolesHandler(IMasterUnitOfWork masterUow)
                 (i.DisplayName != null && i.DisplayName.ToLower().Contains(search)));
         }
 
-        var totalItems = query.Count();
-
-        var rolesDto = query
-            .OrderBy(req.OrderBy, i => i.Id, defaultOrderBy: "Name")
-            .ApplyPaging(req.Page, req.PageSize)
-            .Select(i => i.ToDto())
-            .ToArray();
-
-        return Task.FromResult(PagedResult<RoleDto>.Ok(rolesDto, totalItems, req.PageSize));
+        return await query.ToPagedResultAsync(req, i => i.ToDto(), ct, defaultOrderBy: "Name");
     }
 }

@@ -1,4 +1,5 @@
 using Logistics.Application.Abstractions;
+using Logistics.Application.Utilities;
 using Logistics.Domain.Entities;
 using Logistics.Domain.Persistence;
 using Logistics.Domain.Primitives.Enums;
@@ -11,7 +12,7 @@ namespace Logistics.Application.Modules.Platform.BlogPosts.Queries;
 internal sealed class GetPublishedBlogPostsHandler(
     IMasterUnitOfWork masterUow) : IRequestHandler<GetPublishedBlogPostsQuery, PagedResult<BlogPostDto>>
 {
-    public Task<PagedResult<BlogPostDto>> Handle(GetPublishedBlogPostsQuery req, CancellationToken ct)
+    public async Task<PagedResult<BlogPostDto>> Handle(GetPublishedBlogPostsQuery req, CancellationToken ct)
     {
         var query = masterUow.Repository<BlogPost>().Query()
             .Where(x => x.Status == BlogPostStatus.Published);
@@ -29,14 +30,6 @@ internal sealed class GetPublishedBlogPostsHandler(
             query = query.Where(x => x.Category == req.Category);
         }
 
-        var totalItems = query.Count();
-
-        var items = query
-            .OrderBy(string.IsNullOrEmpty(req.OrderBy) ? "-PublishedAt" : req.OrderBy)
-            .ApplyPaging(req.Page, req.PageSize)
-            .Select(i => i.ToDto())
-            .ToArray();
-
-        return Task.FromResult(PagedResult<BlogPostDto>.Ok(items, totalItems, req.PageSize));
+        return await query.ToPagedResultAsync(req, i => i.ToDto(), ct, defaultOrderBy: "-PublishedAt");
     }
 }

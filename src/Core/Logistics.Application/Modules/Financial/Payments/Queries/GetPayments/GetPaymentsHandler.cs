@@ -1,4 +1,5 @@
 using Logistics.Application.Abstractions;
+using Logistics.Application.Utilities;
 using Logistics.Domain.Entities;
 using Logistics.Domain.Persistence;
 using Logistics.Mappings;
@@ -10,21 +11,13 @@ namespace Logistics.Application.Modules.Financial.Payments.Queries;
 internal sealed class GetPaymentsHandler(ITenantUnitOfWork tenantUow)
     : IRequestHandler<GetPaymentsQuery, PagedResult<PaymentDto>>
 {
-    public Task<PagedResult<PaymentDto>> Handle(
+    public async Task<PagedResult<PaymentDto>> Handle(
         GetPaymentsQuery req,
         CancellationToken ct)
     {
         var query = tenantUow.Repository<Payment>().Query()
             .Where(i => i.CreatedAt >= req.StartDate && i.CreatedAt <= req.EndDate);
 
-        var totalItems = query.Count();
-
-        var payments = query
-            .OrderBy(req.OrderBy, x => x.Id)
-            .ApplyPaging(req.Page, req.PageSize)
-            .Select(i => i.ToDto())
-            .ToArray();
-
-        return Task.FromResult(PagedResult<PaymentDto>.Ok(payments, totalItems, req.PageSize));
+        return await query.ToPagedResultAsync(req, i => i.ToDto(), ct);
     }
 }

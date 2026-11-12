@@ -1,4 +1,5 @@
 using Logistics.Application.Abstractions;
+using Logistics.Application.Utilities;
 using Logistics.Domain.Entities.Maintenance;
 using Logistics.Domain.Persistence;
 using Logistics.Mappings;
@@ -10,7 +11,7 @@ namespace Logistics.Application.Modules.Operations.Maintenance.Queries;
 internal sealed class GetMaintenanceRecordsHandler(ITenantUnitOfWork tenantUow)
     : IRequestHandler<GetMaintenanceRecordsQuery, PagedResult<MaintenanceRecordDto>>
 {
-    public Task<PagedResult<MaintenanceRecordDto>> Handle(GetMaintenanceRecordsQuery req, CancellationToken ct)
+    public async Task<PagedResult<MaintenanceRecordDto>> Handle(GetMaintenanceRecordsQuery req, CancellationToken ct)
     {
         var baseQuery = tenantUow.Repository<MaintenanceRecord>().Query();
 
@@ -34,13 +35,6 @@ internal sealed class GetMaintenanceRecordsHandler(ITenantUnitOfWork tenantUow)
             baseQuery = baseQuery.Where(r => r.ServiceDate <= req.ToDate);
         }
 
-        baseQuery = baseQuery.OrderBy(req.OrderBy, x => x.Id, defaultOrderBy: "-ServiceDate");
-
-        var totalItems = baseQuery.Count();
-        baseQuery = baseQuery.ApplyPaging(req.Page, req.PageSize);
-
-        var dtos = baseQuery.Select(r => r.ToDto()).ToArray();
-
-        return Task.FromResult(PagedResult<MaintenanceRecordDto>.Ok(dtos, totalItems, req.PageSize));
+        return await baseQuery.ToPagedResultAsync(req, r => r.ToDto(), ct, defaultOrderBy: "-ServiceDate");
     }
 }

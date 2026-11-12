@@ -1,4 +1,5 @@
 using Logistics.Application.Abstractions;
+using Logistics.Application.Utilities;
 using Logistics.Domain.Entities;
 using Logistics.Domain.Persistence;
 using Logistics.Mappings;
@@ -10,7 +11,7 @@ namespace Logistics.Application.Modules.IdentityAccess.Tenants.Queries;
 internal sealed class GetTenantsHandler(IMasterUnitOfWork masterUow)
     : IRequestHandler<GetTenantsQuery, PagedResult<TenantDto>>
 {
-    public Task<PagedResult<TenantDto>> Handle(
+    public async Task<PagedResult<TenantDto>> Handle(
         GetTenantsQuery req, CancellationToken ct)
     {
         var query = masterUow.Repository<Tenant>().Query();
@@ -23,14 +24,6 @@ internal sealed class GetTenantsHandler(IMasterUnitOfWork masterUow)
                 (!string.IsNullOrEmpty(i.CompanyName) && i.CompanyName.ToLower().Contains(search)));
         }
 
-        var totalItems = query.Count();
-
-        var items = query
-            .OrderBy(req.OrderBy, x => x.Id)
-            .ApplyPaging(req.Page, req.PageSize)
-            .Select(i => i.ToDto(null))
-            .ToArray();
-
-        return Task.FromResult(PagedResult<TenantDto>.Ok(items, totalItems, req.PageSize));
+        return await query.ToPagedResultAsync(req, i => i.ToDto(null), ct);
     }
 }

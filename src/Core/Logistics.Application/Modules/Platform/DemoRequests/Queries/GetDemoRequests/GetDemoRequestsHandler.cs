@@ -1,4 +1,5 @@
 using Logistics.Application.Abstractions;
+using Logistics.Application.Utilities;
 using Logistics.Domain.Entities;
 using Logistics.Domain.Persistence;
 using Logistics.Mappings;
@@ -10,7 +11,7 @@ namespace Logistics.Application.Modules.Platform.DemoRequests.Queries;
 internal sealed class GetDemoRequestsHandler(
     IMasterUnitOfWork masterUow) : IRequestHandler<GetDemoRequestsQuery, PagedResult<DemoRequestDto>>
 {
-    public Task<PagedResult<DemoRequestDto>> Handle(GetDemoRequestsQuery req, CancellationToken ct)
+    public async Task<PagedResult<DemoRequestDto>> Handle(GetDemoRequestsQuery req, CancellationToken ct)
     {
         var query = masterUow.Repository<DemoRequest>().Query();
 
@@ -24,14 +25,6 @@ internal sealed class GetDemoRequestsHandler(
                 x.Company.ToLower().Contains(search));
         }
 
-        var totalItems = query.Count();
-
-        var items = query
-            .OrderBy(req.OrderBy, x => x.Id)
-            .ApplyPaging(req.Page, req.PageSize)
-            .Select(i => i.ToDto())
-            .ToArray();
-
-        return Task.FromResult(PagedResult<DemoRequestDto>.Ok(items, totalItems, req.PageSize));
+        return await query.ToPagedResultAsync(req, i => i.ToDto(), ct);
     }
 }

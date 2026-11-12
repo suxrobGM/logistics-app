@@ -1,4 +1,5 @@
 using Logistics.Application.Abstractions;
+using Logistics.Application.Utilities;
 using Logistics.Domain.Entities.Safety;
 using Logistics.Domain.Persistence;
 using Logistics.Mappings;
@@ -10,7 +11,7 @@ namespace Logistics.Application.Modules.Compliance.Accidents.Queries;
 internal sealed class GetAccidentReportsHandler(ITenantUnitOfWork tenantUow)
     : IRequestHandler<GetAccidentReportsQuery, PagedResult<AccidentReportDto>>
 {
-    public Task<PagedResult<AccidentReportDto>> Handle(GetAccidentReportsQuery req, CancellationToken ct)
+    public async Task<PagedResult<AccidentReportDto>> Handle(GetAccidentReportsQuery req, CancellationToken ct)
     {
         var baseQuery = tenantUow.Repository<AccidentReport>().Query();
 
@@ -44,13 +45,6 @@ internal sealed class GetAccidentReportsHandler(ITenantUnitOfWork tenantUow)
             baseQuery = baseQuery.Where(r => r.AccidentDateTime <= req.ToDate);
         }
 
-        baseQuery = baseQuery.OrderBy(req.OrderBy, x => x.Id, defaultOrderBy: "-AccidentDateTime");
-
-        var totalItems = baseQuery.Count();
-        baseQuery = baseQuery.ApplyPaging(req.Page, req.PageSize);
-
-        var dtos = baseQuery.Select(r => r.ToDto()).ToArray();
-
-        return Task.FromResult(PagedResult<AccidentReportDto>.Ok(dtos, totalItems, req.PageSize));
+        return await baseQuery.ToPagedResultAsync(req, r => r.ToDto(), ct, defaultOrderBy: "-AccidentDateTime");
     }
 }

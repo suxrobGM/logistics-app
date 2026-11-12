@@ -1,4 +1,5 @@
 using Logistics.Application.Abstractions;
+using Logistics.Application.Utilities;
 using Logistics.Domain.Entities;
 using Logistics.Domain.Persistence;
 using Logistics.Mappings;
@@ -9,7 +10,7 @@ namespace Logistics.Application.Modules.IdentityAccess.Employees.Queries;
 
 internal sealed class GetEmployeesHandler(ITenantUnitOfWork tenantUow) : IRequestHandler<GetEmployeesQuery, PagedResult<EmployeeDto>>
 {
-    public Task<PagedResult<EmployeeDto>> Handle(
+    public async Task<PagedResult<EmployeeDto>> Handle(
         GetEmployeesQuery req,
         CancellationToken ct)
     {
@@ -30,14 +31,6 @@ internal sealed class GetEmployeesHandler(ITenantUnitOfWork tenantUow) : IReques
             query = query.Where(e => e.Role != null && req.Roles.Contains(e.Role.Name));
         }
 
-        var totalItems = query.Count();
-
-        var employeeDto = query
-            .OrderBy(req.OrderBy, x => x.Id)
-            .ApplyPaging(req.Page, req.PageSize)
-            .Select(employeeEntity => employeeEntity.ToDto())
-            .ToArray();
-
-        return Task.FromResult(PagedResult<EmployeeDto>.Ok(employeeDto, totalItems, req.PageSize));
+        return await query.ToPagedResultAsync(req, i => i.ToDto(), ct);
     }
 }

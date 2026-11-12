@@ -21,7 +21,7 @@ internal sealed class GetFactoringBatchesHandler(ITenantUnitOfWork tenantUow)
 
         var totalItems = await query.CountAsync(ct);
         var batches = await query
-            .OrderBy(string.IsNullOrEmpty(req.OrderBy) ? "-SubmittedAt" : req.OrderBy)
+            .OrderBy(req.OrderBy, x => x.Id, defaultOrderBy: "-SubmittedAt")
             .ApplyPaging(req.Page, req.PageSize)
             .ToListAsync(ct);
 

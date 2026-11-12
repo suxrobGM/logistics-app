@@ -1,4 +1,5 @@
 using Logistics.Application.Abstractions;
+using Logistics.Application.Utilities;
 using Logistics.Domain.Entities;
 using Logistics.Domain.Persistence;
 using Logistics.Mappings;
@@ -10,7 +11,7 @@ namespace Logistics.Application.Modules.IdentityAccess.Customers.Queries;
 internal sealed class GetCustomersHandler(ITenantUnitOfWork tenantUow)
     : IRequestHandler<GetCustomersQuery, PagedResult<CustomerDto>>
 {
-    public Task<PagedResult<CustomerDto>> Handle(GetCustomersQuery req, CancellationToken ct)
+    public async Task<PagedResult<CustomerDto>> Handle(GetCustomersQuery req, CancellationToken ct)
     {
         var query = tenantUow.Repository<Customer>().Query();
 
@@ -20,14 +21,6 @@ internal sealed class GetCustomersHandler(ITenantUnitOfWork tenantUow)
             query = query.Where(i => i.Name.ToLower().Contains(search));
         }
 
-        var totalItems = query.Count();
-
-        var customers = query
-            .OrderBy(req.OrderBy, x => x.Id)
-            .ApplyPaging(req.Page, req.PageSize)
-            .Select(i => i.ToDto())
-            .ToArray();
-
-        return Task.FromResult(PagedResult<CustomerDto>.Ok(customers, totalItems, req.PageSize));
+        return await query.ToPagedResultAsync(req, i => i.ToDto(), ct);
     }
 }

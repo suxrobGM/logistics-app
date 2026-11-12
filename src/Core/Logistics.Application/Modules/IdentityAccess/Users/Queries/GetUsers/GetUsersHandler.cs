@@ -1,4 +1,5 @@
 using Logistics.Application.Abstractions;
+using Logistics.Application.Utilities;
 using Logistics.Domain.Entities;
 using Logistics.Domain.Persistence;
 using Logistics.Mappings;
@@ -10,7 +11,7 @@ namespace Logistics.Application.Modules.IdentityAccess.Users.Queries;
 internal sealed class GetUsersHandler(IMasterUnitOfWork masterUow)
     : IRequestHandler<GetUsersQuery, PagedResult<UserDto>>
 {
-    public Task<PagedResult<UserDto>> Handle(
+    public async Task<PagedResult<UserDto>> Handle(
         GetUsersQuery req,
         CancellationToken ct)
     {
@@ -26,14 +27,6 @@ internal sealed class GetUsersHandler(IMasterUnitOfWork masterUow)
                 (i.Email != null && i.Email.ToLower().Contains(search)));
         }
 
-        var totalItems = query.Count();
-
-        var users = query
-            .OrderBy(req.OrderBy, x => x.Id)
-            .ApplyPaging(req.Page, req.PageSize)
-            .Select(i => i.ToDto())
-            .ToArray();
-
-        return Task.FromResult(PagedResult<UserDto>.Ok(users, totalItems, req.PageSize));
+        return await query.ToPagedResultAsync(req, i => i.ToDto(), ct);
     }
 }

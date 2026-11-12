@@ -1,4 +1,5 @@
 using Logistics.Application.Abstractions;
+using Logistics.Application.Utilities;
 using Logistics.Domain.Entities;
 using Logistics.Domain.Persistence;
 using Logistics.Mappings;
@@ -10,19 +11,11 @@ namespace Logistics.Application.Modules.IdentityAccess.Subscriptions.Queries;
 internal sealed class GetSubscriptionPlansHandler(IMasterUnitOfWork masterUow)
     : IRequestHandler<GetSubscriptionPlansQuery, PagedResult<SubscriptionPlanDto>>
 {
-    public Task<PagedResult<SubscriptionPlanDto>> Handle(
+    public async Task<PagedResult<SubscriptionPlanDto>> Handle(
         GetSubscriptionPlansQuery req, CancellationToken ct)
     {
         var query = masterUow.Repository<SubscriptionPlan>().Query();
 
-        var totalItems = query.Count();
-
-        var items = query
-            .OrderBy(req.OrderBy, x => x.Id)
-            .ApplyPaging(req.Page, req.PageSize)
-            .Select(i => i.ToDto())
-            .ToArray();
-
-        return Task.FromResult(PagedResult<SubscriptionPlanDto>.Ok(items, totalItems, req.PageSize));
+        return await query.ToPagedResultAsync(req, i => i.ToDto(), ct);
     }
 }
