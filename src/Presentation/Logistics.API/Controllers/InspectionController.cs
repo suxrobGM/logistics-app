@@ -65,23 +65,7 @@ public class InspectionsController(IMediator mediator) : ControllerBase
             return BadRequest(new ErrorResponse("User not authenticated"));
         }
 
-        var photos = new List<FileUpload>();
-        if (request.Photos is not null)
-        {
-            foreach (var photo in request.Photos)
-            {
-                if (photo.Length > 0)
-                {
-                    photos.Add(new FileUpload
-                    {
-                        Content = photo.OpenReadStream(),
-                        FileName = photo.FileName,
-                        ContentType = photo.ContentType,
-                        FileSizeBytes = photo.Length
-                    });
-                }
-            }
-        }
+        var photos = request.Photos.ToFileUploads();
 
         // Defects arrive as a JSON-encoded string in the multipart form because
         // POST is multipart/form-data (Photos are files). Parse here.

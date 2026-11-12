@@ -128,23 +128,7 @@ public class DocumentController(IMediator mediator) : ControllerBase
     [RequestSizeLimit(MaxUploadSizeBytes)] // 20MB limit for multiple photos
     public async Task<IActionResult> CaptureProofOfDelivery([FromForm] CaptureProofOfDeliveryRequest request)
     {
-        var photos = new List<FileUpload>();
-        if (request.Photos != null)
-        {
-            foreach (var photo in request.Photos)
-            {
-                if (photo.Length > 0)
-                {
-                    photos.Add(new FileUpload
-                    {
-                        Content = photo.OpenReadStream(),
-                        FileName = photo.FileName,
-                        ContentType = photo.ContentType,
-                        FileSizeBytes = photo.Length
-                    });
-                }
-            }
-        }
+        var photos = request.Photos.ToFileUploads();
 
         var cmd = new CaptureProofOfDeliveryCommand
         {
@@ -172,23 +156,7 @@ public class DocumentController(IMediator mediator) : ControllerBase
     [RequestSizeLimit(MaxUploadSizeBytes)] // 20MB limit for multiple photos
     public async Task<IActionResult> CaptureBillOfLading([FromForm] CaptureProofOfDeliveryRequest request)
     {
-        var photos = new List<FileUpload>();
-        if (request.Photos != null)
-        {
-            foreach (var photo in request.Photos)
-            {
-                if (photo.Length > 0)
-                {
-                    photos.Add(new FileUpload
-                    {
-                        Content = photo.OpenReadStream(),
-                        FileName = photo.FileName,
-                        ContentType = photo.ContentType,
-                        FileSizeBytes = photo.Length
-                    });
-                }
-            }
-        }
+        var photos = request.Photos.ToFileUploads();
 
         var cmd = new CaptureBillOfLadingCommand
         {
