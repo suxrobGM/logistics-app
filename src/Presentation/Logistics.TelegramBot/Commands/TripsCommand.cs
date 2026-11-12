@@ -3,7 +3,6 @@ using Logistics.TelegramBot.Formatters;
 using Logistics.Mediator;
 using Telegram.Bot;
 using Telegram.Bot.Types;
-using Telegram.Bot.Types.Enums;
 using Logistics.Application.Modules.Operations.Trips.Queries;
 
 namespace Logistics.TelegramBot.Commands;
@@ -11,6 +10,7 @@ namespace Logistics.TelegramBot.Commands;
 internal sealed class TripsCommand(IMediator mediator) : ITelegramCommand, ICallbackHandler
 {
     private const int PageSize = 5;
+    private const string CallbackCommand = "trips";
 
     public string Name => "/trips";
     public string Description => "View active trips";
@@ -25,19 +25,12 @@ internal sealed class TripsCommand(IMediator mediator) : ITelegramCommand, ICall
     public async Task HandleCallbackAsync(
         ITelegramBotClient bot, CallbackQuery callbackQuery, TelegramChatContext? context, CancellationToken ct)
     {
-        var data = callbackQuery.Data;
-        if (data is null || !data.StartsWith("trips:page:"))
+        if (callbackQuery.Message is not { } message || !callbackQuery.TryGetPage(CallbackCommand, out var page))
+        {
             return;
+        }
 
-        if (!int.TryParse(data["trips:page:".Length..], out var page))
-            return;
-
-        var chatId = callbackQuery.Message?.Chat.Id;
-        var messageId = callbackQuery.Message?.MessageId;
-        if (chatId is null)
-            return;
-
-        await SendPageAsync(bot, chatId.Value, page, messageId, ct);
+        await SendPageAsync(bot, message.Chat.Id, page, message.MessageId, ct);
     }
 
     private async Task SendPageAsync(
@@ -53,23 +46,8 @@ internal sealed class TripsCommand(IMediator mediator) : ITelegramCommand, ICall
 
         var trips = result.Value?.ToList() ?? [];
         var text = TelegramMessageFormatter.FormatTrips(trips, page, result.TotalPages);
-        var keyboard = TelegramMessageFormatter.BuildPaginationKeyboard("trips", page, result.TotalPages);
+        var keyboard = TelegramMessageFormatter.BuildPaginationKeyboard(CallbackCommand, page, result.TotalPages);
 
-        if (editMessageId is not null)
-        {
-            await bot.EditMessageText(
-                chatId, editMessageId.Value, text,
-                parseMode: ParseMode.MarkdownV2,
-                replyMarkup: keyboard,
-                cancellationToken: ct);
-        }
-        else
-        {
-            await bot.SendMessage(
-                chatId, text,
-                parseMode: ParseMode.MarkdownV2,
-                replyMarkup: keyboard,
-                cancellationToken: ct);
-        }
+        await bot.SendOrEditPageAsync(chatId, editMessageId, text, keyboard, ct);
     }
 }
