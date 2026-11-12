@@ -15,6 +15,6 @@ internal sealed class UpdateUserHandler(IUserService userService) : IRequestHand
             PhoneNumber = req.PhoneNumber
         }, ct);
 
-        return found ? Result.Ok() : Result.Fail("Could not find the specified user");
+        return found ? Result.Ok() : Result.Fail("Could not find the specified user", ErrorCodes.NotFound);
     }
 }

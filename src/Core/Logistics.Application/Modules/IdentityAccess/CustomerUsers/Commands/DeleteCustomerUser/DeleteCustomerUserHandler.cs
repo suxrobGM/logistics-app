@@ -19,7 +19,7 @@ internal sealed class DeleteCustomerUserHandler(
 
         if (customerUser is null)
         {
-            return Result.Fail($"Could not find a customer user with ID '{req.Id}'");
+            return Result.Fail($"Could not find a customer user with ID '{req.Id}'", ErrorCodes.NotFound);
         }
 
         // Revoke the master access row first, so a failure part-way leaves the user locked out rather than in.

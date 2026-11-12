@@ -15,7 +15,7 @@ internal sealed class AssignLoadToTruckHandler(ITenantUnitOfWork tenantUow) : IR
 
         if (load is null)
         {
-            return Result.Fail($"Load not found with ID '{req.LoadId}'");
+            return Result.Fail($"Load not found with ID '{req.LoadId}'", ErrorCodes.NotFound);
         }
 
         if (req.TruckId == load.AssignedTruckId)
@@ -38,7 +38,7 @@ internal sealed class AssignLoadToTruckHandler(ITenantUnitOfWork tenantUow) : IR
         var truck = await tenantUow.Repository<Truck>().GetByIdAsync(truckId, ct);
         if (truck is null)
         {
-            return Result.Fail($"Truck not found with ID '{truckId}'");
+            return Result.Fail($"Truck not found with ID '{truckId}'", ErrorCodes.NotFound);
         }
 
         if (TruckLoadCompatibility.DescribeMismatch(truck.Number, truck.Type, load.Type) is { } mismatch)

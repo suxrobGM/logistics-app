@@ -18,7 +18,7 @@ internal sealed class UpdateLineItemHandler(
         var invoice = await tenantUow.Repository<Invoice>().GetByIdAsync(req.InvoiceId, ct);
         if (invoice is null)
         {
-            return Result<InvoiceLineItemDto>.Fail("Invoice not found.");
+            return Result<InvoiceLineItemDto>.Fail("Invoice not found.", ErrorCodes.NotFound);
         }
 
         if (invoice.EditBlockedReason() is { } editBlocked)
@@ -29,7 +29,7 @@ internal sealed class UpdateLineItemHandler(
         var lineItem = invoice.LineItems.FirstOrDefault(li => li.Id == req.LineItemId);
         if (lineItem is null)
         {
-            return Result<InvoiceLineItemDto>.Fail("Line item not found.");
+            return Result<InvoiceLineItemDto>.Fail("Line item not found.", ErrorCodes.NotFound);
         }
 
         // Update only provided fields

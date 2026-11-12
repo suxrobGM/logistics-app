@@ -17,7 +17,7 @@ internal sealed class GetPayrollPayStubPdfHandler(ITenantUnitOfWork tenantUow, I
 
         if (payroll is null)
         {
-            return Result<InvoicePdfResult>.Fail($"Could not find a payroll invoice with ID {request.PayrollInvoiceId}");
+            return Result<InvoicePdfResult>.Fail($"Could not find a payroll invoice with ID {request.PayrollInvoiceId}", ErrorCodes.NotFound);
         }
 
         var tenant = tenantUow.GetCurrentTenant();

@@ -33,7 +33,7 @@ internal sealed class CreateSubscriptionHandler(
 
         if (subscriptionPlan is null)
         {
-            return Result.Fail($"Could not find a subscription plan with ID '{req.PlanId}'");
+            return Result.Fail($"Could not find a subscription plan with ID '{req.PlanId}'", ErrorCodes.NotFound);
         }
 
         var isFirstSubscription = string.IsNullOrEmpty(tenant.Subscription?.StripeSubscriptionId);

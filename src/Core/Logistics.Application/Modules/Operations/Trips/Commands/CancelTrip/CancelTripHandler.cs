@@ -18,7 +18,7 @@ internal sealed class CancelTripHandler(
 
         if (trip is null)
         {
-            return Result.Fail($"Could not find the trip with ID '{req.TripId}'");
+            return Result.Fail($"Could not find the trip with ID '{req.TripId}'", ErrorCodes.NotFound);
         }
 
         try

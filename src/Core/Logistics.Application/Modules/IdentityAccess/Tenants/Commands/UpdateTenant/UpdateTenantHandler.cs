@@ -18,7 +18,7 @@ internal sealed class UpdateTenantHandler(
 
         if (tenant is null)
         {
-            return Result.Fail($"Could not find a tenant with ID '{req.Id}'");
+            return Result.Fail($"Could not find a tenant with ID '{req.Id}'", ErrorCodes.NotFound);
         }
 
         tenant.CompanyName = PropertyUpdater.UpdateIfChanged(req.CompanyName, tenant.CompanyName);

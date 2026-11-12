@@ -40,7 +40,7 @@ internal sealed class ImpersonateUserHandler(
         if (adminUser is null)
         {
             await LogFailedAttemptAsync(adminUserId, null, req.TargetEmail, "Admin user not found", ipAddress, userAgent, ct);
-            return Result<ImpersonateUserResult>.Fail("Admin user not found.");
+            return Result<ImpersonateUserResult>.Fail("Admin user not found.", ErrorCodes.NotFound);
         }
 
         // 2. Validate caller is SuperAdmin or Admin
@@ -63,7 +63,7 @@ internal sealed class ImpersonateUserHandler(
         if (targetUser is null)
         {
             await LogFailedAttemptAsync(adminUserId, adminUser.Email, req.TargetEmail, "Target user not found", ipAddress, userAgent, ct);
-            return Result<ImpersonateUserResult>.Fail("Target user not found.");
+            return Result<ImpersonateUserResult>.Fail("Target user not found.", ErrorCodes.NotFound);
         }
 
         // 5. Create impersonation token (one-time use, short expiry)

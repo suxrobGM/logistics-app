@@ -15,7 +15,7 @@ internal sealed class GetTrailerByIdHandler(ITenantUnitOfWork tenantUow)
         var trailer = await tenantUow.Repository<Trailer>().GetByIdAsync(req.Id, ct);
         if (trailer is null)
         {
-            return Result<TrailerDto>.Fail($"Could not find a trailer with ID '{req.Id}'");
+            return Result<TrailerDto>.Fail($"Could not find a trailer with ID '{req.Id}'", ErrorCodes.NotFound);
         }
 
         var truck = await tenantUow.Repository<Truck>().GetAsync(i => i.CurrentTrailerId == trailer.Id, ct);

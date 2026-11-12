@@ -16,7 +16,7 @@ internal sealed class UpdateTrailerHandler(ITenantUnitOfWork tenantUow, ITrailer
         var trailer = await repository.GetByIdAsync(req.Id, ct);
         if (trailer is null)
         {
-            return Result.Fail($"Could not find a trailer with ID '{req.Id}'");
+            return Result.Fail($"Could not find a trailer with ID '{req.Id}'", ErrorCodes.NotFound);
         }
 
         var number = req.Number.Trim();

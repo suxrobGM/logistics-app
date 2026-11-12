@@ -13,7 +13,7 @@ internal sealed class UpdateCustomerDetentionTermsHandler(ITenantUnitOfWork tena
         var customer = await tenantUow.Repository<Customer>().GetByIdAsync(req.CustomerId, ct);
         if (customer is null)
         {
-            return Result.Fail($"Could not find a customer with ID '{req.CustomerId}'");
+            return Result.Fail($"Could not find a customer with ID '{req.CustomerId}'", ErrorCodes.NotFound);
         }
 
         customer.DetentionFreeMinutes = req.FreeMinutes;

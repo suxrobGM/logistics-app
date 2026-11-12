@@ -15,7 +15,7 @@ internal sealed class ReleaseFactoringReserveHandler(ITenantUnitOfWork tenantUow
             .GetAsync(i => i.Id == req.ItemId && i.BatchId == req.BatchId, ct);
         if (item is null)
         {
-            return Result.Fail("Invoice not found on this schedule.");
+            return Result.Fail("Invoice not found on this schedule.", ErrorCodes.NotFound);
         }
 
         try

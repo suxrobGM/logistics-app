@@ -25,7 +25,7 @@ internal sealed class MarkConversationReadHandler(
 
             if (conversation is null)
             {
-                return Result.Fail($"Conversation with ID '{req.ConversationId}' not found");
+                return Result.Fail($"Conversation with ID '{req.ConversationId}' not found", ErrorCodes.NotFound);
             }
 
             if (!conversation.IsTenantChat)

@@ -15,7 +15,7 @@ internal sealed class UpdateContainerStatusHandler(ITenantUnitOfWork tenantUow)
         var container = await tenantUow.Repository<Container>().GetByIdAsync(req.Id, ct);
         if (container is null)
         {
-            return Result.Fail($"Could not find container with ID '{req.Id}'");
+            return Result.Fail($"Could not find container with ID '{req.Id}'", ErrorCodes.NotFound);
         }
 
         Terminal? terminal = null;
@@ -29,7 +29,7 @@ internal sealed class UpdateContainerStatusHandler(ITenantUnitOfWork tenantUow)
             terminal = await tenantUow.Repository<Terminal>().GetByIdAsync(req.TerminalId.Value, ct);
             if (terminal is null)
             {
-                return Result.Fail($"Could not find terminal with ID '{req.TerminalId}'");
+                return Result.Fail($"Could not find terminal with ID '{req.TerminalId}'", ErrorCodes.NotFound);
             }
         }
 

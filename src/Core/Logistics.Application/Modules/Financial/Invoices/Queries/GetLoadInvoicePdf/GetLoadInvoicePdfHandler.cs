@@ -16,7 +16,7 @@ internal sealed class GetLoadInvoicePdfHandler(ITenantUnitOfWork tenantUow, IInv
 
         if (invoice is null)
         {
-            return Result<InvoicePdfResult>.Fail($"Could not find an invoice with ID {request.InvoiceId}");
+            return Result<InvoicePdfResult>.Fail($"Could not find an invoice with ID {request.InvoiceId}", ErrorCodes.NotFound);
         }
 
         var tenant = tenantUow.GetCurrentTenant();

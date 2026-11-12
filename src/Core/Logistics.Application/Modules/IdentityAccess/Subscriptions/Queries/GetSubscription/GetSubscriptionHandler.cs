@@ -16,7 +16,7 @@ internal sealed class GetSubscriptionHandler(IMasterUnitOfWork masterUow) : IReq
 
         if (subscription is null)
         {
-            return Result<SubscriptionDto>.Fail($"Could not find a subscription with ID '{req.Id}'");
+            return Result<SubscriptionDto>.Fail($"Could not find a subscription with ID '{req.Id}'", ErrorCodes.NotFound);
         }
 
         var dto = subscription.ToDto();

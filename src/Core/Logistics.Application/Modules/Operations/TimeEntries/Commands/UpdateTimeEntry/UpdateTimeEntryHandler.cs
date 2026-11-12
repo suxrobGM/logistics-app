@@ -14,7 +14,7 @@ internal sealed class UpdateTimeEntryHandler(ITenantUnitOfWork tenantUow)
         var timeEntry = await tenantUow.Repository<TimeEntry>().GetByIdAsync(req.Id, ct);
         if (timeEntry is null)
         {
-            return Result.Fail("Time entry not found");
+            return Result.Fail("Time entry not found", ErrorCodes.NotFound);
         }
 
         // Don't allow editing time entries already linked to a payroll

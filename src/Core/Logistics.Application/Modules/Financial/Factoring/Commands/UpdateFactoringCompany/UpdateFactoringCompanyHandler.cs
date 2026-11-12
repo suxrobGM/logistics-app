@@ -14,7 +14,7 @@ internal sealed class UpdateFactoringCompanyHandler(ITenantUnitOfWork tenantUow)
         var company = await tenantUow.Repository<FactoringCompany>().GetByIdAsync(req.Id, ct);
         if (company is null)
         {
-            return Result.Fail($"Could not find a factoring company with ID '{req.Id}'");
+            return Result.Fail($"Could not find a factoring company with ID '{req.Id}'", ErrorCodes.NotFound);
         }
 
         FactoringCompanyFields.Apply(req, company);

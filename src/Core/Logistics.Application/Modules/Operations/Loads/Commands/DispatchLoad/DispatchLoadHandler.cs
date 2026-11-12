@@ -18,7 +18,7 @@ internal sealed class DispatchLoadHandler(
 
         if (load is null)
         {
-            return Result.Fail($"Load not found with ID '{req.Id}'");
+            return Result.Fail($"Load not found with ID '{req.Id}'", ErrorCodes.NotFound);
         }
 
         // Eligibility is enforced at the dispatch gate - assignment up to this point is

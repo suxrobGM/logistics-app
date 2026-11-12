@@ -18,7 +18,7 @@ internal sealed class CreatePayrollInvoiceHandler(
 
         if (employee is null)
         {
-            return Result.Fail($"Could not find an employee with ID '{req.EmployeeId}'");
+            return Result.Fail($"Could not find an employee with ID '{req.EmployeeId}'", ErrorCodes.NotFound);
         }
 
         // Check for overlapping payroll periods

@@ -16,7 +16,7 @@ internal sealed class UpdateLoadBoardConfigurationHandler(
         var config = await tenantUow.Repository<LoadBoardConfiguration>().GetByIdAsync(req.Id, ct);
         if (config is null)
         {
-            return Result.Fail("Load board provider not found");
+            return Result.Fail("Load board provider not found", ErrorCodes.NotFound);
         }
 
         var credentialsChanged = false;

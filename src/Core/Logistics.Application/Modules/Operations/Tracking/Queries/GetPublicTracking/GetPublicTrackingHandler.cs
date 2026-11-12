@@ -43,7 +43,7 @@ internal sealed class GetPublicTrackingHandler(
         var load = trackingLink.Load;
         if (load is null)
         {
-            return Result<PublicTrackingDto>.Fail("Load not found.");
+            return Result<PublicTrackingDto>.Fail("Load not found.", ErrorCodes.NotFound);
         }
 
         var dto = new PublicTrackingDto

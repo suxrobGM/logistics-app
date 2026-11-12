@@ -19,13 +19,13 @@ internal sealed class DownloadDocumentHandler(
         var document = await tenantUow.Repository<Document>().GetByIdAsync(req.DocumentId, ct);
         if (document is null)
         {
-            return Result<DocumentDownloadDto>.Fail($"Could not find document with ID '{req.DocumentId}'");
+            return Result<DocumentDownloadDto>.Fail($"Could not find document with ID '{req.DocumentId}'", ErrorCodes.NotFound);
         }
 
         var caller = await documentAccess.ResolveCallerAsync(ct);
         if (caller is null || !await documentAccess.CanAccessAsync(caller, document, ct))
         {
-            return Result<DocumentDownloadDto>.Fail("Document not found or access denied.");
+            return Result<DocumentDownloadDto>.Fail("Document not found or access denied.", ErrorCodes.NotFound);
         }
 
         return await documentDownloads.OpenAsync(document, ct);

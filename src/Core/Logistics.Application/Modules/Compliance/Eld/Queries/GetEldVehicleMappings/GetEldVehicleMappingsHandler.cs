@@ -14,7 +14,7 @@ internal sealed class GetEldVehicleMappingsHandler(ITenantUnitOfWork tenantUow)
         var config = await tenantUow.Repository<EldProviderConfiguration>().GetByIdAsync(req.ProviderId, ct);
         if (config is null)
         {
-            return Result<List<EldVehicleMappingDto>>.Fail("ELD provider configuration not found");
+            return Result<List<EldVehicleMappingDto>>.Fail("ELD provider configuration not found", ErrorCodes.NotFound);
         }
 
         var mappings = await tenantUow.Repository<EldVehicleMapping>()

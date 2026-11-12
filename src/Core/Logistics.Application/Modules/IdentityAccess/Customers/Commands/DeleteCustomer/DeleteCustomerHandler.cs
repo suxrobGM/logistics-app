@@ -19,7 +19,7 @@ internal sealed class DeleteCustomerHandler(
 
         if (customer is null)
         {
-            return Result.Fail($"Could not find a customer with ID '{req.Id}'");
+            return Result.Fail($"Could not find a customer with ID '{req.Id}'", ErrorCodes.NotFound);
         }
 
         // The delete cascades to the customer's portal users; their master access rows go first.

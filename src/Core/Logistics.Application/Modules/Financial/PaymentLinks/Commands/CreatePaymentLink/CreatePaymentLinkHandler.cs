@@ -24,7 +24,7 @@ internal sealed class CreatePaymentLinkHandler(
         var invoice = await tenantUow.Repository<Invoice>().GetByIdAsync(req.InvoiceId, ct);
         if (invoice is null)
         {
-            return Result<PaymentLinkDto>.Fail("Invoice not found.");
+            return Result<PaymentLinkDto>.Fail("Invoice not found.", ErrorCodes.NotFound);
         }
 
         // The pay page refuses factored invoices, so a link would be dead on arrival.

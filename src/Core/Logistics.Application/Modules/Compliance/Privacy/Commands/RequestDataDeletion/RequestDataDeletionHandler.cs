@@ -36,7 +36,7 @@ internal sealed class RequestDataDeletionHandler(
         var user = await masterUow.Repository<User>().GetByIdAsync(userId.Value, ct);
         if (user is null)
         {
-            return Result<Guid>.Fail("User not found.");
+            return Result<Guid>.Fail("User not found.", ErrorCodes.NotFound);
         }
 
         var now = DateTime.UtcNow;

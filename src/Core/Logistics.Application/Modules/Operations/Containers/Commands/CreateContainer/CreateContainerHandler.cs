@@ -29,7 +29,7 @@ internal sealed class CreateContainerHandler(ITenantUnitOfWork tenantUow)
             terminal = await tenantUow.Repository<Terminal>().GetByIdAsync(req.CurrentTerminalId.Value, ct);
             if (terminal is null)
             {
-                return Result<ContainerDto>.Fail($"Could not find terminal with ID '{req.CurrentTerminalId}'");
+                return Result<ContainerDto>.Fail($"Could not find terminal with ID '{req.CurrentTerminalId}'", ErrorCodes.NotFound);
             }
         }
 

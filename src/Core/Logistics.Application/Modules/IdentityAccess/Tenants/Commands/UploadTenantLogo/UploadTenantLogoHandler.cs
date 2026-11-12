@@ -20,7 +20,7 @@ internal sealed class UploadTenantLogoHandler(
         var tenant = await masterUow.Repository<Tenant>().GetByIdAsync(req.TenantId, ct);
         if (tenant is null)
         {
-            return Result<string>.Fail($"Could not find a tenant with ID '{req.TenantId}'");
+            return Result<string>.Fail($"Could not find a tenant with ID '{req.TenantId}'", ErrorCodes.NotFound);
         }
 
         try

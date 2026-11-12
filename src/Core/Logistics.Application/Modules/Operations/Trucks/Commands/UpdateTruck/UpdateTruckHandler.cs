@@ -25,7 +25,7 @@ internal sealed class UpdateTruckHandler(
 
         if (truck is null)
         {
-            return Result.Fail($"Could not find a truck with ID {req.Id}");
+            return Result.Fail($"Could not find a truck with ID {req.Id}", ErrorCodes.NotFound);
         }
 
         // Only a change is checked, so existing car haulers stay editable after the feature is turned off.
@@ -121,7 +121,7 @@ internal sealed class UpdateTruckHandler(
             trailer = await tenantUow.Repository<Trailer>().GetByIdAsync(trailerId.Value, ct);
             if (trailer is null)
             {
-                return Result.Fail($"Could not find a trailer with ID {trailerId}");
+                return Result.Fail($"Could not find a trailer with ID {trailerId}", ErrorCodes.NotFound);
             }
         }
 

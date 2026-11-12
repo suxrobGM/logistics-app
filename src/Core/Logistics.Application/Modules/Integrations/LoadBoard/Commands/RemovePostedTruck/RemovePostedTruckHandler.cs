@@ -19,7 +19,7 @@ internal sealed class RemovePostedTruckHandler(
         var postedTruck = await tenantUow.Repository<PostedTruck>().GetByIdAsync(req.PostedTruckId, ct);
         if (postedTruck is null)
         {
-            return Result.Fail("Posted truck not found");
+            return Result.Fail("Posted truck not found", ErrorCodes.NotFound);
         }
 
         var providerConfig = await tenantUow.Repository<LoadBoardConfiguration>()

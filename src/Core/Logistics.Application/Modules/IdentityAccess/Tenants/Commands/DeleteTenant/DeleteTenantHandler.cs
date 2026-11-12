@@ -23,7 +23,7 @@ internal sealed class DeleteTenantHandler(
 
         if (tenant is null)
         {
-            return Result.Fail($"Could not find a tenant with ID '{req.Id}'");
+            return Result.Fail($"Could not find a tenant with ID '{req.Id}'", ErrorCodes.NotFound);
         }
 
         var isDeleted = await _tenantDatabase.DeleteDatabaseAsync(tenant.DatabaseName);

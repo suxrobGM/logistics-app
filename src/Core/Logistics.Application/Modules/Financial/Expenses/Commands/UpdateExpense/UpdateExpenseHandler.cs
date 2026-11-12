@@ -17,7 +17,7 @@ internal sealed class UpdateExpenseHandler(ITenantUnitOfWork tenantUow)
 
         if (expense is null)
         {
-            return Result.Fail($"Could not find expense with ID '{req.Id}'");
+            return Result.Fail($"Could not find expense with ID '{req.Id}'", ErrorCodes.NotFound);
         }
 
         // Only pending expenses can be updated

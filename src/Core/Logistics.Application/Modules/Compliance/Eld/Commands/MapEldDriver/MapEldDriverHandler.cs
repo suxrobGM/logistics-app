@@ -19,7 +19,7 @@ internal sealed class MapEldDriverHandler(
         var employee = await tenantUow.Repository<Employee>().GetByIdAsync(req.EmployeeId, ct);
         if (employee is null)
         {
-            return Result.Fail($"Employee with ID {req.EmployeeId} not found");
+            return Result.Fail($"Employee with ID {req.EmployeeId} not found", ErrorCodes.NotFound);
         }
 
         if (employee.Status != EmployeeStatus.Active)
@@ -32,7 +32,7 @@ internal sealed class MapEldDriverHandler(
             .GetAsync(c => c.ProviderType == req.ProviderType, ct);
         if (config is null)
         {
-            return Result.Fail("ELD provider configuration not found");
+            return Result.Fail("ELD provider configuration not found", ErrorCodes.NotFound);
         }
 
         // Check if mapping already exists for this employee and provider

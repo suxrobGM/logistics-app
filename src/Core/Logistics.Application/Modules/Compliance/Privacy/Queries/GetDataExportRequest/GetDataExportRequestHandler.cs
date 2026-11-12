@@ -29,7 +29,7 @@ internal sealed class GetDataExportRequestHandler(
         var request = await masterUow.Repository<DataExportRequest>().GetByIdAsync(req.Id, ct);
         if (request is null || request.UserId != userId.Value)
         {
-            return Result<DataExportRequestDto>.Fail("Data export request not found.");
+            return Result<DataExportRequestDto>.Fail("Data export request not found.", ErrorCodes.NotFound);
         }
 
         var dto = request.ToDto();

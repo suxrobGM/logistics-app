@@ -17,7 +17,7 @@ internal sealed class UpdateMaintenanceRecordHandler(ITenantUnitOfWork tenantUow
 
         if (record is null)
         {
-            return Result<MaintenanceRecordDto>.Fail($"Could not find maintenance record with ID '{req.Id}'");
+            return Result<MaintenanceRecordDto>.Fail($"Could not find maintenance record with ID '{req.Id}'", ErrorCodes.NotFound);
         }
 
         // Verify truck exists if changing
@@ -26,7 +26,7 @@ internal sealed class UpdateMaintenanceRecordHandler(ITenantUnitOfWork tenantUow
             var truck = await tenantUow.Repository<Truck>().GetByIdAsync(req.TruckId, ct);
             if (truck is null)
             {
-                return Result<MaintenanceRecordDto>.Fail("Truck not found.");
+                return Result<MaintenanceRecordDto>.Fail("Truck not found.", ErrorCodes.NotFound);
             }
             record.TruckId = req.TruckId;
             record.Truck = truck;
@@ -38,7 +38,7 @@ internal sealed class UpdateMaintenanceRecordHandler(ITenantUnitOfWork tenantUow
             var performedBy = await tenantUow.Repository<Employee>().GetByIdAsync(req.PerformedById.Value, ct);
             if (performedBy is null)
             {
-                return Result<MaintenanceRecordDto>.Fail("Performed by employee not found.");
+                return Result<MaintenanceRecordDto>.Fail("Performed by employee not found.", ErrorCodes.NotFound);
             }
             record.PerformedById = req.PerformedById;
             record.PerformedBy = performedBy;

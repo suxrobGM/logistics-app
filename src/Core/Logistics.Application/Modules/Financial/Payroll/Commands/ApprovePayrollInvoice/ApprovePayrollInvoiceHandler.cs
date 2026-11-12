@@ -19,7 +19,7 @@ internal sealed class ApprovePayrollInvoiceHandler(
 
         if (payroll is null)
         {
-            return Result.Fail($"Could not find payroll invoice with ID '{req.Id}'");
+            return Result.Fail($"Could not find payroll invoice with ID '{req.Id}'", ErrorCodes.NotFound);
         }
 
         if (payroll.Status != InvoiceStatus.PendingApproval)

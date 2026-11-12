@@ -19,7 +19,7 @@ internal sealed class PreviewPayrollInvoiceHandler(
 
         if (employee is null)
         {
-            return Result<InvoiceDto>.Fail($"Could not find an employer with ID '{req.EmployeeId}'");
+            return Result<InvoiceDto>.Fail($"Could not find an employer with ID '{req.EmployeeId}'", ErrorCodes.NotFound);
         }
 
         var payrollInvoice = await payrollService.BuildPayrollInvoiceAsync(employee, req.PeriodStart, req.PeriodEnd, ct);

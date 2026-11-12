@@ -19,7 +19,7 @@ internal sealed class DeleteEldProviderConfigurationHandler(
 
         if (config is null)
         {
-            return Result.Fail("ELD provider configuration not found");
+            return Result.Fail("ELD provider configuration not found", ErrorCodes.NotFound);
         }
 
         // Delete the HOS statuses of the drivers this provider maps

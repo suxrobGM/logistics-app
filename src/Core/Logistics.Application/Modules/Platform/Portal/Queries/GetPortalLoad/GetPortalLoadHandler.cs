@@ -23,7 +23,7 @@ internal sealed class GetPortalLoadHandler(ITenantUnitOfWork tenantUow, ITrackin
 
         if (load == null)
         {
-            return Result<PortalLoadDto>.Fail("Load not found or access denied.");
+            return Result<PortalLoadDto>.Fail("Load not found or access denied.", ErrorCodes.NotFound);
         }
 
         var nextStop = load.TripStops

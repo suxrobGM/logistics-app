@@ -20,7 +20,7 @@ internal sealed class ReviewDvirReportHandler(
         var report = await tenantUow.Repository<DvirReport>().GetByIdAsync(req.ReportId, ct);
         if (report is null)
         {
-            return Result<DvirReportDto>.Fail("DVIR report not found.");
+            return Result<DvirReportDto>.Fail("DVIR report not found.", ErrorCodes.NotFound);
         }
 
         if (report.Status != DvirStatus.Submitted && report.Status != DvirStatus.RequiresRepair)
@@ -37,7 +37,7 @@ internal sealed class ReviewDvirReportHandler(
         var reviewer = await tenantUow.Repository<Employee>().GetByIdAsync(reviewerId.Value, ct);
         if (reviewer is null)
         {
-            return Result<DvirReportDto>.Fail("Reviewer not found.");
+            return Result<DvirReportDto>.Fail("Reviewer not found.", ErrorCodes.NotFound);
         }
 
         report.ReviewedById = reviewer.Id;

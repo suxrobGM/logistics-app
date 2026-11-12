@@ -23,7 +23,7 @@ internal sealed class GetCurrentUserPermissionsHandler(
 
         if (user is null)
         {
-            return Result<string[]>.Fail($"Could not find a user with ID '{req.UserId}'");
+            return Result<string[]>.Fail($"Could not find a user with ID '{req.UserId}'", ErrorCodes.NotFound);
         }
 
         var permissions = new HashSet<string>();

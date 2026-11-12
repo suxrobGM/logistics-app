@@ -16,7 +16,7 @@ internal sealed class GetNegotiationByIdHandler(ITenantUnitOfWork tenantUow)
         var negotiation = await tenantUow.Repository<RateNegotiation>().GetByIdAsync(req.Id, ct);
         if (negotiation is null)
         {
-            return Result<RateNegotiationDto>.Fail($"Could not find a negotiation with ID '{req.Id}'");
+            return Result<RateNegotiationDto>.Fail($"Could not find a negotiation with ID '{req.Id}'", ErrorCodes.NotFound);
         }
 
         var listing = await tenantUow.Repository<LoadBoardListing>()

@@ -16,7 +16,7 @@ internal sealed class UpdateDriverLicenseHandler(ITenantUnitOfWork tenantUow)
         var license = await tenantUow.Repository<DriverLicense>().GetByIdAsync(req.LicenseId, ct);
         if (license is null)
         {
-            return Result.Fail($"Driver license not found with ID '{req.LicenseId}'");
+            return Result.Fail($"Driver license not found with ID '{req.LicenseId}'", ErrorCodes.NotFound);
         }
 
         if (req.DocumentId.HasValue)
@@ -24,7 +24,7 @@ internal sealed class UpdateDriverLicenseHandler(ITenantUnitOfWork tenantUow)
             var doc = await tenantUow.Repository<EmployeeDocument>().GetByIdAsync(req.DocumentId.Value, ct);
             if (doc is null)
             {
-                return Result.Fail($"Document '{req.DocumentId}' not found");
+                return Result.Fail($"Document '{req.DocumentId}' not found", ErrorCodes.NotFound);
             }
             if (doc.EmployeeId != license.EmployeeId)
             {

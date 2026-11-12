@@ -19,7 +19,7 @@ internal sealed class CreateLoadInvoiceHandler(
 
         if (load is null)
         {
-            return Result<Guid>.Fail($"Could not find a load with ID '{req.LoadId}'");
+            return Result<Guid>.Fail($"Could not find a load with ID '{req.LoadId}'", ErrorCodes.NotFound);
         }
 
         var existingInvoice = await tenantUow.Repository<LoadInvoice>()

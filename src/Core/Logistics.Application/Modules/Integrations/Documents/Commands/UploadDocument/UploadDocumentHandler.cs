@@ -26,7 +26,7 @@ internal sealed class UploadDocumentHandler(
         if (caller is null ||
             !await documentAccess.CanAccessOwnerAsync(caller, req.OwnerType, req.OwnerId, ct))
         {
-            return Result<Guid>.Fail("Owner not found or access denied.");
+            return Result<Guid>.Fail("Owner not found or access denied.", ErrorCodes.NotFound);
         }
 
         try

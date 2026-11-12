@@ -25,7 +25,7 @@ internal sealed class GetLoadByIdHandler(
 
         if (load is null || !currentUserService.CanDrive(load.AssignedTruck))
         {
-            return Result<LoadDto>.Fail($"Could not find a load with ID '{req.Id}'");
+            return Result<LoadDto>.Fail($"Could not find a load with ID '{req.Id}'", ErrorCodes.NotFound);
         }
 
         var lookup = await lookupBuilder.BuildAsync([load], ct);

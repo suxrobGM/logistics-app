@@ -13,7 +13,7 @@ internal sealed class UpdateDriverPayProfileHandler(ITenantUnitOfWork tenantUow)
         var employee = await tenantUow.Repository<Employee>().GetByIdAsync(req.EmployeeId, ct);
         if (employee is null)
         {
-            return Result.Fail($"Could not find an employee with ID '{req.EmployeeId}'");
+            return Result.Fail($"Could not find an employee with ID '{req.EmployeeId}'", ErrorCodes.NotFound);
         }
 
         employee.PayExcludesFuelSurcharge = req.PayExcludesFuelSurcharge;

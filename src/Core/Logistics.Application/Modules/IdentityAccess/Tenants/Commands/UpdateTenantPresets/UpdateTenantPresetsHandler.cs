@@ -18,7 +18,7 @@ internal sealed class UpdateTenantPresetsHandler(
 
         if (tenant is null)
         {
-            return Result.Fail($"Could not find a tenant with ID '{req.TenantId}'");
+            return Result.Fail($"Could not find a tenant with ID '{req.TenantId}'", ErrorCodes.NotFound);
         }
 
         tenant.Presets = [.. req.Presets.Distinct()];

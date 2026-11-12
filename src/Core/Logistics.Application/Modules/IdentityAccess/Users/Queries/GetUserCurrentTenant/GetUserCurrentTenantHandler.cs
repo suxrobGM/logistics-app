@@ -18,7 +18,7 @@ internal sealed class GetUserCurrentTenantHandler(IMasterUnitOfWork masterUow) :
 
         if (user is null)
         {
-            return Result<TenantDto>.Fail($"Could not find an user with ID '{req.UserId}'");
+            return Result<TenantDto>.Fail($"Could not find an user with ID '{req.UserId}'", ErrorCodes.NotFound);
         }
 
         if (user.Tenant is null)

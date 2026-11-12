@@ -22,7 +22,7 @@ internal sealed class ConfirmLoadStatusHandler(
 
         if (load is null)
         {
-            return Result.Fail($"Could not find load with ID '{req.LoadId}'");
+            return Result.Fail($"Could not find load with ID '{req.LoadId}'", ErrorCodes.NotFound);
         }
 
         if (!currentUser.CanDrive(load.AssignedTruck))

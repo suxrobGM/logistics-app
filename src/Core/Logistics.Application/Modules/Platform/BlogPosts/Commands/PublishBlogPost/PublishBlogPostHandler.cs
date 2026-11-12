@@ -18,7 +18,7 @@ internal sealed class PublishBlogPostHandler(
 
         if (blogPost is null)
         {
-            return Result.Fail($"Blog post with ID '{req.Id}' not found");
+            return Result.Fail($"Blog post with ID '{req.Id}' not found", ErrorCodes.NotFound);
         }
 
         blogPost.Status = BlogPostStatus.Published;

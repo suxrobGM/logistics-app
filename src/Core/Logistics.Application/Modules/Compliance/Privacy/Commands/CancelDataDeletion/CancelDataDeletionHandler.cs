@@ -24,7 +24,7 @@ internal sealed class CancelDataDeletionHandler(
         var request = await masterUow.Repository<DataDeletionRequest>().GetByIdAsync(req.Id, ct);
         if (request is null || request.UserId != userId.Value)
         {
-            return Result.Fail("Deletion request not found.");
+            return Result.Fail("Deletion request not found.", ErrorCodes.NotFound);
         }
 
         if (request.Status != DataDeletionStatus.Pending)

@@ -15,7 +15,7 @@ internal sealed class DeleteLoadHandler(ITenantUnitOfWork tenantUow)
 
         if (load is null)
         {
-            return Result.Fail("Could not find the specified load");
+            return Result.Fail("Could not find the specified load", ErrorCodes.NotFound);
         }
 
         // Raise domain event for truck notification before deletion

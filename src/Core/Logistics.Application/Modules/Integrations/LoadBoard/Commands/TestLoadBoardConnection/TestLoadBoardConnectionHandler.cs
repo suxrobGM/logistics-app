@@ -15,7 +15,7 @@ internal sealed class TestLoadBoardConnectionHandler(
     {
         var config = await tenantUow.Repository<LoadBoardConfiguration>().GetByIdAsync(req.Id, ct);
         return config is null
-            ? Result.Fail("Load board provider not found")
+            ? Result.Fail("Load board provider not found", ErrorCodes.NotFound)
             : await gateway.TestConnectionAsync(config, ct);
     }
 }

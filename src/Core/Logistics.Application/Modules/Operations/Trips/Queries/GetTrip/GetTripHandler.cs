@@ -16,7 +16,7 @@ internal sealed class GetTripHandler(ITenantUnitOfWork tenantUow) : IRequestHand
 
         if (trip is null)
         {
-            return Result<TripDto>.Fail($"Could not find a trip with ID '{req.TripId}'");
+            return Result<TripDto>.Fail($"Could not find a trip with ID '{req.TripId}'", ErrorCodes.NotFound);
         }
 
         var tripeDto = trip.ToDto(trip.Trailer?.Number);

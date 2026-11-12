@@ -16,7 +16,7 @@ internal sealed class CreateMaintenanceRecordHandler(ITenantUnitOfWork tenantUow
         var truck = await tenantUow.Repository<Truck>().GetByIdAsync(req.TruckId, ct);
         if (truck is null)
         {
-            return Result<MaintenanceRecordDto>.Fail("Truck not found.");
+            return Result<MaintenanceRecordDto>.Fail("Truck not found.", ErrorCodes.NotFound);
         }
 
         Employee? performedBy = null;
@@ -25,7 +25,7 @@ internal sealed class CreateMaintenanceRecordHandler(ITenantUnitOfWork tenantUow
             performedBy = await tenantUow.Repository<Employee>().GetByIdAsync(req.PerformedById.Value, ct);
             if (performedBy is null)
             {
-                return Result<MaintenanceRecordDto>.Fail("Performed by employee not found.");
+                return Result<MaintenanceRecordDto>.Fail("Performed by employee not found.", ErrorCodes.NotFound);
             }
         }
 

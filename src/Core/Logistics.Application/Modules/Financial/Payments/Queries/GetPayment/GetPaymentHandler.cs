@@ -16,7 +16,7 @@ internal sealed class GetPaymentHandler(ITenantUnitOfWork tenantUow) : IRequestH
 
         if (paymentEntity is null)
         {
-            return Result<PaymentDto>.Fail($"Could not find a payment with ID {req.Id}");
+            return Result<PaymentDto>.Fail($"Could not find a payment with ID {req.Id}", ErrorCodes.NotFound);
         }
 
         var paymentDto = paymentEntity.ToDto();

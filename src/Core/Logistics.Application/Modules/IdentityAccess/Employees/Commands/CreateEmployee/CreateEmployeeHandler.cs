@@ -27,7 +27,7 @@ internal sealed class CreateEmployeeHandler(
 
         if (user is null)
         {
-            return Result.Fail("Could not find the specified user");
+            return Result.Fail("Could not find the specified user", ErrorCodes.NotFound);
         }
 
         var tenantRole = await tenantUow.Repository<TenantRole>().GetAsync(i => i.Name == req.Role);

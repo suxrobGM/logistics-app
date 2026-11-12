@@ -29,7 +29,7 @@ internal sealed class RecordTrackingAccessHandler(
             logger.LogWarning(
                 "RecordTrackingAccess: tracking link {LinkId} not found for tenant {TenantId}.",
                 req.TrackingLinkId, req.TenantId);
-            return Result.Fail("Tracking link not found.");
+            return Result.Fail("Tracking link not found.", ErrorCodes.NotFound);
         }
 
         trackingLink.RecordAccess();

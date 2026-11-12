@@ -15,7 +15,7 @@ internal sealed class UpdateTerminalHandler(ITenantUnitOfWork tenantUow)
         var terminal = await tenantUow.Repository<Terminal>().GetByIdAsync(req.Id, ct);
         if (terminal is null)
         {
-            return Result.Fail($"Could not find terminal with ID '{req.Id}'");
+            return Result.Fail($"Could not find terminal with ID '{req.Id}'", ErrorCodes.NotFound);
         }
 
         // Canonical vs canonical: a case-only edit is not a change, and the lookup needs the

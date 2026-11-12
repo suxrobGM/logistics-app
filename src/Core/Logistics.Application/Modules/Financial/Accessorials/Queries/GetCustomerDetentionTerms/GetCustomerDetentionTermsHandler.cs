@@ -12,7 +12,7 @@ internal sealed class GetCustomerDetentionTermsHandler(ITenantUnitOfWork tenantU
     {
         var customer = await tenantUow.Repository<Customer>().GetByIdAsync(req.CustomerId, ct);
         return customer is null
-            ? Result<DetentionTermsDto>.Fail($"Could not find a customer with ID '{req.CustomerId}'")
+            ? Result<DetentionTermsDto>.Fail($"Could not find a customer with ID '{req.CustomerId}'", ErrorCodes.NotFound)
             : Result<DetentionTermsDto>.Ok(new DetentionTermsDto
             {
                 FreeMinutes = customer.DetentionFreeMinutes,

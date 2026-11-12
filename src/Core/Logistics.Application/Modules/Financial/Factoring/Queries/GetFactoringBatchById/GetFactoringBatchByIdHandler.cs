@@ -14,7 +14,7 @@ internal sealed class GetFactoringBatchByIdHandler(ITenantUnitOfWork tenantUow, 
     {
         var batch = await tenantUow.Repository<FactoringBatch>().GetByIdAsync(req.Id, ct);
         return batch is null
-            ? Result<FactoringBatchDto>.Fail("Schedule of accounts not found.")
+            ? Result<FactoringBatchDto>.Fail("Schedule of accounts not found.", ErrorCodes.NotFound)
             : Result<FactoringBatchDto>.Ok(await batchDtoBuilder.BuildAsync(batch, ct));
     }
 }

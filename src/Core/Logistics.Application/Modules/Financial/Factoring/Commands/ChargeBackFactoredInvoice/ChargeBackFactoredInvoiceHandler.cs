@@ -15,7 +15,7 @@ internal sealed class ChargeBackFactoredInvoiceHandler(ITenantUnitOfWork tenantU
         var item = batch?.Items.FirstOrDefault(i => i.Id == req.ItemId);
         if (batch is null || item is null)
         {
-            return Result.Fail("Invoice not found on this schedule.");
+            return Result.Fail("Invoice not found on this schedule.", ErrorCodes.NotFound);
         }
 
         Payment? salePayment;

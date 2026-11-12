@@ -19,7 +19,7 @@ internal sealed class GetEldProviderDriversHandler(
 
         if (config is null)
         {
-            return Result<List<EldDriverDto>>.Fail("ELD provider configuration not found");
+            return Result<List<EldDriverDto>>.Fail("ELD provider configuration not found", ErrorCodes.NotFound);
         }
 
         var providerService = eldProviderFactory.GetProvider(config);

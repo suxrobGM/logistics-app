@@ -21,7 +21,7 @@ internal sealed class AddDrayageChargesHandler(
         var load = await tenantUow.Repository<Load>().GetByIdAsync(req.LoadId, ct);
         if (load is null)
         {
-            return Result.Fail($"Could not find load with ID '{req.LoadId}'");
+            return Result.Fail($"Could not find load with ID '{req.LoadId}'", ErrorCodes.NotFound);
         }
 
         if (load.ContainerId is not { } containerId)
@@ -32,7 +32,7 @@ internal sealed class AddDrayageChargesHandler(
         var container = await tenantUow.Repository<Container>().GetByIdAsync(containerId, ct);
         if (container is null)
         {
-            return Result.Fail($"Could not find container with ID '{containerId}'");
+            return Result.Fail($"Could not find container with ID '{containerId}'", ErrorCodes.NotFound);
         }
 
         var fresh = BuildAccessorials(load, container, container.GetFreeTime(DateTime.UtcNow));

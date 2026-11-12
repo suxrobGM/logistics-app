@@ -20,7 +20,7 @@ internal sealed class GetPortalLoadDocumentsHandler(ITenantUnitOfWork tenantUow)
 
         if (!loadExists)
         {
-            return Result<PortalDocumentDto[]>.Fail("Load not found or access denied.");
+            return Result<PortalDocumentDto[]>.Fail("Load not found or access denied.", ErrorCodes.NotFound);
         }
 
         var documents = await tenantUow.Repository<LoadDocument>().Query()

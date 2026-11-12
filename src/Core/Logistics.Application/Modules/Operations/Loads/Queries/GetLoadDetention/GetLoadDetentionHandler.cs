@@ -13,7 +13,7 @@ internal sealed class GetLoadDetentionHandler(ITenantUnitOfWork tenantUow)
         var load = await tenantUow.Repository<Load>().GetByIdAsync(req.LoadId, ct);
         if (load is null)
         {
-            return Result<List<StopDetentionDto>>.Fail($"Could not find a load with ID '{req.LoadId}'");
+            return Result<List<StopDetentionDto>>.Fail($"Could not find a load with ID '{req.LoadId}'", ErrorCodes.NotFound);
         }
 
         var terms = DetentionTerms.For(tenantUow.GetCurrentTenant().Settings, load.Customer);

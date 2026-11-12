@@ -17,7 +17,7 @@ internal sealed class UpdateAccidentReportHandler(ITenantUnitOfWork tenantUow)
         var report = await tenantUow.Repository<AccidentReport>().GetByIdAsync(req.Id, ct);
         if (report is null)
         {
-            return Result<AccidentReportDto>.Fail("Accident report not found.");
+            return Result<AccidentReportDto>.Fail("Accident report not found.", ErrorCodes.NotFound);
         }
 
         if (report.Status != AccidentReportStatus.Draft)
@@ -28,13 +28,13 @@ internal sealed class UpdateAccidentReportHandler(ITenantUnitOfWork tenantUow)
         var truck = await tenantUow.Repository<Truck>().GetByIdAsync(req.TruckId, ct);
         if (truck is null)
         {
-            return Result<AccidentReportDto>.Fail("Truck not found.");
+            return Result<AccidentReportDto>.Fail("Truck not found.", ErrorCodes.NotFound);
         }
 
         var driver = await tenantUow.Repository<Employee>().GetByIdAsync(req.DriverId, ct);
         if (driver is null)
         {
-            return Result<AccidentReportDto>.Fail("Driver not found.");
+            return Result<AccidentReportDto>.Fail("Driver not found.", ErrorCodes.NotFound);
         }
 
         report.TruckId = req.TruckId;

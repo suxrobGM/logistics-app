@@ -16,7 +16,7 @@ internal sealed class UpdateTenantAdminSettingsHandler(IMasterUnitOfWork masterU
 
         if (tenant is null)
         {
-            return Result.Fail($"Could not find a tenant with ID '{req.TenantId}'");
+            return Result.Fail($"Could not find a tenant with ID '{req.TenantId}'", ErrorCodes.NotFound);
         }
 
         if (!string.IsNullOrWhiteSpace(req.Name))

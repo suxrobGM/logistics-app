@@ -18,7 +18,7 @@ internal sealed class RecordPaymentLinkAccessHandler(
         var tenant = await masterUow.Repository<Tenant>().GetByIdAsync(req.TenantId, ct);
         if (tenant is null)
         {
-            return Result.Fail("Tenant not found.");
+            return Result.Fail("Tenant not found.", ErrorCodes.NotFound);
         }
 
         tenantUow.SetCurrentTenant(tenant);
@@ -30,7 +30,7 @@ internal sealed class RecordPaymentLinkAccessHandler(
             logger.LogWarning(
                 "RecordPaymentLinkAccess: payment link {LinkId} not found for tenant {TenantId}.",
                 req.PaymentLinkId, req.TenantId);
-            return Result.Fail("Payment link not found.");
+            return Result.Fail("Payment link not found.", ErrorCodes.NotFound);
         }
 
         paymentLink.RecordAccess();

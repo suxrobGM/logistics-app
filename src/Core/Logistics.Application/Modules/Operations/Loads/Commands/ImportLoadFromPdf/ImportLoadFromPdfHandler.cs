@@ -120,7 +120,7 @@ internal sealed class ImportLoadFromPdfHandler(
 
             if (truck is null)
             {
-                return Result<ImportLoadFromPdfResponse>.Fail("Specified truck not found.");
+                return Result<ImportLoadFromPdfResponse>.Fail("Specified truck not found.", ErrorCodes.NotFound);
             }
 
             truckId = truck.Id;

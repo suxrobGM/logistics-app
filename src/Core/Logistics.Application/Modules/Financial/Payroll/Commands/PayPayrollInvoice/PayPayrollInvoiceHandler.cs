@@ -22,7 +22,7 @@ internal sealed class PayPayrollInvoiceHandler(
 
         if (invoice is not PayrollInvoice payrollInvoice)
         {
-            return Result.Fail("Invoice not found or is not a payroll invoice.");
+            return Result.Fail("Invoice not found or is not a payroll invoice.", ErrorCodes.NotFound);
         }
 
         if (payrollInvoice.Status is not (InvoiceStatus.Approved or InvoiceStatus.Issued or InvoiceStatus.PartiallyPaid))
@@ -34,7 +34,7 @@ internal sealed class PayPayrollInvoiceHandler(
 
         if (employee is null)
         {
-            return Result.Fail("Employee not found.");
+            return Result.Fail("Employee not found.", ErrorCodes.NotFound);
         }
 
         if (string.IsNullOrEmpty(employee.StripeConnectedAccountId))

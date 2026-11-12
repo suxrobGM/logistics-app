@@ -15,7 +15,7 @@ internal sealed class UpdateInvoiceHandler(ITenantUnitOfWork tenantUow) : IReque
 
         if (invoice is null)
         {
-            return Result.Fail($"Could not find an invoice with ID '{req.Id}'");
+            return Result.Fail($"Could not find an invoice with ID '{req.Id}'", ErrorCodes.NotFound);
         }
 
         if (req.InvoiceStatus.HasValue && invoice.Status != req.InvoiceStatus)

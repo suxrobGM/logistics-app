@@ -22,7 +22,7 @@ internal sealed class ReportLoadExceptionHandler(
         var load = await tenantUow.Repository<Load>().GetByIdAsync(req.LoadId, ct);
         if (load is null)
         {
-            return Result.Fail($"Load not found with ID '{req.LoadId}'");
+            return Result.Fail($"Load not found with ID '{req.LoadId}'", ErrorCodes.NotFound);
         }
 
         var exception = new LoadException

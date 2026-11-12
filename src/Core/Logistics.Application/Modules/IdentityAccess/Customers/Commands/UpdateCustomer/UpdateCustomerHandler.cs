@@ -21,7 +21,7 @@ internal sealed class UpdateCustomerHandler(
 
         if (customerEntity is null)
         {
-            return Result.Fail($"Could not find a customer with ID '{req.Id}'");
+            return Result.Fail($"Could not find a customer with ID '{req.Id}'", ErrorCodes.NotFound);
         }
 
         var nameChanged = !string.IsNullOrEmpty(req.Name)

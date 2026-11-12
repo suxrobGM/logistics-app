@@ -21,7 +21,7 @@ internal sealed class CreateConversationHandler(ITenantUnitOfWork tenantUow)
             var employee = await employeeRepo.GetByIdAsync(participantId, ct);
             if (employee is null)
             {
-                return Result<ConversationDto>.Fail($"Employee with ID '{participantId}' not found");
+                return Result<ConversationDto>.Fail($"Employee with ID '{participantId}' not found", ErrorCodes.NotFound);
             }
         }
 
@@ -31,7 +31,7 @@ internal sealed class CreateConversationHandler(ITenantUnitOfWork tenantUow)
             var load = await tenantUow.Repository<Load>().GetByIdAsync(req.LoadId.Value, ct);
             if (load is null)
             {
-                return Result<ConversationDto>.Fail($"Load with ID '{req.LoadId}' not found");
+                return Result<ConversationDto>.Fail($"Load with ID '{req.LoadId}' not found", ErrorCodes.NotFound);
             }
         }
 

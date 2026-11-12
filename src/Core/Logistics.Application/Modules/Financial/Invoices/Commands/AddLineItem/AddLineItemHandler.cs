@@ -18,7 +18,7 @@ internal sealed class AddLineItemHandler(
         var invoice = await tenantUow.Repository<Invoice>().GetByIdAsync(req.InvoiceId, ct);
         if (invoice is null)
         {
-            return Result<InvoiceLineItemDto>.Fail("Invoice not found.");
+            return Result<InvoiceLineItemDto>.Fail("Invoice not found.", ErrorCodes.NotFound);
         }
 
         if (invoice.EditBlockedReason() is { } editBlocked)

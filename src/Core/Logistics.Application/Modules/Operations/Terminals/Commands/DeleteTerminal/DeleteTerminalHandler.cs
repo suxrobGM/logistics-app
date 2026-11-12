@@ -15,7 +15,7 @@ internal sealed class DeleteTerminalHandler(ITenantUnitOfWork tenantUow)
 
         if (terminal is null)
         {
-            return Result.Fail($"Could not find terminal with ID '{req.Id}'");
+            return Result.Fail($"Could not find terminal with ID '{req.Id}'", ErrorCodes.NotFound);
         }
 
         var assignedContainer = await tenantUow.Repository<Container>()

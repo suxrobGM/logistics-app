@@ -27,7 +27,7 @@ internal sealed class RevertAIDispatchDecisionHandler(
             .FirstOrDefaultAsync(d => d.Id == request.DecisionId, ct);
         if (decision is null)
         {
-            return Result.Fail("Decision not found");
+            return Result.Fail("Decision not found", ErrorCodes.NotFound);
         }
 
         var now = DateTime.UtcNow;

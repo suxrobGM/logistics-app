@@ -13,7 +13,7 @@ internal sealed class DeleteEldVehicleMappingHandler(ITenantUnitOfWork tenantUow
         var mapping = await tenantUow.Repository<EldVehicleMapping>().GetByIdAsync(req.MappingId, ct);
         if (mapping is null)
         {
-            return Result.Fail("Vehicle mapping not found");
+            return Result.Fail("Vehicle mapping not found", ErrorCodes.NotFound);
         }
 
         tenantUow.Repository<EldVehicleMapping>().Delete(mapping);

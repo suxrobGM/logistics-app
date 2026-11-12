@@ -22,7 +22,7 @@ internal sealed class ProcessPaymentHandler(
 
         if (payment is null)
         {
-            return Result.Fail($"Could not find a payment with ID '{req.PaymentId}'");
+            return Result.Fail($"Could not find a payment with ID '{req.PaymentId}'", ErrorCodes.NotFound);
         }
 
         if (string.IsNullOrEmpty(payment.StripePaymentMethodId))

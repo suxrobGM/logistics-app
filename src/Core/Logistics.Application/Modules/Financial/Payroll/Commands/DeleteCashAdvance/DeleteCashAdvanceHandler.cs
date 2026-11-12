@@ -13,7 +13,7 @@ internal sealed class DeleteCashAdvanceHandler(ITenantUnitOfWork tenantUow)
         var advance = await tenantUow.Repository<CashAdvance>().GetByIdAsync(req.Id, ct);
         if (advance is null)
         {
-            return Result.Fail($"Could not find a cash advance with ID '{req.Id}'");
+            return Result.Fail($"Could not find a cash advance with ID '{req.Id}'", ErrorCodes.NotFound);
         }
 
         if (advance.PayrollInvoiceId is not null)

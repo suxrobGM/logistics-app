@@ -16,7 +16,7 @@ internal sealed class DeleteExpenseHandler(ITenantUnitOfWork tenantUow)
 
         if (expense is null)
         {
-            return Result.Fail($"Could not find expense with ID '{req.Id}'");
+            return Result.Fail($"Could not find expense with ID '{req.Id}'", ErrorCodes.NotFound);
         }
 
         // Only pending or rejected expenses can be deleted

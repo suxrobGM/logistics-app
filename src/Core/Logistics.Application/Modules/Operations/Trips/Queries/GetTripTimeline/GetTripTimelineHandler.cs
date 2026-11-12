@@ -17,7 +17,7 @@ internal sealed class GetTripTimelineHandler(ITenantUnitOfWork tenantUow)
 
         if (trip is null)
         {
-            return Result<TripTimelineDto>.Fail($"Could not find a trip with ID '{req.TripId}'");
+            return Result<TripTimelineDto>.Fail($"Could not find a trip with ID '{req.TripId}'", ErrorCodes.NotFound);
         }
 
         var events = BuildTimelineEvents(trip);

@@ -37,7 +37,7 @@ internal sealed class ProposeCounterOfferHandler(
         var listing = await tenantUow.Repository<LoadBoardListing>().GetByIdAsync(req.ListingId, ct);
         if (listing is null)
         {
-            return Result<RateNegotiationDto>.Fail("Load board listing not found");
+            return Result<RateNegotiationDto>.Fail("Load board listing not found", ErrorCodes.NotFound);
         }
 
         if (listing.UnavailableReason() is { } unavailable)

@@ -27,7 +27,7 @@ internal sealed class SendMessageHandler(
 
         if (conversation is null)
         {
-            return Result<MessageDto>.Fail($"Conversation with ID '{req.ConversationId}' not found");
+            return Result<MessageDto>.Fail($"Conversation with ID '{req.ConversationId}' not found", ErrorCodes.NotFound);
         }
 
         // Check if sender is a participant (query DB directly to avoid stale data)
@@ -57,7 +57,7 @@ internal sealed class SendMessageHandler(
 
         if (sender is null)
         {
-            return Result<MessageDto>.Fail($"Sender with ID '{req.SenderId}' not found");
+            return Result<MessageDto>.Fail($"Sender with ID '{req.SenderId}' not found", ErrorCodes.NotFound);
         }
 
         // Create message

@@ -17,7 +17,7 @@ internal sealed class
 
         if (entity is null)
         {
-            return Result<SubscriptionPlanDto>.Fail($"Could not find a subscription plan with ID '{req.Id}'");
+            return Result<SubscriptionPlanDto>.Fail($"Could not find a subscription plan with ID '{req.Id}'", ErrorCodes.NotFound);
         }
 
         var dto = entity.ToDto();

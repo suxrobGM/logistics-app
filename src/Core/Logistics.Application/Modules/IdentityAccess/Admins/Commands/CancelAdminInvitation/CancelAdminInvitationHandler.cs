@@ -17,7 +17,7 @@ internal sealed class CancelAdminInvitationHandler(IMasterUnitOfWork masterUow)
 
         if (invitation is null)
         {
-            return Result.Fail("Invitation not found.");
+            return Result.Fail("Invitation not found.", ErrorCodes.NotFound);
         }
 
         if (invitation.Status != InvitationStatus.Pending)

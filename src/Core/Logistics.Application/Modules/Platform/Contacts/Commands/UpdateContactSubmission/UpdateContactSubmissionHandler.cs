@@ -17,7 +17,7 @@ internal sealed class UpdateContactSubmissionHandler(
 
         if (submission is null)
         {
-            return Result.Fail($"Contact submission with ID '{req.Id}' not found");
+            return Result.Fail($"Contact submission with ID '{req.Id}' not found", ErrorCodes.NotFound);
         }
 
         submission.Status = req.Status;

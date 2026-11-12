@@ -19,7 +19,7 @@ internal sealed class CloseNegotiationHandler(
         var negotiation = await tenantUow.Repository<RateNegotiation>().GetByIdAsync(req.Id, ct);
         if (negotiation is null)
         {
-            return Result.Fail($"Could not find a negotiation with ID '{req.Id}'");
+            return Result.Fail($"Could not find a negotiation with ID '{req.Id}'", ErrorCodes.NotFound);
         }
 
         if (!negotiation.IsOpen)

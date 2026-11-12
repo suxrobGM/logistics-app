@@ -21,7 +21,7 @@ internal sealed class GetCustomerUserHandler(ITenantUnitOfWork tenantUow)
 
         if (customerUser == null)
         {
-            return Result<CustomerUserDto>.Fail("Customer user not found or inactive.");
+            return Result<CustomerUserDto>.Fail("Customer user not found or inactive.", ErrorCodes.NotFound);
         }
 
         return Result<CustomerUserDto>.Ok(customerUser.ToDto());

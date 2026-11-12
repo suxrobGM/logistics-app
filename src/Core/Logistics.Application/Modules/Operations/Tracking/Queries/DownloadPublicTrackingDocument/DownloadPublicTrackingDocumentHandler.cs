@@ -33,7 +33,7 @@ internal sealed class DownloadPublicTrackingDocumentHandler(
 
         if (document is null)
         {
-            return Result<DocumentDownloadDto>.Fail("Document not found.");
+            return Result<DocumentDownloadDto>.Fail("Document not found.", ErrorCodes.NotFound);
         }
 
         return await documentDownloads.OpenAsync(document, ct);

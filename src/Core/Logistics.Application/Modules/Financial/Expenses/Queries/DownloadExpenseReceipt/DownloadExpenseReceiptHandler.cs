@@ -18,7 +18,7 @@ internal sealed class DownloadExpenseReceiptHandler(
         var expense = await tenantUow.Repository<Expense>().GetByIdAsync(req.ExpenseId, ct);
         if (expense is null)
         {
-            return Result<DocumentDownloadDto>.Fail($"Could not find expense with ID '{req.ExpenseId}'");
+            return Result<DocumentDownloadDto>.Fail($"Could not find expense with ID '{req.ExpenseId}'", ErrorCodes.NotFound);
         }
 
         if (string.IsNullOrEmpty(expense.ReceiptBlobPath))
@@ -30,7 +30,7 @@ internal sealed class DownloadExpenseReceiptHandler(
         var requester = await tenantUow.Repository<Employee>().GetByIdAsync(req.RequestedById, ct);
         if (requester is null)
         {
-            return Result<DocumentDownloadDto>.Fail($"Could not find employee with ID '{req.RequestedById}'");
+            return Result<DocumentDownloadDto>.Fail($"Could not find employee with ID '{req.RequestedById}'", ErrorCodes.NotFound);
         }
 
         try
@@ -39,7 +39,7 @@ internal sealed class DownloadExpenseReceiptHandler(
                 await blobStorageService.ExistsAsync(BlobConstants.ReceiptsContainerName, expense.ReceiptBlobPath, ct);
             if (!exists)
             {
-                return Result<DocumentDownloadDto>.Fail("Receipt file not found in storage");
+                return Result<DocumentDownloadDto>.Fail("Receipt file not found in storage", ErrorCodes.NotFound);
             }
 
             var stream =

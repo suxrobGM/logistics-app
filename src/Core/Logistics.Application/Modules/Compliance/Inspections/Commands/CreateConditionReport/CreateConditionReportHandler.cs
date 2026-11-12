@@ -25,13 +25,13 @@ internal sealed class CreateConditionReportHandler(
         var load = await tenantUow.Repository<Load>().GetByIdAsync(req.LoadId, ct);
         if (load is null)
         {
-            return Result<Guid>.Fail($"Load with ID '{req.LoadId}' not found");
+            return Result<Guid>.Fail($"Load with ID '{req.LoadId}' not found", ErrorCodes.NotFound);
         }
 
         var inspector = await tenantUow.Repository<Employee>().GetByIdAsync(req.InspectedById, ct);
         if (inspector is null)
         {
-            return Result<Guid>.Fail($"Employee with ID '{req.InspectedById}' not found");
+            return Result<Guid>.Fail($"Employee with ID '{req.InspectedById}' not found", ErrorCodes.NotFound);
         }
 
         var vehicleCheck = ResolveVehicle(load, req.LoadVehicleId);

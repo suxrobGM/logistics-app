@@ -15,7 +15,7 @@ internal sealed class RevokeTrackingLinkHandler(ITenantUnitOfWork tenantUow)
 
         if (trackingLink is null)
         {
-            return Result.Fail("Tracking link not found.");
+            return Result.Fail("Tracking link not found.", ErrorCodes.NotFound);
         }
 
         trackingLink.IsActive = false;

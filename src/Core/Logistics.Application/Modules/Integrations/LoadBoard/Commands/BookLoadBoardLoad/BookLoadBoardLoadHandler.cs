@@ -34,7 +34,7 @@ internal sealed class BookLoadBoardLoadHandler(
         var listing = await tenantUow.Repository<LoadBoardListing>().GetByIdAsync(req.ListingId, ct);
         if (listing is null)
         {
-            return Result<LoadBoardBookingResultDto>.Fail("Load board listing not found");
+            return Result<LoadBoardBookingResultDto>.Fail("Load board listing not found", ErrorCodes.NotFound);
         }
 
         if (listing.UnavailableReason() is { } unavailable)
@@ -59,18 +59,18 @@ internal sealed class BookLoadBoardLoadHandler(
         var truck = await tenantUow.Repository<Truck>().GetByIdAsync(req.TruckId, ct);
         if (truck is null)
         {
-            return Result<LoadBoardBookingResultDto>.Fail("Truck not found");
+            return Result<LoadBoardBookingResultDto>.Fail("Truck not found", ErrorCodes.NotFound);
         }
 
         if ((req.DispatcherId ?? currentUser.GetUserId()) is not { } dispatcherId)
         {
-            return Result<LoadBoardBookingResultDto>.Fail("Dispatcher not found");
+            return Result<LoadBoardBookingResultDto>.Fail("Dispatcher not found", ErrorCodes.NotFound);
         }
 
         var dispatcher = await tenantUow.Repository<Employee>().GetByIdAsync(dispatcherId, ct);
         if (dispatcher is null)
         {
-            return Result<LoadBoardBookingResultDto>.Fail("Dispatcher not found");
+            return Result<LoadBoardBookingResultDto>.Fail("Dispatcher not found", ErrorCodes.NotFound);
         }
 
         var creditCheck = await brokerCreditChecker.CheckAsync(listing, req.OverrideCreditCheck, ct);
@@ -98,7 +98,7 @@ internal sealed class BookLoadBoardLoadHandler(
             customer = await tenantUow.Repository<Customer>().GetByIdAsync(req.CustomerId.Value, ct);
             if (customer is null)
             {
-                return Result<LoadBoardBookingResultDto>.Fail("Customer not found");
+                return Result<LoadBoardBookingResultDto>.Fail("Customer not found", ErrorCodes.NotFound);
             }
         }
         else

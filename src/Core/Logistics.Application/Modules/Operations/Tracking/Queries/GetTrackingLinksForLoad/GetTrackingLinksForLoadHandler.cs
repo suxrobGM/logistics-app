@@ -20,7 +20,7 @@ internal sealed class GetTrackingLinksForLoadHandler(
         var load = await tenantUow.Repository<Load>().GetByIdAsync(req.LoadId, ct);
         if (load is null)
         {
-            return Result<IEnumerable<TrackingLinkDto>>.Fail("Load not found.");
+            return Result<IEnumerable<TrackingLinkDto>>.Fail("Load not found.", ErrorCodes.NotFound);
         }
 
         var trackingLinks = await tenantUow.Repository<TrackingLink>().Query()

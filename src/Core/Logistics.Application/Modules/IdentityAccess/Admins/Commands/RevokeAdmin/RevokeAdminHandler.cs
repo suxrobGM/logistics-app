@@ -16,7 +16,7 @@ internal sealed class RevokeAdminHandler(UserManager<User> userManager)
         var user = await userManager.FindByIdAsync(req.UserId.ToString());
         if (user is null)
         {
-            return Result.Fail("User not found.");
+            return Result.Fail("User not found.", ErrorCodes.NotFound);
         }
 
         if (await userManager.IsInRoleAsync(user, AppRoles.SuperAdmin))

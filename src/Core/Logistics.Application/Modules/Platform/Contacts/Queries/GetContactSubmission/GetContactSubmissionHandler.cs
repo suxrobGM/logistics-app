@@ -16,7 +16,7 @@ internal sealed class GetContactSubmissionHandler(
 
         if (submission is null)
         {
-            return Result<ContactSubmissionDto>.Fail($"Contact submission with ID '{req.Id}' not found");
+            return Result<ContactSubmissionDto>.Fail($"Contact submission with ID '{req.Id}' not found", ErrorCodes.NotFound);
         }
 
         return Result<ContactSubmissionDto>.Ok(submission.ToDto());

@@ -60,7 +60,7 @@ internal sealed class SubmitInvoicesToFactorHandler(
         var company = await tenantUow.Repository<FactoringCompany>().GetByIdAsync(companyId.Value, ct);
         if (company is null)
         {
-            return Result<FactoringBatchDto>.Fail("Factoring company not found.");
+            return Result<FactoringBatchDto>.Fail("Factoring company not found.", ErrorCodes.NotFound);
         }
 
         var loadIds = invoices.Select(i => i.LoadId).ToList();

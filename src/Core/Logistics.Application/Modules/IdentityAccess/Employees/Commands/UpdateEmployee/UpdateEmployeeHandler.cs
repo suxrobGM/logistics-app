@@ -22,7 +22,7 @@ internal sealed class UpdateEmployeeHandler(
 
         if (employeeEntity is null)
         {
-            return Result.Fail("Could not find the specified user");
+            return Result.Fail("Could not find the specified user", ErrorCodes.NotFound);
         }
 
         if (tenantRole is not null && tenantRole.Name != employeeEntity.Role?.Name)

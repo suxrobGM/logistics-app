@@ -16,7 +16,7 @@ internal sealed class CreateBodyShopExpenseHandler(ITenantUnitOfWork tenantUow)
 
         if (truck is null)
         {
-            return Result<Guid>.Fail($"Could not find truck with ID '{req.TruckId}'");
+            return Result<Guid>.Fail($"Could not find truck with ID '{req.TruckId}'", ErrorCodes.NotFound);
         }
 
         var expense = new BodyShopExpense

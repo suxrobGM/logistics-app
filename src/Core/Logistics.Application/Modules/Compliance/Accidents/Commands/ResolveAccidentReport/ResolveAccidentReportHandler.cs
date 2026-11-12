@@ -16,7 +16,7 @@ internal sealed class ResolveAccidentReportHandler(ITenantUnitOfWork tenantUow)
         var report = await tenantUow.Repository<AccidentReport>().GetByIdAsync(req.ReportId, ct);
         if (report is null)
         {
-            return Result<AccidentReportDto>.Fail("Accident report not found.");
+            return Result<AccidentReportDto>.Fail("Accident report not found.", ErrorCodes.NotFound);
         }
 
         // Allow resolving from submitted or under_review status

@@ -18,7 +18,7 @@ internal sealed class UpdateDemoRequestHandler(
 
         if (demoRequest is null)
         {
-            return Result.Fail($"Demo request with ID '{req.Id}' not found");
+            return Result.Fail($"Demo request with ID '{req.Id}' not found", ErrorCodes.NotFound);
         }
 
         demoRequest.Status = (DemoRequestStatus)req.Status;

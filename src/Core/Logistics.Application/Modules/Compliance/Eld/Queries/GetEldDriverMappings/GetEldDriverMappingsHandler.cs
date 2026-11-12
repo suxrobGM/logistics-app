@@ -17,7 +17,7 @@ internal sealed class GetEldDriverMappingsHandler(ITenantUnitOfWork tenantUow)
 
         if (config is null)
         {
-            return Result<List<EldDriverMappingDto>>.Fail("ELD provider configuration not found");
+            return Result<List<EldDriverMappingDto>>.Fail("ELD provider configuration not found", ErrorCodes.NotFound);
         }
 
         var mappings = await tenantUow.Repository<EldDriverMapping>()

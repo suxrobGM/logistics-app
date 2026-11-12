@@ -16,7 +16,7 @@ internal sealed class GetTenantHandler(IMasterUnitOfWork masterUow, ITenantUnitO
 
         if (tenantEntity is null)
         {
-            return Result<TenantDto>.Fail($"Could not find a tenant with ID or Name: {req.Id} or {req.Name}");
+            return Result<TenantDto>.Fail($"Could not find a tenant with ID or Name: {req.Id} or {req.Name}", ErrorCodes.NotFound);
         }
 
         // Count the number of trucks belonging to the tenant

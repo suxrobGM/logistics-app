@@ -53,7 +53,7 @@ internal sealed class CreatePublicCheckoutSessionHandler(
         var invoice = await tenantUow.Repository<Invoice>().GetByIdAsync(paymentLink.InvoiceId, ct);
         if (invoice is null)
         {
-            return Result<PublicCheckoutSessionDto>.Fail("Invoice not found.");
+            return Result<PublicCheckoutSessionDto>.Fail("Invoice not found.", ErrorCodes.NotFound);
         }
 
         if (invoice is LoadInvoice { AssignedFactor: { } factor })

@@ -16,7 +16,7 @@ internal sealed class GetDemoRequestHandler(
 
         if (demoRequest is null)
         {
-            return Result<DemoRequestDto>.Fail($"Demo request with ID '{req.Id}' not found");
+            return Result<DemoRequestDto>.Fail($"Demo request with ID '{req.Id}' not found", ErrorCodes.NotFound);
         }
 
         return Result<DemoRequestDto>.Ok(demoRequest.ToDto());

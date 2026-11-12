@@ -16,7 +16,7 @@ internal sealed class CreateTrackingLinkHandler(
         var load = await tenantUow.Repository<Load>().GetByIdAsync(req.LoadId, ct);
         if (load is null)
         {
-            return Result<TrackingLinkDto>.Fail("Load not found.");
+            return Result<TrackingLinkDto>.Fail("Load not found.", ErrorCodes.NotFound);
         }
 
         var trackingLink = await trackingLinks.GetOrCreateAsync(load.Id, ct);

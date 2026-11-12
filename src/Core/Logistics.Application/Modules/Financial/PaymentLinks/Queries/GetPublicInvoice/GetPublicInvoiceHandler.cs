@@ -43,7 +43,7 @@ internal sealed class GetPublicInvoiceHandler(
         var invoice = await tenantUow.Repository<Invoice>().GetByIdAsync(paymentLink.InvoiceId, ct);
         if (invoice is null)
         {
-            return Result<PublicInvoiceDto>.Fail("Invoice not found.");
+            return Result<PublicInvoiceDto>.Fail("Invoice not found.", ErrorCodes.NotFound);
         }
 
         // Defer access bookkeeping so the read path stays write-free.

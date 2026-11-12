@@ -18,7 +18,7 @@ internal sealed class DeleteTenantTaxRateHandler(
 
         if (rate is null || rate.TenantId != tenant.Id)
         {
-            return Result.Fail($"Tax rate '{req.Id}' not found.");
+            return Result.Fail($"Tax rate '{req.Id}' not found.", ErrorCodes.NotFound);
         }
 
         masterUow.Repository<TenantTaxRate>().Delete(rate);

@@ -31,7 +31,7 @@ internal sealed class PostTruckToLoadBoardHandler(
         var truck = await tenantUow.Repository<Truck>().GetByIdAsync(req.TruckId, ct);
         if (truck is null)
         {
-            return Result<PostTruckResultDto>.Fail("Truck not found");
+            return Result<PostTruckResultDto>.Fail("Truck not found", ErrorCodes.NotFound);
         }
 
         var equipmentType = req.EquipmentType ?? DefaultEquipmentFor(truck.Type);

@@ -23,7 +23,7 @@ internal sealed class MarkStopDepartedHandler(
 
         if (trip is null)
         {
-            return Result.Fail($"Could not find the trip with ID '{req.TripId}'");
+            return Result.Fail($"Could not find the trip with ID '{req.TripId}'", ErrorCodes.NotFound);
         }
 
         if (!currentUser.CanDrive(trip.Truck))

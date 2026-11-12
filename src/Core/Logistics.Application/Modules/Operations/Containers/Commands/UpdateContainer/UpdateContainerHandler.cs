@@ -16,7 +16,7 @@ internal sealed class UpdateContainerHandler(ITenantUnitOfWork tenantUow)
 
         if (container is null)
         {
-            return Result.Fail($"Could not find container with ID '{req.Id}'");
+            return Result.Fail($"Could not find container with ID '{req.Id}'", ErrorCodes.NotFound);
         }
 
         // Canonical vs canonical: a case-only edit is not a change, and the lookup needs the

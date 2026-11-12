@@ -15,7 +15,7 @@ internal sealed class RevokeApiKeyHandler(
             .GetByIdAsync(req.Id, ct);
 
         if (apiKey is null)
-            return Result.Fail("API key not found.");
+            return Result.Fail("API key not found.", ErrorCodes.NotFound);
 
         tenantUow.Repository<ApiKey>().Delete(apiKey);
         await tenantUow.SaveChangesAsync(ct);

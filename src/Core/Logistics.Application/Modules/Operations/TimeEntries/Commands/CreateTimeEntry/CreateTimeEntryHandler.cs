@@ -14,7 +14,7 @@ internal sealed class CreateTimeEntryHandler(ITenantUnitOfWork tenantUow)
         var employee = await tenantUow.Repository<Employee>().GetByIdAsync(req.EmployeeId, ct);
         if (employee is null)
         {
-            return Result<Guid>.Fail("Employee not found");
+            return Result<Guid>.Fail("Employee not found", ErrorCodes.NotFound);
         }
 
         var timeEntry = new TimeEntry

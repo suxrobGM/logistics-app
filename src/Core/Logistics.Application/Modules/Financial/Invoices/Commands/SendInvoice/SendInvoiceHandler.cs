@@ -31,7 +31,7 @@ internal sealed class SendInvoiceHandler(
         var invoice = await tenantUow.Repository<Invoice>().GetByIdAsync(req.InvoiceId, ct);
         if (invoice is null)
         {
-            return Result.Fail("Invoice not found.");
+            return Result.Fail("Invoice not found.", ErrorCodes.NotFound);
         }
 
         if (invoice.Status == InvoiceStatus.Cancelled)

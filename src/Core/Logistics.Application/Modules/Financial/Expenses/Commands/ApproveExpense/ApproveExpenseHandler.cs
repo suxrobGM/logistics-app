@@ -16,7 +16,7 @@ internal sealed class ApproveExpenseHandler(ITenantUnitOfWork tenantUow)
 
         if (expense is null)
         {
-            return Result.Fail($"Could not find expense with ID '{req.Id}'");
+            return Result.Fail($"Could not find expense with ID '{req.Id}'", ErrorCodes.NotFound);
         }
 
         if (expense.Status != ExpenseStatus.Pending)

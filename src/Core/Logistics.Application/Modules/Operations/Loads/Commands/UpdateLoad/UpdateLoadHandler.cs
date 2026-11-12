@@ -22,7 +22,7 @@ internal sealed class UpdateLoadHandler(
 
         if (load is null)
         {
-            return Result.Fail("Could not find the specified load");
+            return Result.Fail("Could not find the specified load", ErrorCodes.NotFound);
         }
 
         // Only a change is checked, so existing vehicle loads stay editable after the feature is turned off.

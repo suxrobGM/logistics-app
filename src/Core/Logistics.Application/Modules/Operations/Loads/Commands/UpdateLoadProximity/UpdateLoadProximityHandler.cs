@@ -15,7 +15,7 @@ internal sealed class UpdateLoadProximityHandler(ITenantUnitOfWork tenantUow)
 
         if (load is null)
         {
-            return Result.Fail($"Could not find load with ID '{req.LoadId}'");
+            return Result.Fail($"Could not find load with ID '{req.LoadId}'", ErrorCodes.NotFound);
         }
 
         // UpdateProximity raises LoadProximityChangedEvent for notifications

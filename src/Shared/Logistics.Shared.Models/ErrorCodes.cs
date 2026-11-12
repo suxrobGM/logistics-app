@@ -5,6 +5,9 @@ namespace Logistics.Shared.Models;
 /// </summary>
 public static class ErrorCodes
 {
+    /// <summary>The requested record does not exist. The API answers 404.</summary>
+    public const string NotFound = "NOT_FOUND";
+
     /// <summary>
     ///     The requested feature is not included in the tenant's current subscription plan.
     /// </summary>

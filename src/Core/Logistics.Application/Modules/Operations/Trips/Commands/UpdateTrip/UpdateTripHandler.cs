@@ -19,7 +19,7 @@ internal sealed class UpdateTripHandler(
         var trip = await uow.Repository<Trip>().GetByIdAsync(req.TripId, ct);
         if (trip is null)
         {
-            return Result.Fail($"Trip '{req.TripId}' not found.");
+            return Result.Fail($"Trip '{req.TripId}' not found.", ErrorCodes.NotFound);
         }
 
         if (!trip.CanModify)
@@ -39,7 +39,7 @@ internal sealed class UpdateTripHandler(
             var newTruck = await uow.Repository<Truck>().GetByIdAsync(newTruckId, ct);
             if (newTruck is null)
             {
-                return Result.Fail($"Truck '{newTruckId}' not found.");
+                return Result.Fail($"Truck '{newTruckId}' not found.", ErrorCodes.NotFound);
             }
 
             trip.AssignToTruck(newTruck);
@@ -50,7 +50,7 @@ internal sealed class UpdateTripHandler(
             var trailer = await uow.Repository<Trailer>().GetByIdAsync(trailerId, ct);
             if (trailer is null)
             {
-                return Result.Fail($"Trailer '{trailerId}' not found.");
+                return Result.Fail($"Trailer '{trailerId}' not found.", ErrorCodes.NotFound);
             }
 
             try

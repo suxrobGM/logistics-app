@@ -20,7 +20,7 @@ internal sealed class DeleteSubscriptionHandler(
 
         if (subscription is null)
         {
-            return Result.Fail($"Could not find a subscription with ID '{req.Id}'");
+            return Result.Fail($"Could not find a subscription with ID '{req.Id}'", ErrorCodes.NotFound);
         }
 
         if (!string.IsNullOrEmpty(subscription.StripeSubscriptionId))

@@ -15,7 +15,7 @@ internal sealed class CreateDriverLicenseHandler(ITenantUnitOfWork tenantUow)
         var employee = await tenantUow.Repository<Employee>().GetByIdAsync(req.EmployeeId, ct);
         if (employee is null)
         {
-            return Result<Guid>.Fail($"Employee not found with ID '{req.EmployeeId}'");
+            return Result<Guid>.Fail($"Employee not found with ID '{req.EmployeeId}'", ErrorCodes.NotFound);
         }
 
         // Reject duplicate (employee, license number, country) combinations.
@@ -62,7 +62,7 @@ internal sealed class CreateDriverLicenseHandler(ITenantUnitOfWork tenantUow)
         var doc = await tenantUow.Repository<EmployeeDocument>().GetByIdAsync(documentId, ct);
         if (doc is null)
         {
-            return Result.Fail($"Document '{documentId}' not found");
+            return Result.Fail($"Document '{documentId}' not found", ErrorCodes.NotFound);
         }
 
         if (doc.EmployeeId != employeeId)

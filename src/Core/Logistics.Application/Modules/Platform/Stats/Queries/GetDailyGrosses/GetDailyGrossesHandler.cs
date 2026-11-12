@@ -22,7 +22,7 @@ internal sealed class GetDailyGrossesHandler(ITenantUnitOfWork tenantUow) : IReq
 
             if (truck is null)
             {
-                return Result<DailyGrossesDto>.Fail($"Could not find a truck with driver ID '{req.UserId}'");
+                return Result<DailyGrossesDto>.Fail($"Could not find a truck with driver ID '{req.UserId}'", ErrorCodes.NotFound);
             }
 
             truckId = truck.Id;

@@ -18,7 +18,7 @@ internal sealed class UpdateTenantFeaturesAdminHandler(
         var tenant = await masterUow.Repository<Tenant>().GetByIdAsync(req.TenantId, ct);
         if (tenant is null)
         {
-            return Result.Fail($"Could not find a tenant with ID '{req.TenantId}'");
+            return Result.Fail($"Could not find a tenant with ID '{req.TenantId}'", ErrorCodes.NotFound);
         }
 
         // Get existing configs for this tenant

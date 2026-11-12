@@ -25,7 +25,7 @@ internal sealed class CancelSubscriptionHandler(
 
         if (subscription is null)
         {
-            return Result.Fail($"Could not find a subscription with ID '{req.Id}'");
+            return Result.Fail($"Could not find a subscription with ID '{req.Id}'", ErrorCodes.NotFound);
         }
 
         currentUserService.EnsureOwnsTenant(subscription.TenantId, "subscription");

@@ -16,7 +16,7 @@ internal sealed class GetBlogPostHandler(
 
         if (blogPost is null)
         {
-            return Result<BlogPostDto>.Fail($"Blog post with ID '{req.Id}' not found");
+            return Result<BlogPostDto>.Fail($"Blog post with ID '{req.Id}' not found", ErrorCodes.NotFound);
         }
 
         return Result<BlogPostDto>.Ok(blogPost.ToDto());

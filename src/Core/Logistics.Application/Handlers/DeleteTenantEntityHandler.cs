@@ -23,7 +23,7 @@ internal abstract class DeleteTenantEntityHandler<TCommand, TEntity>(ITenantUnit
 
         if (entity is null)
         {
-            return Result.Fail($"Could not find a {EntityName.Humanize<TEntity>()} with ID '{req.Id}'");
+            return Result.Fail($"Could not find a {EntityName.Humanize<TEntity>()} with ID '{req.Id}'", ErrorCodes.NotFound);
         }
 
         tenantUow.Repository<TEntity>().Delete(entity);

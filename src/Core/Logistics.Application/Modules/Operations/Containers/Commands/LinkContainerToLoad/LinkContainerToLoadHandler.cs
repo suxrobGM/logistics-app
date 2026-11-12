@@ -14,13 +14,13 @@ internal sealed class LinkContainerToLoadHandler(ITenantUnitOfWork tenantUow)
         var container = await tenantUow.Repository<Container>().GetByIdAsync(req.ContainerId, ct);
         if (container is null)
         {
-            return Result.Fail($"Could not find container with ID '{req.ContainerId}'");
+            return Result.Fail($"Could not find container with ID '{req.ContainerId}'", ErrorCodes.NotFound);
         }
 
         var load = await tenantUow.Repository<Load>().GetByIdAsync(req.LoadId, ct);
         if (load is null)
         {
-            return Result.Fail($"Could not find load with ID '{req.LoadId}'");
+            return Result.Fail($"Could not find load with ID '{req.LoadId}'", ErrorCodes.NotFound);
         }
 
         load.ContainerId = container.Id;

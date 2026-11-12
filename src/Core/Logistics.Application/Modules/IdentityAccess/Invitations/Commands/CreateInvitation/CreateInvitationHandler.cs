@@ -32,7 +32,7 @@ internal sealed class CreateInvitationHandler(
         var currentUser = await userManager.FindByIdAsync(currentUserId.Value.ToString());
         if (currentUser is null)
         {
-            return Result<InvitationDto>.Fail("Current user not found.");
+            return Result<InvitationDto>.Fail("Current user not found.", ErrorCodes.NotFound);
         }
 
         var tenant = tenantUow.GetCurrentTenant();
@@ -86,7 +86,7 @@ internal sealed class CreateInvitationHandler(
             var customer = await tenantUow.Repository<Customer>().GetByIdAsync(req.CustomerId.Value, ct);
             if (customer is null)
             {
-                return Result<InvitationDto>.Fail("Customer not found.");
+                return Result<InvitationDto>.Fail("Customer not found.", ErrorCodes.NotFound);
             }
             customerName = customer.Name;
         }

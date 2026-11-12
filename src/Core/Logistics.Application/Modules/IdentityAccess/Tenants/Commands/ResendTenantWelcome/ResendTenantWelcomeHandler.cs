@@ -21,7 +21,7 @@ internal sealed class ResendTenantWelcomeHandler(
 
         if (tenant is null)
         {
-            return Result.Fail("Tenant not found");
+            return Result.Fail("Tenant not found", ErrorCodes.NotFound);
         }
 
         tenantUow.SetCurrentTenant(tenant);

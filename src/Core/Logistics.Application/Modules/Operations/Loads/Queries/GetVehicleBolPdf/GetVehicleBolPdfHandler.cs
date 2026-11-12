@@ -32,7 +32,7 @@ internal sealed class GetVehicleBolPdfHandler(
 
         if (!canRead)
         {
-            return Result<VehicleBolPdfResult>.Fail($"Could not find a load with ID '{req.LoadId}'");
+            return Result<VehicleBolPdfResult>.Fail($"Could not find a load with ID '{req.LoadId}'", ErrorCodes.NotFound);
         }
 
         if (load!.Type != LoadType.Vehicle || load.Vehicles.Count == 0)

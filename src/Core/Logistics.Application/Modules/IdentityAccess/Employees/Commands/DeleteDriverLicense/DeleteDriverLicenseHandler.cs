@@ -19,7 +19,7 @@ internal sealed class DeleteDriverLicenseHandler(ITenantUnitOfWork tenantUow)
         var license = await tenantUow.Repository<DriverLicense>().GetByIdAsync(req.LicenseId, ct);
         if (license is null)
         {
-            return Result.Fail($"Driver license not found with ID '{req.LicenseId}'");
+            return Result.Fail($"Driver license not found with ID '{req.LicenseId}'", ErrorCodes.NotFound);
         }
 
         license.Status = DriverLicenseStatus.Revoked;

@@ -16,7 +16,7 @@ internal sealed class GetEmployeeByIdHandler(ITenantUnitOfWork tenantUow) : IReq
 
         if (employeeEntity is null)
         {
-            return Result<EmployeeDto>.Fail($"Could not find the specified employee with ID {req.UserId}");
+            return Result<EmployeeDto>.Fail($"Could not find the specified employee with ID {req.UserId}", ErrorCodes.NotFound);
         }
 
         var employeeDto = employeeEntity.ToDto();

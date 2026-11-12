@@ -15,7 +15,7 @@ internal sealed class DeleteContainerHandler(ITenantUnitOfWork tenantUow)
 
         if (container is null)
         {
-            return Result.Fail($"Could not find container with ID '{req.Id}'");
+            return Result.Fail($"Could not find container with ID '{req.Id}'", ErrorCodes.NotFound);
         }
 
         var linkedLoad = await tenantUow.Repository<Load>().GetAsync(i => i.ContainerId == container.Id, ct);

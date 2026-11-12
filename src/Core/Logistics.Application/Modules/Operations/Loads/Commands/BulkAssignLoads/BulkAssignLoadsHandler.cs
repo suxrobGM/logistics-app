@@ -33,7 +33,7 @@ internal sealed class BulkAssignLoadsHandler(ITenantUnitOfWork tenantUow) : IReq
         var truck = await tenantUow.Repository<Truck>().GetByIdAsync(req.TruckId, ct);
         if (truck is null)
         {
-            return Result.Fail($"Truck not found with ID '{req.TruckId}'");
+            return Result.Fail($"Truck not found with ID '{req.TruckId}'", ErrorCodes.NotFound);
         }
 
         foreach (var load in loads.Where(l => l.AssignedTruckId != truck.Id))

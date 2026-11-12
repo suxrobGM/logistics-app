@@ -21,7 +21,7 @@ internal sealed class SendTrackingLinkEmailHandler(
         var trackingLink = await tenantUow.Repository<TrackingLink>().GetByIdAsync(req.TrackingLinkId, ct);
         if (trackingLink is null)
         {
-            return Result.Fail("Tracking link not found.");
+            return Result.Fail("Tracking link not found.", ErrorCodes.NotFound);
         }
 
         if (!trackingLink.IsValid)
@@ -32,7 +32,7 @@ internal sealed class SendTrackingLinkEmailHandler(
         var load = await tenantUow.Repository<Load>().GetByIdAsync(trackingLink.LoadId, ct);
         if (load is null)
         {
-            return Result.Fail("Load not found.");
+            return Result.Fail("Load not found.", ErrorCodes.NotFound);
         }
 
         var tenant = tenantUow.GetCurrentTenant();

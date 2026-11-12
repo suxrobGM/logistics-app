@@ -14,7 +14,7 @@ internal sealed class UpdateAccessorialChargeHandler(ITenantUnitOfWork tenantUow
         var charge = await repository.GetByIdAsync(req.Id, ct);
         if (charge is null)
         {
-            return Result.Fail($"Could not find an accessorial with ID '{req.Id}'");
+            return Result.Fail($"Could not find an accessorial with ID '{req.Id}'", ErrorCodes.NotFound);
         }
 
         var name = req.Name.Trim();

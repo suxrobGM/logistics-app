@@ -25,7 +25,7 @@ internal sealed class ChangeSubscriptionPlanHandler(
 
         if (subscription is null)
         {
-            return Result.Fail($"Could not find a subscription with ID '{req.SubscriptionId}'");
+            return Result.Fail($"Could not find a subscription with ID '{req.SubscriptionId}'", ErrorCodes.NotFound);
         }
 
         currentUserService.EnsureOwnsTenant(subscription.TenantId, "subscription");
@@ -45,7 +45,7 @@ internal sealed class ChangeSubscriptionPlanHandler(
 
         if (newPlan is null)
         {
-            return Result.Fail($"Could not find a subscription plan with ID '{req.NewPlanId}'");
+            return Result.Fail($"Could not find a subscription plan with ID '{req.NewPlanId}'", ErrorCodes.NotFound);
         }
 
         if (string.IsNullOrEmpty(subscription.StripeSubscriptionId))

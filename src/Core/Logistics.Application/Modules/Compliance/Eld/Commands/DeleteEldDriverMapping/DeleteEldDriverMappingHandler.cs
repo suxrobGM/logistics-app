@@ -16,7 +16,7 @@ internal sealed class DeleteEldDriverMappingHandler(ITenantUnitOfWork tenantUow)
 
         if (mapping is null)
         {
-            return Result.Fail("Driver mapping not found");
+            return Result.Fail("Driver mapping not found", ErrorCodes.NotFound);
         }
 
         // Also delete associated HOS status if exists

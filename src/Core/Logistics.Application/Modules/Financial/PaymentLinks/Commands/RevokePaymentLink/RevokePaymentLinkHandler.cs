@@ -17,7 +17,7 @@ internal sealed class RevokePaymentLinkHandler(
         var paymentLink = await tenantUow.Repository<PaymentLink>().GetByIdAsync(req.PaymentLinkId, ct);
         if (paymentLink is null)
         {
-            return Result.Fail("Payment link not found.");
+            return Result.Fail("Payment link not found.", ErrorCodes.NotFound);
         }
 
         paymentLink.Revoke();

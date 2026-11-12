@@ -21,7 +21,7 @@ internal sealed class PreviewCounterOfferHandler(
         var decision = await tenantUow.Repository<AgentDecision>().GetByIdAsync(req.DecisionId, ct);
         if (decision is null)
         {
-            return Result<CounterOfferPreviewDto>.Fail($"Could not find a decision with ID '{req.DecisionId}'");
+            return Result<CounterOfferPreviewDto>.Fail($"Could not find a decision with ID '{req.DecisionId}'", ErrorCodes.NotFound);
         }
 
         if (decision.ToolName != AgentToolNames.ProposeCounterOffer || string.IsNullOrWhiteSpace(decision.ToolInput))

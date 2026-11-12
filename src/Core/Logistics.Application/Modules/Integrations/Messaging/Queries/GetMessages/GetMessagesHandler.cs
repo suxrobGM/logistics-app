@@ -22,7 +22,7 @@ internal sealed class GetMessagesHandler(
 
         if (conversation is null)
         {
-            return Result<MessageDto[]>.Fail($"Conversation with ID '{req.ConversationId}' not found");
+            return Result<MessageDto[]>.Fail($"Conversation with ID '{req.ConversationId}' not found", ErrorCodes.NotFound);
         }
 
         if (!conversation.IsTenantChat)
@@ -34,7 +34,7 @@ internal sealed class GetMessagesHandler(
 
             if (!isParticipant)
             {
-                return Result<MessageDto[]>.Fail("Conversation not found or access denied.");
+                return Result<MessageDto[]>.Fail("Conversation not found or access denied.", ErrorCodes.NotFound);
             }
         }
 

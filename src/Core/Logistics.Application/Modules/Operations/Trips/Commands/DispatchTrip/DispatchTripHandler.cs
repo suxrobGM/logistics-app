@@ -20,7 +20,7 @@ internal sealed class DispatchTripHandler(
 
         if (trip is null)
         {
-            return Result.Fail($"Could not find the trip with ID '{req.TripId}'");
+            return Result.Fail($"Could not find the trip with ID '{req.TripId}'", ErrorCodes.NotFound);
         }
 
         // Hard eligibility gate at dispatch - every load on the trip must be carryable

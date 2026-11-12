@@ -16,7 +16,7 @@ internal sealed class GetIftaTaxRateHandler(
 
         if (rate is null)
         {
-            return Result<IftaTaxRateDto>.Fail($"IFTA tax rate with ID '{req.Id}' not found");
+            return Result<IftaTaxRateDto>.Fail($"IFTA tax rate with ID '{req.Id}' not found", ErrorCodes.NotFound);
         }
 
         return Result<IftaTaxRateDto>.Ok(rate.ToDto());

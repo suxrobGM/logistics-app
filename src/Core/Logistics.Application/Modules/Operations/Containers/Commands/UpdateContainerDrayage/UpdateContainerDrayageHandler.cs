@@ -14,7 +14,7 @@ internal sealed class UpdateContainerDrayageHandler(ITenantUnitOfWork tenantUow)
         var container = await tenantUow.Repository<Container>().GetByIdAsync(req.Id, ct);
         if (container is null)
         {
-            return Result.Fail($"Could not find container with ID '{req.Id}'");
+            return Result.Fail($"Could not find container with ID '{req.Id}'", ErrorCodes.NotFound);
         }
 
         Terminal? emptyReturnTerminal = null;
@@ -23,7 +23,7 @@ internal sealed class UpdateContainerDrayageHandler(ITenantUnitOfWork tenantUow)
             emptyReturnTerminal = await tenantUow.Repository<Terminal>().GetByIdAsync(terminalId, ct);
             if (emptyReturnTerminal is null)
             {
-                return Result.Fail($"Could not find terminal with ID '{terminalId}'");
+                return Result.Fail($"Could not find terminal with ID '{terminalId}'", ErrorCodes.NotFound);
             }
         }
 

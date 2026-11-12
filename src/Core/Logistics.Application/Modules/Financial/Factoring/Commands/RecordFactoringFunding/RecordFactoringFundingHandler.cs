@@ -14,7 +14,7 @@ internal sealed class RecordFactoringFundingHandler(ITenantUnitOfWork tenantUow)
         var batch = await tenantUow.Repository<FactoringBatch>().GetByIdAsync(req.BatchId, ct);
         if (batch is null)
         {
-            return Result.Fail("Schedule of accounts not found.");
+            return Result.Fail("Schedule of accounts not found.", ErrorCodes.NotFound);
         }
 
         var tenant = tenantUow.GetCurrentTenant();

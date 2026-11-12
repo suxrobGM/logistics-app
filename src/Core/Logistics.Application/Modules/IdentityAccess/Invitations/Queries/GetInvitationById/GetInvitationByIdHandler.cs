@@ -23,7 +23,7 @@ internal sealed class GetInvitationByIdHandler(
 
         if (invitation is null)
         {
-            return Result<InvitationDto>.Fail("Invitation not found.");
+            return Result<InvitationDto>.Fail("Invitation not found.", ErrorCodes.NotFound);
         }
 
         string? customerName = null;

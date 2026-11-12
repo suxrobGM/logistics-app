@@ -31,7 +31,7 @@ internal sealed class GetRolePermissionsHandler(IMasterUnitOfWork masterUow, ITe
 
         if (role is null)
         {
-            return Result<PermissionDto[]>.Fail($"Could not find a role with name '{req.RoleName}'");
+            return Result<PermissionDto[]>.Fail($"Could not find a role with name '{req.RoleName}'", ErrorCodes.NotFound);
         }
 
         var permissions = await masterUow.Repository<AppRoleClaim, int>().GetListAsync(i => i.RoleId == role.Id);
@@ -45,7 +45,7 @@ internal sealed class GetRolePermissionsHandler(IMasterUnitOfWork masterUow, ITe
 
         if (role is null)
         {
-            return Result<PermissionDto[]>.Fail($"Could not find a role with name '{req.RoleName}'");
+            return Result<PermissionDto[]>.Fail($"Could not find a role with name '{req.RoleName}'", ErrorCodes.NotFound);
         }
 
         var permissions = await tenantUow.Repository<TenantRoleClaim>().GetListAsync(i => i.RoleId == role.Id);

@@ -15,7 +15,7 @@ internal sealed class GetEldMappingSuggestionsHandler(
     {
         var config = await tenantUow.Repository<EldProviderConfiguration>().GetByIdAsync(req.ProviderId, ct);
         return config is null
-            ? Result<EldMappingSuggestionsDto>.Fail("ELD provider configuration not found")
+            ? Result<EldMappingSuggestionsDto>.Fail("ELD provider configuration not found", ErrorCodes.NotFound)
             : Result<EldMappingSuggestionsDto>.Ok(await suggestionService.GetSuggestionsAsync(config, ct));
     }
 }

@@ -15,7 +15,7 @@ internal sealed class UpdateLaneRateFloorHandler(ITenantUnitOfWork tenantUow, IL
 
         if (floor is null)
         {
-            return Result.Fail($"Could not find a lane rate floor with ID '{req.Id}'");
+            return Result.Fail($"Could not find a lane rate floor with ID '{req.Id}'", ErrorCodes.NotFound);
         }
 
         var conflict = await duplicateChecker.FindConflictAsync(

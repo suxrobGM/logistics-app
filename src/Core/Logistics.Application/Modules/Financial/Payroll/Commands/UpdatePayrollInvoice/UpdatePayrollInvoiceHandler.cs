@@ -19,7 +19,7 @@ internal sealed class UpdatePayrollInvoiceHandler(
 
         if (payroll is null)
         {
-            return Result.Fail($"Could not find a payroll with ID '{req.Id}'");
+            return Result.Fail($"Could not find a payroll with ID '{req.Id}'", ErrorCodes.NotFound);
         }
 
         // Only allow updates to draft payrolls
@@ -36,7 +36,7 @@ internal sealed class UpdatePayrollInvoiceHandler(
 
             if (employee is null)
             {
-                return Result.Fail($"Could not find an employee with ID '{req.EmployeeId}'");
+                return Result.Fail($"Could not find an employee with ID '{req.EmployeeId}'", ErrorCodes.NotFound);
             }
 
             payroll.EmployeeId = req.EmployeeId.Value;

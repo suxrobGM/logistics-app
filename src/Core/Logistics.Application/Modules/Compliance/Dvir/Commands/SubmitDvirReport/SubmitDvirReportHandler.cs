@@ -18,7 +18,7 @@ internal sealed class SubmitDvirReportHandler(
         var report = await tenantUow.Repository<DvirReport>().GetByIdAsync(req.ReportId, ct);
         if (report is null)
         {
-            return Result<DvirReportDto>.Fail("DVIR report not found.");
+            return Result<DvirReportDto>.Fail("DVIR report not found.", ErrorCodes.NotFound);
         }
 
         if (!await dvirReportAccess.CanFileForAsync(report.DriverId, ct))

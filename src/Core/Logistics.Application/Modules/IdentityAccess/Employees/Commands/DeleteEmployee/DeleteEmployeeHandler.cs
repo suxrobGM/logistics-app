@@ -18,7 +18,7 @@ internal sealed class DeleteEmployeeHandler(
 
         if (employee is null)
         {
-            return Result.Fail($"Could not find employee with ID {req.UserId}");
+            return Result.Fail($"Could not find employee with ID {req.UserId}", ErrorCodes.NotFound);
         }
 
         var user = await masterUow.Repository<User>().GetByIdAsync(employee.Id, ct);

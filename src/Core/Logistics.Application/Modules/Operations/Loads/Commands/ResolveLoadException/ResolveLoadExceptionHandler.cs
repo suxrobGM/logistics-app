@@ -15,7 +15,7 @@ internal sealed class ResolveLoadExceptionHandler(ITenantUnitOfWork tenantUow) :
 
         if (exception is null)
         {
-            return Result.Fail($"Exception not found with ID '{req.ExceptionId}'");
+            return Result.Fail($"Exception not found with ID '{req.ExceptionId}'", ErrorCodes.NotFound);
         }
 
         if (exception.IsResolved)

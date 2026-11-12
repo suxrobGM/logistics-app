@@ -20,7 +20,7 @@ internal sealed class GetDriverStatsHandler(ITenantUnitOfWork tenantUow)
 
         if (driver is null)
         {
-            return Result<DriverStatsDto>.Fail($"Could not find driver with the user ID '{req.UserId}'");
+            return Result<DriverStatsDto>.Fail($"Could not find driver with the user ID '{req.UserId}'", ErrorCodes.NotFound);
         }
 
         var assignedTruck = await tenantUow.Repository<Truck>().GetAsync(i => i.MainDriverId == driver.Id

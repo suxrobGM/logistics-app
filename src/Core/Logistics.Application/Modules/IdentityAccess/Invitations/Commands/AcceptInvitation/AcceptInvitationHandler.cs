@@ -55,7 +55,7 @@ internal sealed class AcceptInvitationHandler(
         var tenant = invitation.Tenant;
         if (tenant is null)
         {
-            return Result<AcceptInvitationResult>.Fail("Organization not found.");
+            return Result<AcceptInvitationResult>.Fail("Organization not found.", ErrorCodes.NotFound);
         }
 
         // Check if user already exists
@@ -243,7 +243,7 @@ internal sealed class AcceptInvitationHandler(
         var customer = await tenantUow.Repository<Customer>().GetByIdAsync(invitation.CustomerId.Value, ct);
         if (customer is null)
         {
-            return Result.Fail("Customer not found.");
+            return Result.Fail("Customer not found.", ErrorCodes.NotFound);
         }
 
         var customerUser = new CustomerUser

@@ -19,7 +19,7 @@ internal sealed class UpdateCustomerUserHandler(
 
         if (customerUser is null)
         {
-            return Result.Fail($"Customer user with ID '{req.Id}' not found.");
+            return Result.Fail($"Customer user with ID '{req.Id}' not found.", ErrorCodes.NotFound);
         }
 
         if (req.DisplayName is not null)

@@ -22,7 +22,7 @@ internal sealed class UpdateSubscriptionPlanHandler(
 
         if (subscriptionPlan is null)
         {
-            return Result.Fail($"Could not find a subscription plan with ID '{req.Id}'");
+            return Result.Fail($"Could not find a subscription plan with ID '{req.Id}'", ErrorCodes.NotFound);
         }
 
         subscriptionPlan.Name = PropertyUpdater.UpdateIfChanged(req.Name, subscriptionPlan.Name);

@@ -13,7 +13,7 @@ internal sealed class DeletePaymentHandler(ITenantUnitOfWork tenantUow) : IReque
         var payment = await tenantUow.Repository<Payment>().GetByIdAsync(req.Id, ct);
         if (payment is null)
         {
-            return Result.Fail($"Could not find a {EntityName.Humanize<Payment>()} with ID '{req.Id}'");
+            return Result.Fail($"Could not find a {EntityName.Humanize<Payment>()} with ID '{req.Id}'", ErrorCodes.NotFound);
         }
 
         payment.Invoice?.RemovePayment(payment, DateTime.UtcNow);

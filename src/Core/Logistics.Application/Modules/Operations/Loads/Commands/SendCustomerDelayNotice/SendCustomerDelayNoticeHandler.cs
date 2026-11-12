@@ -15,7 +15,7 @@ internal sealed class SendCustomerDelayNoticeHandler(
         var load = await tenantUow.Repository<Load>().GetByIdAsync(req.LoadId, ct);
         if (load is null)
         {
-            return Result.Fail($"Could not find load with ID '{req.LoadId}'");
+            return Result.Fail($"Could not find load with ID '{req.LoadId}'", ErrorCodes.NotFound);
         }
 
         var result = await customerUpdates.SendDelayNoticeAsync(load, req.Message.Trim(), ct);

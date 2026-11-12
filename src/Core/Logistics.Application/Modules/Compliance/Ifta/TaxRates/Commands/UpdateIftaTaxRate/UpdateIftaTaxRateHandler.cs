@@ -19,7 +19,7 @@ internal sealed class UpdateIftaTaxRateHandler(
 
         if (rate is null)
         {
-            return Result.Fail($"IFTA tax rate with ID '{req.Id}' not found");
+            return Result.Fail($"IFTA tax rate with ID '{req.Id}' not found", ErrorCodes.NotFound);
         }
 
         var jurisdiction = TaxJurisdiction.Create(req.CountryCode, req.Region);

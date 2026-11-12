@@ -17,7 +17,7 @@ internal sealed class GetRateFloorContextHandler(
         var listing = await tenantUow.Repository<LoadBoardListing>().GetByIdAsync(req.ListingId, ct);
         if (listing is null)
         {
-            return Result<RateFloorContextDto>.Fail($"Could not find a load board listing with ID '{req.ListingId}'");
+            return Result<RateFloorContextDto>.Fail($"Could not find a load board listing with ID '{req.ListingId}'", ErrorCodes.NotFound);
         }
 
         var floor = await resolver.ResolveAsync(listing, ct);

@@ -18,7 +18,7 @@ internal sealed class GetTruckHandler(ITenantUnitOfWork tenantUow, ILoadLookupBu
 
         if (truckEntity is null)
         {
-            return Result<TruckDto>.Fail($"Could not find a truck with ID '{req.TruckOrDriverId}'");
+            return Result<TruckDto>.Fail($"Could not find a truck with ID '{req.TruckOrDriverId}'", ErrorCodes.NotFound);
         }
 
         // Resolve only the loads that reach the DTO, not ones OnlyActiveLoads drops.

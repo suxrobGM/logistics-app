@@ -19,7 +19,7 @@ internal sealed class UpdateTenantTaxRateHandler(
 
         if (rate is null || rate.TenantId != tenant.Id)
         {
-            return Result<TenantTaxRateDto>.Fail($"Tax rate '{req.Id}' not found.");
+            return Result<TenantTaxRateDto>.Fail($"Tax rate '{req.Id}' not found.", ErrorCodes.NotFound);
         }
 
         rate.RatePercent = req.RatePercent;

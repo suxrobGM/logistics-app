@@ -16,7 +16,7 @@ internal sealed class SetDriverDeviceTokenHandler(ITenantUnitOfWork tenantUow)
 
         if (driver is null)
         {
-            return Result.Fail("Could not find the specified driver");
+            return Result.Fail("Could not find the specified driver", ErrorCodes.NotFound);
         }
 
         if (!string.IsNullOrEmpty(driver.DeviceToken) && driver.DeviceToken == req.DeviceToken)

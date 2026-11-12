@@ -16,7 +16,7 @@ internal sealed class GetEldProviderVehiclesHandler(
         var config = await tenantUow.Repository<EldProviderConfiguration>().GetByIdAsync(req.ProviderId, ct);
         if (config is null)
         {
-            return Result<List<EldVehicleDto>>.Fail("ELD provider configuration not found");
+            return Result<List<EldVehicleDto>>.Fail("ELD provider configuration not found", ErrorCodes.NotFound);
         }
 
         var vehicles = await eldProviderFactory.GetProvider(config).GetAllVehiclesAsync();

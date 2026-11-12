@@ -14,7 +14,7 @@ internal sealed class StreetTurnContainerHandler(ITenantUnitOfWork tenantUow)
         var container = await tenantUow.Repository<Container>().GetByIdAsync(req.Id, ct);
         if (container is null)
         {
-            return Result.Fail($"Could not find container with ID '{req.Id}'");
+            return Result.Fail($"Could not find container with ID '{req.Id}'", ErrorCodes.NotFound);
         }
 
         try

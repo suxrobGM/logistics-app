@@ -24,7 +24,7 @@ internal abstract class GetTenantEntityByIdHandler<TQuery, TEntity, TDto>(ITenan
 
         if (entity is null)
         {
-            return Result<TDto>.Fail($"Could not find a {EntityName.Humanize<TEntity>()} with ID '{req.Id}'");
+            return Result<TDto>.Fail($"Could not find a {EntityName.Humanize<TEntity>()} with ID '{req.Id}'", ErrorCodes.NotFound);
         }
 
         return Result<TDto>.Ok(MapToDto(entity));

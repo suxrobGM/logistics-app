@@ -17,7 +17,7 @@ internal sealed class CreateCustomerUserHandler(ITenantUnitOfWork tenantUow, ICu
         var customer = await tenantUow.Repository<Customer>().GetByIdAsync(req.CustomerId, ct);
         if (customer is null)
         {
-            return Result<CustomerUserDto>.Fail($"Customer with ID '{req.CustomerId}' not found.");
+            return Result<CustomerUserDto>.Fail($"Customer with ID '{req.CustomerId}' not found.", ErrorCodes.NotFound);
         }
 
         // Check if a CustomerUser already exists for this user and customer

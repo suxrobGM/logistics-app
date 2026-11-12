@@ -18,7 +18,7 @@ internal sealed class GetFactoringSchedulePdfHandler(
         var batch = await tenantUow.Repository<FactoringBatch>().GetByIdAsync(req.BatchId, ct);
         if (batch is null)
         {
-            return Result<InvoicePdfResult>.Fail("Schedule of accounts not found.");
+            return Result<InvoicePdfResult>.Fail("Schedule of accounts not found.", ErrorCodes.NotFound);
         }
 
         var pdf = pdfService.GenerateSchedulePdf(batch, tenantUow.GetCurrentTenant());

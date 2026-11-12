@@ -27,7 +27,7 @@ internal sealed class AssignFuelCardTransactionTruckHandler(
         var truck = await tenantUow.Repository<Truck>().GetByIdAsync(req.TruckId, ct);
         if (truck is null)
         {
-            return Result.Fail("Truck not found");
+            return Result.Fail("Truck not found", ErrorCodes.NotFound);
         }
 
         foreach (var transaction in transactions)

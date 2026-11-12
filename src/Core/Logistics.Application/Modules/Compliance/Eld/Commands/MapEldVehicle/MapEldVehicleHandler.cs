@@ -13,14 +13,14 @@ internal sealed class MapEldVehicleHandler(ITenantUnitOfWork tenantUow)
         var truck = await tenantUow.Repository<Truck>().GetByIdAsync(req.TruckId, ct);
         if (truck is null)
         {
-            return Result.Fail($"Truck with ID {req.TruckId} not found");
+            return Result.Fail($"Truck with ID {req.TruckId} not found", ErrorCodes.NotFound);
         }
 
         var config = await tenantUow.Repository<EldProviderConfiguration>()
             .GetAsync(c => c.ProviderType == req.ProviderType, ct);
         if (config is null)
         {
-            return Result.Fail("ELD provider configuration not found");
+            return Result.Fail("ELD provider configuration not found", ErrorCodes.NotFound);
         }
 
         var mappings = tenantUow.Repository<EldVehicleMapping>();

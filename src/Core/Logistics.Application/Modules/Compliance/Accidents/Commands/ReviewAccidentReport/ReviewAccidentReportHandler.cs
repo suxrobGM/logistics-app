@@ -19,7 +19,7 @@ internal sealed class ReviewAccidentReportHandler(
         var report = await tenantUow.Repository<AccidentReport>().GetByIdAsync(req.ReportId, ct);
         if (report is null)
         {
-            return Result<AccidentReportDto>.Fail("Accident report not found.");
+            return Result<AccidentReportDto>.Fail("Accident report not found.", ErrorCodes.NotFound);
         }
 
         if (report.Status != AccidentReportStatus.Submitted)

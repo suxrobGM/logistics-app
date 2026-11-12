@@ -17,7 +17,7 @@ internal sealed class GetUserByIdHandler(UserManager<User> userManager)
 
         if (userEntity is null)
         {
-            return Result<UserDto>.Fail($"Could not find an user with ID '{req.UserId}'");
+            return Result<UserDto>.Fail($"Could not find an user with ID '{req.UserId}'", ErrorCodes.NotFound);
         }
 
         var user = userEntity.ToDto();

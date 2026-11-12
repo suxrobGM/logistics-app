@@ -17,7 +17,7 @@ internal sealed class GetDriverPayProfileHandler(ITenantUnitOfWork tenantUow, IP
         var employee = await tenantUow.Repository<Employee>().GetByIdAsync(req.EmployeeId, ct);
         if (employee is null)
         {
-            return Result<DriverPayProfileDto>.Fail($"Could not find an employee with ID '{req.EmployeeId}'");
+            return Result<DriverPayProfileDto>.Fail($"Could not find an employee with ID '{req.EmployeeId}'", ErrorCodes.NotFound);
         }
 
         var deductions = await tenantUow.Repository<RecurringDeduction>()

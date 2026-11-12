@@ -24,7 +24,7 @@ internal sealed class CreateTripHandler(
             truck = await tenantUow.Repository<Truck>().GetByIdAsync(req.TruckId.Value, ct);
             if (truck is null)
             {
-                return Result<Guid>.Fail($"Could not find the truck with ID '{req.TruckId}'");
+                return Result<Guid>.Fail($"Could not find the truck with ID '{req.TruckId}'", ErrorCodes.NotFound);
             }
         }
 
@@ -34,7 +34,7 @@ internal sealed class CreateTripHandler(
             trailer = await tenantUow.Repository<Trailer>().GetByIdAsync(trailerId, ct);
             if (trailer is null)
             {
-                return Result<Guid>.Fail($"Could not find the trailer with ID '{trailerId}'");
+                return Result<Guid>.Fail($"Could not find the trailer with ID '{trailerId}'", ErrorCodes.NotFound);
             }
         }
 

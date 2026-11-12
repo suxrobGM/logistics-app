@@ -22,7 +22,7 @@ internal sealed class GetMonthlyGrossesHandler(ITenantUnitOfWork tenantUow) : IR
 
             if (truck is null)
             {
-                return Result<MonthlyGrossesDto>.Fail($"Could not find a truck with driver ID '{req.UserId}'");
+                return Result<MonthlyGrossesDto>.Fail($"Could not find a truck with driver ID '{req.UserId}'", ErrorCodes.NotFound);
             }
 
             truckId = truck.Id;
