@@ -7,7 +7,7 @@ public static class PrivacyDefaults
 {
     /// <summary>
     /// How long the generated export ZIP is retained in blob storage before
-    /// <c>DataExportExpiryJob</c> deletes it and marks the request Expired.
+    /// the daily <c>DataExportExpiryService</c> run deletes it and marks the request Expired.
     /// </summary>
     public static readonly TimeSpan ExportBlobRetention = TimeSpan.FromDays(7);
 

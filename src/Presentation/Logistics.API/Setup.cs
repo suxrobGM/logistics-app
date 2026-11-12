@@ -287,19 +287,11 @@ internal static class Setup
             AccountingSyncJob.ScheduleJobs();
             FuelCardSyncJob.ScheduleJobs();
             IftaQuarterCloseJob.ScheduleJobs();
-            IftaFilingReminderJob.ScheduleJobs();
             ContainerDeadlineAlertJob.ScheduleJobs();
             DetentionAlertJob.ScheduleJobs();
-            LicenseExpiryReminderJob.ScheduleJobs();
-            InvitationExpiryJob.ScheduleJobs();
-            DataExportProcessingJob.ScheduleJobs();
-            DataDeletionJob.ScheduleJobs();
-            DataRetentionJob.ScheduleJobs();
-            DataExportExpiryJob.ScheduleJobs();
-            WebhookEventCleanupJob.ScheduleJobs();
             AIDispatchPolicyLearningJob.ScheduleJobs();
             NegotiationExpirySweepJob.ScheduleJobs();
-            ProductLicenseHeartbeatJob.ScheduleJobs();
+            RecurringJobs.Schedule();
 
             // Jobs whose code is gone.
             RecurringJob.RemoveIfExists("ai-dispatch");

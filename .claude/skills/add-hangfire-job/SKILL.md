@@ -14,12 +14,16 @@ populated from a request. Every guard you get for free in a handler you must wri
 
 ## Decide first
 
-1. **Recurring or on-demand?** Recurring → `RecurringJob.AddOrUpdate` in `ScheduleJobs()`. On-demand →
+1. **Does it need a job class at all?** If the whole job is one call to an application service that
+   works on the master DB or loops over the tenants itself, add one `RecurringJob.AddOrUpdate<IThingService>`
+   entry to `Jobs/RecurringJobs.cs` and stop here. Hangfire resolves the service in a scope with no
+   tenant set, so a service that reads tenant data without setting the tenant reads the wrong database.
+2. **Recurring or on-demand?** Recurring → `RecurringJob.AddOrUpdate` in `ScheduleJobs()`. On-demand →
    no `ScheduleJobs()`; something enqueues it (see `AIDispatchTurnJob` + `HangfireAIDispatchTurnRunner`,
    `NegotiationWakeJob` + `HangfireNegotiationWakeRunner`, `CommandEnqueuerJob` + `HangfireCommandEnqueuer`).
-2. **Per-tenant or global?** Almost always per-tenant → fan out with `TenantJobRunner.ForEachTenantAsync`.
-   Global (master DB only, e.g. `WebhookEventCleanupJob`) → one scope, no fan-out.
-3. **Is the work behind a tenant feature flag?** If yes, you must check it explicitly.
+3. **Per-tenant or global?** Almost always per-tenant → fan out with `TenantJobRunner.ForEachTenantAsync`.
+   Global (master DB only, e.g. the webhook event cleanup in `RecurringJobs.cs`) → one scope, no fan-out.
+4. **Is the work behind a tenant feature flag?** If yes, you must check it explicitly.
 
 ## 1. The job class
 
