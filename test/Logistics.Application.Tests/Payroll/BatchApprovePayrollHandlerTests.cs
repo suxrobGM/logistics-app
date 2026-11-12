@@ -8,6 +8,7 @@ using Logistics.Domain.Primitives.Enums;
 using Logistics.Domain.Primitives.ValueObjects;
 using NSubstitute;
 using Xunit;
+using Logistics.Application.Modules.Financial.Payroll.Commands;
 
 namespace Logistics.Application.Tests.Payroll;
 

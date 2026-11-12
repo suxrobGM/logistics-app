@@ -1,0 +1,15 @@
+using FluentValidation;
+
+namespace Logistics.Application.Modules.Financial.Payroll.Commands;
+
+internal sealed class UpdatePayrollInvoiceValidator : AbstractValidator<UpdatePayrollInvoiceCommand>
+{
+    public UpdatePayrollInvoiceValidator()
+    {
+        // Only validate period dates when both are provided
+        RuleFor(i => i.PeriodStart)
+            .LessThan(i => i.PeriodEnd!.Value)
+            .When(i => i.PeriodStart.HasValue && i.PeriodEnd.HasValue)
+            .WithMessage("Period start must be before period end");
+    }
+}

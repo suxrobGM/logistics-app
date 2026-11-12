@@ -1,0 +1,48 @@
+using Logistics.Application.Modules.Financial.Payroll.Services;
+using Logistics.Domain.Entities;
+using Logistics.Domain.Persistence;
+using Logistics.Mediator;
+using Logistics.Shared.Models;
+
+namespace Logistics.Application.Modules.Financial.Payroll.Commands;
+
+internal sealed class CreatePayrollInvoiceHandler(
+    ITenantUnitOfWork tenantUow,
+    IPayrollService payrollService)
+    : IRequestHandler<CreatePayrollInvoiceCommand, Result>
+{
+    public async Task<Result> Handle(
+        CreatePayrollInvoiceCommand req, CancellationToken ct)
+    {
+        var employee = await tenantUow.Repository<Employee>().GetByIdAsync(req.EmployeeId, ct);
+
+        if (employee is null)
+        {
+            return Result.Fail($"Could not find an employee with ID '{req.EmployeeId}'");
+        }
+
+        // Check for overlapping payroll periods
+        var overlappingPayroll = await tenantUow.Repository<PayrollInvoice>()
+            .GetAsync(p =>
+                p.EmployeeId == req.EmployeeId &&
+                p.PeriodStart <= req.PeriodEnd &&
+                p.PeriodEnd >= req.PeriodStart);
+
+        if (overlappingPayroll is not null)
+        {
+            return Result.Fail(
+                $"A payroll invoice already exists for this employee that overlaps with the specified period " +
+                $"({overlappingPayroll.PeriodStart:d} - {overlappingPayroll.PeriodEnd:d})");
+        }
+
+        var payroll = await payrollService.CreatePayrollInvoiceAsync(employee, req.PeriodStart, req.PeriodEnd, ct);
+        await tenantUow.Repository<PayrollInvoice>().AddAsync(payroll);
+        await tenantUow.SaveChangesAsync(ct);
+
+        // Link time entries to the payroll (for hourly employees)
+        await payrollService.LinkTimeEntriesToPayrollAsync(payroll, ct);
+        await tenantUow.SaveChangesAsync(ct);
+
+        return Result.Ok();
+    }
+}

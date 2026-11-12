@@ -8,6 +8,7 @@ using Logistics.Application.Modules.Financial.Invoices.Queries;
 using Logistics.Application.Modules.Financial.PaymentLinks.Commands;
 using Logistics.Application.Modules.Financial.Payments.Commands;
 using Logistics.Application.Modules.Financial.Payroll.Commands;
+using Logistics.Application.Modules.Financial.Payroll.Queries;
 
 namespace Logistics.API.Controllers;
 

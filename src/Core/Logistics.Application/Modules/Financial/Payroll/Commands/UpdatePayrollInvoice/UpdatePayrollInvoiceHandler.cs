@@ -1,0 +1,68 @@
+using Logistics.Application.Modules.Financial.Payroll.Services;
+using Logistics.Domain.Entities;
+using Logistics.Domain.Persistence;
+using Logistics.Domain.Primitives.Enums;
+using Logistics.Mediator;
+using Logistics.Shared.Models;
+
+namespace Logistics.Application.Modules.Financial.Payroll.Commands;
+
+internal sealed class UpdatePayrollInvoiceHandler(
+    ITenantUnitOfWork tenantUow,
+    IPayrollService payrollService)
+    : IRequestHandler<UpdatePayrollInvoiceCommand, Result>
+{
+    public async Task<Result> Handle(
+        UpdatePayrollInvoiceCommand req, CancellationToken ct)
+    {
+        var payroll = await tenantUow.Repository<PayrollInvoice>().GetByIdAsync(req.Id, ct);
+
+        if (payroll is null)
+        {
+            return Result.Fail($"Could not find a payroll with ID '{req.Id}'");
+        }
+
+        // Only allow updates to draft payrolls
+        if (payroll.Status != InvoiceStatus.Draft)
+        {
+            return Result.Fail("Only draft payroll invoices can be updated");
+        }
+
+        var needsRecalculation = false;
+
+        if (req.EmployeeId.HasValue && req.EmployeeId != payroll.EmployeeId)
+        {
+            var employee = await tenantUow.Repository<Employee>().GetByIdAsync(req.EmployeeId.Value, ct);
+
+            if (employee is null)
+            {
+                return Result.Fail($"Could not find an employee with ID '{req.EmployeeId}'");
+            }
+
+            payroll.EmployeeId = req.EmployeeId.Value;
+            payroll.Employee = employee;
+            needsRecalculation = true;
+        }
+
+        if (req.PeriodStart.HasValue && req.PeriodStart != payroll.PeriodStart)
+        {
+            payroll.PeriodStart = req.PeriodStart.Value;
+            needsRecalculation = true;
+        }
+
+        if (req.PeriodEnd.HasValue && req.PeriodEnd != payroll.PeriodEnd)
+        {
+            payroll.PeriodEnd = req.PeriodEnd.Value;
+            needsRecalculation = true;
+        }
+
+        // Recalculate payroll amounts if period or employee changed
+        if (needsRecalculation)
+        {
+            await payrollService.RecalculatePayrollAsync(payroll, ct);
+        }
+
+        await tenantUow.SaveChangesAsync(ct);
+        return Result.Ok();
+    }
+}
