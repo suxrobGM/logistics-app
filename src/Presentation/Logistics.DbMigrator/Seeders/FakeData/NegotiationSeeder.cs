@@ -219,9 +219,6 @@ internal class NegotiationSeeder(ILogger<NegotiationSeeder> logger) : SeederBase
         Guid? bookedLoadId,
         CancellationToken cancellationToken)
     {
-        var negotiations = context.TenantUnitOfWork.Repository<RateNegotiation>();
-        var messages = context.TenantUnitOfWork.Repository<NegotiationMessage>();
-
         var floorTotal = new Money { Amount = decimal.Round(lane.FloorPerMile * lane.Miles, 0), Currency = currency };
         var snapshot = new RateFloorSnapshot(lane.FloorPerMile, floorTotal, lane.FloorSource);
 
@@ -232,115 +229,29 @@ internal class NegotiationSeeder(ILogger<NegotiationSeeder> logger) : SeederBase
             listing.BrokerName,
             listing.BrokerMcNumber);
 
-        await negotiations.AddAsync(negotiation, cancellationToken);
+        await context.TenantUnitOfWork.Repository<RateNegotiation>().AddAsync(negotiation, cancellationToken);
         await context.TenantUnitOfWork.SaveChangesAsync(cancellationToken);
 
         var openedAt = random.UtcDate(DateTime.UtcNow.AddHours(-96), DateTime.UtcNow.AddHours(-6));
-        var askPerMile = decimal.Round(lane.FloorPerMile + 0.18m, 2);
-        var ask = new Money { Amount = decimal.Round(askPerMile * lane.Miles, 0), Currency = currency };
+        var thread = new NegotiationThread(context, negotiation, listing, lane, currency, openedAt, cancellationToken);
 
-        Money Total(decimal perMile) =>
-            new() { Amount = decimal.Round(perMile * lane.Miles, 0), Currency = currency };
-
-        Task<int> NextSequenceAsync() =>
-            context.TenantUnitOfWork.ReserveSequenceAsync(negotiation, cancellationToken);
-
-        async Task AddAsync(NegotiationMessage message, double hoursIn)
-        {
-            message.OccurredAt = openedAt.AddHours(hoursIn);
-            await messages.AddAsync(message, cancellationToken);
-        }
-
-        async Task AddBrokerReplyAsync(double hoursIn, decimal bumpPerMile)
-        {
-            var counterPerMile = decimal.Round(listing.RatePerMile!.Value + bumpPerMile, 2);
-            var counter = Total(counterPerMile);
-
-            await AddAsync(
-                negotiation.AddInboundMessage(
-                    await NextSequenceAsync(),
-                    $"Best I can do right now is {Format(counter)}. Shipper is firm on the pickup window, " +
-                    "let me know quickly if that works for you.",
-                    $"Re: {negotiation.Reference}",
-                    proposedTotalRate: counter,
-                    proposedRatePerMile: counterPerMile),
-                hoursIn);
-        }
-
-        await AddAsync(
-            negotiation.AddOutboundMessage(
-                await NextSequenceAsync(),
-                OutboundBody(listing, lane, ask, askPerMile),
-                $"{negotiation.Reference} - {listing.OriginAddress.City} to {listing.DestinationAddress.City}",
-                ask,
-                askPerMile),
-            0);
+        await AddOpeningOfferAsync(thread);
 
         switch (scenario)
         {
             case NegotiationScenario.AwaitingBroker:
                 break;
-
             case NegotiationScenario.BrokerReplied:
-                await AddBrokerReplyAsync(5, 0.06m);
+                await thread.AddBrokerReplyAsync(5, 0.06m);
                 break;
-
             case NegotiationScenario.Accepted:
-                await AddBrokerReplyAsync(3, 0.08m);
-
-                var settledPerMile = decimal.Round(askPerMile - 0.05m, 2);
-                var settled = Total(settledPerMile);
-
-                await AddAsync(
-                    negotiation.AddOutboundMessage(
-                        await NextSequenceAsync(),
-                        $"Deal at {Format(settled)} all-in. Rate confirmation to follow, dispatch will call with the driver details.",
-                        $"Re: {negotiation.Reference}",
-                        settled,
-                        settledPerMile),
-                    4);
-
-                await AddAsync(
-                    negotiation.AddInboundMessage(
-                        await NextSequenceAsync(),
-                        $"Accepted at {Format(settled)}. Rate con is attached, please sign and return today.",
-                        $"Re: {negotiation.Reference}",
-                        proposedTotalRate: settled),
-                    6);
-
-                if (bookedLoadId is { } loadId)
-                {
-                    negotiation.MarkAccepted(loadId);
-                    listing.LoadId = loadId;
-                    listing.BookedAt = openedAt.AddHours(6);
-                }
-                else
-                {
-                    negotiation.Close(RateNegotiationStatus.Accepted, "Broker accepted the counter offer");
-                }
+                await AddAcceptedDealAsync(thread, bookedLoadId);
                 break;
-
             case NegotiationScenario.Declined:
-                await AddAsync(
-                    negotiation.AddInboundMessage(
-                        await NextSequenceAsync(),
-                        $"We cannot go above {Format(listing.TotalRate!)} on this one. Covering it with another carrier.",
-                        $"Re: {negotiation.Reference}",
-                        proposedTotalRate: listing.TotalRate),
-                    7);
-                negotiation.Close(RateNegotiationStatus.Declined, "Broker declined - offer stayed below the lane floor");
+                await AddBrokerDeclineAsync(thread);
                 break;
-
             case NegotiationScenario.Expired:
-                await AddAsync(
-                    negotiation.AddInboundMessage(
-                        await NextSequenceAsync(),
-                        "Unlimited freight leads, click here to claim your free trial.",
-                        "You have new load matches",
-                        quarantined: true),
-                    11);
-                negotiation.ExpiresAt = openedAt.AddHours(48);
-                negotiation.Close(RateNegotiationStatus.Expired, "No broker reply within 48 hours");
+                await AddSpamAndExpireAsync(thread);
                 break;
         }
 
@@ -354,6 +265,93 @@ internal class NegotiationSeeder(ILogger<NegotiationSeeder> logger) : SeederBase
                 RevokedAt = negotiation.IsOpen ? null : negotiation.ClosedAt
             },
             cancellationToken);
+    }
+
+    private static async Task AddOpeningOfferAsync(NegotiationThread thread)
+    {
+        var listing = thread.Listing;
+        var ask = thread.Total(thread.AskPerMile);
+
+        await thread.AddMessageAsync(
+            thread.Negotiation.AddOutboundMessage(
+                await thread.NextSequenceAsync(),
+                OutboundBody(listing, thread.Lane, ask, thread.AskPerMile),
+                $"{thread.Negotiation.Reference} - {listing.OriginAddress.City} to {listing.DestinationAddress.City}",
+                ask,
+                thread.AskPerMile),
+            0);
+    }
+
+    /// <summary>
+    /// The broker counters, we settle a little under our ask, and the broker accepts. Linked to the
+    /// newest load when one exists, otherwise closed as accepted with no load.
+    /// </summary>
+    private static async Task AddAcceptedDealAsync(NegotiationThread thread, Guid? bookedLoadId)
+    {
+        var negotiation = thread.Negotiation;
+        await thread.AddBrokerReplyAsync(3, 0.08m);
+
+        var settledPerMile = decimal.Round(thread.AskPerMile - 0.05m, 2);
+        var settled = thread.Total(settledPerMile);
+
+        await thread.AddMessageAsync(
+            negotiation.AddOutboundMessage(
+                await thread.NextSequenceAsync(),
+                $"Deal at {Format(settled)} all-in. Rate confirmation to follow, dispatch will call with the driver details.",
+                $"Re: {negotiation.Reference}",
+                settled,
+                settledPerMile),
+            4);
+
+        await thread.AddMessageAsync(
+            negotiation.AddInboundMessage(
+                await thread.NextSequenceAsync(),
+                $"Accepted at {Format(settled)}. Rate con is attached, please sign and return today.",
+                $"Re: {negotiation.Reference}",
+                proposedTotalRate: settled),
+            6);
+
+        if (bookedLoadId is { } loadId)
+        {
+            negotiation.MarkAccepted(loadId);
+            thread.Listing.LoadId = loadId;
+            thread.Listing.BookedAt = thread.OpenedAt.AddHours(6);
+        }
+        else
+        {
+            negotiation.Close(RateNegotiationStatus.Accepted, "Broker accepted the counter offer");
+        }
+    }
+
+    private static async Task AddBrokerDeclineAsync(NegotiationThread thread)
+    {
+        var negotiation = thread.Negotiation;
+        var postedTotal = thread.Listing.TotalRate!;
+
+        await thread.AddMessageAsync(
+            negotiation.AddInboundMessage(
+                await thread.NextSequenceAsync(),
+                $"We cannot go above {Format(postedTotal)} on this one. Covering it with another carrier.",
+                $"Re: {negotiation.Reference}",
+                proposedTotalRate: postedTotal),
+            7);
+        negotiation.Close(RateNegotiationStatus.Declined, "Broker declined - offer stayed below the lane floor");
+    }
+
+    /// <summary>The only reply is quarantined spam, so the thread runs out its 48 hours.</summary>
+    private static async Task AddSpamAndExpireAsync(NegotiationThread thread)
+    {
+        var negotiation = thread.Negotiation;
+
+        await thread.AddMessageAsync(
+            negotiation.AddInboundMessage(
+                await thread.NextSequenceAsync(),
+                "Unlimited freight leads, click here to claim your free trial.",
+                "You have new load matches",
+                quarantined: true),
+            11);
+        negotiation.ExpiresAt = thread.OpenedAt.AddHours(48);
+        negotiation.Close(RateNegotiationStatus.Expired, "No broker reply within 48 hours");
     }
 
     private static string OutboundBody(LoadBoardListing listing, Lane lane, Money ask, decimal askPerMile)
@@ -370,6 +368,51 @@ internal class NegotiationSeeder(ILogger<NegotiationSeeder> logger) : SeederBase
 
     private static string BrokerEmail(string brokerName) =>
         $"rates@{new string([.. brokerName.ToLowerInvariant().Where(char.IsLetterOrDigit)])}.example.com";
+
+    /// <summary>One seeded negotiation and the clock its messages are stamped against.</summary>
+    private sealed class NegotiationThread(
+        SeederContext context,
+        RateNegotiation negotiation,
+        LoadBoardListing listing,
+        Lane lane,
+        string currency,
+        DateTime openedAt,
+        CancellationToken cancellationToken)
+    {
+        public RateNegotiation Negotiation => negotiation;
+        public LoadBoardListing Listing => listing;
+        public Lane Lane => lane;
+        public DateTime OpenedAt => openedAt;
+        public decimal AskPerMile { get; } = decimal.Round(lane.FloorPerMile + 0.18m, 2);
+
+        public Money Total(decimal perMile) =>
+            new() { Amount = decimal.Round(perMile * lane.Miles, 0), Currency = currency };
+
+        public Task<int> NextSequenceAsync() =>
+            context.TenantUnitOfWork.ReserveSequenceAsync(negotiation, cancellationToken);
+
+        public async Task AddMessageAsync(NegotiationMessage message, double hoursIn)
+        {
+            message.OccurredAt = openedAt.AddHours(hoursIn);
+            await context.TenantUnitOfWork.Repository<NegotiationMessage>().AddAsync(message, cancellationToken);
+        }
+
+        public async Task AddBrokerReplyAsync(double hoursIn, decimal bumpPerMile)
+        {
+            var counterPerMile = decimal.Round(listing.RatePerMile!.Value + bumpPerMile, 2);
+            var counter = Total(counterPerMile);
+
+            await AddMessageAsync(
+                negotiation.AddInboundMessage(
+                    await NextSequenceAsync(),
+                    $"Best I can do right now is {Format(counter)}. Shipper is firm on the pickup window, " +
+                    "let me know quickly if that works for you.",
+                    $"Re: {negotiation.Reference}",
+                    proposedTotalRate: counter,
+                    proposedRatePerMile: counterPerMile),
+                hoursIn);
+        }
+    }
 
     private record SeededLane(
         RoutePoint Origin,
