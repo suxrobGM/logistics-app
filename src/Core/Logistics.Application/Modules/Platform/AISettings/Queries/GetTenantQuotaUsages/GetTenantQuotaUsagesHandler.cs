@@ -9,6 +9,7 @@ using Logistics.Shared.Models;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using Logistics.Application.Utilities;
+using Logistics.Domain.Extensions;
 
 namespace Logistics.Application.Modules.Platform.AISettings.Queries;
 
@@ -43,7 +44,7 @@ internal sealed class GetTenantQuotaUsagesHandler(
         GetTenantQuotaUsagesQuery request, CancellationToken ct)
     {
         var targets = await LoadQuotaTenantsAsync(ct);
-        var weekStart = DateTimeHelpers.GetCurrentIsoWeekStart();
+        var weekStart = DateTime.UtcNow.GetIsoWeekStart();
         var costWindowStart = DateTime.UtcNow - CostWindow;
 
         // The default sort is a computed column, so every tenant has to be read before the page can

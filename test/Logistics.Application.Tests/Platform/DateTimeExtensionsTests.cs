@@ -21,4 +21,14 @@ public class DateTimeExtensionsTests
         Assert.Equal((2026, 10, 9), days[0]);
         Assert.Equal((2026, 10, 16), days[^1]);
     }
+
+    /// <summary>ISO weeks start on Monday, so a Sunday belongs to the week that began six days earlier.</summary>
+    [Theory]
+    [InlineData("2026-11-09", "2026-11-09")] // Monday
+    [InlineData("2026-11-12", "2026-11-09")] // Thursday
+    [InlineData("2026-11-15", "2026-11-09")] // Sunday
+    public void GetIsoWeekStart_ReturnsThatWeeksMonday(string date, string monday)
+    {
+        Assert.Equal(DateTime.Parse(monday), DateTime.Parse(date).AddHours(15).GetIsoWeekStart());
+    }
 }

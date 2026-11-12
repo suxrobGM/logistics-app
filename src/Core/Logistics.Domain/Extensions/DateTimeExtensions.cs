@@ -2,6 +2,17 @@ namespace Logistics.Domain.Extensions;
 
 public static class DateTimeExtensions
 {
+    extension(DateTime date)
+    {
+        /// <summary>Monday 00:00 of the ISO 8601 week <paramref name="date" /> falls in.</summary>
+        public DateTime GetIsoWeekStart()
+        {
+            var day = date.Date;
+            var daysSinceMonday = day.DayOfWeek == DayOfWeek.Sunday ? 6 : (int)day.DayOfWeek - 1;
+            return day.AddDays(-daysSinceMonday);
+        }
+    }
+
     extension(DateTime startDate)
     {
         public IEnumerable<(int Year, int Month)> MonthsBetween(

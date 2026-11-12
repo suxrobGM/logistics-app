@@ -6,6 +6,7 @@ using Logistics.Domain.Primitives.Enums;
 using Logistics.Shared.Models;
 using Microsoft.EntityFrameworkCore;
 using Logistics.Application.Abstractions.AIDispatch;
+using Logistics.Domain.Extensions;
 
 namespace Logistics.Infrastructure.Persistence.Services.AIDispatch;
 
@@ -24,7 +25,7 @@ internal sealed class AIQuotaService(
         var (budget, planName, quotaResetAt, blockOverage, overageBillable) = tenantInfo;
 
         // If tenant has a quota reset this week, count from that date; otherwise use ISO week start
-        var weekStart = DateTimeHelpers.GetCurrentIsoWeekStart();
+        var weekStart = DateTime.UtcNow.GetIsoWeekStart();
         var countFrom = quotaResetAt > weekStart ? quotaResetAt.Value : weekStart;
 
         // Every status counts - failed and cancelled runs still consumed paid tokens.

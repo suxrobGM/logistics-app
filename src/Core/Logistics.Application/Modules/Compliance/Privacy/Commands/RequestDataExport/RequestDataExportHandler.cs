@@ -7,6 +7,7 @@ using Logistics.Mediator;
 using Logistics.Shared.Models;
 using Microsoft.EntityFrameworkCore;
 using Logistics.Application.Abstractions.CurrentUser;
+using Logistics.Application.Modules.Compliance.Privacy.Constants;
 
 namespace Logistics.Application.Modules.Compliance.Privacy.Commands;
 

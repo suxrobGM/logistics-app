@@ -6,6 +6,7 @@ using Logistics.Shared.Models;
 using Logistics.Mediator;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
+using Logistics.Application.Modules.Compliance.Privacy.Constants;
 
 namespace Logistics.IdentityServer.Pages.Account.Manage.Privacy;
 

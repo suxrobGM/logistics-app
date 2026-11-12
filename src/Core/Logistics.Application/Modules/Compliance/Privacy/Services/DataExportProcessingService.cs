@@ -10,6 +10,7 @@ using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using Logistics.Application.Abstractions.Storage;
 using Logistics.Application.Abstractions.Privacy;
+using Logistics.Application.Modules.Compliance.Privacy.Constants;
 
 namespace Logistics.Application.Modules.Compliance.Privacy.Services;
 

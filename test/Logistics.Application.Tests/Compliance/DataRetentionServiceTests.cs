@@ -7,6 +7,7 @@ using Microsoft.Extensions.Logging.Abstractions;
 using MockQueryable;
 using NSubstitute;
 using Xunit;
+using Logistics.Application.Modules.Compliance.Privacy.Constants;
 
 namespace Logistics.Application.Tests.Compliance;
 

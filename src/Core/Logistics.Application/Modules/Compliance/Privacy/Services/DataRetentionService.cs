@@ -3,6 +3,7 @@ using Logistics.Domain.Persistence;
 using Logistics.Domain.Primitives;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
+using Logistics.Application.Modules.Compliance.Privacy.Constants;
 
 namespace Logistics.Application.Modules.Compliance.Privacy.Services;
 

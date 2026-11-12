@@ -1,4 +1,4 @@
-namespace Logistics.Domain.Primitives;
+namespace Logistics.Application.Modules.Compliance.Privacy.Constants;
 
 /// <summary>
 /// System-wide defaults for GDPR data subject rights and retention.
