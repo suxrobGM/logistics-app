@@ -24,7 +24,6 @@ public static partial class LoadMapper
     [MapperIgnoreTarget(nameof(LoadDto.Customer))]
     [MapperIgnoreTarget(nameof(LoadDto.Invoice))]
     [MapperIgnoreTarget(nameof(LoadDto.Accessorials))]
-    [MapperIgnoreTarget(nameof(LoadDto.CancelledAt))]
     [MapperIgnoreTarget(nameof(LoadDto.ContainerNumber))]
     [MapperIgnoreTarget(nameof(LoadDto.ContainerIsoType))]
     [MapperIgnoreTarget(nameof(LoadDto.ContainerLastFreeDay))]
