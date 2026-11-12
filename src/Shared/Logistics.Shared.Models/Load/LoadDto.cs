@@ -82,6 +82,11 @@ public class LoadDto
     public List<LoadVehicleDto> Vehicles { get; set; } = [];
 
     /// <summary>
+    ///     Customer update emails for this load, oldest first.
+    /// </summary>
+    public List<CustomerUpdateDto> CustomerUpdates { get; set; } = [];
+
+    /// <summary>
     ///     Set on a single-load read when the assigned truck's open loads carry more vehicles than
     ///     its <c>VehicleCapacity</c>. A warning, not a block.
     /// </summary>

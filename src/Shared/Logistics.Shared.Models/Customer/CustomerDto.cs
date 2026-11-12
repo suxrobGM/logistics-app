@@ -19,5 +19,10 @@ public class CustomerDto
     /// The factoring company this customer's invoices are sold to; null when the carrier collects itself.
     /// </summary>
     public Guid? FactoringCompanyId { get; set; }
+
+    /// <summary>
+    /// Which shipment update emails this customer receives.
+    /// </summary>
+    public CustomerUpdatePreferences UpdatePreferences { get; set; } = new();
     public DateTime CreatedAt { get; set; }
 }

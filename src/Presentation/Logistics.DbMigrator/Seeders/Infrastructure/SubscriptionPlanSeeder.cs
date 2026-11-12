@@ -35,7 +35,8 @@ internal class SubscriptionPlanSeeder(ILogger<SubscriptionPlanSeeder> logger) : 
         TenantFeature.AgenticDispatch,
         TenantFeature.AICopilot,
         TenantFeature.McpServer,
-        TenantFeature.VehicleTransport
+        TenantFeature.VehicleTransport,
+        TenantFeature.CustomerUpdates
     ];
 
     private static readonly TenantFeature[] ProfessionalFeatures =
@@ -50,7 +51,8 @@ internal class SubscriptionPlanSeeder(ILogger<SubscriptionPlanSeeder> logger) : 
         TenantFeature.FuelCards,
         TenantFeature.Ifta,
         TenantFeature.IntermodalContainers,
-        TenantFeature.AIRateNegotiation
+        TenantFeature.AIRateNegotiation,
+        TenantFeature.AITripAlerts
     ];
 
     private static readonly TenantFeature[] EnterpriseFeatures = Enum.GetValues<TenantFeature>();

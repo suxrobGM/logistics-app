@@ -18,6 +18,7 @@ internal sealed class LoadEntityConfiguration : IEntityTypeConfiguration<Load>
         });
 
         builder.ComplexCollection(i => i.Vehicles, vehicles => vehicles.ToJson("vehicles"));
+        builder.ComplexCollection(i => i.CustomerUpdates, updates => updates.ToJson("customer_updates"));
 
         builder.Property(i => i.Number)
             .UseIdentityAlwaysColumn()

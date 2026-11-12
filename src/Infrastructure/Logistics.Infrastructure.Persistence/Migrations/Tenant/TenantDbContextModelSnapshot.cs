@@ -1146,6 +1146,27 @@ namespace Logistics.Infrastructure.Persistence.Migrations.Tenant
                                 .HasColumnName("address_zip_code");
                         });
 
+                    b.ComplexProperty(typeof(Dictionary<string, object>), "UpdatePreferences", "Logistics.Domain.Entities.Customer.UpdatePreferences#CustomerUpdatePreferences", b1 =>
+                        {
+                            b1.IsRequired();
+
+                            b1.Property<bool>("Delivered")
+                                .HasColumnType("boolean")
+                                .HasColumnName("update_preferences_delivered");
+
+                            b1.Property<bool>("Dispatched")
+                                .HasColumnType("boolean")
+                                .HasColumnName("update_preferences_dispatched");
+
+                            b1.Property<bool>("Late")
+                                .HasColumnType("boolean")
+                                .HasColumnName("update_preferences_late");
+
+                            b1.Property<bool>("PickedUp")
+                                .HasColumnType("boolean")
+                                .HasColumnName("update_preferences_picked_up");
+                        });
+
                     b.HasKey("Id")
                         .HasName("pk_customers");
 
@@ -3133,6 +3154,27 @@ namespace Logistics.Infrastructure.Persistence.Migrations.Tenant
                     b.Property<double?>("Weight")
                         .HasColumnType("double precision")
                         .HasColumnName("weight");
+
+                    b.ComplexCollection(typeof(List<Dictionary<string, object>>), "CustomerUpdates", "Logistics.Domain.Entities.Load.CustomerUpdates#CustomerUpdate", b1 =>
+                        {
+                            b1.IsRequired();
+
+                            b1.Property<DateTime>("At");
+
+                            b1.Property<string>("Event")
+                                .IsRequired();
+
+                            b1.Property<string>("Outcome")
+                                .IsRequired();
+
+                            b1.Property<string>("Reason");
+
+                            b1.Property<int>("RecipientCount");
+
+                            b1
+                                .ToJson("customer_updates")
+                                .HasColumnType("jsonb");
+                        });
 
                     b.ComplexProperty(typeof(Dictionary<string, object>), "DeliveryCost", "Logistics.Domain.Entities.Load.DeliveryCost#Money", b1 =>
                         {

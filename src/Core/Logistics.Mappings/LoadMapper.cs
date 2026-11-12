@@ -78,6 +78,7 @@ public static partial class LoadMapper
                 AssignedTruckNumber = truck?.Number,
                 AssignedTruckDriversName = truck?.DriversNames,
                 Vehicles = entity.Vehicles.ToDto(),
+                CustomerUpdates = entity.CustomerUpdates.ToDto(),
                 Customer = lookup.FindCustomer(entity.CustomerId),
                 Invoice = lookup.FindInvoice(entity.Id),
                 TripId = trip?.Id,

@@ -14,5 +14,6 @@ internal sealed class CustomerEntityConfiguration : IEntityTypeConfiguration<Cus
             .HasMaxLength(50);
 
         builder.Property(c => c.DetentionRatePerHour).HasPrecision(18, 2);
+        builder.ComplexProperty(c => c.UpdatePreferences);
     }
 }

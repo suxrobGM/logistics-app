@@ -88,4 +88,15 @@ public class CustomerController(IMediator mediator) : ControllerBase
         var result = await mediator.Send(request);
         return result.IsSuccess ? NoContent() : BadRequest(ErrorResponse.FromResult(result));
     }
+
+    [HttpPut("{id:guid}/update-preferences", Name = "SetCustomerUpdatePreferences")]
+    [ProducesResponseType(StatusCodes.Status204NoContent)]
+    [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status400BadRequest)]
+    [Authorize(Policy = Permission.Customer.Manage)]
+    public async Task<IActionResult> SetUpdatePreferences(Guid id, [FromBody] SetCustomerUpdatePreferencesCommand request)
+    {
+        request.CustomerId = id;
+        var result = await mediator.Send(request);
+        return result.IsSuccess ? NoContent() : BadRequest(ErrorResponse.FromResult(result));
+    }
 }

@@ -1,0 +1,28 @@
+{% assign Title = "Load #" | append: LoadNumber | append: " scheduled" %}
+{% assign Sender = CompanyName %}
+{% assign Preheader = "Your shipment from " | append: OriginCity | append: " to " | append: DestinationCity | append: " is scheduled." %}
+<h1 class="h1 t-ink" style="margin: 0 0 16px; font-size: 24px; line-height: 1.3; font-weight: 700; color: #18181b;">Your shipment is scheduled</h1>
+
+<p class="t-body" style="margin: 0; font-size: 16px; line-height: 1.6; color: #3f3f46;">
+  {{ CompanyName }} has dispatched a truck for your shipment.
+</p>
+
+<table role="presentation" class="c-panel" width="100%" cellpadding="0" cellspacing="0" border="0" style="margin: 24px 0 0; background-color: #f4f4f5; border-radius: 8px;">
+  <tr>
+    <td class="panel-cell" style="padding: 20px;">
+      <p class="t-muted" style="margin: 0 0 4px; font-size: 13px; line-height: 1.5; color: #71717a;">Load #{{ LoadNumber }}{% if LoadName %} &middot; {{ LoadName }}{% endif %}</p>
+      <p class="t-ink" style="margin: 0; font-size: 17px; line-height: 1.5; font-weight: 600; color: #18181b;">{{ OriginCity }} &rarr; {{ DestinationCity }}</p>
+      {% if Window %}<p class="t-body" style="margin: 12px 0 0; font-size: 15px; line-height: 1.5; color: #3f3f46;">Pickup window: {{ Window }}</p>{% endif %}
+    </td>
+  </tr>
+</table>
+
+{% if TrackingUrl %}
+<table role="presentation" class="btn" cellpadding="0" cellspacing="0" border="0" style="margin: 28px 0 0;">
+  <tr>
+    <td align="center" style="border-radius: 8px; background-color: #18181b;">
+      <a href="{{ TrackingUrl }}" style="display: inline-block; padding: 14px 28px; font-size: 16px; line-height: 1.25; font-weight: 600; color: #ffffff; text-decoration: none; border-radius: 8px;">Track shipment</a>
+    </td>
+  </tr>
+</table>
+{% endif %}

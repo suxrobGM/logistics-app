@@ -65,5 +65,10 @@ public enum TenantFeature
     [Description("AI Rate Negotiation")]
     AIRateNegotiation,
 
-    VehicleTransport
+    VehicleTransport,
+
+    CustomerUpdates,
+
+    [Description("AI Trip Alerts")]
+    AITripAlerts
 }

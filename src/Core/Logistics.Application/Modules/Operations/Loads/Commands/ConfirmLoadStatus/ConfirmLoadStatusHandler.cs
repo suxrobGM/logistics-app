@@ -1,7 +1,6 @@
 using Logistics.Application.Abstractions;
 using Logistics.Application.Abstractions.CurrentUser;
 using Logistics.Application.Utilities;
-using Logistics.Application.Modules.Operations.Loads.Services;
 using Logistics.Domain.Entities;
 using Logistics.Domain.Persistence;
 using Logistics.Domain.Primitives.Enums;
@@ -14,8 +13,7 @@ namespace Logistics.Application.Modules.Operations.Loads.Commands;
 internal sealed class ConfirmLoadStatusHandler(
     ITenantUnitOfWork tenantUow,
     ICurrentUserService currentUser,
-    INotificationService notificationService,
-    IVehicleDeliveryEmailService vehicleDeliveryEmail)
+    INotificationService notificationService)
     : IRequestHandler<ConfirmLoadStatusCommand, Result>
 {
     public async Task<Result> Handle(ConfirmLoadStatusCommand req, CancellationToken ct)
@@ -48,7 +46,6 @@ internal sealed class ConfirmLoadStatusHandler(
         if (changes > 0)
         {
             await SendNotificationAsync(load);
-            await vehicleDeliveryEmail.SendAsync(load, ct);
         }
 
         return Result.Ok();

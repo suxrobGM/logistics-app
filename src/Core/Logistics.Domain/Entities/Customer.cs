@@ -43,5 +43,10 @@ public class Customer : AuditableEntity, ITenantEntity
     /// </summary>
     public decimal? DetentionRatePerHour { get; set; }
 
+    /// <summary>
+    /// Which shipment update emails this customer receives.
+    /// </summary>
+    public CustomerUpdatePreferences UpdatePreferences { get; set; } = new();
+
     public virtual List<LoadInvoice> Invoices { get; set; } = [];
 }

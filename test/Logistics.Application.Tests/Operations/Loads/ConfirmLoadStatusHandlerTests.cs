@@ -34,7 +34,7 @@ public class ConfirmLoadStatusHandlerTests
         _currentUser.IsInRole(Arg.Is<string[]>(r => r.Contains(TenantRoles.Driver))).Returns(true);
 
         _sut = new ConfirmLoadStatusHandler(
-            _tenantUow, _currentUser, Substitute.For<INotificationService>(), Substitute.For<IVehicleDeliveryEmailService>());
+            _tenantUow, _currentUser, Substitute.For<INotificationService>());
     }
 
     private Load NewDispatchedLoad()
