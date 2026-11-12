@@ -44,8 +44,8 @@ public class TripAlertReporterTests
     {
         _eta.GetRemainingDriveTime(_trip, Arg.Any<DateTime>()).Returns(TimeSpan.FromHours(6));
 
-        await _sut.CheckHosShortfallAsync(_driverId, drivingMinutesRemaining: 300);
-        await _sut.CheckHosShortfallAsync(_driverId, drivingMinutesRemaining: 290);
+        await _sut.CheckHosShortfallsAsync(new Dictionary<Guid, int> { [_driverId] = 300 });
+        await _sut.CheckHosShortfallsAsync(new Dictionary<Guid, int> { [_driverId] = 290 });
 
         Assert.NotNull(_trip.HosShortfallFlaggedAt);
         _enqueuer.Received(1).Enqueue(Arg.Is<RaiseTripAlertCommand>(c =>
@@ -57,7 +57,7 @@ public class TripAlertReporterTests
     {
         _eta.GetRemainingDriveTime(_trip, Arg.Any<DateTime>()).Returns(TimeSpan.FromHours(4));
 
-        await _sut.CheckHosShortfallAsync(_driverId, drivingMinutesRemaining: 300);
+        await _sut.CheckHosShortfallsAsync(new Dictionary<Guid, int> { [_driverId] = 300 });
 
         Assert.Null(_trip.HosShortfallFlaggedAt);
         _enqueuer.DidNotReceiveWithAnyArgs().Enqueue(default!);
@@ -68,7 +68,7 @@ public class TripAlertReporterTests
     {
         _eta.GetRemainingDriveTime(_trip, Arg.Any<DateTime>()).Returns((TimeSpan?)null);
 
-        await _sut.CheckHosShortfallAsync(_driverId, drivingMinutesRemaining: 10);
+        await _sut.CheckHosShortfallsAsync(new Dictionary<Guid, int> { [_driverId] = 10 });
 
         _enqueuer.DidNotReceiveWithAnyArgs().Enqueue(default!);
     }

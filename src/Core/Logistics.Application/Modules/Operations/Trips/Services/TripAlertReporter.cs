@@ -16,16 +16,27 @@ internal sealed class TripAlertReporter(
     ICommandEnqueuer commandEnqueuer,
     IFeatureService featureService) : ITripAlertReporter
 {
-    public async Task CheckHosShortfallAsync(Guid employeeId, int drivingMinutesRemaining, CancellationToken ct = default)
+    public async Task CheckHosShortfallsAsync(
+        IReadOnlyDictionary<Guid, int> drivingMinutesByDriver, CancellationToken ct = default)
     {
-        if (!await IsEnabledAsync())
+        if (drivingMinutesByDriver.Count == 0 || !await IsEnabledAsync())
         {
             return;
         }
 
-        if (await FindActiveTripAsync(employeeId, ct) is { } trip)
+        List<Guid?> driverIds = [.. drivingMinutesByDriver.Keys.Select(id => (Guid?)id)];
+        var trips = await QueryActiveTrips()
+            .Where(t => t.HosShortfallFlaggedAt == null)
+            .Where(t => driverIds.Contains(t.DriverId) || driverIds.Contains(t.SecondaryDriverId))
+            .ToListAsync(ct);
+
+        foreach (var (driverId, drivingMinutesRemaining) in drivingMinutesByDriver)
         {
-            FlagIfShort(trip, drivingMinutesRemaining);
+            var trip = trips.FirstOrDefault(t => t.DriverId == driverId || t.SecondaryDriverId == driverId);
+            if (trip is not null)
+            {
+                FlagIfShort(trip, drivingMinutesRemaining);
+            }
         }
     }
 
@@ -138,11 +149,17 @@ internal sealed class TripAlertReporter(
 
     private async Task<Trip?> FindActiveTripAsync(Guid employeeId, CancellationToken ct)
     {
-        return await tenantUow.Repository<Trip>().Query()
+        return await QueryActiveTrips()
             .Where(t => t.DriverId == employeeId || t.SecondaryDriverId == employeeId)
-            .Where(t => t.Status == TripStatus.Dispatched || t.Status == TripStatus.InTransit)
-            .OrderByDescending(t => t.DispatchedAt)
             .FirstOrDefaultAsync(ct);
+    }
+
+    /// <summary>Newest first, so a driver's most recently dispatched trip wins.</summary>
+    private IQueryable<Trip> QueryActiveTrips()
+    {
+        return tenantUow.Repository<Trip>().Query()
+            .Where(t => t.Status == TripStatus.Dispatched || t.Status == TripStatus.InTransit)
+            .OrderByDescending(t => t.DispatchedAt);
     }
 
     private static string FormatMinutes(int minutes)

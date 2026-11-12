@@ -39,13 +39,17 @@ internal sealed class EldSyncService(
                     .GetListAsync(s => employeeIds.Contains(s.EmployeeId), ct))
                 .ToDictionary(s => s.EmployeeId);
 
+            var drivingMinutesByDriver = new Dictionary<Guid, int>();
             foreach (var mapping in mappings)
             {
                 if (clocks.TryGetValue(mapping.ExternalDriverId, out var hosData))
                 {
                     await ApplyHosStatusAsync(mapping, hosData, statuses.GetValueOrDefault(mapping.EmployeeId), ct);
+                    drivingMinutesByDriver[mapping.EmployeeId] = hosData.DrivingMinutesRemaining;
                 }
             }
+
+            await tripAlertReporter.CheckHosShortfallsAsync(drivingMinutesByDriver, ct);
         }
 
         var locations = provider is IEldGpsTrackingProvider gps
@@ -93,6 +97,8 @@ internal sealed class EldSyncService(
         var status = await tenantUow.Repository<DriverHosStatus>()
             .GetAsync(s => s.EmployeeId == mapping.EmployeeId, ct);
         await ApplyHosStatusAsync(mapping, hosData, status, ct);
+        await tripAlertReporter.CheckHosShortfallsAsync(
+            new Dictionary<Guid, int> { [mapping.EmployeeId] = hosData.DrivingMinutesRemaining }, ct);
         await tenantUow.SaveChangesAsync(ct);
     }
 
@@ -160,8 +166,6 @@ internal sealed class EldSyncService(
         status.NextMandatoryBreakAt = hosData.NextMandatoryBreakAt;
         status.LastUpdatedAt = now;
         mapping.LastSyncedAt = now;
-
-        await tripAlertReporter.CheckHosShortfallAsync(mapping.EmployeeId, hosData.DrivingMinutesRemaining, ct);
     }
 
     /// <summary>
