@@ -130,7 +130,7 @@ What the backend contains:
 
 ## Run it locally
 
-You need the [.NET 10 SDK](https://dotnet.microsoft.com/download/dotnet/10.0) and Docker.
+You need the [.NET 11 SDK](https://dotnet.microsoft.com/download/dotnet/11.0) and Docker.
 
 ```bash
 git clone --recurse-submodules https://github.com/suxrobGM/logistics-app.git
@@ -173,7 +173,7 @@ Each tenant company gets its own PostgreSQL database. The [architecture overview
 
 | Part | Stack |
 | --- | --- |
-| Backend | .NET 10, ASP.NET Core, EF Core, SignalR, Hangfire, Open.IdentityServer |
+| Backend | .NET 11, ASP.NET Core, EF Core, SignalR, Hangfire, Open.IdentityServer |
 | Web portals | Angular 22, spartan/ui, Tailwind CSS |
 | Driver app | Kotlin Multiplatform, Compose Multiplatform |
 | Database | PostgreSQL 18 |

@@ -4,15 +4,15 @@ Required software to run LogisticsX locally.
 
 ## Required Software
 
-### .NET 10 SDK
+### .NET 11 SDK
 
-Download and install from [Microsoft](https://dotnet.microsoft.com/download/dotnet/10.0).
+Download and install from [Microsoft](https://dotnet.microsoft.com/download/dotnet/11.0).
 
 Verify installation:
 
 ```bash
 dotnet --version
-# Should output: 10.0.x
+# Should output: 11.0.x
 ```
 
 ### Bun Runtime

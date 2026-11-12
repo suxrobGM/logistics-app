@@ -1,6 +1,6 @@
 ﻿# Architecture Overview
 
-LogisticsX is a Domain-Driven Design (DDD) monolith with CQRS, organized into clear layers and a modular infrastructure split into focused projects. The runtime is .NET 10 on PostgreSQL 18, deployed with Docker Compose.
+LogisticsX is a Domain-Driven Design (DDD) monolith with CQRS, organized into clear layers and a modular infrastructure split into focused projects. The runtime is .NET 11 on PostgreSQL 18, deployed with Docker Compose.
 
 > See [layering.md](layering.md) for the 4-layer rule and the Abstractions / Application split. See [module-layout.md](module-layout.md) for the Application `Modules/` layout.
 
@@ -133,7 +133,7 @@ A public clone gets an empty `private/` directory. Everything else builds and ru
 
 | Technology | Purpose |
 | --- | --- |
-| .NET 10 | Runtime |
+| .NET 11 | Runtime |
 | ASP.NET Core | Web framework |
 | Entity Framework Core | ORM (lazy loading enabled) |
 | Open.IdentityServer | OAuth2 / OIDC |

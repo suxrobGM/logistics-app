@@ -5,7 +5,7 @@ Run local infrastructure (PostgreSQL + the database migrator) in Docker, then ru
 ## Prerequisites
 
 - Docker Desktop running
-- .NET 10 SDK
+- .NET 11 SDK
 - Bun (for the Angular apps)
 
 ## Quick Start
