@@ -14,7 +14,6 @@ public class UpdateTripCommand : ICommand
     public Guid? TrailerId { get; set; }
 
     public IEnumerable<CreateTripLoadCommand>? NewLoads { get; set; }
-    public IEnumerable<Guid>? AttachedLoadIds { get; set; }
     public IEnumerable<Guid>? DetachedLoadIds { get; set; }
     public IEnumerable<TripStopDto>? OptimizedStops { get; set; }
 

@@ -85,14 +85,6 @@ internal sealed class UpdateTripHandler(
 
         var removedCount = RemoveLoads(trip, loadsMap, req.DetachedLoadIds);
 
-        // Disabled the attach logic for now
-        // var attachResult = await AttachExistingLoadsAsync(trip, loadsMap, req.AttachedLoadIds, ct);
-        // if (!attachResult.Success)
-        // {
-        //     return Result.Fail(attachResult.Error!);
-        // }
-
-        var attachedCount = 0; // attachResult.Data;
         var created = await CreateNewLoadsAsync(trip, loadsMap, req.NewLoads);
         if (!created.IsSuccess)
         {
@@ -117,8 +109,8 @@ internal sealed class UpdateTripHandler(
         await uow.SaveChangesAsync(ct);
 
         logger.LogInformation(
-            "Updated trip '{TripId}'. Name='{Name}', Truck='{TruckId}'. Loads={LoadCount} (attached {Attached}, created {Created}, removed {Removed})",
-            trip.Id, trip.Name, trip.TruckId, loadsMap.Count, attachedCount, createdCount,
+            "Updated trip '{TripId}'. Name='{Name}', Truck='{TruckId}'. Loads={LoadCount} (created {Created}, removed {Removed})",
+            trip.Id, trip.Name, trip.TruckId, loadsMap.Count, createdCount,
             removedCount);
 
         return Result.Ok();
@@ -146,54 +138,6 @@ internal sealed class UpdateTripHandler(
         return before - loadsMap.Count;
     }
 
-    private async Task<Result<int>> AttachExistingLoadsAsync(
-        Trip trip,
-        Dictionary<Guid, Load> loadsMap,
-        IEnumerable<Guid>? attachIds,
-        CancellationToken ct)
-    {
-        var count = 0;
-        if (attachIds is null)
-        {
-            return Result<int>.Ok(count);
-        }
-
-        var ids = attachIds.Distinct().Where(id => !loadsMap.ContainsKey(id)).ToArray();
-        if (ids.Length == 0)
-        {
-            return Result<int>.Ok(count);
-        }
-
-        var toAttach = await uow.Repository<Load>().GetListAsync(l => ids.Contains(l.Id), ct);
-
-        foreach (var load in toAttach)
-        {
-            if (load.Status != LoadStatus.Draft)
-            {
-                return Result<int>.Fail(
-                    $"Only loads in 'Draft' status can be attached. Load '{load.Id}' is in '{load.Status}' status.");
-            }
-
-            load.AssignedTruckId = trip.TruckId;
-            load.AssignedTruck = trip.Truck;
-
-            // If the load already has trip stops, we need to remove them first from the previous trip
-            // to avoid duplicates. This can happen if the load was previously attached to another trip.
-            if (load.TripStops.Count > 0)
-            {
-                var previousTrip = await uow.Repository<Trip>().GetByIdAsync(load.TripStops.First().TripId, ct);
-                previousTrip?.RemoveLoad(load.Id);
-            }
-
-            // Add the existing load to the new trip
-            trip.AddLoads([load]);
-
-            loadsMap[load.Id] = load;
-            count++;
-        }
-
-        return Result<int>.Ok(count);
-    }
 
     private async Task<Result<int>> CreateNewLoadsAsync(
         Trip trip,
