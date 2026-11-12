@@ -14,16 +14,11 @@ namespace Logistics.Infrastructure.Persistence.Converters;
 ///     </list>
 ///     EF applies converters only to non-null values, so null handling is not needed here.
 /// </summary>
-public sealed class EncryptedStringConverter : ValueConverter<string, string>
+public sealed class EncryptedStringConverter(IDataProtector protector) : ValueConverter<string, string>(
+        plaintext => Encrypt(protector, plaintext),
+        stored => Decrypt(protector, stored))
 {
     public const string Prefix = "enc:v1:";
-
-    public EncryptedStringConverter(IDataProtector protector)
-        : base(
-            plaintext => Encrypt(protector, plaintext),
-            stored => Decrypt(protector, stored))
-    {
-    }
 
     private static string Encrypt(IDataProtector protector, string plaintext)
     {

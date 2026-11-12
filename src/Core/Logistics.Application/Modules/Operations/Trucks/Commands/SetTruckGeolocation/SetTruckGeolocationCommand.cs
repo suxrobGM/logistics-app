@@ -2,12 +2,7 @@ using Logistics.Shared.Models;
 
 namespace Logistics.Application.Modules.Operations.Trucks.Commands;
 
-public class SetTruckGeolocationCommand : ICommand
+public class SetTruckGeolocationCommand(TruckGeolocationDto geolocationData) : ICommand
 {
-    public SetTruckGeolocationCommand(TruckGeolocationDto geolocationData)
-    {
-        GeolocationData = geolocationData;
-    }
-
-    public TruckGeolocationDto GeolocationData { get; set; }
+    public TruckGeolocationDto GeolocationData { get; set; } = geolocationData;
 }

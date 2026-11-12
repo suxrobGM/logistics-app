@@ -14,51 +14,33 @@ using Logistics.Application.Abstractions.Captcha;
 namespace Logistics.IdentityServer.Pages.Account.Register;
 
 [AllowAnonymous]
-public class Index : PageModel
+public class Index(
+    IConfiguration configuration,
+    SignInManager<User> signInManager,
+    UserManager<User> userManager,
+    IEmailSender emailSender,
+    IEmailTemplateService emailTemplateService,
+    ICaptchaService captchaService,
+    ILogger<Index> logger) : PageModel
 {
-    private readonly SignInManager<User> _signInManager;
-    private readonly UserManager<User> _userManager;
-    private readonly IEmailSender _emailSender;
-    private readonly IEmailTemplateService _emailTemplateService;
-    private readonly ICaptchaService _captchaService;
-    private readonly ILogger<Index> _logger;
-
-    public Index(
-        IConfiguration configuration,
-        SignInManager<User> signInManager,
-        UserManager<User> userManager,
-        IEmailSender emailSender,
-        IEmailTemplateService emailTemplateService,
-        ICaptchaService captchaService,
-        ILogger<Index> logger)
-    {
-        _signInManager = signInManager;
-        _userManager = userManager;
-        _emailSender = emailSender;
-        _emailTemplateService = emailTemplateService;
-        _captchaService = captchaService;
-        _logger = logger;
-        CaptchaSiteKey = configuration.GetValue<string>("GoogleRecaptcha:SiteKey");
-    }
-
     [BindProperty]
     public InputModel Input { get; set; } = new();
     public string? ReturnUrl { get; set; }
-    public string? CaptchaSiteKey { get; }
+    public string? CaptchaSiteKey { get; } = configuration.GetValue<string>("GoogleRecaptcha:SiteKey");
     public IList<AuthenticationScheme> ExternalLogins { get; set; } = [];
 
     public async Task OnGetAsync(string? returnUrl = null)
     {
         ReturnUrl = returnUrl;
-        ExternalLogins = (await _signInManager.GetExternalAuthenticationSchemesAsync()).ToList();
+        ExternalLogins = (await signInManager.GetExternalAuthenticationSchemesAsync()).ToList();
     }
 
     public async Task<IActionResult> OnPostAsync(string? returnUrl = null)
     {
         returnUrl ??= Url.Content("~/");
         var captchaValue = HttpContext.Request.Form["g-recaptcha-response"].ToString();
-        var validCaptcha = await _captchaService.VerifyCaptchaAsync(captchaValue);
-        ExternalLogins = (await _signInManager.GetExternalAuthenticationSchemesAsync()).ToList();
+        var validCaptcha = await captchaService.VerifyCaptchaAsync(captchaValue);
+        ExternalLogins = (await signInManager.GetExternalAuthenticationSchemesAsync()).ToList();
 
         if (!validCaptcha)
             ModelState.AddModelError("captcha", "Invalid captcha verification");
@@ -74,25 +56,25 @@ public class Index : PageModel
             LastName = Input.LastName
         };
 
-        var result = await _userManager.CreateAsync(user, Input.Password);
+        var result = await userManager.CreateAsync(user, Input.Password);
         if (result.Succeeded)
         {
-            _logger.LogInformation("User created a new account with password");
+            logger.LogInformation("User created a new account with password");
 
-            var code = await _userManager.GenerateEmailConfirmationTokenAsync(user);
+            var code = await userManager.GenerateEmailConfirmationTokenAsync(user);
             code = WebEncoders.Base64UrlEncode(Encoding.UTF8.GetBytes(code));
             var callbackUrl = Url.Page("/Account/ConfirmEmail", null, new { userId = user.Id, code, returnUrl }, Request.Scheme);
 
             var confirmModel = new EmailConfirmationEmailModel { ConfirmUrl = callbackUrl! };
-            var confirmBody = await _emailTemplateService.RenderAsync("EmailConfirmation", confirmModel);
-            await _emailSender.SendEmailAsync(Input.Email, "Confirm your email", confirmBody);
+            var confirmBody = await emailTemplateService.RenderAsync("EmailConfirmation", confirmModel);
+            await emailSender.SendEmailAsync(Input.Email, "Confirm your email", confirmBody);
 
-            if (_userManager.Options.SignIn.RequireConfirmedAccount)
+            if (userManager.Options.SignIn.RequireConfirmedAccount)
             {
                 return RedirectToPage("RegisterConfirmation", new { email = Input.Email, returnUrl });
             }
 
-            await _signInManager.SignInAsync(user, false);
+            await signInManager.SignInAsync(user, false);
             return LocalRedirect(returnUrl);
         }
         foreach (var error in result.Errors)

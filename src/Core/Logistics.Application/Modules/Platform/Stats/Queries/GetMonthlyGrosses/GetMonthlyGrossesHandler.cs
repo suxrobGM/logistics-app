@@ -8,15 +8,8 @@ using Logistics.Shared.Models;
 
 namespace Logistics.Application.Modules.Platform.Stats.Queries;
 
-internal sealed class GetMonthlyGrossesHandler : IRequestHandler<GetMonthlyGrossesQuery, Result<MonthlyGrossesDto>>
+internal sealed class GetMonthlyGrossesHandler(ITenantUnitOfWork tenantUow) : IRequestHandler<GetMonthlyGrossesQuery, Result<MonthlyGrossesDto>>
 {
-    private readonly ITenantUnitOfWork _tenantUow;
-
-    public GetMonthlyGrossesHandler(ITenantUnitOfWork tenantUow)
-    {
-        _tenantUow = tenantUow;
-    }
-
     public async Task<Result<MonthlyGrossesDto>> Handle(
         GetMonthlyGrossesQuery req, CancellationToken ct)
     {
@@ -24,7 +17,7 @@ internal sealed class GetMonthlyGrossesHandler : IRequestHandler<GetMonthlyGross
 
         if (req.UserId.HasValue)
         {
-            var truck = await _tenantUow.Repository<Truck>().GetAsync(i => i.MainDriverId == req.UserId.Value ||
+            var truck = await tenantUow.Repository<Truck>().GetAsync(i => i.MainDriverId == req.UserId.Value ||
                                                                            i.SecondaryDriverId == req.UserId.Value);
 
             if (truck is null)
@@ -41,7 +34,7 @@ internal sealed class GetMonthlyGrossesHandler : IRequestHandler<GetMonthlyGross
 
         var spec = new FilterLoadsByDeliveryDate(truckId, startDate, endDate);
         var months = req.StartDate.MonthsBetween(req.EndDate);
-        var filteredLoads = _tenantUow.Repository<Load>().ApplySpecification(spec).ToArray();
+        var filteredLoads = tenantUow.Repository<Load>().ApplySpecification(spec).ToArray();
 
         var dict = months.ToDictionary(
             k => (k.Year, k.Month),

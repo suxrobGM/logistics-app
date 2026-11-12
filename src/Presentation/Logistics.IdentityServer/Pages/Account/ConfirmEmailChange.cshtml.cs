@@ -13,22 +13,11 @@ namespace Logistics.IdentityServer.Pages.Account;
 
 [AllowAnonymous]
 
-public class ConfirmEmailChangeModel : PageModel
+public class ConfirmEmailChangeModel(
+    UserManager<User> userManager,
+    SignInManager<User> signInManager,
+    IUserService userService) : PageModel
 {
-    private readonly UserManager<User> _userManager;
-    private readonly SignInManager<User> _signInManager;
-    private readonly IUserService _userService;
-
-    public ConfirmEmailChangeModel(
-        UserManager<User> userManager,
-        SignInManager<User> signInManager,
-        IUserService userService)
-    {
-        _userManager = userManager;
-        _signInManager = signInManager;
-        _userService = userService;
-    }
-
     [TempData]
     public string? StatusMessage { get; set; }
 
@@ -39,23 +28,23 @@ public class ConfirmEmailChangeModel : PageModel
             return RedirectToPage("/Index");
         }
 
-        var user = await _userManager.FindByIdAsync(userId);
+        var user = await userManager.FindByIdAsync(userId);
         if (user == null)
         {
             return NotFound($"Unable to load user with ID '{userId}'.");
         }
 
         code = Encoding.UTF8.GetString(WebEncoders.Base64UrlDecode(code));
-        var result = await _userManager.ChangeEmailAsync(user, email, code);
+        var result = await userManager.ChangeEmailAsync(user, email, code);
         if (!result.Succeeded)
         {
             StatusMessage = "Error changing email.";
             return Page();
         }
 
-        await _userService.SyncTenantProfilesAsync(user);
+        await userService.SyncTenantProfilesAsync(user);
 
-        await _signInManager.RefreshSignInAsync(user);
+        await signInManager.RefreshSignInAsync(user);
         StatusMessage = "Thank you for confirming your email change.";
         return Page();
     }

@@ -7,19 +7,12 @@ using Logistics.Shared.Models;
 
 namespace Logistics.Application.Modules.IdentityAccess.Employees.Queries;
 
-internal sealed class GetEmployeeByIdHandler : IRequestHandler<GetEmployeeByIdQuery, Result<EmployeeDto>>
+internal sealed class GetEmployeeByIdHandler(ITenantUnitOfWork tenantUow) : IRequestHandler<GetEmployeeByIdQuery, Result<EmployeeDto>>
 {
-    private readonly ITenantUnitOfWork _tenantUow;
-
-    public GetEmployeeByIdHandler(ITenantUnitOfWork tenantUow)
-    {
-        _tenantUow = tenantUow;
-    }
-
     public async Task<Result<EmployeeDto>> Handle(
         GetEmployeeByIdQuery req, CancellationToken ct)
     {
-        var employeeEntity = await _tenantUow.Repository<Employee>().GetByIdAsync(req.UserId, ct);
+        var employeeEntity = await tenantUow.Repository<Employee>().GetByIdAsync(req.UserId, ct);
 
         if (employeeEntity is null)
         {

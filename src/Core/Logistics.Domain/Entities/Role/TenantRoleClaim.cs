@@ -2,16 +2,10 @@ using Logistics.Domain.Core;
 
 namespace Logistics.Domain.Entities;
 
-public class TenantRoleClaim : Entity, ITenantEntity
+public class TenantRoleClaim(string claimType, string claimValue) : Entity, ITenantEntity
 {
-    public TenantRoleClaim(string claimType, string claimValue)
-    {
-        ClaimType = claimType;
-        ClaimValue = claimValue;
-    }
-
-    public string ClaimType { get; set; }
-    public string ClaimValue { get; set; }
+    public string ClaimType { get; set; } = claimType;
+    public string ClaimValue { get; set; } = claimValue;
 
     public Guid RoleId { get; set; }
     public virtual TenantRole Role { get; set; } = null!;

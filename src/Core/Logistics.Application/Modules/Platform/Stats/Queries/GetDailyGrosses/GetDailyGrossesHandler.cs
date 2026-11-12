@@ -8,15 +8,8 @@ using Logistics.Shared.Models;
 
 namespace Logistics.Application.Modules.Platform.Stats.Queries;
 
-internal sealed class GetDailyGrossesHandler : IRequestHandler<GetDailyGrossesQuery, Result<DailyGrossesDto>>
+internal sealed class GetDailyGrossesHandler(ITenantUnitOfWork tenantUow) : IRequestHandler<GetDailyGrossesQuery, Result<DailyGrossesDto>>
 {
-    private readonly ITenantUnitOfWork _tenantUow;
-
-    public GetDailyGrossesHandler(ITenantUnitOfWork tenantUow)
-    {
-        _tenantUow = tenantUow;
-    }
-
     public async Task<Result<DailyGrossesDto>> Handle(
         GetDailyGrossesQuery req, CancellationToken ct)
     {
@@ -24,7 +17,7 @@ internal sealed class GetDailyGrossesHandler : IRequestHandler<GetDailyGrossesQu
 
         if (req.UserId.HasValue)
         {
-            var truck = await _tenantUow.Repository<Truck>().GetAsync(i => i.MainDriverId == req.UserId.Value ||
+            var truck = await tenantUow.Repository<Truck>().GetAsync(i => i.MainDriverId == req.UserId.Value ||
                                                                            i.SecondaryDriverId == req.UserId.Value);
 
             if (truck is null)
@@ -46,7 +39,7 @@ internal sealed class GetDailyGrossesHandler : IRequestHandler<GetDailyGrossesQu
             k => (k.Year, k.Month, k.Day),
             m => new DailyGrossDto(m.Year, m.Month, m.Day));
 
-        var filteredLoads = _tenantUow.Repository<Load>().ApplySpecification(spec).ToArray();
+        var filteredLoads = tenantUow.Repository<Load>().ApplySpecification(spec).ToArray();
 
         foreach (var load in filteredLoads)
         {

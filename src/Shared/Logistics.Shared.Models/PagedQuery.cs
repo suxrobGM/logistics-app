@@ -1,20 +1,13 @@
 namespace Logistics.Shared.Models;
 
-public class PagedQuery
+public class PagedQuery(
+    string? orderBy = null,
+    int page = 1,
+    int pageSize = 10)
 {
-    public PagedQuery(
-        string? orderBy = null,
-        int page = 1,
-        int pageSize = 10)
-    {
-        OrderBy = orderBy;
-        Page = page;
-        PageSize = pageSize;
-    }
-
-    public string? OrderBy { get; set; }
-    public int Page { get; set; }
-    public int PageSize { get; set; }
+    public string? OrderBy { get; set; } = orderBy;
+    public int Page { get; set; } = page;
+    public int PageSize { get; set; } = pageSize;
 
     public virtual IDictionary<string, string> ToDictionary()
     {

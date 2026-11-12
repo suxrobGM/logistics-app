@@ -7,19 +7,12 @@ using Logistics.Shared.Models;
 
 namespace Logistics.Application.Modules.Operations.Trips.Queries;
 
-internal sealed class GetTripHandler : IRequestHandler<GetTripQuery, Result<TripDto>>
+internal sealed class GetTripHandler(ITenantUnitOfWork tenantUow) : IRequestHandler<GetTripQuery, Result<TripDto>>
 {
-    private readonly ITenantUnitOfWork _tenantUow;
-
-    public GetTripHandler(ITenantUnitOfWork tenantUow)
-    {
-        _tenantUow = tenantUow;
-    }
-
     public async Task<Result<TripDto>> Handle(
         GetTripQuery req, CancellationToken ct)
     {
-        var trip = await _tenantUow.Repository<Trip>().GetByIdAsync(req.TripId);
+        var trip = await tenantUow.Repository<Trip>().GetByIdAsync(req.TripId);
 
         if (trip is null)
         {

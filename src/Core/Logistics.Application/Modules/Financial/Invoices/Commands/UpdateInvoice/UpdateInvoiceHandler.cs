@@ -6,19 +6,12 @@ using Logistics.Shared.Models;
 
 namespace Logistics.Application.Modules.Financial.Invoices.Commands;
 
-internal sealed class UpdateInvoiceHandler : IRequestHandler<UpdateInvoiceCommand, Result>
+internal sealed class UpdateInvoiceHandler(ITenantUnitOfWork tenantUow) : IRequestHandler<UpdateInvoiceCommand, Result>
 {
-    private readonly ITenantUnitOfWork _tenantUow;
-
-    public UpdateInvoiceHandler(ITenantUnitOfWork tenantUow)
-    {
-        _tenantUow = tenantUow;
-    }
-
     public async Task<Result> Handle(
         UpdateInvoiceCommand req, CancellationToken ct)
     {
-        var invoice = await _tenantUow.Repository<Invoice>().GetByIdAsync(req.Id);
+        var invoice = await tenantUow.Repository<Invoice>().GetByIdAsync(req.Id);
 
         if (invoice is null)
         {
@@ -30,8 +23,8 @@ internal sealed class UpdateInvoiceHandler : IRequestHandler<UpdateInvoiceComman
             invoice.Status = req.InvoiceStatus.Value;
         }
 
-        _tenantUow.Repository<Invoice>().Update(invoice);
-        await _tenantUow.SaveChangesAsync();
+        tenantUow.Repository<Invoice>().Update(invoice);
+        await tenantUow.SaveChangesAsync();
         return Result.Ok();
     }
 }

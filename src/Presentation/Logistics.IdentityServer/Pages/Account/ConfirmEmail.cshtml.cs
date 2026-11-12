@@ -11,15 +11,8 @@ using Microsoft.AspNetCore.WebUtilities;
 namespace Logistics.IdentityServer.Pages.Account;
 
 [AllowAnonymous]
-public class ConfirmEmailModel : PageModel
+public class ConfirmEmailModel(UserManager<User> userManager) : PageModel
 {
-    private readonly UserManager<User> _userManager;
-
-    public ConfirmEmailModel(UserManager<User> userManager)
-    {
-        _userManager = userManager;
-    }
-
     [TempData]
     public string? StatusMessage { get; set; }
 
@@ -30,14 +23,14 @@ public class ConfirmEmailModel : PageModel
             return RedirectToPage("/Index");
         }
 
-        var user = await _userManager.FindByIdAsync(userId);
+        var user = await userManager.FindByIdAsync(userId);
         if (user == null)
         {
             return NotFound($"Unable to load user with ID '{userId}'.");
         }
 
         code = Encoding.UTF8.GetString(WebEncoders.Base64UrlDecode(code));
-        var result = await _userManager.ConfirmEmailAsync(user, code);
+        var result = await userManager.ConfirmEmailAsync(user, code);
         StatusMessage = result.Succeeded ? "Thank you for confirming your email." : "Error confirming your email.";
         return Page();
     }

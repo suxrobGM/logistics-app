@@ -9,22 +9,15 @@ namespace Logistics.IdentityServer.Pages.ExternalLogin;
 
 [AllowAnonymous]
 [SecurityHeaders]
-public class Challenge : PageModel
+public class Challenge(IIdentityServerInteractionService interactionService) : PageModel
 {
-    private readonly IIdentityServerInteractionService _interactionService;
-
-    public Challenge(IIdentityServerInteractionService interactionService)
-    {
-        _interactionService = interactionService;
-    }
-
     public IActionResult OnGet(string scheme, string returnUrl)
     {
         if (string.IsNullOrEmpty(returnUrl))
             returnUrl = "~/";
 
         // validate returnUrl - either it is a valid OIDC URL or back to a local page
-        if (Url.IsLocalUrl(returnUrl) == false && _interactionService.IsValidReturnUrl(returnUrl) == false)
+        if (Url.IsLocalUrl(returnUrl) == false && interactionService.IsValidReturnUrl(returnUrl) == false)
         {
             // user might have clicked on a malicious link - should be logged
             throw new Exception("invalid return URL");

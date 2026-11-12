@@ -4,11 +4,8 @@ using Logistics.Infrastructure.Persistence.Data;
 
 namespace Logistics.Infrastructure.Persistence.Repositories;
 
-internal class MasterRepository<TEntity, TKey> :
-    Repository<MasterDbContext, TEntity, TKey>, IMasterRepository<TEntity, TKey>
+internal class MasterRepository<TEntity, TKey>(MasterDbContext masterDbContext) :
+    Repository<MasterDbContext, TEntity, TKey>(masterDbContext), IMasterRepository<TEntity, TKey>
     where TEntity : class, IEntity<TKey>, IMasterEntity
 {
-    public MasterRepository(MasterDbContext masterDbContext) : base(masterDbContext)
-    {
-    }
 }

@@ -8,19 +8,12 @@ using Logistics.Shared.Models;
 namespace Logistics.Application.Modules.IdentityAccess.Subscriptions.Queries;
 
 internal sealed class
-    GetSubscriptionPlanHandler : IRequestHandler<GetSubscriptionPlanQuery, Result<SubscriptionPlanDto>>
+    GetSubscriptionPlanHandler(IMasterUnitOfWork masterUow) : IRequestHandler<GetSubscriptionPlanQuery, Result<SubscriptionPlanDto>>
 {
-    private readonly IMasterUnitOfWork _masterUow;
-
-    public GetSubscriptionPlanHandler(IMasterUnitOfWork masterUow)
-    {
-        _masterUow = masterUow;
-    }
-
     public async Task<Result<SubscriptionPlanDto>> Handle(
         GetSubscriptionPlanQuery req, CancellationToken ct)
     {
-        var entity = await _masterUow.Repository<SubscriptionPlan>().GetAsync(i => i.Id == req.Id);
+        var entity = await masterUow.Repository<SubscriptionPlan>().GetAsync(i => i.Id == req.Id);
 
         if (entity is null)
         {

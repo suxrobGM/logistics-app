@@ -7,19 +7,12 @@ using Logistics.Shared.Models;
 
 namespace Logistics.Application.Modules.Financial.Payments.Queries;
 
-internal sealed class GetPaymentHandler : IRequestHandler<GetPaymentQuery, Result<PaymentDto>>
+internal sealed class GetPaymentHandler(ITenantUnitOfWork tenantUow) : IRequestHandler<GetPaymentQuery, Result<PaymentDto>>
 {
-    private readonly ITenantUnitOfWork _tenantUow;
-
-    public GetPaymentHandler(ITenantUnitOfWork tenantUow)
-    {
-        _tenantUow = tenantUow;
-    }
-
     public async Task<Result<PaymentDto>> Handle(
         GetPaymentQuery req, CancellationToken ct)
     {
-        var paymentEntity = await _tenantUow.Repository<Payment>().GetByIdAsync(req.Id);
+        var paymentEntity = await tenantUow.Repository<Payment>().GetByIdAsync(req.Id);
 
         if (paymentEntity is null)
         {

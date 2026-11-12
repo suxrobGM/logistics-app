@@ -1,5 +1,4 @@
 using System.Text;
-using Logistics.Application.Abstractions.Email;
 using Logistics.Domain.Entities;
 
 using Microsoft.AspNetCore.Authorization;
@@ -11,17 +10,8 @@ using Microsoft.AspNetCore.WebUtilities;
 namespace Logistics.IdentityServer.Pages.Account;
 
 [AllowAnonymous]
-public class RegisterConfirmationModel : PageModel
+public class RegisterConfirmationModel(UserManager<User> userManager) : PageModel
 {
-    private readonly UserManager<User> _userManager;
-    private readonly IEmailSender _senderService;
-
-    public RegisterConfirmationModel(UserManager<User> userManager, IEmailSender senderService)
-    {
-        _userManager = userManager;
-        _senderService = senderService;
-    }
-
     public string? Email { get; set; }
 
     public bool DisplayConfirmAccountLink { get; set; }
@@ -35,7 +25,7 @@ public class RegisterConfirmationModel : PageModel
             return RedirectToPage("/Index");
         }
 
-        var user = await _userManager.FindByEmailAsync(email);
+        var user = await userManager.FindByEmailAsync(email);
         if (user == null)
         {
             return NotFound($"Unable to load user with email '{email}'.");
@@ -46,8 +36,8 @@ public class RegisterConfirmationModel : PageModel
         DisplayConfirmAccountLink = true;
         if (DisplayConfirmAccountLink)
         {
-            var userId = await _userManager.GetUserIdAsync(user);
-            var code = await _userManager.GenerateEmailConfirmationTokenAsync(user);
+            var userId = await userManager.GetUserIdAsync(user);
+            var code = await userManager.GenerateEmailConfirmationTokenAsync(user);
             code = WebEncoders.Base64UrlEncode(Encoding.UTF8.GetBytes(code));
             EmailConfirmationUrl = Url.Page(
                 "/Account/ConfirmEmail",

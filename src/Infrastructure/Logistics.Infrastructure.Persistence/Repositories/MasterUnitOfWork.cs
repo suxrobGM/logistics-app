@@ -5,18 +5,9 @@ using Microsoft.Extensions.DependencyInjection;
 
 namespace Logistics.Infrastructure.Persistence.Repositories;
 
-internal sealed class MasterUnitOfWork
-    : UnitOfWork<IMasterEntity>, IMasterUnitOfWork
+internal sealed class MasterUnitOfWork(MasterDbContext db, IServiceProvider services)
+        : UnitOfWork<IMasterEntity>(db), IMasterUnitOfWork
 {
-    private readonly MasterDbContext _db;
-    private readonly IServiceProvider _services;
-
-    public MasterUnitOfWork(MasterDbContext db, IServiceProvider services) : base(db)
-    {
-        _db = db;
-        _services = services;
-    }
-
     // Strongly typed repos (hide base with 'new')
     public new IMasterRepository<TEntity, Guid> Repository<TEntity>()
         where TEntity : class, IEntity<Guid>, IMasterEntity
@@ -33,6 +24,6 @@ internal sealed class MasterUnitOfWork
     protected override IRepository<TEntity, TKey> CreateRepository<TEntity, TKey>()
     {
         // MasterRepository<TEntity, TKey>(MasterDbContext db)
-        return ActivatorUtilities.CreateInstance<MasterRepository<TEntity, TKey>>(_services, _db);
+        return ActivatorUtilities.CreateInstance<MasterRepository<TEntity, TKey>>(services, db);
     }
 }

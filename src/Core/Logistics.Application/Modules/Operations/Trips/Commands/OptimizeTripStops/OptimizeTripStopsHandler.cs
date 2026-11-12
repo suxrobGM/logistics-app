@@ -6,17 +6,10 @@ using Logistics.Application.Abstractions.Routing;
 
 namespace Logistics.Application.Modules.Operations.Trips.Commands;
 
-internal sealed class OptimizeTripStopsHandler :
+internal sealed class OptimizeTripStopsHandler(ITripOptimizer optimizer, ILogger<OptimizeTripStopsHandler> log) :
     IRequestHandler<OptimizeTripStopsCommand, Result<OptimizedTripStopsDto>>
 {
-    private readonly ITripOptimizer _optimizer;
-    private ILogger<OptimizeTripStopsHandler> _log;
-
-    public OptimizeTripStopsHandler(ITripOptimizer optimizer, ILogger<OptimizeTripStopsHandler> log)
-    {
-        _optimizer = optimizer;
-        _log = log;
-    }
+    private ILogger<OptimizeTripStopsHandler> _log = log;
 
     public async Task<Result<OptimizedTripStopsDto>> Handle(OptimizeTripStopsCommand req, CancellationToken ct)
     {
@@ -31,7 +24,7 @@ internal sealed class OptimizeTripStopsHandler :
         );
 
         // Optimize (Matrix or Heuristic fallback)
-        var ordered = await _optimizer.OptimizeAsync(optimizeTripParams, ct);
+        var ordered = await optimizer.OptimizeAsync(optimizeTripParams, ct);
         var totalDistance = ordered.Zip(ordered.Skip(1), (a, b) => a.Location.DistanceTo(b.Location)).Sum();
 
         var result = new OptimizedTripStopsDto
