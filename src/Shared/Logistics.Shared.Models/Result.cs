@@ -8,7 +8,7 @@ namespace Logistics.Shared.Models;
 /// <remarks>
 ///     Use <see cref="Result{T}" /> when you need to return data on success.
 /// </remarks>
-public record Result : IResult
+public record Result
 {
     /// <inheritdoc />
     [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingDefault)]

@@ -6,8 +6,8 @@ namespace Logistics.Domain.Primitives.ValueObjects;
 [ComplexType]
 public record Money
 {
-    public required decimal Amount { get; set; }
-    public required string Currency { get; set; }
+    public required decimal Amount { get; init; }
+    public required string Currency { get; init; }
     public static Money Zero(string currency) => new() { Amount = 0M, Currency = currency };
 
     /// <summary>Formats as "$1,234.50" for USD and "1,234.50 EUR" otherwise - never in the server's culture.</summary>

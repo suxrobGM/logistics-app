@@ -24,11 +24,11 @@ internal static class ToolResult
         AgentToolResultJson.Serialize(result);
 
     /// <summary><paramref name="successPayload"/> carries its own <c>success = true</c> and ids.</summary>
-    public static string Written(IResult result, object successPayload) =>
+    public static string Written(Result result, object successPayload) =>
         result.IsSuccess ? JsonSerializer.Serialize(successPayload) : WriteFailed(result);
 
     /// <summary>The failure arm alone, for write tools that shape their success payload later.</summary>
-    public static string WriteFailed(IResult result) =>
+    public static string WriteFailed(Result result) =>
         JsonSerializer.Serialize(new { success = false, error = result.Error });
 
     /// <summary>

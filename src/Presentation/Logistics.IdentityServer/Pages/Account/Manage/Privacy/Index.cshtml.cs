@@ -63,7 +63,7 @@ public class PrivacyModel(IMediator mediator) : PageModel
             "Deletion request cancelled.");
 
     /// <summary>Outcome into the status banner, then POST-redirect-GET.</summary>
-    private IActionResult Done(Logistics.Shared.Models.IResult result, string successMessage)
+    private IActionResult Done(Logistics.Shared.Models.Result result, string successMessage)
     {
         StatusMessage = result.IsSuccess ? successMessage : $"Error: {result.Error}";
         return RedirectToPage();

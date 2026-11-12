@@ -40,7 +40,7 @@ public record ErrorResponse(string Error, string? ErrorCode = null, Dictionary<s
     /// <summary>
     ///     Creates an ErrorResponse from a Result.
     /// </summary>
-    public static ErrorResponse FromResult(IResult result)
+    public static ErrorResponse FromResult(Result result)
     {
         return new ErrorResponse(result.Error ?? "An error occurred", result.ErrorCode);
     }
