@@ -12,28 +12,31 @@ namespace Logistics.Infrastructure.Documents;
 
 public static class Registrar
 {
-    /// <summary>
-    ///     Add document infrastructure (PDF generation/import, spreadsheet import, GDPR data export).
-    /// </summary>
-    public static IServiceCollection AddDocumentsInfrastructure(this IServiceCollection services)
+    extension(IServiceCollection services)
     {
-        Settings.License = LicenseType.Community;
+        /// <summary>
+        ///     Add document infrastructure (PDF generation/import, spreadsheet import, GDPR data export).
+        /// </summary>
+        public IServiceCollection AddDocumentsInfrastructure()
+        {
+            Settings.License = LicenseType.Community;
 
-        // PDF generation
-        services.AddScoped<IInvoicePdfService, InvoicePdfService>();
-        services.AddScoped<IPayrollPayStubService, PayrollPayStubService>();
-        services.AddScoped<IIftaReportPdfService, Pdf.Ifta.IftaReportPdfService>();
-        services.AddScoped<IVehicleBolPdfService, VehicleBolPdfService>();
-        services.AddScoped<IFactoringSchedulePdfService, Pdf.Factoring.FactoringSchedulePdfService>();
+            // PDF generation
+            services.AddScoped<IInvoicePdfService, InvoicePdfService>();
+            services.AddScoped<IPayrollPayStubService, PayrollPayStubService>();
+            services.AddScoped<IIftaReportPdfService, Pdf.Ifta.IftaReportPdfService>();
+            services.AddScoped<IVehicleBolPdfService, VehicleBolPdfService>();
+            services.AddScoped<IFactoringSchedulePdfService, Pdf.Factoring.FactoringSchedulePdfService>();
 
-        // PDF import (LLM-based extraction)
-        services.AddScoped<IPdfDataExtractor, LlmPdfDataExtractor>();
+            // PDF import (LLM-based extraction)
+            services.AddScoped<IPdfDataExtractor, LlmPdfDataExtractor>();
 
-        // CSV / XLSX data import
-        services.AddSingleton<ISpreadsheetReader, SpreadsheetReader>();
+            // CSV / XLSX data import
+            services.AddSingleton<ISpreadsheetReader, SpreadsheetReader>();
 
-        // Privacy / GDPR
-        services.AddScoped<IDataExportService, DataExportService>();
-        return services;
+            // Privacy / GDPR
+            services.AddScoped<IDataExportService, DataExportService>();
+            return services;
+        }
     }
 }

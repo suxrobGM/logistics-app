@@ -100,62 +100,66 @@ public class ExceptionHandlingMiddleware(
 
 public static class ExceptionHandlingMiddlewareExtensions
 {
-    public static IApplicationBuilder UseCustomExceptionHandler(this IApplicationBuilder builder)
+    extension(IApplicationBuilder builder)
     {
-        return builder.UseMiddleware<ExceptionHandlingMiddleware>();
-    }
-
-    /// <summary>
-    /// Configures Serilog request logging with error response details enrichment.
-    /// </summary>
-    public static IApplicationBuilder UseSerilogRequestLoggingWithErrorDetails(this IApplicationBuilder builder)
-    {
-        return builder.UseSerilogRequestLogging(options =>
+        public IApplicationBuilder UseCustomExceptionHandler()
         {
-            options.MessageTemplate =
-                "HTTP {RequestMethod} {RequestPath} responded {StatusCode} in {Elapsed:0.0000} ms";
+            return builder.UseMiddleware<ExceptionHandlingMiddleware>();
+        }
 
-            options.GetLevel = (httpContext, elapsed, ex) =>
+        /// <summary>
+        /// Configures Serilog request logging with error response details enrichment.
+        /// </summary>
+        public IApplicationBuilder UseSerilogRequestLoggingWithErrorDetails()
+        {
+            return builder.UseSerilogRequestLogging(options =>
             {
-                if (ex is not null)
-                {
-                    return Serilog.Events.LogEventLevel.Error;
-                }
+                options.MessageTemplate =
+                    "HTTP {RequestMethod} {RequestPath} responded {StatusCode} in {Elapsed:0.0000} ms";
 
-                return httpContext.Response.StatusCode switch
+                options.GetLevel = (httpContext, elapsed, ex) =>
                 {
-                    >= 500 => Serilog.Events.LogEventLevel.Error,
-                    >= 400 => Serilog.Events.LogEventLevel.Warning,
-                    _ => Serilog.Events.LogEventLevel.Information
+                    if (ex is not null)
+                    {
+                        return Serilog.Events.LogEventLevel.Error;
+                    }
+
+                    return httpContext.Response.StatusCode switch
+                    {
+                        >= 500 => Serilog.Events.LogEventLevel.Error,
+                        >= 400 => Serilog.Events.LogEventLevel.Warning,
+                        _ => Serilog.Events.LogEventLevel.Information
+                    };
                 };
-            };
 
-            options.EnrichDiagnosticContext = (diagnosticContext, httpContext) =>
-            {
-                diagnosticContext.Set("RequestHost", httpContext.Request.Host.Value);
-                diagnosticContext.Set("UserAgent", httpContext.Request.Headers.UserAgent.ToString());
-                diagnosticContext.Set("ClientIP", httpContext.Connection.RemoteIpAddress?.ToString());
-
-                if (httpContext.User.Identity?.IsAuthenticated == true)
+                options.EnrichDiagnosticContext = (diagnosticContext, httpContext) =>
                 {
-                    diagnosticContext.Set("UserId",
-                        httpContext.User.FindFirst("sub")?.Value ??
-                        httpContext.User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value);
-                }
+                    diagnosticContext.Set("RequestHost", httpContext.Request.Host.Value);
+                    diagnosticContext.Set("UserAgent", httpContext.Request.Headers.UserAgent.ToString());
+                    diagnosticContext.Set("ClientIP", httpContext.Connection.RemoteIpAddress?.ToString());
 
-                if (httpContext.Items.TryGetValue(ExceptionHandlingMiddleware.ErrorBodyKey, out var errorBody)
-                    && errorBody is string body)
-                {
-                    const int maxLength = 4000;
-                    diagnosticContext.Set("ErrorBody",
-                        body.Length > maxLength ? body[..maxLength] + "... (truncated)" : body);
-                }
+                    if (httpContext.User.Identity?.IsAuthenticated == true)
+                    {
+                        diagnosticContext.Set("UserId",
+                            httpContext.User.FindFirst("sub")?.Value ??
+                            httpContext.User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value);
+                    }
 
-                if (httpContext.Response.StatusCode >= 400 && httpContext.Request.QueryString.HasValue)
-                {
-                    diagnosticContext.Set("QueryString", httpContext.Request.QueryString.Value);
-                }
-            };
-        });
+                    if (httpContext.Items.TryGetValue(ExceptionHandlingMiddleware.ErrorBodyKey, out var errorBody)
+                        && errorBody is string body)
+                    {
+                        const int maxLength = 4000;
+                        diagnosticContext.Set("ErrorBody",
+                            body.Length > maxLength ? body[..maxLength] + "... (truncated)" : body);
+                    }
+
+                    if (httpContext.Response.StatusCode >= 400 && httpContext.Request.QueryString.HasValue)
+                    {
+                        diagnosticContext.Set("QueryString", httpContext.Request.QueryString.Value);
+                    }
+                };
+            });
+        }
     }
+
 }

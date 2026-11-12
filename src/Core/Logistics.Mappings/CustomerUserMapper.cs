@@ -7,22 +7,25 @@ namespace Logistics.Mappings;
 [Mapper]
 public static partial class CustomerUserMapper
 {
-    /// <summary>
-    /// Maps a CustomerUser entity to CustomerUserDto.
-    /// </summary>
-    [UserMapping(Default = true)]
-    public static CustomerUserDto ToDto(this CustomerUser entity)
+    extension(CustomerUser entity)
     {
-        return new CustomerUserDto
+        /// <summary>
+        /// Maps a CustomerUser entity to CustomerUserDto.
+        /// </summary>
+        [UserMapping(Default = true)]
+        public CustomerUserDto ToDto()
         {
-            Id = entity.Id,
-            UserId = entity.UserId,
-            CustomerId = entity.CustomerId,
-            CustomerName = entity.Customer?.Name ?? string.Empty,
-            Email = entity.Email,
-            DisplayName = entity.DisplayName,
-            IsActive = entity.IsActive,
-            CreatedAt = entity.CreatedAt
-        };
+            return new CustomerUserDto
+            {
+                Id = entity.Id,
+                UserId = entity.UserId,
+                CustomerId = entity.CustomerId,
+                CustomerName = entity.Customer?.Name ?? string.Empty,
+                Email = entity.Email,
+                DisplayName = entity.DisplayName,
+                IsActive = entity.IsActive,
+                CreatedAt = entity.CreatedAt
+            };
+        }
     }
 }

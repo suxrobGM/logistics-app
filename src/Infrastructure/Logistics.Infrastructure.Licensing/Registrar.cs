@@ -5,13 +5,16 @@ namespace Logistics.Infrastructure.Licensing;
 
 public static class Registrar
 {
-    /// <summary>
-    ///     Registers the outbound license heartbeat sender. The receiver lives in the API.
-    /// </summary>
-    public static IServiceCollection AddLicensingInfrastructure(this IServiceCollection services)
+    extension(IServiceCollection services)
     {
-        services.AddHttpClient<IProductLicenseHeartbeatSender, ProductLicenseHeartbeatSender>(
-            client => client.Timeout = TimeSpan.FromSeconds(15));
-        return services;
+        /// <summary>
+        ///     Registers the outbound license heartbeat sender. The receiver lives in the API.
+        /// </summary>
+        public IServiceCollection AddLicensingInfrastructure()
+        {
+            services.AddHttpClient<IProductLicenseHeartbeatSender, ProductLicenseHeartbeatSender>(
+                client => client.Timeout = TimeSpan.FromSeconds(15));
+            return services;
+        }
     }
 }

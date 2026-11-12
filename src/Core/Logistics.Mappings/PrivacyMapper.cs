@@ -20,14 +20,17 @@ public static partial class PrivacyMapper
     [MapperIgnoreTarget(nameof(DataDeletionRequestDto.IsCancellable))]
     public static partial DataDeletionRequestDto ToDto(this DataDeletionRequest entity);
 
-    public static DataDeletionRequestDto ToDto(this DataDeletionRequest entity, DateTime now)
+    extension(DataDeletionRequest entity)
     {
-        var dto = entity.ToDto();
-        return dto with
+        public DataDeletionRequestDto ToDto(DateTime now)
         {
-            IsCancellable = entity.Status == Domain.Primitives.Enums.DataDeletionStatus.Pending
-                            && entity.ScheduledFor > now
-        };
+            var dto = entity.ToDto();
+            return dto with
+            {
+                IsCancellable = entity.Status == Domain.Primitives.Enums.DataDeletionStatus.Pending
+                                && entity.ScheduledFor > now
+            };
+        }
     }
 
     [MapperIgnoreSource(nameof(ConsentRecord.User))]

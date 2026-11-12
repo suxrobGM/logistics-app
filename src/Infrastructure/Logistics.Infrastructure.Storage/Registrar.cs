@@ -11,15 +11,17 @@ namespace Logistics.Infrastructure.Storage;
 
 public static class Registrar
 {
-    /// <summary>
-    ///     Add storage such as Local File System, Azure Blob Storage, etc.
-    /// </summary>
-    public static IServiceCollection AddStorageInfrastructure(this IServiceCollection services,
-        IConfiguration configuration)
+    extension(IServiceCollection services)
     {
-        // Blob Storage (Azure or File based on configuration)
-        AddBlobStorage(services, configuration);
-        return services;
+        /// <summary>
+        ///     Add storage such as Local File System, Azure Blob Storage, etc.
+        /// </summary>
+        public IServiceCollection AddStorageInfrastructure(IConfiguration configuration)
+        {
+            // Blob Storage (Azure or File based on configuration)
+            AddBlobStorage(services, configuration);
+            return services;
+        }
     }
 
     /// <summary>

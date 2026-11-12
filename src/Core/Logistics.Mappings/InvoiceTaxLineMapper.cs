@@ -12,6 +12,9 @@ public static partial class InvoiceTaxLineMapper
 
     public static partial TaxJurisdictionDto ToDto(this TaxJurisdiction entity);
 
-    public static IEnumerable<InvoiceTaxLineDto> ToDto(this IEnumerable<InvoiceTaxLine> entities) =>
-        entities.Select(ToDto);
+    extension(IEnumerable<InvoiceTaxLine> entities)
+    {
+        public IEnumerable<InvoiceTaxLineDto> ToDto() =>
+            entities.Select(ToDto);
+    }
 }

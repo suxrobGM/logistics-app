@@ -14,6 +14,9 @@ public static partial class TenantTaxRateMapper
     [MapperIgnoreSource(nameof(TenantTaxRate.CreatedBy))]
     public static partial TenantTaxRateDto ToDto(this TenantTaxRate entity);
 
-    public static IEnumerable<TenantTaxRateDto> ToDto(this IEnumerable<TenantTaxRate> entities) =>
-        entities.Select(ToDto);
+    extension(IEnumerable<TenantTaxRate> entities)
+    {
+        public IEnumerable<TenantTaxRateDto> ToDto() =>
+            entities.Select(ToDto);
+    }
 }

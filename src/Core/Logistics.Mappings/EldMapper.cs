@@ -7,134 +7,155 @@ namespace Logistics.Mappings;
 
 public static class EldMapper
 {
-    public static EldProviderConfigurationDto ToDto(this EldProviderConfiguration entity, int mappedDriversCount = 0,
-        int mappedVehiclesCount = 0)
+    extension(EldProviderConfiguration entity)
     {
-        return new EldProviderConfigurationDto
+        public EldProviderConfigurationDto ToDto(int mappedDriversCount = 0,
+            int mappedVehiclesCount = 0)
         {
-            Id = entity.Id,
-            ProviderType = entity.ProviderType,
-            ProviderName = entity.ProviderType.GetDescription(),
-            IsActive = entity.IsActive,
-            LastSyncedAt = entity.LastSyncedAt,
-            IsConnected = entity.IsActive && !string.IsNullOrEmpty(entity.ApiKey),
-            MappedDriversCount = mappedDriversCount,
-            MappedVehiclesCount = mappedVehiclesCount,
-            ExternalAccountId = entity.ExternalAccountId,
-            Region = entity.Region,
-            HasWebhookSecret = !string.IsNullOrEmpty(entity.WebhookSecret)
-        };
+            return new EldProviderConfigurationDto
+            {
+                Id = entity.Id,
+                ProviderType = entity.ProviderType,
+                ProviderName = entity.ProviderType.GetDescription(),
+                IsActive = entity.IsActive,
+                LastSyncedAt = entity.LastSyncedAt,
+                IsConnected = entity.IsActive && !string.IsNullOrEmpty(entity.ApiKey),
+                MappedDriversCount = mappedDriversCount,
+                MappedVehiclesCount = mappedVehiclesCount,
+                ExternalAccountId = entity.ExternalAccountId,
+                Region = entity.Region,
+                HasWebhookSecret = !string.IsNullOrEmpty(entity.WebhookSecret)
+            };
+        }
     }
 
-    public static DriverHosStatusDto ToDto(this DriverHosStatus entity, string? employeeName = null)
+    extension(DriverHosStatus entity)
     {
-        return new DriverHosStatusDto
+        public DriverHosStatusDto ToDto(string? employeeName = null)
         {
-            EmployeeId = entity.EmployeeId,
-            EmployeeName = employeeName ?? entity.Employee?.GetFullName(),
-            CurrentDutyStatus = entity.CurrentDutyStatus,
-            CurrentDutyStatusDisplay = entity.CurrentDutyStatus.GetDescription(),
-            StatusChangedAt = entity.StatusChangedAt,
-            DrivingMinutesRemaining = entity.DrivingMinutesRemaining,
-            OnDutyMinutesRemaining = entity.OnDutyMinutesRemaining,
-            CycleMinutesRemaining = entity.CycleMinutesRemaining,
-            DrivingTimeRemainingDisplay = FormatMinutes(entity.DrivingMinutesRemaining),
-            OnDutyTimeRemainingDisplay = FormatMinutes(entity.OnDutyMinutesRemaining),
-            CycleTimeRemainingDisplay = FormatMinutes(entity.CycleMinutesRemaining),
-            TimeUntilBreakRequired = entity.TimeUntilBreakRequired,
-            IsInViolation = entity.IsInViolation,
-            IsAvailableForDispatch = entity.IsAvailableForDispatch(),
-            LastUpdatedAt = entity.LastUpdatedAt,
-            NextMandatoryBreakAt = entity.NextMandatoryBreakAt
-        };
+            return new DriverHosStatusDto
+            {
+                EmployeeId = entity.EmployeeId,
+                EmployeeName = employeeName ?? entity.Employee?.GetFullName(),
+                CurrentDutyStatus = entity.CurrentDutyStatus,
+                CurrentDutyStatusDisplay = entity.CurrentDutyStatus.GetDescription(),
+                StatusChangedAt = entity.StatusChangedAt,
+                DrivingMinutesRemaining = entity.DrivingMinutesRemaining,
+                OnDutyMinutesRemaining = entity.OnDutyMinutesRemaining,
+                CycleMinutesRemaining = entity.CycleMinutesRemaining,
+                DrivingTimeRemainingDisplay = FormatMinutes(entity.DrivingMinutesRemaining),
+                OnDutyTimeRemainingDisplay = FormatMinutes(entity.OnDutyMinutesRemaining),
+                CycleTimeRemainingDisplay = FormatMinutes(entity.CycleMinutesRemaining),
+                TimeUntilBreakRequired = entity.TimeUntilBreakRequired,
+                IsInViolation = entity.IsInViolation,
+                IsAvailableForDispatch = entity.IsAvailableForDispatch(),
+                LastUpdatedAt = entity.LastUpdatedAt,
+                NextMandatoryBreakAt = entity.NextMandatoryBreakAt
+            };
+        }
     }
 
-    public static EldDriverMappingDto ToDto(this EldDriverMapping entity, string? employeeName = null)
+    extension(EldDriverMapping entity)
     {
-        return new EldDriverMappingDto
+        public EldDriverMappingDto ToDto(string? employeeName = null)
         {
-            Id = entity.Id,
-            EmployeeId = entity.EmployeeId,
-            EmployeeName = employeeName ?? entity.Employee?.GetFullName(),
-            ProviderType = entity.ProviderType,
-            ExternalDriverId = entity.ExternalDriverId,
-            ExternalDriverName = entity.ExternalDriverName,
-            IsSyncEnabled = entity.IsSyncEnabled,
-            LastSyncedAt = entity.LastSyncedAt
-        };
+            return new EldDriverMappingDto
+            {
+                Id = entity.Id,
+                EmployeeId = entity.EmployeeId,
+                EmployeeName = employeeName ?? entity.Employee?.GetFullName(),
+                ProviderType = entity.ProviderType,
+                ExternalDriverId = entity.ExternalDriverId,
+                ExternalDriverName = entity.ExternalDriverName,
+                IsSyncEnabled = entity.IsSyncEnabled,
+                LastSyncedAt = entity.LastSyncedAt
+            };
+        }
     }
 
-    public static EldVehicleMappingDto ToDto(this EldVehicleMapping entity, string? truckNumber = null)
+    extension(EldVehicleMapping entity)
     {
-        return new EldVehicleMappingDto
+        public EldVehicleMappingDto ToDto(string? truckNumber = null)
         {
-            Id = entity.Id,
-            TruckId = entity.TruckId,
-            TruckNumber = truckNumber ?? entity.Truck?.Number,
-            ProviderType = entity.ProviderType,
-            ExternalVehicleId = entity.ExternalVehicleId,
-            ExternalVehicleName = entity.ExternalVehicleName,
-            IsSyncEnabled = entity.IsSyncEnabled,
-            LastSyncedAt = entity.LastSyncedAt
-        };
+            return new EldVehicleMappingDto
+            {
+                Id = entity.Id,
+                TruckId = entity.TruckId,
+                TruckNumber = truckNumber ?? entity.Truck?.Number,
+                ProviderType = entity.ProviderType,
+                ExternalVehicleId = entity.ExternalVehicleId,
+                ExternalVehicleName = entity.ExternalVehicleName,
+                IsSyncEnabled = entity.IsSyncEnabled,
+                LastSyncedAt = entity.LastSyncedAt
+            };
+        }
     }
 
-    public static HosLogDto ToDto(this HosLog entity, string? employeeName = null)
+    extension(HosLog entity)
     {
-        return new HosLogDto
+        public HosLogDto ToDto(string? employeeName = null)
         {
-            Id = entity.Id,
-            EmployeeId = entity.EmployeeId,
-            EmployeeName = employeeName ?? entity.Employee?.GetFullName(),
-            LogDate = entity.LogDate,
-            DutyStatus = entity.DutyStatus,
-            DutyStatusDisplay = entity.DutyStatus.GetDescription(),
-            StartTime = entity.StartTime,
-            EndTime = entity.EndTime,
-            DurationMinutes = entity.DurationMinutes,
-            DurationDisplay = FormatMinutes(entity.DurationMinutes),
-            Location = entity.Location,
-            Latitude = entity.Latitude,
-            Longitude = entity.Longitude,
-            Remark = entity.Remark,
-            ProviderType = entity.ProviderType
-        };
+            return new HosLogDto
+            {
+                Id = entity.Id,
+                EmployeeId = entity.EmployeeId,
+                EmployeeName = employeeName ?? entity.Employee?.GetFullName(),
+                LogDate = entity.LogDate,
+                DutyStatus = entity.DutyStatus,
+                DutyStatusDisplay = entity.DutyStatus.GetDescription(),
+                StartTime = entity.StartTime,
+                EndTime = entity.EndTime,
+                DurationMinutes = entity.DurationMinutes,
+                DurationDisplay = FormatMinutes(entity.DurationMinutes),
+                Location = entity.Location,
+                Latitude = entity.Latitude,
+                Longitude = entity.Longitude,
+                Remark = entity.Remark,
+                ProviderType = entity.ProviderType
+            };
+        }
     }
 
-    public static HosViolationDto ToDto(this HosViolation entity, string? employeeName = null)
+    extension(HosViolation entity)
     {
-        return new HosViolationDto
+        public HosViolationDto ToDto(string? employeeName = null)
         {
-            Id = entity.Id,
-            EmployeeId = entity.EmployeeId,
-            EmployeeName = employeeName ?? entity.Employee?.GetFullName(),
-            ViolationDate = entity.ViolationDate,
-            ViolationType = entity.ViolationType,
-            ViolationTypeDisplay = entity.ViolationType.GetDescription(),
-            Description = entity.Description,
-            SeverityLevel = entity.SeverityLevel,
-            IsResolved = entity.IsResolved,
-            ResolvedAt = entity.ResolvedAt,
-            ProviderType = entity.ProviderType,
-            RuleSetCode = entity.RuleSetCode
-        };
+            return new HosViolationDto
+            {
+                Id = entity.Id,
+                EmployeeId = entity.EmployeeId,
+                EmployeeName = employeeName ?? entity.Employee?.GetFullName(),
+                ViolationDate = entity.ViolationDate,
+                ViolationType = entity.ViolationType,
+                ViolationTypeDisplay = entity.ViolationType.GetDescription(),
+                Description = entity.Description,
+                SeverityLevel = entity.SeverityLevel,
+                IsResolved = entity.IsResolved,
+                ResolvedAt = entity.ResolvedAt,
+                ProviderType = entity.ProviderType,
+                RuleSetCode = entity.RuleSetCode
+            };
+        }
     }
 
-    public static HosLimitsDto ToDto(this HosLimits limits)
+    extension(HosLimits limits)
     {
-        return new HosLimitsDto
+        public HosLimitsDto ToDto()
         {
-            RuleSetCode = limits.RuleSetCode,
-            MaxDailyDrivingMinutes = limits.MaxDailyDrivingMinutes,
-            MaxDailyOnDutyMinutes = limits.MaxDailyOnDutyMinutes,
-            MaxWeeklyDrivingMinutes = limits.MaxWeeklyDrivingMinutes,
-            MaxBiweeklyDrivingMinutes = limits.MaxBiweeklyDrivingMinutes,
-            MaxContinuousDrivingMinutes = limits.MaxContinuousDrivingMinutes,
-            MinDailyRestMinutes = limits.MinDailyRestMinutes,
-            MinWeeklyRestMinutes = limits.MinWeeklyRestMinutes,
-            RequiredBreakAfterMinutes = limits.RequiredBreakAfterMinutes,
-            CycleDays = limits.CycleDays
-        };
+            return new HosLimitsDto
+            {
+                RuleSetCode = limits.RuleSetCode,
+                MaxDailyDrivingMinutes = limits.MaxDailyDrivingMinutes,
+                MaxDailyOnDutyMinutes = limits.MaxDailyOnDutyMinutes,
+                MaxWeeklyDrivingMinutes = limits.MaxWeeklyDrivingMinutes,
+                MaxBiweeklyDrivingMinutes = limits.MaxBiweeklyDrivingMinutes,
+                MaxContinuousDrivingMinutes = limits.MaxContinuousDrivingMinutes,
+                MinDailyRestMinutes = limits.MinDailyRestMinutes,
+                MinWeeklyRestMinutes = limits.MinWeeklyRestMinutes,
+                RequiredBreakAfterMinutes = limits.RequiredBreakAfterMinutes,
+                CycleDays = limits.CycleDays
+            };
+        }
     }
 
     private static string FormatMinutes(int totalMinutes)

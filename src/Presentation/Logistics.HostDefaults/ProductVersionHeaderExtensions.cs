@@ -15,14 +15,17 @@ public static class ProductVersionHeaderExtensions
 
     private static readonly StringValues Version = ProductInfo.Version;
 
-    public static WebApplication UseLogisticsProductVersionHeader(this WebApplication app)
+    extension(WebApplication app)
     {
-        app.Use((context, next) =>
+        public WebApplication UseLogisticsProductVersionHeader()
         {
-            context.Response.Headers[HeaderName] = Version;
-            return next(context);
-        });
+            app.Use((context, next) =>
+            {
+                context.Response.Headers[HeaderName] = Version;
+                return next(context);
+            });
 
-        return app;
+            return app;
+        }
     }
 }

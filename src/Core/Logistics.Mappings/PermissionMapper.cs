@@ -5,19 +5,25 @@ namespace Logistics.Mappings;
 
 public static class PermissionMapper
 {
-    public static PermissionDto ToDto(this AppRoleClaim entity)
+    extension(AppRoleClaim entity)
     {
-        return new PermissionDto()
+        public PermissionDto ToDto()
         {
-            Name = entity.ClaimValue
-        };
+            return new PermissionDto()
+            {
+                Name = entity.ClaimValue
+            };
+        }
     }
 
-    public static PermissionDto ToDto(this TenantRoleClaim entity)
+    extension(TenantRoleClaim entity)
     {
-        return new PermissionDto()
+        public PermissionDto ToDto()
         {
-            Name = entity.ClaimValue
-        };
+            return new PermissionDto()
+            {
+                Name = entity.ClaimValue
+            };
+        }
     }
 }

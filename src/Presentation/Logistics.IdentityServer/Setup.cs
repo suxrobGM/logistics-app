@@ -21,168 +21,174 @@ namespace Logistics.IdentityServer;
 
 internal static class Setup
 {
-    public static WebApplication ConfigureServices(this WebApplicationBuilder builder)
+    extension(WebApplicationBuilder builder)
     {
-        var services = builder.Services;
-        var configuration = builder.Configuration;
-
-        // Configuration options
-        services.Configure<ImpersonationOptions>(configuration.GetSection(ImpersonationOptions.SectionName));
-
-        // Infrastructure layers
-        services.AddCommunicationsInfrastructure(configuration);
-        services.AddPersistenceInfrastructure(configuration)
-            .AddMasterDatabase()
-            .AddTenantDatabase()
-            .AddIdentity(identityBuilder =>
-            {
-                identityBuilder
-                    .AddSignInManager()
-                    .AddClaimsPrincipalFactory<UserCustomClaimsFactory>()
-                    .AddDefaultTokenProviders();
-            });
-
-        // Backs the signed download URL on the Manage Privacy page's data exports.
-        services.AddStorageInfrastructure(configuration);
-
-        // Application services used directly by Razor pages. Still not the full Application
-        // stack - just UserService (Manage Profile) and the Privacy slice (Manage Privacy).
-        services.AddScoped<IUserService, UserService>();
-        services.AddApplicationPrivacyServices();
-
-        services.AddRazorPages();
-        AddAuthSchemes(services);
-
-        // The application name feeds purpose derivation for every protected payload, including
-        // the auth cookies and the signing keys. Changing it makes all of them unreadable.
-        services.AddLogisticsDataProtection<MasterDbContext>("LogisticsX.IdentityServer");
-
-        // Real health probe: master DB connectivity (composes with AddHealthChecks() in LogisticsHost).
-        services.AddHealthChecks().AddDbContextCheck<MasterDbContext>("master-db");
-
-        // Replaces the automatic key management the Duende package provided. Registered before
-        // AddIdentityServer because the first ISigningCredentialStore registered is the one that signs.
-        services.Configure<SigningKeyOptions>(configuration.GetSection(SigningKeyOptions.SectionName));
-        services.AddScoped<SigningKeyProtector>();
-        services.AddSingleton<SigningKeyCache>();
-        services.AddScoped<ISigningCredentialStore, RotatingSigningKeyStore>();
-        services.AddScoped<IValidationKeysStore, RotatingSigningKeyStore>();
-        services.AddSingleton<SigningKeyMaintenance>();
-        services.AddHostedService(sp => sp.GetRequiredService<SigningKeyMaintenance>());
-
-        services.AddIdentityServer(options =>
-            {
-                options.Events.RaiseErrorEvents = true;
-                options.Events.RaiseInformationEvents = true;
-                options.Events.RaiseFailureEvents = true;
-                options.Events.RaiseSuccessEvents = true;
-
-                options.EmitStaticAudienceClaim = true;
-            })
-            .AddInMemoryIdentityResources(Config.IdentityResources())
-            .AddInMemoryApiScopes(Config.ApiScopes())
-            .AddInMemoryApiResources(Config.ApiResources())
-            .AddInMemoryClients(Config.Clients(configuration))
-            .AddAspNetIdentity<User>()
-            // Refresh tokens in the master DB; without this they live in the container and
-            // every redeploy invalidates all sessions
-            .AddOperationalStore(options =>
-            {
-                OperationalStoreSetup.ConfigureStoreOptions(options);
-                options.ConfigureDbContext = b => OperationalStoreSetup.ConfigureDbContext(
-                    b, configuration.GetConnectionString("MasterDatabase"));
-                options.EnableTokenCleanup = true;
-            });
-
-        services.AddAuthentication()
-            .AddGoogle(options =>
-            {
-                options.SignInScheme = IdentityServerConstants.ExternalCookieAuthenticationScheme;
-                options.ClientId = configuration["Authentication:Google:ClientId"]!;
-                options.ClientSecret = configuration["Authentication:Google:ClientSecret"]!;
-            });
-
-        services.AddLogisticsCors("https://*.logisticsx.app");
-
-        // Rate limiting configuration
-        services.AddRateLimiter(options =>
+        public WebApplication ConfigureServices()
         {
-            // Rate limit for login attempts per IP
-            options.AddPolicy("login", context =>
-                RateLimitPartition.GetSlidingWindowLimiter(
-                    partitionKey: context.Connection.RemoteIpAddress?.ToString() ?? "unknown",
-                    factory: _ => new SlidingWindowRateLimiterOptions
-                    {
-                        AutoReplenishment = true,
-                        PermitLimit = 10,
-                        Window = TimeSpan.FromMinutes(15),
-                        SegmentsPerWindow = 3,
-                        QueueLimit = 0
-                    }));
+            var services = builder.Services;
+            var configuration = builder.Configuration;
 
-            // Rate limit for impersonation token validation
-            options.AddIpFixedWindowPolicy("impersonation", 5, TimeSpan.FromMinutes(15));
+            // Configuration options
+            services.Configure<ImpersonationOptions>(configuration.GetSection(ImpersonationOptions.SectionName));
 
-            // The token endpoint is middleware-generated, so rate-limit it globally by path.
-            options.GlobalLimiter = PartitionedRateLimiter.Create<HttpContext, string>(context =>
-                context.Request.Path.StartsWithSegments("/connect/token")
-                    ? RateLimitPartition.GetFixedWindowLimiter(
-                        context.Connection.RemoteIpAddress?.ToString() ?? "unknown",
-                        _ => new FixedWindowRateLimiterOptions
-                        {
-                            PermitLimit = 30,
-                            Window = TimeSpan.FromMinutes(1),
-                            QueueLimit = 0
-                        })
-                    : RateLimitPartition.GetNoLimiter("unlimited"));
+            // Infrastructure layers
+            services.AddCommunicationsInfrastructure(configuration);
+            services.AddPersistenceInfrastructure(configuration)
+                .AddMasterDatabase()
+                .AddTenantDatabase()
+                .AddIdentity(identityBuilder =>
+                {
+                    identityBuilder
+                        .AddSignInManager()
+                        .AddClaimsPrincipalFactory<UserCustomClaimsFactory>()
+                        .AddDefaultTokenProviders();
+                });
 
-            options.OnRejected = async (context, ct) =>
+            // Backs the signed download URL on the Manage Privacy page's data exports.
+            services.AddStorageInfrastructure(configuration);
+
+            // Application services used directly by Razor pages. Still not the full Application
+            // stack - just UserService (Manage Profile) and the Privacy slice (Manage Privacy).
+            services.AddScoped<IUserService, UserService>();
+            services.AddApplicationPrivacyServices();
+
+            services.AddRazorPages();
+            AddAuthSchemes(services);
+
+            // The application name feeds purpose derivation for every protected payload, including
+            // the auth cookies and the signing keys. Changing it makes all of them unreadable.
+            services.AddLogisticsDataProtection<MasterDbContext>("LogisticsX.IdentityServer");
+
+            // Real health probe: master DB connectivity (composes with AddHealthChecks() in LogisticsHost).
+            services.AddHealthChecks().AddDbContextCheck<MasterDbContext>("master-db");
+
+            // Replaces the automatic key management the Duende package provided. Registered before
+            // AddIdentityServer because the first ISigningCredentialStore registered is the one that signs.
+            services.Configure<SigningKeyOptions>(configuration.GetSection(SigningKeyOptions.SectionName));
+            services.AddScoped<SigningKeyProtector>();
+            services.AddSingleton<SigningKeyCache>();
+            services.AddScoped<ISigningCredentialStore, RotatingSigningKeyStore>();
+            services.AddScoped<IValidationKeysStore, RotatingSigningKeyStore>();
+            services.AddSingleton<SigningKeyMaintenance>();
+            services.AddHostedService(sp => sp.GetRequiredService<SigningKeyMaintenance>());
+
+            services.AddIdentityServer(options =>
+                {
+                    options.Events.RaiseErrorEvents = true;
+                    options.Events.RaiseInformationEvents = true;
+                    options.Events.RaiseFailureEvents = true;
+                    options.Events.RaiseSuccessEvents = true;
+
+                    options.EmitStaticAudienceClaim = true;
+                })
+                .AddInMemoryIdentityResources(Config.IdentityResources())
+                .AddInMemoryApiScopes(Config.ApiScopes())
+                .AddInMemoryApiResources(Config.ApiResources())
+                .AddInMemoryClients(Config.Clients(configuration))
+                .AddAspNetIdentity<User>()
+                // Refresh tokens in the master DB; without this they live in the container and
+                // every redeploy invalidates all sessions
+                .AddOperationalStore(options =>
+                {
+                    OperationalStoreSetup.ConfigureStoreOptions(options);
+                    options.ConfigureDbContext = b => OperationalStoreSetup.ConfigureDbContext(
+                        b, configuration.GetConnectionString("MasterDatabase"));
+                    options.EnableTokenCleanup = true;
+                });
+
+            services.AddAuthentication()
+                .AddGoogle(options =>
+                {
+                    options.SignInScheme = IdentityServerConstants.ExternalCookieAuthenticationScheme;
+                    options.ClientId = configuration["Authentication:Google:ClientId"]!;
+                    options.ClientSecret = configuration["Authentication:Google:ClientSecret"]!;
+                });
+
+            services.AddLogisticsCors("https://*.logisticsx.app");
+
+            // Rate limiting configuration
+            services.AddRateLimiter(options =>
             {
-                context.HttpContext.Response.StatusCode = StatusCodes.Status429TooManyRequests;
+                // Rate limit for login attempts per IP
+                options.AddPolicy("login", context =>
+                    RateLimitPartition.GetSlidingWindowLimiter(
+                        partitionKey: context.Connection.RemoteIpAddress?.ToString() ?? "unknown",
+                        factory: _ => new SlidingWindowRateLimiterOptions
+                        {
+                            AutoReplenishment = true,
+                            PermitLimit = 10,
+                            Window = TimeSpan.FromMinutes(15),
+                            SegmentsPerWindow = 3,
+                            QueueLimit = 0
+                        }));
 
-                if (context.HttpContext.Request.Path.StartsWithSegments("/connect/token"))
-                {
-                    await context.HttpContext.Response.WriteAsync("Too many requests. Please retry later.", ct);
-                }
-                else
-                {
-                    context.HttpContext.Response.Redirect("/Account/Login?error=TooManyAttempts");
-                }
-            };
-        });
+                // Rate limit for impersonation token validation
+                options.AddIpFixedWindowPolicy("impersonation", 5, TimeSpan.FromMinutes(15));
 
-        return builder.Build();
+                // The token endpoint is middleware-generated, so rate-limit it globally by path.
+                options.GlobalLimiter = PartitionedRateLimiter.Create<HttpContext, string>(context =>
+                    context.Request.Path.StartsWithSegments("/connect/token")
+                        ? RateLimitPartition.GetFixedWindowLimiter(
+                            context.Connection.RemoteIpAddress?.ToString() ?? "unknown",
+                            _ => new FixedWindowRateLimiterOptions
+                            {
+                                PermitLimit = 30,
+                                Window = TimeSpan.FromMinutes(1),
+                                QueueLimit = 0
+                            })
+                        : RateLimitPartition.GetNoLimiter("unlimited"));
+
+                options.OnRejected = async (context, ct) =>
+                {
+                    context.HttpContext.Response.StatusCode = StatusCodes.Status429TooManyRequests;
+
+                    if (context.HttpContext.Request.Path.StartsWithSegments("/connect/token"))
+                    {
+                        await context.HttpContext.Response.WriteAsync("Too many requests. Please retry later.", ct);
+                    }
+                    else
+                    {
+                        context.HttpContext.Response.Redirect("/Account/Login?error=TooManyAttempts");
+                    }
+                };
+            });
+
+            return builder.Build();
+        }
     }
 
-    public static WebApplication ConfigurePipeline(this WebApplication app)
+    extension(WebApplication app)
     {
-        app.UseLogisticsProductVersionHeader();
-        app.UseSerilogRequestLogging();
+        public WebApplication ConfigurePipeline()
+        {
+            app.UseLogisticsProductVersionHeader();
+            app.UseSerilogRequestLogging();
 
-        if (app.Environment.IsDevelopment())
-        {
-            app.UseDeveloperExceptionPage();
-        }
-        else
-        {
-            app.UseForwardedHeaders(new ForwardedHeadersOptions
+            if (app.Environment.IsDevelopment())
             {
-                ForwardedHeaders = ForwardedHeaders.XForwardedFor | ForwardedHeaders.XForwardedProto
-            });
+                app.UseDeveloperExceptionPage();
+            }
+            else
+            {
+                app.UseForwardedHeaders(new ForwardedHeadersOptions
+                {
+                    ForwardedHeaders = ForwardedHeaders.XForwardedFor | ForwardedHeaders.XForwardedProto
+                });
+            }
+
+            app.UseHttpsRedirection();
+            app.UseStaticFiles();
+            app.UseRouting();
+            app.UseLogisticsCors();
+
+            app.UseRateLimiter();
+            app.UseIdentityServer();
+            app.UseAuthorization();
+            app.MapRazorPages().RequireAuthorization();
+
+            EnsureSigningKey(app);
+            return app;
         }
-
-        app.UseHttpsRedirection();
-        app.UseStaticFiles();
-        app.UseRouting();
-        app.UseLogisticsCors();
-
-        app.UseRateLimiter();
-        app.UseIdentityServer();
-        app.UseAuthorization();
-        app.MapRazorPages().RequireAuthorization();
-
-        EnsureSigningKey(app);
-        return app;
     }
 
     /// <summary>

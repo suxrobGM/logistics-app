@@ -5,17 +5,20 @@ namespace Logistics.Mappings;
 
 public static class PaymentMapper
 {
-    public static PaymentDto ToDto(this Payment entity)
+    extension(Payment entity)
     {
-        return new PaymentDto
+        public PaymentDto ToDto()
         {
-            Id = entity.Id,
-            Amount = entity.Amount,
-            CreatedDate = entity.CreatedAt,
-            StripePaymentMethodId = entity.StripePaymentMethodId,
-            Status = entity.Status,
-            Description = entity.Description,
-            BillingAddress = entity.BillingAddress
-        };
+            return new PaymentDto
+            {
+                Id = entity.Id,
+                Amount = entity.Amount,
+                CreatedDate = entity.CreatedAt,
+                StripePaymentMethodId = entity.StripePaymentMethodId,
+                Status = entity.Status,
+                Description = entity.Description,
+                BillingAddress = entity.BillingAddress
+            };
+        }
     }
 }

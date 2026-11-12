@@ -4,14 +4,17 @@ namespace Logistics.Application.Modules.Compliance;
 
 public static class ComplianceModuleRegistrar
 {
-    /// <summary>
-    /// Registers Compliance-module-specific services that cannot be covered by Scrutor's
-    /// <see cref="IApplicationService"/> scan (decorators, named instances, factories).
-    /// Handlers + FluentValidation + IApplicationService scan happen at the assembly
-    /// level in <c>Registrar.AddApplicationCommon</c>/<c>AddApplicationServices</c>.
-    /// </summary>
-    public static IServiceCollection AddComplianceModule(this IServiceCollection services)
+    extension(IServiceCollection services)
     {
-        return services;
+        /// <summary>
+        /// Registers Compliance-module-specific services that cannot be covered by Scrutor's
+        /// <see cref="IApplicationService"/> scan (decorators, named instances, factories).
+        /// Handlers + FluentValidation + IApplicationService scan happen at the assembly
+        /// level in <c>Registrar.AddApplicationCommon</c>/<c>AddApplicationServices</c>.
+        /// </summary>
+        public IServiceCollection AddComplianceModule()
+        {
+            return services;
+        }
     }
 }

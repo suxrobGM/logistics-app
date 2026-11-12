@@ -9,48 +9,51 @@ namespace Logistics.Mappings;
 [Mapper]
 public static partial class InvitationMapper
 {
-    /// <summary>
-    /// Maps an Invitation entity to InvitationDto with tenant information.
-    /// </summary>
-    [UserMapping(Default = true)]
-    public static InvitationDto ToDto(this Invitation entity)
+    extension(Invitation entity)
     {
-        return new InvitationDto
+        /// <summary>
+        /// Maps an Invitation entity to InvitationDto with tenant information.
+        /// </summary>
+        [UserMapping(Default = true)]
+        public InvitationDto ToDto()
         {
-            Id = entity.Id,
-            Email = entity.Email,
-            TenantId = entity.TenantId,
-            TenantName = entity.Tenant?.CompanyName ?? entity.Tenant?.Name ?? string.Empty,
-            Type = entity.Type,
-            TenantRole = entity.TenantRole,
-            TenantRoleDisplayName = entity.Type == InvitationType.AppUser
-                ? GetAppRoleDisplayName(entity.AppRole)
-                : GetRoleDisplayName(entity.TenantRole),
-            AppRole = entity.AppRole,
-            CustomerId = entity.CustomerId,
-            CustomerName = null, // Set by handler with tenant DB lookup
-            ExpiresAt = entity.ExpiresAt,
-            Status = entity.Status,
-            CreatedAt = entity.CreatedAt,
-            InvitedByName = entity.InvitedByUser?.GetFullName() ?? string.Empty,
-            SendCount = entity.SendCount,
-            LastSentAt = entity.LastSentAt,
-            IsExpired = entity.IsExpired
-        };
-    }
+            return new InvitationDto
+            {
+                Id = entity.Id,
+                Email = entity.Email,
+                TenantId = entity.TenantId,
+                TenantName = entity.Tenant?.CompanyName ?? entity.Tenant?.Name ?? string.Empty,
+                Type = entity.Type,
+                TenantRole = entity.TenantRole,
+                TenantRoleDisplayName = entity.Type == InvitationType.AppUser
+                    ? GetAppRoleDisplayName(entity.AppRole)
+                    : GetRoleDisplayName(entity.TenantRole),
+                AppRole = entity.AppRole,
+                CustomerId = entity.CustomerId,
+                CustomerName = null, // Set by handler with tenant DB lookup
+                ExpiresAt = entity.ExpiresAt,
+                Status = entity.Status,
+                CreatedAt = entity.CreatedAt,
+                InvitedByName = entity.InvitedByUser?.GetFullName() ?? string.Empty,
+                SendCount = entity.SendCount,
+                LastSentAt = entity.LastSentAt,
+                IsExpired = entity.IsExpired
+            };
+        }
 
-    /// <summary>
-    /// Maps an Invitation entity to InvitationDto with explicit tenant and inviter names.
-    /// </summary>
-    public static InvitationDto ToDto(this Invitation entity, string tenantName, string invitedByName, string? customerName = null)
-    {
-        var dto = entity.ToDto();
-        return dto with
+        /// <summary>
+        /// Maps an Invitation entity to InvitationDto with explicit tenant and inviter names.
+        /// </summary>
+        public InvitationDto ToDto(string tenantName, string invitedByName, string? customerName = null)
         {
-            TenantName = tenantName,
-            InvitedByName = invitedByName,
-            CustomerName = customerName
-        };
+            var dto = entity.ToDto();
+            return dto with
+            {
+                TenantName = tenantName,
+                InvitedByName = invitedByName,
+                CustomerName = customerName
+            };
+        }
     }
 
     /// <summary>

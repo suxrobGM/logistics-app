@@ -5,19 +5,22 @@ namespace Logistics.Mappings;
 
 public static class UserMapper
 {
-    public static UserDto ToDto(this User entity, string? role = null)
+    extension(User entity)
     {
-        var dto = new UserDto
+        public UserDto ToDto(string? role = null)
         {
-            Id = entity.Id,
-            FirstName = entity.FirstName,
-            LastName = entity.LastName,
-            Role = role,
-            Email = entity.Email,
-            PhoneNumber = entity.PhoneNumber,
-            TenantId = entity.TenantId,
-            TenantName = entity.Tenant?.Name
-        };
-        return dto;
+            var dto = new UserDto
+            {
+                Id = entity.Id,
+                FirstName = entity.FirstName,
+                LastName = entity.LastName,
+                Role = role,
+                Email = entity.Email,
+                PhoneNumber = entity.PhoneNumber,
+                TenantId = entity.TenantId,
+                TenantName = entity.Tenant?.Name
+            };
+            return dto;
+        }
     }
 }

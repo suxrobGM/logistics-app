@@ -9,6 +9,9 @@ public static partial class LoadVehicleMapper
 {
     public static partial LoadVehicleDto ToDto(this LoadVehicle entity);
 
-    public static List<LoadVehicleDto> ToDto(this IEnumerable<LoadVehicle> entities) =>
-        [.. entities.Select(ToDto)];
+    extension(IEnumerable<LoadVehicle> entities)
+    {
+        public List<LoadVehicleDto> ToDto() =>
+            [.. entities.Select(ToDto)];
+    }
 }

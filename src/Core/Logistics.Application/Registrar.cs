@@ -14,120 +14,122 @@ namespace Logistics.Application;
 
 public static class Registrar
 {
-    public static IServiceCollection AddApplicationLayer(this IServiceCollection services)
+    extension(IServiceCollection services)
     {
-        services.AddApplicationCommon();
-        services.AddApplicationServices();
-
-        services.AddOperationsModule();
-        services.AddComplianceModule();
-        services.AddFinancialModule();
-        services.AddIdentityAccessModule();
-        services.AddIntegrationsModule();
-        services.AddPlatformModule();
-
-        return services;
-    }
-
-    /// <summary>
-    /// Registers tax-related application services (currently <see cref="Modules.Financial.Tax.Services.IInvoiceTaxApplier"/>).
-    /// Used by hosts like DbMigrator that need to apply tax during seeding but don't pull in the
-    /// full <see cref="AddApplicationLayer"/> stack (which also registers services that depend on
-    /// SignalR, blob storage, and other infrastructure those hosts don't wire).
-    /// </summary>
-    public static IServiceCollection AddApplicationTaxServices(this IServiceCollection services)
-    {
-        services.Scan(scan => scan
-            .FromAssemblies(typeof(Registrar).Assembly)
-            .AddClasses(c => c.InNamespaces("Logistics.Application.Modules.Financial.Tax.Services"), publicOnly: false)
-            .AsImplementedInterfaces()
-            .WithScopedLifetime());
-        return services;
-    }
-
-    /// <summary>
-    /// Registers fuel-card application services (<see cref="Modules.Integrations.FuelCards.Services.IFuelCardSyncService"/>).
-    /// Used by hosts like DbMigrator that seed fuel card demo data without pulling in the full
-    /// <see cref="AddApplicationLayer"/> stack.
-    /// </summary>
-    public static IServiceCollection AddApplicationFuelCardServices(this IServiceCollection services)
-    {
-        services.Scan(scan => scan
-            .FromAssemblies(typeof(Registrar).Assembly)
-            .AddClasses(c => c.InNamespaces("Logistics.Application.Modules.Integrations.FuelCards.Services"), publicOnly: false)
-            .AsImplementedInterfaces()
-            .WithScopedLifetime());
-        return services;
-    }
-
-    /// <summary>
-    /// Registers payroll application services (<see cref="Modules.Financial.Payroll.Services.IPayrollService"/>).
-    /// Used by hosts like DbMigrator that seed payroll history through the same calculation the app
-    /// uses, without pulling in the full <see cref="AddApplicationLayer"/> stack.
-    /// </summary>
-    public static IServiceCollection AddApplicationPayrollServices(this IServiceCollection services)
-    {
-        services.Scan(scan => scan
-            .FromAssemblies(typeof(Registrar).Assembly)
-            .AddClasses(c => c.AssignableTo<Modules.Financial.Payroll.Services.IPayrollService>(), publicOnly: false)
-            .AsImplementedInterfaces()
-            .WithScopedLifetime());
-        return services;
-    }
-
-    /// <summary>
-    /// Registers only the Compliance/Privacy handler slice, for hosts (the IdentityServer) that serve
-    /// the GDPR self-service page without the full <see cref="AddApplicationLayer"/> stack.
-    /// </summary>
-    public static IServiceCollection AddApplicationPrivacyServices(this IServiceCollection services)
-    {
-        const string privacyNamespace = "Logistics.Application.Modules.Compliance.Privacy";
-
-        // The filter isn't tidiness: an unfiltered scan registers notification handlers that
-        // DispatchDomainEventsInterceptor would construct on SaveChanges. FeatureCheck is off - it
-        // needs IFeatureService + ICurrentTenantAccessor, which this host doesn't wire.
-        return services.AddApplicationCommon(
-            typeFilter: type => type.Namespace?.StartsWith(privacyNamespace, StringComparison.Ordinal) == true,
-            withFeatureCheck: false);
-    }
-
-    private static IServiceCollection AddApplicationServices(this IServiceCollection services)
-    {
-        // UserPermissionService caches on it; idempotent, so a host registering it too is fine.
-        services.AddMemoryCache();
-
-        services.Scan(scan => scan
-            .FromAssemblies(typeof(Registrar).Assembly)
-            .AddClasses(c => c.AssignableTo<IApplicationService>(), publicOnly: false)
-            .AsImplementedInterfaces()
-            .WithScopedLifetime());
-        return services;
-    }
-
-    /// <summary>
-    /// Validators + the mediator with the core pipeline. <paramref name="typeFilter"/> narrows the scan
-    /// to one slice, for hosts that don't want the whole Application layer.
-    /// </summary>
-    private static IServiceCollection AddApplicationCommon(
-        this IServiceCollection services,
-        Func<Type, bool>? typeFilter = null,
-        bool withFeatureCheck = true)
-    {
-        services.AddValidatorsFromAssembly(
-            Assembly.GetExecutingAssembly(),
-            includeInternalTypes: true,
-            filter: typeFilter is null ? null : result => typeFilter(result.ValidatorType));
-
-        services.AddMediator(typeof(Registrar).Assembly, typeFilter);
-
-        // Registration order is pipeline order: the first registered behaviour runs outermost.
-        services.AddTransient(typeof(IPipelineBehavior<,>), typeof(ValidationBehaviour<,>));
-        if (withFeatureCheck)
+        public IServiceCollection AddApplicationLayer()
         {
-            services.AddTransient(typeof(IPipelineBehavior<,>), typeof(FeatureCheckBehaviour<,>));
+            services.AddApplicationCommon();
+            services.AddApplicationServices();
+
+            services.AddOperationsModule();
+            services.AddComplianceModule();
+            services.AddFinancialModule();
+            services.AddIdentityAccessModule();
+            services.AddIntegrationsModule();
+            services.AddPlatformModule();
+
+            return services;
         }
 
-        return services;
+        /// <summary>
+        /// Registers tax-related application services (currently <see cref="Modules.Financial.Tax.Services.IInvoiceTaxApplier"/>).
+        /// Used by hosts like DbMigrator that need to apply tax during seeding but don't pull in the
+        /// full <see cref="AddApplicationLayer"/> stack (which also registers services that depend on
+        /// SignalR, blob storage, and other infrastructure those hosts don't wire).
+        /// </summary>
+        public IServiceCollection AddApplicationTaxServices()
+        {
+            services.Scan(scan => scan
+                .FromAssemblies(typeof(Registrar).Assembly)
+                .AddClasses(c => c.InNamespaces("Logistics.Application.Modules.Financial.Tax.Services"), publicOnly: false)
+                .AsImplementedInterfaces()
+                .WithScopedLifetime());
+            return services;
+        }
+
+        /// <summary>
+        /// Registers fuel-card application services (<see cref="Modules.Integrations.FuelCards.Services.IFuelCardSyncService"/>).
+        /// Used by hosts like DbMigrator that seed fuel card demo data without pulling in the full
+        /// <see cref="AddApplicationLayer"/> stack.
+        /// </summary>
+        public IServiceCollection AddApplicationFuelCardServices()
+        {
+            services.Scan(scan => scan
+                .FromAssemblies(typeof(Registrar).Assembly)
+                .AddClasses(c => c.InNamespaces("Logistics.Application.Modules.Integrations.FuelCards.Services"), publicOnly: false)
+                .AsImplementedInterfaces()
+                .WithScopedLifetime());
+            return services;
+        }
+
+        /// <summary>
+        /// Registers payroll application services (<see cref="Modules.Financial.Payroll.Services.IPayrollService"/>).
+        /// Used by hosts like DbMigrator that seed payroll history through the same calculation the app
+        /// uses, without pulling in the full <see cref="AddApplicationLayer"/> stack.
+        /// </summary>
+        public IServiceCollection AddApplicationPayrollServices()
+        {
+            services.Scan(scan => scan
+                .FromAssemblies(typeof(Registrar).Assembly)
+                .AddClasses(c => c.AssignableTo<Modules.Financial.Payroll.Services.IPayrollService>(), publicOnly: false)
+                .AsImplementedInterfaces()
+                .WithScopedLifetime());
+            return services;
+        }
+
+        /// <summary>
+        /// Registers only the Compliance/Privacy handler slice, for hosts (the IdentityServer) that serve
+        /// the GDPR self-service page without the full <see cref="AddApplicationLayer"/> stack.
+        /// </summary>
+        public IServiceCollection AddApplicationPrivacyServices()
+        {
+            const string privacyNamespace = "Logistics.Application.Modules.Compliance.Privacy";
+
+            // The filter isn't tidiness: an unfiltered scan registers notification handlers that
+            // DispatchDomainEventsInterceptor would construct on SaveChanges. FeatureCheck is off - it
+            // needs IFeatureService + ICurrentTenantAccessor, which this host doesn't wire.
+            return services.AddApplicationCommon(
+                typeFilter: type => type.Namespace?.StartsWith(privacyNamespace, StringComparison.Ordinal) == true,
+                withFeatureCheck: false);
+        }
+
+        private IServiceCollection AddApplicationServices()
+        {
+            // UserPermissionService caches on it; idempotent, so a host registering it too is fine.
+            services.AddMemoryCache();
+
+            services.Scan(scan => scan
+                .FromAssemblies(typeof(Registrar).Assembly)
+                .AddClasses(c => c.AssignableTo<IApplicationService>(), publicOnly: false)
+                .AsImplementedInterfaces()
+                .WithScopedLifetime());
+            return services;
+        }
+
+            /// <summary>
+            /// Validators + the mediator with the core pipeline. <paramref name="typeFilter"/> narrows the scan
+            /// to one slice, for hosts that don't want the whole Application layer.
+            /// </summary>
+            private IServiceCollection AddApplicationCommon(
+        Func<Type, bool>? typeFilter = null,
+                bool withFeatureCheck = true)
+            {
+                services.AddValidatorsFromAssembly(
+                    Assembly.GetExecutingAssembly(),
+                    includeInternalTypes: true,
+                    filter: typeFilter is null ? null : result => typeFilter(result.ValidatorType));
+
+                services.AddMediator(typeof(Registrar).Assembly, typeFilter);
+
+                // Registration order is pipeline order: the first registered behaviour runs outermost.
+                services.AddTransient(typeof(IPipelineBehavior<,>), typeof(ValidationBehaviour<,>));
+                if (withFeatureCheck)
+                {
+                    services.AddTransient(typeof(IPipelineBehavior<,>), typeof(FeatureCheckBehaviour<,>));
+                }
+
+                return services;
+            }
     }
 
 }

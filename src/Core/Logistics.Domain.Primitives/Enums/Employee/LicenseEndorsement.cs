@@ -52,15 +52,21 @@ public static class LicenseEndorsementExtensions
         LicenseEndorsement.AdrClass7
     ];
 
-    /// <summary>
-    /// Expands a flags value into the set of individual endorsements it contains.
-    /// </summary>
-    public static LicenseEndorsement[] ToArray(this LicenseEndorsement value) =>
-        AllValues.Where(v => value.HasFlag(v)).ToArray();
+    extension(LicenseEndorsement value)
+    {
+        /// <summary>
+        /// Expands a flags value into the set of individual endorsements it contains.
+        /// </summary>
+        public LicenseEndorsement[] ToArray() =>
+            AllValues.Where(v => value.HasFlag(v)).ToArray();
+    }
 
-    /// <summary>
-    /// Combines a set of endorsements into a single flags bitfield.
-    /// </summary>
-    public static LicenseEndorsement Combine(this IEnumerable<LicenseEndorsement>? values) =>
-        values?.Aggregate(LicenseEndorsement.None, (acc, v) => acc | v) ?? LicenseEndorsement.None;
+    extension(IEnumerable<LicenseEndorsement>? values)
+    {
+        /// <summary>
+        /// Combines a set of endorsements into a single flags bitfield.
+        /// </summary>
+        public LicenseEndorsement Combine() =>
+            values?.Aggregate(LicenseEndorsement.None, (acc, v) => acc | v) ?? LicenseEndorsement.None;
+    }
 }

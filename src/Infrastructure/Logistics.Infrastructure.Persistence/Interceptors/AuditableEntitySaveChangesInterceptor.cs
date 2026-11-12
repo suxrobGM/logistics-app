@@ -51,24 +51,30 @@ public class AuditableEntitySaveChangesInterceptor(IHttpContextAccessor? httpCon
 
 public static class Extensions
 {
-    public static bool HasChangedOwnedEntities(this EntityEntry entry)
+    extension(EntityEntry entry)
     {
-        return entry.References.Any(r =>
-            r.TargetEntry != null &&
-            r.TargetEntry.Metadata.IsOwned() &&
-            r.TargetEntry.State is EntityState.Modified);
+        public bool HasChangedOwnedEntities()
+        {
+            return entry.References.Any(r =>
+                r.TargetEntry != null &&
+                r.TargetEntry.Metadata.IsOwned() &&
+                r.TargetEntry.State is EntityState.Modified);
+        }
     }
 
-    public static string? GetUserId(this HttpContext? httpContext)
+    extension(HttpContext? httpContext)
     {
-        try
+        public string? GetUserId()
         {
-            return httpContext?.User?.FindFirstValue(ClaimTypes.NameIdentifier);
-        }
-        catch (ObjectDisposedException)
-        {
-            // HttpContext is disposed when running in a background task
-            return null;
+            try
+            {
+                return httpContext?.User?.FindFirstValue(ClaimTypes.NameIdentifier);
+            }
+            catch (ObjectDisposedException)
+            {
+                // HttpContext is disposed when running in a background task
+                return null;
+            }
         }
     }
 }

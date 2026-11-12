@@ -6,21 +6,24 @@ namespace Logistics.Mappings;
 
 public static class ConditionReportMapper
 {
-    public static ConditionDefectDto ToDto(this ConditionDefect entity)
+    extension(ConditionDefect entity)
     {
-        return new ConditionDefectDto
+        public ConditionDefectDto ToDto()
         {
-            Id = entity.Id,
-            PartCategory = entity.PartCategory,
-            PartCategoryDisplay = entity.PartCategory.GetDescription(),
-            Description = entity.Description,
-            Severity = entity.Severity,
-            SeverityDisplay = entity.Severity.GetDescription(),
-            Zone = entity.Zone,
-            ZoneDisplay = entity.Zone?.GetDescription(),
-            DamageType = entity.DamageType,
-            DamageCode = entity.DamageType?.GetCode(),
-            PhotoDocumentId = entity.PhotoDocumentId
-        };
+            return new ConditionDefectDto
+            {
+                Id = entity.Id,
+                PartCategory = entity.PartCategory,
+                PartCategoryDisplay = entity.PartCategory.GetDescription(),
+                Description = entity.Description,
+                Severity = entity.Severity,
+                SeverityDisplay = entity.Severity.GetDescription(),
+                Zone = entity.Zone,
+                ZoneDisplay = entity.Zone?.GetDescription(),
+                DamageType = entity.DamageType,
+                DamageCode = entity.DamageType?.GetCode(),
+                PhotoDocumentId = entity.PhotoDocumentId
+            };
+        }
     }
 }

@@ -15,9 +15,12 @@ public static partial class TrailerMapper
     [MapperIgnoreTarget(nameof(TrailerDto.CurrentTruckNumber))]
     public static partial TrailerDto ToDto(this Trailer entity);
 
-    public static TrailerDto ToDto(this Trailer entity, Truck? currentTruck)
+    extension(Trailer entity)
     {
-        var dto = entity.ToDto();
-        return dto with { CurrentTruckId = currentTruck?.Id, CurrentTruckNumber = currentTruck?.Number };
+        public TrailerDto ToDto(Truck? currentTruck)
+        {
+            var dto = entity.ToDto();
+            return dto with { CurrentTruckId = currentTruck?.Id, CurrentTruckNumber = currentTruck?.Number };
+        }
     }
 }

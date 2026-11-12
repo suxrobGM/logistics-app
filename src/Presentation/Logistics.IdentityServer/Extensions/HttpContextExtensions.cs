@@ -2,9 +2,12 @@ namespace Logistics.IdentityServer.Extensions;
 
 public static class HttpContextExtensions
 {
-    public static Guid? GetTenantId(this HttpContext context)
+    extension(HttpContext context)
     {
-        context.Request.Headers.TryGetValue("x-tenant", out var tenantId);
-        return Guid.TryParse(tenantId, out var id) ? id : null;
+        public Guid? GetTenantId()
+        {
+            context.Request.Headers.TryGetValue("x-tenant", out var tenantId);
+            return Guid.TryParse(tenantId, out var id) ? id : null;
+        }
     }
 }

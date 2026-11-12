@@ -10,18 +10,20 @@ namespace Logistics.Application.Abstractions.AI;
 /// </summary>
 public static class AISettingsResolver
 {
-    /// <summary>
-    /// Global reasoning effort: system setting (<see cref="AISettingsKeys.ReasoningEffort"/>) →
-    /// <see cref="LlmOptions.DefaultReasoningEffort"/> from appsettings.
-    /// </summary>
-    public static async Task<ReasoningEffort> ResolveReasoningEffortAsync(
-        this ISystemSettingsService systemSettings,
-        LlmOptions config,
-        CancellationToken ct = default)
+    extension(ISystemSettingsService systemSettings)
     {
-        var setting = await systemSettings.GetAsync(AISettingsKeys.ReasoningEffort, ct);
-        return Enum.TryParse<ReasoningEffort>(setting, out var effort)
-            ? effort
-            : config.DefaultReasoningEffort;
+            /// <summary>
+            /// Global reasoning effort: system setting (<see cref="AISettingsKeys.ReasoningEffort"/>) →
+            /// <see cref="LlmOptions.DefaultReasoningEffort"/> from appsettings.
+            /// </summary>
+            public async Task<ReasoningEffort> ResolveReasoningEffortAsync(
+        LlmOptions config,
+                CancellationToken ct = default)
+            {
+                var setting = await systemSettings.GetAsync(AISettingsKeys.ReasoningEffort, ct);
+                return Enum.TryParse<ReasoningEffort>(setting, out var effort)
+                    ? effort
+                    : config.DefaultReasoningEffort;
+            }
     }
 }

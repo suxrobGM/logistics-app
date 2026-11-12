@@ -10,22 +10,24 @@ namespace Logistics.Infrastructure.Routing;
 
 public static class Registrar
 {
-    public static IServiceCollection AddRoutingInfrastructure(this IServiceCollection services,
-        IConfiguration configuration)
+    extension(IServiceCollection services)
     {
-        // Geocoding services
-        services.Configure<MapboxOptions>(configuration.GetSection(MapboxOptions.SectionName));
-        services.AddHttpClient<IGeocodingService, MapboxGeocodingService>();
-        services.AddHttpClient<MapboxMatrixClient>();
+        public IServiceCollection AddRoutingInfrastructure(IConfiguration configuration)
+        {
+            // Geocoding services
+            services.Configure<MapboxOptions>(configuration.GetSection(MapboxOptions.SectionName));
+            services.AddHttpClient<IGeocodingService, MapboxGeocodingService>();
+            services.AddHttpClient<MapboxMatrixClient>();
 
-        // Offline point-in-polygon jurisdiction lookup (IFTA mileage attribution)
-        services.AddSingleton<IJurisdictionResolver, JurisdictionResolver>();
-        services.AddHostedService<JurisdictionResolverWarmup>();
+            // Offline point-in-polygon jurisdiction lookup (IFTA mileage attribution)
+            services.AddSingleton<IJurisdictionResolver, JurisdictionResolver>();
+            services.AddHostedService<JurisdictionResolverWarmup>();
 
-        // Trip optimization services
-        services.AddSingleton<HeuristicTripOptimizer>();
-        services.AddSingleton<MapboxMatrixTripOptimizer>();
-        services.AddSingleton<ITripOptimizer, CompositeTripOptimizer>();
-        return services;
+            // Trip optimization services
+            services.AddSingleton<HeuristicTripOptimizer>();
+            services.AddSingleton<MapboxMatrixTripOptimizer>();
+            services.AddSingleton<ITripOptimizer, CompositeTripOptimizer>();
+            return services;
+        }
     }
 }

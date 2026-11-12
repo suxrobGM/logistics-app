@@ -6,12 +6,16 @@ public static class DistanceUnitExtensions
     private const double MetersPerMile = 1609.344;
     private const double MetersPerKilometer = 1000;
 
-    public static double FromMeters(this DistanceUnit unit, double meters) =>
-        unit == DistanceUnit.Kilometers ? meters / MetersPerKilometer : meters / MetersPerMile;
+    extension(DistanceUnit unit)
+    {
+        public double FromMeters(double meters) =>
+            unit == DistanceUnit.Kilometers ? meters / MetersPerKilometer : meters / MetersPerMile;
 
-    public static double ToMeters(this DistanceUnit unit, double distance) =>
-        unit == DistanceUnit.Kilometers ? distance * MetersPerKilometer : distance * MetersPerMile;
+        public double ToMeters(double distance) =>
+            unit == DistanceUnit.Kilometers ? distance * MetersPerKilometer : distance * MetersPerMile;
 
-    public static string Abbreviation(this DistanceUnit unit) =>
-        unit == DistanceUnit.Kilometers ? "km" : "mi";
+        public string Abbreviation() =>
+            unit == DistanceUnit.Kilometers ? "km" : "mi";
+    }
+
 }

@@ -29,23 +29,26 @@ public static partial class FactoringMapper
     [MapperIgnoreTarget(nameof(FactoringBatchDto.Items))]
     private static partial FactoringBatchDto ToDtoCore(this FactoringBatch entity);
 
-    /// <summary>
-    /// The schedule with its totals. Pass the items already loaded for the batch, and their DTOs only for
-    /// the detail read.
-    /// </summary>
-    public static FactoringBatchDto ToDto(
-        this FactoringBatch entity, string? factoringCompanyName, IReadOnlyCollection<FactoringBatchItem> items,
-        IEnumerable<FactoringBatchItemDto>? itemDtos = null)
+    extension(FactoringBatch entity)
     {
-        return entity.ToDtoCore() with
-        {
-            FactoringCompanyName = factoringCompanyName,
-            InvoiceCount = items.Count,
-            AdvanceTotal = items.Sum(i => i.AdvanceAmount ?? 0m),
-            FeeTotal = items.Sum(i => i.FeeAmount ?? 0m),
-            ReserveOutstanding = items.Sum(i => i.ReserveOutstanding),
-            Items = itemDtos ?? []
-        };
+            /// <summary>
+            /// The schedule with its totals. Pass the items already loaded for the batch, and their DTOs only for
+            /// the detail read.
+            /// </summary>
+            public FactoringBatchDto ToDto(
+        string? factoringCompanyName, IReadOnlyCollection<FactoringBatchItem> items,
+                IEnumerable<FactoringBatchItemDto>? itemDtos = null)
+            {
+                return entity.ToDtoCore() with
+                {
+                    FactoringCompanyName = factoringCompanyName,
+                    InvoiceCount = items.Count,
+                    AdvanceTotal = items.Sum(i => i.AdvanceAmount ?? 0m),
+                    FeeTotal = items.Sum(i => i.FeeAmount ?? 0m),
+                    ReserveOutstanding = items.Sum(i => i.ReserveOutstanding),
+                    Items = itemDtos ?? []
+                };
+            }
     }
 
     [MapperIgnoreSource(nameof(FactoringBatchItem.DomainEvents))]
@@ -66,17 +69,20 @@ public static partial class FactoringMapper
     [MapperIgnoreTarget(nameof(FactoringBatchItemDto.EstimatedFee))]
     private static partial FactoringBatchItemDto ToDtoCore(this FactoringBatchItem entity);
 
-    public static FactoringBatchItemDto ToDto(
-        this FactoringBatchItem entity, long invoiceNumber, long loadNumber, string? customerName,
-        FactoringAmounts estimate)
+    extension(FactoringBatchItem entity)
     {
-        return entity.ToDtoCore() with
-        {
-            InvoiceNumber = invoiceNumber,
-            LoadNumber = loadNumber,
-            CustomerName = customerName,
-            EstimatedAdvance = estimate.Advance,
-            EstimatedFee = estimate.Fee
-        };
+            public FactoringBatchItemDto ToDto(
+        long invoiceNumber, long loadNumber, string? customerName,
+                FactoringAmounts estimate)
+            {
+                return entity.ToDtoCore() with
+                {
+                    InvoiceNumber = invoiceNumber,
+                    LoadNumber = loadNumber,
+                    CustomerName = customerName,
+                    EstimatedAdvance = estimate.Advance,
+                    EstimatedFee = estimate.Fee
+                };
+            }
     }
 }

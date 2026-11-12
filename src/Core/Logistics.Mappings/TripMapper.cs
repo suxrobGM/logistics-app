@@ -24,12 +24,15 @@ public static partial class TripMapper
     [MapPropertyFromSource(nameof(TripDto.TotalRevenue), Use = nameof(MapTotalRevenue))]
     private static partial TripDto MapTrip(Trip entity);
 
-    /// <summary>
-    /// <paramref name="trailerNumber"/> is passed in rather than read off <c>Trip.Trailer</c>, which would lazy-load one
-    /// trailer per row in a list.
-    /// </summary>
-    public static TripDto ToDto(this Trip entity, string? trailerNumber) =>
-        MapTrip(entity) with { TrailerNumber = trailerNumber };
+    extension(Trip entity)
+    {
+        /// <summary>
+        /// <paramref name="trailerNumber"/> is passed in rather than read off <c>Trip.Trailer</c>, which would lazy-load one
+        /// trailer per row in a list.
+        /// </summary>
+        public TripDto ToDto(string? trailerNumber) =>
+            MapTrip(entity) with { TrailerNumber = trailerNumber };
+    }
 
     private static IEnumerable<TripLoadDto> MapLoads(Trip trip)
     {

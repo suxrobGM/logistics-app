@@ -8,78 +8,81 @@ namespace Logistics.Mappings;
 [UseStaticMapper(typeof(CustomerMapper))]
 public static partial class LoadMapper
 {
-    /// <summary>
-    /// Related values come from <paramref name="lookup"/> only - there is no navigation-property
-    /// fallback, so a handler that skips the resolver gets blank fields instead of silently paying
-    /// a lazy SELECT per row. Single-row callers resolve a one-load batch.
-    /// </summary>
-    public static LoadDto ToDto(this Load entity, LoadLookup lookup)
+    extension(Load entity)
     {
-        var container = lookup.FindContainer(entity.ContainerId);
-        var originTerminal = lookup.FindTerminal(entity.OriginTerminalId);
-        var destinationTerminal = lookup.FindTerminal(entity.DestinationTerminalId);
-        var truck = lookup.FindTruck(entity.AssignedTruckId);
-        var trip = lookup.FindTrip(entity.Id);
-
-        return new LoadDto
+        /// <summary>
+        /// Related values come from <paramref name="lookup"/> only - there is no navigation-property
+        /// fallback, so a handler that skips the resolver gets blank fields instead of silently paying
+        /// a lazy SELECT per row. Single-row callers resolve a one-load batch.
+        /// </summary>
+        public LoadDto ToDto(LoadLookup lookup)
         {
-            Id = entity.Id,
-            Number = entity.Number,
-            Name = entity.Name,
-            Type = entity.Type,
-            OriginAddress = entity.OriginAddress,
-            OriginLocation = entity.OriginLocation,
-            DestinationAddress = entity.DestinationAddress,
-            DestinationLocation = entity.DestinationLocation,
-            DispatchedAt = entity.DispatchedAt,
-            CreatedAt = entity.CreatedAt,
-            PickedUpAt = entity.PickedUpAt,
-            DeliveredAt = entity.DeliveredAt,
-            DeliveryCost = entity.DeliveryCost,
-            Distance = entity.Distance,
-            CanConfirmPickUp = entity.CanConfirmPickUp,
-            CanConfirmDelivery = entity.CanConfirmDelivery,
-            IsInProximity = entity.IsInProximity,
-            Source = entity.Source,
-            RequestedPickupDate = entity.RequestedPickupDate,
-            RequestedDeliveryDate = entity.RequestedDeliveryDate,
-            Notes = entity.Notes,
-            HazmatClass = entity.HazmatClass,
-            UnNumber = entity.UnNumber,
-            FreightClass = entity.FreightClass,
-            NmfcCode = entity.NmfcCode,
-            PalletCount = entity.PalletCount,
-            PieceCount = entity.PieceCount,
-            Weight = entity.Weight,
-            Dimensions = entity.Dimensions,
-            IsStackable = entity.IsStackable,
-            FuelSurcharge = entity.FuelSurcharge,
-            ContainerId = entity.ContainerId,
-            ContainerNumber = container?.Number,
-            ContainerIsoType = container?.IsoType,
-            ContainerLastFreeDay = container?.LastFreeDay,
-            ContainerIsOnHold = container?.IsOnHold,
-            OriginTerminalId = entity.OriginTerminalId,
-            OriginTerminalName = originTerminal?.Name,
-            OriginTerminalCode = originTerminal?.Code,
-            DestinationTerminalId = entity.DestinationTerminalId,
-            DestinationTerminalName = destinationTerminal?.Name,
-            DestinationTerminalCode = destinationTerminal?.Code,
-            Status = entity.Status,
-            AssignedDispatcherId = entity.AssignedDispatcherId,
-            AssignedDispatcherName = lookup.FindEmployeeName(entity.AssignedDispatcherId),
-            AssignedTruckId = entity.AssignedTruckId,
-            AssignedTruckNumber = truck?.Number,
-            AssignedTruckDriversName = truck?.DriversNames,
-            Vehicles = entity.Vehicles.ToDto(),
-            Customer = lookup.FindCustomer(entity.CustomerId),
-            Invoice = lookup.FindInvoice(entity.Id),
-            TripId = trip?.Id,
-            TripName = trip?.Name,
-            TripNumber = trip?.Number,
-            CurrentAddress = truck?.CurrentAddress,
-            CurrentLocation = truck?.CurrentLocation
-        };
+            var container = lookup.FindContainer(entity.ContainerId);
+            var originTerminal = lookup.FindTerminal(entity.OriginTerminalId);
+            var destinationTerminal = lookup.FindTerminal(entity.DestinationTerminalId);
+            var truck = lookup.FindTruck(entity.AssignedTruckId);
+            var trip = lookup.FindTrip(entity.Id);
+
+            return new LoadDto
+            {
+                Id = entity.Id,
+                Number = entity.Number,
+                Name = entity.Name,
+                Type = entity.Type,
+                OriginAddress = entity.OriginAddress,
+                OriginLocation = entity.OriginLocation,
+                DestinationAddress = entity.DestinationAddress,
+                DestinationLocation = entity.DestinationLocation,
+                DispatchedAt = entity.DispatchedAt,
+                CreatedAt = entity.CreatedAt,
+                PickedUpAt = entity.PickedUpAt,
+                DeliveredAt = entity.DeliveredAt,
+                DeliveryCost = entity.DeliveryCost,
+                Distance = entity.Distance,
+                CanConfirmPickUp = entity.CanConfirmPickUp,
+                CanConfirmDelivery = entity.CanConfirmDelivery,
+                IsInProximity = entity.IsInProximity,
+                Source = entity.Source,
+                RequestedPickupDate = entity.RequestedPickupDate,
+                RequestedDeliveryDate = entity.RequestedDeliveryDate,
+                Notes = entity.Notes,
+                HazmatClass = entity.HazmatClass,
+                UnNumber = entity.UnNumber,
+                FreightClass = entity.FreightClass,
+                NmfcCode = entity.NmfcCode,
+                PalletCount = entity.PalletCount,
+                PieceCount = entity.PieceCount,
+                Weight = entity.Weight,
+                Dimensions = entity.Dimensions,
+                IsStackable = entity.IsStackable,
+                FuelSurcharge = entity.FuelSurcharge,
+                ContainerId = entity.ContainerId,
+                ContainerNumber = container?.Number,
+                ContainerIsoType = container?.IsoType,
+                ContainerLastFreeDay = container?.LastFreeDay,
+                ContainerIsOnHold = container?.IsOnHold,
+                OriginTerminalId = entity.OriginTerminalId,
+                OriginTerminalName = originTerminal?.Name,
+                OriginTerminalCode = originTerminal?.Code,
+                DestinationTerminalId = entity.DestinationTerminalId,
+                DestinationTerminalName = destinationTerminal?.Name,
+                DestinationTerminalCode = destinationTerminal?.Code,
+                Status = entity.Status,
+                AssignedDispatcherId = entity.AssignedDispatcherId,
+                AssignedDispatcherName = lookup.FindEmployeeName(entity.AssignedDispatcherId),
+                AssignedTruckId = entity.AssignedTruckId,
+                AssignedTruckNumber = truck?.Number,
+                AssignedTruckDriversName = truck?.DriversNames,
+                Vehicles = entity.Vehicles.ToDto(),
+                Customer = lookup.FindCustomer(entity.CustomerId),
+                Invoice = lookup.FindInvoice(entity.Id),
+                TripId = trip?.Id,
+                TripName = trip?.Name,
+                TripNumber = trip?.Number,
+                CurrentAddress = truck?.CurrentAddress,
+                CurrentLocation = truck?.CurrentLocation
+            };
+        }
     }
 
     [MapperRequiredMapping(RequiredMappingStrategy.Target)]

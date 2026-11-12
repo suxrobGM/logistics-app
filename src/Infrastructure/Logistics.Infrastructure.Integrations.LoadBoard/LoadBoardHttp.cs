@@ -21,44 +21,45 @@ internal static class LoadBoardHttp
         DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull
     };
 
-    /// <summary>
-    /// Sends <paramref name="body"/> as JSON (when not null) with an optional bearer token and
-    /// reads the response body as <typeparamref name="T"/>.
-    /// </summary>
-    public static async Task<T> SendJsonAsync<T>(
-        this HttpClient client,
-        HttpMethod method,
-        string url,
-        object? body,
-        string? bearerToken,
-        string vendor,
-        CancellationToken ct)
+    extension(HttpClient client)
     {
-        using var response = await SendCoreAsync(client, method, url, body, bearerToken, vendor, ct);
-        try
-        {
-            return await response.Content.ReadFromJsonAsync<T>(Json, ct)
-                   ?? throw new LoadBoardApiException($"{vendor} sent an empty response.", response.StatusCode);
-        }
-        catch (JsonException ex)
-        {
-            throw new LoadBoardApiException($"{vendor} sent a response we could not read: {ex.Message}", response.StatusCode);
-        }
-    }
+            /// <summary>
+            /// Sends <paramref name="body"/> as JSON (when not null) with an optional bearer token and
+            /// reads the response body as <typeparamref name="T"/>.
+            /// </summary>
+            public async Task<T> SendJsonAsync<T>(
+        HttpMethod method,
+                string url,
+                object? body,
+                string? bearerToken,
+                string vendor,
+                CancellationToken ct)
+            {
+                using var response = await SendCoreAsync(client, method, url, body, bearerToken, vendor, ct);
+                try
+                {
+                    return await response.Content.ReadFromJsonAsync<T>(Json, ct)
+                           ?? throw new LoadBoardApiException($"{vendor} sent an empty response.", response.StatusCode);
+                }
+                catch (JsonException ex)
+                {
+                    throw new LoadBoardApiException($"{vendor} sent a response we could not read: {ex.Message}", response.StatusCode);
+                }
+            }
 
-    /// <summary>
-    /// Sends a request whose response body is not needed.
-    /// </summary>
-    public static async Task SendJsonAsync(
-        this HttpClient client,
+            /// <summary>
+            /// Sends a request whose response body is not needed.
+            /// </summary>
+            public async Task SendJsonAsync(
         HttpMethod method,
-        string url,
-        object? body,
-        string? bearerToken,
-        string vendor,
-        CancellationToken ct)
-    {
-        using var response = await SendCoreAsync(client, method, url, body, bearerToken, vendor, ct);
+                string url,
+                object? body,
+                string? bearerToken,
+                string vendor,
+                CancellationToken ct)
+            {
+                using var response = await SendCoreAsync(client, method, url, body, bearerToken, vendor, ct);
+            }
     }
 
     private static async Task<HttpResponseMessage> SendCoreAsync(

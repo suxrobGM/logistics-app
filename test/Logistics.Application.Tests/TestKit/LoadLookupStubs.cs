@@ -13,15 +13,18 @@ namespace Logistics.Application.Tests.TestKit;
 /// </summary>
 internal static class LoadLookupStubs
 {
-    public static void StubLoadLookups(this ITenantUnitOfWork uow)
+    extension(ITenantUnitOfWork uow)
     {
-        Empty<Container>(uow);
-        Empty<Terminal>(uow);
-        Empty<Truck>(uow);
-        Empty<Employee>(uow);
-        Empty<TripStop>(uow);
-        Empty<LoadInvoice>(uow);
-        Empty<Customer>(uow);
+        public void StubLoadLookups()
+        {
+            Empty<Container>(uow);
+            Empty<Terminal>(uow);
+            Empty<Truck>(uow);
+            Empty<Employee>(uow);
+            Empty<TripStop>(uow);
+            Empty<LoadInvoice>(uow);
+            Empty<Customer>(uow);
+        }
     }
 
     private static void Empty<T>(ITenantUnitOfWork uow) where T : class, IEntity<Guid>, ITenantEntity

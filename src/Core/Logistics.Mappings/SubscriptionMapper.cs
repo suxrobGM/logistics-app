@@ -5,17 +5,20 @@ namespace Logistics.Mappings;
 
 public static class SubscriptionMapper
 {
-    public static SubscriptionDto ToDto(this Subscription entity)
+    extension(Subscription entity)
     {
-        return new SubscriptionDto
+        public SubscriptionDto ToDto()
         {
-            Id = entity.Id,
-            Status = entity.Status,
-            Tenant = GetTenantDto(entity.Tenant),
-            Plan = entity.Plan.ToDto(),
-            CancelAtPeriodEnd = entity.CancelAtPeriodEnd,
-            StripeSubscriptionId = entity.StripeSubscriptionId,
-        };
+            return new SubscriptionDto
+            {
+                Id = entity.Id,
+                Status = entity.Status,
+                Tenant = GetTenantDto(entity.Tenant),
+                Plan = entity.Plan.ToDto(),
+                CancelAtPeriodEnd = entity.CancelAtPeriodEnd,
+                StripeSubscriptionId = entity.StripeSubscriptionId,
+            };
+        }
     }
 
     private static TenantDto GetTenantDto(Tenant entity)

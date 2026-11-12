@@ -13,65 +13,79 @@ namespace Logistics.Application.Modules.Financial.Tax.Services;
 /// </summary>
 public static class TaxCalculationMappings
 {
-    /// <summary>
-    /// Builds calculator-line inputs from invoice line items, using each line's net total
-    /// (Amount * Quantity) as the taxable base.
-    /// </summary>
-    public static IReadOnlyList<TaxCalculationLineItem> ToCalculationLines(
-        this IEnumerable<InvoiceLineItem> lineItems) =>
-        lineItems
-            .Select(li => new TaxCalculationLineItem
-            {
-                LineItemId = li.Id,
-                NetAmount = li.Amount.Amount * li.Quantity,
-                TaxCode = li.TaxCode,
-                Description = li.Description
-            })
-            .ToList();
-
-    /// <summary>
-    /// Builds calculator-line inputs from the preview-tax request DTOs.
-    /// </summary>
-    public static IReadOnlyList<TaxCalculationLineItem> ToCalculationLines(
-        this IEnumerable<PreviewInvoiceTaxLineItem> lineItems) =>
-        lineItems
-            .Select(li => new TaxCalculationLineItem
-            {
-                LineItemId = li.LineItemId,
-                NetAmount = li.Amount * li.Quantity,
-                TaxCode = li.TaxCode,
-                Description = li.Description
-            })
-            .ToList();
-
-    public static PreviewLineItemTax ToDto(this TaxCalculationLineResult line) => new()
+    extension(IEnumerable<InvoiceLineItem> lineItems)
     {
-        LineItemId = line.LineItemId,
-        RatePercent = line.RatePercent,
-        TaxAmount = line.TaxAmount,
-        TaxCode = line.TaxCode
-    };
+            /// <summary>
+            /// Builds calculator-line inputs from invoice line items, using each line's net total
+            /// (Amount * Quantity) as the taxable base.
+            /// </summary>
+            public IReadOnlyList<TaxCalculationLineItem> ToCalculationLines(
+        ) =>
+                lineItems
+                    .Select(li => new TaxCalculationLineItem
+                    {
+                        LineItemId = li.Id,
+                        NetAmount = li.Amount.Amount * li.Quantity,
+                        TaxCode = li.TaxCode,
+                        Description = li.Description
+                    })
+                    .ToList();
+    }
 
-    public static IEnumerable<PreviewLineItemTax> ToDto(this IEnumerable<TaxCalculationLineResult> lines) =>
-        lines.Select(ToDto);
+    extension(IEnumerable<PreviewInvoiceTaxLineItem> lineItems)
+    {
+            /// <summary>
+            /// Builds calculator-line inputs from the preview-tax request DTOs.
+            /// </summary>
+            public IReadOnlyList<TaxCalculationLineItem> ToCalculationLines(
+        ) =>
+                lineItems
+                    .Select(li => new TaxCalculationLineItem
+                    {
+                        LineItemId = li.LineItemId,
+                        NetAmount = li.Amount * li.Quantity,
+                        TaxCode = li.TaxCode,
+                        Description = li.Description
+                    })
+                    .ToList();
+    }
 
-    /// <summary>
-    /// Translate a <see cref="TaxCalculationResult"/> into the API's preview response, given the
-    /// invoice currency and pre-tax totals.
-    /// </summary>
-    public static PreviewInvoiceTaxResponse ToPreviewResponse(
-        this TaxCalculationResult result,
-        string currency,
-        decimal subtotal,
-        decimal taxTotal,
-        decimal total) => new()
+    extension(TaxCalculationLineResult line)
+    {
+        public PreviewLineItemTax ToDto() => new()
         {
-            TaxBehavior = result.TaxBehavior,
-            Subtotal = new() { Amount = subtotal, Currency = currency },
-            TaxTotal = new() { Amount = taxTotal, Currency = currency },
-            Total = new() { Amount = total, Currency = currency },
-            Breakdown = result.Breakdown.ToDto(),
-            Lines = result.Lines.ToDto(),
-            Warning = result.Warning
+            LineItemId = line.LineItemId,
+            RatePercent = line.RatePercent,
+            TaxAmount = line.TaxAmount,
+            TaxCode = line.TaxCode
         };
+    }
+
+    extension(IEnumerable<TaxCalculationLineResult> lines)
+    {
+        public IEnumerable<PreviewLineItemTax> ToDto() =>
+            lines.Select(ToDto);
+    }
+
+    extension(TaxCalculationResult result)
+    {
+            /// <summary>
+            /// Translate a <see cref="TaxCalculationResult"/> into the API's preview response, given the
+            /// invoice currency and pre-tax totals.
+            /// </summary>
+            public PreviewInvoiceTaxResponse ToPreviewResponse(
+        string currency,
+                decimal subtotal,
+                decimal taxTotal,
+                decimal total) => new()
+                {
+                    TaxBehavior = result.TaxBehavior,
+                    Subtotal = new() { Amount = subtotal, Currency = currency },
+                    TaxTotal = new() { Amount = taxTotal, Currency = currency },
+                    Total = new() { Amount = total, Currency = currency },
+                    Breakdown = result.Breakdown.ToDto(),
+                    Lines = result.Lines.ToDto(),
+                    Warning = result.Warning
+                };
+    }
 }

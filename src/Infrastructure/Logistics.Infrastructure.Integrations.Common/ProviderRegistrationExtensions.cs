@@ -10,19 +10,22 @@ namespace Logistics.Infrastructure.Integrations.Common;
 /// </summary>
 public static class ProviderRegistrationExtensions
 {
-    /// <summary>
-    /// Binds <typeparamref name="TOptions"/> to <paramref name="sectionName"/> and registers the
-    /// provider factory (<typeparamref name="TFactoryImplementation"/> as
-    /// <typeparamref name="TFactoryService"/>) with a scoped lifetime.
-    /// </summary>
-    public static IServiceCollection AddProviderIntegration<TOptions, TFactoryService, TFactoryImplementation>(
-        this IServiceCollection services, IConfiguration configuration, string sectionName)
-        where TOptions : class
-        where TFactoryService : class
-        where TFactoryImplementation : class, TFactoryService
+    extension(IServiceCollection services)
     {
-        services.Configure<TOptions>(configuration.GetSection(sectionName));
-        services.AddScoped<TFactoryService, TFactoryImplementation>();
-        return services;
+            /// <summary>
+            /// Binds <typeparamref name="TOptions"/> to <paramref name="sectionName"/> and registers the
+            /// provider factory (<typeparamref name="TFactoryImplementation"/> as
+            /// <typeparamref name="TFactoryService"/>) with a scoped lifetime.
+            /// </summary>
+            public IServiceCollection AddProviderIntegration<TOptions, TFactoryService, TFactoryImplementation>(
+        IConfiguration configuration, string sectionName)
+                where TOptions : class
+                where TFactoryService : class
+                where TFactoryImplementation : class, TFactoryService
+            {
+                services.Configure<TOptions>(configuration.GetSection(sectionName));
+                services.AddScoped<TFactoryService, TFactoryImplementation>();
+                return services;
+            }
     }
 }

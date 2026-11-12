@@ -5,15 +5,18 @@ namespace Logistics.Mappings;
 
 public static class NotificationMapper
 {
-    public static NotificationDto ToDto(this Notification entity, bool isRead = false)
+    extension(Notification entity)
     {
-        return new NotificationDto
+        public NotificationDto ToDto(bool isRead = false)
         {
-            Id = entity.Id,
-            Title = entity.Title,
-            Message = entity.Message,
-            IsRead = isRead,
-            CreatedDate = entity.CreatedDate
-        };
+            return new NotificationDto
+            {
+                Id = entity.Id,
+                Title = entity.Title,
+                Message = entity.Message,
+                IsRead = isRead,
+                CreatedDate = entity.CreatedDate
+            };
+        }
     }
 }

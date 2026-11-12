@@ -7,23 +7,26 @@ namespace Logistics.Mappings;
 [Mapper]
 public static partial class NegotiationMapper
 {
-    /// <summary>
-    /// Lane and listing rate come from the caller: reading them off the listing navigation would
-    /// lazy-load one listing per row. Required rather than optional so a caller cannot quietly
-    /// broadcast a row with the lane blanked out.
-    /// </summary>
-    public static RateNegotiationDto ToDto(this RateNegotiation entity, LoadBoardListing? listing)
+    extension(RateNegotiation entity)
     {
-        var dto = Map(entity);
-        return dto with
+        /// <summary>
+        /// Lane and listing rate come from the caller: reading them off the listing navigation would
+        /// lazy-load one listing per row. Required rather than optional so a caller cannot quietly
+        /// broadcast a row with the lane blanked out.
+        /// </summary>
+        public RateNegotiationDto ToDto(LoadBoardListing? listing)
         {
-            MaxRounds = RateNegotiation.MaxRounds,
-            OriginCity = listing?.OriginAddress.City,
-            OriginState = listing?.OriginAddress.State,
-            DestinationCity = listing?.DestinationAddress.City,
-            DestinationState = listing?.DestinationAddress.State,
-            ListingTotalRate = listing?.TotalRate
-        };
+            var dto = Map(entity);
+            return dto with
+            {
+                MaxRounds = RateNegotiation.MaxRounds,
+                OriginCity = listing?.OriginAddress.City,
+                OriginState = listing?.OriginAddress.State,
+                DestinationCity = listing?.DestinationAddress.City,
+                DestinationState = listing?.DestinationAddress.State,
+                ListingTotalRate = listing?.TotalRate
+            };
+        }
     }
 
     [MapperIgnoreSource(nameof(RateNegotiation.DomainEvents))]

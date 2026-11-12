@@ -11,15 +11,21 @@ namespace Logistics.Domain.Persistence;
 /// </summary>
 public static class AgentSessionQueryExtensions
 {
-    /// <summary>
-    /// Filters <see cref="AgentSession"/> to only those that are dispatch-board sessions, not copilot conversations.
-    /// </summary>
-    public static IQueryable<AgentSession> DispatchOnly(this IQueryable<AgentSession> query) =>
-        query.Where(s => s.Type == AgentSessionType.Dispatch);
+    extension(IQueryable<AgentSession> query)
+    {
+        /// <summary>
+        /// Filters <see cref="AgentSession"/> to only those that are dispatch-board sessions, not copilot conversations.
+        /// </summary>
+        public IQueryable<AgentSession> DispatchOnly() =>
+            query.Where(s => s.Type == AgentSessionType.Dispatch);
+    }
 
-    /// <summary>
-    /// Filters <see cref="AgentDecision"/> to only those that are dispatch-board decisions, not copilot suggestions.
-    /// </summary>
-    public static IQueryable<AgentDecision> DispatchOnly(this IQueryable<AgentDecision> query) =>
-        query.Where(d => d.Session.Type == AgentSessionType.Dispatch);
+    extension(IQueryable<AgentDecision> query)
+    {
+        /// <summary>
+        /// Filters <see cref="AgentDecision"/> to only those that are dispatch-board decisions, not copilot suggestions.
+        /// </summary>
+        public IQueryable<AgentDecision> DispatchOnly() =>
+            query.Where(d => d.Session.Type == AgentSessionType.Dispatch);
+    }
 }

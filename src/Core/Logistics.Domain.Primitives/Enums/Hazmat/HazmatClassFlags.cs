@@ -41,24 +41,27 @@ public enum HazmatClassFlags
 
 public static class HazmatClassFlagsExtensions
 {
-    /// <summary>
-    /// Returns the matching flag bit for a single <see cref="HazmatClass"/>.
-    /// </summary>
-    public static HazmatClassFlags ToFlag(this HazmatClass hazmatClass)
+    extension(HazmatClass hazmatClass)
     {
-        return hazmatClass switch
+        /// <summary>
+        /// Returns the matching flag bit for a single <see cref="HazmatClass"/>.
+        /// </summary>
+        public HazmatClassFlags ToFlag()
         {
-            HazmatClass.Class1 => HazmatClassFlags.Class1,
-            HazmatClass.Class2 => HazmatClassFlags.Class2,
-            HazmatClass.Class3 => HazmatClassFlags.Class3,
-            HazmatClass.Class4 => HazmatClassFlags.Class4,
-            HazmatClass.Class5 => HazmatClassFlags.Class5,
-            HazmatClass.Class6 => HazmatClassFlags.Class6,
-            HazmatClass.Class7 => HazmatClassFlags.Class7,
-            HazmatClass.Class8 => HazmatClassFlags.Class8,
-            HazmatClass.Class9 => HazmatClassFlags.Class9,
-            _ => HazmatClassFlags.None
-        };
+            return hazmatClass switch
+            {
+                HazmatClass.Class1 => HazmatClassFlags.Class1,
+                HazmatClass.Class2 => HazmatClassFlags.Class2,
+                HazmatClass.Class3 => HazmatClassFlags.Class3,
+                HazmatClass.Class4 => HazmatClassFlags.Class4,
+                HazmatClass.Class5 => HazmatClassFlags.Class5,
+                HazmatClass.Class6 => HazmatClassFlags.Class6,
+                HazmatClass.Class7 => HazmatClassFlags.Class7,
+                HazmatClass.Class8 => HazmatClassFlags.Class8,
+                HazmatClass.Class9 => HazmatClassFlags.Class9,
+                _ => HazmatClassFlags.None
+            };
+        }
     }
 
     private static readonly (HazmatClassFlags Flag, HazmatClass Class)[] FlagToClassMap =
@@ -74,15 +77,21 @@ public static class HazmatClassFlagsExtensions
         (HazmatClassFlags.Class9, HazmatClass.Class9)
     ];
 
-    /// <summary>
-    /// Expands a flags value into the set of individual <see cref="HazmatClass"/> values it contains.
-    /// </summary>
-    public static HazmatClass[] ToClasses(this HazmatClassFlags flags) =>
-        FlagToClassMap.Where(pair => flags.HasFlag(pair.Flag)).Select(pair => pair.Class).ToArray();
+    extension(HazmatClassFlags flags)
+    {
+        /// <summary>
+        /// Expands a flags value into the set of individual <see cref="HazmatClass"/> values it contains.
+        /// </summary>
+        public HazmatClass[] ToClasses() =>
+            FlagToClassMap.Where(pair => flags.HasFlag(pair.Flag)).Select(pair => pair.Class).ToArray();
+    }
 
-    /// <summary>
-    /// Combines a set of <see cref="HazmatClass"/> values into a single flags bitfield.
-    /// </summary>
-    public static HazmatClassFlags ToFlags(this IEnumerable<HazmatClass>? classes) =>
-        classes?.Aggregate(HazmatClassFlags.None, (acc, c) => acc | c.ToFlag()) ?? HazmatClassFlags.None;
+    extension(IEnumerable<HazmatClass>? classes)
+    {
+        /// <summary>
+        /// Combines a set of <see cref="HazmatClass"/> values into a single flags bitfield.
+        /// </summary>
+        public HazmatClassFlags ToFlags() =>
+            classes?.Aggregate(HazmatClassFlags.None, (acc, c) => acc | c.ToFlag()) ?? HazmatClassFlags.None;
+    }
 }

@@ -29,38 +29,41 @@ public static partial class ContainerMapper
 
     private static partial ChassisUsageDto ToDto(this ChassisUsage usage);
 
-    /// <summary>
-    /// Single-row mapping: the two terminals come off the navigation properties, which is one lazy
-    /// SELECT each. List handlers use the overload taking pre-resolved terminals instead.
-    /// </summary>
-    public static ContainerDto ToDto(this Container entity, DateTime now)
+    extension(Container entity)
     {
-        var current = entity.CurrentTerminal;
-        var emptyReturn = entity.EmptyReturnTerminal;
-        return entity.ToDto(
-            now,
-            current is null ? null : new TerminalRef(current.Name, current.Code),
-            emptyReturn is null ? null : new TerminalRef(emptyReturn.Name, emptyReturn.Code));
-    }
+        /// <summary>
+        /// Single-row mapping: the two terminals come off the navigation properties, which is one lazy
+        /// SELECT each. List handlers use the overload taking pre-resolved terminals instead.
+        /// </summary>
+        public ContainerDto ToDto(DateTime now)
+        {
+            var current = entity.CurrentTerminal;
+            var emptyReturn = entity.EmptyReturnTerminal;
+            return entity.ToDto(
+                now,
+                current is null ? null : new TerminalRef(current.Name, current.Code),
+                emptyReturn is null ? null : new TerminalRef(emptyReturn.Name, emptyReturn.Code));
+        }
 
-    public static ContainerDto ToDto(
-        this Container entity,
+            public ContainerDto ToDto(
         DateTime now,
-        TerminalRef? currentTerminal,
-        TerminalRef? emptyReturnTerminal)
-    {
-        var dto = entity.ToDtoCore();
-        var freeTime = entity.GetFreeTime(now);
+                TerminalRef? currentTerminal,
+                TerminalRef? emptyReturnTerminal)
+            {
+                var dto = entity.ToDtoCore();
+                var freeTime = entity.GetFreeTime(now);
 
-        dto.CurrentTerminalName = currentTerminal?.Name;
-        dto.CurrentTerminalCode = currentTerminal?.Code;
-        dto.EmptyReturnTerminalName = emptyReturnTerminal?.Name;
-        dto.EmptyReturnTerminalCode = emptyReturnTerminal?.Code;
-        dto.IsAvailableForPickup = entity.IsAvailableForPickup(now);
-        dto.Demurrage = freeTime.Demurrage.ToDto();
-        dto.PerDiem = freeTime.PerDiem.ToDto();
-        dto.Chassis = freeTime.Chassis.ToDto();
-        dto.TotalCharge = freeTime.TotalCharge;
-        return dto;
+                dto.CurrentTerminalName = currentTerminal?.Name;
+                dto.CurrentTerminalCode = currentTerminal?.Code;
+                dto.EmptyReturnTerminalName = emptyReturnTerminal?.Name;
+                dto.EmptyReturnTerminalCode = emptyReturnTerminal?.Code;
+                dto.IsAvailableForPickup = entity.IsAvailableForPickup(now);
+                dto.Demurrage = freeTime.Demurrage.ToDto();
+                dto.PerDiem = freeTime.PerDiem.ToDto();
+                dto.Chassis = freeTime.Chassis.ToDto();
+                dto.TotalCharge = freeTime.TotalCharge;
+                return dto;
+            }
     }
+
 }

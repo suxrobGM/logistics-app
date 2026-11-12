@@ -5,28 +5,32 @@ namespace Logistics.Mappings;
 
 public static class EmployeeMapper
 {
-    public static EmployeeDto ToDto(this Employee entity)
+    extension(Employee entity)
     {
-        return entity.ToDto(entity.Role);
+        public EmployeeDto ToDto()
+        {
+            return entity.ToDto(entity.Role);
+        }
+
+        public EmployeeDto ToDto(TenantRole? role)
+        {
+            return new EmployeeDto
+            {
+                Id = entity.Id,
+                Email = entity.Email,
+                FirstName = entity.FirstName,
+                LastName = entity.LastName,
+                FullName = entity.GetFullName(),
+                PhoneNumber = entity.PhoneNumber,
+                Address = entity.Address,
+                JoinedDate = entity.JoinedDate,
+                Salary = entity.Salary,
+                SalaryType = entity.SalaryType,
+                Status = entity.Status,
+                StripeConnectedAccountId = entity.StripeConnectedAccountId,
+                Role = role?.ToDto()
+            };
+        }
     }
 
-    public static EmployeeDto ToDto(this Employee entity, TenantRole? role)
-    {
-        return new EmployeeDto
-        {
-            Id = entity.Id,
-            Email = entity.Email,
-            FirstName = entity.FirstName,
-            LastName = entity.LastName,
-            FullName = entity.GetFullName(),
-            PhoneNumber = entity.PhoneNumber,
-            Address = entity.Address,
-            JoinedDate = entity.JoinedDate,
-            Salary = entity.Salary,
-            SalaryType = entity.SalaryType,
-            Status = entity.Status,
-            StripeConnectedAccountId = entity.StripeConnectedAccountId,
-            Role = role?.ToDto()
-        };
-    }
 }

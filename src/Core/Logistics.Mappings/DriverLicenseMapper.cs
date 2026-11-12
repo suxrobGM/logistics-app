@@ -6,23 +6,26 @@ namespace Logistics.Mappings;
 
 public static class DriverLicenseMapper
 {
-    public static DriverLicenseDto ToDto(this DriverLicense entity)
+    extension(DriverLicense entity)
     {
-        return new DriverLicenseDto
+        public DriverLicenseDto ToDto()
         {
-            Id = entity.Id,
-            EmployeeId = entity.EmployeeId,
-            LicenseNumber = entity.LicenseNumber,
-            LicenseClass = entity.LicenseClass,
-            Endorsements = entity.Endorsements.ToArray(),
-            IssuingCountry = entity.IssuingCountry,
-            IssuingRegion = entity.IssuingRegion,
-            IssuedDate = entity.IssuedDate,
-            ExpiresAt = entity.ExpiresAt,
-            MedicalCertExpiresAt = entity.MedicalCertExpiresAt,
-            Status = entity.Status,
-            DocumentId = entity.DocumentId,
-            DaysUntilExpiry = entity.ExpiresAt.DayNumber - DateOnly.FromDateTime(DateTime.UtcNow).DayNumber
-        };
+            return new DriverLicenseDto
+            {
+                Id = entity.Id,
+                EmployeeId = entity.EmployeeId,
+                LicenseNumber = entity.LicenseNumber,
+                LicenseClass = entity.LicenseClass,
+                Endorsements = entity.Endorsements.ToArray(),
+                IssuingCountry = entity.IssuingCountry,
+                IssuingRegion = entity.IssuingRegion,
+                IssuedDate = entity.IssuedDate,
+                ExpiresAt = entity.ExpiresAt,
+                MedicalCertExpiresAt = entity.MedicalCertExpiresAt,
+                Status = entity.Status,
+                DocumentId = entity.DocumentId,
+                DaysUntilExpiry = entity.ExpiresAt.DayNumber - DateOnly.FromDateTime(DateTime.UtcNow).DayNumber
+            };
+        }
     }
 }

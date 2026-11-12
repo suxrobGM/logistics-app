@@ -16,27 +16,33 @@ internal static class HttpClientQboExtensions
 {
     public const string IntuitTidHeader = "intuit_tid";
 
-    public static async Task<TResponse> GetQboAsync<TResponse>(
-        this HttpClient client, string url, string accessToken, string action, CancellationToken ct)
+    extension(HttpClient client)
     {
-        using var request = new HttpRequestMessage(HttpMethod.Get, url);
-        Authorize(request, accessToken);
-        return await SendAsync<TResponse>(client, request, action, ct);
+            public async Task<TResponse> GetQboAsync<TResponse>(
+        string url, string accessToken, string action, CancellationToken ct)
+            {
+                using var request = new HttpRequestMessage(HttpMethod.Get, url);
+                Authorize(request, accessToken);
+                return await SendAsync<TResponse>(client, request, action, ct);
+            }
+
+            public async Task<TResponse> PostQboAsync<TResponse>(
+        string url, object payload, string accessToken, string action, CancellationToken ct)
+            {
+                using var request = new HttpRequestMessage(HttpMethod.Post, url)
+                {
+                    Content = JsonContent.Create(payload, payload.GetType(), options: QboJsonOptions.Default)
+                };
+                Authorize(request, accessToken);
+                return await SendAsync<TResponse>(client, request, action, ct);
+            }
     }
 
-    public static async Task<TResponse> PostQboAsync<TResponse>(
-        this HttpClient client, string url, object payload, string accessToken, string action, CancellationToken ct)
+    extension(HttpResponseMessage response)
     {
-        using var request = new HttpRequestMessage(HttpMethod.Post, url)
-        {
-            Content = JsonContent.Create(payload, payload.GetType(), options: QboJsonOptions.Default)
-        };
-        Authorize(request, accessToken);
-        return await SendAsync<TResponse>(client, request, action, ct);
+        public string? GetIntuitTid() =>
+            response.Headers.TryGetValues(IntuitTidHeader, out var values) ? values.FirstOrDefault() : null;
     }
-
-    public static string? GetIntuitTid(this HttpResponseMessage response) =>
-        response.Headers.TryGetValues(IntuitTidHeader, out var values) ? values.FirstOrDefault() : null;
 
     private static void Authorize(HttpRequestMessage request, string accessToken)
     {

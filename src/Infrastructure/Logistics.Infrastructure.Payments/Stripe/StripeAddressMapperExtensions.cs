@@ -7,17 +7,20 @@ namespace Logistics.Infrastructure.Payments.Stripe;
 
 internal static class StripeAddressMapperExtensions
 {
-    public static AddressOptions ToStripeAddressOptions(this AddressValueObject address)
+    extension(AddressValueObject address)
     {
-        return new AddressOptions
+        public AddressOptions ToStripeAddressOptions()
         {
-            City = address.City,
-            Country = GetCountryCode(address.Country),
-            Line1 = address.Line1,
-            Line2 = address.Line2,
-            PostalCode = address.ZipCode,
-            State = address.State
-        };
+            return new AddressOptions
+            {
+                City = address.City,
+                Country = GetCountryCode(address.Country),
+                Line1 = address.Line1,
+                Line2 = address.Line2,
+                PostalCode = address.ZipCode,
+                State = address.State
+            };
+        }
     }
 
     private static string? GetCountryCode(string? country)

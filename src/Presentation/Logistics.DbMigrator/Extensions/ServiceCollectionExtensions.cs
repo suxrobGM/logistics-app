@@ -10,52 +10,55 @@ namespace Logistics.DbMigrator.Extensions;
 /// </summary>
 public static class ServiceCollectionExtensions
 {
-    /// <summary>
-    ///     Registers all seeders.
-    /// </summary>
-    public static IServiceCollection AddSeeders(this IServiceCollection services)
+    extension(IServiceCollection services)
     {
-        // Region profiles + factory
-        services.AddSingleton<IRegionProfile, USRegionProfile>();
-        services.AddSingleton<IRegionProfile, EURegionProfile>();
-        services.AddSingleton<IRegionProfileFactory, RegionProfileFactory>();
+        /// <summary>
+        ///     Registers all seeders.
+        /// </summary>
+        public IServiceCollection AddSeeders()
+        {
+            // Region profiles + factory
+            services.AddSingleton<IRegionProfile, USRegionProfile>();
+            services.AddSingleton<IRegionProfile, EURegionProfile>();
+            services.AddSingleton<IRegionProfileFactory, RegionProfileFactory>();
 
-        // Infrastructure seeders (master DB unless IsTenantScoped is overridden)
-        services.AddScoped<ISeeder, AppRoleSeeder>();
-        services.AddScoped<ISeeder, SuperAdminSeeder>();
-        services.AddScoped<ISeeder, SubscriptionPlanSeeder>();
-        services.AddScoped<ISeeder, StripeSeeder>();
-        services.AddScoped<ISeeder, StripeSubscriptionSyncSeeder>();
-        services.AddScoped<ISeeder, DemoTenantsSeeder>();
-        services.AddScoped<ISeeder, TenantRoleSeeder>();
-        services.AddScoped<ISeeder, TenantTaxRateSeeder>();
-        services.AddScoped<ISeeder, IftaTaxRateSeeder>();
+            // Infrastructure seeders (master DB unless IsTenantScoped is overridden)
+            services.AddScoped<ISeeder, AppRoleSeeder>();
+            services.AddScoped<ISeeder, SuperAdminSeeder>();
+            services.AddScoped<ISeeder, SubscriptionPlanSeeder>();
+            services.AddScoped<ISeeder, StripeSeeder>();
+            services.AddScoped<ISeeder, StripeSubscriptionSyncSeeder>();
+            services.AddScoped<ISeeder, DemoTenantsSeeder>();
+            services.AddScoped<ISeeder, TenantRoleSeeder>();
+            services.AddScoped<ISeeder, TenantTaxRateSeeder>();
+            services.AddScoped<ISeeder, IftaTaxRateSeeder>();
 
-        // FakeData seeders (always tenant-scoped - run once per demo tenant)
-        services.AddScoped<ISeeder, UserSeeder>();
-        services.AddScoped<ISeeder, EmployeeSeeder>();
-        services.AddScoped<ISeeder, CustomerSeeder>();
-        services.AddScoped<ISeeder, TruckSeeder>();
-        services.AddScoped<ISeeder, TrailerSeeder>();
-        services.AddScoped<ISeeder, MaintenanceSeeder>();
-        services.AddScoped<ISeeder, TerminalSeeder>();
-        services.AddScoped<ISeeder, ContainerSeeder>();
-        services.AddScoped<ISeeder, LoadSeeder>();
-        services.AddScoped<ISeeder, DocumentSeeder>();
-        services.AddScoped<ISeeder, ConditionReportSeeder>();
-        services.AddScoped<ISeeder, DvirReportSeeder>();
-        services.AddScoped<ISeeder, DriverHosStatusSeeder>();
-        services.AddScoped<ISeeder, AccidentReportSeeder>();
-        services.AddScoped<ISeeder, ExpenseSeeder>();
-        services.AddScoped<ISeeder, FuelCardSeeder>();
-        services.AddScoped<ISeeder, IftaMileageSeeder>();
-        services.AddScoped<ISeeder, TripSeeder>();
-        services.AddScoped<ISeeder, NegotiationSeeder>();
-        services.AddScoped<ISeeder, InvoiceVatSeeder>();
-        services.AddScoped<ISeeder, NotificationSeeder>();
-        services.AddScoped<ISeeder, PayrollSeeder>();
-        services.AddScoped<ISeeder, CustomerUserSeeder>();
+            // FakeData seeders (always tenant-scoped - run once per demo tenant)
+            services.AddScoped<ISeeder, UserSeeder>();
+            services.AddScoped<ISeeder, EmployeeSeeder>();
+            services.AddScoped<ISeeder, CustomerSeeder>();
+            services.AddScoped<ISeeder, TruckSeeder>();
+            services.AddScoped<ISeeder, TrailerSeeder>();
+            services.AddScoped<ISeeder, MaintenanceSeeder>();
+            services.AddScoped<ISeeder, TerminalSeeder>();
+            services.AddScoped<ISeeder, ContainerSeeder>();
+            services.AddScoped<ISeeder, LoadSeeder>();
+            services.AddScoped<ISeeder, DocumentSeeder>();
+            services.AddScoped<ISeeder, ConditionReportSeeder>();
+            services.AddScoped<ISeeder, DvirReportSeeder>();
+            services.AddScoped<ISeeder, DriverHosStatusSeeder>();
+            services.AddScoped<ISeeder, AccidentReportSeeder>();
+            services.AddScoped<ISeeder, ExpenseSeeder>();
+            services.AddScoped<ISeeder, FuelCardSeeder>();
+            services.AddScoped<ISeeder, IftaMileageSeeder>();
+            services.AddScoped<ISeeder, TripSeeder>();
+            services.AddScoped<ISeeder, NegotiationSeeder>();
+            services.AddScoped<ISeeder, InvoiceVatSeeder>();
+            services.AddScoped<ISeeder, NotificationSeeder>();
+            services.AddScoped<ISeeder, PayrollSeeder>();
+            services.AddScoped<ISeeder, CustomerUserSeeder>();
 
-        return services;
+            return services;
+        }
     }
 }

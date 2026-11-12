@@ -5,20 +5,23 @@ namespace Logistics.Domain.Primitives.Enums;
 
 public static partial class EnumExtensions
 {
-    public static string GetDescription(this Enum enumValue)
+    extension(Enum enumValue)
     {
-        var type = enumValue.GetType();
-        var fieldInfo = type.GetField(enumValue.ToString());
-
-        if (fieldInfo is null)
+        public string GetDescription()
         {
-            return Humanize(enumValue.ToString());
+            var type = enumValue.GetType();
+            var fieldInfo = type.GetField(enumValue.ToString());
+
+            if (fieldInfo is null)
+            {
+                return Humanize(enumValue.ToString());
+            }
+
+            var descAttribute = Attribute.GetCustomAttribute(fieldInfo, typeof(DescriptionAttribute)) as DescriptionAttribute;
+
+            // Return the description if exists; otherwise, humanize the enum name
+            return descAttribute?.Description ?? Humanize(enumValue.ToString());
         }
-
-        var descAttribute = Attribute.GetCustomAttribute(fieldInfo, typeof(DescriptionAttribute)) as DescriptionAttribute;
-
-        // Return the description if exists; otherwise, humanize the enum name
-        return descAttribute?.Description ?? Humanize(enumValue.ToString());
     }
 
     /// <summary>

@@ -5,21 +5,27 @@ namespace Logistics.Mappings;
 
 public static class RoleMapper
 {
-    public static RoleDto ToDto(this AppRole entity)
+    extension(AppRole entity)
     {
-        return new RoleDto()
+        public RoleDto ToDto()
         {
-            Name = entity.Name,
-            DisplayName = entity.DisplayName
-        };
+            return new RoleDto()
+            {
+                Name = entity.Name,
+                DisplayName = entity.DisplayName
+            };
+        }
     }
 
-    public static RoleDto ToDto(this TenantRole entity)
+    extension(TenantRole entity)
     {
-        return new RoleDto()
+        public RoleDto ToDto()
         {
-            Name = entity.Name,
-            DisplayName = entity.DisplayName
-        };
+            return new RoleDto()
+            {
+                Name = entity.Name,
+                DisplayName = entity.DisplayName
+            };
+        }
     }
 }

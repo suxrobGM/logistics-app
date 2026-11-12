@@ -66,17 +66,23 @@ public static class CargoInspectionPartCategoryExtensions
             _ => GenericParts
         };
 
-    /// <summary>
-    /// True when <paramref name="part"/> is allowed for the given <paramref name="loadType"/>.
-    /// </summary>
-    public static bool IsValidFor(this CargoInspectionPartCategory part, LoadType loadType) =>
-        GetCatalogFor(loadType).Contains(part);
+    extension(CargoInspectionPartCategory part)
+    {
+        /// <summary>
+        /// True when <paramref name="part"/> is allowed for the given <paramref name="loadType"/>.
+        /// </summary>
+        public bool IsValidFor(LoadType loadType) =>
+            GetCatalogFor(loadType).Contains(part);
+    }
 
-    /// <summary>
-    /// True when the load type is one of the container variants.
-    /// </summary>
-    public static bool IsContainerLoad(this LoadType loadType) =>
-        loadType is LoadType.IntermodalContainer
-            or LoadType.TankContainer
-            or LoadType.ReeferContainer;
+    extension(LoadType loadType)
+    {
+        /// <summary>
+        /// True when the load type is one of the container variants.
+        /// </summary>
+        public bool IsContainerLoad() =>
+            loadType is LoadType.IntermodalContainer
+                or LoadType.TankContainer
+                or LoadType.ReeferContainer;
+    }
 }

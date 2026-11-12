@@ -11,14 +11,17 @@ namespace Logistics.HostDefaults;
 /// </summary>
 public static class DataProtectionExtensions
 {
-    public static IServiceCollection AddLogisticsDataProtection<TContext>(
-        this IServiceCollection services, string applicationName)
-        where TContext : DbContext, IDataProtectionKeyContext
+    extension(IServiceCollection services)
     {
-        services.AddDataProtection()
-            .PersistKeysToDbContext<TContext>()
-            .SetApplicationName(applicationName);
+            public IServiceCollection AddLogisticsDataProtection<TContext>(
+        string applicationName)
+                where TContext : DbContext, IDataProtectionKeyContext
+            {
+                services.AddDataProtection()
+                    .PersistKeysToDbContext<TContext>()
+                    .SetApplicationName(applicationName);
 
-        return services;
+                return services;
+            }
     }
 }

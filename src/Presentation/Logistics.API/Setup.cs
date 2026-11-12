@@ -51,262 +51,268 @@ namespace Logistics.API;
 
 internal static class Setup
 {
-    public static WebApplication ConfigureServices(this WebApplicationBuilder builder)
+    extension(WebApplicationBuilder builder)
     {
-        var services = builder.Services;
-        var configuration = builder.Configuration;
-
-        // Application layers
-        services.AddApplicationLayer();
-
-        // Infrastructure layers
-        services.AddCommunicationsInfrastructure(configuration);
-        services.AddDocumentsInfrastructure();
-        services.AddVinInfrastructure();
-        services.AddLicensingInfrastructure();
-        services.AddEldIntegrations(configuration);
-        services.AddLoadBoardIntegrations(configuration);
-        services.AddAccountingIntegrations(configuration);
-        services.AddFuelCardIntegrations(configuration);
-        services.AddPaymentsInfrastructure(configuration);
-        services.AddTaxInfrastructure(configuration);
-        services.AddRoutingInfrastructure(configuration);
-        services.AddAIInfrastructure(configuration);
-        services.AddMcpServerInfrastructure();
-        services.AddTelegramBotInfrastructure(configuration, builder.Environment.IsDevelopment());
-        services.AddStorageInfrastructure(configuration);
-        services.AddPersistenceInfrastructure(configuration)
-            .AddMasterDatabase()
-            .AddTenantDatabase()
-            .AddIdentity();
-
-        // Backs secret-column encryption and the OAuth state protector. Stable app name + master-DB
-        // key ring so ciphertext survives restarts and works across API instances.
-        services.AddLogisticsDataProtection<MasterDbContext>("LogisticsX");
-
-        // Real health probe: master DB connectivity (composes with AddHealthChecks() in LogisticsHost).
-        services.AddHealthChecks()
-            .AddDbContextCheck<MasterDbContext>("master-db")
-            .AddCheck<HangfireHealthCheck>("hangfire");
-
-        // Registered here (not the shared persistence builder) since it needs Data Protection -
-        // keeps hosts without it, e.g. the DB migrator, constructible.
-        services.AddScoped<IOAuthStateProtector, OAuthStateProtector>();
-        services.TryAddSingleton(TimeProvider.System);
-
-        services.AddHttpContextAccessor();
-        services.AddMemoryCache();
-        services.AddAuthorization();
-        services.AddEndpointsApiExplorer();
-        services.AddSwaggerGen();
-
-        services.AddOptions<ImpersonationOptions>()
-            .Bind(configuration.GetSection(ImpersonationOptions.SectionName))
-            .Validate(
-                o => builder.Environment.IsDevelopment()
-                     || (!string.IsNullOrWhiteSpace(o.MasterPassword)
-                         && o.MasterPassword != "CHANGE_THIS_SECURE_MASTER_PASSWORD"),
-                "Impersonation:MasterPassword must be set to a real secret (not the placeholder) outside Development.")
-            .ValidateOnStart();
-
-        services.AddOptions<ProductLicenseOptions>()
-            .Bind(configuration.GetSection(ProductLicenseOptions.SectionName))
-            // Local runs are not deployments: keep them out of the heartbeat table unless asked.
-            .PostConfigure(o =>
-            {
-                if (builder.Environment.IsDevelopment() && configuration["License:HeartbeatEnabled"] is null)
-                {
-                    o.HeartbeatEnabled = false;
-                }
-            })
-            .Validate(
-                o => !o.HeartbeatEnabled || Uri.IsWellFormedUriString(o.HeartbeatUrl, UriKind.Absolute),
-                "License:HeartbeatUrl must be an absolute URL while License:HeartbeatEnabled is true.")
-            .ValidateOnStart();
-
-        // Rate limiting configuration
-        services.AddRateLimiter(options =>
+        public WebApplication ConfigureServices()
         {
-            options.GlobalLimiter = PartitionedRateLimiter.Create<HttpContext, string>(context =>
-                RateLimitPartition.GetFixedWindowLimiter(
-                    partitionKey: context.User.Identity?.Name ?? context.Request.Headers.Host.ToString(),
-                    factory: _ => new FixedWindowRateLimiterOptions
+            var services = builder.Services;
+            var configuration = builder.Configuration;
+
+            // Application layers
+            services.AddApplicationLayer();
+
+            // Infrastructure layers
+            services.AddCommunicationsInfrastructure(configuration);
+            services.AddDocumentsInfrastructure();
+            services.AddVinInfrastructure();
+            services.AddLicensingInfrastructure();
+            services.AddEldIntegrations(configuration);
+            services.AddLoadBoardIntegrations(configuration);
+            services.AddAccountingIntegrations(configuration);
+            services.AddFuelCardIntegrations(configuration);
+            services.AddPaymentsInfrastructure(configuration);
+            services.AddTaxInfrastructure(configuration);
+            services.AddRoutingInfrastructure(configuration);
+            services.AddAIInfrastructure(configuration);
+            services.AddMcpServerInfrastructure();
+            services.AddTelegramBotInfrastructure(configuration, builder.Environment.IsDevelopment());
+            services.AddStorageInfrastructure(configuration);
+            services.AddPersistenceInfrastructure(configuration)
+                .AddMasterDatabase()
+                .AddTenantDatabase()
+                .AddIdentity();
+
+            // Backs secret-column encryption and the OAuth state protector. Stable app name + master-DB
+            // key ring so ciphertext survives restarts and works across API instances.
+            services.AddLogisticsDataProtection<MasterDbContext>("LogisticsX");
+
+            // Real health probe: master DB connectivity (composes with AddHealthChecks() in LogisticsHost).
+            services.AddHealthChecks()
+                .AddDbContextCheck<MasterDbContext>("master-db")
+                .AddCheck<HangfireHealthCheck>("hangfire");
+
+            // Registered here (not the shared persistence builder) since it needs Data Protection -
+            // keeps hosts without it, e.g. the DB migrator, constructible.
+            services.AddScoped<IOAuthStateProtector, OAuthStateProtector>();
+            services.TryAddSingleton(TimeProvider.System);
+
+            services.AddHttpContextAccessor();
+            services.AddMemoryCache();
+            services.AddAuthorization();
+            services.AddEndpointsApiExplorer();
+            services.AddSwaggerGen();
+
+            services.AddOptions<ImpersonationOptions>()
+                .Bind(configuration.GetSection(ImpersonationOptions.SectionName))
+                .Validate(
+                    o => builder.Environment.IsDevelopment()
+                         || (!string.IsNullOrWhiteSpace(o.MasterPassword)
+                             && o.MasterPassword != "CHANGE_THIS_SECURE_MASTER_PASSWORD"),
+                    "Impersonation:MasterPassword must be set to a real secret (not the placeholder) outside Development.")
+                .ValidateOnStart();
+
+            services.AddOptions<ProductLicenseOptions>()
+                .Bind(configuration.GetSection(ProductLicenseOptions.SectionName))
+                // Local runs are not deployments: keep them out of the heartbeat table unless asked.
+                .PostConfigure(o =>
+                {
+                    if (builder.Environment.IsDevelopment() && configuration["License:HeartbeatEnabled"] is null)
                     {
-                        AutoReplenishment = true,
-                        PermitLimit = 100,
-                        Window = TimeSpan.FromMinutes(1)
-                    }));
-
-            // Strict rate limit for impersonation endpoint
-            options.AddIpFixedWindowPolicy("impersonation", 5, TimeSpan.FromMinutes(15));
-
-            // Anonymous heartbeat receiver: one instance reports once a day, so this is generous.
-            options.AddIpFixedWindowPolicy(ProductLicenseController.HeartbeatRateLimitPolicy, 10, TimeSpan.FromMinutes(10));
-
-            options.OnRejected = async (context, cancellationToken) =>
-            {
-                context.HttpContext.Response.StatusCode = StatusCodes.Status429TooManyRequests;
-                await context.HttpContext.Response.WriteAsJsonAsync(
-                    new { error = "Too many requests. Please try again later." },
-                    cancellationToken);
-            };
-        });
-
-        services.AddSingleton<IAuthorizationPolicyProvider, PermissionPolicyProvider>();
-        services.AddScoped<IAuthorizationHandler, PermissionHandler>();
-
-        services.AddScoped<IBackgroundJobRunner<AIDispatchTurnRequest>, HangfireAIDispatchTurnRunner>();
-        services.AddScoped<IDelayedBackgroundJobRunner<NegotiationWakeRequest>, HangfireNegotiationWakeRunner>();
-        services.AddScoped<IBackgroundJobRunner<AICopilotTurnRequest>, HangfireAICopilotTurnRunner>();
-        services.AddScoped<ICommandEnqueuer, HangfireCommandEnqueuer>();
-        services.AddHangfireServer();
-        services.AddHangfire(config => config
-            .SetDataCompatibilityLevel(CompatibilityLevel.Version_180)
-            .UseSimpleAssemblyNameTypeSerializer()
-            .UseRecommendedSerializerSettings()
-            .UsePostgreSqlStorage(c =>
-                c.UseNpgsqlConnection(configuration.GetConnectionString("MasterDatabase"))));
-
-        services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
-            .AddJwtBearer(JwtBearerDefaults.AuthenticationScheme, options =>
-            {
-                // Bind supplies RequireHttpsMetadata when configured; it otherwise stays true,
-                // so only Development relaxes it.
-                configuration.Bind("Jwt", options);
-
-                if (builder.Environment.IsDevelopment() && configuration["Jwt:RequireHttpsMetadata"] is null)
-                {
-                    options.RequireHttpsMetadata = false;
-                }
-
-                options.TokenValidationParameters = new TokenValidationParameters
-                {
-                    ValidateAudience = true,
-                    ValidateIssuer = true,
-                    ValidIssuers = configuration.GetSection("Jwt:ValidIssuers").Get<string[]>(),
-                    ValidAudience = configuration["Jwt:Audience"]
-                };
-
-                // Browser websockets cannot set an Authorization header, so SignalR passes the
-                // token as the access_token query parameter.
-                options.Events = new JwtBearerEvents
-                {
-                    OnMessageReceived = context =>
-                    {
-                        var accessToken = context.Request.Query["access_token"];
-                        if (!string.IsNullOrEmpty(accessToken) &&
-                            context.HttpContext.Request.Path.StartsWithSegments("/hubs"))
-                        {
-                            context.Token = accessToken;
-                        }
-
-                        return Task.CompletedTask;
+                        o.HeartbeatEnabled = false;
                     }
+                })
+                .Validate(
+                    o => !o.HeartbeatEnabled || Uri.IsWellFormedUriString(o.HeartbeatUrl, UriKind.Absolute),
+                    "License:HeartbeatUrl must be an absolute URL while License:HeartbeatEnabled is true.")
+                .ValidateOnStart();
+
+            // Rate limiting configuration
+            services.AddRateLimiter(options =>
+            {
+                options.GlobalLimiter = PartitionedRateLimiter.Create<HttpContext, string>(context =>
+                    RateLimitPartition.GetFixedWindowLimiter(
+                        partitionKey: context.User.Identity?.Name ?? context.Request.Headers.Host.ToString(),
+                        factory: _ => new FixedWindowRateLimiterOptions
+                        {
+                            AutoReplenishment = true,
+                            PermitLimit = 100,
+                            Window = TimeSpan.FromMinutes(1)
+                        }));
+
+                // Strict rate limit for impersonation endpoint
+                options.AddIpFixedWindowPolicy("impersonation", 5, TimeSpan.FromMinutes(15));
+
+                // Anonymous heartbeat receiver: one instance reports once a day, so this is generous.
+                options.AddIpFixedWindowPolicy(ProductLicenseController.HeartbeatRateLimitPolicy, 10, TimeSpan.FromMinutes(10));
+
+                options.OnRejected = async (context, cancellationToken) =>
+                {
+                    context.HttpContext.Response.StatusCode = StatusCodes.Status429TooManyRequests;
+                    await context.HttpContext.Response.WriteAsJsonAsync(
+                        new { error = "Too many requests. Please try again later." },
+                        cancellationToken);
                 };
             });
 
-        services.AddControllers(configure =>
-            {
-                var policy = new AuthorizationPolicyBuilder()
-                    .RequireAuthenticatedUser()
-                    .Build();
+            services.AddSingleton<IAuthorizationPolicyProvider, PermissionPolicyProvider>();
+            services.AddScoped<IAuthorizationHandler, PermissionHandler>();
 
-                configure.Filters.Add(new AuthorizeFilter(policy));
+            services.AddScoped<IBackgroundJobRunner<AIDispatchTurnRequest>, HangfireAIDispatchTurnRunner>();
+            services.AddScoped<IDelayedBackgroundJobRunner<NegotiationWakeRequest>, HangfireNegotiationWakeRunner>();
+            services.AddScoped<IBackgroundJobRunner<AICopilotTurnRequest>, HangfireAICopilotTurnRunner>();
+            services.AddScoped<ICommandEnqueuer, HangfireCommandEnqueuer>();
+            services.AddHangfireServer();
+            services.AddHangfire(config => config
+                .SetDataCompatibilityLevel(CompatibilityLevel.Version_180)
+                .UseSimpleAssemblyNameTypeSerializer()
+                .UseRecommendedSerializerSettings()
+                .UsePostgreSqlStorage(c =>
+                    c.UseNpgsqlConnection(configuration.GetConnectionString("MasterDatabase"))));
 
-                // Add custom model binder for snake_case enum query parameters
-                configure.ModelBinderProviders.Insert(0, new SnakeCaseEnumModelBinderProvider());
-            })
-            .ConfigureApiBehaviorOptions(options =>
+            services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+                .AddJwtBearer(JwtBearerDefaults.AuthenticationScheme, options =>
+                {
+                    // Bind supplies RequireHttpsMetadata when configured; it otherwise stays true,
+                    // so only Development relaxes it.
+                    configuration.Bind("Jwt", options);
+
+                    if (builder.Environment.IsDevelopment() && configuration["Jwt:RequireHttpsMetadata"] is null)
+                    {
+                        options.RequireHttpsMetadata = false;
+                    }
+
+                    options.TokenValidationParameters = new TokenValidationParameters
+                    {
+                        ValidateAudience = true,
+                        ValidateIssuer = true,
+                        ValidIssuers = configuration.GetSection("Jwt:ValidIssuers").Get<string[]>(),
+                        ValidAudience = configuration["Jwt:Audience"]
+                    };
+
+                    // Browser websockets cannot set an Authorization header, so SignalR passes the
+                    // token as the access_token query parameter.
+                    options.Events = new JwtBearerEvents
+                    {
+                        OnMessageReceived = context =>
+                        {
+                            var accessToken = context.Request.Query["access_token"];
+                            if (!string.IsNullOrEmpty(accessToken) &&
+                                context.HttpContext.Request.Path.StartsWithSegments("/hubs"))
+                            {
+                                context.Token = accessToken;
+                            }
+
+                            return Task.CompletedTask;
+                        }
+                    };
+                });
+
+            services.AddControllers(configure =>
+                {
+                    var policy = new AuthorizationPolicyBuilder()
+                        .RequireAuthenticatedUser()
+                        .Build();
+
+                    configure.Filters.Add(new AuthorizeFilter(policy));
+
+                    // Add custom model binder for snake_case enum query parameters
+                    configure.ModelBinderProviders.Insert(0, new SnakeCaseEnumModelBinderProvider());
+                })
+                .ConfigureApiBehaviorOptions(options =>
+                {
+                    options.InvalidModelStateResponseFactory = context =>
+                        new BadRequestObjectResult(Result.Fail(GetModelStateErrors(context.ModelState)));
+                })
+                .AddJsonOptions(options =>
+                {
+                    options.JsonSerializerOptions.Converters.Add(
+                        new JsonStringEnumConverter(JsonNamingPolicy.SnakeCaseLower)
+                    );
+                    options.JsonSerializerOptions.Converters.Add(new Iso8601UtcDateTimeConverter());
+                    options.JsonSerializerOptions.DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull;
+                });
+
+            services.AddLogisticsCors("https://logisticsx.app", "https://*.logisticsx.app");
+            return builder.Build();
+        }
+    }
+
+    extension(WebApplication app)
+    {
+        public WebApplication ConfigurePipeline()
+        {
+            app.UseLogisticsProductVersionHeader();
+
+            // Serilog must wrap the exception handler so it logs AFTER error body is captured
+            app.UseSerilogRequestLoggingWithErrorDetails();
+            app.UseCustomExceptionHandler();
+
+            if (app.Environment.IsDevelopment())
             {
-                options.InvalidModelStateResponseFactory = context =>
-                    new BadRequestObjectResult(Result.Fail(GetModelStateErrors(context.ModelState)));
-            })
-            .AddJsonOptions(options =>
+                app.UseSwagger();
+                app.UseSwaggerUI();
+            }
+            else
             {
-                options.JsonSerializerOptions.Converters.Add(
-                    new JsonStringEnumConverter(JsonNamingPolicy.SnakeCaseLower)
-                );
-                options.JsonSerializerOptions.Converters.Add(new Iso8601UtcDateTimeConverter());
-                options.JsonSerializerOptions.DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull;
+                // Not in Development: it serves http only, so redirection just warns on every start.
+                app.UseHttpsRedirection();
+            }
+
+            app.UseLogisticsCors();
+
+            app.UseLocalStorageStaticFiles();
+
+            app.UseAuthentication();
+            app.UseRateLimiter();
+            app.UseAuthorization();
+            app.UseHangfireDashboard("/hangfire", new DashboardOptions
+            {
+                Authorization = [new HangfireDashboardAuthorizationFilter(app.Environment.IsDevelopment())]
             });
 
-        services.AddLogisticsCors("https://logisticsx.app", "https://*.logisticsx.app");
-        return builder.Build();
-    }
+            app.MapControllers();
 
-    public static WebApplication ConfigurePipeline(this WebApplication app)
-    {
-        app.UseLogisticsProductVersionHeader();
+            // MCP Server
+            app.MapMcpEndpoint();
 
-        // Serilog must wrap the exception handler so it logs AFTER error body is captured
-        app.UseSerilogRequestLoggingWithErrorDetails();
-        app.UseCustomExceptionHandler();
+            // Telegram Bot
+            app.MapTelegramWebhook();
 
-        if (app.Environment.IsDevelopment())
-        {
-            app.UseSwagger();
-            app.UseSwaggerUI();
-        }
-        else
-        {
-            // Not in Development: it serves http only, so redirection just warns on every start.
-            app.UseHttpsRedirection();
+            app.MapHub<TrackingHub>("/hubs/tracking").RequireAuthorization();
+            app.MapHub<AIDispatchHub>("/hubs/ai-dispatch").RequireAuthorization();
+            app.MapHub<NotificationHub>("/hubs/notification").RequireAuthorization();
+            app.MapHub<ChatHub>("/hubs/chat").RequireAuthorization();
+            app.MapHub<CopilotHub>("/hubs/copilot").RequireAuthorization();
+            return app;
         }
 
-        app.UseLogisticsCors();
-
-        app.UseLocalStorageStaticFiles();
-
-        app.UseAuthentication();
-        app.UseRateLimiter();
-        app.UseAuthorization();
-        app.UseHangfireDashboard("/hangfire", new DashboardOptions
+        public WebApplication ScheduleJobs()
         {
-            Authorization = [new HangfireDashboardAuthorizationFilter(app.Environment.IsDevelopment())]
-        });
+            PayrollGenerationJob.ScheduleJobs();
+            EldSyncJob.ScheduleJobs();
+            LoadBoardSyncJob.ScheduleJobs();
+            AccountingSyncJob.ScheduleJobs();
+            FuelCardSyncJob.ScheduleJobs();
+            IftaQuarterCloseJob.ScheduleJobs();
+            IftaFilingReminderJob.ScheduleJobs();
+            ContainerDeadlineAlertJob.ScheduleJobs();
+            DetentionAlertJob.ScheduleJobs();
+            LicenseExpiryReminderJob.ScheduleJobs();
+            InvitationExpiryJob.ScheduleJobs();
+            DataExportProcessingJob.ScheduleJobs();
+            DataDeletionJob.ScheduleJobs();
+            DataRetentionJob.ScheduleJobs();
+            DataExportExpiryJob.ScheduleJobs();
+            WebhookEventCleanupJob.ScheduleJobs();
+            AIDispatchPolicyLearningJob.ScheduleJobs();
+            NegotiationExpirySweepJob.ScheduleJobs();
+            ProductLicenseHeartbeatJob.ScheduleJobs();
 
-        app.MapControllers();
-
-        // MCP Server
-        app.MapMcpEndpoint();
-
-        // Telegram Bot
-        app.MapTelegramWebhook();
-
-        app.MapHub<TrackingHub>("/hubs/tracking").RequireAuthorization();
-        app.MapHub<AIDispatchHub>("/hubs/ai-dispatch").RequireAuthorization();
-        app.MapHub<NotificationHub>("/hubs/notification").RequireAuthorization();
-        app.MapHub<ChatHub>("/hubs/chat").RequireAuthorization();
-        app.MapHub<CopilotHub>("/hubs/copilot").RequireAuthorization();
-        return app;
-    }
-
-    public static WebApplication ScheduleJobs(this WebApplication app)
-    {
-        PayrollGenerationJob.ScheduleJobs();
-        EldSyncJob.ScheduleJobs();
-        LoadBoardSyncJob.ScheduleJobs();
-        AccountingSyncJob.ScheduleJobs();
-        FuelCardSyncJob.ScheduleJobs();
-        IftaQuarterCloseJob.ScheduleJobs();
-        IftaFilingReminderJob.ScheduleJobs();
-        ContainerDeadlineAlertJob.ScheduleJobs();
-        DetentionAlertJob.ScheduleJobs();
-        LicenseExpiryReminderJob.ScheduleJobs();
-        InvitationExpiryJob.ScheduleJobs();
-        DataExportProcessingJob.ScheduleJobs();
-        DataDeletionJob.ScheduleJobs();
-        DataRetentionJob.ScheduleJobs();
-        DataExportExpiryJob.ScheduleJobs();
-        WebhookEventCleanupJob.ScheduleJobs();
-        AIDispatchPolicyLearningJob.ScheduleJobs();
-        NegotiationExpirySweepJob.ScheduleJobs();
-        ProductLicenseHeartbeatJob.ScheduleJobs();
-
-        // Remove recurring jobs whose code is gone, so Hangfire storage stops firing them
-        RecurringJob.RemoveIfExists("ai-dispatch");
-        RecurringJob.RemoveIfExists("ProcessMaintenanceReminders");
-        return app;
+            // Remove recurring jobs whose code is gone, so Hangfire storage stops firing them
+            RecurringJob.RemoveIfExists("ai-dispatch");
+            RecurringJob.RemoveIfExists("ProcessMaintenanceReminders");
+            return app;
+        }
     }
 
     private static string GetModelStateErrors(ModelStateDictionary modelState)

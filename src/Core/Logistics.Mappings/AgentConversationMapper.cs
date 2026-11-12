@@ -27,10 +27,13 @@ public static partial class AgentConversationMapper
     [MapProperty(nameof(AgentMessage.DisplayText), nameof(AgentMessageDto.Text))]
     public static partial AgentMessageDto ToDto(this AgentMessage entity);
 
-    public static AgentMessageDto ToDto(this AgentMessage entity, string? senderName)
+    extension(AgentMessage entity)
     {
-        var dto = entity.ToDto();
-        dto.SentByName = senderName;
-        return dto;
+        public AgentMessageDto ToDto(string? senderName)
+        {
+            var dto = entity.ToDto();
+            dto.SentByName = senderName;
+            return dto;
+        }
     }
 }

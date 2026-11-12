@@ -23,9 +23,12 @@ public static partial class FuelCardMapper
     [MapperIgnoreTarget(nameof(FuelCardTransactionDto.TruckNumber))]
     public static partial FuelCardTransactionDto ToDto(this FuelCardTransaction entity);
 
-    public static FuelCardTransactionDto ToDto(this FuelCardTransaction entity, string? truckNumber)
+    extension(FuelCardTransaction entity)
     {
-        var dto = entity.ToDto();
-        return dto with { TruckNumber = truckNumber };
+        public FuelCardTransactionDto ToDto(string? truckNumber)
+        {
+            var dto = entity.ToDto();
+            return dto with { TruckNumber = truckNumber };
+        }
     }
 }

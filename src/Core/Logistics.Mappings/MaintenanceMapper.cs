@@ -6,42 +6,48 @@ namespace Logistics.Mappings;
 
 public static class MaintenanceMapper
 {
-    public static MaintenanceRecordDto ToDto(this MaintenanceRecord entity)
+    extension(MaintenanceRecord entity)
     {
-        return new MaintenanceRecordDto
+        public MaintenanceRecordDto ToDto()
         {
-            Id = entity.Id,
-            TruckId = entity.TruckId,
-            TruckNumber = entity.Truck?.Number ?? string.Empty,
-            Type = entity.MaintenanceType,
-            TypeDisplay = entity.MaintenanceType.GetDescription(),
-            Description = entity.Description ?? string.Empty,
-            ServiceDate = entity.ServiceDate,
-            OdometerReading = entity.OdometerReading,
-            EngineHours = entity.EngineHours,
-            VendorName = entity.VendorName,
-            InvoiceNumber = entity.InvoiceNumber,
-            LaborCost = entity.LaborCost,
-            PartsCost = entity.PartsCost,
-            TotalCost = entity.TotalCost,
-            PerformedById = entity.PerformedById,
-            PerformedByName = entity.PerformedBy?.GetFullName(),
-            Notes = entity.WorkPerformed,
-            Parts = entity.Parts.Select(p => p.ToDto()).ToList(),
-            CreatedAt = entity.CreatedAt
-        };
+            return new MaintenanceRecordDto
+            {
+                Id = entity.Id,
+                TruckId = entity.TruckId,
+                TruckNumber = entity.Truck?.Number ?? string.Empty,
+                Type = entity.MaintenanceType,
+                TypeDisplay = entity.MaintenanceType.GetDescription(),
+                Description = entity.Description ?? string.Empty,
+                ServiceDate = entity.ServiceDate,
+                OdometerReading = entity.OdometerReading,
+                EngineHours = entity.EngineHours,
+                VendorName = entity.VendorName,
+                InvoiceNumber = entity.InvoiceNumber,
+                LaborCost = entity.LaborCost,
+                PartsCost = entity.PartsCost,
+                TotalCost = entity.TotalCost,
+                PerformedById = entity.PerformedById,
+                PerformedByName = entity.PerformedBy?.GetFullName(),
+                Notes = entity.WorkPerformed,
+                Parts = entity.Parts.Select(p => p.ToDto()).ToList(),
+                CreatedAt = entity.CreatedAt
+            };
+        }
     }
 
-    public static MaintenancePartDto ToDto(this MaintenancePart entity)
+    extension(MaintenancePart entity)
     {
-        return new MaintenancePartDto
+        public MaintenancePartDto ToDto()
         {
-            Id = entity.Id,
-            PartNumber = entity.PartNumber ?? string.Empty,
-            PartName = entity.PartName,
-            Quantity = entity.Quantity,
-            UnitCost = entity.UnitCost,
-            TotalCost = entity.TotalCost
-        };
+            return new MaintenancePartDto
+            {
+                Id = entity.Id,
+                PartNumber = entity.PartNumber ?? string.Empty,
+                PartName = entity.PartName,
+                Quantity = entity.Quantity,
+                UnitCost = entity.UnitCost,
+                TotalCost = entity.TotalCost
+            };
+        }
     }
 }

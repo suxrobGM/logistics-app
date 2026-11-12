@@ -20,6 +20,9 @@ public static partial class DriverPayMapper
     [MapperIgnoreTarget(nameof(CashAdvanceDto.EmployeeName))]
     private static partial CashAdvanceDto MapCashAdvance(CashAdvance entity);
 
-    public static CashAdvanceDto ToDto(this CashAdvance entity, string? employeeName) =>
-        MapCashAdvance(entity) with { EmployeeName = employeeName };
+    extension(CashAdvance entity)
+    {
+        public CashAdvanceDto ToDto(string? employeeName) =>
+            MapCashAdvance(entity) with { EmployeeName = employeeName };
+    }
 }

@@ -7,40 +7,44 @@ namespace Logistics.Application.Utilities;
 
 public static class CurrentUserServiceExtensions
 {
-    /// <summary>
-    /// Checks whether the caller is a tenant driver, whose reads are limited to their own records.
-    /// Platform admins keep full visibility even when they also hold the driver role.
-    /// </summary>
-    public static bool IsTenantDriver(this ICurrentUserService currentUserService)
+    extension(ICurrentUserService currentUserService)
     {
-        return currentUserService.IsInRole(TenantRoles.Driver) &&
-               !currentUserService.IsInRole(AppRoles.SuperAdmin, AppRoles.Admin);
-    }
-
-    /// <summary>A tenant driver may only act on a truck they drive; other callers are not restricted.</summary>
-    public static bool CanDrive(this ICurrentUserService currentUserService, Truck? truck)
-    {
-        if (!currentUserService.IsTenantDriver())
+        /// <summary>
+        /// Checks whether the caller is a tenant driver, whose reads are limited to their own records.
+        /// Platform admins keep full visibility even when they also hold the driver role.
+        /// </summary>
+        public bool IsTenantDriver()
         {
-            return true;
+            return currentUserService.IsInRole(TenantRoles.Driver) &&
+                   !currentUserService.IsInRole(AppRoles.SuperAdmin, AppRoles.Admin);
         }
 
-        return currentUserService.GetUserId() is { } userId && truck?.IsDrivenBy(userId) == true;
-    }
-
-    /// <summary>Rejects access to another tenant's data unless the caller is a platform admin.</summary>
-    public static void EnsureOwnsTenant(this ICurrentUserService currentUserService, Guid tenantId, string resource)
-    {
-        if (currentUserService.IsInRole(AppRoles.SuperAdmin, AppRoles.Admin))
+        /// <summary>A tenant driver may only act on a truck they drive; other callers are not restricted.</summary>
+        public bool CanDrive(Truck? truck)
         {
-            return;
+            if (!currentUserService.IsTenantDriver())
+            {
+                return true;
+            }
+
+            return currentUserService.GetUserId() is { } userId && truck?.IsDrivenBy(userId) == true;
         }
 
-        if (currentUserService.GetTenantId() == tenantId)
+        /// <summary>Rejects access to another tenant's data unless the caller is a platform admin.</summary>
+        public void EnsureOwnsTenant(Guid tenantId, string resource)
         {
-            return;
-        }
+            if (currentUserService.IsInRole(AppRoles.SuperAdmin, AppRoles.Admin))
+            {
+                return;
+            }
 
-        throw new TenantAccessDeniedException($"You do not have access to this {resource}.");
+            if (currentUserService.GetTenantId() == tenantId)
+            {
+                return;
+            }
+
+            throw new TenantAccessDeniedException($"You do not have access to this {resource}.");
+        }
     }
+
 }

@@ -7,94 +7,104 @@ namespace Logistics.Mappings;
 [Mapper]
 public static partial class MessagingMapper
 {
-    /// <summary>
-    /// Maps a Message entity to MessageDto.
-    /// Note: IsRead must be set by the caller based on the requesting user's read receipts.
-    /// </summary>
-    [UserMapping(Default = true)]
-    public static MessageDto ToDto(this Message entity)
+    extension(Message entity)
     {
-        return new MessageDto
+        /// <summary>
+        /// Maps a Message entity to MessageDto.
+        /// Note: IsRead must be set by the caller based on the requesting user's read receipts.
+        /// </summary>
+        [UserMapping(Default = true)]
+        public MessageDto ToDto()
         {
-            Id = entity.Id,
-            ConversationId = entity.ConversationId,
-            SenderId = entity.SenderId,
-            SenderName = entity.Sender?.GetFullName(),
-            Content = entity.Content,
-            SentAt = entity.SentAt,
-            IsRead = false // Must be set by caller
-        };
-    }
+            return new MessageDto
+            {
+                Id = entity.Id,
+                ConversationId = entity.ConversationId,
+                SenderId = entity.SenderId,
+                SenderName = entity.Sender?.GetFullName(),
+                Content = entity.Content,
+                SentAt = entity.SentAt,
+                IsRead = false // Must be set by caller
+            };
+        }
 
-    /// <summary>
-    /// Maps a Message entity to MessageDto with IsRead status.
-    /// </summary>
-    public static MessageDto ToDto(this Message entity, bool isRead)
-    {
-        var dto = entity.ToDto();
-        return dto with { IsRead = isRead };
-    }
-
-    /// <summary>
-    /// Maps a Message entity to MessageDto with IsRead calculated from the requesting user.
-    /// </summary>
-    public static MessageDto ToDto(this Message entity, Guid requestingUserId)
-    {
-        var isRead = entity.ReadReceipts.Any(r => r.ReadById == requestingUserId);
-        return entity.ToDto(isRead);
-    }
-
-    /// <summary>
-    /// Maps a Message entity to MessageDto with IsRead based on whether any read receipts exist.
-    /// </summary>
-    public static MessageDto ToDtoWithReadStatus(this Message entity)
-    {
-        return entity.ToDto(entity.ReadReceipts.Count > 0);
-    }
-
-    /// <summary>
-    /// Maps a ConversationParticipant entity to ConversationParticipantDto.
-    /// </summary>
-    [UserMapping(Default = true)]
-    public static ConversationParticipantDto ToDto(this ConversationParticipant entity)
-    {
-        return new ConversationParticipantDto
+        /// <summary>
+        /// Maps a Message entity to MessageDto with IsRead status.
+        /// </summary>
+        public MessageDto ToDto(bool isRead)
         {
-            EmployeeId = entity.EmployeeId,
-            EmployeeName = entity.Employee?.GetFullName(),
-            JoinedAt = entity.JoinedAt,
-            LastReadAt = entity.LastReadAt,
-            IsMuted = entity.IsMuted
-        };
-    }
+            var dto = entity.ToDto();
+            return dto with { IsRead = isRead };
+        }
 
-    /// <summary>
-    /// Maps a Conversation entity to ConversationDto.
-    /// Note: UnreadCount and LastMessage must be set by the caller.
-    /// </summary>
-    [UserMapping(Default = true)]
-    public static ConversationDto ToDto(this Conversation entity)
-    {
-        return new ConversationDto
+        /// <summary>
+        /// Maps a Message entity to MessageDto with IsRead calculated from the requesting user.
+        /// </summary>
+        public MessageDto ToDto(Guid requestingUserId)
         {
-            Id = entity.Id,
-            Name = entity.Name,
-            LoadId = entity.LoadId,
-            IsTenantChat = entity.IsTenantChat,
-            CreatedAt = entity.CreatedAt,
-            LastMessageAt = entity.LastMessageAt,
-            Participants = entity.Participants.Select(p => p.ToDto()).ToList(),
-            UnreadCount = 0, // Must be set by caller
-            LastMessage = null // Must be set by caller
-        };
+            var isRead = entity.ReadReceipts.Any(r => r.ReadById == requestingUserId);
+            return entity.ToDto(isRead);
+        }
+
+        /// <summary>
+        /// Maps a Message entity to MessageDto with IsRead based on whether any read receipts exist.
+        /// </summary>
+        public MessageDto ToDtoWithReadStatus()
+        {
+            return entity.ToDto(entity.ReadReceipts.Count > 0);
+        }
     }
 
-    /// <summary>
-    /// Maps a Conversation entity to ConversationDto with unread count and last message.
-    /// </summary>
-    public static ConversationDto ToDto(this Conversation entity, int unreadCount, MessageDto? lastMessage)
+    extension(ConversationParticipant entity)
     {
-        var dto = entity.ToDto();
-        return dto with { UnreadCount = unreadCount, LastMessage = lastMessage };
+        /// <summary>
+        /// Maps a ConversationParticipant entity to ConversationParticipantDto.
+        /// </summary>
+        [UserMapping(Default = true)]
+        public ConversationParticipantDto ToDto()
+        {
+            return new ConversationParticipantDto
+            {
+                EmployeeId = entity.EmployeeId,
+                EmployeeName = entity.Employee?.GetFullName(),
+                JoinedAt = entity.JoinedAt,
+                LastReadAt = entity.LastReadAt,
+                IsMuted = entity.IsMuted
+            };
+        }
     }
+
+    extension(Conversation entity)
+    {
+        /// <summary>
+        /// Maps a Conversation entity to ConversationDto.
+        /// Note: UnreadCount and LastMessage must be set by the caller.
+        /// </summary>
+        [UserMapping(Default = true)]
+        public ConversationDto ToDto()
+        {
+            return new ConversationDto
+            {
+                Id = entity.Id,
+                Name = entity.Name,
+                LoadId = entity.LoadId,
+                IsTenantChat = entity.IsTenantChat,
+                CreatedAt = entity.CreatedAt,
+                LastMessageAt = entity.LastMessageAt,
+                Participants = entity.Participants.Select(p => p.ToDto()).ToList(),
+                UnreadCount = 0, // Must be set by caller
+                LastMessage = null // Must be set by caller
+            };
+        }
+
+        /// <summary>
+        /// Maps a Conversation entity to ConversationDto with unread count and last message.
+        /// </summary>
+        public ConversationDto ToDto(int unreadCount, MessageDto? lastMessage)
+        {
+            var dto = entity.ToDto();
+            return dto with { UnreadCount = unreadCount, LastMessage = lastMessage };
+        }
+    }
+
 }

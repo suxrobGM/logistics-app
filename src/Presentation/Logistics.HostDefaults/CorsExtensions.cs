@@ -13,33 +13,39 @@ public static class CorsExtensions
     public const string DefaultCorsPolicy = "DefaultCors";
     public const string AnyCorsPolicy = "AnyCors";
 
-    public static IServiceCollection AddLogisticsCors(
-        this IServiceCollection services, params string[] productionOrigins)
+    extension(IServiceCollection services)
     {
-        services.AddCors(options =>
-        {
-            options.AddPolicy(DefaultCorsPolicy, cors =>
+            public IServiceCollection AddLogisticsCors(
+        params string[] productionOrigins)
             {
-                cors.SetIsOriginAllowedToAllowWildcardSubdomains()
-                    .WithOrigins(productionOrigins)
-                    .AllowAnyHeader()
-                    .AllowAnyMethod();
-            });
+                services.AddCors(options =>
+                {
+                    options.AddPolicy(DefaultCorsPolicy, cors =>
+                    {
+                        cors.SetIsOriginAllowedToAllowWildcardSubdomains()
+                            .WithOrigins(productionOrigins)
+                            .AllowAnyHeader()
+                            .AllowAnyMethod();
+                    });
 
-            options.AddPolicy(AnyCorsPolicy, cors =>
-            {
-                cors.AllowAnyOrigin()
-                    .AllowAnyHeader()
-                    .AllowAnyMethod();
-            });
-        });
+                    options.AddPolicy(AnyCorsPolicy, cors =>
+                    {
+                        cors.AllowAnyOrigin()
+                            .AllowAnyHeader()
+                            .AllowAnyMethod();
+                    });
+                });
 
-        return services;
+                return services;
+            }
     }
 
-    public static WebApplication UseLogisticsCors(this WebApplication app)
+    extension(WebApplication app)
     {
-        app.UseCors(app.Environment.IsDevelopment() ? AnyCorsPolicy : DefaultCorsPolicy);
-        return app;
+        public WebApplication UseLogisticsCors()
+        {
+            app.UseCors(app.Environment.IsDevelopment() ? AnyCorsPolicy : DefaultCorsPolicy);
+            return app;
+        }
     }
 }

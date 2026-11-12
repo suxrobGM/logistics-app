@@ -5,28 +5,34 @@ namespace Logistics.Mappings;
 
 public static class InvoiceLineItemMapper
 {
-    public static InvoiceLineItemDto ToDto(this InvoiceLineItem entity)
+    extension(InvoiceLineItem entity)
     {
-        return new InvoiceLineItemDto
+        public InvoiceLineItemDto ToDto()
         {
-            Id = entity.Id,
-            InvoiceId = entity.InvoiceId,
-            Description = entity.Description,
-            Type = entity.Type,
-            Amount = entity.Amount,
-            Quantity = entity.Quantity,
-            Order = entity.Order,
-            Notes = entity.Notes,
-            Total = entity.Total,
-            TaxRatePercent = entity.TaxRatePercent,
-            TaxAmount = entity.TaxAmount,
-            TaxCode = entity.TaxCode,
-            SourceId = entity.SourceId
-        };
+            return new InvoiceLineItemDto
+            {
+                Id = entity.Id,
+                InvoiceId = entity.InvoiceId,
+                Description = entity.Description,
+                Type = entity.Type,
+                Amount = entity.Amount,
+                Quantity = entity.Quantity,
+                Order = entity.Order,
+                Notes = entity.Notes,
+                Total = entity.Total,
+                TaxRatePercent = entity.TaxRatePercent,
+                TaxAmount = entity.TaxAmount,
+                TaxCode = entity.TaxCode,
+                SourceId = entity.SourceId
+            };
+        }
     }
 
-    public static IEnumerable<InvoiceLineItemDto> ToDto(this IEnumerable<InvoiceLineItem> entities)
+    extension(IEnumerable<InvoiceLineItem> entities)
     {
-        return entities.Select(e => e.ToDto());
+        public IEnumerable<InvoiceLineItemDto> ToDto()
+        {
+            return entities.Select(e => e.ToDto());
+        }
     }
 }
