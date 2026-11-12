@@ -248,58 +248,26 @@ public class AIQuotaServiceTests
 
     #region Over budget detection
 
-    [Fact]
-    public async Task GetQuotaStatus_UnderBudget_IsOverQuotaFalse()
+    /// <summary>Spend equal to the budget already counts as over.</summary>
+    public static TheoryData<decimal, decimal, bool> OverQuotaCases => new()
+    {
+        { 10m, 1.50m, false },
+        { 3m, 3m, true },
+        { 2m, 3.50m, true },
+    };
+
+    [Theory]
+    [MemberData(nameof(OverQuotaCases))]
+    public async Task GetQuotaStatus_SpendAgainstBudget_SetsIsOverQuota(decimal budget, decimal spent, bool overQuota)
     {
         var tenantId = Guid.NewGuid();
-        SetupTenantWithPlan(tenantId, 10m);
-        var now = DateTime.UtcNow;
-        SetupSessions(
-            CreateCompletedSessionAt(now, 1m),
-            CreateCompletedSessionAt(now, 0.50m)
-        );
+        SetupTenantWithPlan(tenantId, budget);
+        SetupSessions(CreateCompletedSessionAt(DateTime.UtcNow, spent));
 
         var status = await _sut.GetQuotaStatusAsync(tenantId);
 
-        Assert.False(status.IsOverQuota);
-        Assert.Equal(1.50m, status.SpentThisWeekUsd);
-    }
-
-    [Fact]
-    public async Task GetQuotaStatus_AtExactBudget_IsOverQuotaTrue()
-    {
-        var tenantId = Guid.NewGuid();
-        SetupTenantWithPlan(tenantId, 3m);
-
-        var now = DateTime.UtcNow;
-        SetupSessions(
-            CreateCompletedSessionAt(now, 1m),
-            CreateCompletedSessionAt(now, 1m),
-            CreateCompletedSessionAt(now, 1m)
-        );
-
-        var status = await _sut.GetQuotaStatusAsync(tenantId);
-
-        Assert.True(status.IsOverQuota);
-        Assert.Equal(3m, status.SpentThisWeekUsd);
-    }
-
-    [Fact]
-    public async Task GetQuotaStatus_OverBudget_IsOverQuotaTrue()
-    {
-        var tenantId = Guid.NewGuid();
-        SetupTenantWithPlan(tenantId, 2m);
-
-        var now = DateTime.UtcNow;
-        SetupSessions(
-            CreateCompletedSessionAt(now, 1.75m),
-            CreateCompletedSessionAt(now, 1.75m)
-        );
-
-        var status = await _sut.GetQuotaStatusAsync(tenantId);
-
-        Assert.True(status.IsOverQuota);
-        Assert.Equal(3.50m, status.SpentThisWeekUsd);
+        Assert.Equal(overQuota, status.IsOverQuota);
+        Assert.Equal(spent, status.SpentThisWeekUsd);
     }
 
     #endregion
@@ -345,41 +313,26 @@ public class AIQuotaServiceTests
 
     #region Overage blocking
 
-    [Fact]
-    public async Task GetQuotaStatus_BlockOverageAndOverBudget_OverageBlockedTrue()
+    /// <summary>Overage is blocked only when the tenant asked for it and is over budget.</summary>
+    public static TheoryData<decimal, decimal, bool, bool> OverageBlockingCases => new()
+    {
+        { 2m, 3m, true, true },
+        { 10m, 1m, true, false },
+        { 2m, 3m, false, false },
+    };
+
+    [Theory]
+    [MemberData(nameof(OverageBlockingCases))]
+    public async Task GetQuotaStatus_BlockSettingAndSpend_SetOverageBlocked(
+        decimal budget, decimal spent, bool blockOverage, bool overageBlocked)
     {
         var tenantId = Guid.NewGuid();
-        SetupTenantWithPlan(tenantId, 2m, blockOverage: true);
-        SetupSessions(CreateCompletedSessionAt(DateTime.UtcNow, 3m));
+        SetupTenantWithPlan(tenantId, budget, blockOverage);
+        SetupSessions(CreateCompletedSessionAt(DateTime.UtcNow, spent));
 
         var status = await _sut.GetQuotaStatusAsync(tenantId);
 
-        Assert.True(status.OverageBlocked);
-    }
-
-    [Fact]
-    public async Task GetQuotaStatus_BlockOverageUnderBudget_OverageBlockedFalse()
-    {
-        var tenantId = Guid.NewGuid();
-        SetupTenantWithPlan(tenantId, 10m, blockOverage: true);
-        SetupSessions(CreateCompletedSessionAt(DateTime.UtcNow, 1m));
-
-        var status = await _sut.GetQuotaStatusAsync(tenantId);
-
-        Assert.False(status.OverageBlocked);
-    }
-
-    [Fact]
-    public async Task GetQuotaStatus_OverBudgetWithoutBlock_OverageBlockedFalse()
-    {
-        var tenantId = Guid.NewGuid();
-        SetupTenantWithPlan(tenantId, 2m);
-        SetupSessions(CreateCompletedSessionAt(DateTime.UtcNow, 3m));
-
-        var status = await _sut.GetQuotaStatusAsync(tenantId);
-
-        Assert.True(status.IsOverQuota);
-        Assert.False(status.OverageBlocked);
+        Assert.Equal(overageBlocked, status.OverageBlocked);
     }
 
     [Fact]

@@ -83,28 +83,12 @@ public class UpdateLoadHandlerTests
         await _loadChargeService.DidNotReceive().SyncInvoiceAsync(Arg.Any<Load>(), Arg.Any<CancellationToken>());
     }
 
-    [Fact]
-    public async Task Handle_DeliveryCostChanged_RebuildsTheInvoice()
-    {
-        var load = Load(LoadType.GeneralFreight);
-
-        await Update(new UpdateLoadCommand { Id = load.Id, DeliveryCost = 1250m });
-
-        await _loadChargeService.Received(1).SyncInvoiceAsync(load, Arg.Any<CancellationToken>());
-    }
-
-    [Fact]
-    public async Task Handle_FuelSurchargeChanged_RebuildsTheInvoice()
-    {
-        var load = Load(LoadType.GeneralFreight);
-
-        await Update(new UpdateLoadCommand { Id = load.Id, FuelSurcharge = 75m });
-
-        await _loadChargeService.Received(1).SyncInvoiceAsync(load, Arg.Any<CancellationToken>());
-    }
-
-    [Fact]
-    public async Task Handle_CustomerChanged_RebuildsTheInvoice()
+    [Theory]
+    [InlineData("DeliveryCost")]
+    [InlineData("FuelSurcharge")]
+    [InlineData("Customer")]
+    [InlineData("Type")]
+    public async Task Handle_ChargeFieldChanged_RebuildsTheInvoice(string changedField)
     {
         var load = Load(LoadType.GeneralFreight);
         var customer = new Customer { Name = "New Broker" };
@@ -112,18 +96,16 @@ public class UpdateLoadHandlerTests
         customerRepo.GetByIdAsync(customer.Id, Arg.Any<CancellationToken>()).Returns(customer);
         _tenantUow.Repository<Customer>().Returns(customerRepo);
 
-        await Update(new UpdateLoadCommand { Id = load.Id, CustomerId = customer.Id });
+        var command = changedField switch
+        {
+            "DeliveryCost" => new UpdateLoadCommand { Id = load.Id, DeliveryCost = 1250m },
+            "FuelSurcharge" => new UpdateLoadCommand { Id = load.Id, FuelSurcharge = 75m },
+            "Customer" => new UpdateLoadCommand { Id = load.Id, CustomerId = customer.Id },
+            "Type" => new UpdateLoadCommand { Id = load.Id, Type = LoadType.RefrigeratedGoods },
+            _ => throw new ArgumentOutOfRangeException(nameof(changedField)),
+        };
 
-        Assert.Equal(customer.Id, load.CustomerId);
-        await _loadChargeService.Received(1).SyncInvoiceAsync(load, Arg.Any<CancellationToken>());
-    }
-
-    [Fact]
-    public async Task Handle_TypeChanged_RebuildsTheInvoice()
-    {
-        var load = Load(LoadType.GeneralFreight);
-
-        await Update(new UpdateLoadCommand { Id = load.Id, Type = LoadType.RefrigeratedGoods });
+        await Update(command);
 
         await _loadChargeService.Received(1).SyncInvoiceAsync(load, Arg.Any<CancellationToken>());
     }

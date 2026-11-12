@@ -37,20 +37,12 @@ public class QboMapperTests
     }
 
     [Fact]
-    public void MapCustomer_Update_CarriesIdAndSyncToken()
+    public void MapCustomer_UpdateWithoutContact_CarriesIdentityAndLeavesContactNull()
     {
-        var payload = new QboCustomerPayload { Name = "Acme" };
-
-        var result = QboMapper.MapCustomer(payload, qboId: "42", syncToken: "3");
+        var result = QboMapper.MapCustomer(new QboCustomerPayload { Name = "Acme" }, qboId: "42", syncToken: "3");
 
         Assert.Equal("42", result.Id);
         Assert.Equal("3", result.SyncToken);
-    }
-
-    [Fact]
-    public void MapCustomer_NoContact_LeavesEmailAndPhoneNull()
-    {
-        var result = QboMapper.MapCustomer(new QboCustomerPayload { Name = "Acme" }, null, null);
 
         Assert.Null(result.PrimaryEmailAddr);
         Assert.Null(result.PrimaryPhone);
@@ -89,22 +81,6 @@ public class QboMapperTests
     }
 
     [Fact]
-    public void MapInvoice_ZeroTax_OmitsTxnTaxDetail()
-    {
-        var payload = new QboInvoicePayload
-        {
-            QboCustomerId = "42",
-            CurrencyCode = "USD",
-            TaxTotal = 0m,
-            Lines = [new QboInvoiceLinePayload { Description = "Haul", Amount = 500m, Quantity = 1 }]
-        };
-
-        var result = QboMapper.MapInvoice(payload, null, null);
-
-        Assert.Null(result.TxnTaxDetail);
-    }
-
-    [Fact]
     public void MapPayment_LinksToInvoice()
     {
         var payload = new QboPaymentPayload
@@ -113,7 +89,9 @@ public class QboMapperTests
             QboInvoiceId = "1007",
             Amount = 1119m,
             CurrencyCode = "USD",
-            ReferenceNumber = "CHK-88"
+            ReferenceNumber = "CHK-88",
+            TxnDate = new DateTime(2026, 8, 1, 0, 0, 0, DateTimeKind.Utc),
+            DepositAccountId = "35"
         };
 
         var result = QboMapper.MapPayment(payload, null, null);
@@ -121,6 +99,8 @@ public class QboMapperTests
         Assert.Equal("42", result.CustomerRef?.Value);
         Assert.Equal(1119m, result.TotalAmt);
         Assert.Equal("CHK-88", result.PaymentRefNum);
+        Assert.Equal("2026-08-01", result.TxnDate);
+        Assert.Equal("35", result.DepositToAccountRef?.Value);
         var link = Assert.Single(result.Line!);
         Assert.Equal(1119m, link.Amount);
         Assert.Equal("1007", link.LinkedTxn?[0].TxnId);
@@ -160,6 +140,7 @@ public class QboMapperTests
             QboCustomerId = "42",
             CurrencyCode = "USD",
             TxnDate = new DateTime(2026, 7, 5, 0, 0, 0, DateTimeKind.Utc),
+            TaxTotal = 0m,
             Lines =
             [
                 new QboInvoiceLinePayload { Description = "Line haul", Amount = 1000m, ItemId = "7" },
@@ -173,6 +154,7 @@ public class QboMapperTests
         Assert.Equal("7", result.Line![0].SalesItemLineDetail?.ItemRef?.Value);
         Assert.Null(result.Line[1].SalesItemLineDetail?.ItemRef);
         Assert.Null(result.Sparse);
+        Assert.Null(result.TxnTaxDetail);
     }
 
     [Fact]
@@ -195,25 +177,6 @@ public class QboMapperTests
         Assert.Equal("4", result.SyncToken);
         Assert.Null(result.Line);
         Assert.Null(result.CustomerRef);
-    }
-
-    [Fact]
-    public void MapPayment_SendsTxnDateAndDepositAccount()
-    {
-        var payload = new QboPaymentPayload
-        {
-            QboCustomerId = "42",
-            QboInvoiceId = "130",
-            Amount = 500m,
-            CurrencyCode = "USD",
-            TxnDate = new DateTime(2026, 8, 1, 0, 0, 0, DateTimeKind.Utc),
-            DepositAccountId = "35"
-        };
-
-        var result = QboMapper.MapPayment(payload, null, null);
-
-        Assert.Equal("2026-08-01", result.TxnDate);
-        Assert.Equal("35", result.DepositToAccountRef?.Value);
     }
 
     [Fact]
