@@ -1,25 +1,51 @@
 using System.Collections.Frozen;
-using System.Text;
+using System.Text.Json;
+using Logistics.Domain.Primitives.Enums;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace Logistics.Infrastructure.Persistence.Converters;
 
 /// <summary>
-/// EF Core value converter that stores enum values as snake_case strings in the database.
-/// E.g., LoadStatus.PickedUp -> "picked_up"
-/// Uses cached dictionaries for O(1) lookups instead of computing on every call.
+/// EF Core value converter that stores enum values as snake_case strings in the database,
+/// named by <see cref="JsonNamingPolicy.SnakeCaseLower"/>. E.g., LoadStatus.PickedUp -> "picked_up".
+/// Reading is case-insensitive and also accepts PascalCase and numeric values.
 /// </summary>
 public class SnakeCaseEnumConverter<TEnum> : ValueConverter<TEnum, string>
     where TEnum : struct, Enum
 {
-    private static readonly FrozenDictionary<TEnum, string> EnumToSnake = BuildEnumToSnakeCache();
-    private static readonly FrozenDictionary<string, TEnum> SnakeToEnum = BuildSnakeToEnumCache();
+    /// <summary>
+    /// Members stored before the BCL policy was used. The old converter did not split a capital
+    /// that follows a digit, and existing rows keep that spelling.
+    /// </summary>
+    private static readonly FrozenDictionary<Enum, string> LegacyNames = new Dictionary<Enum, string>
+    {
+        [LicenseClass.EUC1E] = "euc1e"
+    }.ToFrozenDictionary();
+
+    private static readonly FrozenDictionary<TEnum, string> EnumToSnake =
+        Enum.GetValues<TEnum>().Distinct().ToFrozenDictionary(v => v, ConvertName);
+
+    private static readonly FrozenDictionary<string, TEnum> SnakeToEnum =
+        EnumToSnake.ToFrozenDictionary(p => p.Value, p => p.Key, StringComparer.OrdinalIgnoreCase);
 
     public SnakeCaseEnumConverter()
-        : base(
-            v => EnumToSnake.GetValueOrDefault(v, ToSnakeCase(v.ToString())),
-            v => FromSnakeCase(v))
+        : base(v => ToSnakeCase(v), v => FromSnakeCase(v))
     {
+    }
+
+    private static string ConvertName(TEnum value) =>
+        LegacyNames.GetValueOrDefault(value) ?? JsonNamingPolicy.SnakeCaseLower.ConvertName(value.ToString());
+
+    private static string ToSnakeCase(TEnum value)
+    {
+        if (EnumToSnake.TryGetValue(value, out var name))
+        {
+            return name;
+        }
+
+        // Flag combinations format as "A, B". Stored rows separate the names with ", _".
+        var parts = value.ToString().Split(", ");
+        return string.Join(", _", parts.Select(JsonNamingPolicy.SnakeCaseLower.ConvertName));
     }
 
     private static TEnum FromSnakeCase(string? value)
@@ -29,98 +55,11 @@ public class SnakeCaseEnumConverter<TEnum> : ValueConverter<TEnum, string>
             return default;
         }
 
-        return SnakeToEnum.TryGetValue(value, out var e) ? e : ParseFallback(value);
-    }
-
-    private static FrozenDictionary<TEnum, string> BuildEnumToSnakeCache()
-    {
-        var values = Enum.GetValues<TEnum>();
-        var dict = new Dictionary<TEnum, string>(values.Length);
-
-        foreach (var value in values)
+        if (SnakeToEnum.TryGetValue(value, out var e))
         {
-            dict[value] = ToSnakeCase(value.ToString());
+            return e;
         }
 
-        return dict.ToFrozenDictionary();
-    }
-
-    private static FrozenDictionary<string, TEnum> BuildSnakeToEnumCache()
-    {
-        var values = Enum.GetValues<TEnum>();
-        var dict = new Dictionary<string, TEnum>(values.Length, StringComparer.OrdinalIgnoreCase);
-
-        foreach (var value in values)
-        {
-            dict[ToSnakeCase(value.ToString())] = value;
-        }
-
-        return dict.ToFrozenDictionary(StringComparer.OrdinalIgnoreCase);
-    }
-
-    private static TEnum ParseFallback(string snakeCase)
-    {
-        // Fallback for values not in cache (shouldn't happen normally)
-        var pascalCase = ToPascalCase(snakeCase);
-        return Enum.Parse<TEnum>(pascalCase, ignoreCase: true);
-    }
-
-    private static string ToSnakeCase(string pascalCase)
-    {
-        if (string.IsNullOrEmpty(pascalCase))
-        {
-            return pascalCase;
-        }
-
-        var sb = new StringBuilder(pascalCase.Length + 4);
-        for (var i = 0; i < pascalCase.Length; i++)
-        {
-            var c = pascalCase[i];
-            if (char.IsUpper(c) && i > 0)
-            {
-                var prevIsLower = char.IsLower(pascalCase[i - 1]);
-                var nextIsLower = i + 1 < pascalCase.Length && char.IsLower(pascalCase[i + 1]);
-
-                // Insert _ before: lowercase→Upper (e.g., "pickedUp") or Upper→Upper+lower (e.g., "USDate" → "us_date")
-                if (prevIsLower || nextIsLower)
-                {
-                    sb.Append('_');
-                }
-            }
-
-            sb.Append(char.ToLowerInvariant(c));
-        }
-
-        return sb.ToString();
-    }
-
-    private static string ToPascalCase(string snakeCase)
-    {
-        if (string.IsNullOrEmpty(snakeCase))
-        {
-            return snakeCase;
-        }
-
-        var sb = new StringBuilder(snakeCase.Length);
-        var capitalizeNext = true;
-
-        foreach (var c in snakeCase)
-        {
-            if (c == '_')
-            {
-                capitalizeNext = true;
-            }
-            else if (capitalizeNext)
-            {
-                sb.Append(char.ToUpperInvariant(c));
-                capitalizeNext = false;
-            }
-            else
-            {
-                sb.Append(char.ToLowerInvariant(c));
-            }
-        }
-
-        return sb.ToString();
+        return Enum.Parse<TEnum>(value.Replace("_", string.Empty), ignoreCase: true);
     }
 }

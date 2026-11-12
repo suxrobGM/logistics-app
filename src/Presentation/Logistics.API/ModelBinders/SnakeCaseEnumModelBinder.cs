@@ -1,4 +1,3 @@
-using System.Globalization;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
 
 namespace Logistics.API.ModelBinders;
@@ -38,10 +37,7 @@ public class SnakeCaseEnumModelBinder : IModelBinder
             return Task.CompletedTask;
         }
 
-        // Convert snake_case to PascalCase
-        var pascalCase = ConvertSnakeCaseToPascalCase(value);
-
-        if (Enum.TryParse(enumType, pascalCase, ignoreCase: true, out var result))
+        if (Enum.TryParse(enumType, value.Replace("_", string.Empty), ignoreCase: true, out var result))
         {
             bindingContext.Result = ModelBindingResult.Success(result);
         }
@@ -53,13 +49,6 @@ public class SnakeCaseEnumModelBinder : IModelBinder
         }
 
         return Task.CompletedTask;
-    }
-
-    private static string ConvertSnakeCaseToPascalCase(string snakeCase)
-    {
-        var textInfo = CultureInfo.InvariantCulture.TextInfo;
-        var parts = snakeCase.Split('_');
-        return string.Concat(parts.Select(p => textInfo.ToTitleCase(p.ToLowerInvariant())));
     }
 }
 
