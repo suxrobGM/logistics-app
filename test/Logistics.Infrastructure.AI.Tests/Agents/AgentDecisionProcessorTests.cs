@@ -1,3 +1,4 @@
+using Logistics.Application.Modules.Integrations.AIDispatch.Services;
 using Logistics.Application.Abstractions.Agents;
 using Logistics.Application.Modules.Integrations.Agents.Services;
 using Logistics.Infrastructure.AI.Tools;
@@ -35,6 +36,8 @@ public class AgentDecisionProcessorTests
     private readonly IAgentToolExecutor _toolExecutor = Substitute.For<IAgentToolExecutor>();
     private readonly IAIDispatchBroadcastService _broadcastService = Substitute.For<IAIDispatchBroadcastService>();
     private readonly IAgentToolRegistry _toolRegistry = new AgentToolRegistry();
+    private readonly IAgentTrustService _trust = Substitute.For<IAgentTrustService>();
+    private readonly IAgentRunContext _runContext = Substitute.For<IAgentRunContext>();
 
     public AgentDecisionProcessorTests()
     {
@@ -51,7 +54,7 @@ public class AgentDecisionProcessorTests
             BillingEmail = "test@test.com",
             CompanyAddress = new() { Line1 = "123 Test St", City = "Test", State = "TX", ZipCode = "12345", Country = "US" }
         });
-        _sut = new AgentDecisionProcessor(_toolExecutor, _toolRegistry, _tenantUow, _broadcastService, new AgentDecisionDtoMapper(_tenantUow), _logger);
+        _sut = new AgentDecisionProcessor(_toolExecutor, _toolRegistry, _tenantUow, _broadcastService, new AgentDecisionDtoMapper(_tenantUow), _trust, _runContext, _logger);
     }
 
     private static AgentSession CreateSession()
@@ -477,6 +480,68 @@ public class AgentDecisionProcessorTests
 
         await _broadcastService.Received(1).BroadcastDecisionAsync(
             Arg.Any<Guid>(), Arg.Any<AgentDecisionDto>());
+    }
+
+    #endregion
+
+    #region Auto-approve
+
+    [Fact]
+    public async Task ProcessToolCalls_TrustedWriteTool_ExecutesAndMarksAutoApproved()
+    {
+        var tripId = Guid.NewGuid();
+        _trust.CanAutoExecuteAsync(Arg.Any<AgentToolDefinition>(), Arg.Any<CancellationToken>()).Returns(true);
+        _toolExecutor.ExecuteToolAsync("create_trip", Arg.Any<string>(), Arg.Any<CancellationToken>())
+            .Returns($$"""{"success":true,"trip_id":"{{tripId}}"}""");
+
+        await _sut.ProcessToolCallsAsync(
+            CreateSession(), new ToolCallContext(), [CreateToolUse("create_trip")], null, CancellationToken.None);
+
+        await _decisionRepo.Received(1).AddAsync(
+            Arg.Is<AgentDecision>(d =>
+                d.Status == AgentDecisionStatus.Executed && d.AutoApproved && d.ApprovedByUserId == null
+                && d.TripId == tripId),
+            Arg.Any<CancellationToken>());
+        _runContext.Received(1).SetDecision(Arg.Is<Guid?>(id => id != null));
+    }
+
+    [Fact]
+    public async Task ProcessToolCalls_TrustedWriteToolReportsFailure_MarksFailed()
+    {
+        _trust.CanAutoExecuteAsync(Arg.Any<AgentToolDefinition>(), Arg.Any<CancellationToken>()).Returns(true);
+        _toolExecutor.ExecuteToolAsync("create_trip", Arg.Any<string>(), Arg.Any<CancellationToken>())
+            .Returns("""{"success":false,"error":"Truck is busy"}""");
+
+        await _sut.ProcessToolCallsAsync(
+            CreateSession(), new ToolCallContext(), [CreateToolUse("create_trip")], null, CancellationToken.None);
+
+        await _decisionRepo.Received(1).AddAsync(
+            Arg.Is<AgentDecision>(d => d.Status == AgentDecisionStatus.Failed && !d.AutoApproved),
+            Arg.Any<CancellationToken>());
+    }
+
+    [Fact]
+    public async Task ProcessToolCalls_UntrustedWriteTool_StaysSuggested()
+    {
+        await _sut.ProcessToolCallsAsync(
+            CreateSession(), new ToolCallContext(), [CreateToolUse("create_trip")], null, CancellationToken.None);
+
+        await _toolExecutor.DidNotReceive().ExecuteToolAsync("create_trip", Arg.Any<string>(), Arg.Any<CancellationToken>());
+        await _decisionRepo.Received(1).AddAsync(
+            Arg.Is<AgentDecision>(d => d.Status == AgentDecisionStatus.Suggested),
+            Arg.Any<CancellationToken>());
+    }
+
+    [Fact]
+    public async Task ProcessToolCalls_CopilotSession_NeverAutoExecutes()
+    {
+        _trust.CanAutoExecuteAsync(Arg.Any<AgentToolDefinition>(), Arg.Any<CancellationToken>()).Returns(true);
+        var session = new AgentSession { CreatedAt = DateTime.UtcNow, Type = AgentSessionType.Copilot };
+
+        await _sut.ProcessToolCallsAsync(
+            session, new ToolCallContext(), [CreateToolUse("create_trip")], null, CancellationToken.None);
+
+        await _toolExecutor.DidNotReceive().ExecuteToolAsync("create_trip", Arg.Any<string>(), Arg.Any<CancellationToken>());
     }
 
     #endregion

@@ -48,6 +48,29 @@ public class AgentDecision : Entity, ITenantEntity
     public Guid? ApprovedByUserId { get; set; }
     public string? RejectionReason { get; set; }
 
+    /// <summary>
+    /// How long a dispatcher has to undo a decision the agent executed on its own.
+    /// </summary>
+    public static readonly TimeSpan RevertWindow = TimeSpan.FromMinutes(15);
+
+    /// <summary>
+    /// True when the agent executed this decision without asking, under the tenant's auto-approve
+    /// opt-in. <see cref="ApprovedByUserId"/> stays null: the opt-in is the authority.
+    /// </summary>
+    public bool AutoApproved { get; set; }
+
+    /// <summary>
+    /// When a dispatcher undid this auto-approved decision. Counts as a rejection for the trust streak.
+    /// </summary>
+    public DateTime? RevertedAt { get; set; }
+
+    public bool CanRevert(DateTime now) =>
+        AutoApproved
+        && Status == AgentDecisionStatus.Executed
+        && RevertedAt is null
+        && ExecutedAt is { } executedAt
+        && now - executedAt <= RevertWindow;
+
     public void Approve(Guid userId)
     {
         Status = AgentDecisionStatus.Approved;
@@ -65,6 +88,17 @@ public class AgentDecision : Entity, ITenantEntity
     {
         Status = AgentDecisionStatus.Executed;
         ExecutedAt = DateTime.UtcNow;
+    }
+
+    public void MarkAutoExecuted()
+    {
+        AutoApproved = true;
+        MarkExecuted();
+    }
+
+    public void MarkReverted(DateTime now)
+    {
+        RevertedAt = now;
     }
 
     public void MarkFailed(string? errorOutput = null)

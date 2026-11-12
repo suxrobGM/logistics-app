@@ -1,3 +1,4 @@
+using Logistics.Application.Modules.Integrations.AIDispatch.Services;
 using Logistics.Application.Abstractions.Agents;
 using Logistics.Application.Modules.Integrations.Agents.Services;
 using Logistics.Infrastructure.AI.Tools;
@@ -51,6 +52,7 @@ public class AgentLoopRunnerTests
         var processor = new AgentDecisionProcessor(
             _toolExecutor, new AgentToolRegistry(), _tenantUow,
             Substitute.For<IAIDispatchBroadcastService>(), new AgentDecisionDtoMapper(_tenantUow),
+            Substitute.For<IAgentTrustService>(), Substitute.For<IAgentRunContext>(),
             NullLogger<AgentDecisionProcessor>.Instance);
         _sut = new AgentLoopRunner(processor, _tenantUow, NullLogger<AgentLoopRunner>.Instance);
     }
@@ -204,7 +206,7 @@ public class AgentLoopRunnerTests
     {
         // A tool talks to the database and to vendor APIs, so an auth failure here is not the LLM
         // credentials - saying so would send the operator to the wrong system entirely.
-        var sanitized = LlmErrorSanitizer.ForToolCall(
+        var sanitized = ToolErrorSanitizer.Sanitize(
             new InvalidOperationException("unauthorized: Host=db-prod-01;Password=hunter2"));
 
         Assert.DoesNotContain("hunter2", sanitized);
@@ -215,7 +217,7 @@ public class AgentLoopRunnerTests
     [Fact]
     public void ForToolCall_OrdinaryFailure_KeepsTheMessage()
     {
-        var sanitized = LlmErrorSanitizer.ForToolCall(
+        var sanitized = ToolErrorSanitizer.Sanitize(
             new InvalidOperationException("Trip is not in Draft status"));
 
         Assert.Equal("Trip is not in Draft status", sanitized);

@@ -11,5 +11,6 @@ public static partial class TripStopMapper
     [MapperIgnoreSource(nameof(TripStop.Trip))]
     [MapperIgnoreSource(nameof(TripStop.Load))]
     [MapperIgnoreSource(nameof(TripStop.DetentionAlertedAt))]
+    [MapperIgnoreSource(nameof(TripStop.LateNotifiedAt))]
     public static partial TripStopDto ToDto(this TripStop entity);
 }

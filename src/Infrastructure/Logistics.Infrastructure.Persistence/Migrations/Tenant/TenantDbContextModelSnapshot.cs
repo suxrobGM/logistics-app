@@ -33,6 +33,15 @@ namespace Logistics.Infrastructure.Persistence.Migrations.Tenant
                         .HasColumnType("uuid")
                         .HasColumnName("id");
 
+                    b.Property<int>("AutoApproveStreak")
+                        .HasColumnType("integer")
+                        .HasColumnName("auto_approve_streak");
+
+                    b.PrimitiveCollection<int[]>("AutoApproveTypes")
+                        .IsRequired()
+                        .HasColumnType("integer[]")
+                        .HasColumnName("auto_approve_types");
+
                     b.Property<DateTime>("CreatedAt")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("timestamp with time zone")
@@ -83,6 +92,10 @@ namespace Logistics.Infrastructure.Persistence.Migrations.Tenant
                         .HasMaxLength(8000)
                         .HasColumnType("character varying(8000)")
                         .HasColumnName("manual_content");
+
+                    b.Property<int>("MinutesSavedPerDecision")
+                        .HasColumnType("integer")
+                        .HasColumnName("minutes_saved_per_decision");
 
                     b.Property<string>("ModelUsed")
                         .HasMaxLength(100)
@@ -364,6 +377,10 @@ namespace Logistics.Infrastructure.Persistence.Migrations.Tenant
                         .HasColumnType("uuid")
                         .HasColumnName("approved_by_user_id");
 
+                    b.Property<bool>("AutoApproved")
+                        .HasColumnType("boolean")
+                        .HasColumnName("auto_approved");
+
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("timestamp with time zone")
                         .HasColumnName("created_at");
@@ -398,6 +415,10 @@ namespace Logistics.Infrastructure.Persistence.Migrations.Tenant
                         .HasMaxLength(1000)
                         .HasColumnType("character varying(1000)")
                         .HasColumnName("rejection_reason");
+
+                    b.Property<DateTime?>("RevertedAt")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("reverted_at");
 
                     b.Property<Guid>("SessionId")
                         .HasColumnType("uuid")

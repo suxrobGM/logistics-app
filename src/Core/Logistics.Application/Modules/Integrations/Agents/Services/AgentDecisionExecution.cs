@@ -24,9 +24,10 @@ internal sealed class AgentDecisionExecution(IAgentToolExecutor toolExecutor) : 
         }
         catch (Exception ex)
         {
-            decision.MarkFailed(ex.Message);
-            note = $"Approved but failed to execute: {decision.ToolName} - {Compact(ex.Message)}";
-            outcome = Result.Fail($"Failed to execute decision: {ex.Message}");
+            var error = ToolErrorSanitizer.Sanitize(ex);
+            decision.MarkFailed(error);
+            note = $"Approved but failed to execute: {decision.ToolName} - {Compact(error)}";
+            outcome = Result.Fail($"Failed to execute decision: {error}");
         }
 
         await appendNoteAsync(note);

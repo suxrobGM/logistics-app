@@ -16,5 +16,8 @@ public static partial class AIDispatchPolicyMapper
     [MapperIgnoreSource(nameof(AIDispatchPolicy.CreatedBy))]
     [MapperIgnoreSource(nameof(AIDispatchPolicy.UpdatedAt))]
     [MapperIgnoreSource(nameof(AIDispatchPolicy.UpdatedBy))]
+    [MapperIgnoreSource(nameof(AIDispatchPolicy.AutoApproveTypes))]
+    [MapperIgnoreSource(nameof(AIDispatchPolicy.AutoApproveStreak))]
+    [MapperIgnoreSource(nameof(AIDispatchPolicy.MinutesSavedPerDecision))]
     public static partial AIDispatchPolicyDto ToDto(this AIDispatchPolicy entity);
 }

@@ -130,6 +130,39 @@ public class AIDispatchController(IMediator mediator) : ControllerBase
         return result.IsSuccess ? NoContent() : BadRequest(ErrorResponse.FromResult(result));
     }
 
+    /// <summary>
+    ///     Undoes a decision the agent executed on its own, within 15 minutes of it running.
+    /// </summary>
+    [HttpPost("decisions/{decisionId:guid}/revert", Name = "RevertAIDispatchDecision")]
+    [ProducesResponseType(StatusCodes.Status204NoContent)]
+    [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status400BadRequest)]
+    [Authorize(Policy = Permission.Dispatch.Manage)]
+    public async Task<IActionResult> RevertDecision(Guid decisionId)
+    {
+        var result = await mediator.Send(new RevertAIDispatchDecisionCommand { DecisionId = decisionId });
+        return result.IsSuccess ? NoContent() : BadRequest(ErrorResponse.FromResult(result));
+    }
+
+    [HttpGet("autonomy", Name = "GetAIDispatchAutonomy")]
+    [ProducesResponseType(typeof(AIDispatchAutonomyDto), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status400BadRequest)]
+    [Authorize(Policy = Permission.Dispatch.View)]
+    public async Task<IActionResult> GetAutonomy()
+    {
+        var result = await mediator.Send(new GetAIDispatchAutonomyQuery());
+        return result.IsSuccess ? Ok(result.Value) : BadRequest(ErrorResponse.FromResult(result));
+    }
+
+    [HttpPut("autonomy", Name = "UpdateAIDispatchAutonomy")]
+    [ProducesResponseType(StatusCodes.Status204NoContent)]
+    [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status400BadRequest)]
+    [Authorize(Policy = Permission.Dispatch.Manage)]
+    public async Task<IActionResult> UpdateAutonomy([FromBody] UpdateAIDispatchAutonomyCommand command)
+    {
+        var result = await mediator.Send(command);
+        return result.IsSuccess ? NoContent() : BadRequest(ErrorResponse.FromResult(result));
+    }
+
     [HttpGet("policy", Name = "GetAIDispatchPolicy")]
     [ProducesResponseType(typeof(AIDispatchPolicyDto), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status400BadRequest)]

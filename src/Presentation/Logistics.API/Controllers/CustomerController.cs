@@ -89,7 +89,7 @@ public class CustomerController(IMediator mediator) : ControllerBase
         return result.IsSuccess ? NoContent() : BadRequest(ErrorResponse.FromResult(result));
     }
 
-    [HttpPut("{id:guid}/update-preferences", Name = "SetCustomerUpdatePreferences")]
+    [HttpPut("{id:guid}/preferences", Name = "SetCustomerUpdatePreferences")]
     [ProducesResponseType(StatusCodes.Status204NoContent)]
     [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status400BadRequest)]
     [Authorize(Policy = Permission.Customer.Manage)]

@@ -118,9 +118,14 @@ Never hand-write JSON Schema, and never read the raw `JsonNode` in a tool. Bindi
 numbers, unquoted text and casing, but a wrong type or unknown enum name fails the call naming the
 property. `ToolInput`'s accessors are only for reading a **persisted** `AgentDecision.ToolInput`.
 
-- On the agent surfaces, read tools always execute immediately and write tools always become
-  `Suggested` decisions awaiting dispatcher/user approval - there is no unattended-execution path
-  (`AgentDecisionProcessor`).
+- On the agent surfaces, read tools always execute immediately and write tools become `Suggested`
+  decisions awaiting dispatcher/user approval (`AgentDecisionProcessor`). The one exception is
+  **auto-approve** on dispatch sessions: `AgentTrustService` lets a decision type in
+  `AIDispatchPolicy.AutoApproveEligibleTypes` (assign load, draft trip, draft invoice) run unattended
+  once the tenant opted it in and its clean streak reaches `AutoApproveStreak`. It sets
+  `AutoApproved` with `ApprovedByUserId = null`, and `RevertAIDispatchDecision` can undo it for
+  `AgentDecision.RevertWindow`. Never widen the eligible set to anything that spends money, contacts
+  someone outside the carrier, or notifies a driver.
 - **Behaviour metadata lives on the tool's static `Definition`** as named init properties:
   `RequiredPermission`, `DecisionType`, `RequiredFeature`, `Surfaces`, `Destructive`. `IsWrite` is
   **derived** (`DecisionType != Query`), so there is no separate flag to forget. Miss
@@ -192,8 +197,8 @@ install with a single configured provider fails every night. The agent loop has 
 between `## HOS Rules` and `## Workflow` as defaults ranking below the hard constraints. Traps:
 
 - The human-approved population is `Status == Executed && ApprovedByUserId != null`. `Approve()` is
-  immediately overwritten by `MarkExecuted()`, so **filtering on `Approved` finds nothing** - every
-  executed write went through approval, so this filter is the whole population, not a carve-out.
+  immediately overwritten by `MarkExecuted()`, so **filtering on `Approved` finds nothing**. The
+  `ApprovedByUserId != null` half is what keeps auto-approved decisions out of learning.
 - `GeneratedContent` is job-owned, `ManualContent` is dispatcher-owned. Never merge them.
 - Policy text is **untrusted** (LLM output derived from dispatcher-typed rejection reasons).
   `AIDispatchSystemPrompt` sanitises and truncates at the injection point, not in callers.

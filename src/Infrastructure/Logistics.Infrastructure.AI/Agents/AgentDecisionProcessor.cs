@@ -8,6 +8,7 @@ using Logistics.Infrastructure.AI.Llm.Contracts;
 using Logistics.Infrastructure.AI.Llm;
 using Logistics.Infrastructure.AI.Tools;
 using Logistics.Application.Modules.Integrations.Agents.Services;
+using Logistics.Application.Modules.Integrations.AIDispatch.Services;
 using Logistics.Shared.Models;
 using Microsoft.Extensions.Logging;
 using Logistics.Application.Abstractions.AIDispatch;
@@ -16,7 +17,8 @@ namespace Logistics.Infrastructure.AI.Agents;
 
 /// <summary>
 /// Processes LLM tool calls into AgentDecision entities.
-/// Write tools always become Suggested decisions awaiting dispatcher approval; read tools execute
+/// Write tools become Suggested decisions awaiting dispatcher approval, unless the tenant opted the
+/// decision type in to auto-approve and its clean streak is long enough; read tools execute
 /// immediately. Write/permission/decision-type behavior comes from the tool's
 /// <see cref="AgentToolDefinition"/> metadata - there is no tool-name list here.
 /// </summary>
@@ -26,6 +28,8 @@ internal sealed class AgentDecisionProcessor(
     ITenantUnitOfWork tenantUow,
     IAIDispatchBroadcastService broadcastService,
     IAgentDecisionDtoMapper decisionDtoMapper,
+    IAgentTrustService trustService,
+    IAgentRunContext runContext,
     ILogger<AgentDecisionProcessor> logger)
 {
     public async Task<List<LlmToolResultBlock>> ProcessToolCallsAsync(
@@ -90,6 +94,12 @@ internal sealed class AgentDecisionProcessor(
 
         var isWriteTool = definition?.IsWrite == true;
 
+        if (isWriteTool && session.Type == AgentSessionType.Dispatch
+                        && await trustService.CanAutoExecuteAsync(definition!, ct))
+        {
+            return await AutoExecuteAsync(session, decision, toolCall.Name, toolInputJson, ct);
+        }
+
         if (isWriteTool)
         {
             decision.Status = AgentDecisionStatus.Suggested;
@@ -118,9 +128,43 @@ internal sealed class AgentDecisionProcessor(
             // Sanitized: this lands on a tenant-visible decision row AND goes back into the model's
             // context, so a raw exception could leak connection strings or vendor credentials.
             var errorResult = JsonSerializer.Serialize(
-                new { error = LlmErrorSanitizer.ForToolCall(ex) });
+                new { error = ToolErrorSanitizer.Sanitize(ex) });
             decision.MarkFailed(errorResult);
             return errorResult;
+        }
+    }
+
+    private async Task<string> AutoExecuteAsync(
+        AgentSession session, AgentDecision decision, string toolName, string toolInputJson, CancellationToken ct)
+    {
+        runContext.SetDecision(decision.Id);
+        try
+        {
+            var result = await toolExecutor.ExecuteToolAsync(toolName, toolInputJson, ct);
+            if (ToolOutputReader.IsFailure(result))
+            {
+                decision.MarkFailed(result);
+                return result;
+            }
+
+            decision.ToolOutput = result;
+            decision.MarkAutoExecuted();
+            decision.TripId ??= ToolOutputReader.GetGuid(result, "trip_id");
+            decision.InvoiceId ??= ToolOutputReader.GetGuid(result, "invoice_id");
+            logger.LogInformation("Session {SessionId}: tool {ToolName} auto-executed under the tenant opt-in",
+                session.Id, toolName);
+            return result;
+        }
+        catch (Exception ex) when (ex is not OperationCanceledException)
+        {
+            logger.LogWarning(ex, "Session {SessionId}: auto-executed tool {ToolName} failed", session.Id, toolName);
+            var errorResult = JsonSerializer.Serialize(new { error = ToolErrorSanitizer.Sanitize(ex) });
+            decision.MarkFailed(errorResult);
+            return errorResult;
+        }
+        finally
+        {
+            runContext.SetDecision(null);
         }
     }
 

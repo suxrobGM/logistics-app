@@ -1,4 +1,5 @@
 using Logistics.Domain.Core;
+using Logistics.Domain.Primitives.Enums;
 
 namespace Logistics.Domain.Entities;
 
@@ -48,6 +49,51 @@ public class AIDispatchPolicy : AuditableEntity, ITenantEntity
     /// which the nightly job would otherwise overwrite.
     /// </summary>
     public Guid? LastEditedByUserId { get; private set; }
+
+    public const int DefaultAutoApproveStreak = 25;
+    public const int DefaultMinutesSavedPerDecision = 5;
+
+    /// <summary>
+    /// The only decision types that may ever run without approval. Anything that spends money,
+    /// contacts someone outside the carrier, or notifies a driver is deliberately absent.
+    /// </summary>
+    public static readonly IReadOnlySet<AgentDecisionType> AutoApproveEligibleTypes = new HashSet<AgentDecisionType>
+    {
+        AgentDecisionType.AssignLoad,
+        AgentDecisionType.CreateTrip,
+        AgentDecisionType.CreateInvoice
+    };
+
+    /// <summary>
+    /// Decision types the tenant opted in to auto-approve once their clean streak is long enough.
+    /// </summary>
+    public List<AgentDecisionType> AutoApproveTypes { get; private set; } = [];
+
+    /// <summary>
+    /// Consecutive approvals, without a rejection or revert, a type needs before it auto-executes.
+    /// </summary>
+    public int AutoApproveStreak { get; private set; } = DefaultAutoApproveStreak;
+
+    /// <summary>
+    /// Dispatcher minutes one auto-executed decision is counted as saving, for the AI dispatch stats.
+    /// </summary>
+    public int MinutesSavedPerDecision { get; private set; } = DefaultMinutesSavedPerDecision;
+
+    public bool IsAutoApproveOptedIn(AgentDecisionType type) =>
+        AutoApproveEligibleTypes.Contains(type) && AutoApproveTypes.Contains(type);
+
+    /// <summary>
+    /// Saves the auto-approve opt-in. Types outside <see cref="AutoApproveEligibleTypes"/> are dropped.
+    /// </summary>
+    public void SetAutoApprove(
+        IEnumerable<AgentDecisionType> types, int streak, int minutesSavedPerDecision, Guid? userId)
+    {
+        AutoApproveTypes = [.. types.Distinct().Where(AutoApproveEligibleTypes.Contains)];
+        AutoApproveStreak = streak;
+        MinutesSavedPerDecision = minutesSavedPerDecision;
+        LastEditedAt = DateTime.UtcNow;
+        LastEditedByUserId = userId;
+    }
 
     /// <summary>
     /// Records the result of a learning pass. A null <paramref name="generatedContent"/> clears the
