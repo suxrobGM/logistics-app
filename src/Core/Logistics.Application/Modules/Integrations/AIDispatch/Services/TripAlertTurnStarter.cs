@@ -14,6 +14,7 @@ internal sealed class TripAlertTurnStarter(
     ITenantUnitOfWork tenantUow,
     IBackgroundJobRunner<AIDispatchTurnRequest> turnRunner,
     IDelayedBackgroundJobRunner<TripAlertWakeRequest> wakeRunner,
+    IAgentTurnClaim turnClaim,
     INotificationService notificationService,
     ITelegramNotificationService telegramNotificationService,
     ILogger<TripAlertTurnStarter> logger) : ITripAlertTurnStarter
@@ -23,8 +24,6 @@ internal sealed class TripAlertTurnStarter(
 
     private const int DefaultAlertsPerDay = 20;
 
-    /// <summary>Matches the takeover window used when a human sends into a stuck conversation.</summary>
-    private static readonly TimeSpan StaleTurnWindow = TimeSpan.FromMinutes(15);
     private static readonly TimeSpan BusyRetryDelay = TimeSpan.FromMinutes(2);
 
     public async Task RaiseAsync(Trip trip, TripAlertKind kind, string details, CancellationToken ct = default)
@@ -106,25 +105,11 @@ internal sealed class TripAlertTurnStarter(
                ?? throw new InvalidOperationException($"Trip {trip.Id} links a missing alert conversation.");
     }
 
-    /// <summary>
-    /// A running turn loaded its transcript before this alert, so retry after it ends. The claim is one
-    /// conditional UPDATE because parallel alert jobs both passed a read-then-write check.
-    /// </summary>
+    /// <summary>A running turn loaded its transcript before this alert, so retry after it ends.</summary>
     private async Task TryBeginTurnAsync(AgentConversation conversation, Guid tripId, CancellationToken ct)
     {
         var tenantId = tenantUow.GetCurrentTenant().Id;
-        var now = DateTime.UtcNow;
-        var staleBefore = now - StaleTurnWindow;
-
-        var claimed = await tenantUow.Repository<AgentConversation>().Query()
-            .Where(c => c.Id == conversation.Id)
-            .Where(c => c.Status != AgentConversationStatus.Running || c.TurnStartedAt == null
-                        || c.TurnStartedAt < staleBefore)
-            .ExecuteUpdateAsync(s => s
-                .SetProperty(c => c.Status, AgentConversationStatus.Running)
-                .SetProperty(c => c.TurnStartedAt, now), ct);
-
-        if (claimed == 0)
+        if (!await turnClaim.TryClaimAsync(conversation, ct))
         {
             wakeRunner.Schedule(new TripAlertWakeRequest(tenantId, tripId), BusyRetryDelay);
             return;

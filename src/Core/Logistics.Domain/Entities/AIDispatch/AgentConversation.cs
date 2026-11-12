@@ -9,6 +9,9 @@ namespace Logistics.Domain.Entities;
 /// </summary>
 public class AgentConversation : AuditableEntity, ITenantEntity
 {
+    /// <summary>A Running turn older than this is assumed crashed and may be taken over.</summary>
+    public static readonly TimeSpan StaleTurnWindow = TimeSpan.FromMinutes(15);
+
     /// <summary>
     /// For Copilot conversations this is an ownership boundary every handler must verify;
     /// Dispatch conversations are tenant-shared and keep it for audit only.

@@ -89,7 +89,7 @@ internal sealed class AgentTestContext
         Access = new AgentConversationAccess(TenantUow);
         SenderDirectory = new AgentSenderDirectory(TenantUow);
         Commands = new AgentConversationCommands(
-            TenantUow, Access, QuotaService, DispatchService, SenderDirectory,
+            TenantUow, Access, QuotaService, DispatchService, SenderDirectory, new FakeTurnClaim(),
             NullLogger<AgentConversationCommands>.Instance);
         DecisionDtoMapper = new AgentDecisionDtoMapper(TenantUow);
         Queries = new AgentConversationQueries(TenantUow, Access, SenderDirectory, DecisionDtoMapper);

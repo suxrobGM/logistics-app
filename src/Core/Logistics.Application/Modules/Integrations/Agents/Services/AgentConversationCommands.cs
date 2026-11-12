@@ -15,13 +15,9 @@ internal sealed class AgentConversationCommands(
     IAIQuotaService quotaService,
     IAIDispatchService dispatchService,
     IAgentSenderDirectory senderDirectory,
+    IAgentTurnClaim turnClaim,
     ILogger<AgentConversationCommands> logger) : IAgentConversationCommands
 {
-    /// <summary>
-    /// A Running conversation older than this is assumed crashed and may be taken over, rather
-    /// than staying locked forever.
-    /// </summary>
-    private static readonly TimeSpan StaleTurnWindow = TimeSpan.FromMinutes(15);
 
     public async Task<Result<AgentConversationDto>> CreateAsync(
         AgentConversationKind kind, Guid? userId, CancellationToken ct)
@@ -107,7 +103,7 @@ internal sealed class AgentConversationCommands(
 
         if (conversation.Status == AgentConversationStatus.Running)
         {
-            if (conversation.TurnStartedAt > DateTime.UtcNow - StaleTurnWindow)
+            if (conversation.TurnStartedAt > DateTime.UtcNow - AgentConversation.StaleTurnWindow)
             {
                 return Result<SendAgentMessageResultDto>.Fail(
                     $"A {scope.Kind.ToString().ToLowerInvariant()} turn is already in progress");
@@ -135,7 +131,14 @@ internal sealed class AgentConversationCommands(
         var sequence = await tenantUow.ReserveSequencesAsync(conversation, 1, ct);
         var message = conversation.AddTextMessage(sequence, AgentMessageRole.User, text.Trim(), userId);
         await tenantUow.Repository<AgentMessage>().AddAsync(message, ct);
-        conversation.BeginTurn();
+
+        // The check above reads a snapshot; this is what stops two sends racing into two turns.
+        if (!await turnClaim.TryClaimAsync(conversation, ct))
+        {
+            return Result<SendAgentMessageResultDto>.Fail(
+                $"A {scope.Kind.ToString().ToLowerInvariant()} turn is already in progress");
+        }
+
         await tenantUow.SaveChangesAsync(ct);
 
         if (broadcastMessage is not null)

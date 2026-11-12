@@ -27,10 +27,9 @@ internal sealed class NegotiationTurnStarter(
     ITenantUnitOfWork tenantUow,
     IBackgroundJobRunner<AIDispatchTurnRequest> turnRunner,
     IDelayedBackgroundJobRunner<NegotiationWakeRequest> wakeRunner,
+    IAgentTurnClaim turnClaim,
     ILogger<NegotiationTurnStarter> logger) : INegotiationTurnStarter
 {
-    /// <summary>Matches the takeover window used when a human sends into a stuck conversation.</summary>
-    private static readonly TimeSpan StaleTurnWindow = TimeSpan.FromMinutes(15);
     private static readonly TimeSpan BusyRetryDelay = TimeSpan.FromMinutes(2);
 
     private const int MaxBrokerTextChars = 6000;
@@ -86,10 +85,7 @@ internal sealed class NegotiationTurnStarter(
         AgentConversation conversation, Guid negotiationId, CancellationToken ct)
     {
         var tenantId = tenantUow.GetCurrentTenant().Id;
-        var busy = conversation.Status == AgentConversationStatus.Running
-                   && conversation.TurnStartedAt > DateTime.UtcNow - StaleTurnWindow;
-
-        if (busy)
+        if (!await turnClaim.TryClaimAsync(conversation, ct))
         {
             logger.LogInformation(
                 "Conversation {ConversationId} is mid-turn; retrying negotiation {NegotiationId} in {Delay}",
@@ -97,9 +93,6 @@ internal sealed class NegotiationTurnStarter(
             wakeRunner.Schedule(new NegotiationWakeRequest(tenantId, negotiationId), BusyRetryDelay);
             return;
         }
-
-        conversation.BeginTurn();
-        await tenantUow.SaveChangesAsync(ct);
 
         // No triggering user: the broker did this, and a booking tool that needs a dispatcher will
         // say so rather than attributing the write to whoever last touched the conversation.

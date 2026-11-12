@@ -51,7 +51,7 @@ public class NegotiationTurnStarterTests
         _negotiationRepo.GetByIdAsync(_negotiation.Id, Arg.Any<CancellationToken>()).Returns(_negotiation);
 
         _sut = new NegotiationTurnStarter(
-            _tenantUow, _turnRunner, _wakeRunner, NullLogger<NegotiationTurnStarter>.Instance);
+            _tenantUow, _turnRunner, _wakeRunner, new FakeTurnClaim(), NullLogger<NegotiationTurnStarter>.Instance);
     }
 
     [Fact]
