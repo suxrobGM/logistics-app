@@ -2,12 +2,7 @@ using System.Reflection;
 using FluentValidation;
 using Logistics.Application.Behaviours;
 using Logistics.Mediator;
-using Logistics.Application.Modules.Compliance;
-using Logistics.Application.Modules.Financial;
-using Logistics.Application.Modules.IdentityAccess;
-using Logistics.Application.Modules.Integrations;
-using Logistics.Application.Modules.Operations;
-using Logistics.Application.Modules.Platform;
+using Logistics.Application.Modules.Platform.ProductLicense.Services;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace Logistics.Application;
@@ -21,12 +16,8 @@ public static class Registrar
             services.AddApplicationCommon();
             services.AddApplicationServices();
 
-            services.AddOperationsModule();
-            services.AddComplianceModule();
-            services.AddFinancialModule();
-            services.AddIdentityAccessModule();
-            services.AddIntegrationsModule();
-            services.AddPlatformModule();
+            // Singleton: importing the public key once is enough, and the validator holds no state.
+            services.AddSingleton(_ => new ProductLicenseKeyValidator(ProductLicensePublicKey.SpkiBase64));
 
             return services;
         }

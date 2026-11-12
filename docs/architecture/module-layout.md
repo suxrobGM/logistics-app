@@ -17,7 +17,6 @@
 
 ```text
 Modules/{Module}/
-├── {Module}ModuleRegistrar.cs          # DI extensions for this module
 └── {Feature}/                          # One folder per top-level feature
     ├── Commands/
     │   └── {Verb}{Entity}/             # One folder per command
@@ -56,11 +55,11 @@ Use bounded context, not entity affinity:
 
 When two modules both look right, pick the one whose other features the new command will mostly call.
 
-## Module registrar
+## Service registration
 
-Every module ships a `{Module}ModuleRegistrar.cs` that exposes a single `Add{Module}Module(IServiceCollection)` extension. Most are empty today - request handlers, FluentValidation validators, and `IApplicationService` implementations are registered assembly-wide by the private `AddApplicationCommon` / `AddApplicationServices` scans in `Logistics.Application/Registrar.cs`. Only put a service in a module registrar when the global scan can't cover it (decorators, named instances, keyed services, factories).
+Modules have no registrars of their own. Request handlers, FluentValidation validators, and `IApplicationService` implementations are registered assembly-wide by the private `AddApplicationCommon` / `AddApplicationServices` scans in `Logistics.Application/Registrar.cs`. A service the scan can't cover (decorators, named instances, keyed services, factories) is registered explicitly in `AddApplicationLayer`.
 
-The whole layer is wired by the single aggregate `services.AddApplicationLayer()`, which runs `AddApplicationCommon`, `AddApplicationServices`, then all six `Add{Module}Module()` calls internally. The **API** is the only host that calls it - from `Logistics.API/Setup.cs` (`ConfigureServices`), reached through the thin `LogisticsHost.Run` shell in `Program.cs`. IdentityServer and DbMigrator do **not** wire the module registrars; DbMigrator pulls in only the narrow slices it needs for seeding (`AddApplicationTaxServices`, `AddApplicationFuelCardServices`).
+The whole layer is wired by the single aggregate `services.AddApplicationLayer()`, which runs `AddApplicationCommon` and `AddApplicationServices`, then the few explicit registrations. The **API** is the only host that calls it - from `Logistics.API/Setup.cs` (`ConfigureServices`), reached through the thin `LogisticsHost.Run` shell in `Program.cs`. IdentityServer and DbMigrator do **not** call `AddApplicationLayer`; DbMigrator pulls in only the narrow slices it needs for seeding (`AddApplicationTaxServices`, `AddApplicationFuelCardServices`).
 
 ## Scaffolding a new feature
 
