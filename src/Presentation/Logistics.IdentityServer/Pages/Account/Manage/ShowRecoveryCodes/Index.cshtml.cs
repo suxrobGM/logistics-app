@@ -1,7 +1,7 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 
-namespace Logistics.IdentityServer.Pages.Account.Manage;
+namespace Logistics.IdentityServer.Pages.Account.Manage.ShowRecoveryCodes;
 
 public class ShowRecoveryCodesModel : PageModel
 {
@@ -15,7 +15,7 @@ public class ShowRecoveryCodesModel : PageModel
     {
         if (RecoveryCodes == null || RecoveryCodes.Length == 0)
         {
-            return RedirectToPage("./TwoFactorAuthentication");
+            return RedirectToPage("/Account/Manage/TwoFactorAuthentication/Index");
         }
 
         return Page();

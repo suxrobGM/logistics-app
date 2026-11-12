@@ -5,7 +5,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 
-namespace Logistics.IdentityServer.Pages.Account.Manage;
+namespace Logistics.IdentityServer.Pages.Account.Manage.ExternalLogins;
 
 public class ExternalLoginsModel(
     UserManager<User> userManager,

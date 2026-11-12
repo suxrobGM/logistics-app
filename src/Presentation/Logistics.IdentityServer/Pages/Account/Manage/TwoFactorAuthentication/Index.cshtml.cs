@@ -4,7 +4,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 
-namespace Logistics.IdentityServer.Pages.Account.Manage;
+namespace Logistics.IdentityServer.Pages.Account.Manage.TwoFactorAuthentication;
 
 public class TwoFactorAuthenticationModel(
     UserManager<User> userManager,

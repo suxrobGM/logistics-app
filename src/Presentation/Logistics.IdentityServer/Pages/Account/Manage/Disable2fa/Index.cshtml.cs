@@ -4,7 +4,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 
-namespace Logistics.IdentityServer.Pages.Account.Manage;
+namespace Logistics.IdentityServer.Pages.Account.Manage.Disable2fa;
 
 public class Disable2faModel(
     UserManager<User> userManager,
@@ -45,6 +45,6 @@ public class Disable2faModel(
 
         logger.LogInformation("User with ID '{UserId}' has disabled 2fa.", userManager.GetUserId(User));
         StatusMessage = "2fa has been disabled. You can reenable 2fa when you setup an authenticator app";
-        return RedirectToPage("./TwoFactorAuthentication");
+        return RedirectToPage("/Account/Manage/TwoFactorAuthentication/Index");
     }
 }

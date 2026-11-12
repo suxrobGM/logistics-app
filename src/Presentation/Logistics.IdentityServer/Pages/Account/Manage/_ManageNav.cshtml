@@ -11,8 +11,8 @@
     <li class="nav-item"><a class="nav-link @ManageNavPages.ChangePasswordNavClass(ViewContext)" id="change-password" asp-page="/Account/Manage/ChangePassword/Index">Password</a></li>
     @if (hasExternalLogins)
     {
-        <li id="external-logins" class="nav-item"><a id="external-login" class="nav-link @ManageNavPages.ExternalLoginsNavClass(ViewContext)" asp-page="/Account/Manage/ExternalLogins">External logins</a></li>
+        <li id="external-logins" class="nav-item"><a id="external-login" class="nav-link @ManageNavPages.ExternalLoginsNavClass(ViewContext)" asp-page="/Account/Manage/ExternalLogins/Index">External logins</a></li>
     }
-    <li class="nav-item"><a class="nav-link @ManageNavPages.TwoFactorAuthenticationNavClass(ViewContext)" id="two-factor" asp-page="/Account/Manage/TwoFactorAuthentication">Two-factor authentication</a></li>
+    <li class="nav-item"><a class="nav-link @ManageNavPages.TwoFactorAuthenticationNavClass(ViewContext)" id="two-factor" asp-page="/Account/Manage/TwoFactorAuthentication/Index">Two-factor authentication</a></li>
     <li class="nav-item"><a class="nav-link @ManageNavPages.PrivacyNavClass(ViewContext)" id="privacy" asp-page="/Account/Manage/Privacy/Index">Privacy &amp; data</a></li>
 </ul>

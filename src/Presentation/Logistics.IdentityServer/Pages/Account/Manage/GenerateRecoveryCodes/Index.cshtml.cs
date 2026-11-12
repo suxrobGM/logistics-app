@@ -4,7 +4,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 
-namespace Logistics.IdentityServer.Pages.Account.Manage;
+namespace Logistics.IdentityServer.Pages.Account.Manage.GenerateRecoveryCodes;
 
 public class GenerateRecoveryCodesModel(
     UserManager<User> userManager,
@@ -54,6 +54,6 @@ public class GenerateRecoveryCodesModel(
 
         logger.LogInformation("User with ID '{UserId}' has generated new 2FA recovery codes.", userId);
         StatusMessage = "You have generated new recovery codes.";
-        return RedirectToPage("./ShowRecoveryCodes");
+        return RedirectToPage("/Account/Manage/ShowRecoveryCodes/Index");
     }
 }
