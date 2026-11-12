@@ -11,7 +11,8 @@ public interface IEtaService : IApplicationService
     /// Recomputes the ETAs of the truck's active trip, at most once per <see cref="Trip.EtaRefreshInterval"/>.
     /// Raises the late event for stops that run past their appointment. The caller owns SaveChangesAsync.
     /// </summary>
-    Task RefreshAsync(Truck truck, DateTime now, CancellationToken ct = default);
+    /// <returns>The trip whose ETAs were recomputed, or null when nothing was due.</returns>
+    Task<Trip?> RefreshAsync(Truck truck, DateTime now, CancellationToken ct = default);
 
     /// <summary>
     /// Drive time left on the trip: the last stop's ETA minus the dwell allowed at the stops before it.

@@ -10,5 +10,6 @@ public enum AgentDecisionType
     CreateInvoice,
     SendInvoice,
     CreatePaymentLink,
-    ProposeCounterOffer
+    ProposeCounterOffer,
+    SendCustomerUpdate
 }

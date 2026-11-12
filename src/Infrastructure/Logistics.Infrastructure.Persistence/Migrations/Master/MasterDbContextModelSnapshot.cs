@@ -1443,6 +1443,10 @@ namespace Logistics.Infrastructure.Persistence.Migrations.Master
                                 .HasColumnType("text")
                                 .HasColumnName("settings_timezone");
 
+                            b1.Property<int?>("TripAlertsPerDay")
+                                .HasColumnType("integer")
+                                .HasColumnName("settings_trip_alerts_per_day");
+
                             b1.Property<string>("VolumeUnit")
                                 .IsRequired()
                                 .HasColumnType("text")

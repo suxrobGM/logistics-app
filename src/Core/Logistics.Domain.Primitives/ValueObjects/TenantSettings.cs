@@ -63,4 +63,9 @@ public record TenantSettings
     /// Minutes the ETA allows at each stop for loading or unloading. Null means one hour.
     /// </summary>
     public int? StopDwellMinutes { get; set; }
+
+    /// <summary>
+    /// Most AI trip alerts the dispatch agent investigates per day; each costs an agent turn. Null means 20.
+    /// </summary>
+    public int? TripAlertsPerDay { get; set; }
 }

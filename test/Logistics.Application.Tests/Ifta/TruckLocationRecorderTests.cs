@@ -39,7 +39,8 @@ public class TruckLocationRecorderTests
             .Returns(new TaxJurisdiction { CountryCode = "US", Region = "TX" });
 
         _sut = new TruckLocationRecorder(
-            _tenantUow, _resolver, Substitute.For<IEtaService>(), NullLogger<TruckLocationRecorder>.Instance);
+            _tenantUow, _resolver, Substitute.For<IEtaService>(), Substitute.For<ITripAlertReporter>(),
+            NullLogger<TruckLocationRecorder>.Instance);
     }
 
     private decimal AccruedMiles => (decimal)_upsert!.GetArgument(3)!;

@@ -6030,6 +6030,10 @@ namespace Logistics.Infrastructure.Persistence.Migrations.Tenant
                         .HasColumnType("uuid")
                         .HasColumnName("id");
 
+                    b.Property<Guid?>("AlertConversationId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("alert_conversation_id");
+
                     b.Property<DateTime?>("CancelledAt")
                         .HasColumnType("timestamp with time zone")
                         .HasColumnName("cancelled_at");

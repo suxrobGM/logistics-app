@@ -1,3 +1,4 @@
+using Logistics.Application.Modules.Operations.Trips.Services;
 using Logistics.Application.Abstractions.Eld;
 using Logistics.Application.Abstractions.Realtime;
 using Logistics.Application.Modules.Compliance.Ifta.Services;
@@ -16,6 +17,7 @@ internal sealed class EldSyncService(
     IEldProviderFactory eldProviderFactory,
     ITruckLocationRecorder locationRecorder,
     IRealtimeLiveTrackingService liveTracking,
+    ITripAlertReporter tripAlertReporter,
     ILogger<EldSyncService> logger) : IEldSyncService
 {
     private static readonly TimeSpan HistoryWindow = TimeSpan.FromDays(8);
@@ -100,6 +102,8 @@ internal sealed class EldSyncService(
         var added = await UpsertViolationsAsync(provider, mapping, ct);
         if (added > 0)
         {
+            await tripAlertReporter.ReportViolationsAsync(mapping.EmployeeId, added, ct);
+
             var status = await tenantUow.Repository<DriverHosStatus>()
                 .GetAsync(s => s.EmployeeId == mapping.EmployeeId, ct);
             if (status is not null)
@@ -156,6 +160,8 @@ internal sealed class EldSyncService(
         status.NextMandatoryBreakAt = hosData.NextMandatoryBreakAt;
         status.LastUpdatedAt = now;
         mapping.LastSyncedAt = now;
+
+        await tripAlertReporter.CheckHosShortfallAsync(mapping.EmployeeId, hosData.DrivingMinutesRemaining, ct);
     }
 
     /// <summary>

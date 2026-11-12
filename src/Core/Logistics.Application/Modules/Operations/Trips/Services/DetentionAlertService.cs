@@ -8,7 +8,8 @@ namespace Logistics.Application.Modules.Operations.Trips.Services;
 
 internal sealed class DetentionAlertService(
     ITenantUnitOfWork tenantUow,
-    INotificationService notificationService) : IDetentionAlertService
+    INotificationService notificationService,
+    ITripAlertReporter tripAlertReporter) : IDetentionAlertService
 {
     public async Task<int> SendAlertsAsync(DateTime now, CancellationToken ct = default)
     {
@@ -30,6 +31,7 @@ internal sealed class DetentionAlertService(
             var (title, message) = BuildAlert(row.Stop.Type, row.Number, row.TruckNumber, detention);
             await notificationService.SendNotificationAsync(title, message);
             row.Stop.DetentionAlertedAt = now;
+            await tripAlertReporter.ReportDetentionAsync(row.Stop.TripId, message, ct);
             sent++;
         }
 

@@ -1,3 +1,4 @@
+using Logistics.Application.Modules.Operations.Trips.Services;
 using System.Linq.Expressions;
 using Logistics.Application.Abstractions.Eld;
 using Logistics.Application.Abstractions.Realtime;
@@ -61,7 +62,9 @@ public class EldSyncServiceTests
 
         _factory.GetProvider(_config).Returns(_provider);
 
-        _sut = new EldSyncService(_tenantUow, _factory, _recorder, _liveTracking, NullLogger<EldSyncService>.Instance);
+        _sut = new EldSyncService(
+            _tenantUow, _factory, _recorder, _liveTracking, Substitute.For<ITripAlertReporter>(),
+            NullLogger<EldSyncService>.Instance);
     }
 
     #region HOS clocks

@@ -209,7 +209,7 @@ public class AgentToolRegistryTests
 
         Assert.Equal(
             ["assign_load_to_truck", "book_loadboard_load", "create_trip", "dispatch_trip",
-             "propose_counter_offer"],
+             "propose_counter_offer", "send_customer_update"],
             writeTools);
     }
 

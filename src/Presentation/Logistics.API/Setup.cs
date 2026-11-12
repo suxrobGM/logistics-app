@@ -164,6 +164,7 @@ internal static class Setup
 
             services.AddScoped<IBackgroundJobRunner<AIDispatchTurnRequest>, HangfireAIDispatchTurnRunner>();
             services.AddScoped<IDelayedBackgroundJobRunner<NegotiationWakeRequest>, HangfireNegotiationWakeRunner>();
+            services.AddScoped<IDelayedBackgroundJobRunner<TripAlertWakeRequest>, HangfireTripAlertWakeRunner>();
             services.AddScoped<IBackgroundJobRunner<AICopilotTurnRequest>, HangfireAICopilotTurnRunner>();
             services.AddScoped<ICommandEnqueuer, HangfireCommandEnqueuer>();
             services.AddHangfireServer();

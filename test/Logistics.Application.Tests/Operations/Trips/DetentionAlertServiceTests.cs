@@ -17,6 +17,7 @@ public class DetentionAlertServiceTests
 
     private readonly ITenantUnitOfWork _tenantUow = Substitute.For<ITenantUnitOfWork>();
     private readonly INotificationService _notifications = Substitute.For<INotificationService>();
+    private readonly ITripAlertReporter _alerts = Substitute.For<ITripAlertReporter>();
     private readonly Trip _trip;
     private readonly DetentionAlertService _sut;
 
@@ -30,7 +31,7 @@ public class DetentionAlertServiceTests
         _tenantUow.Repository<TripStop>().Returns(stopRepo);
         _tenantUow.GetCurrentTenant().Returns(TestTenant.Create());
 
-        _sut = new DetentionAlertService(_tenantUow, _notifications);
+        _sut = new DetentionAlertService(_tenantUow, _notifications, _alerts);
     }
 
     [Fact]

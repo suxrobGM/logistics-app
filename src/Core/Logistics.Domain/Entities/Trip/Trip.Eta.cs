@@ -28,6 +28,27 @@ public partial class Trip
     /// </summary>
     public DateTime? HosShortfallFlaggedAt { get; set; }
 
+    /// <summary>
+    /// The dispatch conversation where the agent investigates this trip's alerts; created by the first alert.
+    /// </summary>
+    public Guid? AlertConversationId { get; set; }
+
+    /// <summary>
+    /// Opens a new tenant-shared dispatch conversation for this trip's alerts and links it.
+    /// Callers must register it with the repository.
+    /// </summary>
+    public AgentConversation StartAlertConversation()
+    {
+        var conversation = new AgentConversation
+        {
+            CreatedById = Guid.Empty,
+            Kind = AgentConversationKind.Dispatch,
+            Title = $"Trip alert: trip #{Number}"
+        };
+        AlertConversationId = conversation.Id;
+        return conversation;
+    }
+
     public bool IsActive => Status is TripStatus.Dispatched or TripStatus.InTransit;
 
     public bool IsEtaDue(DateTime now)

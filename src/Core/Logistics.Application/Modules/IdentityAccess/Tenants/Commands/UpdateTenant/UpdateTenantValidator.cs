@@ -58,5 +58,15 @@ internal sealed class UpdateTenantValidator : AbstractValidator<UpdateTenantComm
             .GreaterThanOrEqualTo(0)
             .When(i => i.Settings?.DetentionRatePerHour is not null)
             .WithMessage("Detention rate cannot be negative.");
+
+        RuleFor(i => i.Settings!.StopDwellMinutes)
+            .InclusiveBetween(0, 12 * 60)
+            .When(i => i.Settings?.StopDwellMinutes is not null)
+            .WithMessage("Stop dwell time must be between 0 and 12 hours.");
+
+        RuleFor(i => i.Settings!.TripAlertsPerDay)
+            .InclusiveBetween(0, 500)
+            .When(i => i.Settings?.TripAlertsPerDay is not null)
+            .WithMessage("AI trip alerts per day must be between 0 and 500.");
     }
 }

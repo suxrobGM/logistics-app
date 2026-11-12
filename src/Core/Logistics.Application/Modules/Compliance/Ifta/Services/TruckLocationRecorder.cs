@@ -14,6 +14,7 @@ internal sealed class TruckLocationRecorder(
     ITenantUnitOfWork tenantUow,
     IJurisdictionResolver jurisdictionResolver,
     IEtaService etaService,
+    ITripAlertReporter tripAlertReporter,
     ILogger<TruckLocationRecorder> logger) : ITruckLocationRecorder
 {
     private const double MetersPerMile = 1609.344;
@@ -64,7 +65,10 @@ internal sealed class TruckLocationRecorder(
         }
 
         truck.CurrentLocation = location;
-        await etaService.RefreshAsync(truck, timestampUtc, ct);
+        if (await etaService.RefreshAsync(truck, timestampUtc, ct) is { } trip)
+        {
+            await tripAlertReporter.CheckHosShortfallAsync(trip, ct);
+        }
 
         if (previous is not null)
         {

@@ -10,11 +10,11 @@ internal sealed class EtaService(ITenantUnitOfWork tenantUow, IRouteDurationServ
 {
     private const int DefaultDwellMinutes = 60;
 
-    public async Task RefreshAsync(Truck truck, DateTime now, CancellationToken ct = default)
+    public async Task<Trip?> RefreshAsync(Truck truck, DateTime now, CancellationToken ct = default)
     {
         if (truck.CurrentLocation is not { } location)
         {
-            return;
+            return null;
         }
 
         var trip = await tenantUow.Repository<Trip>().Query()
@@ -25,13 +25,13 @@ internal sealed class EtaService(ITenantUnitOfWork tenantUow, IRouteDurationServ
 
         if (trip is null || !trip.IsEtaDue(now))
         {
-            return;
+            return null;
         }
 
         var stops = trip.GetRemainingStops();
         if (stops.Count == 0)
         {
-            return;
+            return null;
         }
 
         var legs = await routeDurations.GetLegDurationsAsync([location, .. stops.Select(s => s.Location)], ct);
@@ -47,6 +47,7 @@ internal sealed class EtaService(ITenantUnitOfWork tenantUow, IRouteDurationServ
         }
 
         trip.ApplyArrivalEstimates(etaByStopId, now);
+        return trip;
     }
 
     public TimeSpan? GetRemainingDriveTime(Trip trip, DateTime now)
