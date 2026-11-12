@@ -43,23 +43,6 @@ public class MaintenancePartDto
 
 #region Request DTOs
 
-public class CreateMaintenanceRecordRequest
-{
-    public required Guid TruckId { get; set; }
-    public required MaintenanceType Type { get; set; }
-    public required string Description { get; set; }
-    public required DateTime ServiceDate { get; set; }
-    public int? OdometerReading { get; set; }
-    public int? EngineHours { get; set; }
-    public string? VendorName { get; set; }
-    public string? InvoiceNumber { get; set; }
-    public decimal LaborCost { get; set; }
-    public decimal PartsCost { get; set; }
-    public Guid? PerformedById { get; set; }
-    public string? Notes { get; set; }
-    public List<CreateMaintenancePartRequest> Parts { get; set; } = [];
-}
-
 public class CreateMaintenancePartRequest
 {
     public required string PartNumber { get; set; }
