@@ -23,7 +23,7 @@ internal sealed class DispatchTripHandler(
             return Result.Fail($"Could not find the trip with ID '{req.TripId}'");
         }
 
-        // Hard eligibility gate at dispatch â€” every load on the trip must be carryable
+        // Hard eligibility gate at dispatch - every load on the trip must be carryable
         // by the assigned truck/driver. Planning steps (assignment, trip creation) don't
         // enforce this; the dispatcher is the final commit.
         if (trip.TruckId.HasValue)
@@ -41,7 +41,7 @@ internal sealed class DispatchTripHandler(
                             .Where(i => i.Severity == EligibilitySeverity.Error)
                             .Select(i => i.Message));
                     return Result.Fail(
-                        $"Cannot dispatch trip â€” load '{loadId}' not eligible: {reasons}");
+                        $"Cannot dispatch trip - load '{loadId}' not eligible: {reasons}");
                 }
             }
         }

@@ -21,7 +21,7 @@ internal sealed class DispatchLoadHandler(
             return Result.Fail($"Load not found with ID '{req.Id}'");
         }
 
-        // Eligibility is enforced at the dispatch gate â€” assignment up to this point is
+        // Eligibility is enforced at the dispatch gate - assignment up to this point is
         // planning. If the load is being dispatched, the truck and driver must be qualified
         // to carry it (license, ADR/Hazmat endorsements, ADR cert, placarding).
         if (load.AssignedTruckId.HasValue)

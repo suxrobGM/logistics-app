@@ -102,7 +102,7 @@ internal sealed class DispatchEligibilityService(
         if (hasError)
         {
             logger.LogInformation(
-                "Eligibility check failed: truck {TruckId} / driver {DriverId} / load {LoadId} â€” {Issues}",
+                "Eligibility check failed: truck {TruckId} / driver {DriverId} / load {LoadId} - {Issues}",
                 truckId, effectiveDriverId, loadId,
                 string.Join("; ", issues.Select(i => i.Code)));
         }
@@ -117,7 +117,7 @@ internal sealed class DispatchEligibilityService(
 
     /// <summary>
     /// Picks the most relevant license for the load: prefer one matching the load's
-    /// jurisdiction (US load â†’ US-issued license), then most recent expiry.
+    /// jurisdiction (US load -> US-issued license), then most recent expiry.
     /// </summary>
     private static DriverLicense? SelectPrimaryLicense(Employee driver, Load load, DateOnly today)
     {
@@ -187,7 +187,7 @@ internal sealed class DispatchEligibilityService(
             return;
         }
 
-        // EU / non-US license â€” require ADR.
+        // EU / non-US license - require ADR.
         if (!license.HasEndorsement(LicenseEndorsement.Adr))
         {
             issues.Add(new(
