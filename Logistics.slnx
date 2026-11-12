@@ -6,6 +6,7 @@
     <Project Path="test/Logistics.Infrastructure.AI.Tests/Logistics.Infrastructure.AI.Tests.csproj" />
     <Project Path="test/Logistics.Infrastructure.Communications.Tests/Logistics.Infrastructure.Communications.Tests.csproj" />
     <Project Path="test/Logistics.Infrastructure.Documents.Tests/Logistics.Infrastructure.Documents.Tests.csproj" />
+    <Project Path="test/Logistics.Infrastructure.Integrations.Tests/Logistics.Infrastructure.Integrations.Tests.csproj" />
     <Project Path="test/Logistics.Infrastructure.Payments.Tests/Logistics.Infrastructure.Payments.Tests.csproj" />
     <Project Path="test/Logistics.Infrastructure.Persistence.Tests/Logistics.Infrastructure.Persistence.Tests.csproj" />
     <Project Path="test/Logistics.Infrastructure.Routing.Tests/Logistics.Infrastructure.Routing.Tests.csproj" />
