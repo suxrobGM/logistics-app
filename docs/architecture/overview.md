@@ -27,32 +27,28 @@ flowchart TB
 
     subgraph Core["Core"]
         direction LR
-        Application["Application<br/>Modules · Commands · Queries · Behaviors"]
+        Application["Application<br/>Modules · Commands · Queries · Behaviors · Mappers"]
         Abstractions["Application.Abstractions<br/>Infrastructure ports"]
-        Mappings["Mappings<br/>Entity ↔ DTO"]
         Domain["Domain<br/>Entities · Aggregates · Events"]
-        Primitives["Domain.Primitives<br/>Value objects · Enums"]
+        Primitives["Domain.Primitives<br/>Value objects · Enums · Countries"]
     end
 
     subgraph Shared["Shared"]
         direction LR
         SharedModels["Shared.Models<br/>DTO contracts"]
         SharedIdentity["Shared.Identity<br/>Claims · Roles · Policies"]
-        SharedGeo["Shared.Geo<br/>Geolocation utilities"]
     end
 
-    subgraph Infra["Infrastructure (15 projects)"]
+    subgraph Infra["Infrastructure (8 projects)"]
         direction LR
         Persistence["Persistence"]
         AI["AI"]
         Comms["Communications"]
-        Payments["Payments"]
+        Payments["Payments<br/>Stripe · Tax"]
         Routing["Routing"]
         Documents["Documents"]
         Storage["Storage"]
-        Tax["Tax"]
-        Vin["Vin"]
-        Integrations["Integrations<br/>Common · Eld · LoadBoard<br/>FuelCards · Accounting"]
+        Integrations["Integrations<br/>Common · Eld · LoadBoard · FuelCards<br/>Accounting · Vin · Licensing"]
     end
 
     subgraph External["External Services"]
@@ -68,7 +64,6 @@ flowchart TB
     Migrator --> Persistence
     Application --> Abstractions
     Application --> Domain
-    Application --> Mappings
     Domain --> Primitives
     Application -.uses.-> Shared
     Infra -.uses.-> Shared
@@ -87,7 +82,7 @@ flowchart TB
     Ab["Application.Abstractions<br/>Infrastructure ports · marker interfaces · DTOs"]
     D["Domain<br/>Entities · Aggregates · Events"]
     Pr["Domain.Primitives<br/>Value objects · Enums"]
-    I["Infrastructure<br/>Persistence · Communications · AI · Payments · Documents · Routing · Storage · Tax · Vin · Licensing<br/>Integrations.Common · Integrations.Eld · Integrations.LoadBoard · Integrations.FuelCards · Integrations.Accounting"]
+    I["Infrastructure<br/>Persistence · Communications · AI · Payments · Documents · Routing · Storage · Integrations"]
 
     P --> A
     P -.composition root.-> I
@@ -108,6 +103,7 @@ Layering rules are enforced by [`test/Logistics.Architecture.Tests/`](../../test
 - `Application` must not depend on `Microsoft.AspNetCore.Http` or any Infrastructure assembly.
 - `Application.Abstractions` must not depend on `Application`, Infrastructure, EF Core, or AspNetCore.Http.
 - Each Infrastructure assembly references `Application.Abstractions`, not `Application`.
+- `Shared.Models` must not depend on `Domain`; it may use `Domain.Primitives`.
 - No handler injects `IHttpContextAccessor`.
 
 Both infrastructure rules discover what they cover instead of hand-listing it, so a new project is picked up off disk automatically (the IL-level boundary rule additionally needs an anchor in `AssemblyAnchors.AllInfrastructure` and a `ProjectReference` in the arch-tests csproj). CLAUDE.md holds the canonical rule; [layering.md](layering.md#enforcement) covers the full matrix and the named exemptions.
@@ -120,9 +116,9 @@ The repository follows the layer split above. Each project name is `Logistics.{L
 | --- | --- |
 | `src/Client` | `Logistics.DemoVideo` (Remotion). The Angular workspace and the driver app moved to the private submodule |
 | `private/` | Closed source: `Logistics.Angular` (tms-portal, customer-portal, admin-portal, website, shared library), `Logistics.DriverApp` (Kotlin Multiplatform) |
-| `src/Core` | `Logistics.Application`, `Logistics.Application.Abstractions`, `Logistics.Domain`, `Logistics.Domain.Primitives`, `Logistics.Mappings`, `Logistics.Mediator` |
-| `src/Shared` | `Logistics.Shared.Geo`, `Logistics.Shared.Identity`, `Logistics.Shared.Models` |
-| `src/Infrastructure` | `Persistence`, `Communications`, `AI`, `Payments`, `Documents`, `Routing`, `Storage`, `Tax`, `Vin`, `Integrations.{Common, Eld, LoadBoard, FuelCards, Accounting}` |
+| `src/Core` | `Logistics.Application`, `Logistics.Application.Abstractions`, `Logistics.Domain`, `Logistics.Domain.Primitives`, `Logistics.Mediator` |
+| `src/Shared` | `Logistics.Shared.Identity`, `Logistics.Shared.Models` |
+| `src/Infrastructure` | `Persistence`, `Communications`, `AI`, `Payments`, `Documents`, `Routing`, `Storage`, `Integrations` |
 | `src/Presentation` | `Logistics.API`, `Logistics.IdentityServer`, `Logistics.McpServer`, `Logistics.TelegramBot`, `Logistics.DbMigrator` |
 
 A public clone gets an empty `private/` directory. Everything else builds and runs without it.
@@ -255,7 +251,9 @@ There are two UoWs - one per database type:
 
 ## Infrastructure Projects
 
-The infrastructure layer is split into fourteen focused projects so each has a single concern.
+The infrastructure layer is split into eight projects. AI, Persistence, Documents, Communications, Routing and Storage each bring heavy dependencies of their own; the light HTTP integrations share one `Integrations` project with a folder per family.
+
+Entity-to-DTO mappers live in `Logistics.Application/Mappings/` (namespace `Logistics.Mappings`). `Domain.Primitives` stays its own project: `Shared.Models` references it and must not reference `Domain` (an architecture test pins that).
 
 ### Logistics.Infrastructure.Persistence
 
@@ -289,7 +287,11 @@ LLM dispatch agent and tool registry.
 
 See [AI Dispatch](../ai-dispatch.md).
 
-### Logistics.Infrastructure.Integrations.Common
+### Logistics.Infrastructure.Integrations
+
+Third-party integrations, one folder per family: `Common/`, `Eld/`, `LoadBoard/`, `FuelCards/`, `Accounting/`, `Vin/` and `Licensing/`. Namespaces follow the old project names (`Logistics.Infrastructure.Integrations.Eld`, `Logistics.Infrastructure.Vin`, ...). `AddIntegrationsInfrastructure` registers every family; a host that needs only some calls the family registrar directly (DbMigrator calls `AddFuelCardIntegrations`).
+
+#### Common/
 
 The shared kernel for the third-party integration providers - do not hand-roll a fourth copy of any of it:
 
@@ -298,19 +300,17 @@ The shared kernel for the third-party integration providers - do not hand-roll a
 - `WebhookSignature.VerifyHmacSha256` - constant-time HMAC-SHA256 verification for inbound webhooks (see [Webhook conventions](#webhook-conventions))
 - `ProviderRegistrationExtensions` - `AddProviderIntegration` (options + factory), `AddKeyedProvider` (each provider as a keyed service under its enum value) and `GetRequiredProvider` / `HasProvider`, shared by the ELD, load board, fuel card, and accounting factories
 
-The read helper's contract is that it **never throws** - a failure is logged and returns `default`. That is why the QuickBooks helpers in `Integrations.Accounting` are deliberately not folded in here: they throw `QboApiException` so a push error surfaces to the sync job instead of being swallowed. Keep push paths that must report failure out of the read helper.
+The read helper's contract is that it **never throws** - a failure is logged and returns `default`. That is why the QuickBooks helpers in `Accounting/` are deliberately not folded in here: they throw `QboApiException` so a push error surfaces to the sync job instead of being swallowed. Keep push paths that must report failure out of the read helper.
 
-It is a leaf helper library: it references no other project in the repo.
-
-### Logistics.Infrastructure.Integrations.Eld
+#### Eld/
 
 ELD providers for HOS compliance: Samsara, Motive (KeepTruckin), TT ELD, Geotab, and a Demo provider for tests. Factory pattern for provider selection plus webhook handlers signed by the provider.
 
-### Logistics.Infrastructure.Integrations.LoadBoard
+#### LoadBoard/
 
 Load board providers: DAT and a Demo provider; Truckstop and 123Loadboard have no provider yet, so the gateway reports them "not available yet". DAT covers search, truck posts with reconciliation and RateView market rates. Calls throw `LoadBoardApiException` (helper: `LoadBoardHttp`), and `ILoadBoardProviderGateway` in Application handles tokens, one 401 retry, and per-provider errors. Setup and verification status: [DAT setup](../loadboard-dat-setup.md).
 
-### Logistics.Infrastructure.Integrations.FuelCards
+#### FuelCards/
 
 Fuel card providers: WEX, EFS, and a Demo provider, selected through `FuelCardProviderFactory`.
 
@@ -318,12 +318,21 @@ Fuel card providers: WEX, EFS, and a Demo provider, selected through `FuelCardPr
 - Per-provider mappers and models, plus a shared `JurisdictionMapper`
 - `FuelCardsOptions` binds the `FuelCards` section, with a nullable entry per provider
 
-### Logistics.Infrastructure.Integrations.Accounting
+#### Accounting/
 
 Accounting sync providers: QuickBooks Online and a Demo provider, selected through `AccountingProviderFactory`.
 
 - `QuickBooksOAuthClient` for the OAuth token flow, `QuickBooksOnlineService` for the Data API
 - `HttpClientQboExtensions` throws `QboApiException` on failure so push errors reach the sync job
+
+#### Vin/
+
+- `IVinDecoderService` fronted by `CompositeVinDecoderService`
+- `WmiPrefixDecoder` for WMI prefix lookup and `NhtsaVinDecoderService` for full-VIN decode via the NHTSA API
+
+#### Licensing/
+
+- `ProductLicenseHeartbeatSender` posts the daily license report; the receiver lives in the API
 
 ### Logistics.Infrastructure.Payments
 
@@ -331,6 +340,15 @@ Accounting sync providers: QuickBooks Online and a Demo provider, selected throu
 - Stripe Connect destination charges (direct payouts to trucking companies)
 - Payment links with expiration
 - Stripe webhook handling with signature validation
+
+#### Tax/
+
+`AddTaxInfrastructure` (namespace `Logistics.Infrastructure.Tax`) registers it:
+
+- `ITaxCalculator` selected per the `Tax:Provider` value (`stripe` | `manual`), defaulting to Stripe
+- Stripe Tax calculation API client and `IStripeTaxConfigService` for onboarding info, registered regardless of the selected calculator
+- `ManualTaxCalculator` backed by static rate data: US sales tax, EU VAT rates and rules, other-country rates
+- `ITaxJurisdictionsProvider` for the jurisdiction list
 
 ### Logistics.Infrastructure.Documents
 
@@ -363,18 +381,6 @@ Accounting sync providers: QuickBooks Online and a Demo provider, selected throu
   }
 }
 ```
-
-### Logistics.Infrastructure.Tax
-
-- `ITaxCalculator` selected per the `Tax:Provider` value (`stripe` | `manual`), defaulting to Stripe
-- Stripe Tax calculation API client and `IStripeTaxConfigService` for onboarding info, registered regardless of the selected calculator
-- `ManualTaxCalculator` backed by static rate data: US sales tax, EU VAT rates and rules, other-country rates
-- `ITaxJurisdictionsProvider` for the jurisdiction list
-
-### Logistics.Infrastructure.Vin
-
-- `IVinDecoderService` fronted by `CompositeVinDecoderService`
-- `WmiPrefixDecoder` for WMI prefix lookup and `NhtsaVinDecoderService` for full-VIN decode via the NHTSA API
 
 ## Presentation Projects
 
@@ -413,7 +419,7 @@ The dashboard is mounted at `/hangfire` and gated by `HangfireDashboardAuthoriza
 Inbound third-party webhooks land on `WebhookController` (mounted at `/webhooks/*`, `[AllowAnonymous]` - the signature is the auth) and follow two invariants:
 
 - **Tenant from the URL.** The endpoints are anonymous, so ELD webhooks are registered per tenant at `/webhooks/eld/{provider}/{tenantId}` and the signature is checked against that tenant's stored secret.
-- **Signature first, fail closed.** The raw request body is verified before it is parsed - `WebhookSignature.VerifySamsara` (`v1:{timestamp}:{body}`, 5-minute replay window) for Samsara, `WebhookSignature.VerifyHmacSha256` for Motive and Geotab, `WebhookSignature.VerifySvix` for Resend (all constant-time, in `Integrations.Common`), `EventUtility.ConstructEvent` for Stripe. A configured-but-missing or incorrect signature returns `400`. Stripe specifics live in [stripe-webhooks.md](../stripe-webhooks.md).
+- **Signature first, fail closed.** The raw request body is verified before it is parsed - `WebhookSignature.VerifySamsara` (`v1:{timestamp}:{body}`, 5-minute replay window) for Samsara, `WebhookSignature.VerifyHmacSha256` for Motive and Geotab, `WebhookSignature.VerifySvix` for Resend (all constant-time, in `Integrations/Common/`), `EventUtility.ConstructEvent` for Stripe. A configured-but-missing or incorrect signature returns `400`. Stripe specifics live in [stripe-webhooks.md](../stripe-webhooks.md).
 - **Idempotency.** Providers retry, so each processed delivery is recorded in the master-DB `ProcessedWebhookEvent` ledger, unique on `(Provider, EventKey)`. `EventKey` is the provider's event id when present, else a SHA-256 hash of the raw body. A duplicate is a no-op returning `200`. The `webhook-event-cleanup` recurring job (`Jobs/RecurringJobs.cs`) prunes old rows daily.
 
 ## Multi-Tenancy

@@ -159,6 +159,11 @@ Of the 291, most are fine: Mapperly mappers, pure calculators (`DetentionCalcula
 
 Update `AssemblyAnchors`, the arch-tests csproj, `overview.md`, CLAUDE.md ("15 focused projects") and the provider skill. Add an arch rule: Shared.Models must not use `Domain.Entities`.
 
+- [x] ✅ **Projects 32 → 25 (src), done 2026-11-12.** `Shared.Geo` → `Domain.Primitives/Geo/`; `Mappings` → `Application/Mappings/` (one folder, namespace `Logistics.Mappings` kept); `Integrations.{Common,Eld,LoadBoard,FuelCards,Accounting}`, `Vin`, `Licensing` → `Infrastructure.Integrations` (one folder each, `AddIntegrationsInfrastructure` calls the family registrars; DbMigrator still calls only `AddFuelCardIntegrations`); `Tax` → `Infrastructure.Payments/Tax/`. Namespaces unchanged. Arch rule added: `Shared.Models` must not depend on `Domain`.
+  - Decision: **`Domain.Primitives` stays its own project** instead of folding into `Domain`. `Shared.Models` references it and must not reference `Domain`, so merging would drag the entities into the client contract.
+  - `NotificationService` (save + broadcast) moved to `Application/Modules/Platform/Notifications/Services/` with its interface; Communications only broadcasts the ready-made DTO through `IRealtimeNotificationService`.
+  - Not done (not in the approved list): moving `VerifySvix` to Communications and Telegram's own `FixedTimeEquals`.
+
 **Inside Application:**
 - [ ] CustomerUser queries live in `Platform/Portal/Queries`; move them to `IdentityAccess/CustomerUsers/Queries`.
 - [ ] 10 payroll features live in `Financial/Invoices`; move them to `Financial/Payroll`.
@@ -189,7 +194,7 @@ The suite is less redundant than it looks: most large files test real branching 
 - [x] Delete `AIDispatchSessionMapperTests` (tests generated Mapperly code). Merge the 7 one-test EF mapping files into one `TenantModelMappingTests`.
 - [x] Shared test kit (~1,150 lines): 87 `new Address {…}` blocks, 25 hand-built `Load`s, ~15 hand-built `Tenant`s (`TestTenant` exists, and AI.Tests keeps a copy), and 182 `Repository<T>().Returns` lines. Add `TestData.*` builders and a `uow.Stub<T>(rows)` extension. Turn `DispatchEligibilityServiceTests` into a `[MemberData]` scenario table (518 → ~300 lines).
 - [x] 11 files (~2k lines) in Application.Tests actually test Infrastructure (QBO, Samsara, Geotab, DAT, FMCSA, webhook signatures, fuel cards). Move them. They are in the new `Logistics.Infrastructure.Integrations.Tests`; its `Logistics.slnx` entry was left uncommitted because the solution file had unrelated local changes.
-- [ ] **Test projects: 12 → 5.** Application.Tests now mirrors `Modules/` (done); the project merge is not started, and the Integrations move made it 13 for now. Application.Tests (mirror `Modules/`), a new merged `Infrastructure.Tests` (Persistence, Tax, Payments, Vin, Routing, Communications, Documents, Integrations, HostDefaults), AI.Tests, Mediator.Tests, Architecture.Tests.
+- [x] ✅ **Test projects: 12 → 5.** Done 2026-11-12: `Logistics.Infrastructure.Tests` with one folder per former project; namespaces unchanged. The five: Application.Tests (mirror `Modules/`), `Infrastructure.Tests` (Persistence, Tax, Payments, Vin, Routing, Communications, Documents, Integrations, HostDefaults), AI.Tests, Mediator.Tests, Architecture.Tests.
 
 ---
 

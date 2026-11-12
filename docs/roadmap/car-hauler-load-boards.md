@@ -9,7 +9,7 @@
 
 DAT and Truckstop carry little vehicle freight. Car haulers book from Central Dispatch (Cox
 Automotive) and the Super Dispatch Super Loadboard. The TMS has a load board provider pattern
-(`Infrastructure.Integrations.LoadBoard`, `ILoadBoardProviderService`: search listings, post trucks, market
+(`Infrastructure.Integrations/LoadBoard/`, `ILoadBoardProviderService`: search listings, post trucks, market
 rates), so the plan was to add one or both as providers.
 
 ## What the public docs allow (checked 2026-10-14)

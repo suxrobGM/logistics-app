@@ -117,7 +117,7 @@ calls - there is no auto-transaction wrapper.
 
 `src/Shared/Logistics.Shared.Models/{Feature}/{Entity}Dto.cs` for the public DTO.
 
-`src/Core/Logistics.Mappings/{Entity}Mapper.cs`:
+`src/Core/Logistics.Application/Mappings/{Entity}Mapper.cs` (namespace `Logistics.Mappings`):
 
 ```csharp
 [Mapper]

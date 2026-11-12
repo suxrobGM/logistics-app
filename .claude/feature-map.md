@@ -17,7 +17,7 @@ This file answers _where_. For _how it works_, follow the deep dive: **AI dispat
 - **Application workflow services** (stay in Application): `src/Core/Logistics.Application/Modules/{Module}/{Feature}/Services/`
 - **Application constants**: feature-scoped under `Modules/{Module}/{Feature}/Constants/`; cross-module shared in `Modules/Common/Constants/`
 - **Service implementations**: `src/Infrastructure/Logistics.Infrastructure.{Module}/`
-- **Shared provider HTTP**: `Logistics.Infrastructure.Integrations.Common/HttpClientJsonExtensions.cs` - `TryGetFromJsonAsync` (never throws; logs, returns `default`), used by FuelCards/Eld (load boards throw instead: `Integrations.LoadBoard/LoadBoardHttp.cs`). Don't copy it into a new integration. `Integrations.Accounting`'s QBO helpers deliberately **throw** so push errors surface - not duplicates, don't fold in
+- **Shared provider HTTP**: `Logistics.Infrastructure.Integrations/Common/HttpClientJsonExtensions.cs` - `TryGetFromJsonAsync` (never throws; logs, returns `default`), used by FuelCards/Eld (load boards throw instead: `Integrations/LoadBoard/LoadBoardHttp.cs`). Don't copy it into a new integration. `Integrations/Accounting/`'s QBO helpers deliberately **throw** so push errors surface - not duplicates, don't fold in
 - **REST controllers**: `src/Presentation/Logistics.API/Controllers/{Feature}Controller.cs`
 - **SignalR hubs**: `src/Infrastructure/Logistics.Infrastructure.Communications/SignalR/Hubs/`
 - **Hangfire jobs**: `src/Presentation/Logistics.API/Jobs/` - fan out with `TenantJobRunner.ForEachTenantAsync` and gate features inside the body (see CLAUDE.md for the canonical `[RequiresFeature]`-is-inert rule)
@@ -255,7 +255,7 @@ registry, `AgentLoopRunner`, decisions, and quota. Gated by `TenantFeature.AICop
 
 - Domain: `ProductLicenseHeartbeat` (master), `Options/ProductLicenseOptions.cs` (`License__Key`, `License__HeartbeatUrl`, `License__HeartbeatEnabled`)
 - Application: `Modules/Platform/ProductLicense/` - `Services/ProductLicenseKeyValidator` (ES256 JWT against the embedded public key), `ProductLicenseService` (env var wins over `SystemSettings`, 5 min cache), `ProductLicenseHeartbeatService` (builds the report, sends it through `IProductLicenseHeartbeatSender`); commands `SetProductLicenseKey`, `RecordProductLicenseHeartbeat`; queries `GetProductLicenseStatus`, `GetProductLicenseDiscovery`
-- Infrastructure: `Logistics.Infrastructure.Licensing` - `ProductLicenseHeartbeatSender` posts the daily report
+- Infrastructure: `Infrastructure.Integrations/Licensing/` - `ProductLicenseHeartbeatSender` posts the daily report
 - API/UI: `ProductLicenseController.cs` (`/license`, `/license/key`, anonymous `/license/heartbeat` and `/.well-known/logisticsx.json`), `product-license-heartbeat` in `Jobs/RecurringJobs.cs`, `HostDefaults/ProductVersionHeaderExtensions.cs` (`X-LogisticsX-Version`), `shared/services/product-license.service.ts` + `ui-license-banner` (all three portals), `admin-portal/pages/license/`
 - Keys are issued with `tools/Logistics.LicenseIssuer` (`keygen`, `issue`, `inspect`); legal text in `COMMERCIAL-LICENSE.md`, `CLA.md`
 
@@ -273,7 +273,7 @@ registry, `AgentLoopRunner`, decisions, and quota. Gated by `TenantFeature.AICop
 
 - Domain: `Entities/Eld/HosLog.cs`, `HosViolation.cs` (`RuleSetCode`), `DriverHosStatus.cs`, `ValueObjects/HosLimits.cs`
 - Application: `Modules/Compliance/Eld/Commands/`, `Modules/Compliance/Eld/Queries/GetHosLimits/`, `Modules/Compliance/Eld/Services/RuleSetSelector.cs` (region → FMCSA / EU 561/2006)
-- Infrastructure: `Infrastructure.Integrations.Eld/` (Samsara, Motive, TT ELD, Geotab, Demo). Casing comes from `IntegrationJsonOptions` (camel/snake), reads from `TryGetFromJsonAsync` - all in `Integrations.Common` (429/5xx retries come from the host-wide standard resilience handler, GET only - unsafe methods are never retried). Samsara follows `pagination.endCursor`, picks its host from `EldProviderConfiguration.Region` (us/eu/ca) and implements `IEldGpsTrackingProvider` (`/fleet/vehicles/stats`)
+- Infrastructure: `Infrastructure.Integrations/Eld/` (Samsara, Motive, TT ELD, Geotab, Demo). Casing comes from `IntegrationJsonOptions` (camel/snake), reads from `TryGetFromJsonAsync` - all in `Integrations/Common/` (429/5xx retries come from the host-wide standard resilience handler, GET only - unsafe methods are never retried). Samsara follows `pagination.endCursor`, picks its host from `EldProviderConfiguration.Region` (us/eu/ca) and implements `IEldGpsTrackingProvider` (`/fleet/vehicles/stats`)
 - API/UI: `EldController.cs` (incl. `/eld/rules/limits`), `tms-portal/pages/eld/` (`EldRulesService`, region-aware dashboard, `eld-hos-logs/`)
 - Docs: [docs/eld-samsara-setup.md](../docs/eld-samsara-setup.md) (tenant setup: token scopes, webhook URL + secret)
 
@@ -281,7 +281,7 @@ registry, `AgentLoopRunner`, decisions, and quota. Gated by `TenantFeature.AICop
 
 - Domain: `Entities/Eld/EldProviderConfiguration.cs` (`ExternalAccountId` = TT ELD USDOT, `Region` = Samsara data region), `EldDriverMapping.cs`, `EldVehicleMapping.cs`
 - Application: `Commands/CreateEldProviderConfiguration/` (initializes the provider from the unsaved config before validating credentials), `MapEldDriver` / `MapEldVehicle` / `ApplyEldMappingSuggestions`, `Queries/GetEldMappingSuggestions/`, `Services/EldMappingSuggestionService.cs` + `EldMappingMatcher.cs` (driver by email → license → name, vehicle by VIN → truck number; unique keys only)
-- Infrastructure: `Infrastructure.Integrations.Eld/` factory
+- Infrastructure: `Infrastructure.Integrations/Eld/` factory
 - API/UI: `EldController.cs` (`/eld/providers/{id}/{drivers,vehicles,mappings,vehicles/mappings,suggestions}`), `tms-portal/pages/eld/eld-providers/` (connect dialog, webhook URL to copy), `eld-mappings/` (suggestions + driver + vehicle mapping cards)
 
 ### ELD sync
@@ -370,7 +370,7 @@ registry, `AgentLoopRunner`, decisions, and quota. Gated by `TenantFeature.AICop
 
 - Domain: `Entities/TenantTaxRate.cs`, `Invoice.TaxBehavior`, `Invoice.TaxBreakdownJson`, `ValueObjects/TaxJurisdiction.cs` - build jurisdictions with `TaxJurisdiction.Create(country, region)` on every write path; it upper-cases and normalizes a blank region to null, which is what the equality comparisons rely on
 - Application: `Application.Abstractions/Tax/ITaxCalculator`, `Modules/Financial/Tax/Services/IInvoiceTaxApplier`, `Modules/Financial/Tax/Commands/`, `Modules/Financial/Tax/Queries/`, `Modules/Financial/Invoices/Queries/PreviewInvoiceTax/`
-- Infrastructure: `Infrastructure.Tax/` (`StripeTaxCalculator`, `ManualTaxCalculator`, `StripeTaxConfigService`, `EUVatRates`/`USSalesTaxRates`/`OtherCountryRates`); `Infrastructure.Documents/Pdf/Invoice/` VAT block
+- Infrastructure: `Infrastructure.Payments/Tax/` (`StripeTaxCalculator`, `ManualTaxCalculator`, `StripeTaxConfigService`, `EUVatRates`/`USSalesTaxRates`/`OtherCountryRates`); `Infrastructure.Documents/Pdf/Invoice/` VAT block
 - API/UI: `TaxController.cs`, `TaxRatesController.cs`, `tms-portal/pages/settings/components/tenant-tax-rates-card/`
 
 ### Payments
@@ -430,7 +430,7 @@ registry, `AgentLoopRunner`, decisions, and quota. Gated by `TenantFeature.AICop
 
 - Domain: `Entities/FuelCards/` (`FuelCardProviderConfiguration`, `FuelCard`, `FuelCardTransaction`); `TruckExpense.PurchaseJurisdiction`/`FuelCardProvider`/`ExternalTransactionId`
 - Application: `Modules/Integrations/FuelCards/` (Commands, Queries, `Services/FuelCardSyncService`)
-- Infrastructure: `Infrastructure.Integrations.FuelCards/` (WEX, EFS, Demo; factory). WEX/EFS share `Providers/BearerFuelCardService.cs`; config binds once from the `FuelCards` section into aggregate `FuelCardsOptions` (nullable `Wex`/`Efs`, read as `options.Value.Wex ?? new WexOptions()`) - same shape as `LoadBoardOptions`/`EldOptions`
+- Infrastructure: `Infrastructure.Integrations/FuelCards/` (WEX, EFS, Demo; factory). WEX/EFS share `Providers/BearerFuelCardService.cs`; config binds once from the `FuelCards` section into aggregate `FuelCardsOptions` (nullable `Wex`/`Efs`, read as `options.Value.Wex ?? new WexOptions()`) - same shape as `LoadBoardOptions`/`EldOptions`
 - API/UI: `FuelCardsController.cs` (providers, sync, transaction review queue), `Jobs/FuelCardSyncJob.cs`, `tms-portal/pages/fuel-cards/`
 - **Trap**: `FuelCard` has no endpoints by design - it's an internal card→truck mapping table written by `FuelCardSyncService` and `AssignFuelCardTransactionTruckHandler`. It looks orphaned; deleting it breaks both
 
@@ -438,7 +438,7 @@ registry, `AgentLoopRunner`, decisions, and quota. Gated by `TenantFeature.AICop
 
 - Domain: `Entities/Accounting/` (`AccountingProviderConfiguration` - tokens, `NeedsReconnect`, default item/accounts, `SyncFromDate`, item/category mappings as the `Mappings` JSON complex property (column `mappings`, `ValueObjects/Accounting/AccountingMappings`); `QboEntityMapping` - one row per pushed record; failed rows retry on every run)
 - Application: `Modules/Integrations/Accounting/` - `Services/AccountingSyncService` (the only push path, via `AccountingReceivablesSyncService` and `AccountingPayablesSyncService`: selects only rows edited since their last push, batches lookups, 500 per type per run), `AccountingMappingService` (reads and writes `QboEntityMapping`: what is not up to date, push outcomes, retiring), `AccountingPayloads` (payload + content hash + QBO `requestid`), `AccountingConnectionService` (token refresh, flags reconnect on `invalid_grant`); Commands: Connect/DisconnectQuickBooks, UpdateQuickBooksSettings, SyncQuickBooks → `RunAccountingSync` (enqueued, also the sync-issues Retry); Queries: GetQuickBooksConnection/AuthUrl/Lookups/SyncIssues. Ports in `Application.Abstractions/Accounting/` (`IAccountingProviderService`, `IAccountingProviderFactory`, `IOAuthStateProtector`, `AccountingReconnectRequiredException`)
-- Infrastructure: `Infrastructure.Integrations.Accounting/` (QBO OAuth2 + REST push: Customer, Vendor, Invoice + void, Payment + void (deleted payments, e.g. a factoring charge-back), Purchase, Bill; stale-SyncToken retry, `requestid` on creates, `intuit_tid` in errors); token cols encrypted via `Persistence/Converters/EncryptedStringConverter`; `Persistence/Services/Accounting/OAuthStateProtector` (10-minute state)
+- Infrastructure: `Infrastructure.Integrations/Accounting/` (QBO OAuth2 + REST push: Customer, Vendor, Invoice + void, Payment + void (deleted payments, e.g. a factoring charge-back), Purchase, Bill; stale-SyncToken retry, `requestid` on creates, `intuit_tid` in errors); token cols encrypted via `Persistence/Converters/EncryptedStringConverter`; `Persistence/Services/Accounting/OAuthStateProtector` (10-minute state)
 - API/UI: `AccountingController.cs` (+ anonymous `/accounting/quickbooks/callback` and `/disconnected`), `Jobs/AccountingSyncJob.cs` (15 min fan-out), `tms-portal/pages/settings/integrations-settings/` + `pages/settings/components/quickbooks-card/`, `quickbooks-settings-form/`, `quickbooks-sync-issues/`. Setup guide: `docs/accounting-quickbooks-setup.md`
 - **Trap**: `GetQuickBooksConnection` and `DisconnectQuickBooks` are deliberately not feature-gated - a downgraded tenant must still be able to revoke access
 
@@ -460,7 +460,7 @@ registry, `AgentLoopRunner`, decisions, and quota. Gated by `TenantFeature.AICop
 ### Notifications
 
 - Domain: `Entities/Notification.cs`
-- Application: `Modules/Platform/Notifications/Commands/`, `Modules/Platform/Notifications/Queries/`, `Application.Abstractions/Notifications/INotificationService.cs` (port)
+- Application: `Modules/Platform/Notifications/Commands/`, `Modules/Platform/Notifications/Queries/`, `Modules/Platform/Notifications/Services/NotificationService.cs` (saves, then broadcasts the DTO through the `IRealtimeNotificationService` port)
 - Infrastructure: `Infrastructure.Communications/Notifications/` (Firebase push), `SignalR/Hubs/NotificationHub.cs`
 - API/UI: `NotificationController.cs`, `tms-portal/pages/notifications/`
 
@@ -553,7 +553,7 @@ registry, `AgentLoopRunner`, decisions, and quota. Gated by `TenantFeature.AICop
 ### VIN decoder
 
 - Application: `IVinDecoderService.cs`
-- Infrastructure: `Infrastructure.Vin/` (composite: NHTSA `DecodeWMI` for prefix/country + NHTSA `DecodeVinValues` for full US detail)
+- Infrastructure: `Infrastructure.Integrations/Vin/` (composite: NHTSA `DecodeWMI` for prefix/country + NHTSA `DecodeVinValues` for full US detail)
 - API/UI: `truck-form` Decode VIN button + source badge
 
 ### Blob storage
@@ -569,14 +569,14 @@ registry, `AgentLoopRunner`, decisions, and quota. Gated by `TenantFeature.AICop
 - Domain: `Entities/LoadBoard/LoadBoardListing.cs`, `LoadBoardConfiguration.cs` (`UserEmail` = DAT One seat, `MarketRatesEnabled` = RateView), `Enums/LoadBoardEquipmentType.cs` (the one equipment list; DAT codes in `Providers/Dat/DatEquipment.cs`)
 - Application: `Modules/Integrations/LoadBoard/Commands/` (search, create/update/test provider, create load from listing), `Queries/`; `Services/LoadBoardProviderGateway.cs` - the only way to call a board: token refresh, one 401 retry, vendor error to per-provider `Result`
 - Abstractions: `Application.Abstractions/LoadBoard/ILoadBoardProviderService.cs` (throws `LoadBoardApiException`; no booking call - no board has a booking API)
-- Infrastructure: `Infrastructure.Integrations.LoadBoard/` - `Providers/Dat/` (two-step org + user token, v1 search, truck posts, RateView), `Demo` (Truckstop and 123Loadboard have no provider; the gateway reports them "not available yet"); `LoadBoardHttp.cs` throwing HTTP helper. API verification status in `docs/loadboard-dat-setup.md`
+- Infrastructure: `Infrastructure.Integrations/LoadBoard/` - `Providers/Dat/` (two-step org + user token, v1 search, truck posts, RateView), `Demo` (Truckstop and 123Loadboard have no provider; the gateway reports them "not available yet"); `LoadBoardHttp.cs` throwing HTTP helper. API verification status in `docs/loadboard-dat-setup.md`
 - API/UI: `LoadboardController.cs`, `tms-portal/pages/loadboard/` (`provider-dialog` add/edit, `loadboard.constants.ts` equipment + provider labels)
 
 ### Broker credit
 
 - Domain: `Entities/LoadBoard/BrokerCreditRecord.cs`, `LoadBoardListing.BrokerCredit*`, `TenantSettings.MinBrokerCreditScore`
 - Application: `Modules/Integrations/LoadBoard/Queries/GetBrokerCredit/`, booking gate in `Commands/BookLoadBoardLoad/`
-- Infrastructure: `Infrastructure.Integrations.LoadBoard/Credit/` (`BrokerCreditService`, `FmcsaClient`); `Infrastructure.AI/Tools/LoadBoard/CheckBrokerCreditTool.cs`
+- Infrastructure: `Infrastructure.Integrations/LoadBoard/Credit/` (`BrokerCreditService`, `FmcsaClient`); `Infrastructure.AI/Tools/LoadBoard/CheckBrokerCreditTool.cs`
 - API/UI: `GET /loadboard/brokers/{mc}/credit`, credit badges on `tms-portal/pages/loadboard/`, threshold on `settings/company-settings/`
 
 ### Posted trucks
@@ -656,9 +656,8 @@ All under `test/` (singular):
 
 - `Logistics.Application.Tests/` - application handlers, services; folders mirror `Modules/`, shared fixtures in `TestKit/`
 - `Logistics.Architecture.Tests/` - layering/dependency boundaries; discovers projects, never hard-code a list
-- `Logistics.Infrastructure.AI.Tests/` - AI agent, tools, prompts, pricing (quota lives in `Logistics.Infrastructure.Persistence.Tests/`, next to `AIQuotaService`)
-- `Logistics.Infrastructure.{Communications,Documents,Integrations,Payments,Persistence,Routing,Tax,Vin}.Tests/` - per-module (`Integrations` covers the Accounting, Eld, FuelCards, LoadBoard and Common projects)
-- `Logistics.HostDefaults.Tests/` - Sentry scrubbing and tenant tagging
+- `Logistics.Infrastructure.AI.Tests/` - AI agent, tools, prompts, pricing (quota lives in `Logistics.Infrastructure.Tests/Persistence/`, next to `AIQuotaService`)
+- `Logistics.Infrastructure.Tests/` - every other infrastructure project, one folder each (`Communications`, `Documents`, `Integrations`, `Payments`, `Persistence`, `Routing`, `Tax`, `Vin`), plus `HostDefaults/` (Sentry scrubbing and tenant tagging)
 - `Logistics.Mediator.Tests/` - the in-repo mediator
 
 ## Updating this map

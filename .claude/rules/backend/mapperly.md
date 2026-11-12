@@ -1,12 +1,12 @@
 ---
 paths:
-  - "src/Core/Logistics.Mappings/**/*.cs"
   - "src/Core/Logistics.Application/**/*.cs"
 ---
 
 # Entity-to-DTO Mapping (Mapperly)
 
-- All mapping via Riok.Mapperly mappers in `src/Core/Logistics.Mappings/` - no manual mapping in handlers
+- All mapping via Riok.Mapperly mappers in `src/Core/Logistics.Application/Mappings/` (namespace
+  `Logistics.Mappings`) - no manual mapping in handlers
 - Extension method pattern: `entity.ToDto()`
 - `[MapperIgnoreSource]` for navigation properties only. `MapperDefaults.cs` sets
   `RequiredMappingStrategy.Target` assembly-wide, so an unmapped entity column is fine and only an

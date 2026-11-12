@@ -7,17 +7,19 @@ description: Add a third-party integration provider - a new ELD (Samsara/Motive/
 
 Four families exist today, all on the same shape (providers are added per pilot carrier, so no list here is final):
 
-| Family     | Project                                     | Enum                     | Factory                     |
-| ---------- | ------------------------------------------- | ------------------------ | --------------------------- |
-| ELD / HOS  | `Logistics.Infrastructure.Integrations.Eld` | `EldProviderType`        | `EldProviderFactory`        |
-| Load board | `...Integrations.LoadBoard`                 | `LoadBoardProviderType`  | `LoadBoardProviderFactory`  |
-| Fuel cards | `...Integrations.FuelCards`                 | `FuelCardProviderType`   | `FuelCardProviderFactory`   |
-| Accounting | `...Integrations.Accounting`                | `AccountingProviderType` | `AccountingProviderFactory` |
+All of them are folders of one project, `src/Infrastructure/Logistics.Infrastructure.Integrations/`.
+
+| Family     | Folder        | Enum                     | Factory                     |
+| ---------- | ------------- | ------------------------ | --------------------------- |
+| ELD / HOS  | `Eld/`        | `EldProviderType`        | `EldProviderFactory`        |
+| Load board | `LoadBoard/`  | `LoadBoardProviderType`  | `LoadBoardProviderFactory`  |
+| Fuel cards | `FuelCards/`  | `FuelCardProviderType`   | `FuelCardProviderFactory`   |
+| Accounting | `Accounting/` | `AccountingProviderType` | `AccountingProviderFactory` |
 
 Each provider is a .NET keyed service under its provider-type enum value. The family factory
 resolves it with `serviceProvider.GetRequiredProvider<I{Family}ProviderService>(type, "Family")` and
 answers `IsProviderSupported` with `HasProvider`, both in `ProviderRegistrationExtensions`
-(`Logistics.Infrastructure.Integrations.Common`). Every registrar calls
+(`Integrations/Common/`). Every family registrar calls
 `AddProviderIntegration<TOptions, TFactoryService, TFactoryImpl>(configuration, sectionName)`.
 **Do not invent a fifth pattern.**
 
@@ -50,8 +52,8 @@ answers `IsProviderSupported` with `HasProvider`, both in `ProviderRegistrationE
 
 Add a separate `{Name}Client.cs` only when the vendor isn't a plain REST/JSON API (Geotab does this).
 
-Use `TryGetFromJsonAsync` from `Integrations.Common` for reads - it never throws, it logs and returns
-`default`. Do **not** copy it into the family project. (`Integrations.Accounting`'s QuickBooks helpers
+Use `TryGetFromJsonAsync` from `Integrations/Common/` for reads - it never throws, it logs and returns
+`default`. Do **not** copy it into the family folder. (`Integrations/Accounting/`'s QuickBooks helpers
 deliberately _do_ throw so push failures surface. That is not a duplicate - don't fold them together.)
 Load board providers are the other exception: they call `LoadBoardHttp` (throws `LoadBoardApiException`) and
 are reached only through `ILoadBoardProviderGateway`, so a vendor error shows per provider instead of as "no freight".
@@ -146,13 +148,14 @@ Only if the credential fields differ from the family's existing dialog. It must 
 
 Roadmap items like EDI will need this. On top of the above:
 
-1. New `src/Infrastructure/Logistics.Infrastructure.Integrations.{X}/` project + solution entry.
+1. New `src/Infrastructure/Logistics.Infrastructure.Integrations/{X}/` folder (namespace
+   `Logistics.Infrastructure.Integrations.{X}`) with its own `Registrar`, called from the project's
+   root `Registrar.AddIntegrationsInfrastructure`. No new project.
 2. Port interfaces (`I{X}ProviderService`, `I{X}ProviderFactory`) in
    `src/Core/Logistics.Application.Abstractions/{X}/` - **not** in the infrastructure project.
 3. Factory resolving through `GetRequiredProvider` / `HasProvider`; registrar using `AddProviderIntegration` and `AddKeyedProvider`.
-4. **Architecture tests:** the csproj rule discovers the project off disk automatically, but the
-   IL-level boundary rule needs an anchor in `AssemblyAnchors.AllInfrastructure` plus a
-   `ProjectReference` in the arch-tests csproj. Without both, the new project is silently unchecked.
+4. **Architecture tests:** nothing to add - the family lives in an assembly that is already
+   anchored. Only a brand-new infrastructure project needs the anchor + `ProjectReference` (CLAUDE.md).
 5. A `{X}ProviderConfiguration` tenant entity + EF configuration + migration (`migration-creator`).
 6. A sync job if the vendor is polled (`add-hangfire-job`).
 

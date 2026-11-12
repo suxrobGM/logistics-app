@@ -11,12 +11,14 @@ paths:
 | -------------------------------------------- | ----------------------------------------------------- | --------------------------- |
 | `Logistics.Application.Tests`                | Application layer (handlers, services)                | `MockQueryable.NSubstitute` |
 | `Logistics.Infrastructure.AI.Tests`          | AI agent, tools, prompts, LLM pricing                 | `MockQueryable.NSubstitute` |
-| `Logistics.Infrastructure.Persistence.Tests` | Persistence services, converters - including AI quota | `MockQueryable.NSubstitute` |
-| `Logistics.Infrastructure.Integrations.Tests` | QBO, ELD (Samsara, Geotab), DAT, FMCSA, fuel cards, webhook signatures | -                           |
+| `Logistics.Infrastructure.Tests`             | Every other infrastructure project and HostDefaults, one folder each | `MockQueryable.NSubstitute`, EF InMemory, QuestPDF |
 | `Logistics.Architecture.Tests`               | Layering / dependency boundaries                      | `TngTech.ArchUnitNET.xUnitV3` |
 
-Other `Logistics.Infrastructure.*.Tests` projects cover their own infrastructure module. A test of
-infrastructure code goes there, never in `Application.Tests`.
+`Logistics.Infrastructure.Tests` has one folder per area: `Persistence/` (services, converters, AI
+quota), `Integrations/` (QBO, ELD, DAT, FMCSA, fuel cards, webhook signatures), `Payments/`, `Tax/`,
+`Vin/`, `Routing/`, `Communications/`, `Documents/` and `HostDefaults/`. Namespaces kept the old
+project names (`Logistics.Infrastructure.Tax.Tests`, ...). A test of infrastructure code goes there,
+never in `Application.Tests`.
 
 `Application.Tests` folders mirror `src/Core/Logistics.Application/Modules/`
 (`Operations/Loads/`, `Integrations/AIDispatch/`, ...) and the namespace follows the folder. Tests

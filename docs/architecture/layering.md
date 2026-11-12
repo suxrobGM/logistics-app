@@ -32,7 +32,7 @@ Examples - verified locations under `src/Core/Logistics.Application.Abstractions
 - `Geocoding/IGeocodingService.cs` - implemented by `Infrastructure.Routing`
 - `AIDispatch/ILlmProvider.cs` - implemented by `Infrastructure.AI`
 - `Dispatch/IDispatchEligibilityService.cs` - pure-domain check, currently here as a port
-- `Notifications/INotificationService.cs` - implemented by `Infrastructure.Communications`
+- `Realtime/IRealtimeNotificationService.cs` - implemented by `Infrastructure.Communications`
 - `Payments/IStripePaymentService.cs` - implemented by `Infrastructure.Payments`
 
 If Infrastructure implements it, the interface goes in Abstractions.
@@ -91,9 +91,8 @@ Layering rules are not aspirational - they're verified on every build by [`test/
 - `Application` ↛ Infrastructure, `Application` ↛ `Microsoft.AspNetCore.Http`
 - `Abstractions` ↛ `Application`, `Abstractions` ↛ Infrastructure, `Abstractions` ↛ EF Core, `Abstractions` ↛ AspNetCore.Http
 - Each Infrastructure assembly → Abstractions, not Application
+- `Shared.Models` ↛ `Domain` (it may use `Domain.Primitives`)
 - No handler injects `IHttpContextAccessor`
-
-`Integrations.Common` is the one deliberate exception to the "each Infrastructure assembly → Abstractions" line: it is a leaf helper project holding shared `HttpClient` JSON helpers and references no other project in the repo, Abstractions included. The rule it must satisfy is the same one everything else does - no dependency on `Application`.
 
 Both infrastructure rules discover what they cover rather than hand-listing it, so a new project is picked up off disk automatically; the IL-level boundary rule additionally needs an anchor in `AssemblyAnchors.AllInfrastructure` and a `ProjectReference` in the arch-tests csproj. CLAUDE.md holds the canonical version of this rule.
 

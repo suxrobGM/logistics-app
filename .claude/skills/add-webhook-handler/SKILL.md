@@ -60,7 +60,7 @@ public async Task<IActionResult> Provider(CancellationToken ct)
 ### 3. Verify signature in the service layer
 
 Do **not** hand-roll HMAC + comparison. Use `WebhookSignature.VerifyHmacSha256` from
-`Logistics.Infrastructure.Integrations.Common` - it computes the lowercase-hex HMAC-SHA256 of the raw body and
+`Logistics.Infrastructure.Integrations/Common/` - it computes the lowercase-hex HMAC-SHA256 of the raw body and
 compares with `CryptographicOperations.FixedTimeEquals`, and it **fails closed** (returns `false` when either the
 secret or the signature is missing).
 
@@ -213,13 +213,13 @@ Mount at `/webhooks/eld/{provider}/{tenantId}` - the tenant registers its own UR
 
 ### Calling back into the provider
 
-When the handler needs to fetch more from the provider's API, use `TryGetFromJsonAsync` from `Logistics.Infrastructure.Integrations.Common` rather than hand-rolling a try/catch around `GetAsync` + `ReadFromJsonAsync`:
+When the handler needs to fetch more from the provider's API, use `TryGetFromJsonAsync` from `Logistics.Infrastructure.Integrations/Common/` rather than hand-rolling a try/catch around `GetAsync` + `ReadFromJsonAsync`:
 
 ```csharp
 var trip = await httpClient.TryGetFromJsonAsync<TripResponse>(url, logger, "fetch trip", ct: ct);
 ```
 
-It logs and returns `default` on a non-success status, network error, or parse failure, so it never throws. Push paths that must surface an error to the caller are the exception - see the QuickBooks helpers in `Integrations.Accounting`, which throw on purpose.
+It logs and returns `default` on a non-success status, network error, or parse failure, so it never throws. Push paths that must surface an error to the caller are the exception - see the QuickBooks helpers in `Integrations/Accounting/`, which throw on purpose.
 
 ## Related
 

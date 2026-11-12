@@ -43,23 +43,18 @@ src/Infrastructure/
 │
 ├── Logistics.Infrastructure.AI/       # LLM providers, dispatch agent, tool registry
 │
-├── Logistics.Infrastructure.Integrations.Common/
-│   └── HttpClientJsonExtensions.cs    # Shared HTTP JSON helpers; leaf project, no repo references
-│
-├── Logistics.Infrastructure.Integrations.Eld/
-│   └── Providers/                 # Samsara, Motive, TtEld, Geotab, Demo
-│
-├── Logistics.Infrastructure.Integrations.LoadBoard/
-│   └── Providers/                 # DAT, Demo (Truckstop, 123Loadboard not available yet)
-│
-├── Logistics.Infrastructure.Integrations.FuelCards/
-│   └── Providers/                 # Wex, Efs, Demo
-│
-├── Logistics.Infrastructure.Integrations.Accounting/
-│   └── Providers/                 # QuickBooks, Demo
+├── Logistics.Infrastructure.Integrations/
+│   ├── Common/                    # Shared HTTP JSON helpers, webhook signatures, provider registration
+│   ├── Eld/                       # Samsara, Motive, TtEld, Geotab, Demo
+│   ├── LoadBoard/                 # DAT, Demo (Truckstop, 123Loadboard not available yet)
+│   ├── FuelCards/                 # Wex, Efs, Demo
+│   ├── Accounting/                # QuickBooks, Demo
+│   ├── Vin/                       # VIN decoder: WMI prefix lookup + NHTSA API
+│   └── Licensing/                 # Product license heartbeat sender
 │
 ├── Logistics.Infrastructure.Payments/
-│   └── Stripe/                    # Stripe, Stripe Connect
+│   ├── Stripe/                    # Stripe, Stripe Connect
+│   └── Tax/                       # Stripe Tax and manual calculators; US sales tax, EU VAT, other-country rates
 │
 ├── Logistics.Infrastructure.Documents/
 │   └── Pdf/                       # PDF generation, template import
@@ -67,16 +62,8 @@ src/Infrastructure/
 ├── Logistics.Infrastructure.Routing/
 │   └── Trip/                      # Trip optimization, geocoding
 │
-├── Logistics.Infrastructure.Storage/
-│   └── (Blob storage implementations: Azure Blob, Cloudflare R2, local file system)
-│
-├── Logistics.Infrastructure.Tax/
-│   ├── Stripe/                    # Stripe Tax calculator and config
-│   ├── Manual/                    # Manual tax calculator
-│   └── Data/                      # US sales tax, EU VAT, other-country rates
-│
-└── Logistics.Infrastructure.Vin/
-    └── (VIN decoder: WMI prefix lookup + NHTSA API)
+└── Logistics.Infrastructure.Storage/
+    └── (Blob storage implementations: Azure Blob, Cloudflare R2, local file system)
 ```
 
 ## Adding a New Feature
