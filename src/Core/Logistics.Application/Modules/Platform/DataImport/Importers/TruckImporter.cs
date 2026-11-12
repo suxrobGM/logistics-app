@@ -184,7 +184,7 @@ internal sealed class TruckImporter(ITenantUnitOfWork tenantUow, IVehicleTranspo
     private void CheckTruckLimit(IReadOnlyList<Draft> drafts, int currentCount)
     {
         var plan = tenantUow.GetCurrentTenant().Subscription?.Plan;
-        if (plan?.MaxTrucks is not { } maxTrucks)
+        if (plan is null)
         {
             return;
         }
@@ -192,9 +192,9 @@ internal sealed class TruckImporter(ITenantUnitOfWork tenantUow, IVehicleTranspo
         var count = currentCount;
         foreach (var draft in drafts.Where(d => d is { Exists: false, Errors.Count: 0 }))
         {
-            if (++count > maxTrucks)
+            if (plan.TruckLimitReason(++count) is { } reason)
             {
-                draft.Errors.Add($"Your {plan.Name} plan allows {maxTrucks} trucks. Upgrade to import more.");
+                draft.Errors.Add(reason);
             }
         }
     }

@@ -65,29 +65,15 @@ internal sealed class CreateTruckHandler(
 
     private async Task<Result> CheckTruckLimitAsync(CancellationToken ct)
     {
-        var tenant = tenantUow.GetCurrentTenant();
-
-        if (tenant.Subscription is null)
-        {
-            return Result.Ok();
-        }
-
-        var maxTrucks = tenant.Subscription.Plan.MaxTrucks;
-
-        if (maxTrucks is null)
+        var plan = tenantUow.GetCurrentTenant().Subscription?.Plan;
+        if (plan?.MaxTrucks is null)
         {
             return Result.Ok();
         }
 
         var currentCount = await tenantUow.Repository<Truck>().Query().CountAsync(ct);
-
-        if (currentCount >= maxTrucks.Value)
-        {
-            return Result.Fail(
-                $"Your {tenant.Subscription.Plan.Name} plan allows a maximum of {maxTrucks.Value} trucks. Please upgrade your plan to add more.",
-                ErrorCodes.ResourceLimitReached);
-        }
-
-        return Result.Ok();
+        return plan.TruckLimitReason(currentCount + 1) is { } reason
+            ? Result.Fail(reason, ErrorCodes.ResourceLimitReached)
+            : Result.Ok();
     }
 }
