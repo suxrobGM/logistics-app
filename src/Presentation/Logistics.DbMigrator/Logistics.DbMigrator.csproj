@@ -18,7 +18,6 @@
     <ProjectReference Include="..\..\Core\Logistics.Application\Logistics.Application.csproj" />
     <ProjectReference Include="..\..\Infrastructure\Logistics.Infrastructure.Payments\Logistics.Infrastructure.Payments.csproj" />
     <ProjectReference Include="..\..\Infrastructure\Logistics.Infrastructure.Persistence\Logistics.Infrastructure.Persistence.csproj" />
-    <ProjectReference Include="..\..\Infrastructure\Logistics.Infrastructure.Tax\Logistics.Infrastructure.Tax.csproj" />
     <ProjectReference Include="..\..\Infrastructure\Logistics.Infrastructure.Integrations\Logistics.Infrastructure.Integrations.csproj" />
   </ItemGroup>
 </Project>

@@ -32,7 +32,6 @@ internal static class AssemblyAnchors
         typeof(Logistics.Infrastructure.Persistence.Registrar).Assembly,
         typeof(Logistics.Infrastructure.Routing.Registrar).Assembly,
         typeof(Logistics.Infrastructure.Storage.Registrar).Assembly,
-        typeof(Logistics.Infrastructure.Tax.Registrar).Assembly,
     ];
 
     /// <summary>Exempt from "must not depend on Application" until Infrastructure.AI is decoupled.</summary>

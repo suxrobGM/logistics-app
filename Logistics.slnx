@@ -37,7 +37,6 @@
     <Project Path="src/Infrastructure/Logistics.Infrastructure.Routing/Logistics.Infrastructure.Routing.csproj" />
     <Project Path="src/Infrastructure/Logistics.Infrastructure.Storage/Logistics.Infrastructure.Storage.csproj" />
     <Project Path="src/Infrastructure/Logistics.Infrastructure.AI/Logistics.Infrastructure.AI.csproj" />
-    <Project Path="src/Infrastructure/Logistics.Infrastructure.Tax/Logistics.Infrastructure.Tax.csproj" />
   </Folder>
   <Folder Name="/Tools/">
     <Project Path="tools/Logistics.LicenseIssuer/Logistics.LicenseIssuer.csproj" />
