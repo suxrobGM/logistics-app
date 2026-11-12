@@ -53,10 +53,11 @@ streak.
 With `AITripAlerts` on, the agent starts a turn with nobody prompting when an active trip runs into
 trouble: a stop's ETA passes its appointment window, the driver has fewer driving hours left than
 the remaining stops need, the ELD reports a new HOS violation, or detention starts. Each trigger is
-stamped once on its row. `TripAlertReporter` opens the trip's alert conversation and enqueues
-`RaiseTripAlertCommand`; `TripAlertTurnStarter` appends a fenced, system-written description, claims
+stamped once on its row. `TripAlertReporter` enqueues `RaiseTripAlertCommand`. `TripAlertTurnStarter`
+links the trip to its alert conversation with a conditional UPDATE, because Hangfire can start the job
+before the save that raised the alert commits. It then appends a fenced, system-written description, claims
 the turn atomically (or retries through `TripAlertWakeJob`) and notifies dispatchers in-app and on
-Telegram. The agent answers with ordinary suggestions, such as a driver swap, a re-plan, or a delay notice
+Telegram. The agent reads the trip with `get_trip` and answers with ordinary suggestions, such as a driver swap, a re-plan, or a delay notice
 through `send_customer_update`, and those still need approval. `TenantSettings.TripAlertsPerDay`
 (default 20) caps the turns; the AI budget applies as usual.
 
@@ -116,6 +117,7 @@ and the broker-reply envelope carry no sender and render unattributed.
 | `search_loadboard`             | Read  | Search the connected load boards (DAT)               |
 | `get_rate_floor`               | Read  | Lowest rate this carrier accepts on a listing's lane |
 | `get_negotiation_thread`       | Read  | State and messages of one broker negotiation         |
+| `get_trip`                     | Read  | One trip: stops in order, ETAs, late flags, drivers  |
 | `assign_load_to_truck`         | Write | Assign a load to a truck                             |
 | `create_trip`                  | Write | Create a trip from assigned loads                    |
 | `dispatch_trip`                | Write | Transition trip to Dispatched status                 |

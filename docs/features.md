@@ -21,8 +21,11 @@ The web app for owners, managers, and dispatchers.
 | Loads | Create loads with pickup and delivery stops, cargo details, and instructions. Follow each load from booked to delivered. |
 | PDF import | Upload a rate confirmation PDF and the system fills in the load for you. It reads the text first and falls back to an AI vision model for scanned pages. |
 | Trips | Group loads into a trip with a planned multi-stop route. The system warns when a driver or truck is double-booked. Routes come from Mapbox. |
+| Appointment windows | Record a pickup and a delivery window on each load, typed in or read from the rate confirmation. |
 | Live tracking | See every active driver on a map. Positions update over a live connection as drivers move. |
+| Stop ETAs | Each truck position updates the ETA of every stop left on its trip, using Mapbox drive times plus a dwell allowance you set. A stop whose ETA passes its window is flagged as running late. |
 | Public tracking | Share a tracking link with a customer or receiver. No login is needed. |
+| Customer updates | The customer gets an email when a shipment is dispatched, picked up, delivered, or running late, with the window, ETA and tracking link. No AI writes these. Each customer picks which ones they get, and every load shows what was sent or skipped. |
 | Fleet | Trucks and trailers, registration and insurance dates, and who is assigned to what. Hook a trailer to a truck and each trip records the trailer it pulled. Enter a VIN and the truck details fill in from the NHTSA database. |
 | Data import | Move off another TMS or a spreadsheet: upload CSV or XLSX for customers, drivers, trucks, trailers and loads, check the column mapping, see a dry run, then import. See [data import](data-import.md). |
 | Maintenance | Record what was done on each truck and what it cost. |
@@ -78,7 +81,9 @@ Central Dispatch and Super Dispatch are not connected. Neither offers a public c
 | Feature | What it does |
 | --- | --- |
 | Dispatch agent | A shared conversation where you ask the agent to plan the day. It proposes which truck takes which load, checks hours of service, and explains each choice. |
-| Approvals | Every action that changes data becomes a decision waiting for a dispatcher. Approve it or reject it with a reason. Nothing changes until someone approves. |
+| Approvals | Every action that changes data becomes a decision waiting for a dispatcher. Approve it or reject it with a reason. |
+| Auto-approve | Opt in per decision type (assign a load, draft a trip, draft an invoice) and the agent runs that type on its own once you have approved 25 in a row. Each one can be reverted for 15 minutes. Anything that emails someone outside the company, spends money or notifies a driver always waits for you. |
+| Trip alerts | When a stop will miss its window, a driver is short of hours for the rest of the trip, the ELD reports a new violation, or a truck sits in detention, the agent looks into the trip and proposes fixes, such as a driver swap or a delay notice to the customer. Dispatchers are notified in the app and on Telegram. |
 | Timeline | Every tool call, reasoning step, and decision in a turn is written to a timeline with timestamps. |
 | Follow-ups | Reject a suggestion or send a follow-up message, and the agent adjusts within the same conversation. |
 | Learned preferences | A nightly job reads the decisions you approved and rejected and writes a short policy the agent follows next time. Dispatchers can edit it. |
@@ -156,7 +161,7 @@ The web app for a carrier's customers.
 
 | Feature | What it does |
 | --- | --- |
-| Shipments | See every shipment, its status, expected delivery, and history. |
+| Shipments | See every shipment, its status, pickup and delivery windows, the ETA at the next stop, whether it is running late, and the updates already emailed. |
 | Tracking | Follow a shipment on a live map. |
 | Invoices | View and download invoices, and pay them online. A factored customer's invoices show the factor to pay instead of a card checkout. |
 | Documents | Download proof of delivery, bills of lading, the electronic BOL of vehicle shipments, and other load paperwork. |

@@ -180,8 +180,9 @@ with `Type == Dispatch`.
 
 Gated by `TenantFeature.AITripAlerts` (Professional+). The agent proposes; nothing executes without approval.
 
-- Triggers (each stamped once): late stop (`Trips/Events/TripStopRunningLateAlertHandler.cs`), hours shortfall (`Trip.HosShortfallFlaggedAt`, from `EldSyncService` and after each ETA refresh), new HOS violations, detention - all through `Modules/Operations/Trips/Services/TripAlertReporter.cs`, which opens `Trip.AlertConversationId` and enqueues `RaiseTripAlertCommand`
-- Application: `Modules/Integrations/AIDispatch/Services/TripAlertTurnStarter.cs` (fenced alert message, atomic turn claim, daily cap `TenantSettings.TripAlertsPerDay`, in-app + Telegram notice)
+- Triggers (each stamped once): late stop (`Trips/Events/TripStopRunningLateAlertHandler.cs`), hours shortfall (`Trip.HosShortfallFlaggedAt`, from `EldSyncService` and after each ETA refresh), new HOS violations, detention - all through `Modules/Operations/Trips/Services/TripAlertReporter.cs`, which only enqueues `RaiseTripAlertCommand`
+- Application: `Modules/Integrations/AIDispatch/Services/TripAlertTurnStarter.cs` (links `Trip.AlertConversationId` by conditional UPDATE, fenced alert message, atomic turn claim, daily cap `TenantSettings.TripAlertsPerDay`, in-app + Telegram notice)
+- Tool: `Infrastructure.AI/Tools/Dispatch/GetTripTool.cs` (`get_trip`: stops, ETAs, late flags, drivers)
 - Jobs: `Logistics.API/Jobs/TripAlertWakeJob.cs` (busy retry); demo scenario `DbMigrator/Seeders/FakeData/TripAlertDemoSeeder.cs`
 
 ### Dispatch policy (learned preferences)

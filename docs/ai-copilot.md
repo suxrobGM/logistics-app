@@ -122,6 +122,7 @@ the dispatch agent (if dispatch-scoped), and the MCP server in one change. The c
 | `get_invoices` / `get_invoice`          | Read  | `GetInvoicesQuery` / `GetInvoiceByIdQuery`                            |
 | `search_expenses` / `get_expense_stats` | Read  | `GetExpensesQuery` / `GetExpenseStatsQuery`                           |
 | `get_detention`                         | Read  | `GetLoadDetentionQuery`, or open stops across the fleet without a load |
+| `get_trip`                              | Read  | The trip and its stops, read directly (ETAs, late flags, drivers)     |
 | `get_condition_reports`                 | Read  | `GetConditionReportsQuery` (defects with car hauler BOL codes)        |
 | `create_load_invoice`                   | Write | `CreateLoadInvoiceCommand` (unpaid, one line per load charge)         |
 | `send_invoice`                          | Write | `SendInvoiceCommand` (payment link, or remit-to notice if factored)   |

@@ -27,6 +27,7 @@ The server exposes the same tools used by the built-in AI dispatch agent. If the
 | `get_negotiation_thread`       | Read  | One negotiation: status, rounds, floor, recent messages   |
 | `search_loads`                 | Read  | Search loads by status, type, customer, or date range     |
 | `get_load`                     | Read  | One load: status, charges, freight, customer, invoice     |
+| `get_trip`                     | Read  | One trip: stops in order, ETAs, late flags, drivers       |
 | `search_customers`             | Read  | Look up customers by name                                 |
 | `get_invoices`                 | Read  | List load invoices by load/customer/status/date           |
 | `get_invoice`                  | Read  | One invoice: totals, payments, send history, factoring    |
