@@ -18,7 +18,7 @@ internal sealed class TripAlertTurnStarter(
     ITelegramNotificationService telegramNotificationService,
     ILogger<TripAlertTurnStarter> logger) : ITripAlertTurnStarter
 {
-    /// <summary>Starts every alert message, so the daily allowance can count them.</summary>
+    /// <summary>The daily allowance counts messages that start with this.</summary>
     internal const string AlertMarker = "[Trip alert";
 
     private const int DefaultAlertsPerDay = 20;
@@ -75,25 +75,40 @@ internal sealed class TripAlertTurnStarter(
         return alertsToday >= alertsPerDay;
     }
 
+    /// <summary>Parallel alert jobs race here, so the link is claimed with one conditional UPDATE.</summary>
     private async Task<AgentConversation> GetOrCreateConversationAsync(Trip trip, CancellationToken ct)
     {
-        if (trip.AlertConversationId is { } existingId
-            && await tenantUow.Repository<AgentConversation>().GetByIdAsync(existingId, ct) is { } existing)
+        var conversations = tenantUow.Repository<AgentConversation>();
+        if (trip.AlertConversationId is { } existingId && await conversations.GetByIdAsync(existingId, ct) is { } existing)
         {
             return existing;
         }
 
-        var conversation = trip.StartAlertConversation();
-        await tenantUow.Repository<AgentConversation>().AddAsync(conversation, ct);
+        var conversation = trip.CreateAlertConversation();
+        await conversations.AddAsync(conversation, ct);
         await tenantUow.SaveChangesAsync(ct);
-        return conversation;
+
+        var claimed = await tenantUow.Repository<Trip>().Query()
+            .Where(t => t.Id == trip.Id && t.AlertConversationId == null)
+            .ExecuteUpdateAsync(s => s.SetProperty(t => t.AlertConversationId, conversation.Id), ct);
+        if (claimed == 1)
+        {
+            return conversation;
+        }
+
+        conversations.Delete(conversation);
+        await tenantUow.SaveChangesAsync(ct);
+        var winnerId = await tenantUow.Repository<Trip>().Query()
+            .Where(t => t.Id == trip.Id)
+            .Select(t => t.AlertConversationId)
+            .SingleAsync(ct);
+        return await conversations.GetByIdAsync(winnerId!.Value, ct)
+               ?? throw new InvalidOperationException($"Trip {trip.Id} links a missing alert conversation.");
     }
 
     /// <summary>
-    /// A turn already running built its transcript before this alert existed, so it cannot answer
-    /// it. Rather than run two turns on one conversation, come back once the other one is done.
-    /// Alerts raised together run as parallel jobs, so the claim is one conditional UPDATE: a
-    /// read-then-write check let both of them start a turn.
+    /// A running turn loaded its transcript before this alert, so retry after it ends. The claim is one
+    /// conditional UPDATE because parallel alert jobs both passed a read-then-write check.
     /// </summary>
     private async Task TryBeginTurnAsync(AgentConversation conversation, Guid tripId, CancellationToken ct)
     {
@@ -118,10 +133,7 @@ internal sealed class TripAlertTurnStarter(
         turnRunner.Enqueue(new AIDispatchTurnRequest(tenantId, conversation.Id, null));
     }
 
-    /// <summary>
-    /// Written by the system from its own records, but it can quote stop addresses and names that
-    /// came from users, so it is fenced and framed as facts to check rather than instructions.
-    /// </summary>
+    /// <summary>Fenced because the details quote user-entered addresses and names.</summary>
     private static string BuildMessage(Trip trip, TripAlertKind kind, string details)
     {
         return $"""
@@ -133,9 +145,9 @@ internal sealed class TripAlertTurnStarter(
             {details}
             --- END ALERT FACTS ---
 
-            Check the trip, its loads and the driver's hours, then propose fixes as suggestions: swap the
-            driver or truck, re-plan the stops, or draft a short delay notice to the customer with
-            send_customer_update. Say plainly if nothing needs to change.
+            Read the trip with get_trip and the driver's hours with get_driver_hos_status, then propose fixes as suggestions.
+            Options: swap the driver or truck, re-plan the stops, or draft a short delay notice to the customer with send_customer_update.
+            Say plainly if nothing needs to change.
             """;
     }
 }

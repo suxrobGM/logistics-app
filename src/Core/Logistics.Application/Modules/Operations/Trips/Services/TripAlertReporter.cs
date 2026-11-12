@@ -18,7 +18,7 @@ internal sealed class TripAlertReporter(
     {
         if (await FindActiveTripAsync(employeeId, ct) is { } trip)
         {
-            await FlagIfShortAsync(trip, drivingMinutesRemaining, ct);
+            FlagIfShort(trip, drivingMinutesRemaining);
         }
     }
 
@@ -32,11 +32,11 @@ internal sealed class TripAlertReporter(
         var hos = await tenantUow.Repository<DriverHosStatus>().GetAsync(s => s.EmployeeId == driverId, ct);
         if (hos is not null)
         {
-            await FlagIfShortAsync(trip, hos.DrivingMinutesRemaining, ct);
+            FlagIfShort(trip, hos.DrivingMinutesRemaining);
         }
     }
 
-    private async Task FlagIfShortAsync(Trip trip, int drivingMinutesRemaining, CancellationToken ct)
+    private void FlagIfShort(Trip trip, int drivingMinutesRemaining)
     {
         if (trip.HosShortfallFlaggedAt is not null)
         {
@@ -56,10 +56,10 @@ internal sealed class TripAlertReporter(
         }
 
         trip.HosShortfallFlaggedAt = now;
-        await EnqueueAsync(trip, TripAlertKind.HosShortfall,
+        Enqueue(trip, TripAlertKind.HosShortfall,
             $"The driver has {FormatMinutes(drivingMinutesRemaining)} of driving left, but the remaining stops need about " +
             $"{FormatMinutes(minutesNeeded)} of driving. They will run out of hours about " +
-            $"{FormatMinutes(minutesNeeded - drivingMinutesRemaining)} short of the last stop.", ct);
+            $"{FormatMinutes(minutesNeeded - drivingMinutesRemaining)} short of the last stop.");
     }
 
     public async Task ReportViolationsAsync(Guid employeeId, int newViolations, CancellationToken ct = default)
@@ -69,8 +69,8 @@ internal sealed class TripAlertReporter(
             return;
         }
 
-        await EnqueueAsync(trip, TripAlertKind.HosViolation,
-            $"The ELD reported {newViolations} new HOS violation(s) for the driver of this trip.", ct);
+        Enqueue(trip, TripAlertKind.HosViolation,
+            $"The ELD reported {newViolations} new HOS violation(s) for the driver of this trip.");
     }
 
     public async Task ReportLateStopAsync(TripStopRunningLateEvent late, CancellationToken ct = default)
@@ -88,28 +88,20 @@ internal sealed class TripAlertReporter(
             $"expected at {late.EstimatedArrivalAt:yyyy-MM-dd HH:mm} UTC, {FormatMinutes(lateMinutes)} after its " +
             $"appointment window ends at {late.AppointmentEnd:yyyy-MM-dd HH:mm} UTC.");
 
-        await EnqueueAsync(trip, TripAlertKind.RunningLate, details, ct);
+        Enqueue(trip, TripAlertKind.RunningLate, details);
     }
 
     public async Task ReportDetentionAsync(Guid tripId, string details, CancellationToken ct = default)
     {
         if (await tenantUow.Repository<Trip>().GetByIdAsync(tripId, ct) is { } trip)
         {
-            await EnqueueAsync(trip, TripAlertKind.Detention, details, ct);
+            Enqueue(trip, TripAlertKind.Detention, details);
         }
     }
 
-    /// <summary>
-    /// Opens the trip's alert conversation in the caller's save, before the job runs, so alerts raised
-    /// together share one conversation and the second waits for the first turn instead of racing it.
-    /// </summary>
-    private async Task EnqueueAsync(Trip trip, TripAlertKind kind, string details, CancellationToken ct)
+    /// <summary>The job can start before the caller's save commits, so it finds or opens the conversation itself.</summary>
+    private void Enqueue(Trip trip, TripAlertKind kind, string details)
     {
-        if (trip.AlertConversationId is null)
-        {
-            await tenantUow.Repository<AgentConversation>().AddAsync(trip.StartAlertConversation(), ct);
-        }
-
         commandEnqueuer.Enqueue(new RaiseTripAlertCommand
         {
             TenantId = tenantUow.GetCurrentTenant().Id,

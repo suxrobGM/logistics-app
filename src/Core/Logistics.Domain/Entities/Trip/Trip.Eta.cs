@@ -3,50 +3,34 @@ using Logistics.Domain.Primitives.Enums;
 
 namespace Logistics.Domain.Entities;
 
-/// <summary>
-/// Arrival estimates for a trip's remaining stops.
-/// </summary>
 public partial class Trip
 {
-    /// <summary>
-    /// How often a trip's ETAs are recomputed from a stream of truck positions.
-    /// </summary>
+    /// <summary>Truck positions arrive far more often than an ETA needs recomputing.</summary>
     public static readonly TimeSpan EtaRefreshInterval = TimeSpan.FromMinutes(10);
 
-    /// <summary>
-    /// How far past the appointment end an ETA may run before the stop counts as late.
-    /// </summary>
+    /// <summary>How far an ETA may run past the appointment end before the stop counts as late.</summary>
     public static readonly TimeSpan LateGracePeriod = TimeSpan.FromMinutes(30);
 
-    /// <summary>
-    /// When the stop ETAs were last recomputed.
-    /// </summary>
     public DateTime? EtaUpdatedAt { get; private set; }
 
-    /// <summary>
-    /// When the driver was found short of the hours needed to finish this trip; at most one flag per trip.
-    /// </summary>
+    /// <summary>Set once, so a trip raises at most one hours-shortfall alert.</summary>
     public DateTime? HosShortfallFlaggedAt { get; set; }
 
     /// <summary>
-    /// The dispatch conversation where the agent investigates this trip's alerts; created by the first alert.
+    /// Set only by the alert job's conditional UPDATE. The save that raised the alert can commit after the job
+    /// runs, and a tracked write would overwrite the link.
     /// </summary>
     public Guid? AlertConversationId { get; set; }
 
-    /// <summary>
-    /// Opens a new tenant-shared dispatch conversation for this trip's alerts and links it.
-    /// Callers must register it with the repository.
-    /// </summary>
-    public AgentConversation StartAlertConversation()
+    /// <summary>Not linked here: the caller claims <see cref="AlertConversationId"/> for it.</summary>
+    public AgentConversation CreateAlertConversation()
     {
-        var conversation = new AgentConversation
+        return new AgentConversation
         {
             CreatedById = Guid.Empty,
             Kind = AgentConversationKind.Dispatch,
             Title = $"Trip alert: trip #{Number}"
         };
-        AlertConversationId = conversation.Id;
-        return conversation;
     }
 
     public bool IsActive => Status is TripStatus.Dispatched or TripStatus.InTransit;
@@ -56,18 +40,13 @@ public partial class Trip
         return EtaUpdatedAt is not { } updatedAt || now - updatedAt >= EtaRefreshInterval;
     }
 
-    /// <summary>
-    /// The stops the truck has not arrived at yet, in route order.
-    /// </summary>
+    /// <summary>In route order.</summary>
     public IReadOnlyList<TripStop> GetRemainingStops()
     {
         return [.. Stops.Where(s => s.ArrivedAt is null).OrderBy(s => s.Order)];
     }
 
-    /// <summary>
-    /// Stores the new arrival estimates and raises <see cref="TripStopRunningLateEvent"/> for each stop
-    /// whose estimate first runs past its appointment end plus <see cref="LateGracePeriod"/>.
-    /// </summary>
+    /// <summary>Raises <see cref="TripStopRunningLateEvent"/> at most once per stop.</summary>
     public void ApplyArrivalEstimates(IReadOnlyDictionary<Guid, DateTime> etaByStopId, DateTime now)
     {
         EtaUpdatedAt = now;
