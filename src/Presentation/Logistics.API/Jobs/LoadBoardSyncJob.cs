@@ -20,7 +20,7 @@ public class LoadBoardSyncJob(
 
     public static void ScheduleJobs()
     {
-        // The old job re-sent every post every 30 minutes; its method no longer exists.
+        // Hangfire still stores the retired job, and its method is gone.
         RecurringJob.RemoveIfExists(LegacyRefreshJobId);
 
         RecurringJob.AddOrUpdate<LoadBoardSyncJob>(

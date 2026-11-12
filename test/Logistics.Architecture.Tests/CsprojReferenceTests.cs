@@ -1,16 +1,8 @@
 using Xunit;
-using Logistics.Application.Modules.Integrations.Webhooks.Commands;
 
 namespace Logistics.Architecture.Tests;
 
-/// <summary>
-/// XML-level rules over .csproj files - catches package/project references that
-/// NetArchTest's IL inspection can't see (e.g., an unused PackageReference still
-/// declared in the csproj).
-///
-/// Some assertions are <c>[Fact(Skip = ...)]</c> until slice 1.8 / 1.9-AI land.
-/// See <c>.claude/plans/refactor-application-layer/REFACTOR-INDEX.md</c>.
-/// </summary>
+/// <summary>Catches references IL inspection can't see, such as a declared but unused package.</summary>
 public class CsprojReferenceTests
 {
     [Fact]
@@ -21,7 +13,7 @@ public class CsprojReferenceTests
         CsprojAssertions.AssertNoPackage(csproj, "Microsoft.AspNetCore.Http");
     }
 
-    [Fact(Skip = "Re-enable when slice 1.8 lands; ProcessStripEventHandler still consumes raw Stripe.Event payloads.")]
+    [Fact(Skip = "ProcessStripEventHandler still consumes raw Stripe.Event payloads.")]
     public void Application_csproj_has_no_Stripe_package()
     {
         var csproj = CsprojAssertions.ResolveRepoFile(
@@ -37,7 +29,7 @@ public class CsprojReferenceTests
         CsprojAssertions.AssertNoPackage(csproj, "Microsoft.EntityFrameworkCore");
     }
 
-    [Fact(Skip = "Re-enable when slice 1.8 lands; Abstractions still ships Stripe.net to support port signatures that take Stripe SDK types.")]
+    [Fact(Skip = "Abstractions still has port signatures that take Stripe SDK types.")]
     public void Abstractions_csproj_has_no_Stripe_package()
     {
         var csproj = CsprojAssertions.ResolveRepoFile(
@@ -45,34 +37,16 @@ public class CsprojReferenceTests
         CsprojAssertions.AssertNoPackage(csproj, "Stripe.net");
     }
 
-    /// <summary>
-    /// Every project under src/Infrastructure, discovered from disk rather than hand-listed, so a
-    /// newly added infrastructure project is covered by this rule without anyone remembering to
-    /// register it here.
-    /// </summary>
-    public static TheoryData<string> InfrastructureProjects
-    {
-        get
-        {
-            // Logistics.Infrastructure.AI is intentionally exempt until slice 1.9-AI
-            // decouples it. See REFACTOR-INDEX.md.
-            string[] exempt = ["Logistics.Infrastructure.AI"];
-
-            var root = CsprojAssertions.ResolveRepoFile("src", "Infrastructure");
-            var data = new TheoryData<string>();
-
-            foreach (var dir in Directory.EnumerateDirectories(root).Order())
-            {
-                var name = Path.GetFileName(dir);
-                if (!exempt.Contains(name) && File.Exists(Path.Combine(dir, $"{name}.csproj")))
-                {
-                    data.Add(name);
-                }
-            }
-
-            return data;
-        }
-    }
+    /// <summary>Discovered from disk, so a new infrastructure project is covered without registering it.</summary>
+    public static TheoryData<string> InfrastructureProjects =>
+    [
+        .. Directory.EnumerateDirectories(CsprojAssertions.ResolveRepoFile("src", "Infrastructure"))
+            .Order()
+            .Select(Path.GetFileName)
+            .OfType<string>()
+            .Where(name => !AssemblyAnchors.BoundaryExempt.Contains(name))
+            .Where(name => File.Exists(CsprojAssertions.ResolveRepoFile("src", "Infrastructure", name, $"{name}.csproj")))
+    ];
 
     [Theory]
     [MemberData(nameof(InfrastructureProjects))]

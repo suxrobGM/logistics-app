@@ -34,12 +34,8 @@ internal static class CsprojAssertions
             $"{Path.GetFileName(csprojPath)} unexpectedly references ProjectReference '{referencedProjectFileName}'.");
     }
 
-    /// <summary>
-    /// Walks up from the test bin directory until it finds <c>Logistics.slnx</c>,
-    /// then joins the supplied relative segments. Lets the tests run regardless of
-    /// where <c>dotnet test</c> is invoked from.
-    /// </summary>
-    public static string ResolveRepoFile(params string[] relative)
+    /// <summary>Resolves from the repo root (where <c>Logistics.slnx</c> is), wherever the tests run from.</summary>
+    public static string ResolveRepoFile(params ReadOnlySpan<string> relative)
     {
         var dir = new DirectoryInfo(AppContext.BaseDirectory);
         while (dir is not null && !File.Exists(Path.Combine(dir.FullName, "Logistics.slnx")))
@@ -53,7 +49,6 @@ internal static class CsprojAssertions
                 "Could not find repo root (Logistics.slnx) walking up from " + AppContext.BaseDirectory);
         }
 
-        var parts = new[] { dir.FullName }.Concat(relative).ToArray();
-        return Path.Combine(parts);
+        return Path.Combine([dir.FullName, .. relative]);
     }
 }

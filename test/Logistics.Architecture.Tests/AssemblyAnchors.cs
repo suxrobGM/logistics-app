@@ -1,21 +1,19 @@
-// Force every project under test to be loaded into the AppDomain and exposes
-// the ArchUnitNET Architecture used across all boundary/handler tests.
-// Each anchor references a real public type from the target assembly's Registrar
-// (touching them is enough to pull the assembly in).
-//
-// Adding a new infrastructure project? Add its anchor to AllInfrastructure below - the
-// ArchLoader architecture and the boundary Theory both derive from that one array.
-//
-// Adding a new project under src/Core? Give it an anchor here, add it to the LoadAssemblies
-// call, and write the rule that pins its place in the graph. Nothing else will check it.
-
+using ArchUnitNET.Domain;
+using ArchUnitNET.Fluent;
 using ArchUnitNET.Loader;
 using Logistics.Application.Abstractions.CurrentUser;
-using Assembly = System.Reflection.Assembly;
+using static ArchUnitNET.Fluent.ArchRuleDefinition;
 using ArchitectureModel = ArchUnitNET.Domain.Architecture;
+using Assembly = System.Reflection.Assembly;
 
 namespace Logistics.Architecture.Tests;
 
+/// <summary>
+/// One public type per assembly under test, which loads it for <see cref="Architecture"/>.
+/// A new infrastructure project joins <see cref="AllInfrastructure"/>; a new <c>src/Core</c>
+/// project needs an anchor, a place in <see cref="Architecture"/>, and its own rule.
+/// Miss either and nothing checks the project.
+/// </summary>
 internal static class AssemblyAnchors
 {
     public static readonly Assembly Application = typeof(Logistics.Application.Registrar).Assembly;
@@ -23,46 +21,30 @@ internal static class AssemblyAnchors
     public static readonly Assembly Domain = typeof(Logistics.Domain.Entities.Tenant).Assembly;
     public static readonly Assembly Mediator = typeof(global::Logistics.Mediator.IMediator).Assembly;
 
-    public static readonly Assembly InfrastructureAI = typeof(Logistics.Infrastructure.AI.Registrar).Assembly;
-    public static readonly Assembly InfrastructureAccounting = typeof(Logistics.Infrastructure.Integrations.Accounting.Registrar).Assembly;
-    public static readonly Assembly InfrastructureIntegrationsCommon = typeof(Logistics.Infrastructure.Integrations.Common.HttpClientJsonExtensions).Assembly;
-    public static readonly Assembly InfrastructureCommunications = typeof(Logistics.Infrastructure.Communications.Registrar).Assembly;
-    public static readonly Assembly InfrastructureDocuments = typeof(Logistics.Infrastructure.Documents.Registrar).Assembly;
-    public static readonly Assembly InfrastructureEld = typeof(Logistics.Infrastructure.Integrations.Eld.Registrar).Assembly;
-    public static readonly Assembly InfrastructureFuelCards = typeof(Logistics.Infrastructure.Integrations.FuelCards.Registrar).Assembly;
-    public static readonly Assembly InfrastructureLicensing = typeof(Logistics.Infrastructure.Licensing.Registrar).Assembly;
-    public static readonly Assembly InfrastructureLoadBoard = typeof(Logistics.Infrastructure.Integrations.LoadBoard.Registrar).Assembly;
-    public static readonly Assembly InfrastructurePayments = typeof(Logistics.Infrastructure.Payments.Registrar).Assembly;
-    public static readonly Assembly InfrastructurePersistence = typeof(Logistics.Infrastructure.Persistence.Registrar).Assembly;
-    public static readonly Assembly InfrastructureRouting = typeof(Logistics.Infrastructure.Routing.Registrar).Assembly;
-    public static readonly Assembly InfrastructureStorage = typeof(Logistics.Infrastructure.Storage.Registrar).Assembly;
-    public static readonly Assembly InfrastructureTax = typeof(Logistics.Infrastructure.Tax.Registrar).Assembly;
-    public static readonly Assembly InfrastructureVin = typeof(Logistics.Infrastructure.Vin.Registrar).Assembly;
-
     public static readonly Assembly[] AllInfrastructure =
     [
-        InfrastructureAI,
-        InfrastructureAccounting,
-        InfrastructureIntegrationsCommon,
-        InfrastructureCommunications,
-        InfrastructureDocuments,
-        InfrastructureEld,
-        InfrastructureFuelCards,
-        InfrastructureLicensing,
-        InfrastructureLoadBoard,
-        InfrastructurePayments,
-        InfrastructurePersistence,
-        InfrastructureRouting,
-        InfrastructureStorage,
-        InfrastructureTax,
-        InfrastructureVin,
+        typeof(Logistics.Infrastructure.AI.Registrar).Assembly,
+        typeof(Logistics.Infrastructure.Integrations.Accounting.Registrar).Assembly,
+        typeof(Logistics.Infrastructure.Integrations.Common.HttpClientJsonExtensions).Assembly,
+        typeof(Logistics.Infrastructure.Communications.Registrar).Assembly,
+        typeof(Logistics.Infrastructure.Documents.Registrar).Assembly,
+        typeof(Logistics.Infrastructure.Integrations.Eld.Registrar).Assembly,
+        typeof(Logistics.Infrastructure.Integrations.FuelCards.Registrar).Assembly,
+        typeof(Logistics.Infrastructure.Licensing.Registrar).Assembly,
+        typeof(Logistics.Infrastructure.Integrations.LoadBoard.Registrar).Assembly,
+        typeof(Logistics.Infrastructure.Payments.Registrar).Assembly,
+        typeof(Logistics.Infrastructure.Persistence.Registrar).Assembly,
+        typeof(Logistics.Infrastructure.Routing.Registrar).Assembly,
+        typeof(Logistics.Infrastructure.Storage.Registrar).Assembly,
+        typeof(Logistics.Infrastructure.Tax.Registrar).Assembly,
+        typeof(Logistics.Infrastructure.Vin.Registrar).Assembly,
     ];
 
-    /// <summary>
-    /// Infrastructure assemblies exempt from the "must not depend on Application" boundary rule.
-    /// Logistics.Infrastructure.AI stays here until slice 1.9-AI decouples it. See REFACTOR-INDEX.md.
-    /// </summary>
+    /// <summary>Exempt from "must not depend on Application" until Infrastructure.AI is decoupled.</summary>
     public static readonly string[] BoundaryExempt = ["Logistics.Infrastructure.AI"];
+
+    public static IObjectProvider<IType> InfrastructureTypes =>
+        Types().That().ResideInAssembly(AllInfrastructure[0], AllInfrastructure[1..]);
 
     public static Assembly ByName(string name) =>
         AllInfrastructure.FirstOrDefault(a => a.GetName().Name == name)

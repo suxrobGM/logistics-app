@@ -6,9 +6,8 @@ using Xunit;
 namespace Logistics.Application.Tests.Operations;
 
 /// <summary>
-/// Both keys carry a case-sensitive unique index, so "mscu1234567" and "MSCU1234567" used to be two
-/// rows and lookups picked one arbitrarily. Canonicalising in the setter is what closes it, so no
-/// writer - handler, seeder or importer - can bypass it.
+/// Both keys carry a case-sensitive unique index, so the setter canonicalises them: no writer can
+/// store a second casing of the same key.
 /// </summary>
 public class NaturalKeyNormalizationTests
 {

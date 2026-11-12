@@ -20,7 +20,7 @@ public class ControllerAuthorizationTests
     {
         return controller
             .GetMethods(BindingFlags.Public | BindingFlags.Instance | BindingFlags.DeclaredOnly)
-            .Where(m => !m.IsSpecialAccessor() && m.GetCustomAttributes<HttpMethodAttribute>().Any());
+            .Where(m => !m.IsSpecialName && m.GetCustomAttributes<HttpMethodAttribute>().Any());
     }
 
     private static string[] RolesOn(Type controller, string action)
@@ -31,10 +31,7 @@ public class ControllerAuthorizationTests
         return attribute?.Roles?.Split(',', StringSplitOptions.TrimEntries) ?? [];
     }
 
-    /// <summary>
-    /// Actions that carry no permission of their own. The global AuthorizeFilter still requires an
-    /// authenticated caller, so these are not anonymous. The list must shrink, never grow.
-    /// </summary>
+    /// <summary>Still authenticated by the global AuthorizeFilter. The list must shrink, never grow.</summary>
     private static readonly string[] AuthenticatedOnlyActions = ["RoleController.GetPermissions"];
 
     [Fact]
@@ -109,10 +106,7 @@ public class ControllerAuthorizationTests
         }
     }
 
-    /// <summary>
-    /// Every role holds User.View, so gating the update on it let any driver or customer rename
-    /// any user. Editing someone else needs User.Manage; your own profile goes through /users/me.
-    /// </summary>
+    /// <summary>Every role holds User.View; your own profile goes through /users/me.</summary>
     [Fact]
     public void Updating_another_user_requires_user_manage()
     {
@@ -123,10 +117,7 @@ public class ControllerAuthorizationTests
         Assert.Equal(Permission.User.Manage, policy);
     }
 
-    /// <summary>
-    /// Every role holds User.View, so gating the read on it let any user read any user's profile
-    /// across tenants. Reading someone else needs User.Manage; your own profile comes from /users/me.
-    /// </summary>
+    /// <summary>Every role holds User.View; your own profile comes from /users/me.</summary>
     [Fact]
     public void Reading_another_user_requires_user_manage()
     {
@@ -145,13 +136,5 @@ public class ControllerAuthorizationTests
             ?.GetCustomAttribute<AuthorizeAttribute>()?.Policy;
 
         Assert.Equal(Permission.Dispatch.View, policy);
-    }
-}
-
-file static class MethodInfoExtensions
-{
-    public static bool IsSpecialAccessor(this MethodInfo method)
-    {
-        return method.IsSpecialName || method.DeclaringType == typeof(object);
     }
 }

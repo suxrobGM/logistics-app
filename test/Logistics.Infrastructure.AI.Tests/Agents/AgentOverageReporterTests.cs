@@ -41,7 +41,6 @@ public class AgentOverageReporterTests
     [InlineData(AgentSessionType.Copilot)]
     public async Task ReportIfOverBudget_CompletedOverBudgetSession_ReportsRawCost(AgentSessionType type)
     {
-        // Both surfaces bill - the copilot used to be blocked at the boundary instead.
         var session = Session(type, isOverage: true);
         session.Complete();
 

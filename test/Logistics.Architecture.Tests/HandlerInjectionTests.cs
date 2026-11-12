@@ -6,7 +6,7 @@ namespace Logistics.Architecture.Tests;
 
 public class HandlerInjectionTests
 {
-    private const string forbiddenType = "Microsoft.AspNetCore.Http.IHttpContextAccessor";
+    private const string ForbiddenType = "Microsoft.AspNetCore.Http.IHttpContextAccessor";
 
     [Fact]
     public void No_handler_injects_IHttpContextAccessor()
@@ -14,9 +14,9 @@ public class HandlerInjectionTests
         Classes().That().ResideInAssembly(AssemblyAnchors.Application)
             .And().HaveNameEndingWith("Handler")
             .Should().FollowCustomCondition(
-                cls => cls.Dependencies.All(d => d.Target.FullName != forbiddenType),
-                $"not inject {forbiddenType}",
-                $"injects {forbiddenType}")
+                cls => cls.Dependencies.All(d => d.Target.FullName != ForbiddenType),
+                $"not inject {ForbiddenType}",
+                $"injects {ForbiddenType}")
             .Check(AssemblyAnchors.Architecture);
     }
 }
