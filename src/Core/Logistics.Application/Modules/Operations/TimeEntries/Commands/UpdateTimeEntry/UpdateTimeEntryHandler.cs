@@ -11,7 +11,7 @@ internal sealed class UpdateTimeEntryHandler(ITenantUnitOfWork tenantUow)
 {
     public async Task<Result> Handle(UpdateTimeEntryCommand req, CancellationToken ct)
     {
-        var timeEntry = await tenantUow.Repository<TimeEntry>().GetByIdAsync(req.Id);
+        var timeEntry = await tenantUow.Repository<TimeEntry>().GetByIdAsync(req.Id, ct);
         if (timeEntry is null)
         {
             return Result.Fail("Time entry not found");

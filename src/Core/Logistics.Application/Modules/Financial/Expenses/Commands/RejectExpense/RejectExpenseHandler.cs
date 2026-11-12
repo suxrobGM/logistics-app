@@ -12,7 +12,7 @@ internal sealed class RejectExpenseHandler(ITenantUnitOfWork tenantUow)
 {
     public async Task<Result> Handle(RejectExpenseCommand req, CancellationToken ct)
     {
-        var expense = await tenantUow.Repository<Expense>().GetByIdAsync(req.Id);
+        var expense = await tenantUow.Repository<Expense>().GetByIdAsync(req.Id, ct);
 
         if (expense is null)
         {
@@ -26,7 +26,7 @@ internal sealed class RejectExpenseHandler(ITenantUnitOfWork tenantUow)
 
         expense.Reject(req.ApproverId, req.Reason);
 
-        await tenantUow.SaveChangesAsync();
+        await tenantUow.SaveChangesAsync(ct);
 
         return Result.Ok();
     }

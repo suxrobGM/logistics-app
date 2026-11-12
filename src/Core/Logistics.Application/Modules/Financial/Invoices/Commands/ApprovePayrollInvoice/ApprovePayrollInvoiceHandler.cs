@@ -15,7 +15,7 @@ internal sealed class ApprovePayrollInvoiceHandler(
 {
     public async Task<Result> Handle(ApprovePayrollInvoiceCommand req, CancellationToken ct)
     {
-        var payroll = await tenantUow.Repository<PayrollInvoice>().GetByIdAsync(req.Id);
+        var payroll = await tenantUow.Repository<PayrollInvoice>().GetByIdAsync(req.Id, ct);
 
         if (payroll is null)
         {
@@ -34,7 +34,7 @@ internal sealed class ApprovePayrollInvoiceHandler(
         }
 
         payroll.Approve(currentUserId.Value, req.Notes);
-        await tenantUow.SaveChangesAsync();
+        await tenantUow.SaveChangesAsync(ct);
 
         return Result.Ok();
     }

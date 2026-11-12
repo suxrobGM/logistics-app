@@ -11,7 +11,7 @@ internal sealed class DeleteLoadHandler(ITenantUnitOfWork tenantUow)
 {
     public async Task<Result> Handle(DeleteLoadCommand req, CancellationToken ct)
     {
-        var load = await tenantUow.Repository<Load>().GetByIdAsync(req.Id);
+        var load = await tenantUow.Repository<Load>().GetByIdAsync(req.Id, ct);
 
         if (load is null)
         {

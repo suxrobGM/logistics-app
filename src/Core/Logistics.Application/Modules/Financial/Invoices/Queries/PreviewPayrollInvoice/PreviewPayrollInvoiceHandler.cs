@@ -15,7 +15,7 @@ internal sealed class PreviewPayrollInvoiceHandler(
     public async Task<Result<InvoiceDto>> Handle(
         PreviewPayrollInvoiceQuery req, CancellationToken ct)
     {
-        var employee = await tenantUow.Repository<Employee>().GetByIdAsync(req.EmployeeId);
+        var employee = await tenantUow.Repository<Employee>().GetByIdAsync(req.EmployeeId, ct);
 
         if (employee is null)
         {

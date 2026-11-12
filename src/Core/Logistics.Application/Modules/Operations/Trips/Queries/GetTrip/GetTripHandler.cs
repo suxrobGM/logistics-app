@@ -12,7 +12,7 @@ internal sealed class GetTripHandler(ITenantUnitOfWork tenantUow) : IRequestHand
     public async Task<Result<TripDto>> Handle(
         GetTripQuery req, CancellationToken ct)
     {
-        var trip = await tenantUow.Repository<Trip>().GetByIdAsync(req.TripId);
+        var trip = await tenantUow.Repository<Trip>().GetByIdAsync(req.TripId, ct);
 
         if (trip is null)
         {

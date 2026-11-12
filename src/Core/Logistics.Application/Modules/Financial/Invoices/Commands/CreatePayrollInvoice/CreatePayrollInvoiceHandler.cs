@@ -14,7 +14,7 @@ internal sealed class CreatePayrollInvoiceHandler(
     public async Task<Result> Handle(
         CreatePayrollInvoiceCommand req, CancellationToken ct)
     {
-        var employee = await tenantUow.Repository<Employee>().GetByIdAsync(req.EmployeeId);
+        var employee = await tenantUow.Repository<Employee>().GetByIdAsync(req.EmployeeId, ct);
 
         if (employee is null)
         {
@@ -37,11 +37,11 @@ internal sealed class CreatePayrollInvoiceHandler(
 
         var payroll = await payrollService.CreatePayrollInvoiceAsync(employee, req.PeriodStart, req.PeriodEnd, ct);
         await tenantUow.Repository<PayrollInvoice>().AddAsync(payroll);
-        await tenantUow.SaveChangesAsync();
+        await tenantUow.SaveChangesAsync(ct);
 
         // Link time entries to the payroll (for hourly employees)
         await payrollService.LinkTimeEntriesToPayrollAsync(payroll, ct);
-        await tenantUow.SaveChangesAsync();
+        await tenantUow.SaveChangesAsync(ct);
 
         return Result.Ok();
     }

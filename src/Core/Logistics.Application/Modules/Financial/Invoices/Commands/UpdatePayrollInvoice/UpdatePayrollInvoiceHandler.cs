@@ -15,7 +15,7 @@ internal sealed class UpdatePayrollInvoiceHandler(
     public async Task<Result> Handle(
         UpdatePayrollInvoiceCommand req, CancellationToken ct)
     {
-        var payroll = await tenantUow.Repository<PayrollInvoice>().GetByIdAsync(req.Id);
+        var payroll = await tenantUow.Repository<PayrollInvoice>().GetByIdAsync(req.Id, ct);
 
         if (payroll is null)
         {
@@ -32,7 +32,7 @@ internal sealed class UpdatePayrollInvoiceHandler(
 
         if (req.EmployeeId.HasValue && req.EmployeeId != payroll.EmployeeId)
         {
-            var employee = await tenantUow.Repository<Employee>().GetByIdAsync(req.EmployeeId.Value);
+            var employee = await tenantUow.Repository<Employee>().GetByIdAsync(req.EmployeeId.Value, ct);
 
             if (employee is null)
             {
@@ -62,7 +62,7 @@ internal sealed class UpdatePayrollInvoiceHandler(
             await payrollService.RecalculatePayrollAsync(payroll, ct);
         }
 
-        await tenantUow.SaveChangesAsync();
+        await tenantUow.SaveChangesAsync(ct);
         return Result.Ok();
     }
 }

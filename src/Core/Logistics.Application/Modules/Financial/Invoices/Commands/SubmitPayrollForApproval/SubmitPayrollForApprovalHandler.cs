@@ -12,7 +12,7 @@ internal sealed class SubmitPayrollForApprovalHandler(ITenantUnitOfWork tenantUo
 {
     public async Task<Result> Handle(SubmitPayrollForApprovalCommand req, CancellationToken ct)
     {
-        var payroll = await tenantUow.Repository<PayrollInvoice>().GetByIdAsync(req.Id);
+        var payroll = await tenantUow.Repository<PayrollInvoice>().GetByIdAsync(req.Id, ct);
 
         if (payroll is null)
         {
@@ -25,7 +25,7 @@ internal sealed class SubmitPayrollForApprovalHandler(ITenantUnitOfWork tenantUo
         }
 
         payroll.SubmitForApproval();
-        await tenantUow.SaveChangesAsync();
+        await tenantUow.SaveChangesAsync(ct);
 
         return Result.Ok();
     }

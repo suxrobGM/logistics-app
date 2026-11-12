@@ -11,7 +11,7 @@ internal sealed class CreateTimeEntryHandler(ITenantUnitOfWork tenantUow)
 {
     public async Task<Result<Guid>> Handle(CreateTimeEntryCommand req, CancellationToken ct)
     {
-        var employee = await tenantUow.Repository<Employee>().GetByIdAsync(req.EmployeeId);
+        var employee = await tenantUow.Repository<Employee>().GetByIdAsync(req.EmployeeId, ct);
         if (employee is null)
         {
             return Result<Guid>.Fail("Employee not found");

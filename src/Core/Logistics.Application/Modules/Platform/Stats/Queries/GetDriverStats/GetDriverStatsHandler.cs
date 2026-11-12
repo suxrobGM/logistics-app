@@ -16,7 +16,7 @@ internal sealed class GetDriverStatsHandler(ITenantUnitOfWork tenantUow)
         GetDriverStatsQuery req, CancellationToken ct)
     {
         var driverStats = new DriverStatsDto();
-        var driver = await tenantUow.Repository<Employee>().GetByIdAsync(req.UserId);
+        var driver = await tenantUow.Repository<Employee>().GetByIdAsync(req.UserId, ct);
 
         if (driver is null)
         {

@@ -11,7 +11,7 @@ internal sealed class UpdateInvoiceHandler(ITenantUnitOfWork tenantUow) : IReque
     public async Task<Result> Handle(
         UpdateInvoiceCommand req, CancellationToken ct)
     {
-        var invoice = await tenantUow.Repository<Invoice>().GetByIdAsync(req.Id);
+        var invoice = await tenantUow.Repository<Invoice>().GetByIdAsync(req.Id, ct);
 
         if (invoice is null)
         {
@@ -23,7 +23,7 @@ internal sealed class UpdateInvoiceHandler(ITenantUnitOfWork tenantUow) : IReque
             invoice.Status = req.InvoiceStatus.Value;
         }
 
-        await tenantUow.SaveChangesAsync();
+        await tenantUow.SaveChangesAsync(ct);
         return Result.Ok();
     }
 }

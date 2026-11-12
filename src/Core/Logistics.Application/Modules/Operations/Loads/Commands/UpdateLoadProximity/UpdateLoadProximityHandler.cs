@@ -11,7 +11,7 @@ internal sealed class UpdateLoadProximityHandler(ITenantUnitOfWork tenantUow)
 {
     public async Task<Result> Handle(UpdateLoadProximityCommand req, CancellationToken ct)
     {
-        var load = await tenantUow.Repository<Load>().GetByIdAsync(req.LoadId);
+        var load = await tenantUow.Repository<Load>().GetByIdAsync(req.LoadId, ct);
 
         if (load is null)
         {

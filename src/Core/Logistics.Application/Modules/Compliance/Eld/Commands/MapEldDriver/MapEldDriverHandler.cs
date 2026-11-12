@@ -16,7 +16,7 @@ internal sealed class MapEldDriverHandler(
     public async Task<Result> Handle(MapEldDriverCommand req, CancellationToken ct)
     {
         // Verify employee exists
-        var employee = await tenantUow.Repository<Employee>().GetByIdAsync(req.EmployeeId);
+        var employee = await tenantUow.Repository<Employee>().GetByIdAsync(req.EmployeeId, ct);
         if (employee is null)
         {
             return Result.Fail($"Employee with ID {req.EmployeeId} not found");
@@ -66,7 +66,7 @@ internal sealed class MapEldDriverHandler(
         };
 
         await tenantUow.Repository<EldDriverMapping>().AddAsync(mapping);
-        await tenantUow.SaveChangesAsync();
+        await tenantUow.SaveChangesAsync(ct);
 
         logger.LogInformation("Mapped employee {EmployeeId} to ELD driver {ExternalDriverId} for {ProviderType}",
             req.EmployeeId, req.ExternalDriverId, req.ProviderType);

@@ -14,14 +14,14 @@ internal sealed class DeleteEmployeeHandler(
         DeleteEmployeeCommand req, CancellationToken ct)
     {
         var tenant = tenantUow.GetCurrentTenant();
-        var employee = await tenantUow.Repository<Employee>().GetByIdAsync(req.UserId);
+        var employee = await tenantUow.Repository<Employee>().GetByIdAsync(req.UserId, ct);
 
         if (employee is null)
         {
             return Result.Fail($"Could not find employee with ID {req.UserId}");
         }
 
-        var user = await masterUow.Repository<User>().GetByIdAsync(employee.Id);
+        var user = await masterUow.Repository<User>().GetByIdAsync(employee.Id, ct);
 
         // Remove tenant from user if it matches the current tenant
         if (user?.Tenant != null && user.Tenant.Id == tenant.Id)
@@ -42,8 +42,8 @@ internal sealed class DeleteEmployeeHandler(
         }
 
         tenantUow.Repository<Employee>().Delete(employee);
-        await tenantUow.SaveChangesAsync();
-        await masterUow.SaveChangesAsync();
+        await tenantUow.SaveChangesAsync(ct);
+        await masterUow.SaveChangesAsync(ct);
         return Result.Ok();
     }
 }

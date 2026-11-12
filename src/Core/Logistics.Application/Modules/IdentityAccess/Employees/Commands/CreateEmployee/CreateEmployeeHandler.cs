@@ -16,14 +16,14 @@ internal sealed class CreateEmployeeHandler(
     public async Task<Result> Handle(
         CreateEmployeeCommand req, CancellationToken ct)
     {
-        var existingEmployee = await tenantUow.Repository<Employee>().GetByIdAsync(req.UserId);
+        var existingEmployee = await tenantUow.Repository<Employee>().GetByIdAsync(req.UserId, ct);
 
         if (existingEmployee is not null)
         {
             return Result.Fail("Employee already exists");
         }
 
-        var user = await masterUow.Repository<User>().GetByIdAsync(req.UserId);
+        var user = await masterUow.Repository<User>().GetByIdAsync(req.UserId, ct);
 
         if (user is null)
         {
@@ -43,8 +43,8 @@ internal sealed class CreateEmployeeHandler(
 
         await tenantUow.Repository<Employee>().AddAsync(employee);
 
-        await masterUow.SaveChangesAsync();
-        await tenantUow.SaveChangesAsync();
+        await masterUow.SaveChangesAsync(ct);
+        await tenantUow.SaveChangesAsync(ct);
 
         await notificationService.SendNotificationAsync("New Employee",
             $"A new employee '{employee.GetFullName()}' has joined. Role is '{tenantRole?.DisplayName}'");

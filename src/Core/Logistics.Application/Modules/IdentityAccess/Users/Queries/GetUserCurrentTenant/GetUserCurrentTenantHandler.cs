@@ -14,7 +14,7 @@ internal sealed class GetUserCurrentTenantHandler(IMasterUnitOfWork masterUow) :
         GetUserCurrentTenantQuery req,
         CancellationToken ct)
     {
-        var user = await masterUow.Repository<User>().GetByIdAsync(req.UserId);
+        var user = await masterUow.Repository<User>().GetByIdAsync(req.UserId, ct);
 
         if (user is null)
         {

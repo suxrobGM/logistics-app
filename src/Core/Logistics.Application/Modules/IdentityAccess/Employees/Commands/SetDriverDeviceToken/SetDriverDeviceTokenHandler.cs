@@ -12,7 +12,7 @@ internal sealed class SetDriverDeviceTokenHandler(ITenantUnitOfWork tenantUow)
     public async Task<Result> Handle(
         SetDriverDeviceTokenCommand req, CancellationToken ct)
     {
-        var driver = await tenantUow.Repository<Employee>().GetByIdAsync(req.UserId);
+        var driver = await tenantUow.Repository<Employee>().GetByIdAsync(req.UserId, ct);
 
         if (driver is null)
         {
@@ -25,7 +25,7 @@ internal sealed class SetDriverDeviceTokenHandler(ITenantUnitOfWork tenantUow)
         }
 
         driver.DeviceToken = req.DeviceToken;
-        await tenantUow.SaveChangesAsync();
+        await tenantUow.SaveChangesAsync(ct);
         return Result.Ok();
     }
 }

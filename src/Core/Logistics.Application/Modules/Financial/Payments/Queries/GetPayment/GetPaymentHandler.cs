@@ -12,7 +12,7 @@ internal sealed class GetPaymentHandler(ITenantUnitOfWork tenantUow) : IRequestH
     public async Task<Result<PaymentDto>> Handle(
         GetPaymentQuery req, CancellationToken ct)
     {
-        var paymentEntity = await tenantUow.Repository<Payment>().GetByIdAsync(req.Id);
+        var paymentEntity = await tenantUow.Repository<Payment>().GetByIdAsync(req.Id, ct);
 
         if (paymentEntity is null)
         {

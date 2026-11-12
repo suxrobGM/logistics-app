@@ -24,7 +24,7 @@ internal sealed class CreatePaymentHandler(ITenantUnitOfWork tenantUow)
         };
 
         await tenantUow.Repository<Payment>().AddAsync(payment);
-        await tenantUow.SaveChangesAsync();
+        await tenantUow.SaveChangesAsync(ct);
         return Result.Ok();
     }
 }
