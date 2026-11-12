@@ -141,5 +141,5 @@ pick it on each factored customer.
 
 An invoice's factoring status is not factored, submitted, funded, rejected or charged back, and the
 invoice list filters on it. A schedule's status (submitted, partially funded, funded, rejected) is
-derived from its invoices. See [factoring-integration](roadmap/factoring-integration.md) for what
-is not built.
+derived from its invoices. Submission is by email only: there are no direct factor API connections
+or funded-status webhooks yet, so funding is recorded by hand.

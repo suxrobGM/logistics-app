@@ -15,7 +15,7 @@ US competitors head-on.
 
 ## What to build (remaining gaps)
 
-- **EUR pricing**: `Money` VO already carries currency - seed EUR plan prices (`SubscriptionPlanSeeder`), create Stripe Price objects per currency, currency-aware pricing page ([pricing-launch-polish](pricing-launch-polish.md)).
+- **EUR pricing**: `Money` VO already carries currency - seed EUR plan prices (`SubscriptionPlanSeeder`), create Stripe Price objects per currency, currency-aware pricing page (`website` pricing section).
 - **i18n**: portal translations (DE/NL/PL first - largest road-freight markets). Audit Angular i18n readiness; driver app strings in KMP.
 - **EU ELD/tacho providers**: Samsara/Geotab operate in the EU, but digital tachograph data (driver-card downloads) is the EU norm - evaluate a tachograph-data provider integration in `Infrastructure.Integrations.Eld`.
 - **WhatsApp driver/customer comms**: the standard channel outside the US; Telegram bot already exists (`Logistics.TelegramBot`) - add WhatsApp Business API alongside.

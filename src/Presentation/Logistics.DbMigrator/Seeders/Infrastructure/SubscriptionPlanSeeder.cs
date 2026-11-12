@@ -94,7 +94,7 @@ internal class SubscriptionPlanSeeder(ILogger<SubscriptionPlanSeeder> logger) : 
                 PerTruckPrice = 6m,
                 MaxTrucks = (int?)null,
                 Tier = PlanTier.Enterprise,
-                // Soft cap - sessions beyond it are overage-metered (docs/roadmap/ai-cost-guardrails.md).
+                // Soft cap - sessions beyond it are overage-metered (docs/ai-dispatch.md).
                 // Shared with AIWeeklyBudget, the fallback for tenants with no budget of their own.
                 WeeklyAIBudgetUsd = AIWeeklyBudget.DefaultUsd,
                 Features = EnterpriseFeatures

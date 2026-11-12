@@ -172,7 +172,7 @@ backup.
       trailer and data import permissions are missing and those pages return 403.
 - [ ] **QuickBooks.** Production Intuit app keys and redirect URI, per
       [QuickBooks setup](../accounting-quickbooks-setup.md), and one end-to-end run against a sandbox
-      company (still open per [the roadmap](../roadmap/quickbooks-sync.md)).
+      company (still open, see [roadmap follow-ups](../roadmap/README.md#open-follow-ups-from-shipped-work)).
 - [ ] **Samsara.** Production API token and webhook secret for each pilot tenant, per
       [Samsara setup](../eld-samsara-setup.md).
 - [ ] **DAT.** Production DAT credentials, per [DAT setup](../loadboard-dat-setup.md), and the

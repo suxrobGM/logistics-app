@@ -1,67 +1,42 @@
 ﻿# Product Roadmap
 
-Feature backlog from the July 2026 competitive review (vs. Alvys, DataTruck, Truckbase, Toro, Rose Rocket).
-One file per feature. When you start/finish/drop a feature, update its **Status** line and add dated notes
-in its **Notes** section. Keep this index's Status column in sync.
+Features that are planned but not built. One file per feature. When you start, finish or drop one,
+update its **Status** line, add a dated note in its **Notes** section, and keep this table in sync.
+When a feature ships, document it in the feature docs (`docs/*.md`) and [the feature map](../../.claude/feature-map.md),
+then delete its file here and move any leftovers to _Open follow-ups_ below.
 
-**Statuses**: `Planned` · `In Progress` · `Done` · `Dropped`
+**Statuses**: `Planned` · `In Progress` · `Blocked`
 **Priority**: P0 = loses deals today · P1 = differentiator, build soon · P2 = strategic bet
 **Effort**: S (< 1 wk) · M (1–3 wk) · L (1–2 mo) · XL (2+ mo)
 
-## Phase 1 - Table stakes (US small-carrier deal-breakers)
-
 | Feature | Priority | Effort | Status |
 | --- | --- | --- | --- |
-| [QuickBooks sync](quickbooks-sync.md) | P0 | M | Done (sandbox run pending) |
-| [IFTA fuel tax reporting](ifta-reporting.md) | P0 | M | Done |
-| [Fuel card integrations](fuel-card-integrations.md) | P0 | M | Done |
-| [Factoring integration](factoring-integration.md) | P0 | M | Done (email v1) |
-| [Broker credit check](broker-credit-check.md) | P0 | S | Done |
-| [EDI integration](edi-integration.md) | P2 | XL | Planned |
-
-## Phase 2 - AI differentiation (extend the existing agent platform)
-
-| Feature | Priority | Effort | Status |
-| --- | --- | --- | --- |
-| [AI preference learning](ai-preference-learning.md) | P1 | M | Done |
-| [AI exception sentinel](ai-exception-sentinel.md) | P1 | L | Planned |
-| [Graduated autonomy](ai-graduated-autonomy.md) | P1 | M | Planned |
-| [AI eval harness](ai-eval-harness.md) | P1 | M | Planned |
-| [Container & terminal AI tools](ai-container-tools.md) | P1 | S | Done |
-| [TMS-wide AI copilot](ai-tms-copilot.md) | P1 | L | Done |
-| [AI rate negotiation](ai-rate-negotiation.md) | P2 | L | Done |
-| [Voice driver assistant](ai-voice-driver-assistant.md) | P2 | XL | Planned |
-| [MCP client (outbound)](mcp-client-integrations.md) | P2 | L | Planned |
-
-## Phase 3 - Wedge products (attack competitor economics)
-
-| Feature | Priority | Effort | Status |
-| --- | --- | --- | --- |
-| [Same-day carrier pay](same-day-pay.md) | P1 | L | Planned |
-| [AI customer update agent](customer-update-agent.md) | P1 | M | Planned |
-| [Predictive maintenance](predictive-maintenance.md) | P2 | L | Planned |
-
-## Phase 4 - Market expansion
-
-| Feature | Priority | Effort | Status |
-| --- | --- | --- | --- |
-| [EU market readiness](eu-market-readiness.md) | P1 | M | Planned |
 | [Drayage / intermodal vertical](drayage-vertical.md) | P1 | L | In Progress |
-| [Owner-operator (solo) mode](owner-operator-mode.md) | P1 | M | Done |
-| [Car hauler load boards](car-hauler-load-boards.md) | P1 | M | Planned (blocked on vendor access) |
+| [Car hauler load boards](car-hauler-load-boards.md) | P1 | M | Blocked (vendor access) |
+| [EU market readiness](eu-market-readiness.md) | P1 | M | Planned |
+| [Same-day carrier pay](same-day-pay.md) | P1 | L | Planned |
+| [AI eval harness](ai-eval-harness.md) | P1 | M | Planned |
+| [Predictive maintenance](predictive-maintenance.md) | P2 | L | Planned |
+| [MCP client (outbound)](mcp-client-integrations.md) | P2 | L | Planned |
+| [Voice driver assistant](ai-voice-driver-assistant.md) | P2 | XL | Planned |
 
-## Launch hygiene
+## Open follow-ups from shipped work
 
-| Feature | Priority | Effort | Status |
-| --- | --- | --- | --- |
-| [AI cost guardrails](ai-cost-guardrails.md) | P0 | S | Done |
-| [Pricing page polish](pricing-launch-polish.md) | P1 | S | Done |
-
-## Competitive cheat sheet
-
-- **Alvys** (~$150+/mo load-based): 120+ integrations, native EDI, carrier+broker hybrid. Weakness: analytics reliability, support complaints.
-- **DataTruck** ($99–499/mo by truck count): AI Dispatcher +$399/mo, AI Updater +$99/mo, TruckGPT load entry, broker credit vetting. Weakness: AI is expensive add-ons; narrower core than ours.
-- **Truckbase** (~$290/mo): simple, <50 trucks, outgrown quickly.
-- **Toro TMS**: 50–300 trucks, QuickBooks push, no real AI.
-- **Rose Rocket**: hybrid carrier/broker, strong customer portal.
-- **Our uncontested ground**: MCP server, EU compliance stack (EU 561/2006, VAT, ADR, GDPR, SEPA/iDEAL), intermodal entities, native Stripe Connect payments, AI included in base plans.
+- **QuickBooks Online**:
+  - An end-to-end run against a sandbox company before the first pilot.
+  - Not supported yet: QuickBooks Desktop, or QBO sales tax codes (tax is sent as a TotalTax override).
+  - Paid driver-pay bills aren't marked paid (no BillPayment), and nothing flows back from QBO.
+  - Token refresh is serialized per API instance only.
+- **Fuel cards**: the WEX and EFS API contracts are best effort until a partner sandbox confirms them. Comdata is deferred.
+- **Factoring**:
+  - Advance and reserve bank transfers aren't pushed to QuickBooks.
+  - There's no per-invoice factoring timeline (status badge only).
+- **Owner-operators**:
+  - There's no owner pay (draw) path.
+  - The driver app has no earnings or settlement screen and no cash advance request.
+  - Signup isn't self-serve: `POST /tenants` needs an admin, so `/owner-operators` routes to Request a Demo.
+- **AI copilot**: the live acceptance run ("invoice load X and send a payment link") against a configured LLM key.
+- **Pricing**:
+  - Annual billing is deferred until real companies can test the discount.
+  - Plan data is still edited by hand in three places (`SubscriptionPlanSeeder`, the website `pricing.ts`, Stripe Prices).
+- **Terminals** have no coordinates, so `get_terminal_info` can't feed `calculate_distance` (see [drayage](drayage-vertical.md)).
