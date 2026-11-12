@@ -17,8 +17,7 @@ namespace Logistics.Infrastructure.AI.Agents;
 
 /// <summary>
 /// Processes LLM tool calls into AgentDecision entities.
-/// Write tools become Suggested decisions awaiting dispatcher approval, unless the tenant opted the
-/// decision type in to auto-approve and its clean streak is long enough; read tools execute
+/// Write tools become Suggested decisions awaiting dispatcher approval unless auto-approve applies; read tools execute
 /// immediately. Write/permission/decision-type behavior comes from the tool's
 /// <see cref="AgentToolDefinition"/> metadata - there is no tool-name list here.
 /// </summary>

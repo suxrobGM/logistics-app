@@ -8,10 +8,7 @@ using Logistics.Domain.Primitives.Enums;
 
 namespace Logistics.API.Jobs;
 
-/// <summary>
-/// Retries starting the dispatch agent on a trip alert whose conversation was mid-turn when the
-/// alert arrived. The alert is already in the transcript; this only asks for a turn.
-/// </summary>
+/// <summary>The alert is already in the transcript; this only asks for a turn.</summary>
 public class TripAlertWakeJob(
     IServiceScopeFactory scopeFactory,
     ILogger<TripAlertWakeJob> logger)

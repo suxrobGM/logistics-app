@@ -53,10 +53,7 @@ public class AIDispatchPolicy : AuditableEntity, ITenantEntity
     public const int DefaultAutoApproveStreak = 25;
     public const int DefaultMinutesSavedPerDecision = 5;
 
-    /// <summary>
-    /// The only decision types that may ever run without approval. Anything that spends money,
-    /// contacts someone outside the carrier, or notifies a driver is deliberately absent.
-    /// </summary>
+    /// <summary>Never add a type that spends money, contacts someone outside the carrier, or notifies a driver.</summary>
     public static readonly IReadOnlySet<AgentDecisionType> AutoApproveEligibleTypes = new HashSet<AgentDecisionType>
     {
         AgentDecisionType.AssignLoad,
@@ -64,27 +61,17 @@ public class AIDispatchPolicy : AuditableEntity, ITenantEntity
         AgentDecisionType.CreateInvoice
     };
 
-    /// <summary>
-    /// Decision types the tenant opted in to auto-approve once their clean streak is long enough.
-    /// </summary>
     public List<AgentDecisionType> AutoApproveTypes { get; private set; } = [];
 
-    /// <summary>
-    /// Consecutive approvals, without a rejection or revert, a type needs before it auto-executes.
-    /// </summary>
+    /// <summary>Approvals in a row, with no rejection or revert, before a type runs on its own.</summary>
     public int AutoApproveStreak { get; private set; } = DefaultAutoApproveStreak;
 
-    /// <summary>
-    /// Dispatcher minutes one auto-executed decision is counted as saving, for the AI dispatch stats.
-    /// </summary>
     public int MinutesSavedPerDecision { get; private set; } = DefaultMinutesSavedPerDecision;
 
     public bool IsAutoApproveOptedIn(AgentDecisionType type) =>
         AutoApproveEligibleTypes.Contains(type) && AutoApproveTypes.Contains(type);
 
-    /// <summary>
-    /// Saves the auto-approve opt-in. Types outside <see cref="AutoApproveEligibleTypes"/> are dropped.
-    /// </summary>
+    /// <summary>Drops types outside <see cref="AutoApproveEligibleTypes"/>.</summary>
     public void SetAutoApprove(
         IEnumerable<AgentDecisionType> types, int streak, int minutesSavedPerDecision, Guid? userId)
     {

@@ -2,9 +2,7 @@ using System.Globalization;
 
 namespace Logistics.Application.Modules.Operations.Loads.Services;
 
-/// <summary>
-/// Formats UTC shipment times in the carrier's time zone for customer emails.
-/// </summary>
+/// <summary>In the carrier's time zone.</summary>
 internal sealed class ShipmentTimeFormatter
 {
     private static readonly CultureInfo Culture = CultureInfo.GetCultureInfo("en-US");
@@ -25,9 +23,7 @@ internal sealed class ShipmentTimeFormatter
         return ToLocal(utc).ToString("MMMM d, yyyy", Culture);
     }
 
-    /// <summary>
-    /// "Nov 12, 8:00 AM - 2:00 PM", repeating the date only when the window spans days.
-    /// </summary>
+    /// <summary>"Nov 12, 8:00 AM - 2:00 PM", repeating the date only when the window spans days.</summary>
     public string? FormatWindow(DateTime? fromUtc, DateTime? toUtc)
     {
         if (fromUtc is not { } from)

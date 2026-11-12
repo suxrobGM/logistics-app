@@ -3,10 +3,7 @@ using System.Text.Json.Nodes;
 
 namespace Logistics.Infrastructure.AI.Agents;
 
-/// <summary>
-/// Reads the JSON a write tool returns: <c>ToolResult.WriteFailed</c> marks failure with
-/// <c>success: false</c>, and create tools name what they made (<c>trip_id</c>, <c>invoice_id</c>).
-/// </summary>
+/// <summary>Failed writes carry <c>success: false</c>; create tools name what they made (<c>trip_id</c>).</summary>
 internal static class ToolOutputReader
 {
     public static bool IsFailure(string output) =>

@@ -4,7 +4,6 @@ using Logistics.Shared.Models;
 
 namespace Logistics.Application.Modules.IdentityAccess.Customers.Commands;
 
-/// <summary>Chooses which shipment update emails a customer receives.</summary>
 [RequiresFeature(TenantFeature.CustomerUpdates)]
 public class SetCustomerUpdatePreferencesCommand : ICommand<Result>
 {

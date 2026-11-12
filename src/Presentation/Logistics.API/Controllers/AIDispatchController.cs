@@ -130,9 +130,7 @@ public class AIDispatchController(IMediator mediator) : ControllerBase
         return result.IsSuccess ? NoContent() : BadRequest(ErrorResponse.FromResult(result));
     }
 
-    /// <summary>
-    ///     Undoes a decision the agent executed on its own, within 15 minutes of it running.
-    /// </summary>
+    /// <summary>Allowed for 15 minutes after an auto-approved decision runs.</summary>
     [HttpPost("decisions/{decisionId:guid}/revert", Name = "RevertAIDispatchDecision")]
     [ProducesResponseType(StatusCodes.Status204NoContent)]
     [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status400BadRequest)]

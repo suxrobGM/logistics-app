@@ -31,14 +31,9 @@ public class TripStop : Entity, ITenantEntity
     /// </summary>
     public DateTime? DetentionAlertedAt { get; set; }
 
-    /// <summary>
-    ///     When the truck is expected here, refreshed from its live position. Null before the first position on an active trip.
-    /// </summary>
     public DateTime? EstimatedArrivalAt { get; set; }
 
-    /// <summary>
-    ///     When this stop was first reported as running late; at most one late notice per stop.
-    /// </summary>
+    /// <summary>Set once, so a stop gets at most one late notice.</summary>
     public DateTime? LateNotifiedAt { get; set; }
 
     public Guid LoadId { get; set; }
@@ -57,9 +52,6 @@ public class TripStop : Entity, ITenantEntity
         return Type is TripStopType.PickUp ? 1 : -1;
     }
 
-    /// <summary>
-    ///     The end of the load's appointment window for this stop: pickup for a pickup stop, delivery for a drop-off.
-    /// </summary>
     public DateTime? GetAppointmentEnd()
     {
         return Type is TripStopType.PickUp ? Load.PickupAppointmentTo : Load.DeliveryAppointmentTo;

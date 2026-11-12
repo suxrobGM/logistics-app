@@ -6,9 +6,6 @@ using Logistics.Mediator;
 
 namespace Logistics.Application.Modules.Operations.Trips.Events;
 
-/// <summary>
-/// Emails the customer when a stop on their load is expected after its appointment window.
-/// </summary>
 internal sealed class TripStopRunningLateCustomerUpdateHandler(
     ITenantUnitOfWork tenantUow,
     ICustomerUpdateService customerUpdates)

@@ -13,9 +13,7 @@ internal sealed class TrackingLinkService(
 {
     private const int ExpirationDays = 30;
 
-    /// <summary>
-    /// A link this close to expiry is replaced, so an emailed link stays usable for the rest of the shipment.
-    /// </summary>
+    /// <summary>Replaced this close to expiry, so an emailed link lasts the rest of the shipment.</summary>
     private static readonly TimeSpan MinRemainingLifetime = TimeSpan.FromDays(7);
 
     public async Task<TrackingLink> GetOrCreateAsync(Guid loadId, CancellationToken ct = default)

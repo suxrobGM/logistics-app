@@ -31,7 +31,6 @@ public class AgentDecisionDto
     public Guid? ApprovedByUserId { get; set; }
     public string? RejectionReason { get; set; }
 
-    /// <summary>True when the agent executed this on its own under the tenant auto-approve opt-in.</summary>
     public bool AutoApproved { get; set; }
 
     public DateTime? RevertedAt { get; set; }

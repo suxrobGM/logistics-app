@@ -3,7 +3,6 @@ using Logistics.Domain.Primitives.Enums;
 
 namespace Logistics.Application.Modules.Integrations.AIDispatch.Commands;
 
-/// <summary>Opts decision types in to auto-approve and sets how long a clean streak they need.</summary>
 [RequiresFeature(TenantFeature.AgenticDispatch)]
 public class UpdateAIDispatchAutonomyCommand : ICommand
 {

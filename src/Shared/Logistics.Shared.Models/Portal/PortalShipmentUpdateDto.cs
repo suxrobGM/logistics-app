@@ -2,7 +2,7 @@ using Logistics.Domain.Primitives.Enums;
 
 namespace Logistics.Shared.Models;
 
-/// <summary>A shipment update email as the customer sees it: what it said and when.</summary>
+/// <summary>Event and time only; the send outcome stays internal.</summary>
 public record PortalShipmentUpdateDto
 {
     public CustomerUpdateEvent Event { get; init; }

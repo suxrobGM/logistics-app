@@ -7,9 +7,6 @@ using Logistics.Mediator;
 
 namespace Logistics.Application.Modules.Operations.Loads.Events;
 
-/// <summary>
-/// Emails the customer when their load is dispatched, picked up or delivered.
-/// </summary>
 internal sealed class LoadStatusChangedCustomerUpdateHandler(
     ITenantUnitOfWork tenantUow,
     ICustomerUpdateService customerUpdates)

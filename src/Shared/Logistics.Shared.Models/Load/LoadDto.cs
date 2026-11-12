@@ -81,9 +81,7 @@ public class LoadDto
     /// </summary>
     public List<LoadVehicleDto> Vehicles { get; set; } = [];
 
-    /// <summary>
-    ///     Customer update emails for this load, oldest first.
-    /// </summary>
+    /// <summary>Oldest first.</summary>
     public List<CustomerUpdateDto> CustomerUpdates { get; set; } = [];
 
     /// <summary>

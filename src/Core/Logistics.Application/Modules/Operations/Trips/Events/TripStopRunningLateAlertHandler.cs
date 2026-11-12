@@ -4,9 +4,6 @@ using Logistics.Mediator;
 
 namespace Logistics.Application.Modules.Operations.Trips.Events;
 
-/// <summary>
-/// Hands a late stop to the dispatch agent as a trip alert, beside the customer email.
-/// </summary>
 internal sealed class TripStopRunningLateAlertHandler(ITripAlertReporter alertReporter)
     : INotificationHandler<TripStopRunningLateEvent>
 {

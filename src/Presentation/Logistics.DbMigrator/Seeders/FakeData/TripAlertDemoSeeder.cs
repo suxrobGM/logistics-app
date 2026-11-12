@@ -8,10 +8,8 @@ using Microsoft.EntityFrameworkCore;
 namespace Logistics.DbMigrator.Seeders.FakeData;
 
 /// <summary>
-/// Sets up the AI trip alert demo: one in-transit trip on the longest seeded lane whose driver has
-/// about half the driving hours it needs, and whose delivery window it will miss. The first truck
-/// position after seeding (driver app or ELD) refreshes the ETAs, and the shortfall and late alerts
-/// fire on their own.
+/// An in-transit trip whose driver is short on hours and which will miss its delivery window. The first truck
+/// position after seeding fires the shortfall and late alerts.
 /// </summary>
 internal class TripAlertDemoSeeder(ILogger<TripAlertDemoSeeder> logger) : SeederBase(logger)
 {

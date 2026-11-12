@@ -4,9 +4,7 @@ namespace Logistics.Domain.Entities;
 
 public partial class Load
 {
-    /// <summary>
-    /// Every customer update email for this load, oldest first.
-    /// </summary>
+    /// <summary>Oldest first.</summary>
     public List<CustomerUpdate> CustomerUpdates { get; private set; } = [];
 
     public bool WasCustomerUpdateSent(CustomerUpdateEvent updateEvent)

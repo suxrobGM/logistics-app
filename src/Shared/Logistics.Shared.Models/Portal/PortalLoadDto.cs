@@ -47,19 +47,14 @@ public class PortalLoadDto
     public DateTime? DeliveryAppointmentFrom { get; set; }
     public DateTime? DeliveryAppointmentTo { get; set; }
 
-    /// <summary>
-    /// When the truck is expected at this load's next stop, from its live position. Null before dispatch
-    /// or once delivered.
-    /// </summary>
+    /// <summary>At the load's next stop; null before dispatch or once delivered.</summary>
     public DateTime? EstimatedArrivalAt { get; set; }
 
-    /// <summary>True once the next stop's ETA has run past its appointment window.</summary>
     public bool IsRunningLate { get; set; }
 
-    /// <summary>The active public tracking link, when the carrier has shared one.</summary>
     public string? TrackingUrl { get; set; }
 
-    /// <summary>Shipment update emails sent to the customer, oldest first.</summary>
+    /// <summary>Sent emails only, oldest first.</summary>
     public List<PortalShipmentUpdateDto> Updates { get; set; } = [];
 
     // Document counts

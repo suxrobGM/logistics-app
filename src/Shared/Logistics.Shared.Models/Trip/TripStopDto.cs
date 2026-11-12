@@ -14,7 +14,6 @@ public record TripStopDto
     public DateTime? ArrivedAt { get; set; }
     public DateTime? DepartedAt { get; set; }
 
-    /// <summary>When the truck is expected here, from its live position. Null before the first ping.</summary>
     public DateTime? EstimatedArrivalAt { get; set; }
 
     public Guid LoadId { get; set; }

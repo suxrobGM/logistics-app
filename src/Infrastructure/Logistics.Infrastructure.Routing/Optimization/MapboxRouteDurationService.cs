@@ -6,18 +6,13 @@ using Microsoft.Extensions.Options;
 
 namespace Logistics.Infrastructure.Routing.Optimization;
 
-/// <summary>
-///     Leg drive times from the Mapbox Matrix API, falling back to a straight-line estimate
-///     when Mapbox is not configured or the call fails.
-/// </summary>
+/// <summary>Falls back to a straight-line estimate when Mapbox is not configured or the call fails.</summary>
 internal sealed class MapboxRouteDurationService(
     MapboxMatrixClient matrix,
     IOptions<MapboxOptions> options,
     ILogger<MapboxRouteDurationService> logger) : IRouteDurationService
 {
-    /// <summary>
-    ///     Straight-line distance understates road distance; 1.25 and 80 km/h roughly match US truck averages.
-    /// </summary>
+    /// <summary>Straight lines understate road distance; with 80 km/h this roughly matches US truck averages.</summary>
     private const double RoadFactor = 1.25;
     private const double FallbackSpeedMetersPerSecond = 80_000 / 3600.0;
 
@@ -45,10 +40,7 @@ internal sealed class MapboxRouteDurationService(
         }
     }
 
-    /// <summary>
-    ///     Splits the route into chunks of at most the coordinate cap that share their boundary point,
-    ///     so every consecutive leg falls inside exactly one chunk.
-    /// </summary>
+    /// <summary>Chunks share their boundary point, so every leg falls inside exactly one chunk.</summary>
     private async Task<IReadOnlyList<TimeSpan>> GetMatrixLegsAsync(IReadOnlyList<GeoPoint> points, CancellationToken ct)
     {
         var chunkSize = Math.Max(2, options.Value.MaxCoordsPerRequest);
