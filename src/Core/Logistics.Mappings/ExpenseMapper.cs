@@ -1,53 +1,50 @@
 using Logistics.Domain.Entities;
 using Logistics.Domain.Primitives.Enums;
 using Logistics.Shared.Models;
+using Riok.Mapperly.Abstractions;
 
 namespace Logistics.Mappings;
 
-public static class ExpenseMapper
+[Mapper]
+public static partial class ExpenseMapper
 {
+    [MapperIgnoreTarget(nameof(ExpenseDto.Type))]
+    [MapperIgnoreTarget(nameof(ExpenseDto.ReceiptDownloadUrl))]
+    [MapperIgnoreTarget(nameof(ExpenseDto.ApprovedByName))]
+    [MapperIgnoreTarget(nameof(ExpenseDto.CreatedByName))]
+    [MapperIgnoreTarget(nameof(ExpenseDto.CompanyCategory))]
+    [MapperIgnoreTarget(nameof(ExpenseDto.TruckId))]
+    [MapperIgnoreTarget(nameof(ExpenseDto.Truck))]
+    [MapperIgnoreTarget(nameof(ExpenseDto.TruckCategory))]
+    [MapperIgnoreTarget(nameof(ExpenseDto.OdometerReading))]
+    [MapperIgnoreTarget(nameof(ExpenseDto.Quantity))]
+    [MapperIgnoreTarget(nameof(ExpenseDto.QuantityUnit))]
+    [MapperIgnoreTarget(nameof(ExpenseDto.PurchaseJurisdiction))]
+    [MapperIgnoreTarget(nameof(ExpenseDto.FuelCardProvider))]
+    [MapperIgnoreTarget(nameof(ExpenseDto.PricePerUnit))]
+    [MapperIgnoreTarget(nameof(ExpenseDto.VendorAddress))]
+    [MapperIgnoreTarget(nameof(ExpenseDto.VendorPhone))]
+    [MapperIgnoreTarget(nameof(ExpenseDto.RepairDescription))]
+    [MapperIgnoreTarget(nameof(ExpenseDto.EstimatedCompletionDate))]
+    [MapperIgnoreTarget(nameof(ExpenseDto.ActualCompletionDate))]
+    [MapProperty(nameof(Expense.ReceiptBlobPath), nameof(ExpenseDto.ReceiptBlobPath), Use = nameof(@MappingConversions.DefaultToEmpty))]
+    private static partial ExpenseDto MapExpense(Expense entity);
+
     extension(Expense entity)
     {
         public ExpenseDto ToDto(string? receiptDownloadUrl = null)
         {
+            var dto = MapExpense(entity) with { ReceiptDownloadUrl = receiptDownloadUrl };
             return entity switch
             {
-                CompanyExpense companyExpense => new ExpenseDto
+                CompanyExpense companyExpense => dto with
                 {
-                    Id = companyExpense.Id,
-                    Number = companyExpense.Number,
                     Type = ExpenseType.Company,
-                    Status = companyExpense.Status,
-                    Amount = companyExpense.Amount,
-                    VendorName = companyExpense.VendorName,
-                    ExpenseDate = companyExpense.ExpenseDate,
-                    ReceiptBlobPath = companyExpense.ReceiptBlobPath ?? string.Empty,
-                    ReceiptDownloadUrl = receiptDownloadUrl,
-                    Notes = companyExpense.Notes,
-                    ApprovedById = companyExpense.ApprovedById,
-                    ApprovedAt = companyExpense.ApprovedAt,
-                    RejectionReason = companyExpense.RejectionReason,
-                    CreatedAt = companyExpense.CreatedAt,
-                    CreatedBy = companyExpense.CreatedBy,
                     CompanyCategory = companyExpense.Category
                 },
-                TruckExpense truckExpense => new ExpenseDto
+                TruckExpense truckExpense => dto with
                 {
-                    Id = truckExpense.Id,
-                    Number = truckExpense.Number,
                     Type = ExpenseType.Truck,
-                    Status = truckExpense.Status,
-                    Amount = truckExpense.Amount,
-                    VendorName = truckExpense.VendorName,
-                    ExpenseDate = truckExpense.ExpenseDate,
-                    ReceiptBlobPath = truckExpense.ReceiptBlobPath ?? string.Empty,
-                    ReceiptDownloadUrl = receiptDownloadUrl,
-                    Notes = truckExpense.Notes,
-                    ApprovedById = truckExpense.ApprovedById,
-                    ApprovedAt = truckExpense.ApprovedAt,
-                    RejectionReason = truckExpense.RejectionReason,
-                    CreatedAt = truckExpense.CreatedAt,
-                    CreatedBy = truckExpense.CreatedBy,
                     TruckId = truckExpense.TruckId,
                     Truck = truckExpense.Truck.ToDto(),
                     TruckCategory = truckExpense.Category,
@@ -58,23 +55,9 @@ public static class ExpenseMapper
                     FuelCardProvider = truckExpense.FuelCardProvider,
                     PricePerUnit = truckExpense.PricePerUnit
                 },
-                BodyShopExpense bodyShopExpense => new ExpenseDto
+                BodyShopExpense bodyShopExpense => dto with
                 {
-                    Id = bodyShopExpense.Id,
-                    Number = bodyShopExpense.Number,
                     Type = ExpenseType.BodyShop,
-                    Status = bodyShopExpense.Status,
-                    Amount = bodyShopExpense.Amount,
-                    VendorName = bodyShopExpense.VendorName,
-                    ExpenseDate = bodyShopExpense.ExpenseDate,
-                    ReceiptBlobPath = bodyShopExpense.ReceiptBlobPath ?? string.Empty,
-                    ReceiptDownloadUrl = receiptDownloadUrl,
-                    Notes = bodyShopExpense.Notes,
-                    ApprovedById = bodyShopExpense.ApprovedById,
-                    ApprovedAt = bodyShopExpense.ApprovedAt,
-                    RejectionReason = bodyShopExpense.RejectionReason,
-                    CreatedAt = bodyShopExpense.CreatedAt,
-                    CreatedBy = bodyShopExpense.CreatedBy,
                     TruckId = bodyShopExpense.TruckId,
                     Truck = bodyShopExpense.Truck.ToDto(),
                     VendorAddress = bodyShopExpense.VendorAddress,

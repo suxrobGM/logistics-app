@@ -6,8 +6,46 @@ namespace Logistics.Mappings;
 
 [Mapper]
 [UseStaticMapper(typeof(CustomerMapper))]
+[UseStaticMapper(typeof(LoadVehicleMapper))]
+[UseStaticMapper(typeof(CustomerUpdateMapper))]
 public static partial class LoadMapper
 {
+    [MapperIgnoreSource(nameof(Load.Customer))]
+    [MapperIgnoreSource(nameof(Load.AssignedTruck))]
+    [MapperIgnoreSource(nameof(Load.AssignedDispatcher))]
+    [MapperIgnoreSource(nameof(Load.Invoice))]
+    [MapperIgnoreSource(nameof(Load.Documents))]
+    [MapperIgnoreSource(nameof(Load.Exceptions))]
+    [MapperIgnoreSource(nameof(Load.TripStops))]
+    [MapperIgnoreSource(nameof(Load.Container))]
+    [MapperIgnoreSource(nameof(Load.OriginTerminal))]
+    [MapperIgnoreSource(nameof(Load.DestinationTerminal))]
+    [MapperIgnoreSource(nameof(Load.Accessorials))]
+    [MapperIgnoreTarget(nameof(LoadDto.Customer))]
+    [MapperIgnoreTarget(nameof(LoadDto.Invoice))]
+    [MapperIgnoreTarget(nameof(LoadDto.Accessorials))]
+    [MapperIgnoreTarget(nameof(LoadDto.CancelledAt))]
+    [MapperIgnoreTarget(nameof(LoadDto.ContainerNumber))]
+    [MapperIgnoreTarget(nameof(LoadDto.ContainerIsoType))]
+    [MapperIgnoreTarget(nameof(LoadDto.ContainerLastFreeDay))]
+    [MapperIgnoreTarget(nameof(LoadDto.ContainerIsOnHold))]
+    [MapperIgnoreTarget(nameof(LoadDto.OriginTerminalName))]
+    [MapperIgnoreTarget(nameof(LoadDto.OriginTerminalCode))]
+    [MapperIgnoreTarget(nameof(LoadDto.DestinationTerminalName))]
+    [MapperIgnoreTarget(nameof(LoadDto.DestinationTerminalCode))]
+    [MapperIgnoreTarget(nameof(LoadDto.AssignedDispatcherName))]
+    [MapperIgnoreTarget(nameof(LoadDto.AssignedTruckNumber))]
+    [MapperIgnoreTarget(nameof(LoadDto.AssignedTruckDriversName))]
+    [MapperIgnoreTarget(nameof(LoadDto.CurrentAddress))]
+    [MapperIgnoreTarget(nameof(LoadDto.CurrentLocation))]
+    [MapperIgnoreTarget(nameof(LoadDto.TripId))]
+    [MapperIgnoreTarget(nameof(LoadDto.TripName))]
+    [MapperIgnoreTarget(nameof(LoadDto.TripNumber))]
+    [MapperIgnoreTarget(nameof(LoadDto.TrailerId))]
+    [MapperIgnoreTarget(nameof(LoadDto.TrailerNumber))]
+    [MapperIgnoreTarget(nameof(LoadDto.VehicleCapacityWarning))]
+    private static partial LoadDto MapLoad(Load entity);
+
     extension(Load entity)
     {
         /// <summary>
@@ -23,70 +61,26 @@ public static partial class LoadMapper
             var truck = lookup.FindTruck(entity.AssignedTruckId);
             var trip = lookup.FindTrip(entity.Id);
 
-            return new LoadDto
-            {
-                Id = entity.Id,
-                Number = entity.Number,
-                Name = entity.Name,
-                Type = entity.Type,
-                OriginAddress = entity.OriginAddress,
-                OriginLocation = entity.OriginLocation,
-                DestinationAddress = entity.DestinationAddress,
-                DestinationLocation = entity.DestinationLocation,
-                DispatchedAt = entity.DispatchedAt,
-                CreatedAt = entity.CreatedAt,
-                PickedUpAt = entity.PickedUpAt,
-                DeliveredAt = entity.DeliveredAt,
-                DeliveryCost = entity.DeliveryCost,
-                Distance = entity.Distance,
-                CanConfirmPickUp = entity.CanConfirmPickUp,
-                CanConfirmDelivery = entity.CanConfirmDelivery,
-                IsInProximity = entity.IsInProximity,
-                Source = entity.Source,
-                RequestedPickupDate = entity.RequestedPickupDate,
-                RequestedDeliveryDate = entity.RequestedDeliveryDate,
-                PickupAppointmentFrom = entity.PickupAppointmentFrom,
-                PickupAppointmentTo = entity.PickupAppointmentTo,
-                DeliveryAppointmentFrom = entity.DeliveryAppointmentFrom,
-                DeliveryAppointmentTo = entity.DeliveryAppointmentTo,
-                Notes = entity.Notes,
-                HazmatClass = entity.HazmatClass,
-                UnNumber = entity.UnNumber,
-                FreightClass = entity.FreightClass,
-                NmfcCode = entity.NmfcCode,
-                PalletCount = entity.PalletCount,
-                PieceCount = entity.PieceCount,
-                Weight = entity.Weight,
-                Dimensions = entity.Dimensions,
-                IsStackable = entity.IsStackable,
-                FuelSurcharge = entity.FuelSurcharge,
-                ContainerId = entity.ContainerId,
-                ContainerNumber = container?.Number,
-                ContainerIsoType = container?.IsoType,
-                ContainerLastFreeDay = container?.LastFreeDay,
-                ContainerIsOnHold = container?.IsOnHold,
-                OriginTerminalId = entity.OriginTerminalId,
-                OriginTerminalName = originTerminal?.Name,
-                OriginTerminalCode = originTerminal?.Code,
-                DestinationTerminalId = entity.DestinationTerminalId,
-                DestinationTerminalName = destinationTerminal?.Name,
-                DestinationTerminalCode = destinationTerminal?.Code,
-                Status = entity.Status,
-                AssignedDispatcherId = entity.AssignedDispatcherId,
-                AssignedDispatcherName = lookup.FindEmployeeName(entity.AssignedDispatcherId),
-                AssignedTruckId = entity.AssignedTruckId,
-                AssignedTruckNumber = truck?.Number,
-                AssignedTruckDriversName = truck?.DriversNames,
-                Vehicles = entity.Vehicles.ToDto(),
-                CustomerUpdates = entity.CustomerUpdates.ToDto(),
-                Customer = lookup.FindCustomer(entity.CustomerId),
-                Invoice = lookup.FindInvoice(entity.Id),
-                TripId = trip?.Id,
-                TripName = trip?.Name,
-                TripNumber = trip?.Number,
-                CurrentAddress = truck?.CurrentAddress,
-                CurrentLocation = truck?.CurrentLocation
-            };
+            var dto = MapLoad(entity);
+            dto.ContainerNumber = container?.Number;
+            dto.ContainerIsoType = container?.IsoType;
+            dto.ContainerLastFreeDay = container?.LastFreeDay;
+            dto.ContainerIsOnHold = container?.IsOnHold;
+            dto.OriginTerminalName = originTerminal?.Name;
+            dto.OriginTerminalCode = originTerminal?.Code;
+            dto.DestinationTerminalName = destinationTerminal?.Name;
+            dto.DestinationTerminalCode = destinationTerminal?.Code;
+            dto.AssignedDispatcherName = lookup.FindEmployeeName(entity.AssignedDispatcherId);
+            dto.AssignedTruckNumber = truck?.Number;
+            dto.AssignedTruckDriversName = truck?.DriversNames;
+            dto.Customer = lookup.FindCustomer(entity.CustomerId);
+            dto.Invoice = lookup.FindInvoice(entity.Id);
+            dto.TripId = trip?.Id;
+            dto.TripName = trip?.Name;
+            dto.TripNumber = trip?.Number;
+            dto.CurrentAddress = truck?.CurrentAddress;
+            dto.CurrentLocation = truck?.CurrentLocation;
+            return dto;
         }
     }
 
