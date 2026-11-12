@@ -36,12 +36,7 @@ internal sealed class BatchApprovePayrollHandler(
                 continue;
             }
 
-            payroll.Status = InvoiceStatus.Approved;
-            payroll.ApprovedById = currentUserId.Value;
-            payroll.ApprovedAt = DateTime.UtcNow;
-            payroll.ApprovalNotes = req.Notes;
-
-            tenantUow.Repository<PayrollInvoice>().Update(payroll);
+            payroll.Approve(currentUserId.Value, req.Notes);
         }
 
         await tenantUow.SaveChangesAsync(ct);
