@@ -118,22 +118,17 @@ public class AIDispatchConversationBuilderTests
 
     #region Learned policy injection
 
-    [Fact]
-    public async Task BuildAsync_NoPolicyRow_OmitsPolicySection()
-    {
-        SetPolicies();
-        var session = new AgentSession { CreatedAt = DateTime.UtcNow };
-
-        var conversation = await _sut.BuildAsync(session, CreateConversation(), ValidConfig, CancellationToken.None);
-
-        Assert.DoesNotContain("Dispatcher Preferences", conversation.SystemPrompt);
-    }
-
     /// <summary>A disabled policy is filtered out in SQL, so it never reaches the prompt.</summary>
-    [Fact]
-    public async Task BuildAsync_DisabledPolicy_OmitsPolicySection()
+    [Theory]
+    [InlineData(false)]
+    [InlineData(true)]
+    public async Task BuildAsync_NoEnabledPolicy_OmitsPolicySection(bool hasDisabledPolicy)
     {
-        SetPolicies(CreatePolicy(learned: "## Learned preferences\n- Prefer short hauls (5 rejections)", isEnabled: false));
+        if (hasDisabledPolicy)
+        {
+            SetPolicies(CreatePolicy(learned: "## Learned preferences\n- Prefer short hauls (5 rejections)", isEnabled: false));
+        }
+
         var session = new AgentSession { CreatedAt = DateTime.UtcNow };
 
         var conversation = await _sut.BuildAsync(session, CreateConversation(), ValidConfig, CancellationToken.None);
@@ -178,27 +173,22 @@ public class AIDispatchConversationBuilderTests
 
     #region Fleet vs solo owner-operator
 
-    [Fact]
-    public async Task BuildAsync_SoloOperatorTenant_BuildsTheSoloPrompt()
+    [Theory]
+    [InlineData(true)]
+    [InlineData(false)]
+    public async Task BuildAsync_SoloOperatorPreset_PicksTheSoloOrFleetPrompt(bool isSolo)
     {
-        SetTenant(TenantPreset.GeneralFreight, TenantPreset.SoloOperator);
+        if (isSolo)
+        {
+            SetTenant(TenantPreset.GeneralFreight, TenantPreset.SoloOperator);
+        }
+
         var session = new AgentSession { CreatedAt = DateTime.UtcNow };
 
         var conversation = await _sut.BuildAsync(session, CreateConversation(), ValidConfig, CancellationToken.None);
 
-        Assert.Contains("## Fleet Profile: SOLO OWNER-OPERATOR", conversation.SystemPrompt);
-        Assert.DoesNotContain("Maximize fleet utilization", conversation.SystemPrompt);
-    }
-
-    [Fact]
-    public async Task BuildAsync_FleetTenant_BuildsTheFleetPrompt()
-    {
-        var session = new AgentSession { CreatedAt = DateTime.UtcNow };
-
-        var conversation = await _sut.BuildAsync(session, CreateConversation(), ValidConfig, CancellationToken.None);
-
-        Assert.DoesNotContain("SOLO OWNER-OPERATOR", conversation.SystemPrompt);
-        Assert.Contains("Maximize fleet utilization", conversation.SystemPrompt);
+        Assert.Equal(isSolo, conversation.SystemPrompt.Contains("## Fleet Profile: SOLO OWNER-OPERATOR"));
+        Assert.Equal(!isSolo, conversation.SystemPrompt.Contains("Maximize fleet utilization"));
     }
 
     #endregion
@@ -214,26 +204,7 @@ public class AIDispatchConversationBuilderTests
         Assert.Single(conversation.Messages);
         Assert.Equal(ValidConfig.MaxTokens, conversation.MaxTokens);
         Assert.Equal("claude-sonnet-5-5", conversation.Model);
-    }
-
-    [Fact]
-    public async Task BuildAsync_IncludesToolsFromRegistry()
-    {
-        var session = new AgentSession { CreatedAt = DateTime.UtcNow };
-
-        var conversation = await _sut.BuildAsync(session, CreateConversation(), ValidConfig, CancellationToken.None);
-
         Assert.Single(conversation.Tools);
-    }
-
-    [Fact]
-    public async Task BuildAsync_IncludesSystemPrompt()
-    {
-        var session = new AgentSession { CreatedAt = DateTime.UtcNow };
-
-        var conversation = await _sut.BuildAsync(session, CreateConversation(), ValidConfig, CancellationToken.None);
-
-        Assert.NotNull(conversation.SystemPrompt);
         Assert.NotEmpty(conversation.SystemPrompt);
     }
 

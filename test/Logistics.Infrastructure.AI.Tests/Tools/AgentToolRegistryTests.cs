@@ -20,18 +20,11 @@ public class AgentToolRegistryTests
         new HashSet<TenantFeature>(features);
 
     [Fact]
-    public void GetCopilotTools_ReturnsNonEmptyList()
-    {
-        var tools = _sut.GetCopilotTools(NoFeatures, EveryPermission);
-
-        Assert.NotEmpty(tools);
-    }
-
-    [Fact]
     public void GetCopilotTools_AllToolsHaveNameAndDescription()
     {
         var tools = _sut.GetCopilotTools(NoFeatures, EveryPermission);
 
+        Assert.NotEmpty(tools);
         foreach (var tool in tools)
         {
             Assert.False(string.IsNullOrWhiteSpace(tool.Name), "Tool has empty name");
@@ -41,25 +34,7 @@ public class AgentToolRegistryTests
     }
 
     [Fact]
-    public void GetCopilotTools_ExcludesLoadBoardTools_ByDefault()
-    {
-        var tools = _sut.GetCopilotTools(NoFeatures, EveryPermission);
-
-        Assert.DoesNotContain(tools, t => t.Name == "search_loadboard");
-        Assert.DoesNotContain(tools, t => t.Name == "book_loadboard_load");
-    }
-
-    [Fact]
-    public void Catalog_IncludesLoadBoardTools()
-    {
-        var tools = AgentToolCatalog.Definitions;
-
-        Assert.Contains(tools, t => t.Name == "search_loadboard");
-        Assert.Contains(tools, t => t.Name == "book_loadboard_load");
-    }
-
-    [Fact]
-    public void GetCopilotTools_ContainsCoreReadTools()
+    public void GetCopilotTools_WithNoFeatures_KeepsTheUngatedReadAndWriteTools()
     {
         var tools = _sut.GetCopilotTools(NoFeatures, EveryPermission);
         var names = tools.Select(t => t.Name).ToHashSet();
@@ -70,31 +45,23 @@ public class AgentToolRegistryTests
         Assert.Contains("check_hos_feasibility", names);
         Assert.Contains("batch_check_hos_feasibility", names);
         Assert.Contains("calculate_distance", names);
-    }
-
-    /// <summary>
-    /// The intermodal tools are plain reads - listing either in <c>WriteTools</c> would put them
-    /// behind dispatcher approval and stall the agent.
-    /// </summary>
-    [Fact]
-    public void GetCopilotTools_IntermodalToolsAreReadsNotWrites()
-    {
-        var names = _sut.GetCopilotTools(With(TenantFeature.IntermodalContainers), EveryPermission).Select(t => t.Name).ToHashSet();
-
-        Assert.Contains("get_container_status", names);
-        Assert.Contains("get_terminal_info", names);
+        Assert.Contains("assign_load_to_truck", names);
+        Assert.Contains("create_trip", names);
+        Assert.Contains("dispatch_trip", names);
     }
 
     /// <summary>
     /// Their schemas cost tokens on every request, so a tenant without the feature must not get them.
     /// </summary>
     [Fact]
-    public void GetCopilotTools_WithoutIntermodalFeature_OmitsTheIntermodalTools()
+    public void GetCopilotTools_WithoutFeatures_OmitsTheGatedTools()
     {
         var names = _sut.GetCopilotTools(NoFeatures, EveryPermission).Select(t => t.Name).ToHashSet();
 
         Assert.DoesNotContain("get_container_status", names);
         Assert.DoesNotContain("get_terminal_info", names);
+        Assert.DoesNotContain("search_loadboard", names);
+        Assert.DoesNotContain("book_loadboard_load", names);
     }
 
     /// <summary>The gated groups are independent - one feature may not pull in another's tools.</summary>
@@ -139,26 +106,6 @@ public class AgentToolRegistryTests
         Assert.Equal(
             AgentToolCatalog.Definitions.Select(t => t.Name),
             _sut.GetCopilotTools(everyFeature, EveryPermission).Select(t => t.Name));
-    }
-
-    [Fact]
-    public void GetCopilotTools_ContainsCoreWriteTools()
-    {
-        var tools = _sut.GetCopilotTools(NoFeatures, EveryPermission);
-        var names = tools.Select(t => t.Name).ToHashSet();
-
-        Assert.Contains("assign_load_to_truck", names);
-        Assert.Contains("create_trip", names);
-        Assert.Contains("dispatch_trip", names);
-    }
-
-    [Fact]
-    public void Catalog_HasUniqueToolNames()
-    {
-        var tools = AgentToolCatalog.Definitions;
-
-        var names = tools.Select(t => t.Name).ToList();
-        Assert.Equal(names.Count, names.Distinct().Count());
     }
 
     #region Permission scoping

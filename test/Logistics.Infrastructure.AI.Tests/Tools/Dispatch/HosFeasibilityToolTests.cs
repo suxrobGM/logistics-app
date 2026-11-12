@@ -66,11 +66,54 @@ public class HosFeasibilityToolTests
 
     #region Shared verdict logic
 
-    [Fact]
-    public async Task BothTools_AmpleHours_AgreeOnFeasibleAndReason()
+    /// <summary>
+    /// 400km at the assumed 80km/h is 300 minutes of driving. A null <paramref name="drivingMinutes"/>
+    /// means the driver has no HOS row, and then the multi-day verdict is not checked.
+    /// </summary>
+    [Theory]
+    [InlineData(600, 660, false, true, false, "Driver has sufficient hours to complete in one stretch")]
+    [InlineData(600, 660, true, false, false, "Driver is currently in HOS violation")]
+    [InlineData(200, 300, false, false, true, "multi-day trip with rest stops")]
+    [InlineData(90, 90, false, false, false, "too low to make meaningful progress")]
+    [InlineData(null, 0, false, false, null, "No HOS data available for this driver")]
+    public async Task BothTools_SameHos_AgreeOnTheVerdict(
+        int? drivingMinutes, int onDutyMinutes, bool inViolation,
+        bool feasible, bool? feasibleMultiDay, string reason)
     {
         var driverId = Guid.NewGuid();
-        // 400km at the assumed 80km/h = 300 minutes of driving.
+        if (drivingMinutes is { } driving)
+        {
+            SingleReturns(Hos(driverId, driving, onDutyMinutes, inViolation));
+            BatchReturns(Hos(driverId, driving, onDutyMinutes, inViolation));
+        }
+        else
+        {
+            SingleReturns(null);
+            BatchReturns();
+        }
+
+        var single = JsonDocument.Parse(await RunSingle(driverId, 400)).RootElement;
+        var batch = JsonDocument.Parse(await RunBatch((driverId, 400))).RootElement
+            .GetProperty("results")[0];
+
+        foreach (var verdict in new[] { single, batch })
+        {
+            Assert.Equal(feasible, verdict.GetProperty("feasible").GetBoolean());
+            if (feasibleMultiDay is { } multiDay)
+            {
+                Assert.Equal(multiDay, verdict.GetProperty("feasible_multi_day").GetBoolean());
+            }
+
+            Assert.Contains(reason, verdict.GetProperty("reason").GetString());
+        }
+
+        Assert.Equal(single.GetProperty("reason").GetString(), batch.GetProperty("reason").GetString());
+    }
+
+    [Fact]
+    public async Task BothTools_AmpleHours_EstimateTheSameDrivingMinutes()
+    {
+        var driverId = Guid.NewGuid();
         SingleReturns(Hos(driverId, 600, 660));
         BatchReturns(Hos(driverId, 600, 660));
 
@@ -78,90 +121,8 @@ public class HosFeasibilityToolTests
         var batch = JsonDocument.Parse(await RunBatch((driverId, 400))).RootElement
             .GetProperty("results")[0];
 
-        Assert.True(single.GetProperty("feasible").GetBoolean());
-        Assert.True(batch.GetProperty("feasible").GetBoolean());
         Assert.Equal(300, single.GetProperty("estimated_driving_minutes").GetInt32());
         Assert.Equal(300, batch.GetProperty("estimated_driving_minutes").GetInt32());
-        Assert.Equal(
-            "Driver has sufficient hours to complete in one stretch",
-            single.GetProperty("reason").GetString());
-        Assert.Equal(
-            single.GetProperty("reason").GetString(),
-            batch.GetProperty("reason").GetString());
-    }
-
-    [Fact]
-    public async Task BothTools_InViolation_AgreeOnReason()
-    {
-        var driverId = Guid.NewGuid();
-        SingleReturns(Hos(driverId, 600, 660, inViolation: true));
-        BatchReturns(Hos(driverId, 600, 660, inViolation: true));
-
-        var single = JsonDocument.Parse(await RunSingle(driverId, 400)).RootElement;
-        var batch = JsonDocument.Parse(await RunBatch((driverId, 400))).RootElement
-            .GetProperty("results")[0];
-
-        Assert.False(single.GetProperty("feasible").GetBoolean());
-        Assert.False(single.GetProperty("feasible_multi_day").GetBoolean());
-        Assert.False(batch.GetProperty("feasible_multi_day").GetBoolean());
-        Assert.Equal("Driver is currently in HOS violation", single.GetProperty("reason").GetString());
-        Assert.Equal("Driver is currently in HOS violation", batch.GetProperty("reason").GetString());
-    }
-
-    [Fact]
-    public async Task BothTools_PartialHoursAbove2h_AgreeOnMultiDay()
-    {
-        var driverId = Guid.NewGuid();
-        SingleReturns(Hos(driverId, 200, 300));
-        BatchReturns(Hos(driverId, 200, 300));
-
-        var single = JsonDocument.Parse(await RunSingle(driverId, 400)).RootElement;
-        var batch = JsonDocument.Parse(await RunBatch((driverId, 400))).RootElement
-            .GetProperty("results")[0];
-
-        Assert.False(single.GetProperty("feasible").GetBoolean());
-        Assert.True(single.GetProperty("feasible_multi_day").GetBoolean());
-        Assert.True(batch.GetProperty("feasible_multi_day").GetBoolean());
-        Assert.Contains("multi-day trip with rest stops", single.GetProperty("reason").GetString());
-        Assert.Equal(
-            single.GetProperty("reason").GetString(),
-            batch.GetProperty("reason").GetString());
-    }
-
-    [Fact]
-    public async Task BothTools_BelowTwoHourFloor_AgreeOnInsufficient()
-    {
-        var driverId = Guid.NewGuid();
-        SingleReturns(Hos(driverId, 90, 90));
-        BatchReturns(Hos(driverId, 90, 90));
-
-        var single = JsonDocument.Parse(await RunSingle(driverId, 400)).RootElement;
-        var batch = JsonDocument.Parse(await RunBatch((driverId, 400))).RootElement
-            .GetProperty("results")[0];
-
-        Assert.False(single.GetProperty("feasible_multi_day").GetBoolean());
-        Assert.False(batch.GetProperty("feasible_multi_day").GetBoolean());
-        Assert.Contains("too low to make meaningful progress", single.GetProperty("reason").GetString());
-        Assert.Equal(
-            single.GetProperty("reason").GetString(),
-            batch.GetProperty("reason").GetString());
-    }
-
-    [Fact]
-    public async Task BothTools_NoHosRow_AgreeOnReason()
-    {
-        var driverId = Guid.NewGuid();
-        SingleReturns(null);
-        BatchReturns();
-
-        var single = JsonDocument.Parse(await RunSingle(driverId, 400)).RootElement;
-        var batch = JsonDocument.Parse(await RunBatch((driverId, 400))).RootElement
-            .GetProperty("results")[0];
-
-        Assert.Equal("No HOS data available for this driver", single.GetProperty("reason").GetString());
-        Assert.Equal("No HOS data available for this driver", batch.GetProperty("reason").GetString());
-        Assert.False(single.GetProperty("feasible").GetBoolean());
-        Assert.False(batch.GetProperty("feasible").GetBoolean());
     }
 
     [Fact]

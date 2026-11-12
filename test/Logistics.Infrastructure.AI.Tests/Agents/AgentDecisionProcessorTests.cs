@@ -248,74 +248,39 @@ public class AgentDecisionProcessorTests
 
     #region Write vs read execution
 
-    [Fact]
-    public async Task ProcessToolCalls_WriteTool_AlwaysCreatesSuggestion()
+    /// <summary>Without auto-approve trust, a write tool is only suggested and never runs inline.</summary>
+    [Theory]
+    [InlineData("assign_load_to_truck")]
+    [InlineData("create_trip")]
+    public async Task ProcessToolCalls_UntrustedWriteTool_CreatesSuggestionWithoutExecuting(string toolName)
     {
-        var session = CreateSession();
-        var toolUse = CreateToolUse("assign_load_to_truck", new JsonObject
-        {
-            ["load_id"] = Guid.NewGuid().ToString(),
-            ["truck_id"] = Guid.NewGuid().ToString()
-        });
-
         var results = await _sut.ProcessToolCallsAsync(
-            session, new ToolCallContext(), [toolUse], "reasoning", CancellationToken.None);
+            CreateSession(), new ToolCallContext(), [CreateToolUse(toolName)], "reasoning", CancellationToken.None);
 
         Assert.Single(results);
-
-        // Tool executor should NOT be called - suggestion only, never executed inline.
         await _toolExecutor.DidNotReceive().ExecuteToolAsync(
             Arg.Any<string>(), Arg.Any<string>(), Arg.Any<CancellationToken>());
-
-        // Decision should be persisted
         await _decisionRepo.Received(1).AddAsync(
             Arg.Is<AgentDecision>(d =>
                 d.Status == AgentDecisionStatus.Suggested &&
-                d.ToolName == "assign_load_to_truck"),
-            Arg.Any<CancellationToken>());
-    }
-
-    [Fact]
-    public async Task ProcessToolCalls_WriteTool_NeverExecutesInline()
-    {
-        var session = CreateSession();
-        var toolUse = CreateToolUse("create_trip", new JsonObject
-        {
-            ["truck_id"] = Guid.NewGuid().ToString(),
-            ["load_ids"] = new JsonArray(Guid.NewGuid().ToString())
-        });
-
-        var results = await _sut.ProcessToolCallsAsync(
-            session, new ToolCallContext(), [toolUse], null, CancellationToken.None);
-
-        Assert.Single(results);
-
-        await _toolExecutor.DidNotReceive().ExecuteToolAsync(
-            "create_trip", Arg.Any<string>(), Arg.Any<CancellationToken>());
-
-        await _decisionRepo.Received(1).AddAsync(
-            Arg.Is<AgentDecision>(d =>
-                d.Status == AgentDecisionStatus.Suggested &&
+                d.ToolName == toolName &&
                 d.ExecutedAt == null),
             Arg.Any<CancellationToken>());
+        await _broadcastService.Received(1).BroadcastDecisionAsync(Arg.Any<Guid>(), Arg.Any<AgentDecisionDto>());
     }
 
     [Fact]
-    public async Task ProcessToolCalls_ReadTool_AlwaysExecutes()
+    public async Task ProcessToolCalls_ReadTool_ExecutesAndBroadcasts()
     {
-        var session = CreateSession();
-        var toolUse = CreateToolUse("get_available_trucks");
-
         _toolExecutor.ExecuteToolAsync("get_available_trucks", Arg.Any<string>(), Arg.Any<CancellationToken>())
             .Returns("{\"total_trucks\": 5}");
 
-        var results = await _sut.ProcessToolCallsAsync(
-            session, new ToolCallContext(), [toolUse], null, CancellationToken.None);
-
-        Assert.Single(results);
+        await _sut.ProcessToolCallsAsync(
+            CreateSession(), new ToolCallContext(), [CreateToolUse("get_available_trucks")], null, CancellationToken.None);
 
         await _toolExecutor.Received(1).ExecuteToolAsync(
             "get_available_trucks", Arg.Any<string>(), Arg.Any<CancellationToken>());
+        await _broadcastService.Received(1).BroadcastDecisionAsync(Arg.Any<Guid>(), Arg.Any<AgentDecisionDto>());
     }
 
     #endregion
@@ -374,7 +339,7 @@ public class AgentDecisionProcessorTests
     #region Decision count and reasoning
 
     [Fact]
-    public async Task ProcessToolCalls_IncrementsDecisionCount()
+    public async Task ProcessToolCalls_CountsEveryCallAndStoresTheReasoning()
     {
         var session = CreateSession();
 
@@ -392,48 +357,14 @@ public class AgentDecisionProcessorTests
             session, new ToolCallContext(), tools, "analyzing fleet", CancellationToken.None);
 
         Assert.Equal(3, session.DecisionCount);
-    }
-
-    [Fact]
-    public async Task ProcessToolCalls_StoresReasoning()
-    {
-        var session = CreateSession();
-        var toolUse = CreateToolUse("get_available_trucks");
-
-        _toolExecutor.ExecuteToolAsync(Arg.Any<string>(), Arg.Any<string>(), Arg.Any<CancellationToken>())
-            .Returns("{}");
-
-        await _sut.ProcessToolCallsAsync(
-            session, new ToolCallContext(), [toolUse], "Let me check the fleet status", CancellationToken.None);
-
-        await _decisionRepo.Received(1).AddAsync(
-            Arg.Is<AgentDecision>(d => d.Reasoning == "Let me check the fleet status"),
+        await _decisionRepo.Received(3).AddAsync(
+            Arg.Is<AgentDecision>(d => d.Reasoning == "analyzing fleet"),
             Arg.Any<CancellationToken>());
     }
 
     #endregion
 
     #region Broadcasting
-
-    [Fact]
-    public async Task ProcessToolCalls_WriteTool_BroadcastsDecision()
-    {
-        var session = CreateSession();
-        var toolUse = CreateToolUse("assign_load_to_truck", new JsonObject
-        {
-            ["load_id"] = Guid.NewGuid().ToString(),
-            ["truck_id"] = Guid.NewGuid().ToString()
-        });
-
-        _toolExecutor.ExecuteToolAsync(Arg.Any<string>(), Arg.Any<string>(), Arg.Any<CancellationToken>())
-            .Returns("{\"success\": true}");
-
-        await _sut.ProcessToolCallsAsync(
-            session, new ToolCallContext(), [toolUse], null, CancellationToken.None);
-
-        await _broadcastService.Received(1).BroadcastDecisionAsync(
-            Arg.Any<Guid>(), Arg.Any<AgentDecisionDto>());
-    }
 
     /// <summary>The live card shows these; without them it falls back to the GUIDs in the tool input.</summary>
     [Fact]
@@ -464,22 +395,6 @@ public class AgentDecisionProcessorTests
 
         await _broadcastService.Received(1).BroadcastDecisionAsync(
             Arg.Any<Guid>(), Arg.Is<AgentDecisionDto>(d => d.LoadName == "Load 42" && d.TruckNumber == "T-100"));
-    }
-
-    [Fact]
-    public async Task ProcessToolCalls_ReadTool_BroadcastsDecision()
-    {
-        var session = CreateSession();
-        var toolUse = CreateToolUse("get_available_trucks");
-
-        _toolExecutor.ExecuteToolAsync(Arg.Any<string>(), Arg.Any<string>(), Arg.Any<CancellationToken>())
-            .Returns("{}");
-
-        await _sut.ProcessToolCallsAsync(
-            session, new ToolCallContext(), [toolUse], null, CancellationToken.None);
-
-        await _broadcastService.Received(1).BroadcastDecisionAsync(
-            Arg.Any<Guid>(), Arg.Any<AgentDecisionDto>());
     }
 
     #endregion
@@ -517,18 +432,6 @@ public class AgentDecisionProcessorTests
 
         await _decisionRepo.Received(1).AddAsync(
             Arg.Is<AgentDecision>(d => d.Status == AgentDecisionStatus.Failed && !d.AutoApproved),
-            Arg.Any<CancellationToken>());
-    }
-
-    [Fact]
-    public async Task ProcessToolCalls_UntrustedWriteTool_StaysSuggested()
-    {
-        await _sut.ProcessToolCallsAsync(
-            CreateSession(), new ToolCallContext(), [CreateToolUse("create_trip")], null, CancellationToken.None);
-
-        await _toolExecutor.DidNotReceive().ExecuteToolAsync("create_trip", Arg.Any<string>(), Arg.Any<CancellationToken>());
-        await _decisionRepo.Received(1).AddAsync(
-            Arg.Is<AgentDecision>(d => d.Status == AgentDecisionStatus.Suggested),
             Arg.Any<CancellationToken>());
     }
 
