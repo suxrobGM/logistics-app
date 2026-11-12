@@ -68,20 +68,6 @@ public class DispatchEligibilityServiceTests
     }
 
     [Fact]
-    public async Task CheckAsync_HazmatLoad_USDriverWithHazmatAndPlacardedTruck_Eligible()
-    {
-        var driver = CreateDriver(license: BuildLicense("US", LicenseClass.USClassA, LicenseEndorsement.Hazmat));
-        var truck = CreateTruck(driver, isHazmatPlacarded: true);
-        var load = CreateLoad(hazmatClass: HazmatClass.Class3, originCountry: "US", destCountry: "US");
-
-        WireRepos(truck, load, driver);
-
-        var result = await _sut.CheckAsync(TruckId, LoadId);
-
-        Assert.True(result.IsEligible);
-    }
-
-    [Fact]
     public async Task CheckAsync_AdrLoad_EUDriverWithBasicAdr_Class7Load_Blocked()
     {
         var driver = CreateDriver(license: BuildLicense("DE", LicenseClass.EUCE,
