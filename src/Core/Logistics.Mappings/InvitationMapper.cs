@@ -9,35 +9,28 @@ namespace Logistics.Mappings;
 [Mapper]
 public static partial class InvitationMapper
 {
+    [MapperIgnoreSource(nameof(Invitation.Tenant))]
+    [MapperIgnoreSource(nameof(Invitation.AcceptedByUser))]
+    [MapperIgnoreSource(nameof(Invitation.InvitedByUser))]
+    [MapperIgnoreTarget(nameof(InvitationDto.TenantName))]
+    [MapperIgnoreTarget(nameof(InvitationDto.InvitedByName))]
+    [MapperIgnoreTarget(nameof(InvitationDto.CustomerName))]
+    [MapPropertyFromSource(nameof(InvitationDto.TenantRoleDisplayName), Use = nameof(GetInvitedRoleDisplayName))]
+    private static partial InvitationDto MapInvitation(Invitation entity);
+
     extension(Invitation entity)
     {
         /// <summary>
         /// Maps an Invitation entity to InvitationDto with tenant information.
+        /// CustomerName stays null - the handler looks it up in the tenant database.
         /// </summary>
-        [UserMapping(Default = true)]
         public InvitationDto ToDto()
         {
-            return new InvitationDto
+            var dto = MapInvitation(entity);
+            return dto with
             {
-                Id = entity.Id,
-                Email = entity.Email,
-                TenantId = entity.TenantId,
                 TenantName = entity.Tenant?.DisplayName ?? string.Empty,
-                Type = entity.Type,
-                TenantRole = entity.TenantRole,
-                TenantRoleDisplayName = entity.Type == InvitationType.AppUser
-                    ? GetAppRoleDisplayName(entity.AppRole)
-                    : GetRoleDisplayName(entity.TenantRole),
-                AppRole = entity.AppRole,
-                CustomerId = entity.CustomerId,
-                CustomerName = null, // Set by handler with tenant DB lookup
-                ExpiresAt = entity.ExpiresAt,
-                Status = entity.Status,
-                CreatedAt = entity.CreatedAt,
-                InvitedByName = entity.InvitedByUser?.GetFullName() ?? string.Empty,
-                SendCount = entity.SendCount,
-                LastSentAt = entity.LastSentAt,
-                IsExpired = entity.IsExpired
+                InvitedByName = entity.InvitedByUser?.GetFullName() ?? string.Empty
             };
         }
 
@@ -55,6 +48,11 @@ public static partial class InvitationMapper
             };
         }
     }
+
+    private static string GetInvitedRoleDisplayName(Invitation entity) =>
+        entity.Type == InvitationType.AppUser
+            ? GetAppRoleDisplayName(entity.AppRole)
+            : GetRoleDisplayName(entity.TenantRole);
 
     /// <summary>
     /// Gets the display name for a tenant role.

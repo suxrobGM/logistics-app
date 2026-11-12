@@ -7,24 +7,25 @@ namespace Logistics.Mappings;
 [Mapper]
 public static partial class UserTenantAccessMapper
 {
+    [MapperIgnoreSource(nameof(UserTenantAccess.User))]
+    [MapperIgnoreSource(nameof(UserTenantAccess.Tenant))]
+    [MapperIgnoreTarget(nameof(UserTenantAccessDto.TenantName))]
+    [MapperIgnoreTarget(nameof(UserTenantAccessDto.CompanyName))]
+    [MapperIgnoreTarget(nameof(UserTenantAccessDto.Settings))]
+    private static partial UserTenantAccessDto MapAccess(UserTenantAccess entity);
+
     extension(UserTenantAccess entity)
     {
         /// <summary>
         /// Maps a UserTenantAccess entity to UserTenantAccessDto.
         /// </summary>
-        [UserMapping(Default = true)]
         public UserTenantAccessDto ToDto()
         {
-            return new UserTenantAccessDto
-            {
-                Id = entity.Id,
-                TenantId = entity.TenantId,
-                TenantName = entity.Tenant?.Name ?? string.Empty,
-                CompanyName = entity.Tenant?.CompanyName,
-                CustomerName = entity.CustomerName,
-                IsActive = entity.IsActive,
-                Settings = entity.Tenant?.Settings
-            };
+            var dto = MapAccess(entity);
+            dto.TenantName = entity.Tenant?.Name ?? string.Empty;
+            dto.CompanyName = entity.Tenant?.CompanyName;
+            dto.Settings = entity.Tenant?.Settings;
+            return dto;
         }
     }
 }

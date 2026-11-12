@@ -7,25 +7,36 @@ namespace Logistics.Mappings;
 [Mapper]
 public static partial class MessagingMapper
 {
+    [MapperIgnoreSource(nameof(Message.Conversation))]
+    [MapperIgnoreSource(nameof(Message.Sender))]
+    [MapperIgnoreSource(nameof(Message.ReadReceipts))]
+    [MapperIgnoreTarget(nameof(MessageDto.SenderName))]
+    [MapperIgnoreTarget(nameof(MessageDto.IsRead))]
+    private static partial MessageDto MapMessage(Message entity);
+
+    [MapperIgnoreSource(nameof(ConversationParticipant.Conversation))]
+    [MapperIgnoreSource(nameof(ConversationParticipant.Employee))]
+    [MapperIgnoreTarget(nameof(ConversationParticipantDto.EmployeeName))]
+    private static partial ConversationParticipantDto MapParticipant(ConversationParticipant entity);
+
+    [MapperIgnoreSource(nameof(Conversation.Load))]
+    [MapperIgnoreSource(nameof(Conversation.Participants))]
+    [MapperIgnoreSource(nameof(Conversation.Messages))]
+    [MapperIgnoreTarget(nameof(ConversationDto.Participants))]
+    [MapperIgnoreTarget(nameof(ConversationDto.UnreadCount))]
+    [MapperIgnoreTarget(nameof(ConversationDto.LastMessage))]
+    private static partial ConversationDto MapConversation(Conversation entity);
+
     extension(Message entity)
     {
         /// <summary>
         /// Maps a Message entity to MessageDto.
         /// Note: IsRead must be set by the caller based on the requesting user's read receipts.
         /// </summary>
-        [UserMapping(Default = true)]
         public MessageDto ToDto()
         {
-            return new MessageDto
-            {
-                Id = entity.Id,
-                ConversationId = entity.ConversationId,
-                SenderId = entity.SenderId,
-                SenderName = entity.Sender?.GetFullName(),
-                Content = entity.Content,
-                SentAt = entity.SentAt,
-                IsRead = false // Must be set by caller
-            };
+            var dto = MapMessage(entity);
+            return dto with { SenderName = entity.Sender?.GetFullName() };
         }
 
         /// <summary>
@@ -60,17 +71,10 @@ public static partial class MessagingMapper
         /// <summary>
         /// Maps a ConversationParticipant entity to ConversationParticipantDto.
         /// </summary>
-        [UserMapping(Default = true)]
         public ConversationParticipantDto ToDto()
         {
-            return new ConversationParticipantDto
-            {
-                EmployeeId = entity.EmployeeId,
-                EmployeeName = entity.Employee?.GetFullName(),
-                JoinedAt = entity.JoinedAt,
-                LastReadAt = entity.LastReadAt,
-                IsMuted = entity.IsMuted
-            };
+            var dto = MapParticipant(entity);
+            return dto with { EmployeeName = entity.Employee?.GetFullName() };
         }
     }
 
@@ -80,21 +84,10 @@ public static partial class MessagingMapper
         /// Maps a Conversation entity to ConversationDto.
         /// Note: UnreadCount and LastMessage must be set by the caller.
         /// </summary>
-        [UserMapping(Default = true)]
         public ConversationDto ToDto()
         {
-            return new ConversationDto
-            {
-                Id = entity.Id,
-                Name = entity.Name,
-                LoadId = entity.LoadId,
-                IsTenantChat = entity.IsTenantChat,
-                CreatedAt = entity.CreatedAt,
-                LastMessageAt = entity.LastMessageAt,
-                Participants = entity.Participants.Select(p => p.ToDto()).ToList(),
-                UnreadCount = 0, // Must be set by caller
-                LastMessage = null // Must be set by caller
-            };
+            var dto = MapConversation(entity);
+            return dto with { Participants = entity.Participants.Select(p => p.ToDto()).ToList() };
         }
 
         /// <summary>
@@ -106,5 +99,4 @@ public static partial class MessagingMapper
             return dto with { UnreadCount = unreadCount, LastMessage = lastMessage };
         }
     }
-
 }
