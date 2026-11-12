@@ -42,7 +42,7 @@ public class LoadInvoiceChargesTests
     {
         var load = NewLoad();
 
-        var invoice = LoadFactory.CreateInvoice(load);
+        var invoice = LoadInvoice.Create(load);
 
         var line = Assert.Single(invoice.LineItems);
         Assert.Equal(InvoiceLineItemType.BaseRate, line.Type);
@@ -57,7 +57,7 @@ public class LoadInvoiceChargesTests
         load.Accessorials.Add(Accessorial(load, "Lumper", InvoiceLineItemType.Lumper, 150m));
         load.Accessorials.Add(Accessorial(load, "Extra stop", InvoiceLineItemType.Accessorial, 75m, 2,
             AccessorialUnit.PerStop));
-        var invoice = LoadFactory.CreateInvoice(load);
+        var invoice = LoadInvoice.Create(load);
 
         Assert.Collection(invoice.LineItems.OrderBy(li => li.Order),
             l => Assert.Equal(InvoiceLineItemType.BaseRate, l.Type),
@@ -83,7 +83,7 @@ public class LoadInvoiceChargesTests
         load.Accessorials.Add(Accessorial(load, "Detention", InvoiceLineItemType.Detention, 50m, 2.25m,
             AccessorialUnit.PerHour));
 
-        var invoice = LoadFactory.CreateInvoice(load);
+        var invoice = LoadInvoice.Create(load);
 
         var detention = invoice.LineItems.Single(l => l.Type == InvoiceLineItemType.Detention);
         Assert.Equal(1, detention.Quantity);
@@ -95,7 +95,7 @@ public class LoadInvoiceChargesTests
     public void ReplaceLoadCharges_Regenerate_KeepsHandAddedLines()
     {
         var load = NewLoad();
-        var invoice = LoadFactory.CreateInvoice(load);
+        var invoice = LoadInvoice.Create(load);
         var manual = new InvoiceLineItem
         {
             InvoiceId = invoice.Id,
@@ -134,7 +134,7 @@ public class LoadInvoiceChargesTests
         var load = NewLoad();
         var lumper = Accessorial(load, "Lumper", InvoiceLineItemType.Lumper, 150m);
         load.Accessorials.Add(lumper);
-        var invoice = LoadFactory.CreateInvoice(load);
+        var invoice = LoadInvoice.Create(load);
 
         load.Accessorials.Remove(lumper);
         invoice.ReplaceLoadCharges(load);

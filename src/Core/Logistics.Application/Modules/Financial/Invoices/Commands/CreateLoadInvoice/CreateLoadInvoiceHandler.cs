@@ -32,7 +32,7 @@ internal sealed class CreateLoadInvoiceHandler(
         }
 
         var tenant = tenantUow.GetCurrentTenant();
-        var invoice = LoadFactory.CreateInvoice(load);
+        var invoice = LoadInvoice.Create(load);
 
         await taxApplier.ApplyAsync(invoice, ct);
 

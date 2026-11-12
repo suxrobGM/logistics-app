@@ -31,7 +31,7 @@ public class LoadChargeServiceTests
 
         var truck = new Truck { Number = "T-1", Type = TruckType.FreightTruck };
         _trip = Trip.Create("Trip", truck, [_load]);
-        _invoice = LoadFactory.CreateInvoice(_load);
+        _invoice = LoadInvoice.Create(_load);
 
         _tenantUow.GetCurrentTenant().Returns(tenant);
         _tenantUow.Repository<LoadInvoice>().Returns(_invoiceRepo);

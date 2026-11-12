@@ -1,9 +1,33 @@
 using Logistics.Domain.Primitives.Enums;
+using Logistics.Domain.Primitives.ValueObjects;
 
 namespace Logistics.Domain.Entities;
 
 public partial class LoadInvoice : Invoice
 {
+    /// <summary>
+    /// A draft invoice carrying the load's charge lines (base rate, fuel surcharge, accessorials). It is issued
+    /// when the load is dispatched.
+    /// </summary>
+    public static LoadInvoice Create(Load load)
+    {
+        var invoice = new LoadInvoice
+        {
+            Subtotal = load.DeliveryCost,
+            TaxTotal = Money.Zero(load.DeliveryCost.Currency),
+            Total = load.DeliveryCost,
+            Status = InvoiceStatus.Draft,
+            CustomerId = load.CustomerId,
+            Customer = load.Customer,
+            LoadId = load.Id,
+            Load = load
+        };
+
+        invoice.ReplaceLoadCharges(load);
+        invoice.RecalculateTotals();
+        return invoice;
+    }
+
     public override InvoiceType Type { get; set; } = InvoiceType.Load;
     public required Guid LoadId { get; set; }
     public virtual Load Load { get; set; } = null!;

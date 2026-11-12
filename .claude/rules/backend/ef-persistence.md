@@ -20,7 +20,7 @@ await tenantUow.Repository<AgentMessage>().AddAsync(message, ct); // without thi
 await tenantUow.SaveChangesAsync(ct);
 ```
 
-Exempt only when the parent itself is new and added as a graph (`LoadFactory` / `TripFactory` -
+Exempt only when the parent itself is new and added as a graph (`Load.Create` / `Trip.Create` -
 the cascade marks everything Added). `NavigationDiscoveryGuard` (attached to both DbContexts)
 turns the mistake into an immediate, named error - fix the call site, don't remove the guard.
 

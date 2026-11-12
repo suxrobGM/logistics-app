@@ -39,8 +39,7 @@ public partial class Trip
             RecordDrivers();
         }
 
-        TripFactory.RaiseTruckAssignedEvent(
-            this,
+        RaiseTruckAssignedEvent(
             newTruck,
             oldTruckId,
             oldTruck?.MainDriver?.DeviceToken);

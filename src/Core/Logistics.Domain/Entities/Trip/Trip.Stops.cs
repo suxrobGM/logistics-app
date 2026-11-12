@@ -29,7 +29,7 @@ public partial class Trip
             throw new InvalidOperationException("Cannot modify loads unless trip is Draft.");
         }
 
-        TripFactory.AddStopsForLoads(this, loads);
+        AddStopsForLoads(loads);
         RecalculateDistance();
     }
 
