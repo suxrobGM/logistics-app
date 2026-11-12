@@ -26,32 +26,32 @@ Baseline: 291 static classes, 441 handlers, 148 validators, 15 infrastructure pr
 
 These were confirmed by a name-usage scan of `src/`, `test/`, `tools/` and the private clients.
 
-- [ ] ✅ `Handlers/UpdateTenantEntityHandler.cs`: 0 subclasses.
-- [ ] ✅ `UpdateTripHandler.AttachExistingLoadsAsync` (lines 149-196), plus the commented call and `attachedCount = 0` (lines 89-95). `UpdateTripCommand.AttachedLoadIds` is accepted but silently ignored: either finish the feature or drop the field.
-- [ ] ✅ `TenantRoleComparer` (`TenantRole.cs:25`).
-- [ ] ✅ Interface members nobody calls:
+- [x] ✅ `Handlers/UpdateTenantEntityHandler.cs`: 0 subclasses.
+- [x] ✅ `UpdateTripHandler.AttachExistingLoadsAsync` (lines 149-196), plus the commented call and `attachedCount = 0` (lines 89-95). `UpdateTripCommand.AttachedLoadIds` is accepted but silently ignored: either finish the feature or drop the field.
+- [x] ✅ `TenantRoleComparer` (`TenantRole.cs:25`).
+- [x] ✅ Interface members nobody calls:
   - `IStripePaymentService.GetPaymentIntentAsync`
   - `IStripeSubscriptionService.UpdateSubscriptionQuantityAsync`
   - `IRealtimeMessagingService.BroadcastTypingIndicatorAsync` / `UserJoined` / `UserLeft`
   - `ILoadService.DeleteLoadAsync`
   - `IUnitOfWork.CommitTransactionAsync` / `RollbackTransactionAsync`
-- [ ] ✅ Entity and value-object methods nobody calls:
+- [x] ✅ Entity and value-object methods nobody calls:
   - `AuditableEntity.SetCreated` / `SetUpdated`
   - `Load.CanTransitionTo`, `Container.CanTransitionTo`
   - `GetAllowedTransitions` (all 3 state machines), `TripStatusMachine.ValidateTransition` and its whole transition table
   - `DriverHosStatus.GetDrivingTimeRemainingDisplay` / `GetOnDutyTimeRemainingDisplay`
   - `Expense.MarkAsPaid`, `Conversation.CreateDirectConversation`, `Trip.CalcDriversShare`
   - `LoadRoute.WithOrigin` / `WithDestination`, `LoadBoardPlace.FromAddress`
-- [ ] ✅ Used only by tests (delete the method and its tests, unless they are meant as API): `AgentConversation.BeginTurn` (11 test refs; production now claims the turn with a conditional update), `LlmMessage.FromUser`, `CargoInspectionPartCategoryExtensions.IsValidFor`. Keep `ProductLicenseToken.CreateSigningCredentials`: `tools/Logistics.LicenseIssuer` uses it.
-- [ ] ✅ `HttpClientWriteExtensions.TryPostAsJsonAsync` / `TryPutAsync` / `TryDeleteAsync` and `HttpJsonResult` have 0 callers (~100 lines).
-- [ ] ✅ `AppRolePermissions` / `TenantRolePermissions`: `RegisterRole` and `HasRegisteredPermissions` have 0 callers. The `Func` dictionaries exist only to support them.
-- [ ] ✅ API `ClaimsPrincipalExtensions.GetRole`, `SeederContext.ResetPerTenantState`, `USStates.FindState`. Shared.Geo `USStates.cs` and `State.cs` are unused, and DbMigrator has its own copy.
-- [ ] ✅ `Hangfire.SqlServer` package in `Logistics.API.csproj`: never used. The commented-out MySQL/SQL Server blocks in `Persistence/Utilities/DbContextUtils.cs`: delete them. The file name (`Utils`), class name (`Helpers`) and folder (`Utilities`) also disagree.
-- [ ] 5 empty `*ModuleRegistrar.cs` files (only `return services;`): fold Platform's one line into `Registrar.cs`.
-- [ ] Empty or useless validators:
+- [x] ✅ Used only by tests (delete the method and its tests, unless they are meant as API): `AgentConversation.BeginTurn` (11 test refs; production now claims the turn with a conditional update), `LlmMessage.FromUser`, `CargoInspectionPartCategoryExtensions.IsValidFor`. Keep `ProductLicenseToken.CreateSigningCredentials`: `tools/Logistics.LicenseIssuer` uses it. **Kept** `BeginTurn`, `FromUser`, `IsValidFor`: each is a small, meaningful API the tests lean on; deleting them only churns test setup.
+- [x] ✅ `HttpClientWriteExtensions.TryPostAsJsonAsync` / `TryPutAsync` / `TryDeleteAsync` and `HttpJsonResult` have 0 callers (~100 lines).
+- [x] ✅ `AppRolePermissions` / `TenantRolePermissions`: `RegisterRole` and `HasRegisteredPermissions` have 0 callers. The `Func` dictionaries exist only to support them.
+- [x] ✅ API `ClaimsPrincipalExtensions.GetRole`, `SeederContext.ResetPerTenantState`, `USStates.FindState`. Shared.Geo `USStates.cs` and `State.cs` are unused, and DbMigrator has its own copy.
+- [x] ✅ `Hangfire.SqlServer` package in `Logistics.API.csproj`: never used. The commented-out MySQL/SQL Server blocks in `Persistence/Utilities/DbContextUtils.cs`: delete them. The file name (`Utils`), class name (`Helpers`) and folder (`Utilities`) also disagree.
+- [x] 5 empty `*ModuleRegistrar.cs` files (only `return services;`): fold Platform's one line into `Registrar.cs`.
+- [x] Empty or useless validators:
   - `RequestDataExportValidator` and `CreateSetupIntentValidator` (0 rules)
   - 13 validators whose only rule is Id-not-empty (forbidden by `csharp-conventions.md`): `DeleteEmployee`, `GetEmployeeById`, `GetUserById`, `GetUserCurrentTenant`, `DeleteDocument`, `GetDriverStats`, `GetRolePermissions`, `CancelTrip`, `DispatchTrip`, `GetTrip`, `GetTripTimeline`, `UpdateLoadProximity`, `ProcessPayment`
-- [ ] `ToDictionary()` on `PagedQuery` / `SearchableQuery` / `IntervalQuery`: 0 callers.
+- [x] `ToDictionary()` on `PagedQuery` / `SearchableQuery` / `IntervalQuery`: 0 callers.
 - [ ] IdentityServer 2FA: nothing can ever enable 2FA (there is no EnableAuthenticator page and no `SetTwoFactorEnabledAsync(true)`). `TwoFactorAuthentication`, `Disable2fa`, `GenerateRecoveryCodes`, `ShowRecoveryCodes`, `LoginWith2fa` and `LoginWithRecoveryCode` are unreachable (~12 files, ~530 lines). Decide whether to build EnableAuthenticator or delete these pages along with the Angular nav link.
 - [ ] Git branches:
   - Merged into main and deletable: local `feat/open-identityserver`, `feat/pilot-readiness`, `feat/replace-mediatr`, `feat/teaser-v2`, `feat/website-lead-emails`; remote `origin/feat/open-identityserver`, `origin/feat/replace-mediatr`, `origin/local` (2022).
