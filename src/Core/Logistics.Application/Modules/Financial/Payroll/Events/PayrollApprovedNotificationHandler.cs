@@ -2,8 +2,6 @@ using Logistics.Application.Abstractions;
 using Logistics.Application.Abstractions.Email.Models;
 using Logistics.Application.Abstractions.Email;
 using Logistics.Domain.Events;
-using Logistics.Domain.Persistence;
-using Logistics.Domain.Primitives.Enums;
 using Logistics.Mediator;
 using Microsoft.Extensions.Logging;
 using Logistics.Application.Abstractions.Notifications;
@@ -17,8 +15,6 @@ namespace Logistics.Application.Modules.Financial.Payroll.Events;
 internal sealed class PayrollApprovedNotificationHandler(
     IPushNotificationService pushNotificationService,
     INotificationService notificationService,
-    ITelegramNotificationService telegramNotificationService,
-    ITenantUnitOfWork tenantUow,
     IEmailSender emailSender,
     IEmailTemplateService emailTemplateService,
     ILogger<PayrollApprovedNotificationHandler> logger)
@@ -73,21 +69,6 @@ internal sealed class PayrollApprovedNotificationHandler(
             {
                 logger.LogWarning(ex, "Failed to send payroll approval email to {Email}", @event.EmployeeEmail);
             }
-        }
-
-        // Send Telegram notification to drivers
-        try
-        {
-            await telegramNotificationService.SendNotificationAsync(
-                tenantUow.GetCurrentTenant().Id,
-                "Payroll Approved",
-                $"Payroll #{@event.PayrollNumber} for {@event.TotalAmount:C} has been approved",
-                TelegramChatRole.Driver,
-                cancellationToken);
-        }
-        catch (Exception ex)
-        {
-            logger.LogWarning(ex, "Failed to send Telegram notification for payroll approval");
         }
     }
 }
