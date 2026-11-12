@@ -17,10 +17,21 @@ internal sealed class AgentDecisionExecution(IAgentToolExecutor toolExecutor) : 
         try
         {
             var output = await toolExecutor.ExecuteToolAsync(decision.ToolName!, decision.ToolInput!, ct);
-            decision.ToolOutput = output;
-            decision.MarkExecuted();
-            note = $"Approved and executed: {decision.ToolName} - {Compact(output)}";
-            outcome = Result.Ok();
+            var parsed = ToolOutput.Parse(output);
+            if (ToolOutput.IsFailure(parsed))
+            {
+                var error = parsed?["error"]?.ToString() ?? "The tool reported a failure";
+                decision.MarkFailed(output);
+                note = $"Approved but failed to execute: {decision.ToolName} - {Compact(error)}";
+                outcome = Result.Fail($"Failed to execute decision: {error}");
+            }
+            else
+            {
+                decision.ToolOutput = output;
+                decision.MarkExecuted();
+                note = $"Approved and executed: {decision.ToolName} - {Compact(output)}";
+                outcome = Result.Ok();
+            }
         }
         catch (Exception ex)
         {

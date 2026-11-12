@@ -1,10 +1,13 @@
 using System.Text.Json;
 using System.Text.Json.Nodes;
 
-namespace Logistics.Infrastructure.AI.Agents;
+namespace Logistics.Application.Abstractions.Agents;
 
-/// <summary>Failed writes carry <c>success: false</c>; create tools name what they made (<c>trip_id</c>).</summary>
-internal static class ToolOutputReader
+/// <summary>
+/// Reads a tool's JSON output back. A write tool that fails returns <c>success: false</c> with an
+/// <c>error</c> rather than throwing, so a caller that only catches exceptions records it as executed.
+/// </summary>
+public static class ToolOutput
 {
     public static JsonObject? Parse(string output)
     {

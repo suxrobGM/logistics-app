@@ -135,8 +135,8 @@ internal sealed class AgentDecisionProcessor(
         try
         {
             var result = await toolExecutor.ExecuteToolAsync(toolName, toolInputJson, ct);
-            var output = ToolOutputReader.Parse(result);
-            if (ToolOutputReader.IsFailure(output))
+            var output = ToolOutput.Parse(result);
+            if (ToolOutput.IsFailure(output))
             {
                 decision.MarkFailed(result);
                 return result;

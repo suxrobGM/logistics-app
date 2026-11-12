@@ -94,4 +94,21 @@ public class ApproveAIDispatchDecisionHandlerTests
         Assert.Equal(AgentDecisionStatus.Failed, decision.Status);
         Assert.Contains("failed to execute", Assert.Single(_ctx.AddedMessages).DisplayText);
     }
+
+    [Fact]
+    public async Task Handle_ToolReportsFailure_MarksFailedNotExecuted()
+    {
+        var conversation = _ctx.SetConversation(kind: AgentConversationKind.Dispatch);
+        var decision = _ctx.SetDispatchSuggestedDecision(conversation);
+        _ctx.ToolExecutor.ExecuteToolAsync(Arg.Any<string>(), Arg.Any<string>(), Arg.Any<CancellationToken>())
+            .Returns("""{"success":false,"error":"Truck is out of service"}""");
+
+        var result = await _sut.Handle(
+            new ApproveAIDispatchDecisionCommand { DecisionId = decision.Id }, CancellationToken.None);
+
+        Assert.False(result.IsSuccess);
+        Assert.Contains("Truck is out of service", result.Error);
+        Assert.Equal(AgentDecisionStatus.Failed, decision.Status);
+        Assert.Contains("failed to execute", Assert.Single(_ctx.AddedMessages).DisplayText);
+    }
 }
