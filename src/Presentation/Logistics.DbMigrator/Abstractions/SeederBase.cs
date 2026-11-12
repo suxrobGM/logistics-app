@@ -7,8 +7,12 @@ namespace Logistics.DbMigrator.Abstractions;
 /// </summary>
 public abstract class SeederBase(ILogger logger) : ISeeder
 {
+    private const int RandomSeed = 20240101;
+
     protected ILogger Logger { get; } = logger;
-    protected readonly Random random = new();
+
+    /// <summary>Fixed seed, so each seeder makes the same random picks on every run.</summary>
+    protected readonly Random random = new(RandomSeed);
 
     public abstract string Name { get; }
     public abstract SeederType Type { get; }

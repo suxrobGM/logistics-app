@@ -35,9 +35,24 @@ internal class DemoEldService(ILogger<DemoEldService> logger) : IEldProviderServ
 
     public Task<EldDriverHosDataDto?> GetDriverHosStatusAsync(string externalDriverId)
     {
-        var driverIndex = Math.Abs(externalDriverId.GetHashCode()) % demoDriverNames.Length;
+        var driverIndex = GetDemoDriverIndex(externalDriverId);
         var dto = GenerateDriverHosData(externalDriverId, demoDriverNames[driverIndex]);
         return Task.FromResult<EldDriverHosDataDto?>(dto);
+    }
+
+    /// <summary>
+    /// Maps a driver id to the same demo name on every run. string.GetHashCode is seeded per
+    /// process, so it gave a driver a different name after each restart.
+    /// </summary>
+    private static int GetDemoDriverIndex(string externalDriverId)
+    {
+        var hash = 0u;
+        foreach (var c in externalDriverId)
+        {
+            hash = unchecked(hash * 31 + c);
+        }
+
+        return (int)(hash % (uint)demoDriverNames.Length);
     }
 
     public Task<IEnumerable<EldDriverHosDataDto>> GetAllDriversHosStatusAsync()
