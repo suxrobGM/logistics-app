@@ -16,8 +16,6 @@ public interface IStripeSubscriptionService
 
     Task<StripeSubscription> CancelSubscriptionAsync(string stripeSubscriptionId, bool cancelImmediately = true);
 
-    Task<SubscriptionItem> UpdateSubscriptionQuantityAsync(string stripeSubscriptionId, int truckCount);
-
     Task<StripeSubscription> RenewSubscriptionAsync(
         Subscription? subEntity, SubscriptionPlan plan, Tenant tenant, int truckCount);
 

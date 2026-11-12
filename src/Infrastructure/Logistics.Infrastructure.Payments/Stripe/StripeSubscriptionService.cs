@@ -72,20 +72,6 @@ internal sealed class StripeSubscriptionService(ILogger<StripeSubscriptionServic
         return updated;
     }
 
-    public async Task<SubscriptionItem> UpdateSubscriptionQuantityAsync(
-        string stripeSubscriptionId, int truckCount)
-    {
-        var subscription = await new SubscriptionService().GetAsync(stripeSubscriptionId);
-        var item = subscription.Items.Data.FirstOrDefault(i => i.Quantity != 1)
-                   ?? subscription.Items.Data.Last();
-
-        var result = await new SubscriptionItemService().UpdateAsync(item.Id,
-            new SubscriptionItemUpdateOptions { Quantity = truckCount });
-        logger.LogInformation("Updated Stripe subscription {SubscriptionId} truck count to {TruckCount}",
-            stripeSubscriptionId, truckCount);
-        return result;
-    }
-
     public async Task<StripeSubscription> RenewSubscriptionAsync(
         Subscription? subEntity, SubscriptionPlan plan, Tenant tenant, int truckCount)
     {

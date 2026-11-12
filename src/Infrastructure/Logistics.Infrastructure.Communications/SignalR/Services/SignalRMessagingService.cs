@@ -31,42 +31,4 @@ internal sealed class SignalRMessagingService(IHubContext<ChatHub, IChatHubClien
             .Group($"conversation-{conversationId}")
             .ConversationRead(conversationId, readById);
     }
-
-    public async Task BroadcastTypingIndicatorAsync(
-        Guid conversationId,
-        string userId,
-        bool isTyping,
-        CancellationToken ct = default)
-    {
-        var indicator = new TypingIndicatorDto
-        {
-            ConversationId = conversationId,
-            UserId = Guid.Parse(userId),
-            IsTyping = isTyping
-        };
-
-        await hubContext.Clients
-            .Group($"conversation-{conversationId}")
-            .TypingIndicator(indicator);
-    }
-
-    public async Task BroadcastUserJoinedAsync(
-        Guid conversationId,
-        string userId,
-        CancellationToken ct = default)
-    {
-        await hubContext.Clients
-            .Group($"conversation-{conversationId}")
-            .UserJoinedConversation(conversationId, Guid.Parse(userId), null);
-    }
-
-    public async Task BroadcastUserLeftAsync(
-        Guid conversationId,
-        string userId,
-        CancellationToken ct = default)
-    {
-        await hubContext.Clients
-            .Group($"conversation-{conversationId}")
-            .UserLeftConversation(conversationId, Guid.Parse(userId));
-    }
 }

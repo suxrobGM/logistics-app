@@ -15,9 +15,4 @@ public interface IStripePaymentService
     ///     Creates a PaymentIntent for processing a payment.
     /// </summary>
     Task<PaymentIntent> CreatePaymentIntentAsync(Payment payment, Tenant tenant);
-
-    /// <summary>
-    ///     Retrieves a PaymentIntent from Stripe.
-    /// </summary>
-    Task<PaymentIntent> GetPaymentIntentAsync(string paymentIntentId);
 }

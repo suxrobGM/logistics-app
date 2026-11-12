@@ -67,9 +67,4 @@ internal sealed class StripePaymentService(ILogger<StripePaymentService> logger)
             paymentIntent.Id, tenant.Id);
         return paymentIntent;
     }
-
-    public Task<PaymentIntent> GetPaymentIntentAsync(string paymentIntentId)
-    {
-        return new PaymentIntentService().GetAsync(paymentIntentId);
-    }
 }

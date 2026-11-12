@@ -17,20 +17,4 @@ public interface IRealtimeMessagingService
         Guid conversationId,
         Guid readById,
         CancellationToken ct = default);
-
-    Task BroadcastTypingIndicatorAsync(
-        Guid conversationId,
-        string userId,
-        bool isTyping,
-        CancellationToken ct = default);
-
-    Task BroadcastUserJoinedAsync(
-        Guid conversationId,
-        string userId,
-        CancellationToken ct = default);
-
-    Task BroadcastUserLeftAsync(
-        Guid conversationId,
-        string userId,
-        CancellationToken ct = default);
 }
