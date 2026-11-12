@@ -1,16 +1,13 @@
+using Logistics.Application.Abstractions.Realtime;
 using Logistics.Domain.Entities;
 using Logistics.Domain.Persistence;
-using Logistics.Infrastructure.Communications.SignalR.Clients;
-using Logistics.Infrastructure.Communications.SignalR.Hubs;
 using Logistics.Mappings;
-using Microsoft.AspNetCore.SignalR;
-using Logistics.Application.Abstractions.Notifications;
 
-namespace Logistics.Infrastructure.Communications.Services;
+namespace Logistics.Application.Modules.Platform.Notifications.Services;
 
-internal class NotificationService(
+internal sealed class NotificationService(
     ITenantUnitOfWork tenantUow,
-    IHubContext<NotificationHub, INotificationHubClient> notificationHub)
+    IRealtimeNotificationService realtimeNotificationService)
     : INotificationService
 {
     public async Task SendNotificationAsync(string title, string message)
@@ -24,8 +21,7 @@ internal class NotificationService(
 
         if (changes > 0)
         {
-            await notificationHub.Clients.Group(tenantId.ToString())
-                .ReceiveNotification(notification.ToDto());
+            await realtimeNotificationService.BroadcastNotificationAsync(tenantId.ToString(), notification.ToDto());
         }
     }
 }

@@ -1,4 +1,4 @@
-using Logistics.Application.Abstractions.Notifications;
+using Logistics.Application.Modules.Platform.Notifications.Services;
 using Logistics.Application.Modules.Operations.Containers.Services;
 using Logistics.Domain.Entities;
 using Logistics.Domain.Persistence;

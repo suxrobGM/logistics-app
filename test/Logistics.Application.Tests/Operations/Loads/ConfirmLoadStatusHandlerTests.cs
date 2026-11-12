@@ -1,5 +1,5 @@
 using Logistics.Application.Abstractions.CurrentUser;
-using Logistics.Application.Abstractions.Notifications;
+using Logistics.Application.Modules.Platform.Notifications.Services;
 using Logistics.Application.Modules.Operations.Loads.Commands;
 using Logistics.Application.Modules.Operations.Loads.Services;
 using Logistics.Domain.Entities;

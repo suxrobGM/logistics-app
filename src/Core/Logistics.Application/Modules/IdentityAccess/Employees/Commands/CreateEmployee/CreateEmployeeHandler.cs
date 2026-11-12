@@ -3,7 +3,7 @@ using Logistics.Domain.Entities;
 using Logistics.Domain.Persistence;
 using Logistics.Mediator;
 using Logistics.Shared.Models;
-using Logistics.Application.Abstractions.Notifications;
+using Logistics.Application.Modules.Platform.Notifications.Services;
 
 namespace Logistics.Application.Modules.IdentityAccess.Employees.Commands;
 

@@ -55,7 +55,6 @@ public static class Registrar
             services.AddScoped<IInboundEmailWebhookVerifier, ResendWebhookVerifier>();
             services.AddSingleton<IEmailTemplateService, FluidEmailTemplateService>();
 
-            services.AddScoped<INotificationService, NotificationService>();
             services.AddSingleton<IPushNotificationService, PushNotificationService>();
 
             services.Configure<GoogleRecaptchaOptions>(configuration.GetSection(GoogleRecaptchaOptions.SectionName));

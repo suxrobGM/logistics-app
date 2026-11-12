@@ -13,6 +13,7 @@
   <ItemGroup>
     <PackageReference Include="FluentValidation.DependencyInjectionExtensions" />
     <PackageReference Include="System.Linq.Dynamic.Core"/>
+    <PackageReference Include="Riok.Mapperly" />
     <PackageReference Include="Scrutor" />
     <PackageReference Include="Microsoft.EntityFrameworkCore" />
     <PackageReference Include="Microsoft.Extensions.Caching.Memory" />
@@ -26,7 +27,6 @@
     <ProjectReference Include="..\..\Shared\Logistics.Shared.Models\Logistics.Shared.Models.csproj" />
     <ProjectReference Include="..\Logistics.Application.Abstractions\Logistics.Application.Abstractions.csproj" />
     <ProjectReference Include="..\Logistics.Domain\Logistics.Domain.csproj" />
-    <ProjectReference Include="..\Logistics.Mappings\Logistics.Mappings.csproj" />
   </ItemGroup>
 
 </Project>

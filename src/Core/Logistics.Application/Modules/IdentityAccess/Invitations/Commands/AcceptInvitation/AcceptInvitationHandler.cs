@@ -10,7 +10,7 @@ using Logistics.Mediator;
 using Logistics.Shared.Identity.Roles;
 using Logistics.Shared.Models;
 using Microsoft.AspNetCore.Identity;
-using Logistics.Application.Abstractions.Notifications;
+using Logistics.Application.Modules.Platform.Notifications.Services;
 
 namespace Logistics.Application.Modules.IdentityAccess.Invitations.Commands;
 

@@ -1,4 +1,4 @@
-using Logistics.Application.Abstractions.Notifications;
+using Logistics.Application.Modules.Platform.Notifications.Services;
 using Logistics.Application.Modules.Operations.Trips.Services;
 using Logistics.Application.Tests.Operations.Loads;
 using Logistics.Application.Tests.TestKit;
