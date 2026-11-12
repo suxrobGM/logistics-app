@@ -20,7 +20,7 @@ namespace Logistics.IdentityServer.Pages.Account.Login;
 [SecurityHeaders]
 [AllowAnonymous]
 [EnableRateLimiting("login")]
-public class Index(
+public partial class Index(
     IIdentityServerInteractionService interaction,
     IAuthenticationSchemeProvider schemeProvider,
     IEventService events,
@@ -66,10 +66,7 @@ public class Index(
         }
 
         User? user = null;
-        const string emailPattern = @"^([a-zA-Z0-9_\-\.]+)@((\[[0-9]{1,3}" +
-                                    @"\.[0-9]{1,3}\.[0-9]{1,3}\.)|(([a-zA-Z0-9\-]+\" +
-                                    @".)+))([a-zA-Z]{2,4}|[0-9]{1,3})(\]?)$";
-        if (!Regex.IsMatch(Input.Email, emailPattern))
+        if (!EmailPattern().IsMatch(Input.Email))
         {
             ModelState.AddModelError(string.Empty, LoginOptions.InvalidCredentialsErrorMessage);
         }
@@ -163,4 +160,7 @@ public class Index(
             ExternalProviders = providers.ToArray()
         };
     }
+
+    [GeneratedRegex(@"^([a-zA-Z0-9_\-\.]+)@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.)|(([a-zA-Z0-9\-]+\.)+))([a-zA-Z]{2,4}|[0-9]{1,3})(\]?)$")]
+    private static partial Regex EmailPattern();
 }

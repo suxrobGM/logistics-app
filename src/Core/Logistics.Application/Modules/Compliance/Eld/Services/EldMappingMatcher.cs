@@ -1,3 +1,4 @@
+using System.Text.RegularExpressions;
 using Logistics.Shared.Models;
 
 namespace Logistics.Application.Modules.Compliance.Eld.Services;
@@ -11,7 +12,7 @@ internal sealed record TruckCandidate(Guid TruckId, string Number, string? Vin);
 /// is unique on both sides, so two "John Smith"s or a VIN typed on two trucks produce no suggestion
 /// rather than a wrong one. Keys are tried strongest first and each record is used at most once.
 /// </summary>
-internal static class EldMappingMatcher
+internal static partial class EldMappingMatcher
 {
     public static List<EldDriverMappingSuggestionDto> MatchDrivers(
         IReadOnlyCollection<EldDriverDto> eldDrivers, IReadOnlyCollection<DriverCandidate> employees)
@@ -86,7 +87,7 @@ internal static class EldMappingMatcher
     {
         yield return NormalizeCode(vehicle.Name);
 
-        var digitRuns = System.Text.RegularExpressions.Regex.Matches(vehicle.Name, @"\d+");
+        var digitRuns = DigitRun().Matches(vehicle.Name);
         if (digitRuns.Count == 1)
         {
             yield return digitRuns[0].Value;
@@ -148,4 +149,7 @@ internal static class EldMappingMatcher
                 .Split(' ', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries)
                 .Select(part => new string(part.Where(char.IsLetter).ToArray()))
                 .Where(part => part.Length > 0));
+
+    [GeneratedRegex(@"\d+")]
+    private static partial Regex DigitRun();
 }
