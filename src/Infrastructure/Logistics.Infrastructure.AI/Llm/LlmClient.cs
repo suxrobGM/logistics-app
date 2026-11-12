@@ -49,7 +49,7 @@ internal sealed class LlmClient(
             var response = await provider.SendAsync(llmRequest, ct);
 
             var usage = response.Usage;
-            var cost = LlmPricing.Calculate(
+            var cost = LlmModelCatalog.CalculateCost(
                 selection.Model, usage.InputTokens, usage.OutputTokens, usage.CacheReadTokens, usage.CacheCreationTokens);
 
             logger.LogInformation(

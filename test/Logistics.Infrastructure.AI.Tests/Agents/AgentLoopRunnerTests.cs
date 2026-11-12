@@ -100,7 +100,7 @@ public class AgentLoopRunnerTests
 
         await _provider.Received(1).SendAsync(Arg.Any<LlmRequest>(), Arg.Any<CancellationToken>());
         Assert.Equal(150, session.TotalTokensUsed);
-        Assert.Equal(LlmPricing.Calculate("claude-haiku-5-5", 100, 50), session.EstimatedCostUsd);
+        Assert.Equal(LlmModelCatalog.CalculateCost("claude-haiku-5-5", 100, 50), session.EstimatedCostUsd);
     }
 
     [Fact]

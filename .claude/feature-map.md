@@ -241,7 +241,7 @@ registry, `AgentLoopRunner`, decisions, and quota. Gated by `TenantFeature.AICop
 
 - Domain: `Entities/Subscription/SubscriptionPlan.cs` (`WeeklyAIBudgetUsd`, required; unsubscribed tenants fall back to the Enterprise budget via `Application.Abstractions/AIDispatch/AIWeeklyBudget.cs`)
 - Application: `Application.Abstractions/AIDispatch/IAIQuotaService.cs` (port)
-- Infrastructure: `Infrastructure.Persistence/Services/AIDispatch/AIQuotaService.cs` (cost-based quota tracking), `Infrastructure.AI/Llm/LlmPricing.cs` (per-token pricing), `Application.Abstractions/Payments/Stripe/AIOverageBilling.cs` (cost → Stripe metered units; shared by Stripe metering and the tenant-visible accrued-charges figure)
+- Infrastructure: `Infrastructure.Persistence/Services/AIDispatch/AIQuotaService.cs` (cost-based quota tracking), `Application.Abstractions/AI/LlmModelCatalog.cs` (per-token prices on each model, `CalculateCost`), `Application.Abstractions/Payments/Stripe/AIOverageBilling.cs` (cost → Stripe metered units; shared by Stripe metering and the tenant-visible accrued-charges figure)
 - API/UI: (quota bar in `tms-portal/pages/ai-dispatch/`), `admin-portal/pages/ai-settings/tenant-quotas/` (per-tenant usage + revenue-vs-LLM-cost margin report)
 - Quota numbers live in `SubscriptionPlanSeeder` + admin portal only - never exposed to tenants (tenant API returns a percentage)
 

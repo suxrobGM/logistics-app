@@ -6,7 +6,7 @@ internal static class OpenAIUsage
 {
     /// <summary>
     /// OpenAI's <c>input_tokens</c> <b>includes</b> <c>cached_tokens</c> (Anthropic's excludes them),
-    /// and <c>LlmPricing.Calculate</c> adds both buckets - so subtract, or every cached token bills
+    /// and <c>LlmModelCatalog.CalculateCost</c> adds both buckets - so subtract, or every cached token bills
     /// twice. Cache writes are free on OpenAI, so creation stays zero.
     /// </summary>
     public static LlmTokenUsage From(int inputTokens, int cachedTokens, int outputTokens)

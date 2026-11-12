@@ -22,8 +22,7 @@ Providers sit behind the `ILlmProvider` adapter.
    deliberately **not** in `Infrastructure.AI` (the application layer reads it) - see `.claude/rules/backend/ai-agent.md`
 3. `src/Infrastructure/Logistics.Infrastructure.AI/Llm/Providers/{X}LlmProvider.cs` - only for non-OpenAI-compatible
 4. `src/Infrastructure/Logistics.Infrastructure.AI/Llm/LlmProviderFactory.cs` - resolution arm (custom SDK only)
-5. `src/Infrastructure/Logistics.Infrastructure.AI/Llm/LlmPricing.cs` - per-token USD prices (input, output, cache read, cache write)
-6. `src/Core/Logistics.Application.Abstractions/AI/LlmModelCatalog.cs` - add the model `{ Id, DisplayName, Provider }`
+5. `src/Core/Logistics.Application.Abstractions/AI/LlmModelCatalog.cs` - add the model `{ Id, DisplayName, Provider, Prices }`
 
 ## Step-by-step
 
@@ -93,28 +92,19 @@ return type switch
 };
 ```
 
-### 5. Update `LlmPricing.cs`
+### 5. Add the model to `LlmModelCatalog`
 
-**One entry** - per-token USD prices. The weekly budget and Stripe overage both derive from the
-cost this computes; there is no tier or multiplier to pick.
-
-```csharp
-private static readonly Dictionary<string, ModelPricing> Pricing = new()
-{
-    // existing entries
-    ["new-model-1"] = new(0.50m, 2.0m, 0.05m, 0.625m), // input, output, cache read, cache write per M tokens
-};
-```
-
-### 6. Add the model to `LlmModelCatalog`
-
-In `src/Core/Logistics.Application.Abstractions/AI/LlmModelCatalog.cs`:
+In `src/Core/Logistics.Application.Abstractions/AI/LlmModelCatalog.cs`. The `LlmTokenPrices` are USD
+per million tokens (input, output, cache read, cache write); add the vendor's pricing page to the
+comment above the list. The weekly budget and Stripe overage both derive from the cost
+`CalculateCost` computes from them; there is no tier or multiplier to pick.
 
 ```csharp
 public static readonly IReadOnlyList<LlmModelInfo> Models =
 [
     // existing entries
-    new("new-model-1", "New Model 1", LlmProvider.NewProvider, ReasoningStyle.OpenAIEffort),
+    new("new-model-1", "New Model 1", LlmProvider.NewProvider, new(0.50m, 2.0m, 0.05m, 0.625m),
+        ReasoningStyle.OpenAIEffort),
 ];
 ```
 
@@ -140,8 +130,7 @@ selected model in `UpdateAISettingsCommand`. The admin UI populates automaticall
 - [ ] Config section + appsettings entry + env var documented
 - [ ] (If custom SDK) Provider implementation, no SDK types leak
 - [ ] (If custom SDK) Factory arm added; compatible providers fall through with no change
-- [ ] **`LlmPricing.Pricing` entry added** (per-token USD prices)
-- [ ] `LlmModelCatalog` includes the model (id matches the `LlmPricing` keys) with the right `ReasoningStyle`
+- [ ] `LlmModelCatalog` includes the model with its **per-token prices** and the right `ReasoningStyle`
 - [ ] Admin AI Settings page shows the new model in the dropdown
 - [ ] Selecting the model as the global model runs a dispatch session successfully
 
@@ -149,7 +138,7 @@ selected model in `UpdateAISettingsCommand`. The admin UI populates automaticall
 
 - **Wrong `ReasoningStyle`**: a flagged non-reasoning endpoint rejects the parameter. Unsure? Start with `None`.
 - **`LlmProvider.OpenAI` for a non-OpenAI endpoint**: that value selects the Responses provider, and only OpenAI/Azure serve `/v1/responses`. Everything else 404s.
-- **Catalog id ≠ `LlmPricing` key**: silently falls back to Sonnet 5.5 rates.
+- **Catalog id ≠ the model id the provider is configured with**: `CalculateCost` silently falls back to Sonnet 5.5 rates.
 - **No `BaseUrl`** on a compatible provider: defaults to OpenAI's endpoint and 401s.
 - **Raw token counts**: OpenAI folds cached tokens into `input_tokens`, so fill `LlmTokenUsage` via `OpenAIUsage.From` or every cache hit bills twice.
 - **SDK types leaking**: importing the provider SDK in any file other than `Llm/Providers/{X}LlmProvider.cs` breaks the abstraction.

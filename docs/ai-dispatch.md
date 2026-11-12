@@ -23,7 +23,7 @@ bill Stripe metered units (`AIOverageBilling` in `Application.Abstractions/Payme
 $0.10/unit, 3× markup, min one unit); the accrued amount is tenant-visible as
 `AIQuotaStatusDto.OverageChargesUsd`. `TenantSettings.BlockAIOverage` swaps billing for a hard
 pause until the weekly reset (copilot sends fail with `AI_BUDGET_REACHED`; dispatch records a
-failed session). Per-token prices live in `LlmPricing.cs`.
+failed session). Per-token prices live on each model in `LlmModelCatalog.cs`.
 
 ## Approval Model
 
@@ -308,7 +308,6 @@ src/Infrastructure/Logistics.Infrastructure.AI/
 │   ├── LlmProviderFactory.cs               # Resolves provider from config
 │   ├── LlmClient.cs                        # One-shot ILlmClient for non-agent features
 │   ├── LlmModelResolver.cs                 # Global admin-set model → provider
-│   ├── LlmPricing.cs                       # Token → USD cost (the budget/overage currency)
 │   ├── LlmErrorSanitizer.cs                # Strips credentials before text reaches a tenant
 │   ├── Contracts/                          # LlmRequest/Response/Message/ContentBlock/...
 │   └── Providers/                          # Anthropic, OpenAIResponses, OpenAICompatible
@@ -348,8 +347,7 @@ Tool definitions are JSON Schema, which works with both Claude API tool schemas 
 
 1. **OpenAI-compatible** (most providers): Add a new `LlmProvider` enum value and configure with `BaseUrl` in appsettings - these route to `OpenAICompatibleLlmProvider` (chat completions). Only `LlmProvider.OpenAI` uses the Responses API
 2. **Custom SDK**: Create a new `ILlmProvider` implementation, add a case in `LlmProviderFactory`
-3. Add one `Pricing` entry in `LlmPricing.cs` (per-token USD prices)
-4. Add the model to `LlmModelCatalog` with its `ReasoningStyle` - it populates the admin AI
+3. Add the model to `LlmModelCatalog` with its per-token prices and `ReasoningStyle` - it populates the admin AI
    Settings dropdown automatically, and the style decides whether the providers send a
    reasoning parameter
 

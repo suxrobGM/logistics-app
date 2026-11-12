@@ -99,7 +99,7 @@ public class OpenAICompatibleLlmProviderTests
     [Fact]
     public void Usage_SubtractsCachedTokensFromInput()
     {
-        // OpenAI's input_tokens INCLUDES cached_tokens and LlmPricing adds the two buckets, so
+        // OpenAI's input_tokens INCLUDES cached_tokens and LlmModelCatalog.CalculateCost adds the two buckets, so
         // passing both through raw bills the cache twice.
         var usage = OpenAIUsage.From(inputTokens: 1000, cachedTokens: 800, outputTokens: 50);
 

@@ -20,7 +20,7 @@ picture is [docs/ai-dispatch.md](../../../docs/ai-dispatch.md).
 
 | Folder | Holds |
 | --- | --- |
-| `Llm/` | `ILlmProvider`, factory, one-shot `LlmClient`, model resolution, pricing, sanitising |
+| `Llm/` | `ILlmProvider`, factory, one-shot `LlmClient`, model resolution, sanitising |
 | `Llm/Contracts/` | The `Llm*` wire records the rest of the project sees |
 | `Llm/Providers/` | The only files allowed to touch a vendor SDK |
 | `Agents/` | Shared runtime: loop runner, decision processor, cancellation, tool-call context, `AgentTurnService` (the one turn lifecycle every conversational agent runs through, parameterized by `IAgentSurface`), transcript codec/replay |
@@ -98,7 +98,7 @@ and the replay window moves in `WindowStep` jumps. History may only change at th
 when no thinking block exists yet - that is why earlier turns' large tool results can be stubbed.
 
 **The two vendors report cached tokens differently.** OpenAI's `input_tokens` **includes**
-`cached_tokens`; Anthropic's **excludes** cache reads. `LlmPricing.Calculate` adds the input and
+`cached_tokens`; Anthropic's **excludes** cache reads. `LlmModelCatalog.CalculateCost` adds the input and
 cache-read buckets, so both OpenAI-shaped providers must subtract before filling `LlmTokenUsage` -
 that is what `OpenAIUsage.From` is for. Forward the raw counts and every cached token bills twice.
 
@@ -166,7 +166,8 @@ reintroduce one.
   replay thinking blocks via
   `LlmThinkingBlock` (**including redacted ones** - drop one and the next turn is rejected);
   `None` models get no reasoning parameter.
-- `LlmPricing` owns per-token prices - **read the numbers there**, never copy them into docs.
+- `LlmModelCatalog` also owns per-token prices (`LlmModelInfo.Prices`) - **read the numbers there**,
+  never copy them into docs.
   Unknown models charge at Sonnet 5.5 rates.
 - Quota is **cost-based**: `AgentSession.EstimatedCostUsd` (written in `AgentLoopRunner`'s finally,
   so failed and cancelled sessions count) summed weekly against

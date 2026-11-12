@@ -1,3 +1,4 @@
+using Logistics.Application.Abstractions.AI;
 using Logistics.Domain.Entities;
 using Logistics.Domain.Persistence;
 using Logistics.Domain.Primitives.Enums;
@@ -38,7 +39,7 @@ internal sealed class AgentLoopRunner(
         {
             // In a finally so failed/cancelled sessions still record what they burned - the
             // budget counts every session, else failing prompts would be free retries.
-            session.EstimatedCostUsd = LlmPricing.Calculate(
+            session.EstimatedCostUsd = LlmModelCatalog.CalculateCost(
                 conversation.Model,
                 session.InputTokensUsed, session.OutputTokensUsed,
                 session.CacheReadTokens, session.CacheCreationTokens);
