@@ -5,6 +5,7 @@ using Logistics.Domain.Primitives.Enums;
 using Logistics.Mappings;
 using Logistics.Mediator;
 using Logistics.Shared.Models;
+using Logistics.Application.Utilities;
 
 namespace Logistics.Application.Modules.Operations.Trips.Queries;
 

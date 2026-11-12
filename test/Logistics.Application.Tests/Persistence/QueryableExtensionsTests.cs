@@ -1,5 +1,6 @@
 using Logistics.Domain.Persistence;
 using Xunit;
+using Logistics.Application.Utilities;
 
 namespace Logistics.Application.Tests.Persistence;
 

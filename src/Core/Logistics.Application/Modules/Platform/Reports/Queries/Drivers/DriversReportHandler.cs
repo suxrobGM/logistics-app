@@ -3,6 +3,7 @@ using Logistics.Domain.Entities;
 using Logistics.Domain.Persistence;
 using Logistics.Mediator;
 using Logistics.Shared.Models;
+using Logistics.Application.Utilities;
 
 namespace Logistics.Application.Modules.Platform.Reports.Queries;
 

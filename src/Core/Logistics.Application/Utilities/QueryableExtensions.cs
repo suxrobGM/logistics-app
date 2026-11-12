@@ -2,7 +2,7 @@ using System.Linq.Dynamic.Core;
 using System.Linq.Expressions;
 using System.Reflection;
 
-namespace Logistics.Domain.Persistence;
+namespace Logistics.Application.Utilities;
 
 public static class QueryableExtensions
 {

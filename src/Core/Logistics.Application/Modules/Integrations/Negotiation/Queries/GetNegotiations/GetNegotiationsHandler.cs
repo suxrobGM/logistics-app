@@ -5,6 +5,7 @@ using Logistics.Domain.Persistence;
 using Logistics.Mediator;
 using Logistics.Shared.Models;
 using Microsoft.EntityFrameworkCore;
+using Logistics.Application.Utilities;
 
 namespace Logistics.Application.Modules.Integrations.Negotiation.Queries;
 

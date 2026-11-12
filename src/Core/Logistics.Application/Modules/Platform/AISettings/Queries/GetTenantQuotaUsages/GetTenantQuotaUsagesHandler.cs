@@ -8,6 +8,7 @@ using Logistics.Mediator;
 using Logistics.Shared.Models;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
+using Logistics.Application.Utilities;
 
 namespace Logistics.Application.Modules.Platform.AISettings.Queries;
 

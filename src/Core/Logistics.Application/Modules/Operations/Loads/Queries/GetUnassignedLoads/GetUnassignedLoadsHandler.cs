@@ -7,6 +7,7 @@ using Logistics.Mediator;
 using Logistics.Shared.Models;
 using Microsoft.EntityFrameworkCore;
 using Logistics.Application.Modules.Operations.Loads.Services;
+using Logistics.Application.Utilities;
 
 namespace Logistics.Application.Modules.Operations.Loads.Queries;
 
