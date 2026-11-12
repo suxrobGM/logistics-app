@@ -174,22 +174,22 @@ Update `AssemblyAnchors`, the arch-tests csproj, `overview.md`, CLAUDE.md ("15 f
 ## 6. Tests: ~140 methods and ~3,000 lines removable (~9%)
 
 The suite is less redundant than it looks: most large files test real branching (money, HOS, negotiation floors, agent safety).
-- [ ] `AIDispatchSystemPromptTests`: 43 → ~16 tests. Delete ~21 tests that only `Contains`-check prose. Add 2 drift tests: every tool name in the prompt exists in `AgentToolCatalog`, and every back-ticked enum name is real. Keep the sanitization, truncation, ordering and cache-prefix tests.
-- [ ] ~30 per-tool "missing or invalid input" tests in AI.Tests: the binding lives in one place (`AgentToolJson.cs:66`) and is already tested there.
-- [ ] `AgentDecisionProcessorTests` (−5 tests), `AgentToolRegistryTests` (23 → 17), `AIDispatchConversationBuilderTests` (−5), `HosFeasibilityToolTests` (5 parity tests → 1 Theory).
-- [ ] `SnakeCaseEnumConverterTests`: 17 → 4 methods (`Roundtrip_EveryDomainEnumMember` already covers the rest).
-- [ ] Add `BrokerCreditCheckerTests` (one Theory). Cut its 9 indirect tests in the two handler test files down to one each.
-- [ ] Cross-layer duplicates:
+- [x] `AIDispatchSystemPromptTests`: 43 → ~16 tests. Delete ~21 tests that only `Contains`-check prose. Add 2 drift tests: every tool name in the prompt exists in `AgentToolCatalog`, and every back-ticked enum name is real. Keep the sanitization, truncation, ordering and cache-prefix tests.
+- [x] ~30 per-tool "missing or invalid input" tests in AI.Tests: the binding lives in one place (`AgentToolJson.cs:66`) and is already tested there.
+- [x] `AgentDecisionProcessorTests` (−5 tests), `AgentToolRegistryTests` (23 → 17), `AIDispatchConversationBuilderTests` (−5), `HosFeasibilityToolTests` (5 parity tests → 1 Theory). The builder lost 4, not 5: each remaining test pins a different input.
+- [x] `SnakeCaseEnumConverterTests`: 17 → 4 methods (`Roundtrip_EveryDomainEnumMember` already covers the rest).
+- [x] Add `BrokerCreditCheckerTests` (one Theory). Cut its 9 indirect tests in the two handler test files down to one each.
+- [x] Cross-layer duplicates:
   - `PayrollServiceTests` exclusions duplicate `EmployeePayTests`. These two also use `double` and break the decimal rule.
   - The duplicate hazmat eligibility test.
   - `UpdateLoadHandlerTests`: 4 rebuild tests → 1 Theory.
-  - `QboMapperTests`: −5.
+  - `QboMapperTests`: −5. Done −3: the other mapping tests each check a different QBO field.
   - `QueryableExtensionsTests`, `AIQuotaServiceTests` and `ProposeCounterOfferHandlerTests`: merge into Theories.
-- [ ] `ApplicationLayerRegistrationTests` is a hand-maintained `InlineData(typeof(IX))` roster, the same anti-pattern CLAUDE.md bans. Replace it with one `ValidateOnBuild` + `ValidateScopes` test.
-- [ ] Delete `AIDispatchSessionMapperTests` (tests generated Mapperly code). Merge the 7 one-test EF mapping files into one `TenantModelMappingTests`.
-- [ ] Shared test kit (~1,150 lines): 87 `new Address {…}` blocks, 25 hand-built `Load`s, ~15 hand-built `Tenant`s (`TestTenant` exists, and AI.Tests keeps a copy), and 182 `Repository<T>().Returns` lines. Add `TestData.*` builders and a `uow.Stub<T>(rows)` extension. Turn `DispatchEligibilityServiceTests` into a `[MemberData]` scenario table (518 → ~300 lines).
-- [ ] 11 files (~2k lines) in Application.Tests actually test Infrastructure (QBO, Samsara, Geotab, DAT, FMCSA, webhook signatures, fuel cards). Move them.
-- [ ] **Test projects: 12 → 5.** Application.Tests (mirror `Modules/`), a new merged `Infrastructure.Tests` (Persistence, Tax, Payments, Vin, Routing, Communications, Documents, Integrations, HostDefaults), AI.Tests, Mediator.Tests, Architecture.Tests.
+- [x] `ApplicationLayerRegistrationTests` is a hand-maintained `InlineData(typeof(IX))` roster, the same anti-pattern CLAUDE.md bans. Replace it with one `ValidateOnBuild` + `ValidateScopes` test. The 4-row scoped-lifetime theory stays: validation cannot tell scoped from transient.
+- [x] Delete `AIDispatchSessionMapperTests` (tests generated Mapperly code). Merge the 7 one-test EF mapping files into one `TenantModelMappingTests`.
+- [x] Shared test kit (~1,150 lines): 87 `new Address {…}` blocks, 25 hand-built `Load`s, ~15 hand-built `Tenant`s (`TestTenant` exists, and AI.Tests keeps a copy), and 182 `Repository<T>().Returns` lines. Add `TestData.*` builders and a `uow.Stub<T>(rows)` extension. Turn `DispatchEligibilityServiceTests` into a `[MemberData]` scenario table (518 → ~300 lines).
+- [x] 11 files (~2k lines) in Application.Tests actually test Infrastructure (QBO, Samsara, Geotab, DAT, FMCSA, webhook signatures, fuel cards). Move them. They are in the new `Logistics.Infrastructure.Integrations.Tests`; its `Logistics.slnx` entry was left uncommitted because the solution file had unrelated local changes.
+- [ ] **Test projects: 12 → 5.** Application.Tests now mirrors `Modules/` (done); the project merge is not started, and the Integrations move made it 13 for now. Application.Tests (mirror `Modules/`), a new merged `Infrastructure.Tests` (Persistence, Tax, Payments, Vin, Routing, Communications, Documents, Integrations, HostDefaults), AI.Tests, Mediator.Tests, Architecture.Tests.
 
 ---
 

@@ -654,10 +654,10 @@ registry, `AgentLoopRunner`, decisions, and quota. Gated by `TenantFeature.AICop
 
 All under `test/` (singular):
 
-- `Logistics.Application.Tests/` - application handlers, services
+- `Logistics.Application.Tests/` - application handlers, services; folders mirror `Modules/`, shared fixtures in `TestKit/`
 - `Logistics.Architecture.Tests/` - layering/dependency boundaries; discovers projects, never hard-code a list
 - `Logistics.Infrastructure.AI.Tests/` - AI agent, tools, prompts, pricing (quota lives in `Logistics.Infrastructure.Persistence.Tests/`, next to `AIQuotaService`)
-- `Logistics.Infrastructure.{Communications,Documents,Payments,Persistence,Routing,Tax,Vin}.Tests/` - per-module
+- `Logistics.Infrastructure.{Communications,Documents,Integrations,Payments,Persistence,Routing,Tax,Vin}.Tests/` - per-module (`Integrations` covers the Accounting, Eld, FuelCards, LoadBoard and Common projects)
 - `Logistics.HostDefaults.Tests/` - Sentry scrubbing and tenant tagging
 - `Logistics.Mediator.Tests/` - the in-repo mediator
 

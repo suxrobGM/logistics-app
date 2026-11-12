@@ -9,12 +9,34 @@ paths:
 
 | Project                                      | Tests For                                             | Extra Dependencies          |
 | -------------------------------------------- | ----------------------------------------------------- | --------------------------- |
-| `Logistics.Application.Tests`                | Application layer (handlers, services)                | -                           |
+| `Logistics.Application.Tests`                | Application layer (handlers, services)                | `MockQueryable.NSubstitute` |
 | `Logistics.Infrastructure.AI.Tests`          | AI agent, tools, prompts, LLM pricing                 | `MockQueryable.NSubstitute` |
 | `Logistics.Infrastructure.Persistence.Tests` | Persistence services, converters - including AI quota | `MockQueryable.NSubstitute` |
+| `Logistics.Infrastructure.Integrations.Tests` | QBO, ELD (Samsara, Geotab), DAT, FMCSA, fuel cards, webhook signatures | -                           |
 | `Logistics.Architecture.Tests`               | Layering / dependency boundaries                      | `TngTech.ArchUnitNET.xUnitV3` |
 
-Other `Logistics.Infrastructure.*.Tests` projects cover their own infrastructure module.
+Other `Logistics.Infrastructure.*.Tests` projects cover their own infrastructure module. A test of
+infrastructure code goes there, never in `Application.Tests`.
+
+`Application.Tests` folders mirror `src/Core/Logistics.Application/Modules/`
+(`Operations/Loads/`, `Integrations/AIDispatch/`, ...) and the namespace follows the folder. Tests
+of code outside `Modules/` sit in `Behaviours/`, `Validators/`, `Utilities/` and `Primitives/`
+(domain value types and extensions).
+
+## Test kit
+
+`Logistics.Application.Tests/TestKit/` - use it instead of hand-building fixtures:
+
+- `TestData.Address/Load/Truck/Driver(...)` - valid entities; parameters are only the fields tests
+  vary, set anything else on the result.
+- `TestTenant.Create(...)` - a valid tenant (company name, MC number, distance unit).
+- `uow.Stub<T>(rows)` - wires `Repository<T>()` to a substitute whose `Query()` reads `rows` on every
+  call (pass a `List` to see rows added later); returns the repository for `Received` checks.
+  `uow.StubLoadLookups()` stubs everything `LoadLookupBuilder` reads.
+- `AgentTestContext` - the substitute rig for the AI dispatch/copilot handler tests.
+
+`TestData.cs` and `TestTenant.cs` are compiled into `Logistics.Infrastructure.AI.Tests` as linked
+files (see its csproj), so both projects share one copy.
 
 ## Stack
 
