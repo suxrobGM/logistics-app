@@ -18,7 +18,7 @@ internal sealed class GetTripTool(ITenantUnitOfWork tenantUow)
     }
 
     public static AgentToolDefinition Definition => new(
-        "get_trip",
+        AgentToolNames.GetTrip,
         "Get one trip by ID: status, truck, driver ids (pass them to get_driver_hos_status), and its stops in order with each stop's load, arrival and departure, ETA, appointment window end and whether it is running late. Call this first on a trip alert.")
     {
         RequiredFeature = TenantFeature.Loads,

@@ -16,8 +16,6 @@ internal sealed class PreviewCounterOfferHandler(
     IThreadedEmailSender emailSender)
     : IRequestHandler<PreviewCounterOfferQuery, Result<CounterOfferPreviewDto>>
 {
-    private const string ToolName = "propose_counter_offer";
-
     public async Task<Result<CounterOfferPreviewDto>> Handle(PreviewCounterOfferQuery req, CancellationToken ct)
     {
         var decision = await tenantUow.Repository<AgentDecision>().GetByIdAsync(req.DecisionId, ct);
@@ -26,7 +24,7 @@ internal sealed class PreviewCounterOfferHandler(
             return Result<CounterOfferPreviewDto>.Fail($"Could not find a decision with ID '{req.DecisionId}'");
         }
 
-        if (decision.ToolName != ToolName || string.IsNullOrWhiteSpace(decision.ToolInput))
+        if (decision.ToolName != AgentToolNames.ProposeCounterOffer || string.IsNullOrWhiteSpace(decision.ToolInput))
         {
             return Result<CounterOfferPreviewDto>.Fail("This decision does not carry a counter-offer email.");
         }

@@ -1,3 +1,4 @@
+using Logistics.Application.Abstractions.Agents;
 using Logistics.Application.Abstractions.AIDispatch;
 using Logistics.Application.Abstractions.BackgroundJobs;
 using Logistics.Application.Abstractions.Notifications;
@@ -130,8 +131,8 @@ internal sealed class TripAlertTurnStarter(
             {details}
             --- END ALERT FACTS ---
 
-            Read the trip with get_trip and the driver's hours with get_driver_hos_status, then propose fixes as suggestions.
-            Options: swap the driver or truck, re-plan the stops, or draft a short delay notice to the customer with send_customer_update.
+            Read the trip with {AgentToolNames.GetTrip} and the driver's hours with {AgentToolNames.GetDriverHosStatus}, then propose fixes as suggestions.
+            Options: swap the driver or truck, re-plan the stops, or draft a short delay notice to the customer with {AgentToolNames.SendCustomerUpdate}.
             Say plainly if nothing needs to change.
             """;
     }

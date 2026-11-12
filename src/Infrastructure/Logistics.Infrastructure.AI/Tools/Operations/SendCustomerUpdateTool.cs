@@ -22,7 +22,7 @@ internal sealed class SendCustomerUpdateTool(IMediator mediator)
     }
 
     public static AgentToolDefinition Definition => new(
-        "send_customer_update",
+        AgentToolNames.SendCustomerUpdate,
         "Email the load's customer a short delay notice in the carrier's running-late template, with the " +
         "tracking link. Use it when a trip alert shows the delivery will miss its appointment window.")
     {
