@@ -1,4 +1,4 @@
-using ArchUnitNET.xUnit;
+using ArchUnitNET.xUnitV3;
 using Xunit;
 using static ArchUnitNET.Fluent.ArchRuleDefinition;
 using Logistics.Application.Modules.Integrations.Webhooks.Commands;

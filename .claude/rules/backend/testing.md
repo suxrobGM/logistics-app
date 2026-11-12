@@ -12,16 +12,16 @@ paths:
 | `Logistics.Application.Tests`                | Application layer (handlers, services)                | -                           |
 | `Logistics.Infrastructure.AI.Tests`          | AI agent, tools, prompts, LLM pricing                 | `MockQueryable.NSubstitute` |
 | `Logistics.Infrastructure.Persistence.Tests` | Persistence services, converters - including AI quota | `MockQueryable.NSubstitute` |
-| `Logistics.Architecture.Tests`               | Layering / dependency boundaries                      | `TngTech.ArchUnitNET.xUnit` |
+| `Logistics.Architecture.Tests`               | Layering / dependency boundaries                      | `TngTech.ArchUnitNET.xUnitV3` |
 
 Other `Logistics.Infrastructure.*.Tests` projects cover their own infrastructure module.
 
 ## Stack
 
-- **Framework**: xUnit
+- **Framework**: xUnit v3 on Microsoft.Testing.Platform (`global.json` `test.runner`); test projects are `Exe`
 - **Mocking**: NSubstitute (`Substitute.For<T>()`)
 - **IQueryable mocking**: `MockQueryable.NSubstitute` (`.BuildMock()`) for EF Core queries
-- **Coverage**: coverlet
+- **Coverage**: `coverlet.MTP` (`dotnet test --coverlet`)
 
 ## Conventions
 
@@ -45,7 +45,7 @@ projects went unchecked). Here is how the discovery actually works:
 
 Adding an infra project: see CLAUDE.md for the anchor + `ProjectReference` requirement.
 
-Test commands are in CLAUDE.md; `--filter "FullyQualifiedName~Method"` narrows to a single method.
+Test commands are in CLAUDE.md; `--filter-method "*Method"` narrows to a single method. The VSTest `--filter` syntax no longer applies.
 
 ## Patterns
 

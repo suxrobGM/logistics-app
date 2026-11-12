@@ -23,7 +23,7 @@ docker compose -f deploy/docker-compose.dev.yml up -d     # Postgres: 5433 (most
 # Backend only
 dotnet build                                              # Build all
 dotnet test                                               # Run all tests
-dotnet test --filter "ClassName"                          # Filter by class
+dotnet test --filter-class "*ClassName"                   # Filter by class (xUnit v3 on Microsoft.Testing.Platform)
 dotnet run --project src/Presentation/Logistics.IdentityServer  # Identity: http://localhost:7001
 dotnet run --project src/Presentation/Logistics.API       # API: http://localhost:7000
 

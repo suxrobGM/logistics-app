@@ -95,7 +95,7 @@ If a step would touch 10+ files, stop and break it further.
 After every refactor:
 
 - `dotnet build` - compiles
-- Relevant test slice passes (`dotnet test --filter "{Class}Tests"`)
+- Relevant test slice passes (`dotnet test --filter-class "*{Class}Tests"`)
 - For Angular: `bun run lint` and the page renders (eyeball check)
 - No `using` becomes unused - clean imports
 - No public API surface changed (DTOs, controller routes, command/query records all stable)

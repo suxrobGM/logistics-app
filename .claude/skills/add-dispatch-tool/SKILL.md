@@ -131,7 +131,7 @@ catalogue tests already pin naming.
 - [ ] Entity id inputs carry `[AgentEntityId]`
 - [ ] Unit test added under `test/Logistics.Infrastructure.AI.Tests/Tools/{Domain}/`
 - [ ] `dotnet build` passes
-- [ ] `dotnet test --filter "{ToolName}ToolTests"` passes
+- [ ] `dotnet test --filter-class "*{ToolName}ToolTests"` passes
 
 ## Common mistakes
 
