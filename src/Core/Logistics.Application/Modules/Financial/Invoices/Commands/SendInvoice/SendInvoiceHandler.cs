@@ -1,16 +1,14 @@
 using Logistics.Application.Abstractions;
 using Logistics.Application.Abstractions.Email.Models;
 using Logistics.Application.Abstractions.Email;
-using Logistics.Application.Utilities;
+using Logistics.Application.Modules.Financial.PaymentLinks.Services;
 using Logistics.Domain.Entities;
 using Logistics.Domain.Primitives.ValueObjects;
-using Logistics.Domain.Options;
 using Logistics.Domain.Persistence;
 using Logistics.Domain.Primitives.Enums;
 using Logistics.Mediator;
 using Logistics.Shared.Models;
 using Microsoft.Extensions.Logging;
-using Microsoft.Extensions.Options;
 using Logistics.Application.Abstractions.CurrentUser;
 
 namespace Logistics.Application.Modules.Financial.Invoices.Commands;
@@ -20,7 +18,7 @@ internal sealed class SendInvoiceHandler(
     IEmailSender emailSender,
     IEmailTemplateService emailTemplateService,
     ICurrentUserService currentUserService,
-    IOptions<CustomerPortalOptions> portalOptions,
+    IPaymentLinkService paymentLinkService,
     ILogger<SendInvoiceHandler> logger)
     : IRequestHandler<SendInvoiceCommand, Result>
 {
@@ -56,22 +54,11 @@ internal sealed class SendInvoiceHandler(
         PaymentLink? paymentLink = null;
         if (factor is null)
         {
-            paymentLink = invoice.PaymentLinks.FirstOrDefault(p => p.IsValid);
-            if (paymentLink is null)
-            {
-                paymentLink = new PaymentLink
-                {
-                    Token = TokenGenerator.GenerateSecureToken(),
-                    InvoiceId = invoice.Id,
-                    ExpiresAt = DateTime.UtcNow.AddDays(DefaultExpirationDays),
-                    IsActive = true,
-                    CreatedByUserId = currentUserId ?? Guid.Empty
-                };
-                await tenantUow.Repository<PaymentLink>().AddAsync(paymentLink, ct);
-            }
+            paymentLink = invoice.PaymentLinks.FirstOrDefault(p => p.IsValid)
+                          ?? await paymentLinkService.CreateAsync(invoice.Id, DefaultExpirationDays, currentUserId, ct);
         }
 
-        var paymentUrl = paymentLink is null ? null : $"{portalOptions.Value.BaseUrl}/pay/{tenant.Id}/{paymentLink.Token}";
+        var paymentUrl = paymentLink is null ? null : paymentLinkService.GetUrl(paymentLink);
         var companyName = tenant.DisplayName;
 
         // Calculate amount due

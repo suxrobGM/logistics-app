@@ -1,4 +1,5 @@
 using Logistics.Application.Abstractions.CurrentUser;
+using Logistics.Application.Modules.Financial.PaymentLinks.Services;
 using Logistics.Application.Modules.Financial.PaymentLinks.Commands;
 using Logistics.Domain.Entities;
 using Logistics.Domain.Options;
@@ -26,7 +27,7 @@ public class CreatePaymentLinkHandlerTests
         _sut = new CreatePaymentLinkHandler(
             _tenantUow,
             Substitute.For<ICurrentUserService>(),
-            Options.Create(new CustomerPortalOptions { BaseUrl = "https://portal.test" }),
+            new PaymentLinkService(_tenantUow, Options.Create(new CustomerPortalOptions { BaseUrl = "https://portal.test" })),
             NullLogger<CreatePaymentLinkHandler>.Instance);
     }
 

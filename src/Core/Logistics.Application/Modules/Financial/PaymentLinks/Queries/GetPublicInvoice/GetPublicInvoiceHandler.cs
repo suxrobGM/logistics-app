@@ -1,4 +1,5 @@
 using Logistics.Application.Abstractions;
+using Logistics.Application.Modules.Financial.PaymentLinks.Services;
 using Logistics.Application.Abstractions.BackgroundJobs;
 using Logistics.Domain.Entities;
 using Logistics.Domain.Persistence;
@@ -13,6 +14,7 @@ namespace Logistics.Application.Modules.Financial.PaymentLinks.Queries;
 internal sealed class GetPublicInvoiceHandler(
     IMasterUnitOfWork masterUow,
     ITenantUnitOfWork tenantUow,
+    IPaymentLinkService paymentLinkService,
     ICommandEnqueuer commandEnqueuer,
     ILogger<GetPublicInvoiceHandler> logger)
     : IRequestHandler<GetPublicInvoiceQuery, Result<PublicInvoiceDto>>
@@ -29,19 +31,13 @@ internal sealed class GetPublicInvoiceHandler(
         // Switch to tenant database
         tenantUow.SetCurrentTenant(tenant);
 
-        // Find the payment link by token
-        var paymentLink = await tenantUow.Repository<PaymentLink>()
-            .GetAsync(p => p.Token == req.Token, ct);
-
-        if (paymentLink is null)
+        var found = await paymentLinkService.FindValidAsync(req.Token, ct);
+        if (!found.IsSuccess)
         {
-            return Result<PublicInvoiceDto>.Fail("Invalid payment link.");
+            return Result<PublicInvoiceDto>.Fail(found.Error!);
         }
 
-        if (!paymentLink.IsValid)
-        {
-            return Result<PublicInvoiceDto>.Fail("This payment link has expired or been revoked.");
-        }
+        var paymentLink = found.Value!;
 
         // Get the invoice
         var invoice = await tenantUow.Repository<Invoice>().GetByIdAsync(paymentLink.InvoiceId, ct);

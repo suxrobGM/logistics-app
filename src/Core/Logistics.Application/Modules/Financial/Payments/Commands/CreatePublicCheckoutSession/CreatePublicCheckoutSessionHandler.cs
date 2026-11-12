@@ -1,4 +1,5 @@
 using Logistics.Application.Abstractions;
+using Logistics.Application.Modules.Financial.PaymentLinks.Services;
 using Logistics.Domain.Entities;
 using Logistics.Domain.Persistence;
 using Logistics.Domain.Primitives.Enums;
@@ -14,6 +15,7 @@ namespace Logistics.Application.Modules.Financial.Payments.Commands;
 internal sealed class CreatePublicCheckoutSessionHandler(
     IMasterUnitOfWork masterUow,
     ITenantUnitOfWork tenantUow,
+    IPaymentLinkService paymentLinkService,
     IStripeConnectService stripeConnectService,
     ILogger<CreatePublicCheckoutSessionHandler> logger)
     : IRequestHandler<CreatePublicCheckoutSessionCommand, Result<PublicCheckoutSessionDto>>
@@ -40,14 +42,13 @@ internal sealed class CreatePublicCheckoutSessionHandler(
 
         tenantUow.SetCurrentTenant(tenant);
 
-        var paymentLink = await tenantUow.Repository<PaymentLink>()
-            .GetAsync(p => p.Token == req.Token, ct);
-
-        if (paymentLink is null || !paymentLink.IsValid)
+        var found = await paymentLinkService.FindValidAsync(req.Token, ct);
+        if (!found.IsSuccess)
         {
-            return Result<PublicCheckoutSessionDto>.Fail(
-                "This payment link has expired or been revoked.");
+            return Result<PublicCheckoutSessionDto>.Fail(found.Error!);
         }
+
+        var paymentLink = found.Value!;
 
         var invoice = await tenantUow.Repository<Invoice>().GetByIdAsync(paymentLink.InvoiceId, ct);
         if (invoice is null)

@@ -7,7 +7,7 @@ public static class PaymentLinkMapper
 {
     extension(PaymentLink entity)
     {
-        public PaymentLinkDto ToDto(string? baseUrl = null)
+        public PaymentLinkDto ToDto(string? url = null)
         {
             return new PaymentLinkDto
             {
@@ -21,14 +21,8 @@ public static class PaymentLinkMapper
                 LastAccessedAt = entity.LastAccessedAt,
                 IsValid = entity.IsValid,
                 CreatedAt = entity.CreatedAt,
-                Url = baseUrl != null ? $"{baseUrl}/pay/{entity.Token}" : null
+                Url = url
             };
         }
-    }
-
-    extension(IEnumerable<PaymentLink> entities)
-    {
-        public IEnumerable<PaymentLinkDto> ToDto(string? baseUrl = null) =>
-            entities.Select(e => e.ToDto(baseUrl));
     }
 }
