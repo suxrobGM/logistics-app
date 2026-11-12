@@ -12,7 +12,7 @@
 </p>
 <div class="row">
     <div class="col-md-4">
-        <form method="post">
+        <form method="post" asp-route-returnUrl="@Model.ReturnUrl">
             <div asp-validation-summary="All" class="text-danger"></div>
             <div class="mb-3">
                 <label asp-for="Input.RecoveryCode"></label>
