@@ -1,6 +1,7 @@
 using Logistics.Application.Abstractions;
 using Logistics.Application.Abstractions.Storage;
 using Logistics.Application.Modules.Common.Constants;
+using Logistics.Application.Modules.Integrations.Documents.Services;
 using Logistics.Application.Utilities;
 using Logistics.Domain.Entities;
 using Logistics.Domain.Persistence;
@@ -15,6 +16,7 @@ namespace Logistics.Application.Modules.Compliance.Inspections.Commands;
 internal sealed class CreateConditionReportHandler(
     ITenantUnitOfWork tenantUow,
     IBlobStorageService blobStorage,
+    IDocumentBlobCleanup blobCleanup,
     ILogger<CreateConditionReportHandler> logger)
     : IRequestHandler<CreateConditionReportCommand, Result<Guid>>
 {
@@ -46,6 +48,7 @@ internal sealed class CreateConditionReportHandler(
 
         var vehicle = vehicleCheck.Value;
         string? signatureBlobPath = null;
+        var uploadedBlobPaths = new List<string>();
 
         try
         {
@@ -54,6 +57,7 @@ internal sealed class CreateConditionReportHandler(
                 var signatureBytes = Convert.FromBase64String(req.SignatureBase64);
                 var signatureFileName = BlobPathHelper.GenerateSignatureFileName();
                 signatureBlobPath = BlobPathHelper.GetLoadBlobPath(req.LoadId, "inspection", signatureFileName);
+                uploadedBlobPaths.Add(signatureBlobPath);
 
                 using var signatureStream = new MemoryStream(signatureBytes);
                 await blobStorage.UploadAsync(
@@ -96,7 +100,7 @@ internal sealed class CreateConditionReportHandler(
 
             await tenantUow.Repository<LoadConditionReport>().AddAsync(report, ct);
 
-            var photoIds = await AddPhotosAsync(req, load, report, vehicle, ct);
+            var photoIds = await AddPhotosAsync(req, load, report, vehicle, uploadedBlobPaths, ct);
 
             foreach (var input in req.Defects)
             {
@@ -125,7 +129,8 @@ internal sealed class CreateConditionReportHandler(
         catch (Exception ex)
         {
             logger.LogError(ex, "Failed to create condition report for load {LoadId}", req.LoadId);
-            return Result<Guid>.Fail($"Failed to create condition report: {ex.Message}");
+            await blobCleanup.DeleteAsync(uploadedBlobPaths);
+            return Result<Guid>.Fail("Failed to create condition report.");
         }
     }
 
@@ -182,17 +187,14 @@ internal sealed class CreateConditionReportHandler(
         Load load,
         LoadConditionReport report,
         LoadVehicle? vehicle,
+        List<string> uploadedBlobPaths,
         CancellationToken ct)
     {
         var docType = req.Type == InspectionType.Pickup
             ? DocumentType.PickupInspection
             : DocumentType.DeliveryInspection;
 
-        var inspectionLabel = load.Type == LoadType.Vehicle
-            ? vehicle?.GetDisplayName() ?? report.Vin ?? "VIN n/a"
-            : load.Type.IsContainerLoad()
-                ? report.ContainerNumber ?? "Container n/a"
-                : $"Load #{load.Number}";
+        var inspectionLabel = DescribeInspected(load, report, vehicle);
 
         var photoIds = new List<Guid>(req.Photos.Count);
         var photoIndex = 0;
@@ -201,6 +203,7 @@ internal sealed class CreateConditionReportHandler(
         {
             var uniqueFileName = BlobPathHelper.GenerateUniqueFileName(photo.FileName, photoIndex++);
             var blobPath = BlobPathHelper.GetLoadBlobPath(req.LoadId, "inspection", uniqueFileName);
+            uploadedBlobPaths.Add(blobPath);
 
             await blobStorage.UploadAsync(
                 BlobConstants.DocumentsContainerName,
@@ -233,5 +236,16 @@ internal sealed class CreateConditionReportHandler(
         }
 
         return photoIds;
+    }
+
+    /// <summary>What the photos show, for their notes: the vehicle, the container, or the load.</summary>
+    private static string DescribeInspected(Load load, LoadConditionReport report, LoadVehicle? vehicle)
+    {
+        if (load.Type == LoadType.Vehicle)
+        {
+            return vehicle?.GetDisplayName() ?? report.Vin ?? "VIN n/a";
+        }
+
+        return load.Type.IsContainerLoad() ? report.ContainerNumber ?? "Container n/a" : $"Load #{load.Number}";
     }
 }

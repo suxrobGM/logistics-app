@@ -13,6 +13,7 @@ internal sealed class DeliveryDocumentService(
     ITenantUnitOfWork tenantUow,
     IBlobStorageService blobStorage,
     IDocumentAccessService documentAccess,
+    IDocumentBlobCleanup blobCleanup,
     ILogger<DeliveryDocumentService> logger) : IDeliveryDocumentService
 {
     public async Task<Result<Guid>> CaptureAsync(
@@ -147,7 +148,7 @@ internal sealed class DeliveryDocumentService(
 
     private Task DiscardUploadsAsync(CaptureInProgress capture)
     {
-        return DocumentBlobCleanup.DeleteAsync(blobStorage, capture.UploadedBlobPaths, logger);
+        return blobCleanup.DeleteAsync(capture.UploadedBlobPaths);
     }
 
     /// <summary>Carries the blob paths written so far, so a failure can undo them.</summary>

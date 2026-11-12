@@ -16,6 +16,7 @@ internal sealed class UploadDocumentHandler(
     ITenantUnitOfWork tenantUow,
     IBlobStorageService blobStorageService,
     IDocumentAccessService documentAccess,
+    IDocumentBlobCleanup blobCleanup,
     ILogger<UploadDocumentHandler> logger)
     : IRequestHandler<UploadDocumentCommand, Result<Guid>>
 {
@@ -111,7 +112,7 @@ internal sealed class UploadDocumentHandler(
 
             logger.LogWarning(
                 "Failed to save document to database, rolling back blob: {BlobPath}", blobPath);
-            await DocumentBlobCleanup.DeleteAsync(blobStorageService, [blobPath], logger);
+            await blobCleanup.DeleteAsync([blobPath]);
             return Result<Guid>.Fail("Failed to save document information to database");
         }
         catch (Exception ex)

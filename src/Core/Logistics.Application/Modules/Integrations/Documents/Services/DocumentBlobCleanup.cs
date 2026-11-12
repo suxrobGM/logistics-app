@@ -4,21 +4,16 @@ using Microsoft.Extensions.Logging;
 
 namespace Logistics.Application.Modules.Integrations.Documents.Services;
 
-public static class DocumentBlobCleanup
+internal sealed class DocumentBlobCleanup(IBlobStorageService blobStorage, ILogger<DocumentBlobCleanup> logger)
+    : IDocumentBlobCleanup
 {
-    public static async Task DeleteAsync(
-        IBlobStorageService blobStorage,
-        IEnumerable<string> blobPaths,
-        ILogger logger)
+    public async Task DeleteAsync(IEnumerable<string> blobPaths)
     {
         foreach (var blobPath in blobPaths.Distinct())
         {
             try
             {
-                await blobStorage.DeleteAsync(
-                    BlobConstants.DocumentsContainerName,
-                    blobPath,
-                    CancellationToken.None);
+                await blobStorage.DeleteAsync(BlobConstants.DocumentsContainerName, blobPath, CancellationToken.None);
             }
             catch (Exception ex)
             {

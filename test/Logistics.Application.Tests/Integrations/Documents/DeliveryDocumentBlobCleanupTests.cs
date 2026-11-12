@@ -38,7 +38,9 @@ public class DeliveryDocumentBlobCleanupTests
             .Returns("https://storage.test/document");
 
         _sut = new DeliveryDocumentService(
-            _tenantUow, _blobStorage, _documentAccess, NullLogger<DeliveryDocumentService>.Instance);
+            _tenantUow, _blobStorage, _documentAccess,
+            new DocumentBlobCleanup(_blobStorage, NullLogger<DocumentBlobCleanup>.Instance),
+            NullLogger<DeliveryDocumentService>.Instance);
     }
 
     [Fact]
