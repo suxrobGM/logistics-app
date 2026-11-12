@@ -1,6 +1,8 @@
+using Logistics.Application.Abstractions.BackgroundJobs;
 using Logistics.Application.Abstractions.Email;
 using Logistics.Application.Abstractions.Email.Models;
 using Logistics.Application.Abstractions.Features;
+using Logistics.Application.Modules.Operations.Loads.Commands;
 using Logistics.Application.Modules.Operations.Loads.Events;
 using Logistics.Application.Modules.Operations.Loads.Services;
 using Logistics.Application.Modules.Operations.Tracking.Services;
@@ -166,11 +168,11 @@ public class CustomerUpdateServiceTests
     [Fact]
     public async Task Handle_PickupSupersededByDelivery_SendsOnlyTheDelivery()
     {
-        var updates = Substitute.For<ICustomerUpdateService>();
+        var enqueuer = Substitute.For<ICommandEnqueuer>();
         var loadRepo = Substitute.For<ITenantRepository<Load, Guid>>();
         loadRepo.GetByIdAsync(_load.Id, Arg.Any<CancellationToken>()).Returns(_load);
         _tenantUow.Repository<Load>().Returns(loadRepo);
-        var handler = new LoadStatusChangedCustomerUpdateHandler(_tenantUow, updates);
+        var handler = new LoadStatusChangedCustomerUpdateHandler(_tenantUow, enqueuer);
         _load.Dispatch();
         _load.ConfirmPickup();
         _load.ConfirmDelivery();
@@ -178,8 +180,9 @@ public class CustomerUpdateServiceTests
         await handler.Handle(new LoadStatusChangedEvent(_load.Id, LoadStatus.Dispatched, LoadStatus.PickedUp), default);
         await handler.Handle(new LoadStatusChangedEvent(_load.Id, LoadStatus.PickedUp, LoadStatus.Delivered), default);
 
-        await updates.DidNotReceive().SendStatusUpdateAsync(_load, LoadStatus.PickedUp, Arg.Any<CancellationToken>());
-        await updates.Received(1).SendStatusUpdateAsync(_load, LoadStatus.Delivered, Arg.Any<CancellationToken>());
+        enqueuer.Received(1).Enqueue(Arg.Any<SendCustomerStatusUpdateCommand>());
+        enqueuer.Received(1).Enqueue(
+            Arg.Is<SendCustomerStatusUpdateCommand>(c => c.LoadId == _load.Id && c.NewStatus == LoadStatus.Delivered));
     }
 
     #endregion

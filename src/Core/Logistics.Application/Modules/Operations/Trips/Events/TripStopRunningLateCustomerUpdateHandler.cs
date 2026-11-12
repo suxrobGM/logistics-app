@@ -1,24 +1,25 @@
-using Logistics.Application.Modules.Operations.Loads.Services;
-using Logistics.Domain.Entities;
+using Logistics.Application.Abstractions.BackgroundJobs;
+using Logistics.Application.Modules.Operations.Loads.Commands;
 using Logistics.Domain.Events;
 using Logistics.Domain.Persistence;
 using Logistics.Mediator;
 
 namespace Logistics.Application.Modules.Operations.Trips.Events;
 
+/// <summary>Queued, because domain events run inside SaveChangesAsync and the send is SMTP round trips.</summary>
 internal sealed class TripStopRunningLateCustomerUpdateHandler(
     ITenantUnitOfWork tenantUow,
-    ICustomerUpdateService customerUpdates)
+    ICommandEnqueuer commandEnqueuer)
     : INotificationHandler<TripStopRunningLateEvent>
 {
-    public async Task Handle(TripStopRunningLateEvent @event, CancellationToken cancellationToken)
+    public Task Handle(TripStopRunningLateEvent @event, CancellationToken cancellationToken)
     {
-        var stop = await tenantUow.Repository<TripStop>().GetByIdAsync(@event.StopId, cancellationToken);
-        if (stop is null)
+        commandEnqueuer.Enqueue(new SendCustomerLateNoticeCommand
         {
-            return;
-        }
-
-        await customerUpdates.SendLateNoticeAsync(stop, @event.EstimatedArrivalAt, cancellationToken);
+            TenantId = tenantUow.GetCurrentTenant().Id,
+            StopId = @event.StopId,
+            EstimatedArrivalAt = @event.EstimatedArrivalAt
+        });
+        return Task.CompletedTask;
     }
 }

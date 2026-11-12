@@ -1,4 +1,5 @@
-using Logistics.Application.Modules.Operations.Loads.Services;
+using Logistics.Application.Abstractions.BackgroundJobs;
+using Logistics.Application.Modules.Operations.Loads.Commands;
 using Logistics.Domain.Entities;
 using Logistics.Domain.Events;
 using Logistics.Domain.Persistence;
@@ -7,9 +8,10 @@ using Logistics.Mediator;
 
 namespace Logistics.Application.Modules.Operations.Loads.Events;
 
+/// <summary>Queued, because domain events run inside SaveChangesAsync and the send is SMTP round trips.</summary>
 internal sealed class LoadStatusChangedCustomerUpdateHandler(
     ITenantUnitOfWork tenantUow,
-    ICustomerUpdateService customerUpdates)
+    ICommandEnqueuer commandEnqueuer)
     : INotificationHandler<LoadStatusChangedEvent>
 {
     public async Task Handle(LoadStatusChangedEvent @event, CancellationToken cancellationToken)
@@ -27,6 +29,11 @@ internal sealed class LoadStatusChangedCustomerUpdateHandler(
             return;
         }
 
-        await customerUpdates.SendStatusUpdateAsync(load, @event.NewStatus, cancellationToken);
+        commandEnqueuer.Enqueue(new SendCustomerStatusUpdateCommand
+        {
+            TenantId = tenantUow.GetCurrentTenant().Id,
+            LoadId = load.Id,
+            NewStatus = @event.NewStatus
+        });
     }
 }
