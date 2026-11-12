@@ -34,9 +34,16 @@ public class AccidentReportDto
     public bool InjuriesReported { get; set; }
     public int? NumberOfInjuries { get; set; }
     public string? InjuryDescription { get; set; }
+    public bool FatalitiesReported { get; set; }
+    public int? NumberOfFatalities { get; set; }
 
+    public bool VehicleTowed { get; set; }
+    public string? TowCompany { get; set; }
     public decimal? EstimatedDamage { get; set; }
     public string? DamageDescription { get; set; }
+
+    public bool HazmatInvolved { get; set; }
+    public string? HazmatDescription { get; set; }
 
     public string? InsuranceClaimNumber { get; set; }
     public DateTime? InsuranceNotifiedAt { get; set; }

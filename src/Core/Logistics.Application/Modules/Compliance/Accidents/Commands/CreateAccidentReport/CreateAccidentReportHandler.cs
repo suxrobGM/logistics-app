@@ -45,6 +45,12 @@ internal sealed class CreateAccidentReportHandler(ITenantUnitOfWork tenantUow)
             AnyInjuries = req.InjuriesReported,
             NumberOfInjuries = req.NumberOfInjuries,
             InjuryDescription = req.InjuryDescription,
+            FatalitiesReported = req.FatalitiesReported,
+            NumberOfFatalities = req.FatalitiesReported ? req.NumberOfFatalities : null,
+            VehicleTowed = req.VehicleTowed,
+            TowCompany = req.TowCompany,
+            HazmatInvolved = req.HazmatInvolved,
+            HazmatDescription = req.HazmatDescription,
             EstimatedDamageCost = req.EstimatedDamage,
             VehicleDamageDescription = req.DamageDescription,
             TripId = req.TripId

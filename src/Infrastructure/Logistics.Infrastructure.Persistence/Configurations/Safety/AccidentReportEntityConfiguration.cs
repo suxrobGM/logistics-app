@@ -50,6 +50,8 @@ internal sealed class AccidentReportEntityConfiguration : IEntityTypeConfigurati
         builder.Property(i => i.RoadConditions).HasMaxLength(200);
         builder.Property(i => i.InjuryDescription).HasMaxLength(2000);
         builder.Property(i => i.VehicleDamageDescription).HasMaxLength(2000);
+        builder.Property(i => i.TowCompany).HasMaxLength(200);
+        builder.Property(i => i.HazmatDescription).HasMaxLength(2000);
         builder.Property(i => i.PoliceReportNumber).HasMaxLength(100);
         builder.Property(i => i.PoliceOfficerName).HasMaxLength(200);
         builder.Property(i => i.PoliceOfficerBadge).HasMaxLength(50);

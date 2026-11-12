@@ -5135,6 +5135,19 @@ namespace Logistics.Infrastructure.Persistence.Migrations.Tenant
                         .HasColumnType("numeric(18,2)")
                         .HasColumnName("estimated_damage_cost");
 
+                    b.Property<bool>("FatalitiesReported")
+                        .HasColumnType("boolean")
+                        .HasColumnName("fatalities_reported");
+
+                    b.Property<string>("HazmatDescription")
+                        .HasMaxLength(2000)
+                        .HasColumnType("character varying(2000)")
+                        .HasColumnName("hazmat_description");
+
+                    b.Property<bool>("HazmatInvolved")
+                        .HasColumnType("boolean")
+                        .HasColumnName("hazmat_involved");
+
                     b.Property<string>("InjuryDescription")
                         .HasMaxLength(2000)
                         .HasColumnType("character varying(2000)")
@@ -5160,6 +5173,10 @@ namespace Logistics.Infrastructure.Persistence.Migrations.Tenant
                     b.Property<double>("Longitude")
                         .HasColumnType("double precision")
                         .HasColumnName("longitude");
+
+                    b.Property<int?>("NumberOfFatalities")
+                        .HasColumnType("integer")
+                        .HasColumnName("number_of_fatalities");
 
                     b.Property<int?>("NumberOfInjuries")
                         .HasColumnType("integer")
@@ -5217,6 +5234,11 @@ namespace Logistics.Infrastructure.Persistence.Migrations.Tenant
                         .HasColumnType("text")
                         .HasColumnName("status");
 
+                    b.Property<string>("TowCompany")
+                        .HasMaxLength(200)
+                        .HasColumnType("character varying(200)")
+                        .HasColumnName("tow_company");
+
                     b.Property<Guid?>("TripId")
                         .HasColumnType("uuid")
                         .HasColumnName("trip_id");
@@ -5246,6 +5268,10 @@ namespace Logistics.Infrastructure.Persistence.Migrations.Tenant
                     b.Property<bool>("VehicleDrivable")
                         .HasColumnType("boolean")
                         .HasColumnName("vehicle_drivable");
+
+                    b.Property<bool>("VehicleTowed")
+                        .HasColumnType("boolean")
+                        .HasColumnName("vehicle_towed");
 
                     b.Property<string>("WeatherConditions")
                         .HasMaxLength(200)

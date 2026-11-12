@@ -53,6 +53,12 @@ internal sealed class UpdateAccidentReportHandler(ITenantUnitOfWork tenantUow)
         report.AnyInjuries = req.InjuriesReported;
         report.NumberOfInjuries = req.NumberOfInjuries;
         report.InjuryDescription = req.InjuryDescription;
+        report.FatalitiesReported = req.FatalitiesReported;
+        report.NumberOfFatalities = req.FatalitiesReported ? req.NumberOfFatalities : null;
+        report.VehicleTowed = req.VehicleTowed;
+        report.TowCompany = req.TowCompany;
+        report.HazmatInvolved = req.HazmatInvolved;
+        report.HazmatDescription = req.HazmatDescription;
         report.EstimatedDamageCost = req.EstimatedDamage;
         report.VehicleDamageDescription = req.DamageDescription;
         report.TripId = req.TripId;

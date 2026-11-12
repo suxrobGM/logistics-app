@@ -34,12 +34,20 @@ public class AccidentReport : AuditableEntity, ITenantEntity
     public bool AnyInjuries { get; set; }
     public int? NumberOfInjuries { get; set; }
     public string? InjuryDescription { get; set; }
+    public bool FatalitiesReported { get; set; }
+    public int? NumberOfFatalities { get; set; }
 
     // Damage
     public bool VehicleDamaged { get; set; }
     public string? VehicleDamageDescription { get; set; }
     public decimal? EstimatedDamageCost { get; set; }
     public bool VehicleDrivable { get; set; } = true;
+    public bool VehicleTowed { get; set; }
+    public string? TowCompany { get; set; }
+
+    // Hazmat
+    public bool HazmatInvolved { get; set; }
+    public string? HazmatDescription { get; set; }
 
     // Police report
     public bool PoliceReportFiled { get; set; }
