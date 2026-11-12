@@ -114,7 +114,7 @@ internal sealed class TruckLocationRecorder(
         await tenantUow.ExecuteSqlAsync($"""
             INSERT INTO truck_jurisdiction_mileage
                 (id, truck_id, date, miles, jurisdiction_country_code, jurisdiction_region)
-            VALUES ({Guid.NewGuid()}, {truck.Id}, {date}, {segmentMiles}, {jurisdiction.CountryCode}, {jurisdiction.Region})
+            VALUES ({Guid.CreateVersion7()}, {truck.Id}, {date}, {segmentMiles}, {jurisdiction.CountryCode}, {jurisdiction.Region})
             ON CONFLICT (truck_id, date, jurisdiction_country_code, jurisdiction_region)
             DO UPDATE SET miles = truck_jurisdiction_mileage.miles + excluded.miles
             """, ct);

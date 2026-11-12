@@ -9,5 +9,5 @@ public abstract class Entity : IEntity<Guid>
 {
     [NotMapped] public List<IDomainEvent> DomainEvents { get; } = [];
 
-    public Guid Id { get; set; } = Guid.NewGuid();
+    public Guid Id { get; set; } = Guid.CreateVersion7();
 }

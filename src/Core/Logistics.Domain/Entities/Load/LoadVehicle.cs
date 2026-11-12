@@ -7,7 +7,7 @@ namespace Logistics.Domain.Entities;
 /// </summary>
 public class LoadVehicle
 {
-    public Guid Id { get; set; } = Guid.NewGuid();
+    public Guid Id { get; set; } = Guid.CreateVersion7();
     public string? Vin { get; set; }
     public int? Year { get; set; }
     public string? Make { get; set; }

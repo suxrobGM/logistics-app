@@ -14,7 +14,7 @@ public class AppRole : IdentityRole<Guid>, IEntity<Guid>, IMasterEntity
         DisplayName = base.Name;
     }
 
-    public override Guid Id { get; set; } = Guid.NewGuid();
+    public override Guid Id { get; set; } = Guid.CreateVersion7();
     public string? DisplayName { get; set; }
 
     public virtual HashSet<AppRoleClaim> Claims { get; } = [with(new AppRoleClaimComparer())];

@@ -12,7 +12,7 @@ internal static class LoadVehicleInputExtensions
     public static List<LoadVehicle> ToLoadVehicles(this IEnumerable<LoadVehicleInput> inputs) =>
         [.. inputs.Select(v => new LoadVehicle
         {
-            Id = v.Id ?? Guid.NewGuid(),
+            Id = v.Id ?? Guid.CreateVersion7(),
             Vin = VinFormat.Normalize(v.Vin),
             Year = v.Year,
             Make = Clean(v.Make),
