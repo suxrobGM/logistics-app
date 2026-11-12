@@ -18,8 +18,8 @@ public class TenantRole : Entity, ITenantEntity
     public string? DisplayName { get; set; }
     public string NormalizedName { get; set; }
 
-    public virtual List<Employee> Employees { get; } = new();
-    public virtual HashSet<TenantRoleClaim> Claims { get; } = new(new TenantRoleClaimComparer());
+    public virtual List<Employee> Employees { get; } = [];
+    public virtual HashSet<TenantRoleClaim> Claims { get; } = [with(new TenantRoleClaimComparer())];
 }
 
 internal class TenantRoleComparer : IEqualityComparer<TenantRole>

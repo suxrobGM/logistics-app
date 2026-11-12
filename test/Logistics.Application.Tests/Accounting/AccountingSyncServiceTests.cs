@@ -368,7 +368,7 @@ public class AccountingSyncServiceTests
             PaymentId = payment.Id,
             CreatedAt = DateTime.UtcNow
         };
-        Queryable(new List<FactoringBatchItem> { item });
+        Queryable([item]);
         return item;
     }
 

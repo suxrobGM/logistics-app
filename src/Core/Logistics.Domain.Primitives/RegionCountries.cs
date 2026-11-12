@@ -8,16 +8,14 @@ namespace Logistics.Domain.Primitives;
 /// </summary>
 public static class RegionCountries
 {
-    private static readonly HashSet<string> USCountries = new(StringComparer.OrdinalIgnoreCase)
-    {
-        "US"
-    };
+    private static readonly HashSet<string> USCountries = [with(StringComparer.OrdinalIgnoreCase), "US"];
 
     // Geographic Europe - broader than EU-27. Includes EEA/EFTA, UK, Western Balkans,
     // Eastern Europe (Moldova, Ukraine), and the microstates. Russia, Belarus, Turkey
     // intentionally omitted in v1; widen the set if a customer needs them.
-    private static readonly HashSet<string> EuropeanCountries = new(StringComparer.OrdinalIgnoreCase)
-    {
+    private static readonly HashSet<string> EuropeanCountries =
+    [
+        with(StringComparer.OrdinalIgnoreCase),
         // EU-27
         "AT", "BE", "BG", "HR", "CY", "CZ", "DK", "EE", "FI", "FR", "DE", "GR", "HU", "IE",
         "IT", "LV", "LT", "LU", "MT", "NL", "PL", "PT", "RO", "SK", "SI", "ES", "SE",
@@ -31,7 +29,7 @@ public static class RegionCountries
         "MD", "UA",
         // Microstates
         "AD", "MC", "SM", "VA"
-    };
+    ];
 
     /// <summary>
     /// True when <paramref name="countryCode"/> is allowed for the given <paramref name="region"/>.

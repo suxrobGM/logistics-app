@@ -61,7 +61,7 @@ public class AgentDecisionProcessorTests
 
     private static LlmToolUseBlock CreateToolUse(string name, JsonObject? input = null)
     {
-        return new LlmToolUseBlock(Guid.NewGuid().ToString(), name, input ?? new JsonObject());
+        return new LlmToolUseBlock(Guid.NewGuid().ToString(), name, input ?? []);
     }
 
     #region Tool execution failure

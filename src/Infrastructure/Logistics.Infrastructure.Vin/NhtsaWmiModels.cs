@@ -8,7 +8,7 @@ internal class NhtsaWmiResponse
     public int Count { get; set; }
 
     [JsonPropertyName("Results")]
-    public List<NhtsaWmiResult> Results { get; set; } = new();
+    public List<NhtsaWmiResult> Results { get; set; } = [];
 }
 
 internal class NhtsaWmiResult

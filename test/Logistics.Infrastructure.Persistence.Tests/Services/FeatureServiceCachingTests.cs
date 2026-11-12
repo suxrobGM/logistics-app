@@ -28,7 +28,7 @@ public class FeatureServiceCachingTests
         _masterUow.Repository<Tenant>().Returns(_tenantRepo);
 
         _configRepo.GetListAsync(Arg.Any<Expression<Func<TenantFeatureConfig, bool>>>(), Arg.Any<CancellationToken>())
-            .Returns(_ => new List<TenantFeatureConfig>());
+            .Returns(_ => []);
 
         // Non-subscription tenant: plan gating is skipped, so all features are allowed.
         _tenantRepo.GetByIdAsync(_tenantId, Arg.Any<CancellationToken>())

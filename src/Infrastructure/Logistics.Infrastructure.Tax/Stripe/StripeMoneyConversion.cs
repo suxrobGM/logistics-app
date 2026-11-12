@@ -7,7 +7,7 @@ namespace Logistics.Infrastructure.Tax.Stripe;
 internal static class StripeMoneyConversion
 {
     private static readonly HashSet<string> ZeroDecimal =
-        new(StringComparer.OrdinalIgnoreCase) { "JPY", "KRW", "VND", "CLP", "PYG" };
+        [with(StringComparer.OrdinalIgnoreCase), "JPY", "KRW", "VND", "CLP", "PYG"];
 
     public static long ToMinorUnits(decimal amount, string currency) =>
         IsZeroDecimal(currency)

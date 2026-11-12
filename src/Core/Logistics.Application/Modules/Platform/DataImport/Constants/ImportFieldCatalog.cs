@@ -132,7 +132,7 @@ internal static class ImportFieldCatalog
             var synonyms = synonymPrefixes is null
                 ? bases
                 : [.. synonymPrefixes.SelectMany(p => bases.Select(b => $"{p} {b}")),
-                   .. part == FullAddress ? synonymPrefixes : Array.Empty<string>()];
+                   .. part == FullAddress ? synonymPrefixes : []];
 
             var key = ImportFieldKeys.Address(prefix, part);
             var fullLabel = string.IsNullOrEmpty(labelPrefix)

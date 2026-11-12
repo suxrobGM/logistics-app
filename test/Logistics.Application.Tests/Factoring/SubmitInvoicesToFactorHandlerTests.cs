@@ -54,7 +54,7 @@ public class SubmitInvoicesToFactorHandlerTests
         _documentRepo.GetListAsync(Arg.Any<Expression<Func<LoadDocument, bool>>>(), Arg.Any<CancellationToken>())
             .Returns(_ => _documents.ToList());
         _itemRepo.GetListAsync(Arg.Any<Expression<Func<FactoringBatchItem, bool>>>(), Arg.Any<CancellationToken>())
-            .Returns(_ => new List<FactoringBatchItem>());
+            .Returns(_ => []);
         _companyRepo.GetByIdAsync(_factor.Id, Arg.Any<CancellationToken>()).Returns(_factor);
         _blobStorage.DownloadAsync(Arg.Any<string>(), Arg.Any<string>(), Arg.Any<CancellationToken>())
             .Returns(_ => new MemoryStream([1, 2, 3]));

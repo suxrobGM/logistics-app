@@ -9,7 +9,7 @@ namespace Logistics.Application.Modules.Platform.DataImport.Importers;
 /// </summary>
 internal sealed class EmployeeMatcher
 {
-    private readonly Dictionary<string, Employee?> _byKey = new(StringComparer.OrdinalIgnoreCase);
+    private readonly Dictionary<string, Employee?> _byKey = [with(StringComparer.OrdinalIgnoreCase)];
 
     public EmployeeMatcher(IEnumerable<Employee> employees)
     {

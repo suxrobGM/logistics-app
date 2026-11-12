@@ -8,7 +8,7 @@ internal class NhtsaVinValuesResponse
     public int Count { get; set; }
 
     [JsonPropertyName("Results")]
-    public List<NhtsaVinValuesResult> Results { get; set; } = new();
+    public List<NhtsaVinValuesResult> Results { get; set; } = [];
 }
 
 internal class NhtsaVinValuesResult

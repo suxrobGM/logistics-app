@@ -55,7 +55,7 @@ public class LoadConditionReport : AuditableEntity, ITenantEntity
     /// Photos captured at inspection time. Stored as LoadDocument rows linked
     /// to the load and discriminated by capture timestamp + document type.
     /// </summary>
-    public virtual ICollection<LoadDocument> Photos { get; set; } = new List<LoadDocument>();
+    public virtual ICollection<LoadDocument> Photos { get; set; } = [];
 
     public static LoadConditionReport Create(
         Guid loadId,

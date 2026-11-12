@@ -161,7 +161,7 @@ internal sealed class StripeConnectService(ILogger<StripeConnectService> logger)
             },
             Metadata = request.Metadata is null
                 ? null
-                : new Dictionary<string, string>(request.Metadata)
+                : [with(request.Metadata)]
         };
 
         if (request.ApplicationFeePercent > 0)
@@ -197,7 +197,7 @@ internal sealed class StripeConnectService(ILogger<StripeConnectService> logger)
             PaymentIntentData = paymentIntentData,
             Metadata = request.Metadata is null
                 ? null
-                : new Dictionary<string, string>(request.Metadata)
+                : [with(request.Metadata)]
         };
 
         var session = await new SessionService().CreateAsync(options);

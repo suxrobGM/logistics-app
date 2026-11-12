@@ -50,7 +50,7 @@ internal sealed class GetTrucksHandler(ITenantUnitOfWork tenantUow, ILoadLookupB
         if (!req.IncludeLoads)
         {
             var withoutLoads = entities
-                .Select(i => WithTrailer(i.ToDto(new List<LoadDto>()), trailerNumbers))
+                .Select(i => WithTrailer(i.ToDto([]), trailerNumbers))
                 .ToArray();
             return PagedResult<TruckDto>.Ok(withoutLoads, totalItems, req.PageSize);
         }

@@ -23,9 +23,9 @@ public record DriverDashboardDto
     public int TotalLoadsDelivered { get; set; }
     public decimal AverageEarningsPerDriver { get; set; }
     public double AverageDistancePerDriver { get; set; }
-    public IReadOnlyList<DriverPerformanceDto> TopPerformers { get; set; } = Array.Empty<DriverPerformanceDto>();
-    public IReadOnlyList<DriverTrendDto> DriverTrends { get; set; } = Array.Empty<DriverTrendDto>();
-    public IReadOnlyList<DriverEfficiencyDto> EfficiencyMetrics { get; set; } = Array.Empty<DriverEfficiencyDto>();
+    public IReadOnlyList<DriverPerformanceDto> TopPerformers { get; set; } = [];
+    public IReadOnlyList<DriverTrendDto> DriverTrends { get; set; } = [];
+    public IReadOnlyList<DriverEfficiencyDto> EfficiencyMetrics { get; set; } = [];
 }
 
 public class DriverPerformanceDto

@@ -114,7 +114,7 @@ internal static class AgentToolJson
         // Case-insensitive to match the binder, but not underscore-insensitive.
         var present = input is JsonObject obj
             ? obj.Select(p => p.Key).ToHashSet(StringComparer.OrdinalIgnoreCase)
-            : new HashSet<string>(StringComparer.OrdinalIgnoreCase);
+            : [with(StringComparer.OrdinalIgnoreCase)];
 
         return [.. Options.GetTypeInfo(inputType).Properties
             .Where(p => p.IsRequired && !present.Contains(p.Name))

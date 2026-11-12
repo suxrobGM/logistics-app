@@ -9,13 +9,13 @@ public record LoadsReportDto
     public double TotalDistance { get; set; }
     public decimal AverageRevenuePerLoad { get; set; }
     public double AverageDistancePerLoad { get; set; }
-    public IReadOnlyList<StatusDto> StatusBreakdown { get; set; } = Array.Empty<StatusDto>();
-    public IReadOnlyList<TypeDto> TypeBreakdown { get; set; } = Array.Empty<TypeDto>();
+    public IReadOnlyList<StatusDto> StatusBreakdown { get; set; } = [];
+    public IReadOnlyList<TypeDto> TypeBreakdown { get; set; } = [];
     public decimal CancelledLoadsRevenue { get; set; }
     public double CancellationRate { get; set; }
-    public IReadOnlyList<LoadTrendDto> LoadTrends { get; set; } = Array.Empty<LoadTrendDto>();
-    public IReadOnlyList<TopCustomerLoadDto> TopCustomers { get; set; } = Array.Empty<TopCustomerLoadDto>();
-    public IReadOnlyList<LoadPerformanceDto> PerformanceMetrics { get; set; } = Array.Empty<LoadPerformanceDto>();
+    public IReadOnlyList<LoadTrendDto> LoadTrends { get; set; } = [];
+    public IReadOnlyList<TopCustomerLoadDto> TopCustomers { get; set; } = [];
+    public IReadOnlyList<LoadPerformanceDto> PerformanceMetrics { get; set; } = [];
 }
 
 

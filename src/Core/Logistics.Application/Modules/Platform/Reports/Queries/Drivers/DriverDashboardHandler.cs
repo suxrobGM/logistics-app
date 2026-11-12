@@ -169,12 +169,12 @@ internal sealed class DriverDashboardHandler(ITenantUnitOfWork tenantUow) : IReq
         var avgDistancePerDriver = totalDrivers > 0 ? totalDistance / totalDrivers : 0;
         var avgLoadsPerDriver = totalDrivers > 0 ? driverStats.Sum(d => (double)d.LoadsDelivered) / totalDrivers : 0;
 
-        return new List<DriverEfficiencyDto>
-        {
+        return
+        [
             new() { Metric = "Avg Earnings/Driver", Value = avgEarningsPerDriver, Unit = "$" },
             new() { Metric = "Avg Distance/Driver", Value = avgDistancePerDriver, Unit = "m" },
             new() { Metric = "Avg Loads/Driver", Value = avgLoadsPerDriver, Unit = "loads" },
             new() { Metric = "Driver Utilization", Value = (double)driverStats.Count(d => d.LoadsDelivered > 0) / Math.Max(totalDrivers, 1) * 100, Unit = "%" }
-        };
+        ];
     }
 }

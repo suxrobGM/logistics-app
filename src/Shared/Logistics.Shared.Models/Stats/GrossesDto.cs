@@ -14,7 +14,7 @@ public class GrossesDto<T> where T : IGrossChartData
                 TotalDistance += data.Distance;
             }
         }
-    } = new List<T>();
+    } = [];
 
     public decimal TotalGross { get; private set; }
     public double TotalDistance { get; private set; }

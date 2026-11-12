@@ -63,7 +63,7 @@ internal sealed class GetTruckHandler(ITenantUnitOfWork tenantUow, ILoadLookupBu
         IReadOnlyCollection<Load> loads,
         LoadLookup lookup)
     {
-        var truckDto = truckEntity.ToDto(new List<LoadDto>());
+        var truckDto = truckEntity.ToDto([]);
         truckDto.Loads = [.. loads.Select(l => l.ToDto(lookup))];
         truckDto.CurrentTrailerNumber = truckEntity.CurrentTrailer?.Number;
         return truckDto;
