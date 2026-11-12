@@ -1,22 +1,21 @@
 using Logistics.Domain.Entities;
 using Logistics.Shared.Models;
+using Riok.Mapperly.Abstractions;
 
 namespace Logistics.Mappings;
 
-public static class NotificationMapper
+[Mapper]
+public static partial class NotificationMapper
 {
+    [MapperIgnoreTarget(nameof(NotificationDto.IsRead))]
+    private static partial NotificationDto MapNotification(Notification entity);
+
     extension(Notification entity)
     {
         public NotificationDto ToDto(bool isRead = false)
         {
-            return new NotificationDto
-            {
-                Id = entity.Id,
-                Title = entity.Title,
-                Message = entity.Message,
-                IsRead = isRead,
-                CreatedDate = entity.CreatedDate
-            };
+            var dto = MapNotification(entity);
+            return dto with { IsRead = isRead };
         }
     }
 }

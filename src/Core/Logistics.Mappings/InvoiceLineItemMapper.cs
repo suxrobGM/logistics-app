@@ -1,32 +1,14 @@
 using Logistics.Domain.Entities;
 using Logistics.Shared.Models;
+using Riok.Mapperly.Abstractions;
 
 namespace Logistics.Mappings;
 
-public static class InvoiceLineItemMapper
+[Mapper]
+public static partial class InvoiceLineItemMapper
 {
-    extension(InvoiceLineItem entity)
-    {
-        public InvoiceLineItemDto ToDto()
-        {
-            return new InvoiceLineItemDto
-            {
-                Id = entity.Id,
-                InvoiceId = entity.InvoiceId,
-                Description = entity.Description,
-                Type = entity.Type,
-                Amount = entity.Amount,
-                Quantity = entity.Quantity,
-                Order = entity.Order,
-                Notes = entity.Notes,
-                Total = entity.Total,
-                TaxRatePercent = entity.TaxRatePercent,
-                TaxAmount = entity.TaxAmount,
-                TaxCode = entity.TaxCode,
-                SourceId = entity.SourceId
-            };
-        }
-    }
+    [MapperIgnoreSource(nameof(InvoiceLineItem.Invoice))]
+    public static partial InvoiceLineItemDto ToDto(this InvoiceLineItem entity);
 
     extension(IEnumerable<InvoiceLineItem> entities)
     {

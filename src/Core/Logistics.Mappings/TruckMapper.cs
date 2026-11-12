@@ -2,11 +2,35 @@ using Logistics.Domain.Entities;
 using Logistics.Domain.Primitives.Enums;
 using Logistics.Domain.Primitives.ValueObjects;
 using Logistics.Shared.Models;
+using Riok.Mapperly.Abstractions;
 
 namespace Logistics.Mappings;
 
-public static class TruckMapper
+[Mapper]
+public static partial class TruckMapper
 {
+    [MapperIgnoreSource(nameof(Truck.MainDriver))]
+    [MapperIgnoreSource(nameof(Truck.SecondaryDriver))]
+    [MapperIgnoreSource(nameof(Truck.CurrentTrailer))]
+    [MapperIgnoreSource(nameof(Truck.Loads))]
+    [MapperIgnoreSource(nameof(Truck.Trips))]
+    [MapperIgnoreSource(nameof(Truck.Documents))]
+    [MapperIgnoreTarget(nameof(TruckDto.MainDriver))]
+    [MapperIgnoreTarget(nameof(TruckDto.SecondaryDriver))]
+    [MapperIgnoreTarget(nameof(TruckDto.CurrentTrailerNumber))]
+    [MapperIgnoreTarget(nameof(TruckDto.Loads))]
+    private static partial TruckDto MapTruck(Truck entity);
+
+    [MapProperty(nameof(AdrEquipment.AllowedClasses), nameof(AdrEquipmentDto.AllowedClasses), Use = nameof(ExpandClasses))]
+    public static partial AdrEquipmentDto ToDto(this AdrEquipment entity);
+
+    [MapProperty(nameof(AdrEquipmentDto.AllowedClasses), nameof(AdrEquipment.AllowedClasses), Use = nameof(CombineClasses))]
+    public static partial AdrEquipment ToDomain(this AdrEquipmentDto dto);
+
+    private static HazmatClass[] ExpandClasses(HazmatClassFlags flags) => flags.ToClasses();
+
+    private static HazmatClassFlags CombineClasses(HazmatClass[] classes) => classes.ToFlags();
+
     extension(Truck entity)
     {
         /// <summary>
@@ -14,28 +38,10 @@ public static class TruckMapper
         /// </summary>
         public TruckDto ToDto()
         {
-            return new TruckDto
-            {
-                Id = entity.Id,
-                Number = entity.Number,
-                Type = entity.Type,
-                Status = entity.Status,
-                Make = entity.Make,
-                Model = entity.Model,
-                Year = entity.Year,
-                Vin = entity.Vin,
-                LicensePlate = entity.LicensePlate,
-                LicensePlateState = entity.LicensePlateState,
-                AdrEquipment = entity.AdrEquipment.ToDto(),
-                IsHazmatPlacarded = entity.IsHazmatPlacarded,
-                CurrentLocation = entity.CurrentLocation,
-                CurrentAddress = entity.CurrentAddress,
-                VehicleCapacity = entity.VehicleCapacity,
-                Loads = [],
-                MainDriver = entity.MainDriver?.ToDto(),
-                SecondaryDriver = entity.SecondaryDriver?.ToDto(),
-                CurrentTrailerId = entity.CurrentTrailerId,
-            };
+            var dto = MapTruck(entity);
+            dto.MainDriver = entity.MainDriver?.ToDto();
+            dto.SecondaryDriver = entity.SecondaryDriver?.ToDto();
+            return dto;
         }
 
         /// <summary>
@@ -48,27 +54,4 @@ public static class TruckMapper
             return dto;
         }
     }
-
-    extension(AdrEquipment entity)
-    {
-        public AdrEquipmentDto ToDto() => new()
-        {
-            IsAdrCertified = entity.IsAdrCertified,
-            AdrCertExpiresAt = entity.AdrCertExpiresAt,
-            AllowedClasses = entity.AllowedClasses.ToClasses(),
-            OrangePlateNumber = entity.OrangePlateNumber
-        };
-    }
-
-    extension(AdrEquipmentDto dto)
-    {
-        public AdrEquipment ToDomain() => new()
-        {
-            IsAdrCertified = dto.IsAdrCertified,
-            AdrCertExpiresAt = dto.AdrCertExpiresAt,
-            AllowedClasses = dto.AllowedClasses.ToFlags(),
-            OrangePlateNumber = dto.OrangePlateNumber
-        };
-    }
-
 }

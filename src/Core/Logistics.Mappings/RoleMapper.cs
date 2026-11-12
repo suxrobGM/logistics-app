@@ -1,31 +1,16 @@
 using Logistics.Domain.Entities;
 using Logistics.Shared.Models;
+using Riok.Mapperly.Abstractions;
 
 namespace Logistics.Mappings;
 
-public static class RoleMapper
+[Mapper]
+public static partial class RoleMapper
 {
-    extension(AppRole entity)
-    {
-        public RoleDto ToDto()
-        {
-            return new RoleDto()
-            {
-                Name = entity.Name,
-                DisplayName = entity.DisplayName
-            };
-        }
-    }
+    [MapperIgnoreSource(nameof(AppRole.Claims))]
+    public static partial RoleDto ToDto(this AppRole entity);
 
-    extension(TenantRole entity)
-    {
-        public RoleDto ToDto()
-        {
-            return new RoleDto()
-            {
-                Name = entity.Name,
-                DisplayName = entity.DisplayName
-            };
-        }
-    }
+    [MapperIgnoreSource(nameof(TenantRole.Employees))]
+    [MapperIgnoreSource(nameof(TenantRole.Claims))]
+    public static partial RoleDto ToDto(this TenantRole entity);
 }

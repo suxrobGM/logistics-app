@@ -1,28 +1,22 @@
 using Logistics.Domain.Entities;
 using Logistics.Shared.Models;
+using Riok.Mapperly.Abstractions;
 
 namespace Logistics.Mappings;
 
-public static class PaymentLinkMapper
+[Mapper]
+public static partial class PaymentLinkMapper
 {
+    [MapperIgnoreSource(nameof(PaymentLink.Invoice))]
+    [MapperIgnoreTarget(nameof(PaymentLinkDto.Url))]
+    private static partial PaymentLinkDto MapPaymentLink(PaymentLink entity);
+
     extension(PaymentLink entity)
     {
         public PaymentLinkDto ToDto(string? url = null)
         {
-            return new PaymentLinkDto
-            {
-                Id = entity.Id,
-                Token = entity.Token,
-                InvoiceId = entity.InvoiceId,
-                ExpiresAt = entity.ExpiresAt,
-                IsActive = entity.IsActive,
-                CreatedByUserId = entity.CreatedByUserId,
-                AccessCount = entity.AccessCount,
-                LastAccessedAt = entity.LastAccessedAt,
-                IsValid = entity.IsValid,
-                CreatedAt = entity.CreatedAt,
-                Url = url
-            };
+            var dto = MapPaymentLink(entity);
+            return dto with { Url = url };
         }
     }
 }

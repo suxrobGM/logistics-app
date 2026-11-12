@@ -1,24 +1,13 @@
 using Logistics.Domain.Entities;
 using Logistics.Shared.Models;
+using Riok.Mapperly.Abstractions;
 
 namespace Logistics.Mappings;
 
-public static class PaymentMapper
+[Mapper]
+public static partial class PaymentMapper
 {
-    extension(Payment entity)
-    {
-        public PaymentDto ToDto()
-        {
-            return new PaymentDto
-            {
-                Id = entity.Id,
-                Amount = entity.Amount,
-                CreatedDate = entity.CreatedAt,
-                StripePaymentMethodId = entity.StripePaymentMethodId,
-                Status = entity.Status,
-                Description = entity.Description,
-                BillingAddress = entity.BillingAddress
-            };
-        }
-    }
+    [MapperIgnoreSource(nameof(Payment.Invoice))]
+    [MapProperty(nameof(Payment.CreatedAt), nameof(PaymentDto.CreatedDate))]
+    public static partial PaymentDto ToDto(this Payment entity);
 }

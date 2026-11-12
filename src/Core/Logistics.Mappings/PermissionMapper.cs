@@ -1,29 +1,17 @@
 using Logistics.Domain.Entities;
 using Logistics.Shared.Models;
+using Riok.Mapperly.Abstractions;
 
 namespace Logistics.Mappings;
 
-public static class PermissionMapper
+[Mapper]
+public static partial class PermissionMapper
 {
-    extension(AppRoleClaim entity)
-    {
-        public PermissionDto ToDto()
-        {
-            return new PermissionDto()
-            {
-                Name = entity.ClaimValue
-            };
-        }
-    }
+    [MapperIgnoreSource(nameof(AppRoleClaim.Role))]
+    [MapProperty(nameof(AppRoleClaim.ClaimValue), nameof(PermissionDto.Name))]
+    public static partial PermissionDto ToDto(this AppRoleClaim entity);
 
-    extension(TenantRoleClaim entity)
-    {
-        public PermissionDto ToDto()
-        {
-            return new PermissionDto()
-            {
-                Name = entity.ClaimValue
-            };
-        }
-    }
+    [MapperIgnoreSource(nameof(TenantRoleClaim.Role))]
+    [MapProperty(nameof(TenantRoleClaim.ClaimValue), nameof(PermissionDto.Name))]
+    public static partial PermissionDto ToDto(this TenantRoleClaim entity);
 }
