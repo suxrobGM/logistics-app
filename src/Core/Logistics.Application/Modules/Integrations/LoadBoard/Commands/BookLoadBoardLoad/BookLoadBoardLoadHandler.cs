@@ -1,4 +1,5 @@
 using Logistics.Application.Abstractions;
+using Logistics.Application.Modules.IdentityAccess.Customers.Services;
 using Logistics.Application.Abstractions.AIDispatch;
 using Logistics.Domain.Entities;
 using Logistics.Domain.Persistence;
@@ -36,10 +37,9 @@ internal sealed class BookLoadBoardLoadHandler(
             return Result<LoadBoardBookingResultDto>.Fail("Load board listing not found");
         }
 
-        if (listing.Status != LoadBoardListingStatus.Available)
+        if (listing.UnavailableReason() is { } unavailable)
         {
-            return Result<LoadBoardBookingResultDto>.Fail(
-                $"Load board listing is not available (current status: {listing.Status})");
+            return Result<LoadBoardBookingResultDto>.Fail(unavailable);
         }
 
         var loadType = listing.EquipmentType switch
@@ -104,17 +104,7 @@ internal sealed class BookLoadBoardLoadHandler(
         else
         {
             var customerName = req.CustomerName ?? listing.BrokerName ?? "Unknown Broker";
-            customer = await tenantUow.Repository<Customer>()
-                .GetAsync(c => c.Name.ToLower() == customerName.ToLower(), ct);
-
-            if (customer is null)
-            {
-                customer = new Customer
-                {
-                    Name = customerName
-                };
-                await tenantUow.Repository<Customer>().AddAsync(customer, ct);
-            }
+            (customer, _) = await tenantUow.FindOrAddCustomerAsync(customerName, ct);
         }
 
         // No supported board books through its API: the load is created here and the dispatcher
@@ -138,10 +128,7 @@ internal sealed class BookLoadBoardLoadHandler(
 
         await tenantUow.Repository<Load>().AddAsync(load, ct);
 
-        listing.Status = LoadBoardListingStatus.Booked;
-        listing.BookedAt = DateTime.UtcNow;
-        listing.LoadId = load.Id;
-        listing.Notes = req.Notes;
+        listing.MarkBooked(load.Id, req.Notes);
 
         // Booking the listing settles any open negotiation on it, whatever rate it ends at.
         negotiation?.MarkAccepted(load.Id);

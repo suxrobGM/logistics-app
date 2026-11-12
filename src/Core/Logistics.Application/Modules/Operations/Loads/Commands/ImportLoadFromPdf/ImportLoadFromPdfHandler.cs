@@ -1,4 +1,5 @@
 using Logistics.Application.Modules.Operations.Loads.Services;
+using Logistics.Application.Modules.IdentityAccess.Customers.Services;
 using Logistics.Domain.Entities;
 using Logistics.Domain.Persistence;
 using Logistics.Domain.Primitives.Enums;
@@ -91,15 +92,12 @@ internal sealed class ImportLoadFromPdfHandler(
         }
 
         // Step 4: Find or create customer
-        var (customer, customerCreated) = await FindOrCreateCustomerAsync(extractedData.ShipperName, ct);
-
-        if (customer is null)
-        {
-            return Result<ImportLoadFromPdfResponse>.Fail("Unable to find or create customer");
-        }
-
+        var shipperName = string.IsNullOrEmpty(extractedData.ShipperName) ? "Imported Customer" : extractedData.ShipperName;
+        var (customer, customerCreated) = await tenantUow.FindOrAddCustomerAsync(shipperName, ct);
         if (customerCreated)
         {
+            // LoadService reads the customer back from the database, so it has to exist first.
+            await tenantUow.SaveChangesAsync(ct);
             logger.LogInformation("Created new customer: {CustomerName}", customer.Name);
         }
 
@@ -170,33 +168,5 @@ internal sealed class ImportLoadFromPdfHandler(
             CustomerName = customer.Name,
             Warnings = warnings
         });
-    }
-
-    private async Task<(Customer? customer, bool created)> FindOrCreateCustomerAsync(
-        string? shipperName,
-        CancellationToken ct)
-    {
-        if (string.IsNullOrEmpty(shipperName))
-        {
-            // Use default customer name
-            shipperName = "Imported Customer";
-        }
-
-        // Try to find existing customer by name
-        var existingCustomer = await tenantUow.Repository<Customer>()
-            .GetAsync(c => c.Name.ToLower() == shipperName.ToLower(), ct);
-
-        if (existingCustomer is not null)
-        {
-            return (existingCustomer, false);
-        }
-
-        // Create new customer
-        var newCustomer = new Customer { Name = shipperName };
-
-        await tenantUow.Repository<Customer>().AddAsync(newCustomer, ct);
-        await tenantUow.SaveChangesAsync(ct);
-
-        return (newCustomer, true);
     }
 }

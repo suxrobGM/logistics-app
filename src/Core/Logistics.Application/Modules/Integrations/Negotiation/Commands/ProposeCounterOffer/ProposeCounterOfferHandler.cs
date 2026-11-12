@@ -40,10 +40,9 @@ internal sealed class ProposeCounterOfferHandler(
             return Result<RateNegotiationDto>.Fail("Load board listing not found");
         }
 
-        if (listing.Status != LoadBoardListingStatus.Available)
+        if (listing.UnavailableReason() is { } unavailable)
         {
-            return Result<RateNegotiationDto>.Fail(
-                $"Load board listing is not available (current status: {listing.Status})");
+            return Result<RateNegotiationDto>.Fail(unavailable);
         }
 
         var brokerEmail = listing.BrokerEmail;

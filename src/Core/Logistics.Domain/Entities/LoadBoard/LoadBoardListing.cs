@@ -95,4 +95,17 @@ public class LoadBoardListing : AuditableEntity, ITenantEntity
     /// When this listing expires on the load board
     /// </summary>
     public DateTime ExpiresAt { get; set; }
+
+    /// <summary>Why the listing can't be booked or bid on - it isn't available any more - or null when it can.</summary>
+    public string? UnavailableReason() => Status == LoadBoardListingStatus.Available
+        ? null
+        : $"Load board listing is not available (current status: {Status})";
+
+    public void MarkBooked(Guid loadId, string? notes)
+    {
+        Status = LoadBoardListingStatus.Booked;
+        BookedAt = DateTime.UtcNow;
+        LoadId = loadId;
+        Notes = notes;
+    }
 }
