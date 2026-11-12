@@ -1,9 +1,7 @@
 using Logistics.Application.Abstractions;
-using Logistics.Application.Abstractions.Email.Models;
-using Logistics.Application.Abstractions.Email;
+using Logistics.Application.Modules.IdentityAccess.Tenants.Services;
 using Logistics.Application.Utilities;
 using Logistics.Domain.Entities;
-using Logistics.Domain.Options;
 using Logistics.Domain.Primitives.Enums;
 using Logistics.Domain.Persistence;
 using Logistics.Mediator;
@@ -11,7 +9,6 @@ using Logistics.Shared.Identity.Roles;
 using Logistics.Shared.Models;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.Options;
 using Logistics.Application.Abstractions.Features;
 using Logistics.Application.Abstractions.Tenancy;
 
@@ -23,9 +20,7 @@ internal sealed class CreateTenantHandler(
     ITenantUnitOfWork tenantUow,
     IFeatureService featureService,
     UserManager<User> userManager,
-    IEmailSender emailSender,
-    IEmailTemplateService emailTemplateService,
-    IOptions<IdentityServerOptions> identityServerOptions)
+    ITenantWelcomeEmailSender welcomeEmailSender)
     : IRequestHandler<CreateTenantCommand, Result>
 {
     /// <summary>PostgreSQL identifier limit; matches the <c>tenants.database_name</c> column.</summary>
@@ -102,7 +97,7 @@ internal sealed class CreateTenantHandler(
             existingUser.LastName = req.OwnerLastName;
             await userManager.UpdateAsync(existingUser);
             owner = existingUser;
-            await SendWelcomeEmailAsync(owner, tenant);
+            await welcomeEmailSender.SendAsync(owner, tenant);
         }
         else
         {
@@ -124,7 +119,7 @@ internal sealed class CreateTenantHandler(
                     $"Failed to create owner account: {createResult.DescribeErrors()}");
             }
 
-            await SendWelcomeEmailAsync(owner, tenant, temporaryPassword);
+            await welcomeEmailSender.SendAsync(owner, tenant, temporaryPassword);
         }
 
         // Create employee record in tenant database with Owner role
@@ -143,25 +138,5 @@ internal sealed class CreateTenantHandler(
         await tenantUow.SaveChangesAsync();
 
         return Result.Ok();
-    }
-
-    private async Task SendWelcomeEmailAsync(User owner, Tenant tenant, string? temporaryPassword = null)
-    {
-        var loginUrl = $"{identityServerOptions.Value.UserFacingAuthority}/Account/Login";
-        var companyName = tenant.DisplayName;
-
-        var model = new TenantWelcomeEmailModel
-        {
-            OwnerName = $"{owner.FirstName} {owner.LastName}",
-            CompanyName = companyName,
-            Email = owner.Email!,
-            TemporaryPassword = temporaryPassword,
-            LoginUrl = loginUrl
-        };
-
-        var subject = $"Welcome to LogisticsX - {companyName}";
-        var body = await emailTemplateService.RenderAsync("TenantWelcome", model);
-
-        await emailSender.SendEmailAsync(owner.Email!, subject, body);
     }
 }

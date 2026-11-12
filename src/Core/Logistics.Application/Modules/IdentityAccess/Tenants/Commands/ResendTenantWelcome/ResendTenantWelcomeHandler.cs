@@ -1,23 +1,18 @@
 using Logistics.Application.Abstractions;
-using Logistics.Application.Abstractions.Email.Models;
-using Logistics.Application.Abstractions.Email;
+using Logistics.Application.Modules.IdentityAccess.Tenants.Services;
 using Logistics.Domain.Entities;
-using Logistics.Domain.Options;
 using Logistics.Domain.Persistence;
 using Logistics.Mediator;
 using Logistics.Shared.Identity.Roles;
 using Logistics.Shared.Models;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Options;
 
 namespace Logistics.Application.Modules.IdentityAccess.Tenants.Commands;
 
 internal sealed class ResendTenantWelcomeHandler(
     IMasterUnitOfWork masterUow,
     ITenantUnitOfWork tenantUow,
-    IEmailSender emailSender,
-    IEmailTemplateService emailTemplateService,
-    IOptions<IdentityServerOptions> identityServerOptions)
+    ITenantWelcomeEmailSender welcomeEmailSender)
     : IRequestHandler<ResendTenantWelcomeCommand, Result>
 {
     public async Task<Result> Handle(ResendTenantWelcomeCommand req, CancellationToken ct)
@@ -43,21 +38,7 @@ internal sealed class ResendTenantWelcomeHandler(
             return Result.Fail("No owner found for this tenant");
         }
 
-        var loginUrl = $"{identityServerOptions.Value.UserFacingAuthority}/Account/Login";
-        var companyName = tenant.DisplayName;
-
-        var model = new TenantWelcomeEmailModel
-        {
-            OwnerName = $"{owner.FirstName} {owner.LastName}",
-            CompanyName = companyName,
-            Email = owner.Email!,
-            LoginUrl = loginUrl
-        };
-
-        var subject = $"Welcome to LogisticsX - {companyName}";
-        var body = await emailTemplateService.RenderAsync("TenantWelcome", model);
-
-        await emailSender.SendEmailAsync(owner.Email!, subject, body);
+        await welcomeEmailSender.SendAsync(owner, tenant);
 
         return Result.Ok();
     }
