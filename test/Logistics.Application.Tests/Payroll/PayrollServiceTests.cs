@@ -90,41 +90,42 @@ public class PayrollServiceTests
 
     #region Gross pay
 
-    [Theory]
-    [InlineData(false, false, 0.88 * 2600)]
-    [InlineData(true, false, 0.88 * 2200)]
-    [InlineData(false, true, 0.88 * 2400)]
-    [InlineData(true, true, 0.88 * 2000)]
-    public async Task Build_ShareOfGross_AppliesExclusions(bool excludeFuel, bool excludeAccessorials, double expected)
+    /// <summary>Each exclusion combination is covered in <c>EmployeePayTests</c>; this pins that the share is taken of the payable revenue.</summary>
+    [Fact]
+    public async Task Build_ShareOfGross_PaysTheShareOfPayableRevenue()
     {
         _driver.SalaryType = SalaryType.ShareOfGross;
         _driver.Salary = new Money { Amount = 0.88m, Currency = "USD" };
-        _driver.PayExcludesFuelSurcharge = excludeFuel;
-        _driver.PayExcludesAccessorials = excludeAccessorials;
+        _driver.PayExcludesFuelSurcharge = true;
         Delivered(2000m, fuelSurcharge: 400m, accessorials: 200m);
 
         var payroll = await _sut.BuildPayrollInvoiceAsync(_driver, StartDay, EndDay);
 
-        Assert.Equal((decimal)expected, payroll.LineItems.Single(l => l.Type == InvoiceLineItemType.BasePay).Total);
+        Assert.Equal(1936m, payroll.LineItems.Single(l => l.Type == InvoiceLineItemType.BasePay).Total);
     }
 
     /// <summary>Load distances are meters; paying the rate on them raw overpaid by ~1600x.</summary>
+    public static TheoryData<DistanceUnit, double, decimal, decimal> RatePerDistanceCases => new()
+    {
+        { DistanceUnit.Miles, 160_934.4, 0.65m, 65.00m },
+        { DistanceUnit.Kilometers, 100_000, 0.50m, 50.00m },
+    };
+
     [Theory]
-    [InlineData(DistanceUnit.Miles, 160_934.4, 0.65, 65.00)]
-    [InlineData(DistanceUnit.Kilometers, 100_000, 0.50, 50.00)]
+    [MemberData(nameof(RatePerDistanceCases))]
     public async Task Build_RatePerDistance_PaysPerTenantUnit(
-        DistanceUnit unit, double meters, double rate, double expected)
+        DistanceUnit unit, double meters, decimal rate, decimal expected)
     {
         var tenant = TestTenant.Create();
         tenant.Settings.DistanceUnit = unit;
         _tenantUow.GetCurrentTenant().Returns(tenant);
         _driver.SalaryType = SalaryType.RatePerDistance;
-        _driver.Salary = new Money { Amount = (decimal)rate, Currency = "USD" };
+        _driver.Salary = new Money { Amount = rate, Currency = "USD" };
         Delivered(1000m).Distance = meters;
 
         var payroll = await _sut.BuildPayrollInvoiceAsync(_driver, StartDay, EndDay);
 
-        Assert.Equal((decimal)expected, Math.Round(payroll.Total.Amount, 2));
+        Assert.Equal(expected, Math.Round(payroll.Total.Amount, 2));
         Assert.Equal(meters, payroll.TotalDistanceDriven);
     }
 
