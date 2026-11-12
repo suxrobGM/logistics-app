@@ -223,34 +223,11 @@ internal static class Setup
                 options.DefaultChallengeScheme = IdentityConstants.ApplicationScheme;
                 options.DefaultSignInScheme = IdentityConstants.ExternalScheme;
             })
-            .AddCookie(IdentityConstants.ApplicationScheme, o =>
+            .AddIdentityCookies(cookies => cookies.ApplicationCookie!.Configure(o =>
             {
-                o.LoginPath = new PathString("/Account/Login");
                 o.Cookie.SameSite = SameSiteMode.None;
                 o.Cookie.SecurePolicy = CookieSecurePolicy.Always;
                 o.Cookie.HttpOnly = true;
-                o.Events = new CookieAuthenticationEvents
-                {
-                    OnValidatePrincipal = SecurityStampValidator.ValidatePrincipalAsync
-                };
-            })
-            .AddCookie(IdentityConstants.ExternalScheme, o =>
-            {
-                o.Cookie.Name = IdentityConstants.ExternalScheme;
-                o.ExpireTimeSpan = TimeSpan.FromMinutes(5.0);
-            })
-            .AddCookie(IdentityConstants.TwoFactorRememberMeScheme, o =>
-            {
-                o.Cookie.Name = IdentityConstants.TwoFactorRememberMeScheme;
-                o.Events = new CookieAuthenticationEvents
-                {
-                    OnValidatePrincipal = SecurityStampValidator.ValidateAsync<ITwoFactorSecurityStampValidator>
-                };
-            })
-            .AddCookie(IdentityConstants.TwoFactorUserIdScheme, o =>
-            {
-                o.Cookie.Name = IdentityConstants.TwoFactorUserIdScheme;
-                o.ExpireTimeSpan = TimeSpan.FromMinutes(5.0);
-            });
+            }));
     }
 }
