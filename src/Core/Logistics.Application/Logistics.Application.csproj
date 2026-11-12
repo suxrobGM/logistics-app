@@ -22,7 +22,6 @@
 
   <ItemGroup>
     <ProjectReference Include="..\Logistics.Mediator\Logistics.Mediator.csproj" />
-    <ProjectReference Include="..\..\Shared\Logistics.Shared.Geo\Logistics.Shared.Geo.csproj" />
     <ProjectReference Include="..\..\Shared\Logistics.Shared.Identity\Logistics.Shared.Identity.csproj" />
     <ProjectReference Include="..\..\Shared\Logistics.Shared.Models\Logistics.Shared.Models.csproj" />
     <ProjectReference Include="..\Logistics.Application.Abstractions\Logistics.Application.Abstractions.csproj" />

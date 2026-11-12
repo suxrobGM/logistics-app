@@ -20,6 +20,7 @@ internal static class AssemblyAnchors
     public static readonly Assembly ApplicationAbstractions = typeof(ICurrentUserService).Assembly;
     public static readonly Assembly Domain = typeof(Logistics.Domain.Entities.Tenant).Assembly;
     public static readonly Assembly Mediator = typeof(global::Logistics.Mediator.IMediator).Assembly;
+    public static readonly Assembly SharedModels = typeof(Logistics.Shared.Models.PagedQuery).Assembly;
 
     public static readonly Assembly[] AllInfrastructure =
     [
@@ -51,6 +52,6 @@ internal static class AssemblyAnchors
         ?? throw new InvalidOperationException($"No infrastructure anchor for assembly '{name}'.");
 
     public static readonly ArchitectureModel Architecture = new ArchLoader()
-        .LoadAssemblies([Application, ApplicationAbstractions, Domain, Mediator, .. AllInfrastructure])
+        .LoadAssemblies([Application, ApplicationAbstractions, Domain, Mediator, SharedModels, .. AllInfrastructure])
         .Build();
 }

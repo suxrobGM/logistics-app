@@ -25,7 +25,6 @@
   <Folder Name="/Shared/">
     <Project Path="src/Shared/Logistics.Shared.Models/Logistics.Shared.Models.csproj" />
     <Project Path="src/Shared/Logistics.Shared.Identity/Logistics.Shared.Identity.csproj" />
-    <Project Path="src/Shared/Logistics.Shared.Geo/Logistics.Shared.Geo.csproj" />
   </Folder>
   <Folder Name="/Docs/">
     <File Path="README.md" />

@@ -90,6 +90,15 @@ public class BoundaryTests
             .Check(AssemblyAnchors.Architecture);
     }
 
+    /// <summary>Shared.Models is the client contract, so it may use Domain.Primitives but never the entities.</summary>
+    [Fact]
+    public void SharedModels_must_not_depend_on_Domain()
+    {
+        Classes().That().ResideInAssembly(AssemblyAnchors.SharedModels)
+            .Should().NotDependOnAny(Types().That().ResideInAssembly(AssemblyAnchors.Domain))
+            .Check(AssemblyAnchors.Architecture);
+    }
+
     /// <summary>Mediator sits below Domain, so it is the leaf of the graph.</summary>
     [Fact]
     public void Mediator_must_not_depend_on_any_other_Logistics_assembly()

@@ -8,7 +8,6 @@
     <ProjectReference Include="..\Logistics.Mediator\Logistics.Mediator.csproj" />
     <ProjectReference Include="..\Logistics.Domain\Logistics.Domain.csproj" />
     <ProjectReference Include="..\Logistics.Domain.Primitives\Logistics.Domain.Primitives.csproj" />
-    <ProjectReference Include="..\..\Shared\Logistics.Shared.Geo\Logistics.Shared.Geo.csproj" />
     <ProjectReference Include="..\..\Shared\Logistics.Shared.Models\Logistics.Shared.Models.csproj" />
   </ItemGroup>
 
