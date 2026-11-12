@@ -2,7 +2,7 @@ using Logistics.Application.Abstractions.Email;
 using Logistics.Application.Abstractions.Email.Models;
 using Logistics.Application.Modules.Common.Constants;
 using Logistics.Domain.Entities;
-using Logistics.Domain.Options;
+using Logistics.Application.Abstractions.Options;
 using Microsoft.Extensions.Options;
 
 namespace Logistics.Application.Modules.IdentityAccess.Tenants.Services;

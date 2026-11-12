@@ -1,6 +1,6 @@
 using Logistics.Application.Abstractions.Email;
 using Logistics.Application.Modules.Integrations.Webhooks.Commands;
-using Logistics.Domain.Options;
+using Logistics.Application.Abstractions.Options;
 using Microsoft.Extensions.Logging.Abstractions;
 using Microsoft.Extensions.Options;
 using NSubstitute;

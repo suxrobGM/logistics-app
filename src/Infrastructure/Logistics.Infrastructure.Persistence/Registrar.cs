@@ -1,6 +1,6 @@
 using Logistics.Application.Abstractions.Privacy;
 using Logistics.Application.Abstractions.Tenancy;
-using Logistics.Domain.Options;
+using Logistics.Application.Abstractions.Options;
 using Logistics.Infrastructure.Persistence.Builder;
 using Logistics.Infrastructure.Persistence.Interceptors;
 using Logistics.Infrastructure.Persistence.Reads;

@@ -1,4 +1,4 @@
-namespace Logistics.Domain.Options;
+namespace Logistics.Application.Abstractions.Options;
 
 public sealed class CustomerPortalOptions
 {

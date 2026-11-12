@@ -2,7 +2,7 @@ using Logistics.Application.Abstractions.CurrentUser;
 using Logistics.Application.Modules.Financial.PaymentLinks.Services;
 using Logistics.Application.Modules.Financial.PaymentLinks.Commands;
 using Logistics.Domain.Entities;
-using Logistics.Domain.Options;
+using Logistics.Application.Abstractions.Options;
 using Logistics.Domain.Persistence;
 using Logistics.Application.Tests.TestKit;
 using Microsoft.Extensions.Logging.Abstractions;

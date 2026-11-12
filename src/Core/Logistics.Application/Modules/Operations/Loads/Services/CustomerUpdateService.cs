@@ -4,7 +4,7 @@ using Logistics.Application.Abstractions.Email.Models;
 using Logistics.Application.Abstractions.Features;
 using Logistics.Application.Modules.Operations.Tracking.Services;
 using Logistics.Domain.Entities;
-using Logistics.Domain.Options;
+using Logistics.Application.Abstractions.Options;
 using Logistics.Domain.Persistence;
 using Logistics.Domain.Primitives.Enums;
 using Logistics.Shared.Models;

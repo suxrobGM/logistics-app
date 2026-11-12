@@ -1,4 +1,4 @@
-namespace Logistics.Domain.Options;
+namespace Logistics.Application.Abstractions.Options;
 
 /// <summary>
 ///     Where website demo requests, contact messages and received email that no feature handles are sent.

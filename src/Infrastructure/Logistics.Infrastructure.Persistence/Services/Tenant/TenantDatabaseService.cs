@@ -1,7 +1,7 @@
 using System.Data.Common;
 using System.Text.RegularExpressions;
 using Logistics.Domain.Entities;
-using Logistics.Domain.Options;
+using Logistics.Application.Abstractions.Options;
 using Logistics.Infrastructure.Persistence.Data;
 using Logistics.Shared.Identity.Policies;
 using Logistics.Shared.Identity.Roles;

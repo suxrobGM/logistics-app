@@ -1,5 +1,5 @@
 using Logistics.Domain.Entities;
-using Logistics.Domain.Options;
+using Logistics.Application.Abstractions.Options;
 using Logistics.Infrastructure.Persistence.Conventions;
 using Logistics.Infrastructure.Persistence.Extensions;
 using Logistics.Infrastructure.Persistence.Helpers;

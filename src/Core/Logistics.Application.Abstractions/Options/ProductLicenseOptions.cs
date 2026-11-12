@@ -1,4 +1,4 @@
-namespace Logistics.Domain.Options;
+namespace Logistics.Application.Abstractions.Options;
 
 /// <summary>
 /// Commercial license settings. Bound from the "License" section, so the environment

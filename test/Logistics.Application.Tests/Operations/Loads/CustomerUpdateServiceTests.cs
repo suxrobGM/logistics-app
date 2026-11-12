@@ -9,7 +9,7 @@ using Logistics.Application.Modules.Operations.Tracking.Services;
 using Logistics.Application.Tests.TestKit;
 using Logistics.Domain.Entities;
 using Logistics.Domain.Events;
-using Logistics.Domain.Options;
+using Logistics.Application.Abstractions.Options;
 using Logistics.Domain.Persistence;
 using Logistics.Domain.Primitives.Enums;
 using Microsoft.Extensions.Logging.Abstractions;

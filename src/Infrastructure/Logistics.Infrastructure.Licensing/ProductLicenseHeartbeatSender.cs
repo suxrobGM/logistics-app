@@ -1,5 +1,5 @@
 using Logistics.Application.Abstractions.ProductLicense;
-using Logistics.Domain.Options;
+using Logistics.Application.Abstractions.Options;
 using Logistics.Infrastructure.Integrations.Common;
 using Logistics.Shared.Models;
 using Microsoft.Extensions.Logging;

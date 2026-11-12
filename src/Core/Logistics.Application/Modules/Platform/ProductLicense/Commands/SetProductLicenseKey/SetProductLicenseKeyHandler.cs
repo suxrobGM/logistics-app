@@ -2,7 +2,7 @@ using Logistics.Application.Abstractions;
 using Logistics.Application.Abstractions.ProductLicense;
 using Logistics.Application.Abstractions.SystemSettings;
 using Logistics.Application.Modules.Platform.ProductLicense.Services;
-using Logistics.Domain.Options;
+using Logistics.Application.Abstractions.Options;
 using Logistics.Mediator;
 using Logistics.Shared.Models;
 using Microsoft.Extensions.Options;

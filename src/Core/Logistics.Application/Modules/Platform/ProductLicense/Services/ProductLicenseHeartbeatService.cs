@@ -2,7 +2,7 @@ using System.Globalization;
 using Logistics.Application.Abstractions.ProductLicense;
 using Logistics.Application.Abstractions.SystemSettings;
 using Logistics.Domain.Entities;
-using Logistics.Domain.Options;
+using Logistics.Application.Abstractions.Options;
 using Logistics.Domain.Persistence;
 using Logistics.Shared.Models;
 using Microsoft.Extensions.Options;

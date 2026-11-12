@@ -13,7 +13,7 @@ using Logistics.API.Middlewares;
 using Logistics.API.ModelBinders;
 using Logistics.API.OpenApi;
 using Logistics.Application;
-using Logistics.Domain.Options;
+using Logistics.Application.Abstractions.Options;
 using Logistics.Infrastructure.Communications;
 using Logistics.Infrastructure.Communications.SignalR.Hubs;
 using Logistics.Infrastructure.Documents;

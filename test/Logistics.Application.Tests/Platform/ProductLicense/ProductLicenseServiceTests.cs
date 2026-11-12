@@ -1,7 +1,7 @@
 using Logistics.Application.Abstractions.ProductLicense;
 using Logistics.Application.Abstractions.SystemSettings;
 using Logistics.Application.Modules.Platform.ProductLicense.Services;
-using Logistics.Domain.Options;
+using Logistics.Application.Abstractions.Options;
 using Logistics.Domain.Primitives.Enums;
 using Microsoft.Extensions.Caching.Memory;
 using Microsoft.Extensions.Options;

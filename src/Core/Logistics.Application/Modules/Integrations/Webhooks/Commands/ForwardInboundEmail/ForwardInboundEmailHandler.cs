@@ -1,6 +1,6 @@
 using System.Net;
 using Logistics.Application.Abstractions.Email;
-using Logistics.Domain.Options;
+using Logistics.Application.Abstractions.Options;
 using Logistics.Mediator;
 using Logistics.Shared.Models;
 using Microsoft.Extensions.Logging;

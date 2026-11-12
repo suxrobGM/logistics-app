@@ -3,7 +3,7 @@ using Open.IdentityServer;
 using Logistics.Application;
 using Logistics.Application.Modules.IdentityAccess.Users.Services;
 using Logistics.Domain.Entities;
-using Logistics.Domain.Options;
+using Logistics.Application.Abstractions.Options;
 using Logistics.HostDefaults;
 using Logistics.IdentityServer.Services;
 using Logistics.IdentityServer.Services.SigningKeys;

@@ -1,4 +1,4 @@
-namespace Logistics.Domain.Options;
+namespace Logistics.Application.Abstractions.Options;
 
 /// <summary>
 /// Configuration options for the admin impersonation feature.

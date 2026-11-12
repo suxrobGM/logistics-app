@@ -1,7 +1,7 @@
 using Logistics.Application.Abstractions;
 using Logistics.Application.Utilities;
 using Logistics.Domain.Entities;
-using Logistics.Domain.Options;
+using Logistics.Application.Abstractions.Options;
 using Logistics.Domain.Persistence;
 using Logistics.Mediator;
 using Logistics.Shared.Identity.Roles;

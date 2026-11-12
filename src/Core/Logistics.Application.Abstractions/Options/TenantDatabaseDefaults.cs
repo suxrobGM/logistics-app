@@ -1,4 +1,4 @@
-namespace Logistics.Domain.Options;
+namespace Logistics.Application.Abstractions.Options;
 
 /// <summary>
 /// Host, credentials, and the name template for tenant databases. A tenant stores only its
