@@ -1,3 +1,4 @@
+using Logistics.Application.Modules.Integrations.Negotiation.Services;
 using Logistics.Application.Abstractions.LoadBoard;
 using Logistics.Application.Modules.Integrations.LoadBoard.Services;
 using Logistics.Domain.Entities;
@@ -252,7 +253,7 @@ internal sealed class SearchLoadBoardHandler(
     private static Money? ToMoney(decimal? amount, string? currency)
     {
         return amount.HasValue
-            ? new Money { Amount = amount.Value, Currency = currency ?? "USD" }
+            ? new Money { Amount = amount.Value, Currency = currency ?? ListingCurrency.Default }
             : null;
     }
 }

@@ -81,8 +81,8 @@ internal sealed class CreatePublicCheckoutSessionHandler(
                     Metadata = new Dictionary<string, string>
                     {
                         [StripeMetadataKeys.TenantId] = tenant.Id.ToString(),
-                        ["invoice_id"] = invoice.Id.ToString(),
-                        ["payment_link_token"] = paymentLink.Token
+                        [StripeMetadataKeys.InvoiceId] = invoice.Id.ToString(),
+                        [StripeMetadataKeys.PaymentLinkToken] = paymentLink.Token
                     }
                 });
 

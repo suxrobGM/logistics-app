@@ -306,7 +306,7 @@ internal sealed class ProcessStripEventHandler(
             return Result.Ok();
         }
 
-        if (!session.Metadata.TryGetValue("invoice_id", out var rawInvoiceId)
+        if (!session.Metadata.TryGetValue(StripeMetadataKeys.InvoiceId, out var rawInvoiceId)
             || !Guid.TryParse(rawInvoiceId, out var invoiceId))
         {
             return Result.Fail("invoice_id missing or invalid in Checkout Session metadata.");
