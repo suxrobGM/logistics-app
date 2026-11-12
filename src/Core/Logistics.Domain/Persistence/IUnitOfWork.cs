@@ -42,19 +42,4 @@ public interface IUnitOfWork<in TMarker> : IDisposable
     ///     with <c>RETURNING</c>. Bypasses change tracking the same way.
     /// </summary>
     Task<List<T>> SqlQueryAsync<T>(FormattableString sql, CancellationToken ct = default);
-
-    /// <summary>
-    ///     Begins a database transaction (idempotent; does nothing if one is already active).
-    /// </summary>
-    Task BeginTransactionAsync(CancellationToken ct = default);
-
-    /// <summary>
-    ///     Commits the current transaction (idempotent; does nothing if none exists).
-    /// </summary>
-    Task CommitTransactionAsync(CancellationToken ct = default);
-
-    /// <summary>
-    ///     Rolls back the current transaction (idempotent; does nothing if none exists).
-    /// </summary>
-    Task RollbackTransactionAsync(CancellationToken ct = default);
 }

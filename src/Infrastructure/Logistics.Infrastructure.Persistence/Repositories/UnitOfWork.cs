@@ -2,14 +2,12 @@ using System.Collections.Concurrent;
 using Logistics.Domain.Core;
 using Logistics.Domain.Persistence;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Storage;
 
 namespace Logistics.Infrastructure.Persistence;
 
 internal abstract class UnitOfWork<TMarker>(DbContext db) : IUnitOfWork<TMarker>
 {
     private readonly ConcurrentDictionary<(Type entity, Type key), object> _repoCache = new();
-    private IDbContextTransaction? _tx;
 
     protected DbContext Db { get; } = db;
 
@@ -43,51 +41,8 @@ internal abstract class UnitOfWork<TMarker>(DbContext db) : IUnitOfWork<TMarker>
         return Db.Database.SqlQuery<T>(sql).ToListAsync(ct);
     }
 
-    public async Task BeginTransactionAsync(CancellationToken ct = default)
-    {
-        _tx ??= await Db.Database.BeginTransactionAsync(ct);
-    }
-
-    public async Task CommitTransactionAsync(CancellationToken ct = default)
-    {
-        if (_tx is null)
-        {
-            return;
-        }
-
-        try
-        {
-            await Db.SaveChangesAsync(ct); // safe if already saved; keeps atomicity
-            await _tx.CommitAsync(ct);
-        }
-        finally
-        {
-            await _tx.DisposeAsync();
-            _tx = null;
-        }
-    }
-
-    public async Task RollbackTransactionAsync(CancellationToken ct = default)
-    {
-        if (_tx is null)
-        {
-            return;
-        }
-
-        try
-        {
-            await _tx.RollbackAsync(ct);
-        }
-        finally
-        {
-            await _tx.DisposeAsync();
-            _tx = null;
-        }
-    }
-
     public void Dispose()
     {
-        _tx?.Dispose();
         Db.Dispose();
         GC.SuppressFinalize(this);
     }
