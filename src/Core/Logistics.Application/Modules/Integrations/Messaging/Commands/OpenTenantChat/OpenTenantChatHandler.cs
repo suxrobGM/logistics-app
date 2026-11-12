@@ -23,7 +23,7 @@ internal sealed class OpenTenantChatHandler(ITenantUnitOfWork tenantUow)
         if (tenantChat is null)
         {
             var tenant = tenantUow.GetCurrentTenant();
-            tenantChat = Conversation.CreateTenantChat(tenant.CompanyName ?? tenant.Name);
+            tenantChat = Conversation.CreateTenantChat(tenant.DisplayName);
             await conversationRepo.AddAsync(tenantChat, ct);
             await tenantUow.SaveChangesAsync(ct);
         }

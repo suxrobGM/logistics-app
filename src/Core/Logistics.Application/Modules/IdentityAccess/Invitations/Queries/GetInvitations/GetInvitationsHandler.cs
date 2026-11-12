@@ -72,7 +72,7 @@ internal sealed class GetInvitationsHandler(
                 : null;
 
             return i.ToDto(
-                tenant.CompanyName ?? tenant.Name,
+                tenant.DisplayName,
                 i.InvitedByUser?.GetFullName() ?? string.Empty,
                 customerName);
         }).ToList();

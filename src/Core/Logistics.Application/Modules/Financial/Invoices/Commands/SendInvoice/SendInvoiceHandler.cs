@@ -72,7 +72,7 @@ internal sealed class SendInvoiceHandler(
         }
 
         var paymentUrl = paymentLink is null ? null : $"{portalOptions.Value.BaseUrl}/pay/{tenant.Id}/{paymentLink.Token}";
-        var companyName = tenant.CompanyName ?? tenant.Name;
+        var companyName = tenant.DisplayName;
 
         // Calculate amount due
         var amountDue = invoice.AmountDue;

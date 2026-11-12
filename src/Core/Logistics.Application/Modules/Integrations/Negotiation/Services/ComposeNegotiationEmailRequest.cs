@@ -53,7 +53,7 @@ public record ComposeNegotiationEmailRequest
             Currency = ListingCurrency.Get(listing),
             OfferPerMile = offerPerMile,
             AgentMessage = agentMessage,
-            CompanyName = tenant.CompanyName ?? tenant.Name,
+            CompanyName = tenant.DisplayName,
             CompanyMcNumber = tenant.McNumber,
             ThreadReference = RateNegotiation.ReferenceFor(listing.Id),
             ReplyToAddress = replyToAddress,

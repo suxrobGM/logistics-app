@@ -147,7 +147,7 @@ internal sealed class SubmitInvoicesToFactorHandler(
         FactoringBatch batch, FactoringCompany company, IReadOnlyList<LoadInvoice> invoices, Tenant tenant,
         IReadOnlyList<EmailFileAttachment> attachments, CancellationToken ct)
     {
-        var companyName = tenant.CompanyName ?? tenant.Name;
+        var companyName = tenant.DisplayName;
         var model = new FactoringScheduleEmailModel
         {
             CompanyName = companyName,

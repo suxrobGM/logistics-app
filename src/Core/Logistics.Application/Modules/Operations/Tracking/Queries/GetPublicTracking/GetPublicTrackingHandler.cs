@@ -78,7 +78,7 @@ internal sealed class GetPublicTrackingHandler(
             DocumentCount = load.Documents.Count,
             HasProofOfDelivery = load.Documents.Any(d => d.Type == DocumentType.ProofOfDelivery),
             HasBillOfLading = load.Documents.Any(d => d.Type == DocumentType.BillOfLading),
-            TenantName = tenant.CompanyName ?? tenant.Name,
+            TenantName = tenant.DisplayName,
             TenantLogoUrl = GetLogoUrl(tenant)
         };
 

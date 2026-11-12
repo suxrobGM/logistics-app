@@ -22,7 +22,7 @@ public static partial class InvitationMapper
                 Id = entity.Id,
                 Email = entity.Email,
                 TenantId = entity.TenantId,
-                TenantName = entity.Tenant?.CompanyName ?? entity.Tenant?.Name ?? string.Empty,
+                TenantName = entity.Tenant?.DisplayName ?? string.Empty,
                 Type = entity.Type,
                 TenantRole = entity.TenantRole,
                 TenantRoleDisplayName = entity.Type == InvitationType.AppUser

@@ -34,7 +34,7 @@ internal sealed class GetInvitationByIdHandler(
         }
 
         var dto = invitation.ToDto(
-            tenant.CompanyName ?? tenant.Name,
+            tenant.DisplayName,
             invitation.InvitedByUser?.GetFullName() ?? string.Empty,
             customerName);
 

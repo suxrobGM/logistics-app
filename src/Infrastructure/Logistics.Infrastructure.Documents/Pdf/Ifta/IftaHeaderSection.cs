@@ -24,7 +24,7 @@ internal static class IftaHeaderSection
 
             row.ConstantItem(220).Column(col =>
             {
-                col.Item().AlignRight().Text(tenant.CompanyName ?? tenant.Name).FontSize(11).Bold();
+                col.Item().AlignRight().Text(tenant.DisplayName).FontSize(11).Bold();
                 if (!string.IsNullOrEmpty(tenant.DotNumber))
                 {
                     col.Item().AlignRight().Text($"DOT {tenant.DotNumber}").FontSize(8);

@@ -44,7 +44,7 @@ internal sealed class ResendTenantWelcomeHandler(
         }
 
         var loginUrl = $"{identityServerOptions.Value.UserFacingAuthority}/Account/Login";
-        var companyName = tenant.CompanyName ?? tenant.Name;
+        var companyName = tenant.DisplayName;
 
         var model = new TenantWelcomeEmailModel
         {

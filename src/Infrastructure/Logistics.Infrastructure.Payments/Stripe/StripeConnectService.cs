@@ -28,7 +28,7 @@ internal sealed class StripeConnectService(ILogger<StripeConnectService> logger)
             Company =
                 new AccountCompanyOptions
                 {
-                    Name = tenant.CompanyName ?? tenant.Name,
+                    Name = tenant.DisplayName,
                     Address = tenant.CompanyAddress.ToStripeAddressOptions(),
                     Phone = tenant.PhoneNumber
                 },

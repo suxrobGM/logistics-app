@@ -136,7 +136,7 @@ internal sealed class CustomerUpdateService(
 
         return new ShipmentUpdateEmailModel
         {
-            CompanyName = tenant.CompanyName ?? tenant.Name,
+            CompanyName = tenant.DisplayName,
             LoadNumber = load.Number,
             LoadName = load.Name,
             OriginCity = load.OriginAddress.City,

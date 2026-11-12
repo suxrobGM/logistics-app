@@ -16,7 +16,7 @@ internal static class CompanyInfoColumn
     {
         container.Column(col =>
         {
-            col.Item().Text(tenant.CompanyName ?? tenant.Name)
+            col.Item().Text(tenant.DisplayName)
                 .FontSize(18)
                 .Bold()
                 .FontColor(Colors.Blue.Darken3);

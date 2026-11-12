@@ -22,7 +22,7 @@ internal static class PdfFooter
 
             column.Item().PaddingTop(5).AlignCenter().Text(text =>
             {
-                text.Span(tenant.CompanyName ?? tenant.Name).FontSize(9).FontColor(Colors.Grey.Medium);
+                text.Span(tenant.DisplayName).FontSize(9).FontColor(Colors.Grey.Medium);
                 text.Span(" | ").FontSize(9).FontColor(Colors.Grey.Medium);
                 text.Span(tenant.BillingEmail).FontSize(9).FontColor(Colors.Grey.Medium);
             });

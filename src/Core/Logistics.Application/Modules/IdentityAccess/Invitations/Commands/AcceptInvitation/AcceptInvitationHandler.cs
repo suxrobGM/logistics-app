@@ -150,7 +150,7 @@ internal sealed class AcceptInvitationHandler(
         {
             UserId = user.Id,
             Email = user.Email!,
-            TenantName = tenant.CompanyName ?? tenant.Name,
+            TenantName = tenant.DisplayName,
             RoleDisplayName = roleDisplayName
         });
     }

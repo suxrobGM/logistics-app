@@ -16,6 +16,9 @@ public class Tenant : Entity, IMasterEntity
     /// </summary>
     public string? CompanyName { get; set; }
 
+    /// <summary>What customers and staff see: the company name, or the tenant's unique name when none is set.</summary>
+    public string DisplayName => CompanyName ?? Name;
+
     public required Address CompanyAddress { get; set; }
     public required string DatabaseName { get; set; }
     public required string BillingEmail { get; set; }

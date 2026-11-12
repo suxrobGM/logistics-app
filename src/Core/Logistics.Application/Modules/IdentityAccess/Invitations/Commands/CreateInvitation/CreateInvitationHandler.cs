@@ -118,7 +118,7 @@ internal sealed class CreateInvitationHandler(
         await SendInvitationEmailAsync(invitation, token, tenant, currentUser.GetFullName());
 
         var dto = invitation.ToDto(
-            tenant.CompanyName ?? tenant.Name,
+            tenant.DisplayName,
             currentUser.GetFullName(),
             customerName);
 
@@ -143,7 +143,7 @@ internal sealed class CreateInvitationHandler(
     private async Task SendInvitationEmailAsync(Invitation invitation, string token, Tenant tenant, string invitedByName)
     {
         var acceptUrl = $"{identityServerOptions.Value.UserFacingAuthority}/Account/AcceptInvitation?token={token}";
-        var companyName = tenant.CompanyName ?? tenant.Name;
+        var companyName = tenant.DisplayName;
 
         var model = new InvitationEmailModel
         {

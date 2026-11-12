@@ -69,7 +69,7 @@ internal sealed class ValidateInvitationTokenHandler(
             Email = invitation.Email,
             TenantName = isAppUser
                 ? PlatformConstants.PlatformName
-                : invitation.Tenant?.CompanyName ?? invitation.Tenant?.Name ?? string.Empty,
+                : invitation.Tenant?.DisplayName ?? string.Empty,
             RoleDisplayName = isAppUser
                 ? InvitationMapper.GetAppRoleDisplayName(invitation.AppRole)
                 : InvitationMapper.GetRoleDisplayName(invitation.TenantRole),

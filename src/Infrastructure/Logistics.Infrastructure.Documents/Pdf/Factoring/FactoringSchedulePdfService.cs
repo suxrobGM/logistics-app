@@ -13,7 +13,7 @@ internal sealed class FactoringSchedulePdfService : IFactoringSchedulePdfService
     public byte[] GenerateSchedulePdf(FactoringBatch batch, Tenant tenant)
     {
         var currency = batch.Total.Currency;
-        var companyName = tenant.CompanyName ?? tenant.Name;
+        var companyName = tenant.DisplayName;
         var items = batch.Items.OrderBy(i => i.Invoice.Number).ToList();
 
         var doc = QuestDocument.Create(container =>

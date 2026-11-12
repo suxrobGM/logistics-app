@@ -74,7 +74,7 @@ internal sealed class GetPublicInvoiceHandler(
             DueDate = invoice.DueDate,
             AmountDue = amountDue,
             LineItems = invoice.LineItems.Select(i => i.ToDto()),
-            CompanyName = tenant.CompanyName ?? tenant.Name
+            CompanyName = tenant.DisplayName
         };
 
         // Add load-specific details if it's a LoadInvoice

@@ -37,7 +37,7 @@ internal sealed class SendTrackingLinkEmailHandler(
 
         var tenant = tenantUow.GetCurrentTenant();
         var trackingUrl = trackingLinks.GetUrl(trackingLink);
-        var companyName = tenant.CompanyName ?? tenant.Name;
+        var companyName = tenant.DisplayName;
 
         var originCity = load.OriginAddress?.City ?? "Origin";
         var destinationCity = load.DestinationAddress?.City ?? "Destination";
