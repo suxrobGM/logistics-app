@@ -52,12 +52,7 @@ public class ControllerAuthorizationTests
         Assert.Empty(unguarded);
     }
 
-    /// <summary>
-    /// Every controller action reachable without authentication. The global AuthorizeFilter makes
-    /// authenticated the default, so each entry here is a deliberate opt-out and has to carry its own
-    /// protection: a verified webhook signature, a tenant-scoped token in the route, or genuinely
-    /// public content. The list must shrink, never grow.
-    /// </summary>
+    /// <summary>Reachable without signing in, so each must protect itself: a webhook signature, a token in the route, or public content.</summary>
     private static readonly string[] AnonymousActions =
     [
         "AccountingController.Callback",
@@ -83,11 +78,6 @@ public class ControllerAuthorizationTests
         "WebhookController.Stripe"
     ];
 
-    /// <summary>
-    /// Every_action_declares_its_authorization treats [AllowAnonymous] as a valid declaration and
-    /// skips it, so it can never catch an endpoint that is anonymous by mistake. This closes that
-    /// gap: adding [AllowAnonymous] anywhere now fails until it is reviewed and listed above.
-    /// </summary>
     [Fact]
     public void Anonymous_actions_are_an_explicit_allowlist()
     {
