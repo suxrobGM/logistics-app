@@ -1,49 +1,22 @@
-using Logistics.Application.Abstractions;
+using Logistics.Application.Modules.Platform.Notifications.Services;
 using Logistics.Domain.Events;
-using Logistics.Domain.Primitives.ValueObjects;
-using Logistics.Domain.Persistence;
 using Logistics.Domain.Primitives.Enums;
+using Logistics.Domain.Primitives.ValueObjects;
 using Logistics.Mediator;
-using Microsoft.Extensions.Logging;
-using Logistics.Application.Abstractions.Notifications;
 
 namespace Logistics.Application.Modules.Financial.Payroll.Events;
 
-/// <summary>
-/// Handles notifications when a payroll invoice is submitted for approval.
-/// Sends in-app notification to managers/approvers.
-/// </summary>
-internal sealed class PayrollSubmittedNotificationHandler(
-    INotificationService notificationService,
-    ITelegramNotificationService telegramNotificationService,
-    ITenantUnitOfWork tenantUow,
-    ILogger<PayrollSubmittedNotificationHandler> logger)
+/// <summary>Asks the people who approve payroll to review a submitted one: in-app and the dispatcher chats.</summary>
+internal sealed class PayrollSubmittedNotificationHandler(IEventNotifier notifier)
     : INotificationHandler<PayrollSubmittedEvent>
 {
     public async Task Handle(PayrollSubmittedEvent @event, CancellationToken cancellationToken)
     {
-        logger.LogInformation(
-            "Payroll {PayrollId} submitted for approval, sending notifications",
-            @event.PayrollId);
+        const string title = "Payroll Pending Approval";
+        var message = $"Payroll #{@event.PayrollNumber} for {@event.EmployeeName} " +
+                      $"({Money.Format(@event.TotalAmount, @event.Currency)}) requires approval";
 
-        // Send in-app notification for managers
-        await notificationService.SendNotificationAsync(
-            "Payroll Pending Approval",
-            $"Payroll #{@event.PayrollNumber} for {@event.EmployeeName} ({Money.Format(@event.TotalAmount, @event.Currency)}) requires approval");
-
-        // Send Telegram notification to dispatchers/managers
-        try
-        {
-            await telegramNotificationService.SendNotificationAsync(
-                tenantUow.GetCurrentTenant().Id,
-                "Payroll Pending Approval",
-                $"Payroll #{@event.PayrollNumber} for {@event.EmployeeName} ({Money.Format(@event.TotalAmount, @event.Currency)}) requires approval",
-                TelegramChatRole.Dispatcher,
-                cancellationToken);
-        }
-        catch (Exception ex)
-        {
-            logger.LogWarning(ex, "Failed to send Telegram notification for payroll submission");
-        }
+        await notifier.ShowInAppAsync(title, message);
+        await notifier.PostToTelegramAsync(title, message, TelegramChatRole.Dispatcher, cancellationToken);
     }
 }

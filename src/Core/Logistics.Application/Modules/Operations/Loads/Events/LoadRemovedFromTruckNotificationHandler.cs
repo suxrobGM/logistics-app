@@ -1,65 +1,21 @@
-using Logistics.Application.Abstractions;
+using Logistics.Application.Modules.Platform.Notifications.Services;
 using Logistics.Domain.Events;
-using Logistics.Domain.Persistence;
 using Logistics.Domain.Primitives.Enums;
 using Logistics.Mediator;
-using Microsoft.Extensions.Logging;
-using Logistics.Application.Abstractions.Notifications;
 
 namespace Logistics.Application.Modules.Operations.Loads.Events;
 
-/// <summary>
-/// Handles notifications when a load is removed from a truck.
-/// Sends push notification to all drivers on the truck.
-/// </summary>
-internal sealed class LoadRemovedFromTruckNotificationHandler(
-    IPushNotificationService pushNotificationService,
-    ITelegramNotificationService telegramNotificationService,
-    ITenantUnitOfWork tenantUow,
-    ILogger<LoadRemovedFromTruckNotificationHandler> logger)
+/// <summary>Tells the truck's drivers a load was taken off them: push and the driver chats.</summary>
+internal sealed class LoadRemovedFromTruckNotificationHandler(IEventNotifier notifier)
     : INotificationHandler<LoadRemovedFromTruckEvent>
 {
     public async Task Handle(LoadRemovedFromTruckEvent @event, CancellationToken cancellationToken)
     {
-        logger.LogInformation(
-            "Load {LoadId} removed from truck {TruckId}, sending notifications",
-            @event.LoadId, @event.TruckId);
-
         var data = new Dictionary<string, string> { ["loadId"] = @event.LoadId.ToString() };
 
-        // Notify main driver
-        if (!string.IsNullOrEmpty(@event.MainDriverDeviceToken))
-        {
-            await pushNotificationService.SendNotificationAsync(
-                "Load update",
-                $"Load #{@event.LoadNumber} has been removed from you",
-                @event.MainDriverDeviceToken,
-                data);
-        }
-
-        // Notify secondary driver
-        if (!string.IsNullOrEmpty(@event.SecondaryDriverDeviceToken))
-        {
-            await pushNotificationService.SendNotificationAsync(
-                "Load update",
-                $"Load #{@event.LoadNumber} has been removed from you",
-                @event.SecondaryDriverDeviceToken,
-                data);
-        }
-
-        // Send Telegram notification to drivers
-        try
-        {
-            await telegramNotificationService.SendNotificationAsync(
-                tenantUow.GetCurrentTenant().Id,
-                "Load Removed",
-                $"Load #{@event.LoadNumber} has been removed from truck",
-                TelegramChatRole.Driver,
-                cancellationToken);
-        }
-        catch (Exception ex)
-        {
-            logger.LogWarning(ex, "Failed to send Telegram notification for load removal");
-        }
+        await notifier.PushAsync("Load update", $"Load #{@event.LoadNumber} has been removed from you", data,
+            @event.MainDriverDeviceToken, @event.SecondaryDriverDeviceToken);
+        await notifier.PostToTelegramAsync("Load Removed", $"Load #{@event.LoadNumber} has been removed from truck",
+            TelegramChatRole.Driver, cancellationToken);
     }
 }

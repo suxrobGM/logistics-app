@@ -1,27 +1,16 @@
-using Logistics.Application.Abstractions;
+using Logistics.Application.Modules.Platform.Notifications.Services;
 using Logistics.Domain.Events;
 using Logistics.Domain.Primitives.Enums;
 using Logistics.Mediator;
-using Microsoft.Extensions.Logging;
-using Logistics.Application.Abstractions.Notifications;
 
 namespace Logistics.Application.Modules.Operations.Loads.Events;
 
-/// <summary>
-/// Handles notifications when load proximity changes and driver can confirm status.
-/// Sends push notification to all drivers on the truck.
-/// </summary>
-internal sealed class LoadProximityChangedNotificationHandler(
-    IPushNotificationService pushNotificationService,
-    ILogger<LoadProximityChangedNotificationHandler> logger)
+/// <summary>Prompts the truck's drivers to confirm a pickup or delivery once they are near the stop.</summary>
+internal sealed class LoadProximityChangedNotificationHandler(IEventNotifier notifier)
     : INotificationHandler<LoadProximityChangedEvent>
 {
     public async Task Handle(LoadProximityChangedEvent @event, CancellationToken cancellationToken)
     {
-        logger.LogInformation(
-            "Load {LoadId} proximity changed to confirm {Status}, sending notifications",
-            @event.LoadId, @event.StatusToConfirm);
-
         var statusText = @event.StatusToConfirm switch
         {
             LoadStatus.PickedUp => "picked up",
@@ -32,24 +21,8 @@ internal sealed class LoadProximityChangedNotificationHandler(
 
         var data = new Dictionary<string, string> { ["loadId"] = @event.LoadId.ToString() };
 
-        // Notify main driver
-        if (!string.IsNullOrEmpty(@event.MainDriverDeviceToken))
-        {
-            await pushNotificationService.SendNotificationAsync(
-                "Confirm load status",
-                $"You can confirm the {statusText} date of load #{@event.LoadNumber}",
-                @event.MainDriverDeviceToken,
-                data);
-        }
-
-        // Notify secondary driver
-        if (!string.IsNullOrEmpty(@event.SecondaryDriverDeviceToken))
-        {
-            await pushNotificationService.SendNotificationAsync(
-                "Confirm load status",
-                $"You can confirm the {statusText} date of load #{@event.LoadNumber}",
-                @event.SecondaryDriverDeviceToken,
-                data);
-        }
+        await notifier.PushAsync("Confirm load status",
+            $"You can confirm the {statusText} date of load #{@event.LoadNumber}", data,
+            @event.MainDriverDeviceToken, @event.SecondaryDriverDeviceToken);
     }
 }

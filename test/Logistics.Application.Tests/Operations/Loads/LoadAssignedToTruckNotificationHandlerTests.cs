@@ -1,10 +1,9 @@
-using Logistics.Application.Abstractions.Notifications;
 using Logistics.Application.Modules.Operations.Loads.Events;
+using Logistics.Application.Modules.Platform.Notifications.Services;
 using Logistics.Application.Tests.TestKit;
 using Logistics.Domain.Entities;
 using Logistics.Domain.Events;
 using Logistics.Domain.Persistence;
-using Microsoft.Extensions.Logging.Abstractions;
 using NSubstitute;
 using Xunit;
 
@@ -12,7 +11,7 @@ namespace Logistics.Application.Tests.Operations.Loads;
 
 public class LoadAssignedToTruckNotificationHandlerTests
 {
-    private readonly IPushNotificationService _push = Substitute.For<IPushNotificationService>();
+    private readonly IEventNotifier _notifier = Substitute.For<IEventNotifier>();
     private readonly ITenantUnitOfWork _tenantUow = Substitute.For<ITenantUnitOfWork>();
     private readonly ITenantRepository<Load, Guid> _loadRepo = Substitute.For<ITenantRepository<Load, Guid>>();
     private readonly LoadAssignedToTruckNotificationHandler _sut;
@@ -21,12 +20,7 @@ public class LoadAssignedToTruckNotificationHandlerTests
     {
         _tenantUow.Repository<Load>().Returns(_loadRepo);
         _tenantUow.GetCurrentTenant().Returns(TestTenant.Create());
-        _sut = new LoadAssignedToTruckNotificationHandler(
-            _push,
-            Substitute.For<INotificationService>(),
-            Substitute.For<ITelegramNotificationService>(),
-            _tenantUow,
-            NullLogger<LoadAssignedToTruckNotificationHandler>.Instance);
+        _sut = new LoadAssignedToTruckNotificationHandler(_notifier, _tenantUow);
     }
 
     /// <summary>The event is raised before the insert assigns the number (a private, database-set property), so it must come off the saved load.</summary>
@@ -41,10 +35,10 @@ public class LoadAssignedToTruckNotificationHandlerTests
             new LoadAssignedToTruckEvent(load.Id, Guid.NewGuid(), "T-1", "token", null, "Driver"),
             CancellationToken.None);
 
-        await _push.Received(1).SendNotificationAsync(
+        await _notifier.Received(1).PushAsync(
             Arg.Any<string>(),
             Arg.Is<string>(body => body.Contains("#1234")),
-            "token",
-            Arg.Any<IReadOnlyDictionary<string, string>?>());
+            Arg.Any<IReadOnlyDictionary<string, string>?>(),
+            Arg.Any<string?[]>());
     }
 }

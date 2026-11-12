@@ -1,75 +1,37 @@
-using Logistics.Application.Abstractions;
 using Logistics.Application.Abstractions.Email.Models;
-using Logistics.Application.Abstractions.Email;
+using Logistics.Application.Modules.Platform.Notifications.Services;
 using Logistics.Domain.Events;
 using Logistics.Domain.Primitives.ValueObjects;
 using Logistics.Mediator;
-using Microsoft.Extensions.Logging;
-using Logistics.Application.Abstractions.Notifications;
 
 namespace Logistics.Application.Modules.Financial.Payroll.Events;
 
-/// <summary>
-///     Handles notifications when a payroll invoice is approved.
-///     Sends push notification and email to employee.
-/// </summary>
-internal sealed class PayrollApprovedNotificationHandler(
-    IPushNotificationService pushNotificationService,
-    INotificationService notificationService,
-    IEmailSender emailSender,
-    IEmailTemplateService emailTemplateService,
-    ILogger<PayrollApprovedNotificationHandler> logger)
+/// <summary>Tells the employee their payroll was approved: push, in-app and email.</summary>
+internal sealed class PayrollApprovedNotificationHandler(IEventNotifier notifier)
     : INotificationHandler<PayrollApprovedEvent>
 {
     public async Task Handle(PayrollApprovedEvent @event, CancellationToken cancellationToken)
     {
-        logger.LogInformation(
-            "Payroll {PayrollId} approved, sending notifications to employee {EmployeeId}",
-            @event.PayrollId, @event.EmployeeId);
-
+        var total = Money.Format(@event.TotalAmount, @event.Currency);
         var data = new Dictionary<string, string>
         {
             ["payrollId"] = @event.PayrollId.ToString(),
             ["type"] = "payroll_approved"
         };
 
-        // Send push notification to employee
-        if (!string.IsNullOrEmpty(@event.EmployeeDeviceToken))
-        {
-            await pushNotificationService.SendNotificationAsync(
-                "Payroll Approved",
-                $"Your payroll #{@event.PayrollNumber} for {Money.Format(@event.TotalAmount, @event.Currency)} has been approved",
-                @event.EmployeeDeviceToken,
-                data);
-        }
-
-        // Send in-app notification
-        await notificationService.SendNotificationAsync(
-            "Payroll Approved",
+        await notifier.PushAsync("Payroll Approved",
+            $"Your payroll #{@event.PayrollNumber} for {total} has been approved", data, @event.EmployeeDeviceToken);
+        await notifier.ShowInAppAsync("Payroll Approved",
             $"Payroll #{@event.PayrollNumber} for {@event.EmployeeName} has been approved");
-
-        // Send email to employee
-        if (!string.IsNullOrEmpty(@event.EmployeeEmail))
-        {
-            try
+        await notifier.EmailAsync(@event.EmployeeEmail, "Your Payroll Has Been Approved", "PayrollApproved",
+            new PayrollApprovedEmailModel
             {
-                var emailModel = new PayrollApprovedEmailModel
-                {
-                    EmployeeName = @event.EmployeeName,
-                    PayrollNumber = @event.PayrollNumber,
-                    TotalAmount = Money.Format(@event.TotalAmount, @event.Currency),
-                    Currency = @event.Currency,
-                    PeriodStart = @event.PeriodStart.ToString("MMMM d, yyyy"),
-                    PeriodEnd = @event.PeriodEnd.ToString("MMMM d, yyyy")
-                };
-
-                var htmlBody = await emailTemplateService.RenderAsync("PayrollApproved", emailModel);
-                await emailSender.SendEmailAsync(@event.EmployeeEmail, "Your Payroll Has Been Approved", htmlBody);
-            }
-            catch (Exception ex)
-            {
-                logger.LogWarning(ex, "Failed to send payroll approval email to {Email}", @event.EmployeeEmail);
-            }
-        }
+                EmployeeName = @event.EmployeeName,
+                PayrollNumber = @event.PayrollNumber,
+                TotalAmount = total,
+                Currency = @event.Currency,
+                PeriodStart = @event.PeriodStart.ToString("MMMM d, yyyy"),
+                PeriodEnd = @event.PeriodEnd.ToString("MMMM d, yyyy")
+            });
     }
 }

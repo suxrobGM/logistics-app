@@ -1,64 +1,20 @@
-using Logistics.Application.Abstractions;
+using Logistics.Application.Modules.Platform.Notifications.Services;
 using Logistics.Domain.Events;
-using Logistics.Domain.Persistence;
 using Logistics.Mediator;
-using Microsoft.Extensions.Logging;
-using Logistics.Application.Abstractions.Notifications;
 
 namespace Logistics.Application.Modules.Operations.Loads.Events;
 
-/// <summary>
-/// Handles notifications when load details are updated.
-/// Sends push notification to all drivers on the truck.
-/// </summary>
-internal sealed class LoadUpdatedNotificationHandler(
-    IPushNotificationService pushNotificationService,
-    ITelegramNotificationService telegramNotificationService,
-    ITenantUnitOfWork tenantUow,
-    ILogger<LoadUpdatedNotificationHandler> logger)
+/// <summary>Tells the truck's drivers and every chat that a load's details changed.</summary>
+internal sealed class LoadUpdatedNotificationHandler(IEventNotifier notifier)
     : INotificationHandler<LoadUpdatedEvent>
 {
     public async Task Handle(LoadUpdatedEvent @event, CancellationToken cancellationToken)
     {
-        logger.LogInformation(
-            "Load {LoadId} updated, sending notifications to truck {TruckId}",
-            @event.LoadId, @event.TruckId);
-
         var data = new Dictionary<string, string> { ["loadId"] = @event.LoadId.ToString() };
 
-        // Notify main driver
-        if (!string.IsNullOrEmpty(@event.MainDriverDeviceToken))
-        {
-            await pushNotificationService.SendNotificationAsync(
-                "Load update",
-                $"Load #{@event.LoadNumber} details have been updated. Check details.",
-                @event.MainDriverDeviceToken,
-                data);
-        }
-
-        // Notify secondary driver
-        if (!string.IsNullOrEmpty(@event.SecondaryDriverDeviceToken))
-        {
-            await pushNotificationService.SendNotificationAsync(
-                "Load update",
-                $"Load #{@event.LoadNumber} details have been updated. Check details.",
-                @event.SecondaryDriverDeviceToken,
-                data);
-        }
-
-        // Send Telegram notification to all users (both dispatchers and drivers)
-        try
-        {
-            await telegramNotificationService.SendNotificationAsync(
-                tenantUow.GetCurrentTenant().Id,
-                "Load Updated",
-                $"Load #{@event.LoadNumber} details have been updated",
-                targetRole: null,
-                cancellationToken);
-        }
-        catch (Exception ex)
-        {
-            logger.LogWarning(ex, "Failed to send Telegram notification for load update");
-        }
+        await notifier.PushAsync("Load update", $"Load #{@event.LoadNumber} details have been updated. Check details.",
+            data, @event.MainDriverDeviceToken, @event.SecondaryDriverDeviceToken);
+        await notifier.PostToTelegramAsync("Load Updated", $"Load #{@event.LoadNumber} details have been updated",
+            role: null, cancellationToken);
     }
 }
