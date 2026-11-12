@@ -40,26 +40,9 @@ internal sealed class AgentTurnService(
             return;
         }
 
-        if (!options.Value.BypassAIGate && tenantUow.GetCurrentTenant().Settings.AIEnabled == false)
+        var quota = await CheckTurnAllowedAsync(request, surface, conversation, ct);
+        if (quota is null)
         {
-            logger.LogInformation(
-                "LLM is disabled for tenant {TenantId}, skipping {SessionType} turn",
-                request.TenantId, surface.SessionType);
-            await AppendSystemNoticeAsync(
-                request, surface, conversation,
-                "AI is disabled for this company. Contact your administrator to enable it.", ct);
-            return;
-        }
-
-        // Billed-not-blocked by default. The send handler already gates; this catches turns
-        // enqueued just before the budget line or the toggle flip.
-        var quota = await quotaService.GetQuotaStatusAsync(request.TenantId, ct);
-        if (quota.OverageBlocked)
-        {
-            logger.LogInformation(
-                "Weekly AI budget reached and overage is blocked for tenant {TenantId}, skipping {SessionType} turn",
-                request.TenantId, surface.SessionType);
-            await AppendSystemNoticeAsync(request, surface, conversation, ErrorCodes.AIBudgetReachedMessage, ct);
             return;
         }
 
@@ -117,14 +100,7 @@ internal sealed class AgentTurnService(
         }
 
         // Persist even on failure - the audit trail and the next turn's context both depend on it.
-        List<AgentMessage> newMessages = state is null
-            ? []
-            : await PersistTurnMessagesAsync(conversation, session, state.Messages.Skip(priorMessageCount).ToList());
-
-        conversation.Title ??= await DeriveTitleAsync(conversation);
-        conversation.LastMessageAt = DateTime.UtcNow;
-        conversation.EndTurn();
-        await tenantUow.SaveChangesAsync(CancellationToken.None);
+        var newMessages = await SaveTurnAsync(conversation, session, state, priorMessageCount);
 
         foreach (var message in newMessages.Where(m => m.DisplayText is not null))
         {
@@ -133,6 +109,58 @@ internal sealed class AgentTurnService(
 
         await BroadcastTurnUpdateSafeAsync(request, surface, conversation, session);
         await overageReporter.ReportIfOverBudgetAsync(session, request.TenantId);
+    }
+
+    /// <summary>
+    /// Returns the tenant's quota when the turn may run. Returns null when AI is switched off for the
+    /// tenant or its weekly budget is spent with overage blocked; the conversation then gets a
+    /// system notice saying why and the turn ends without a session.
+    /// </summary>
+    private async Task<AIQuotaStatus?> CheckTurnAllowedAsync(
+        AgentTurnRequest request, IAgentSurface surface, AgentConversation conversation, CancellationToken ct)
+    {
+        if (!options.Value.BypassAIGate && tenantUow.GetCurrentTenant().Settings.AIEnabled == false)
+        {
+            logger.LogInformation(
+                "LLM is disabled for tenant {TenantId}, skipping {SessionType} turn",
+                request.TenantId, surface.SessionType);
+            await AppendSystemNoticeAsync(
+                request, surface, conversation,
+                "AI is disabled for this company. Contact your administrator to enable it.", ct);
+            return null;
+        }
+
+        // Billed-not-blocked by default. The send handler already gates; this catches turns
+        // enqueued just before the budget line or the toggle flip.
+        var quota = await quotaService.GetQuotaStatusAsync(request.TenantId, ct);
+        if (quota.OverageBlocked)
+        {
+            logger.LogInformation(
+                "Weekly AI budget reached and overage is blocked for tenant {TenantId}, skipping {SessionType} turn",
+                request.TenantId, surface.SessionType);
+            await AppendSystemNoticeAsync(request, surface, conversation, ErrorCodes.AIBudgetReachedMessage, ct);
+            return null;
+        }
+
+        return quota;
+    }
+
+    /// <summary>
+    /// Saves the messages the turn added, titles the conversation from its first user message and
+    /// ends the turn. Uses CancellationToken.None so a cancelled turn still saves what it produced.
+    /// </summary>
+    private async Task<List<AgentMessage>> SaveTurnAsync(
+        AgentConversation conversation, AgentSession session, LlmConversation? state, int priorMessageCount)
+    {
+        List<AgentMessage> newMessages = state is null
+            ? []
+            : await PersistTurnMessagesAsync(conversation, session, state.Messages.Skip(priorMessageCount).ToList());
+
+        conversation.Title ??= await DeriveTitleAsync(conversation);
+        conversation.LastMessageAt = DateTime.UtcNow;
+        conversation.EndTurn();
+        await tenantUow.SaveChangesAsync(CancellationToken.None);
+        return newMessages;
     }
 
     /// <summary>
