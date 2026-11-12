@@ -19,18 +19,12 @@
     <ProjectReference Include="..\..\src\Infrastructure\Logistics.Infrastructure.AI\Logistics.Infrastructure.AI.csproj" />
     <ProjectReference Include="..\..\src\Infrastructure\Logistics.Infrastructure.Communications\Logistics.Infrastructure.Communications.csproj" />
     <ProjectReference Include="..\..\src\Infrastructure\Logistics.Infrastructure.Documents\Logistics.Infrastructure.Documents.csproj" />
-    <ProjectReference Include="..\..\src\Infrastructure\Logistics.Infrastructure.Integrations.Accounting\Logistics.Infrastructure.Integrations.Accounting.csproj" />
-    <ProjectReference Include="..\..\src\Infrastructure\Logistics.Infrastructure.Integrations.Common\Logistics.Infrastructure.Integrations.Common.csproj" />
-    <ProjectReference Include="..\..\src\Infrastructure\Logistics.Infrastructure.Integrations.Eld\Logistics.Infrastructure.Integrations.Eld.csproj" />
-    <ProjectReference Include="..\..\src\Infrastructure\Logistics.Infrastructure.Integrations.FuelCards\Logistics.Infrastructure.Integrations.FuelCards.csproj" />
-    <ProjectReference Include="..\..\src\Infrastructure\Logistics.Infrastructure.Integrations.LoadBoard\Logistics.Infrastructure.Integrations.LoadBoard.csproj" />
-    <ProjectReference Include="..\..\src\Infrastructure\Logistics.Infrastructure.Licensing\Logistics.Infrastructure.Licensing.csproj" />
+    <ProjectReference Include="..\..\src\Infrastructure\Logistics.Infrastructure.Integrations\Logistics.Infrastructure.Integrations.csproj" />
     <ProjectReference Include="..\..\src\Infrastructure\Logistics.Infrastructure.Payments\Logistics.Infrastructure.Payments.csproj" />
     <ProjectReference Include="..\..\src\Infrastructure\Logistics.Infrastructure.Persistence\Logistics.Infrastructure.Persistence.csproj" />
     <ProjectReference Include="..\..\src\Infrastructure\Logistics.Infrastructure.Routing\Logistics.Infrastructure.Routing.csproj" />
     <ProjectReference Include="..\..\src\Infrastructure\Logistics.Infrastructure.Storage\Logistics.Infrastructure.Storage.csproj" />
     <ProjectReference Include="..\..\src\Infrastructure\Logistics.Infrastructure.Tax\Logistics.Infrastructure.Tax.csproj" />
-    <ProjectReference Include="..\..\src\Infrastructure\Logistics.Infrastructure.Vin\Logistics.Infrastructure.Vin.csproj" />
     <ProjectReference Include="..\..\src\Presentation\Logistics.API\Logistics.API.csproj" />
   </ItemGroup>
 

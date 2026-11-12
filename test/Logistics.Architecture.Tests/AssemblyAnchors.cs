@@ -25,20 +25,14 @@ internal static class AssemblyAnchors
     public static readonly Assembly[] AllInfrastructure =
     [
         typeof(Logistics.Infrastructure.AI.Registrar).Assembly,
-        typeof(Logistics.Infrastructure.Integrations.Accounting.Registrar).Assembly,
-        typeof(Logistics.Infrastructure.Integrations.Common.HttpClientJsonExtensions).Assembly,
         typeof(Logistics.Infrastructure.Communications.Registrar).Assembly,
         typeof(Logistics.Infrastructure.Documents.Registrar).Assembly,
-        typeof(Logistics.Infrastructure.Integrations.Eld.Registrar).Assembly,
-        typeof(Logistics.Infrastructure.Integrations.FuelCards.Registrar).Assembly,
-        typeof(Logistics.Infrastructure.Licensing.Registrar).Assembly,
-        typeof(Logistics.Infrastructure.Integrations.LoadBoard.Registrar).Assembly,
+        typeof(Logistics.Infrastructure.Integrations.Registrar).Assembly,
         typeof(Logistics.Infrastructure.Payments.Registrar).Assembly,
         typeof(Logistics.Infrastructure.Persistence.Registrar).Assembly,
         typeof(Logistics.Infrastructure.Routing.Registrar).Assembly,
         typeof(Logistics.Infrastructure.Storage.Registrar).Assembly,
         typeof(Logistics.Infrastructure.Tax.Registrar).Assembly,
-        typeof(Logistics.Infrastructure.Vin.Registrar).Assembly,
     ];
 
     /// <summary>Exempt from "must not depend on Application" until Infrastructure.AI is decoupled.</summary>

@@ -14,7 +14,7 @@
   <ItemGroup>
     <ProjectReference Include="..\..\Core\Logistics.Application.Abstractions\Logistics.Application.Abstractions.csproj" />
     <ProjectReference Include="..\..\Shared\Logistics.Shared.Identity\Logistics.Shared.Identity.csproj" />
-    <ProjectReference Include="..\Logistics.Infrastructure.Integrations.Common\Logistics.Infrastructure.Integrations.Common.csproj" />
+    <ProjectReference Include="..\Logistics.Infrastructure.Integrations\Logistics.Infrastructure.Integrations.csproj" />
   </ItemGroup>
 
   <ItemGroup>
