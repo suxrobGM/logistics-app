@@ -23,6 +23,10 @@ internal sealed class CreateMaintenanceRecordHandler(ITenantUnitOfWork tenantUow
         if (req.PerformedById.HasValue)
         {
             performedBy = await tenantUow.Repository<Employee>().GetByIdAsync(req.PerformedById.Value, ct);
+            if (performedBy is null)
+            {
+                return Result<MaintenanceRecordDto>.Fail("Performed by employee not found.");
+            }
         }
 
         var record = new MaintenanceRecord
@@ -38,7 +42,6 @@ internal sealed class CreateMaintenanceRecordHandler(ITenantUnitOfWork tenantUow
             InvoiceNumber = req.InvoiceNumber,
             LaborCost = req.LaborCost,
             PartsCost = req.PartsCost,
-            TotalCost = req.LaborCost + req.PartsCost,
             PerformedById = req.PerformedById,
             PerformedBy = performedBy,
             WorkPerformed = req.Notes
@@ -56,7 +59,12 @@ internal sealed class CreateMaintenanceRecordHandler(ITenantUnitOfWork tenantUow
                 TotalCost = partDto.Quantity * partDto.UnitCost
             };
             record.Parts.Add(part);
-            record.PartsCost += part.TotalCost;
+        }
+
+        // Itemized parts replace the lump-sum figure rather than adding to it.
+        if (record.Parts.Count > 0)
+        {
+            record.PartsCost = record.Parts.Sum(p => p.TotalCost);
         }
 
         record.TotalCost = record.LaborCost + record.PartsCost;
