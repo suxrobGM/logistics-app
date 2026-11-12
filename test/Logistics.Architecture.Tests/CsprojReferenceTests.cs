@@ -13,7 +13,7 @@ public class CsprojReferenceTests
         CsprojAssertions.AssertNoPackage(csproj, "Microsoft.AspNetCore.Http");
     }
 
-    [Fact(Skip = "ProcessStripEventHandler still consumes raw Stripe.Event payloads.")]
+    [Fact]
     public void Application_csproj_has_no_Stripe_package()
     {
         var csproj = CsprojAssertions.ResolveRepoFile(
@@ -29,7 +29,7 @@ public class CsprojReferenceTests
         CsprojAssertions.AssertNoPackage(csproj, "Microsoft.EntityFrameworkCore");
     }
 
-    [Fact(Skip = "Abstractions still has port signatures that take Stripe SDK types.")]
+    [Fact]
     public void Abstractions_csproj_has_no_Stripe_package()
     {
         var csproj = CsprojAssertions.ResolveRepoFile(

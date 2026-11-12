@@ -22,7 +22,7 @@ public class BoundaryTests
             .Check(AssemblyAnchors.Architecture);
     }
 
-    [Fact(Skip = "ProcessStripEventHandler still consumes raw Stripe.Event payloads.")]
+    [Fact]
     public void Application_must_not_depend_on_Stripe()
     {
         Classes().That().ResideInAssembly(AssemblyAnchors.Application)
@@ -62,7 +62,7 @@ public class BoundaryTests
             .Check(AssemblyAnchors.Architecture);
     }
 
-    [Fact(Skip = "Abstractions still has port signatures that take Stripe SDK types.")]
+    [Fact]
     public void Abstractions_must_not_depend_on_Stripe()
     {
         Classes().That().ResideInAssembly(AssemblyAnchors.ApplicationAbstractions)
