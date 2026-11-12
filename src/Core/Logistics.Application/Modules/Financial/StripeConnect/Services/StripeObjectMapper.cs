@@ -19,14 +19,4 @@ public static class StripeObjectMapper
             _ => throw new ArgumentOutOfRangeException(nameof(stripeSubscriptionStatus), stripeSubscriptionStatus)
         };
     }
-
-    public static PaymentStatus GetPaymentStatus(string stripePaymentStatus)
-    {
-        return stripePaymentStatus switch
-        {
-            "canceled" => PaymentStatus.Cancelled,
-            "succeeded" => PaymentStatus.Paid,
-            _ => throw new ArgumentOutOfRangeException(nameof(stripePaymentStatus), stripePaymentStatus)
-        };
-    }
 }
