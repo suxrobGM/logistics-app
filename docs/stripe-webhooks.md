@@ -37,7 +37,7 @@ So in the Stripe Dashboard you need two destinations, both pointing at the same 
 1. **Platform events** - `customer.subscription.*`, `checkout.session.completed`, `payment_intent.*`
 2. **Connected account events** - `account.updated`
 
-> **Known limitation.** `StripeOptions` exposes a single `WebhookSecret`, and `ProcessStripEventHandler` passes that one secret to `EventUtility.ConstructEvent`. Only one of the two endpoints can verify. The other returns `400`, and Stripe retries it for up to three days before giving up. Until `StripeOptions` grows a second secret (`ConnectWebhookSecret`) and the handler tries both, Connect status must be refreshed by polling `GET /stripe/connect/status` rather than by webhook.
+> **Known limitation.** `StripeOptions` exposes a single `WebhookSecret`, and `StripeWebhookParser` passes that one secret to `EventUtility.ConstructEvent`. Only one of the two endpoints can verify. The other returns `400`, and Stripe retries it for up to three days before giving up. Until `StripeOptions` grows a second secret (`ConnectWebhookSecret`) and the handler tries both, Connect status must be refreshed by polling `GET /stripe/connect/status` rather than by webhook.
 
 ## Configuration
 
@@ -77,7 +77,8 @@ Triggered events carry no `tenant_id` metadata, so handlers will short-circuit. 
 ## Related Files
 
 - Controller: `src/Presentation/Logistics.API/Controllers/WebhookController.cs`
-- Handler: `src/Core/Logistics.Application/Modules/Integrations/Webhooks/Commands/ProcessStripEvent/ProcessStripEventHandler.cs`
+- Handler: `src/Core/Logistics.Application/Modules/Integrations/Webhooks/Commands/ProcessStripeEvent/ProcessStripeEventHandler.cs`
+- Parser (signature check, Stripe SDK to plain records): `src/Infrastructure/Logistics.Infrastructure.Payments/Stripe/StripeWebhookParser.cs`
 - Options: `src/Infrastructure/Logistics.Infrastructure.Payments/Stripe/StripeOptions.cs`
 - Connect service: `src/Infrastructure/Logistics.Infrastructure.Payments/Stripe/StripeConnectService.cs`
 - See also: [Stripe Connect](stripe-connect.md), [Customer Payments](customer-payments.md)

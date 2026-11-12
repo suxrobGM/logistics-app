@@ -1,5 +1,5 @@
+using Logistics.Application.Abstractions.Payments.Stripe;
 using Logistics.Application.Modules.Financial.StripeConnect.Services;
-using Logistics.Application.Abstractions.Payments;
 using Logistics.Application.Modules.Integrations.Webhooks.Services;
 using Logistics.Domain.Entities;
 using Logistics.Domain.Persistence;
@@ -8,68 +8,58 @@ using Logistics.Domain.Primitives.ValueObjects;
 using Logistics.Mediator;
 using Logistics.Shared.Models;
 using Microsoft.Extensions.Logging;
-using Stripe;
-using Stripe.Checkout;
-using Logistics.Application.Abstractions.Payments.Stripe;
-using DomainInvoice = Logistics.Domain.Entities.Invoice;
-using StripeSubscription = Stripe.Subscription;
-using Subscription = Logistics.Domain.Entities.Subscription;
 
 namespace Logistics.Application.Modules.Integrations.Webhooks.Commands;
 
-internal sealed class ProcessStripEventHandler(
+internal sealed class ProcessStripeEventHandler(
     ITenantUnitOfWork tenantUow,
     IMasterUnitOfWork masterUow,
-    IStripeService stripeService,
+    IStripeWebhookParser webhookParser,
     IStripeConnectService stripeConnectService,
     IWebhookEventTracker webhookEvents,
-    ILogger<ProcessStripEventHandler> logger)
-    : IRequestHandler<ProcessStripEventCommand, Result>
+    ILogger<ProcessStripeEventHandler> logger)
+    : IRequestHandler<ProcessStripeEventCommand, Result>
 {
-    public async Task<Result> Handle(
-        ProcessStripEventCommand req, CancellationToken ct)
+    private const string Provider = "Stripe";
+
+    public async Task<Result> Handle(ProcessStripeEventCommand req, CancellationToken ct)
     {
         try
         {
-            var stripeEvent = EventUtility.ConstructEvent(
-                req.RequestBodyJson,
-                req.StripeSignature,
-                stripeService.WebhookSecret,
-                throwOnApiVersionMismatch: false);
+            var stripeEvent = webhookParser.Parse(req.RequestBodyJson, req.StripeSignature);
+            if (stripeEvent is null)
+            {
+                return Result.Fail("Stripe webhook signature verification failed", ErrorCodes.WebhookRejected);
+            }
 
             logger.LogInformation("Received Stripe event: {Type}", stripeEvent.Type);
 
-            const string provider = "Stripe";
-            if (await webhookEvents.WasAlreadyHandledAsync(provider, stripeEvent.Id, ct))
+            if (await webhookEvents.WasAlreadyHandledAsync(Provider, stripeEvent.Id, ct))
             {
                 logger.LogInformation("Duplicate Stripe event '{EventId}' ignored", stripeEvent.Id);
                 return Result.Ok();
             }
 
-            var result = stripeEvent.Type switch
+            var result = stripeEvent.Kind switch
             {
-                EventTypes.CustomerSubscriptionCreated => await HandleSubscriptionCreated(
-                    (stripeEvent.Data.Object as StripeSubscription)!),
-                EventTypes.CustomerSubscriptionUpdated => await HandleSubscriptionUpdated(
-                    (stripeEvent.Data.Object as StripeSubscription)!),
-                EventTypes.CustomerSubscriptionDeleted => await HandleSubscriptionDeleted(
-                    (stripeEvent.Data.Object as StripeSubscription)!),
-                EventTypes.PaymentIntentProcessing => await HandlePaymentIntentStatus(
-                    (stripeEvent.Data.Object as PaymentIntent)!, PaymentStatus.Pending),
-                EventTypes.PaymentIntentSucceeded => await HandlePaymentIntentStatus(
-                    (stripeEvent.Data.Object as PaymentIntent)!, PaymentStatus.Paid),
-                EventTypes.PaymentIntentPaymentFailed => await HandlePaymentIntentFailed(
-                    (stripeEvent.Data.Object as PaymentIntent)!),
-                EventTypes.AccountUpdated => await HandleAccountUpdated(
-                    (stripeEvent.Data.Object as Account)!),
-                EventTypes.CheckoutSessionCompleted => await HandleCheckoutSessionCompleted(
-                    (stripeEvent.Data.Object as Session)!),
+                StripeWebhookEventKind.SubscriptionCreated => await HandleSubscriptionCreated(stripeEvent.Subscription!),
+                StripeWebhookEventKind.SubscriptionUpdated => await HandleSubscriptionUpdated(stripeEvent.Subscription!),
+                StripeWebhookEventKind.SubscriptionDeleted => await HandleSubscriptionDeleted(stripeEvent.Subscription!),
+                StripeWebhookEventKind.PaymentIntentProcessing => await UpdatePaymentStatus(
+                    stripeEvent.PaymentIntent!, PaymentStatus.Pending),
+                StripeWebhookEventKind.PaymentIntentSucceeded => await UpdatePaymentStatus(
+                    stripeEvent.PaymentIntent!, PaymentStatus.Paid),
+                StripeWebhookEventKind.PaymentIntentFailed => await UpdatePaymentStatus(
+                    stripeEvent.PaymentIntent!, PaymentStatus.Failed),
+                StripeWebhookEventKind.AccountUpdated => await HandleAccountUpdated(stripeEvent.Account!),
+                StripeWebhookEventKind.CheckoutSessionCompleted => await HandleCheckoutSessionCompleted(
+                    stripeEvent.CheckoutSession!),
                 _ => Result.Ok()
             };
 
             if (result.IsSuccess)
             {
-                await webhookEvents.MarkHandledAsync(provider, stripeEvent.Id, ct);
+                await webhookEvents.MarkHandledAsync(Provider, stripeEvent.Id, ct);
             }
 
             return result;
@@ -81,10 +71,9 @@ internal sealed class ProcessStripEventHandler(
         }
     }
 
-
     #region Subscription Handlers
 
-    private async Task<Result> HandleSubscriptionCreated(StripeSubscription stripeSubscription)
+    private async Task<Result> HandleSubscriptionCreated(StripeSubscriptionInfo stripeSubscription)
     {
         var metadata = stripeSubscription.Metadata;
         if (!metadata.TryGetValue(StripeMetadataKeys.TenantId, out var tenantId))
@@ -111,9 +100,11 @@ internal sealed class ProcessStripEventHandler(
             return Result.Fail($"Could not find a subscription plan with ID '{planId}'");
         }
 
+        var status = StripeObjectMapper.GetSubscriptionStatus(stripeSubscription.Status);
+
         if (tenant.Subscription is not null)
         {
-            tenant.Subscription.Status = StripeObjectMapper.GetSubscriptionStatus(stripeSubscription.Status);
+            tenant.Subscription.Status = status;
             tenant.Subscription.StripeSubscriptionId = stripeSubscription.Id;
             tenant.Subscription.PlanId = subscriptionPlan.Id;
 
@@ -125,7 +116,7 @@ internal sealed class ProcessStripEventHandler(
         {
             var newSubscription = new Subscription
             {
-                Status = StripeObjectMapper.GetSubscriptionStatus(stripeSubscription.Status),
+                Status = status,
                 TenantId = tenant.Id,
                 Tenant = tenant,
                 PlanId = subscriptionPlan.Id,
@@ -142,7 +133,7 @@ internal sealed class ProcessStripEventHandler(
         return Result.Ok();
     }
 
-    private async Task<Result> HandleSubscriptionUpdated(StripeSubscription stripeSubscription)
+    private async Task<Result> HandleSubscriptionUpdated(StripeSubscriptionInfo stripeSubscription)
     {
         var metadata = stripeSubscription.Metadata;
         if (!metadata.TryGetValue(StripeMetadataKeys.TenantId, out var tenantId))
@@ -161,12 +152,9 @@ internal sealed class ProcessStripEventHandler(
         subscription.Status = StripeObjectMapper.GetSubscriptionStatus(stripeSubscription.Status);
         subscription.CancelAtPeriodEnd = stripeSubscription.CancelAtPeriodEnd;
 
-        // Update plan if changed
-        if (metadata.TryGetValue(StripeMetadataKeys.PlanId, out var planId)
-            && Guid.TryParse(planId, out var parsedPlanId)
-            && parsedPlanId != subscription.PlanId)
+        if (TryGetGuid(metadata, StripeMetadataKeys.PlanId, out var planId))
         {
-            subscription.PlanId = parsedPlanId;
+            subscription.PlanId = planId;
         }
 
         masterUow.Repository<Subscription>().Update(subscription);
@@ -177,7 +165,7 @@ internal sealed class ProcessStripEventHandler(
         return Result.Ok();
     }
 
-    private async Task<Result> HandleSubscriptionDeleted(StripeSubscription stripeSubscription)
+    private async Task<Result> HandleSubscriptionDeleted(StripeSubscriptionInfo stripeSubscription)
     {
         if (!stripeSubscription.Metadata.TryGetValue(StripeMetadataKeys.TenantId, out var tenantId))
         {
@@ -203,12 +191,11 @@ internal sealed class ProcessStripEventHandler(
 
     #endregion
 
-
     #region PaymentIntent Handlers
 
-    private async Task<Result> HandlePaymentIntentStatus(PaymentIntent paymentIntent, PaymentStatus newStatus)
+    private async Task<Result> UpdatePaymentStatus(StripePaymentIntentInfo paymentIntent, PaymentStatus newStatus)
     {
-        if (!TryGetTenantId(paymentIntent.Metadata, out var tenantId))
+        if (!TryGetGuid(paymentIntent.Metadata, StripeMetadataKeys.TenantId, out var tenantId))
         {
             return Result.Fail($"{StripeMetadataKeys.TenantId} not found in PaymentIntent metadata.");
         }
@@ -223,7 +210,8 @@ internal sealed class ProcessStripEventHandler(
             return Result.Ok();
         }
 
-        // Idempotency: don't downgrade a terminal status (Paid/Failed/Cancelled) back to Pending.
+        // Stripe delivers at least once and out of order, so a terminal status
+        // (Paid/Failed/Cancelled/Refunded) is never overwritten.
         if (payment.Status == newStatus || IsTerminal(payment.Status))
         {
             return Result.Ok();
@@ -231,41 +219,10 @@ internal sealed class ProcessStripEventHandler(
 
         payment.Status = newStatus;
         payment.Invoice?.RecalculatePaymentStatus(DateTime.UtcNow);
-        tenantUow.Repository<Payment>().Update(payment);
-        await tenantUow.SaveChangesAsync();
 
-        logger.LogInformation(
-            "Updated payment {PaymentId} to {Status} from PaymentIntent {PaymentIntentId}",
-            payment.Id, newStatus, paymentIntent.Id);
-        return Result.Ok();
-    }
-
-    private async Task<Result> HandlePaymentIntentFailed(PaymentIntent paymentIntent)
-    {
-        if (!TryGetTenantId(paymentIntent.Metadata, out var tenantId))
-        {
-            return Result.Fail($"{StripeMetadataKeys.TenantId} not found in PaymentIntent metadata.");
-        }
-
-        await tenantUow.SetCurrentTenantByIdAsync(tenantId);
-
-        var payment = await tenantUow.Repository<Payment>()
-            .GetAsync(p => p.StripePaymentIntentId == paymentIntent.Id);
-
-        if (payment is null)
-        {
-            return Result.Ok();
-        }
-
-        if (IsTerminal(payment.Status))
-        {
-            return Result.Ok();
-        }
-
-        payment.Status = PaymentStatus.Failed;
-        payment.Invoice?.RecalculatePaymentStatus(DateTime.UtcNow);
-        var errorMessage = paymentIntent.LastPaymentError?.Message;
-        if (!string.IsNullOrEmpty(errorMessage))
+        var errorMessage = paymentIntent.LastErrorMessage;
+        var recordFailureReason = newStatus == PaymentStatus.Failed && !string.IsNullOrEmpty(errorMessage);
+        if (recordFailureReason)
         {
             payment.Description = string.IsNullOrEmpty(payment.Description)
                 ? $"Failed: {errorMessage}"
@@ -276,8 +233,8 @@ internal sealed class ProcessStripEventHandler(
         await tenantUow.SaveChangesAsync();
 
         logger.LogInformation(
-            "Marked payment {PaymentId} as Failed from PaymentIntent {PaymentIntentId}: {Error}",
-            payment.Id, paymentIntent.Id, errorMessage);
+            "Updated payment {PaymentId} to {Status} from PaymentIntent {PaymentIntentId}",
+            payment.Id, newStatus, paymentIntent.Id);
         return Result.Ok();
     }
 
@@ -287,40 +244,37 @@ internal sealed class ProcessStripEventHandler(
             or PaymentStatus.Cancelled
             or PaymentStatus.Refunded;
 
-    private static bool TryGetTenantId(IDictionary<string, string> metadata, out Guid tenantId)
+    private static bool TryGetGuid(IReadOnlyDictionary<string, string> metadata, string key, out Guid value)
     {
-        tenantId = Guid.Empty;
-        return metadata.TryGetValue(StripeMetadataKeys.TenantId, out var raw)
-            && Guid.TryParse(raw, out tenantId);
+        value = Guid.Empty;
+        return metadata.TryGetValue(key, out var raw) && Guid.TryParse(raw, out value);
     }
 
     #endregion
 
-
     #region Checkout Handlers
 
-    private async Task<Result> HandleCheckoutSessionCompleted(Session session)
+    private async Task<Result> HandleCheckoutSessionCompleted(StripeCheckoutSessionInfo session)
     {
-        if (!TryGetTenantId(session.Metadata, out var tenantId))
+        if (!TryGetGuid(session.Metadata, StripeMetadataKeys.TenantId, out var tenantId))
         {
             return Result.Ok();
         }
 
-        if (!session.Metadata.TryGetValue(StripeMetadataKeys.InvoiceId, out var rawInvoiceId)
-            || !Guid.TryParse(rawInvoiceId, out var invoiceId))
+        if (!TryGetGuid(session.Metadata, StripeMetadataKeys.InvoiceId, out var invoiceId))
         {
             return Result.Fail("invoice_id missing or invalid in Checkout Session metadata.");
         }
 
         await tenantUow.SetCurrentTenantByIdAsync(tenantId);
 
-        var invoice = await tenantUow.Repository<DomainInvoice>().GetByIdAsync(invoiceId);
+        var invoice = await tenantUow.Repository<Invoice>().GetByIdAsync(invoiceId);
         if (invoice is null)
         {
             return Result.Fail($"Invoice {invoiceId} not found for tenant {tenantId}.");
         }
 
-        // Idempotency: Stripe retries delivered events. Bail if we already recorded this session.
+        // Stripe retries delivered events. Bail if we already recorded this session.
         var paymentIntentId = session.PaymentIntentId;
         if (!string.IsNullOrEmpty(paymentIntentId))
         {
@@ -341,12 +295,11 @@ internal sealed class ProcessStripEventHandler(
             _ => PaymentStatus.Pending
         };
 
-        var amount = (session.AmountTotal ?? 0) / 100m;
         var currency = (session.Currency ?? invoice.Total.Currency).ToUpperInvariant();
 
         var payment = new Payment
         {
-            Amount = new Money { Amount = amount, Currency = currency },
+            Amount = new Money { Amount = session.AmountTotal, Currency = currency },
             Status = status,
             StripePaymentIntentId = paymentIntentId,
             // Stripe's billing details aren't expanded onto the session payload; reuse the
@@ -360,7 +313,7 @@ internal sealed class ProcessStripEventHandler(
         // A pending (ACH/SEPA) payment is linked now but pays nothing until payment_intent.succeeded
         // marks it Paid and recalculates the invoice.
         invoice.ApplyPayment(payment);
-        tenantUow.Repository<DomainInvoice>().Update(invoice);
+        tenantUow.Repository<Invoice>().Update(invoice);
 
         await tenantUow.SaveChangesAsync();
 
@@ -372,20 +325,18 @@ internal sealed class ProcessStripEventHandler(
 
     #endregion
 
-
     #region Account Handlers
 
-    private async Task<Result> HandleAccountUpdated(Account account)
+    private async Task<Result> HandleAccountUpdated(StripeAccountInfo account)
     {
-        if (!account.Metadata.TryGetValue(StripeMetadataKeys.TenantId, out var tenantId)
-            || !Guid.TryParse(tenantId, out var parsedTenantId))
+        if (!TryGetGuid(account.Metadata, StripeMetadataKeys.TenantId, out var tenantId))
         {
             // Connect accounts created outside the tenant flow (e.g., employee payout accounts)
             // don't carry tenant_id metadata - silently ignore.
             return Result.Ok();
         }
 
-        var tenant = await masterUow.Repository<Tenant>().GetByIdAsync(parsedTenantId);
+        var tenant = await masterUow.Repository<Tenant>().GetByIdAsync(tenantId);
         if (tenant is null || tenant.StripeConnectedAccountId != account.Id)
         {
             return Result.Ok();

@@ -46,7 +46,7 @@ Then, in one change:
 ## Before the next production deploy
 
 - [ ] **Stripe:** move the webhook endpoint's API version in the Stripe dashboard to `2026-09-30.endive`.
-  `ProcessStripEventHandler` passes `throwOnApiVersionMismatch: false`, so events still parse, but
+  `StripeWebhookParser` passes `throwOnApiVersionMismatch: false`, so events still parse, but
   payloads keep the old shape until the endpoint is moved.
 - [ ] **Anthropic:** one live request through `AnthropicLlmProvider` on `2026-10-21` (not run; costs money).
   The SDK now sends the key as `Authorization: Bearer` — nothing here reads `X-Api-Key`.

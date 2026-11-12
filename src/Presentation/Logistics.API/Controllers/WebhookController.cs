@@ -20,7 +20,7 @@ public class WebhookController(IMediator mediator) : ControllerBase
         var requestBodyJson = await new StreamReader(HttpContext.Request.Body).ReadToEndAsync();
         var stripeSignature = Request.Headers["Stripe-Signature"].ToString();
 
-        var result = await mediator.Send(new ProcessStripEventCommand
+        var result = await mediator.Send(new ProcessStripeEventCommand
         {
             RequestBodyJson = requestBodyJson,
             StripeSignature = stripeSignature

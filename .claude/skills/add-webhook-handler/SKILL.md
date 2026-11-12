@@ -85,8 +85,8 @@ Never compare signatures with `==` or `string.Equals` - they leak timing informa
 Timestamped envelopes are already covered (`VerifySamsara`, `VerifySvix`); if a provider signs with a
 scheme no helper covers, extend `WebhookSignature` rather than open-coding a compare.
 
-For Stripe specifically, use `EventUtility.ConstructEvent(rawBody, signature, secret)` from the Stripe SDK - it
-handles timestamp tolerance and constant-time compare for you.
+For Stripe specifically, `StripeWebhookParser` (`Infrastructure.Payments`, behind `IStripeWebhookParser`) wraps
+`EventUtility.ConstructEvent` - it handles timestamp tolerance and constant-time compare for you.
 
 ### 4. Handler: validate, idempotency, dispatch
 
@@ -196,10 +196,13 @@ running once; unknown event type → logged, 200, no crash; happy path → comma
 
 ### Stripe
 
-Use the Stripe SDK's built-in verifier. It validates both signature and timestamp tolerance:
+Verification and parsing live in `StripeWebhookParser` (`Infrastructure.Payments`), which wraps the SDK's
+`EventUtility.ConstructEvent` and returns SDK-free records - Application must not reference Stripe.net
+(the architecture tests enforce it). A new event type means a `StripeWebhookEventKind` value, a payload
+record if it needs one, and an arm in `ProcessStripeEventHandler`:
 
 ```csharp
-var stripeEvent = EventUtility.ConstructEvent(rawBody, stripeSignatureHeader, webhookSecret);
+var stripeEvent = webhookParser.Parse(req.RequestBodyJson, req.StripeSignature); // null = bad signature
 ```
 
 Stripe events have unique `id` fields - perfect for idempotency keys. Mount the endpoint at `/webhooks/stripe` (existing convention).

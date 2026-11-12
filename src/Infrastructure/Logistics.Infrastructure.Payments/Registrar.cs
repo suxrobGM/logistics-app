@@ -26,7 +26,7 @@ public static class Registrar
             services.AddHostedService<StripeApiKeyInitializer>();
 
             // Stripe services
-            services.AddSingleton<IStripeService, StripeService>();
+            services.AddSingleton<IStripeWebhookParser, StripeWebhookParser>();
             services.AddSingleton<IStripeCustomerService, StripeCustomerService>();
             services.AddScoped<IStripeSubscriptionService, StripeSubscriptionService>();
             services.AddScoped<IStripePlanService, StripePlanService>();

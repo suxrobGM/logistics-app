@@ -20,7 +20,7 @@ Customer Payment → Platform Stripe Account → Connected Account (Trucking Com
 
 Stripe Connect is implemented as a separate service from the existing subscription Stripe service:
 
-- `IStripeService` - Platform subscriptions, payment methods
+- `IStripeSubscriptionService` / `IStripePaymentService` - Platform subscriptions, payment methods
 - `IStripeConnectService` - Connect account management, destination charges
 
 ## Onboarding Flow
