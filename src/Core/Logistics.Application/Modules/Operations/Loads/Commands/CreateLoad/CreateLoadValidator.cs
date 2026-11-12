@@ -10,6 +10,7 @@ internal sealed class CreateLoadValidator : AbstractValidator<CreateLoadCommand>
     public CreateLoadValidator()
     {
         Include(new LoadChargesValidator());
+        Include(new LoadScheduleValidator());
         RuleFor(i => i.Name).NotEmpty();
         RuleFor(i => i.Type).IsInEnum();
         RuleFor(i => i.AssignedDispatcherId).NotEmpty();
@@ -27,26 +28,5 @@ internal sealed class CreateLoadValidator : AbstractValidator<CreateLoadCommand>
         RuleFor(i => i.DeliveryCost)
             .GreaterThan(LoadConstants.MinDeliveryCost)
             .LessThan(LoadConstants.MaxDeliveryCost);
-
-        When(i => i.RequestedPickupDate.HasValue && i.RequestedDeliveryDate.HasValue, () =>
-        {
-            RuleFor(i => i.RequestedDeliveryDate!.Value)
-                .GreaterThanOrEqualTo(i => i.RequestedPickupDate!.Value)
-                .WithMessage("Requested delivery date must be on or after requested pickup date.");
-        });
-
-        When(i => i.PickupAppointmentFrom.HasValue && i.PickupAppointmentTo.HasValue, () =>
-        {
-            RuleFor(i => i.PickupAppointmentTo!.Value)
-                .GreaterThanOrEqualTo(i => i.PickupAppointmentFrom!.Value)
-                .WithMessage("Pickup appointment must end after it starts.");
-        });
-
-        When(i => i.DeliveryAppointmentFrom.HasValue && i.DeliveryAppointmentTo.HasValue, () =>
-        {
-            RuleFor(i => i.DeliveryAppointmentTo!.Value)
-                .GreaterThanOrEqualTo(i => i.DeliveryAppointmentFrom!.Value)
-                .WithMessage("Delivery appointment must end after it starts.");
-        });
     }
 }

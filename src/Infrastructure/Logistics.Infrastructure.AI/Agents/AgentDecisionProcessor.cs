@@ -93,8 +93,11 @@ internal sealed class AgentDecisionProcessor(
 
         var isWriteTool = definition?.IsWrite == true;
 
-        if (isWriteTool && session.Type == AgentSessionType.Dispatch
-                        && await trustService.CanAutoExecuteAsync(definition!, ct))
+        var canAutoExecute = isWriteTool
+            && session.Type == AgentSessionType.Dispatch
+            && await trustService.CanAutoExecuteAsync(definition!, ct);
+
+        if (canAutoExecute)
         {
             return await AutoExecuteAsync(session, decision, toolCall.Name, toolInputJson, ct);
         }
@@ -121,15 +124,7 @@ internal sealed class AgentDecisionProcessor(
         }
         catch (Exception ex) when (ex is not OperationCanceledException)
         {
-            logger.LogWarning(ex, "Session {SessionId}: tool {ToolName} failed",
-                session.Id, toolCall.Name);
-
-            // Sanitized: this lands on a tenant-visible decision row AND goes back into the model's
-            // context, so a raw exception could leak connection strings or vendor credentials.
-            var errorResult = JsonSerializer.Serialize(
-                new { error = ToolErrorSanitizer.Sanitize(ex) });
-            decision.MarkFailed(errorResult);
-            return errorResult;
+            return Fail(session, decision, toolCall.Name, ex);
         }
     }
 
@@ -140,7 +135,8 @@ internal sealed class AgentDecisionProcessor(
         try
         {
             var result = await toolExecutor.ExecuteToolAsync(toolName, toolInputJson, ct);
-            if (ToolOutputReader.IsFailure(result))
+            var output = ToolOutputReader.Parse(result);
+            if (ToolOutputReader.IsFailure(output))
             {
                 decision.MarkFailed(result);
                 return result;
@@ -148,23 +144,32 @@ internal sealed class AgentDecisionProcessor(
 
             decision.ToolOutput = result;
             decision.MarkAutoExecuted();
-            decision.TripId ??= ToolOutputReader.GetGuid(result, "trip_id");
-            decision.InvoiceId ??= ToolOutputReader.GetGuid(result, "invoice_id");
+            decision.TripId ??= output?.GetGuid("trip_id");
+            decision.InvoiceId ??= output?.GetGuid("invoice_id");
             logger.LogInformation("Session {SessionId}: tool {ToolName} auto-executed under the tenant opt-in",
                 session.Id, toolName);
             return result;
         }
         catch (Exception ex) when (ex is not OperationCanceledException)
         {
-            logger.LogWarning(ex, "Session {SessionId}: auto-executed tool {ToolName} failed", session.Id, toolName);
-            var errorResult = JsonSerializer.Serialize(new { error = ToolErrorSanitizer.Sanitize(ex) });
-            decision.MarkFailed(errorResult);
-            return errorResult;
+            return Fail(session, decision, toolName, ex);
         }
         finally
         {
             runContext.SetDecision(null);
         }
+    }
+
+    /// <summary>
+    /// Sanitized: the error lands on a tenant-visible decision row AND goes back into the model's
+    /// context, so a raw exception could leak connection strings or vendor credentials.
+    /// </summary>
+    private string Fail(AgentSession session, AgentDecision decision, string toolName, Exception ex)
+    {
+        logger.LogWarning(ex, "Session {SessionId}: tool {ToolName} failed", session.Id, toolName);
+        var errorResult = JsonSerializer.Serialize(new { error = ToolErrorSanitizer.Sanitize(ex) });
+        decision.MarkFailed(errorResult);
+        return errorResult;
     }
 
     private static AgentDecision CreateDecision(

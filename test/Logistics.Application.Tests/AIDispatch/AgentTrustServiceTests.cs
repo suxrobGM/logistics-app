@@ -42,14 +42,20 @@ public class AgentTrustServiceTests
     private void Add(AgentDecisionStatus status, int minute, DateTime? revertedAt = null,
         AgentDecisionType type = AgentDecisionType.CreateTrip, AgentSession? session = null)
     {
-        _decisions.Add(new AgentDecision
+        var decision = new AgentDecision
         {
             Session = session ?? _dispatchSession,
             Type = type,
             Status = status,
-            CreatedAt = Start.AddMinutes(minute),
-            RevertedAt = revertedAt
-        });
+            CreatedAt = Start.AddMinutes(minute)
+        };
+
+        if (revertedAt is { } at)
+        {
+            decision.MarkReverted(at);
+        }
+
+        _decisions.Add(decision);
     }
 
     #region Streak

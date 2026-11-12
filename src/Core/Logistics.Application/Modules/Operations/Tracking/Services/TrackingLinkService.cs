@@ -18,11 +18,7 @@ internal sealed class TrackingLinkService(
 
     public async Task<TrackingLink> GetOrCreateAsync(Guid loadId, CancellationToken ct = default)
     {
-        var usableUntil = DateTime.UtcNow + MinRemainingLifetime;
-        var existing = await tenantUow.Repository<TrackingLink>().Query()
-            .Where(l => l.LoadId == loadId && l.IsActive && l.ExpiresAt > usableUntil)
-            .OrderByDescending(l => l.ExpiresAt)
-            .FirstOrDefaultAsync(ct);
+        var existing = await FindValidAsync(loadId, DateTime.UtcNow + MinRemainingLifetime, ct);
 
         if (existing is not null)
         {
@@ -40,18 +36,20 @@ internal sealed class TrackingLinkService(
         return link;
     }
 
-    public async Task<TrackingLink?> FindActiveAsync(Guid loadId, CancellationToken ct = default)
-    {
-        var now = DateTime.UtcNow;
-        return await tenantUow.Repository<TrackingLink>().Query()
-            .Where(l => l.LoadId == loadId && l.IsActive && l.ExpiresAt > now)
-            .OrderByDescending(l => l.ExpiresAt)
-            .FirstOrDefaultAsync(ct);
-    }
+    public Task<TrackingLink?> FindActiveAsync(Guid loadId, CancellationToken ct = default) =>
+        FindValidAsync(loadId, DateTime.UtcNow, ct);
 
     public string GetUrl(TrackingLink link)
     {
         var tenantId = tenantUow.GetCurrentTenant().Id;
         return $"{portalOptions.Value.BaseUrl}/track/{tenantId}/{link.Token}";
+    }
+
+    private async Task<TrackingLink?> FindValidAsync(Guid loadId, DateTime validUntil, CancellationToken ct)
+    {
+        return await tenantUow.Repository<TrackingLink>().Query()
+            .Where(l => l.LoadId == loadId && l.IsActive && l.ExpiresAt > validUntil)
+            .OrderByDescending(l => l.ExpiresAt)
+            .FirstOrDefaultAsync(ct);
     }
 }

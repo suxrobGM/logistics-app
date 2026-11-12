@@ -1,4 +1,5 @@
 using Logistics.Application.Abstractions.BackgroundJobs;
+using Logistics.Application.Abstractions.Features;
 using Logistics.Application.Modules.Integrations.AIDispatch.Commands;
 using Logistics.Application.Modules.Operations.Trips.Services;
 using Logistics.Application.Tests.Operations.Loads;
@@ -17,6 +18,7 @@ public class TripAlertReporterTests
     private readonly ITenantUnitOfWork _tenantUow = Substitute.For<ITenantUnitOfWork>();
     private readonly IEtaService _eta = Substitute.For<IEtaService>();
     private readonly ICommandEnqueuer _enqueuer = Substitute.For<ICommandEnqueuer>();
+    private readonly IFeatureService _features = Substitute.For<IFeatureService>();
     private readonly Guid _driverId = Guid.NewGuid();
     private readonly Trip _trip;
     private readonly TripAlertReporter _sut;
@@ -32,7 +34,9 @@ public class TripAlertReporterTests
         _tenantUow.Repository<Trip>().Returns(tripRepo);
         _tenantUow.GetCurrentTenant().Returns(TestTenant.Create());
 
-        _sut = new TripAlertReporter(_tenantUow, _eta, _enqueuer);
+        _features.IsFeatureEnabledAsync(Arg.Any<Guid>(), TenantFeature.AITripAlerts).Returns(true);
+
+        _sut = new TripAlertReporter(_tenantUow, _eta, _enqueuer, _features);
     }
 
     [Fact]

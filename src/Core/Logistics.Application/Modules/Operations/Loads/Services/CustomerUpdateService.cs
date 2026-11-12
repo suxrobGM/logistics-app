@@ -65,9 +65,11 @@ internal sealed class CustomerUpdateService(
 
         try
         {
-            var model = await BuildModelAsync(load, updateEvent, message, eta, tenant.Settings.Timezone, ct);
-            var body = await emailTemplateService.RenderAsync(GetTemplateName(updateEvent), model);
-            var subject = GetSubject(updateEvent, load.Number, model.CompanyName);
+            var model = await BuildModelAsync(tenant, load, updateEvent, message, eta, ct);
+            var (templateName, headline) = GetEmailKind(updateEvent);
+            var body = await emailTemplateService.RenderAsync(templateName, model);
+            var subject = string.Create(
+                CultureInfo.InvariantCulture, $"{headline} - Load #{load.Number} | {model.CompanyName}");
 
             var sent = 0;
             foreach (var recipient in recipients)
@@ -125,11 +127,10 @@ internal sealed class CustomerUpdateService(
     }
 
     private async Task<ShipmentUpdateEmailModel> BuildModelAsync(
-        Load load, CustomerUpdateEvent updateEvent, string? message, DateTime? eta, string timezone,
+        Tenant tenant, Load load, CustomerUpdateEvent updateEvent, string? message, DateTime? eta,
         CancellationToken ct)
     {
-        var tenant = tenantUow.GetCurrentTenant();
-        var times = new ShipmentTimeFormatter(timezone);
+        var times = new ShipmentTimeFormatter(tenant.Settings.Timezone);
         var isDelivered = updateEvent == CustomerUpdateEvent.Delivered;
         var trackingUrl = isDelivered ? null : trackingLinks.GetUrl(await trackingLinks.GetOrCreateAsync(load.Id, ct));
 
@@ -180,26 +181,14 @@ internal sealed class CustomerUpdateService(
         _ => null
     };
 
-    private static string GetTemplateName(CustomerUpdateEvent updateEvent) => updateEvent switch
-    {
-        CustomerUpdateEvent.Dispatched => "ShipmentDispatched",
-        CustomerUpdateEvent.PickedUp => "ShipmentPickedUp",
-        CustomerUpdateEvent.Delivered => "ShipmentDelivered",
-        _ => "ShipmentLate"
-    };
-
-    private static string GetSubject(CustomerUpdateEvent updateEvent, long loadNumber, string companyName)
-    {
-        var what = updateEvent switch
+    private static (string TemplateName, string Headline) GetEmailKind(CustomerUpdateEvent updateEvent) =>
+        updateEvent switch
         {
-            CustomerUpdateEvent.Dispatched => "Scheduled",
-            CustomerUpdateEvent.PickedUp => "Picked up",
-            CustomerUpdateEvent.Delivered => "Delivered",
-            _ => "Running late"
+            CustomerUpdateEvent.Dispatched => ("ShipmentDispatched", "Scheduled"),
+            CustomerUpdateEvent.PickedUp => ("ShipmentPickedUp", "Picked up"),
+            CustomerUpdateEvent.Delivered => ("ShipmentDelivered", "Delivered"),
+            _ => ("ShipmentLate", "Running late")
         };
-
-        return string.Create(CultureInfo.InvariantCulture, $"{what} - Load #{loadNumber} | {companyName}");
-    }
 
     private sealed record Delivery(CustomerUpdateOutcome Outcome, string? Reason);
 }

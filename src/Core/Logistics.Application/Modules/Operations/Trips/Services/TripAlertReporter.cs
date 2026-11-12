@@ -1,5 +1,6 @@
 using System.Globalization;
 using Logistics.Application.Abstractions.BackgroundJobs;
+using Logistics.Application.Abstractions.Features;
 using Logistics.Application.Modules.Integrations.AIDispatch.Commands;
 using Logistics.Domain.Entities;
 using Logistics.Domain.Events;
@@ -12,10 +13,16 @@ namespace Logistics.Application.Modules.Operations.Trips.Services;
 internal sealed class TripAlertReporter(
     ITenantUnitOfWork tenantUow,
     IEtaService etaService,
-    ICommandEnqueuer commandEnqueuer) : ITripAlertReporter
+    ICommandEnqueuer commandEnqueuer,
+    IFeatureService featureService) : ITripAlertReporter
 {
     public async Task CheckHosShortfallAsync(Guid employeeId, int drivingMinutesRemaining, CancellationToken ct = default)
     {
+        if (!await IsEnabledAsync())
+        {
+            return;
+        }
+
         if (await FindActiveTripAsync(employeeId, ct) is { } trip)
         {
             FlagIfShort(trip, drivingMinutesRemaining);
@@ -25,6 +32,11 @@ internal sealed class TripAlertReporter(
     public async Task CheckHosShortfallAsync(Trip trip, CancellationToken ct = default)
     {
         if (trip.HosShortfallFlaggedAt is not null || trip.DriverId is not { } driverId)
+        {
+            return;
+        }
+
+        if (!await IsEnabledAsync())
         {
             return;
         }
@@ -56,7 +68,7 @@ internal sealed class TripAlertReporter(
         }
 
         trip.HosShortfallFlaggedAt = now;
-        Enqueue(trip, TripAlertKind.HosShortfall,
+        Enqueue(trip.Id, TripAlertKind.HosShortfall,
             $"The driver has {FormatMinutes(drivingMinutesRemaining)} of driving left, but the remaining stops need about " +
             $"{FormatMinutes(minutesNeeded)} of driving. They will run out of hours about " +
             $"{FormatMinutes(minutesNeeded - drivingMinutesRemaining)} short of the last stop.");
@@ -64,17 +76,27 @@ internal sealed class TripAlertReporter(
 
     public async Task ReportViolationsAsync(Guid employeeId, int newViolations, CancellationToken ct = default)
     {
-        if (newViolations <= 0 || await FindActiveTripAsync(employeeId, ct) is not { } trip)
+        if (newViolations <= 0 || !await IsEnabledAsync())
         {
             return;
         }
 
-        Enqueue(trip, TripAlertKind.HosViolation,
+        if (await FindActiveTripAsync(employeeId, ct) is not { } trip)
+        {
+            return;
+        }
+
+        Enqueue(trip.Id, TripAlertKind.HosViolation,
             $"The ELD reported {newViolations} new HOS violation(s) for the driver of this trip.");
     }
 
     public async Task ReportLateStopAsync(TripStopRunningLateEvent late, CancellationToken ct = default)
     {
+        if (!await IsEnabledAsync())
+        {
+            return;
+        }
+
         var trip = await tenantUow.Repository<Trip>().GetByIdAsync(late.TripId, ct);
         if (trip?.Stops.FirstOrDefault(s => s.Id == late.StopId) is not { } stop)
         {
@@ -88,24 +110,27 @@ internal sealed class TripAlertReporter(
             $"expected at {late.EstimatedArrivalAt:yyyy-MM-dd HH:mm} UTC, {FormatMinutes(lateMinutes)} after its " +
             $"appointment window ends at {late.AppointmentEnd:yyyy-MM-dd HH:mm} UTC.");
 
-        Enqueue(trip, TripAlertKind.RunningLate, details);
+        Enqueue(trip.Id, TripAlertKind.RunningLate, details);
     }
 
     public async Task ReportDetentionAsync(Guid tripId, string details, CancellationToken ct = default)
     {
-        if (await tenantUow.Repository<Trip>().GetByIdAsync(tripId, ct) is { } trip)
+        if (await IsEnabledAsync())
         {
-            Enqueue(trip, TripAlertKind.Detention, details);
+            Enqueue(tripId, TripAlertKind.Detention, details);
         }
     }
 
+    private Task<bool> IsEnabledAsync() =>
+        featureService.IsFeatureEnabledAsync(tenantUow.GetCurrentTenant().Id, TenantFeature.AITripAlerts);
+
     /// <summary>The job can start before the caller's save commits, so it finds or opens the conversation itself.</summary>
-    private void Enqueue(Trip trip, TripAlertKind kind, string details)
+    private void Enqueue(Guid tripId, TripAlertKind kind, string details)
     {
         commandEnqueuer.Enqueue(new RaiseTripAlertCommand
         {
             TenantId = tenantUow.GetCurrentTenant().Id,
-            TripId = trip.Id,
+            TripId = tripId,
             Kind = kind,
             Details = details
         });

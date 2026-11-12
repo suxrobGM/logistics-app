@@ -1,17 +1,16 @@
 using Logistics.Application.Abstractions;
+using Logistics.Application.Modules.Operations.Tracking.Services;
 using Logistics.Domain.Entities;
 using Logistics.Domain.Persistence;
-using Logistics.Domain.Options;
 using Logistics.Mediator;
 using Logistics.Shared.Models;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Options;
 
 namespace Logistics.Application.Modules.Operations.Tracking.Queries;
 
 internal sealed class GetTrackingLinksForLoadHandler(
     ITenantUnitOfWork tenantUow,
-    IOptions<CustomerPortalOptions> portalOptions)
+    ITrackingLinkService trackingLinkService)
     : IRequestHandler<GetTrackingLinksForLoadQuery, Result<IEnumerable<TrackingLinkDto>>>
 {
     public async Task<Result<IEnumerable<TrackingLinkDto>>> Handle(
@@ -24,8 +23,6 @@ internal sealed class GetTrackingLinksForLoadHandler(
             return Result<IEnumerable<TrackingLinkDto>>.Fail("Load not found.");
         }
 
-        var tenant = tenantUow.GetCurrentTenant();
-
         var trackingLinks = await tenantUow.Repository<TrackingLink>().Query()
             .Where(t => t.LoadId == req.LoadId)
             .OrderByDescending(t => t.CreatedAt)
@@ -35,7 +32,7 @@ internal sealed class GetTrackingLinksForLoadHandler(
         {
             Id = t.Id,
             Token = t.Token,
-            Url = $"{portalOptions.Value.BaseUrl}/track/{tenant.Id}/{t.Token}",
+            Url = trackingLinkService.GetUrl(t),
             LoadId = load.Id,
             LoadNumber = load.Number,
             LoadName = load.Name,

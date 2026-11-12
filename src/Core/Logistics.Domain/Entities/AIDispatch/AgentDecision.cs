@@ -54,7 +54,7 @@ public class AgentDecision : Entity, ITenantEntity
     public bool AutoApproved { get; set; }
 
     /// <summary>Counts as a rejection for the trust streak.</summary>
-    public DateTime? RevertedAt { get; set; }
+    public DateTime? RevertedAt { get; private set; }
 
     public bool CanRevert(DateTime now) =>
         AutoApproved

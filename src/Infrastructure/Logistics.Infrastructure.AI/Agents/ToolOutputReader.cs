@@ -6,29 +6,18 @@ namespace Logistics.Infrastructure.AI.Agents;
 /// <summary>Failed writes carry <c>success: false</c>; create tools name what they made (<c>trip_id</c>).</summary>
 internal static class ToolOutputReader
 {
-    public static bool IsFailure(string output) =>
-        Parse(output) is JsonObject obj
-        && obj["success"] is JsonValue success
-        && success.TryGetValue<bool>(out var ok)
-        && !ok;
-
-    public static Guid? GetGuid(string output, string key) =>
-        Parse(output) is JsonObject obj
-        && obj[key] is JsonValue value
-        && value.TryGetValue<string>(out var text)
-        && Guid.TryParse(text, out var id)
-            ? id
-            : null;
-
-    private static JsonNode? Parse(string output)
+    public static JsonObject? Parse(string output)
     {
         try
         {
-            return JsonNode.Parse(output);
+            return JsonNode.Parse(output) as JsonObject;
         }
         catch (JsonException)
         {
             return null;
         }
     }
+
+    public static bool IsFailure(JsonObject? output) =>
+        output?["success"]?.GetValueKind() == JsonValueKind.False;
 }

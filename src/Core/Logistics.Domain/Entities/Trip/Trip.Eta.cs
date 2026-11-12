@@ -20,7 +20,7 @@ public partial class Trip
     /// Set only by the alert job's conditional UPDATE. The save that raised the alert can commit after the job
     /// runs, and a tracked write would overwrite the link.
     /// </summary>
-    public Guid? AlertConversationId { get; set; }
+    public Guid? AlertConversationId { get; private set; }
 
     /// <summary>Not linked here: the caller claims <see cref="AlertConversationId"/> for it.</summary>
     public AgentConversation CreateAlertConversation()
