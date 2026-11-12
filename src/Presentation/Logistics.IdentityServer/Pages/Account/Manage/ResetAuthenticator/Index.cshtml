@@ -1,0 +1,19 @@
+@page
+@using Logistics.IdentityServer.Pages.Account.Manage
+@model Logistics.IdentityServer.Pages.Account.Manage.ResetAuthenticator.ResetAuthenticatorModel
+@{
+    ViewData["Title"] = "Reset authenticator key";
+    ViewData["ActivePage"] = ManageNavPages.TwoFactorAuthentication;
+}
+
+<partial name="_StatusMessage" for="StatusMessage" />
+<h4>@ViewData["Title"]</h4>
+<div class="alert alert-warning" role="alert">
+    <p>
+        Resetting the key turns two-factor authentication off and stops your current authenticator app
+        from working. You will set the app up again with the new key.
+    </p>
+</div>
+<form method="post">
+    <button class="btn btn-danger" type="submit">Reset authenticator key</button>
+</form>

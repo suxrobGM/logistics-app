@@ -1,4 +1,4 @@
-﻿@page
+@page
 @using Logistics.IdentityServer.Pages.Account.Manage
 @model Logistics.IdentityServer.Pages.Account.Manage.TwoFactorAuthentication.TwoFactorAuthenticationModel
 @{
@@ -32,12 +32,22 @@
         </div>
     }
 
-    if (Model.IsMachineRemembered)
-    {
-        <form method="post" style="display: inline-block">
-            <button type="submit" class="btn btn-default">Forget this browser</button>
-        </form>
-    }
-    <a asp-page="/Account/Manage/Disable2fa/Index" class="btn btn-default">Disable 2FA</a>
-    <a asp-page="/Account/Manage/GenerateRecoveryCodes/Index" class="btn btn-default">Reset recovery codes</a>
+    <p>Two-factor authentication is on. Signing in asks for a code from your authenticator app.</p>
+    <div class="d-flex flex-wrap gap-2">
+        @if (Model.IsMachineRemembered)
+        {
+            <form method="post">
+                <button type="submit" class="btn btn-outline-secondary">Forget this browser</button>
+            </form>
+        }
+        <a asp-page="/Account/Manage/GenerateRecoveryCodes/Index" class="btn btn-outline-secondary">Reset recovery codes</a>
+        <a asp-page="/Account/Manage/ResetAuthenticator/Index" class="btn btn-outline-secondary">Reset authenticator app</a>
+        <a asp-page="/Account/Manage/Disable2fa/Index" class="btn btn-outline-danger">Turn off 2FA</a>
+    </div>
+}
+else
+{
+    <p>Add a second step to signing in: after your password, enter a code from an authenticator app on your phone.</p>
+    <p class="text-muted small">Signing in with Google relies on Google's own two-step verification and skips this code.</p>
+    <a asp-page="/Account/Manage/EnableAuthenticator/Index" class="btn btn-primary">Set up authenticator app</a>
 }

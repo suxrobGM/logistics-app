@@ -95,6 +95,18 @@ public partial class Index(
                 return Redirect(Input.ReturnUrl);
             }
 
+            if (result.RequiresTwoFactor)
+            {
+                return RedirectToPage("/Account/LoginWith2fa/Index",
+                    new { returnUrl = Input.ReturnUrl, rememberMe = Input.RememberLogin });
+            }
+
+            if (result.IsLockedOut)
+            {
+                await events.RaiseAsync(new UserLoginFailureEvent(Input.Email, "locked out", clientId: context?.Client.ClientId));
+                return RedirectToPage("/Account/Lockout");
+            }
+
             await events.RaiseAsync(new UserLoginFailureEvent(Input.Email, "invalid credentials", clientId: context?.Client.ClientId));
             ModelState.AddModelError(string.Empty, LoginOptions.InvalidCredentialsErrorMessage);
         }

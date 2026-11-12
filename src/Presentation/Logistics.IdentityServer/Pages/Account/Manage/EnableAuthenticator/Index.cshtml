@@ -1,0 +1,35 @@
+@page
+@using Logistics.IdentityServer.Pages.Account.Manage
+@model Logistics.IdentityServer.Pages.Account.Manage.EnableAuthenticator.EnableAuthenticatorModel
+@{
+    ViewData["Title"] = "Set up an authenticator app";
+    ViewData["ActivePage"] = ManageNavPages.TwoFactorAuthentication;
+}
+
+<partial name="_StatusMessage" for="StatusMessage" />
+<h4>@ViewData["Title"]</h4>
+<ol class="ps-3">
+    <li class="mb-3">
+        <p>Install an authenticator app such as Microsoft Authenticator, Google Authenticator or 1Password.</p>
+    </li>
+    <li class="mb-3">
+        <p>Scan the QR code, or enter this key into the app: <kbd>@Model.SharedKey</kbd> (spaces and case don't matter).</p>
+        <div class="authenticator-qr" style="width: 200px">@Html.Raw(Model.QrCodeSvg)</div>
+    </li>
+    <li>
+        <p>Enter the six-digit code the app shows.</p>
+        <div class="row">
+            <div class="col-md-6">
+                <form method="post">
+                    <div class="mb-3">
+                        <label asp-for="Input.Code" class="form-label"></label>
+                        <input asp-for="Input.Code" class="form-control" autocomplete="one-time-code" inputmode="numeric" />
+                        <span asp-validation-for="Input.Code" class="text-danger"></span>
+                    </div>
+                    <button type="submit" class="btn btn-primary">Verify</button>
+                    <div asp-validation-summary="ModelOnly" class="text-danger" role="alert"></div>
+                </form>
+            </div>
+        </div>
+    </li>
+</ol>

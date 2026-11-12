@@ -54,6 +54,7 @@
     <PackageVersion Include="Open.IdentityServer.EntityFramework.Storage" Version="3.1.5" />
     <PackageVersion Include="OpenAI" Version="2.15.0" />
     <PackageVersion Include="PdfPig" Version="0.1.16" />
+    <PackageVersion Include="QRCoder" Version="1.8.1" />
     <PackageVersion Include="QuestPDF" Version="2026.9.1" />
     <PackageVersion Include="Resend" Version="0.25.0" />
     <PackageVersion Include="Riok.Mapperly" Version="4.3.1" />
