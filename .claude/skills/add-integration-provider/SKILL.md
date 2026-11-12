@@ -1,6 +1,6 @@
 ---
 name: add-integration-provider
-description: Add a third-party integration provider - a new ELD (Samsara/Motive/Geotab-style), load board (DAT-style), fuel card (WEX/EFS), or accounting (QuickBooks) vendor, or a whole new integration family. Use when wiring an external vendor API into the platform. Covers the ProviderFactoryBase pattern, options binding, secrets, and the frontend provider constants that silently break when only one of a family's lists is updated.
+description: Add a third-party integration provider - a new ELD (Samsara/Motive/Geotab-style), load board (DAT-style), fuel card (WEX/EFS), or accounting (QuickBooks) vendor, or a whole new integration family. Use when wiring an external vendor API into the platform. Covers the keyed-service provider registration, options binding, secrets, and the frontend provider constants that silently break when only one of a family's lists is updated.
 ---
 
 # Add an integration provider
@@ -14,8 +14,10 @@ Four families exist today, all on the same shape (providers are added per pilot 
 | Fuel cards | `...Integrations.FuelCards`                 | `FuelCardProviderType`   | `FuelCardProviderFactory`   |
 | Accounting | `...Integrations.Accounting`                | `AccountingProviderType` | `AccountingProviderFactory` |
 
-Every factory derives from `ProviderFactoryBase<TService, TProviderType>` in
-`Logistics.Infrastructure.Integrations.Common`. Every registrar calls
+Each provider is a .NET keyed service under its provider-type enum value. The family factory
+resolves it with `serviceProvider.GetRequiredProvider<I{Family}ProviderService>(type, "Family")` and
+answers `IsProviderSupported` with `HasProvider`, both in `ProviderRegistrationExtensions`
+(`Logistics.Infrastructure.Integrations.Common`). Every registrar calls
 `AddProviderIntegration<TOptions, TFactoryService, TFactoryImpl>(configuration, sectionName)`.
 **Do not invent a fifth pattern.**
 
@@ -66,26 +68,22 @@ Add the property to the family's options root, e.g. `EldOptions.cs`:
 public GeotabOptions? Geotab { get; set; }
 ```
 
-### 4. Factory map
+### 4. DI registration
 
-Add the arm to the `ProviderMap` dictionary in `{Family}ProviderFactory.cs`:
-
-```csharp
-[EldProviderType.Geotab] = typeof(GeotabEldService),
-```
-
-### 5. DI registration
-
-In the family's `Registrar.cs`:
+In the family's `Registrar.cs`, register the service, then key it under its enum value. The keyed
+registration forwards to the service's own registration, so the lifetime stays what you chose here.
+A provider without the keyed line throws `NotSupportedException` from the factory:
 
 ```csharp
 services.AddHttpClient<NameEldService>();          // plain REST provider
 // or, when the vendor needs its own client:
 services.AddHttpClient<NameClient>();
 services.AddScoped<NameEldService>();
+
+services.AddKeyedProvider<IEldProviderService, NameEldService>(EldProviderType.Name);
 ```
 
-### 6. Configuration
+### 5. Configuration
 
 `src/Presentation/Logistics.API/appsettings.json`, the family's section. Only `"LoadBoard"` and
 `"Accounting"` exist today; `"Eld"` and `"FuelCards"` must be created when a provider needs a
@@ -97,7 +95,7 @@ failing at first call. Keep that shape.
 
 ## Frontend
 
-### 7. Provider constants
+### 6. Provider constants
 
 `projects/tms-portal/src/app/pages/{family}/components/{family}.constants.ts`. The shape differs per
 family:
@@ -113,7 +111,7 @@ family:
   `Record<LoadBoardProviderType, string>`, so a missing one is a type error); `PROVIDER_OPTIONS` lists
   the connectable ones, labelled from `PROVIDER_LABELS`.
 
-### 8. Regenerate the API client
+### 7. Regenerate the API client
 
 ```bash
 bun run gen:api:live      # requires the API running; or gen:api against a fresh openapi.json
@@ -122,7 +120,7 @@ bun run gen:api:live      # requires the API running; or gen:api against a fresh
 The constants cast snake_case strings to the **generated** union (`"demo" as EldProviderType`). Skip
 the regen after a C# enum change and the cast is a type error.
 
-### 9. Connect dialog
+### 8. Connect dialog
 
 Only if the credential fields differ from the family's existing dialog. It must project into
 `<app-provider-connect-dialog>` (`tms-portal/src/app/shared/components/integrations/provider-connect-dialog/`)
@@ -136,8 +134,7 @@ Only if the credential fields differ from the family's existing dialog. It must 
 - [ ] `Providers/{Name}/` with service + mapper + models + options
 - [ ] Reads go through `TryGetFromJsonAsync`, not a hand-rolled HTTP helper
 - [ ] Property added to `{Family}Options`
-- [ ] Arm added to the factory's `ProviderMap`
-- [ ] `AddHttpClient` / `AddScoped` in the family `Registrar.cs`
+- [ ] `AddHttpClient` / `AddScoped` plus `AddKeyedProvider` in the family `Registrar.cs`
 - [ ] `appsettings.json` section added if the provider needs a non-default value (create the family section if missing)
 - [ ] Family constants updated (ELD: options + labels + webhook set; fuel cards: options; load boards: labels + options)
 - [ ] `bun run gen:api` run after the enum change
@@ -152,7 +149,7 @@ Roadmap items like EDI will need this. On top of the above:
 1. New `src/Infrastructure/Logistics.Infrastructure.Integrations.{X}/` project + solution entry.
 2. Port interfaces (`I{X}ProviderService`, `I{X}ProviderFactory`) in
    `src/Core/Logistics.Application.Abstractions/{X}/` - **not** in the infrastructure project.
-3. Factory deriving from `ProviderFactoryBase`; registrar using `AddProviderIntegration`.
+3. Factory resolving through `GetRequiredProvider` / `HasProvider`; registrar using `AddProviderIntegration` and `AddKeyedProvider`.
 4. **Architecture tests:** the csproj rule discovers the project off disk automatically, but the
    IL-level boundary rule needs an anchor in `AssemblyAnchors.AllInfrastructure` plus a
    `ProjectReference` in the arch-tests csproj. Without both, the new project is silently unchecked.

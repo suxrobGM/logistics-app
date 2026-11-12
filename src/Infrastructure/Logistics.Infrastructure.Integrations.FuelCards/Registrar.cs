@@ -1,4 +1,5 @@
 using Logistics.Application.Abstractions.FuelCards;
+using Logistics.Domain.Primitives.Enums;
 using Logistics.Infrastructure.Integrations.Common;
 using Logistics.Infrastructure.Integrations.FuelCards.Providers;
 using Logistics.Infrastructure.Integrations.FuelCards.Providers.Efs;
@@ -22,6 +23,10 @@ public static class Registrar
             services.AddHttpClient<WexFuelCardService>();
             services.AddHttpClient<EfsFuelCardService>();
             services.AddScoped<DemoFuelCardService>();
+
+            services.AddKeyedProvider<IFuelCardProviderService, WexFuelCardService>(FuelCardProviderType.Wex);
+            services.AddKeyedProvider<IFuelCardProviderService, EfsFuelCardService>(FuelCardProviderType.Efs);
+            services.AddKeyedProvider<IFuelCardProviderService, DemoFuelCardService>(FuelCardProviderType.Demo);
 
             // Options binding + factory pattern for provider selection
             services.AddProviderIntegration<FuelCardsOptions, IFuelCardProviderFactory, FuelCardProviderFactory>(

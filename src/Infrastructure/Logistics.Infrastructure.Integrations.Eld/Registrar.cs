@@ -7,6 +7,7 @@ using Logistics.Infrastructure.Integrations.Eld.Providers.TtEld;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Logistics.Application.Abstractions.Eld;
+using Logistics.Domain.Primitives.Enums;
 
 namespace Logistics.Infrastructure.Integrations.Eld;
 
@@ -26,6 +27,12 @@ public static class Registrar
             services.AddHttpClient<GeotabClient>();
             services.AddScoped<GeotabEldService>();
             services.AddScoped<DemoEldService>();
+
+            services.AddKeyedProvider<IEldProviderService, SamsaraEldService>(EldProviderType.Samsara);
+            services.AddKeyedProvider<IEldProviderService, MotiveEldService>(EldProviderType.Motive);
+            services.AddKeyedProvider<IEldProviderService, TtEldService>(EldProviderType.TtEld);
+            services.AddKeyedProvider<IEldProviderService, DemoEldService>(EldProviderType.Demo);
+            services.AddKeyedProvider<IEldProviderService, GeotabEldService>(EldProviderType.Geotab);
 
             // Options binding + factory pattern for provider selection
             services.AddProviderIntegration<EldOptions, IEldProviderFactory, EldProviderFactory>(

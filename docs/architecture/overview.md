@@ -296,7 +296,7 @@ The shared kernel for the third-party integration providers - do not hand-roll a
 - `HttpClientJsonExtensions.TryGetFromJsonAsync<T>` - "send + status check + JSON deserialise + log on failure" for reads; and `HttpClientWriteExtensions` / `HttpJsonResult<T>` for writes that need to report success or failure back to the caller
 - `IntegrationJsonOptions` - the shared `JsonSerializerOptions` for provider payloads
 - `WebhookSignature.VerifyHmacSha256` - constant-time HMAC-SHA256 verification for inbound webhooks (see [Webhook conventions](#webhook-conventions))
-- `ProviderFactoryBase` + `AddProviderIntegration` (`ProviderRegistrationExtensions`) - the provider-selection factory base and its DI registration helper, shared by the ELD, load board, fuel card, and accounting factories
+- `ProviderRegistrationExtensions` - `AddProviderIntegration` (options + factory), `AddKeyedProvider` (each provider as a keyed service under its enum value) and `GetRequiredProvider` / `HasProvider`, shared by the ELD, load board, fuel card, and accounting factories
 
 The read helper's contract is that it **never throws** - a failure is logged and returns `default`. That is why the QuickBooks helpers in `Integrations.Accounting` are deliberately not folded in here: they throw `QboApiException` so a push error surfaces to the sync job instead of being swallowed. Keep push paths that must report failure out of the read helper.
 

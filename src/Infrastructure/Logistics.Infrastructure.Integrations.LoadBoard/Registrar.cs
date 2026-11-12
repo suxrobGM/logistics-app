@@ -1,4 +1,5 @@
 using Logistics.Application.Abstractions.LoadBoard;
+using Logistics.Domain.Primitives.Enums;
 using Logistics.Infrastructure.Integrations.Common;
 using Logistics.Infrastructure.Integrations.LoadBoard.Credit;
 using Logistics.Infrastructure.Integrations.LoadBoard.Providers;
@@ -20,6 +21,9 @@ public static class Registrar
         {
             services.AddHttpClient<DatLoadBoardService>();
             services.AddScoped<DemoLoadBoardService>();
+
+            services.AddKeyedProvider<ILoadBoardProviderService, DatLoadBoardService>(LoadBoardProviderType.Dat);
+            services.AddKeyedProvider<ILoadBoardProviderService, DemoLoadBoardService>(LoadBoardProviderType.Demo);
 
             services.AddProviderIntegration<LoadBoardOptions, ILoadBoardProviderFactory, LoadBoardProviderFactory>(
                 configuration, LoadBoardOptions.SectionName);

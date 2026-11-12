@@ -1,4 +1,5 @@
 using Logistics.Application.Abstractions.Accounting;
+using Logistics.Domain.Primitives.Enums;
 using Logistics.Infrastructure.Integrations.Accounting.Providers;
 using Logistics.Infrastructure.Integrations.Accounting.Providers.QuickBooks;
 using Logistics.Infrastructure.Integrations.Common;
@@ -20,6 +21,10 @@ public static class Registrar
             services.AddHttpClient<QuickBooksOAuthClient>();
             services.AddHttpClient<QuickBooksOnlineService>();
             services.AddScoped<DemoAccountingService>();
+
+            services.AddKeyedProvider<IAccountingProviderService, QuickBooksOnlineService>(
+                AccountingProviderType.QuickBooksOnline);
+            services.AddKeyedProvider<IAccountingProviderService, DemoAccountingService>(AccountingProviderType.Demo);
 
             services.AddProviderIntegration<AccountingOptions, IAccountingProviderFactory, AccountingProviderFactory>(
                 configuration, AccountingOptions.SectionName);

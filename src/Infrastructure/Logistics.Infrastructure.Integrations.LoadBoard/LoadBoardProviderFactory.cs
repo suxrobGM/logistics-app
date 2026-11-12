@@ -1,26 +1,14 @@
+using Logistics.Application.Abstractions.LoadBoard;
 using Logistics.Domain.Primitives.Enums;
 using Logistics.Infrastructure.Integrations.Common;
-using Logistics.Infrastructure.Integrations.LoadBoard.Providers;
-using Logistics.Infrastructure.Integrations.LoadBoard.Providers.Dat;
-using Microsoft.Extensions.Logging;
-using Logistics.Application.Abstractions.LoadBoard;
 
 namespace Logistics.Infrastructure.Integrations.LoadBoard;
 
-internal sealed class LoadBoardProviderFactory(
-    IServiceProvider serviceProvider,
-    ILogger<LoadBoardProviderFactory> logger)
-    : ProviderFactoryBase<ILoadBoardProviderService, LoadBoardProviderType>(serviceProvider, logger),
-        ILoadBoardProviderFactory
+internal sealed class LoadBoardProviderFactory(IServiceProvider serviceProvider) : ILoadBoardProviderFactory
 {
-    protected override string FamilyName => "Load board";
+    public ILoadBoardProviderService GetProvider(LoadBoardProviderType providerType) =>
+        serviceProvider.GetRequiredProvider<ILoadBoardProviderService>(providerType, "Load board");
 
-    protected override IReadOnlyDictionary<LoadBoardProviderType, Type> Providers => ProviderMap;
-
-    private static readonly IReadOnlyDictionary<LoadBoardProviderType, Type> ProviderMap =
-        new Dictionary<LoadBoardProviderType, Type>
-        {
-            [LoadBoardProviderType.Dat] = typeof(DatLoadBoardService),
-            [LoadBoardProviderType.Demo] = typeof(DemoLoadBoardService)
-        };
+    public bool IsProviderSupported(LoadBoardProviderType providerType) =>
+        serviceProvider.HasProvider<ILoadBoardProviderService>(providerType);
 }
