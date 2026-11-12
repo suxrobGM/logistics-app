@@ -1,0 +1,90 @@
+using System.Linq.Expressions;
+using Logistics.Application.Modules.Compliance.Ifta.TaxRates;
+using Logistics.Application.Modules.Compliance.Ifta.TaxRates.Commands;
+using Logistics.Domain.Entities;
+using Logistics.Domain.Persistence;
+using Logistics.Domain.Primitives.ValueObjects;
+using Microsoft.Extensions.Logging;
+using NSubstitute;
+using Xunit;
+
+namespace Logistics.Application.Tests.Compliance.Ifta;
+
+public class CreateIftaTaxRateHandlerTests
+{
+    private readonly IMasterUnitOfWork _masterUow = Substitute.For<IMasterUnitOfWork>();
+    private readonly IMasterRepository<IftaTaxRate, Guid> _rateRepo =
+        Substitute.For<IMasterRepository<IftaTaxRate, Guid>>();
+
+    private readonly CreateIftaTaxRateHandler _sut;
+
+    public CreateIftaTaxRateHandlerTests()
+    {
+        _masterUow.Repository<IftaTaxRate>().Returns(_rateRepo);
+        _sut = new CreateIftaTaxRateHandler(_masterUow, new IftaTaxRateDuplicateChecker(_masterUow), Substitute.For<ILogger<CreateIftaTaxRateHandler>>());
+    }
+
+    private static CreateIftaTaxRateCommand Command(string country = "us", string? region = "tx") => new()
+    {
+        CountryCode = country,
+        Region = region,
+        Year = 2027,
+        Quarter = 1,
+        RatePerGallon = 0.20m,
+    };
+
+    private void SetupExisting(IftaTaxRate? existing) =>
+        _rateRepo.GetAsync(Arg.Any<Expression<Func<IftaTaxRate, bool>>>(), Arg.Any<CancellationToken>())
+            .Returns(existing);
+
+    [Fact]
+    public async Task Handle_NoDuplicate_AddsRateAndSaves()
+    {
+        SetupExisting(null);
+
+        var result = await _sut.Handle(Command(), CancellationToken.None);
+
+        Assert.True(result.IsSuccess);
+        await _rateRepo.Received(1).AddAsync(
+            Arg.Is<IftaTaxRate>(r =>
+                r.Jurisdiction.CountryCode == "US" &&
+                r.Jurisdiction.Region == "TX" &&
+                r.Year == 2027 &&
+                r.Quarter == 1 &&
+                r.RatePerGallon == 0.20m),
+            Arg.Any<CancellationToken>());
+        await _masterUow.Received(1).SaveChangesAsync(Arg.Any<CancellationToken>());
+    }
+
+    [Fact]
+    public async Task Handle_DuplicateJurisdictionYearQuarter_ReturnsFail()
+    {
+        SetupExisting(new IftaTaxRate
+        {
+            Jurisdiction = new TaxJurisdiction { CountryCode = "US", Region = "TX" },
+            Year = 2027,
+            Quarter = 1,
+            RatePerGallon = 0.19m,
+        });
+
+        var result = await _sut.Handle(Command(), CancellationToken.None);
+
+        Assert.False(result.IsSuccess);
+        Assert.Contains("already exists", result.Error);
+        await _rateRepo.DidNotReceive().AddAsync(Arg.Any<IftaTaxRate>(), Arg.Any<CancellationToken>());
+        await _masterUow.DidNotReceive().SaveChangesAsync(Arg.Any<CancellationToken>());
+    }
+
+    [Fact]
+    public async Task Handle_BlankRegion_NormalizedToCountryWideNull()
+    {
+        SetupExisting(null);
+
+        var result = await _sut.Handle(Command(region: "  "), CancellationToken.None);
+
+        Assert.True(result.IsSuccess);
+        await _rateRepo.Received(1).AddAsync(
+            Arg.Is<IftaTaxRate>(r => r.Jurisdiction.Region == null),
+            Arg.Any<CancellationToken>());
+    }
+}
