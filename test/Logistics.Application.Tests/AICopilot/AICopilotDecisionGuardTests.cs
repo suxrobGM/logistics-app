@@ -1,6 +1,9 @@
+using Logistics.Application.Abstractions.AI;
+using Logistics.Application.Modules.Integrations.AICopilot.Services;
 using Logistics.Application.Tests.TestKit;
 using Logistics.Domain.Entities;
 using Logistics.Domain.Primitives.Enums;
+using Microsoft.Extensions.Options;
 using NSubstitute;
 using Xunit;
 
@@ -9,6 +12,20 @@ namespace Logistics.Application.Tests.AICopilot;
 public class AICopilotDecisionGuardTests
 {
     private readonly AgentTestContext _ctx = new();
+
+    /// <summary>Approve and reject both go through the guard, so turning AI off blocks both.</summary>
+    [Fact]
+    public async Task LoadAsync_AIDisabledForTenant_Fails()
+    {
+        _ctx.Tenant.Settings.AIEnabled = false;
+        var guard = new AICopilotDecisionGuard(
+            _ctx.TenantUow, _ctx.Access, Options.Create(new LlmOptions { BypassAIGate = false }));
+
+        var result = await guard.LoadAsync(Guid.NewGuid(), _ctx.UserId, CancellationToken.None);
+
+        Assert.False(result.IsSuccess);
+        Assert.Equal("AI is disabled for this tenant", result.Error);
+    }
 
     [Fact]
     public async Task LoadAsync_UserNotAuthenticated_Fails()

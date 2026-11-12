@@ -57,8 +57,7 @@ internal sealed class AgentTestContext
     public IAgentConversationQueries Queries { get; }
     public IAgentSenderDirectory SenderDirectory { get; }
     public IAgentDecisionNotes Notes { get; }
-    public IAgentDecisionExecution Execution { get; }
-    public IAgentDecisionAuthorization Authorization { get; }
+    public IAgentDecisionApprover Approver { get; }
     public IAICopilotDecisionGuard CopilotGuard { get; }
     public IAgentDecisionDtoMapper DecisionDtoMapper { get; }
 
@@ -94,9 +93,8 @@ internal sealed class AgentTestContext
         DecisionDtoMapper = new AgentDecisionDtoMapper(TenantUow);
         Queries = new AgentConversationQueries(TenantUow, Access, SenderDirectory, DecisionDtoMapper);
         Notes = new AgentDecisionNotes(TenantUow, SenderDirectory);
-        Execution = new AgentDecisionExecution(ToolExecutor);
-        Authorization = new AgentDecisionAuthorization(ToolRegistry, UserPermissions);
-        CopilotGuard = new AICopilotDecisionGuard(TenantUow, Access);
+        Approver = new AgentDecisionApprover(ToolRegistry, UserPermissions, ToolExecutor, Notes, RunContext);
+        CopilotGuard = new AICopilotDecisionGuard(TenantUow, Access, Options.Create(new LlmOptions { BypassAIGate = true }));
     }
 
     /// <summary><paramref name="bypassAIGate"/> is the knob the AI-disabled tests turn.</summary>

@@ -22,9 +22,8 @@ public class ApproveAICopilotDecisionHandlerTests
         _ctx.SetToolDefinition("send_invoice", "Permission.Invoice.Manage", AgentDecisionType.SendInvoice);
 
         _sut = new ApproveAICopilotDecisionHandler(
-            _ctx.TenantUow, _ctx.CopilotGuard, _ctx.Authorization, _ctx.Execution, _ctx.Notes,
-            _ctx.CurrentUser, _ctx.RunContext, _broadcastService, _ctx.DecisionDtoMapper,
-            Options.Create(new LlmOptions { BypassAIGate = true }));
+            _ctx.TenantUow, _ctx.CopilotGuard, _ctx.Approver, _ctx.CurrentUser, _broadcastService,
+            _ctx.DecisionDtoMapper);
     }
 
     [Fact]

@@ -1,19 +1,25 @@
+using Logistics.Application.Abstractions.AI;
 using Logistics.Application.Modules.Integrations.Agents;
 using Logistics.Application.Modules.Integrations.Agents.Services;
 using Logistics.Domain.Entities;
 using Logistics.Domain.Persistence;
 using Logistics.Domain.Primitives.Enums;
 using Logistics.Shared.Models;
+using Microsoft.Extensions.Options;
 
 namespace Logistics.Application.Modules.Integrations.AICopilot.Services;
 
 internal sealed class AICopilotDecisionGuard(
     ITenantUnitOfWork tenantUow,
-    IAgentConversationAccess access) : IAICopilotDecisionGuard
+    IAgentConversationAccess access,
+    IOptions<LlmOptions> llmOptions) : IAICopilotDecisionGuard
 {
     public async Task<Result<CopilotDecisionContext>> LoadAsync(
         Guid decisionId, Guid? userId, CancellationToken ct)
     {
+        if (!llmOptions.Value.BypassAIGate && tenantUow.GetCurrentTenant().Settings.AIEnabled == false)
+            return Result<CopilotDecisionContext>.Fail("AI is disabled for this tenant");
+
         if (userId is null)
             return Result<CopilotDecisionContext>.Fail("User is not authenticated");
 

@@ -20,8 +20,7 @@ public class ApproveAIDispatchDecisionHandlerTests
         _ctx.SetToolDefinition("assign_load_to_truck", "Permission.Dispatch.Manage", AgentDecisionType.AssignLoad);
 
         _sut = new ApproveAIDispatchDecisionHandler(
-            _ctx.TenantUow, _ctx.DispatchGuard(), _ctx.Authorization, _ctx.Execution, _ctx.Notes,
-            _ctx.CurrentUser, _ctx.RunContext, _broadcastService);
+            _ctx.TenantUow, _ctx.DispatchGuard(), _ctx.Approver, _ctx.CurrentUser, _broadcastService);
     }
 
     [Fact]
