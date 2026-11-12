@@ -38,15 +38,27 @@ This file answers _where_. For _how it works_, follow the deep dive: **AI dispat
 - Domain: `Entities/Load/`
 - Application: `Modules/Operations/Loads/` (Commands, Queries, Services, Specifications, Constants)
 - API/UI: `LoadController.cs`, `tms-portal/pages/loads/`
-- Car hauler vehicles: `Entities/Load/LoadVehicle.cs` + `Load.Vehicles.cs` (JSON complex collection `loads.vehicles`; `LoadVehicle.Id` is what a condition report points at), input `LoadVehicleInput` + `Validators/LoadVehicleInputValidator.cs`, `Services/LoadVehicleInputExtensions.cs`. Capacity warning: `Operations/Common/Services/VehicleCapacityChecker.cs` (used by `GetLoadByIdHandler` and `DispatchEligibilityService` as `VehicleCapacityExceeded`, a warning). eBOL: `Queries/GetVehicleBolPdf/` → `GET /loads/{id}/ebol`, `GET /portal/loads/{id}/ebol`; delivery email `Services/VehicleDeliveryEmailService.cs` (from `ConfirmLoadStatusHandler`, template `VehicleDelivered.liquid`). UI: `load-form/load-vehicles-section.ts` (per-row VIN decode, capacity warning), `pages/loads/components/load-vehicles-content/` (details + eBOL download), `shared/components/display/vehicle-damage-diagram/` (read-only diagram on condition-report-details), customer-portal `shipments/shipment-details` + `documents/`. Guide: [docs/car-hauler-guide.md](../docs/car-hauler-guide.md)
+- Car hauler vehicles: `Entities/Load/LoadVehicle.cs` + `Load.Vehicles.cs` (JSON complex collection `loads.vehicles`; `LoadVehicle.Id` is what a condition report points at), input `LoadVehicleInput` + `Validators/LoadVehicleInputValidator.cs`, `Services/LoadVehicleInputExtensions.cs`. Capacity warning: `Operations/Common/Services/VehicleCapacityChecker.cs` (used by `GetLoadByIdHandler` and `DispatchEligibilityService` as `VehicleCapacityExceeded`, a warning). eBOL: `Queries/GetVehicleBolPdf/` → `GET /loads/{id}/ebol`, `GET /portal/loads/{id}/ebol`; delivery email is the eBOL variant of the `ShipmentDelivered` customer update (see Customer updates). UI: `load-form/load-vehicles-section.ts` (per-row VIN decode, capacity warning), `pages/loads/components/load-vehicles-content/` (details + eBOL download), `shared/components/display/vehicle-damage-diagram/` (read-only diagram on condition-report-details), customer-portal `shipments/shipment-details` + `documents/`. Guide: [docs/car-hauler-guide.md](../docs/car-hauler-guide.md)
 - Charges and LTL: `Load.Billing.cs` (`FuelSurcharge`, `Accessorials`), `Load.Freight.cs` (freight class, NMFC, pallets, pieces, weight, dimensions, stackable), `LoadAccessorial.cs`; invoice lines from `Entities/Invoice/LoadInvoice.Charges.cs` (`ReplaceLoadCharges` - owns `BaseRate`, `FuelSurcharge` and lines whose `SourceId` is an accessorial). Application: `Services/LoadChargeService.cs` (replace accessorials, sync the invoice, write detention), `Commands/{Create,Update}Load/*Command.Charges.cs`. UI: `load-form/load-charges-section.ts`, `load-form/load-freight-section.ts`, `pages/loads/components/load-charges-content/`
 - Detention: `Entities/Trip/DetentionCalculator.cs` + `DetentionTerms.cs` (customer → tenant → 2 h), applied by `MarkStopDepartedHandler` → `LoadChargeService.ApplyDetentionAsync`; `Queries/GetLoadDetention/` (`GET /loads/{id}/detention`, UI `pages/loads/components/load-detention-content/`); alert `Modules/Operations/Trips/Services/DetentionAlertService.cs` + `Jobs/DetentionAlertJob.cs` (every 15 min, once per stop via `TripStop.DetentionAlertedAt`)
+
+- Appointment windows: `Load.PickupAppointmentFrom/To`, `DeliveryAppointmentFrom/To` (load form `load-schedule-section`, PDF import `DispatchSheetPrompt`, CSV import `ImportFieldCatalog`). Status changes raise `Events/Load/LoadStatusChangedEvent` from `Load.UpdateStatus` (not from `RestoreImportedStatus`)
+
+### Customer updates
+
+Template emails, no LLM. Gated by `TenantFeature.CustomerUpdates` (every plan).
+
+- Domain: `Entities/Load/Load.CustomerUpdates.cs` + `CustomerUpdate.cs` (JSON `loads.customer_updates`: sent / skipped / failed), `Customer.UpdatePreferences` (`ValueObjects/CustomerUpdatePreferences.cs`)
+- Application: `Modules/Operations/Loads/Services/CustomerUpdateService.cs` (recipients = `Customer.Email` + active `CustomerUser`s; tracking link from `Tracking/Services/TrackingLinkService.cs`), triggered by `Loads/Events/LoadStatusChangedCustomerUpdateHandler.cs` and `Trips/Events/TripStopRunningLateCustomerUpdateHandler.cs`; `Commands/SendCustomerDelayNotice/` (the agent's `send_customer_update`); `IdentityAccess/Customers/Commands/SetCustomerUpdatePreferences/` (`PUT /customers/{id}/preferences`)
+- Templates: `Infrastructure.Communications/Email/Templates/Shipment{Dispatched,PickedUp,Delivered,Late}.liquid`, model `ShipmentUpdateEmailModel`
+- UI: `tms-portal/pages/loads/components/load-customer-updates-content/`, `pages/customers/components/customer-update-preferences/`; customer-portal `shipments/components/shipment-schedule/` (windows, ETA, tracking link, sent updates via `PortalLoadDto`)
 
 ### Trips
 
 - Domain: `Entities/Trip/`
 - Application: `Modules/Operations/Trips/Commands/`, `Modules/Operations/Trips/Queries/`
-- Infrastructure: `Routing/Optimization/` (trip optimizer)
+- Infrastructure: `Routing/Optimization/` (trip optimizer; `MapboxRouteDurationService` behind `IRouteDurationService` for ETAs)
+- ETA: `Trip.Eta.cs` (`ApplyArrivalEstimates`, raises `TripStopRunningLateEvent` once per stop via `TripStop.LateNotifiedAt`), `Modules/Operations/Trips/Services/EtaService.cs`, called from `TruckLocationRecorder` at most every 10 min per trip; dwell per stop `TenantSettings.StopDwellMinutes`
 - API/UI: `TripController.cs`, `tms-portal/pages/trips/`; driver stop events `DriverController.cs` (`POST /drivers/trips/{tripId}/stops/{stopId}/arrive|depart`, assignment-checked, sets `TripStop.ArrivedAt`/`DepartedAt`) - departure also bills detention (see Loads)
 
 ### Trucks
@@ -161,7 +173,16 @@ with `Type == Dispatch`.
 - Domain: `Entities/AIDispatch/AgentDecision.cs`
 - Application: `Modules/Integrations/AIDispatch/Commands/Approve*`, `Reject*` - append a System note to the decision's conversation transcript and broadcast it tenant-wide, but only when the session has a `ConversationId` (old sessions may predate conversations)
 - Infrastructure: `Infrastructure.AI/Agents/AgentDecisionProcessor.cs`
+- Auto-approve: `AIDispatchPolicy.AutoApproveTypes`/`AutoApproveStreak` (eligible set `AutoApproveEligibleTypes`), `AIDispatch/Services/AgentTrustService.cs` (streak since the last rejection or revert), `Commands/RevertAIDispatchDecision/` (15 min, `AgentDecision.RevertWindow`), `Commands/UpdateAIDispatchAutonomy/`, `Queries/GetAIDispatchAutonomy/` (`ai/dispatch/autonomy`); UI `ai-dispatch/components/auto-approve-settings/` (policy page), `components/auto-approved-decisions/` (right panel)
 - API/UI: (under `ai-dispatch/`)
+
+### AI trip alerts
+
+Gated by `TenantFeature.AITripAlerts` (Professional+). The agent proposes; nothing executes without approval.
+
+- Triggers (each stamped once): late stop (`Trips/Events/TripStopRunningLateAlertHandler.cs`), hours shortfall (`Trip.HosShortfallFlaggedAt`, from `EldSyncService` and after each ETA refresh), new HOS violations, detention - all through `Modules/Operations/Trips/Services/TripAlertReporter.cs`, which opens `Trip.AlertConversationId` and enqueues `RaiseTripAlertCommand`
+- Application: `Modules/Integrations/AIDispatch/Services/TripAlertTurnStarter.cs` (fenced alert message, atomic turn claim, daily cap `TenantSettings.TripAlertsPerDay`, in-app + Telegram notice)
+- Jobs: `Logistics.API/Jobs/TripAlertWakeJob.cs` (busy retry); demo scenario `DbMigrator/Seeders/FakeData/TripAlertDemoSeeder.cs`
 
 ### Dispatch policy (learned preferences)
 

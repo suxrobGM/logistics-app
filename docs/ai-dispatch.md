@@ -29,8 +29,36 @@ failed session). Per-token prices live in `LlmPricing.cs`.
 
 The agent looks at the fleet and produces suggestions in the conversation. Each suggestion comes
 with the agent's reasoning. A dispatcher approves or rejects one at a time; rejecting requires a
-reason, which the next turn sees as a transcript note. There is no unattended mode - every write
-tool call becomes a `Suggested` decision, never an immediate execution.
+reason, which the next turn sees as a transcript note. Every write tool call becomes a `Suggested`
+decision, with one opt-in exception, auto-approve, described below.
+
+### Auto-approve (graduated autonomy)
+
+A tenant can let three routine decision types run without asking: assigning a load, creating a
+draft trip and creating a draft invoice (`AIDispatchPolicy.AutoApproveEligibleTypes`; the invoice
+tool is copilot-only today, so only the first two reach a dispatch run). A type auto-executes only
+when the tenant opted it in on the dispatch policy page **and** its clean streak (approvals since
+the last rejection or revert, from `AgentTrustService`) has reached `AutoApproveStreak`, 25 by
+default. Anything that spends money, emails someone outside the carrier or notifies a driver is
+never eligible, nor is a `Destructive` tool, and copilot sessions never auto-execute.
+
+An auto-executed decision is `Executed` with `AutoApproved = true` and no `ApprovedByUserId`, so the
+nightly policy learner, which reads only human approvals, ignores it. For 15 minutes a dispatcher
+can revert it from the dispatch board (`RevertAIDispatchDecision`): the load is unassigned, or the
+trip or invoice is deleted while it is still a draft. A revert counts as a rejection and resets the
+streak.
+
+### AI trip alerts
+
+With `AITripAlerts` on, the agent starts a turn with nobody prompting when an active trip runs into
+trouble: a stop's ETA passes its appointment window, the driver has fewer driving hours left than
+the remaining stops need, the ELD reports a new HOS violation, or detention starts. Each trigger is
+stamped once on its row. `TripAlertReporter` opens the trip's alert conversation and enqueues
+`RaiseTripAlertCommand`; `TripAlertTurnStarter` appends a fenced, system-written description, claims
+the turn atomically (or retries through `TripAlertWakeJob`) and notifies dispatchers in-app and on
+Telegram. The agent answers with ordinary suggestions, such as a driver swap, a re-plan, or a delay notice
+through `send_customer_update`, and those still need approval. `TenantSettings.TripAlertsPerDay`
+(default 20) caps the turns; the AI budget applies as usual.
 
 The system prompt separately varies by `Tenant.IsSolo` (the `SoloOperator` preset). A solo tenant gets
 a "Fleet Profile" section that drops fleet utilization, the truck-to-truck comparison and the
@@ -93,8 +121,10 @@ and the broker-reply envelope carry no sender and render unattributed.
 | `dispatch_trip`                | Write | Transition trip to Dispatched status                 |
 | `book_loadboard_load`          | Write | Create a load from a listing (broker confirms by phone) |
 | `propose_counter_offer`        | Write | Email a broker a counter-offer on a listing          |
+| `send_customer_update`         | Write | Email the customer a delay notice (never auto-approved) |
 
-Write tools always create `Suggested` decisions; read tools execute immediately.
+Write tools create `Suggested` decisions unless auto-approve applies (see above); read tools execute
+immediately.
 
 ## Rate Negotiation
 
@@ -326,9 +356,6 @@ See the `add-llm-provider` skill for the full checklist.
 ## Roadmap
 
 - Telegram bot for drivers and dispatchers - accept/reject loads, status updates, fleet summaries.
-- Graduated autonomy - use per-action-type approval rates from the same decision history to let a
-  tenant relax the per-action approval requirement for actions it has a long clean approval streak
-  on. Not current behavior: every write today is `Suggested` and gated, with no path that skips it.
 
 ## Related
 
