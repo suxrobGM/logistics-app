@@ -28,7 +28,7 @@ internal static class LoadBoardHttp
         /// reads the response body as <typeparamref name="T"/>.
         /// </summary>
         public async Task<T> SendJsonAsync<T>(
-    HttpMethod method,
+            HttpMethod method,
             string url,
             object? body,
             string? bearerToken,
@@ -51,7 +51,7 @@ internal static class LoadBoardHttp
         /// Sends a request whose response body is not needed.
         /// </summary>
         public async Task SendJsonAsync(
-    HttpMethod method,
+            HttpMethod method,
             string url,
             object? body,
             string? bearerToken,

@@ -15,7 +15,7 @@ public static class HttpClientWriteExtensions
     extension(HttpClient client)
     {
         public async Task<bool> TryPostAsync<TReq>(
-    string url,
+            string url,
             TReq body,
             ILogger logger,
             string action,

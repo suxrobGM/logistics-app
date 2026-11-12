@@ -6,7 +6,7 @@ public static class BlobStorageExtensions
     {
         /// <summary>Reads a whole blob into memory, for attachments and images embedded in a PDF.</summary>
         public async Task<byte[]> DownloadBytesAsync(
-    string containerName, string blobName, CancellationToken ct = default)
+            string containerName, string blobName, CancellationToken ct = default)
         {
             await using var stream = await blobStorage.DownloadAsync(containerName, blobName, ct);
             using var buffer = new MemoryStream();

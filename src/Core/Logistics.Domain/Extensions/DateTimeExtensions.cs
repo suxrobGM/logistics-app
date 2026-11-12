@@ -5,7 +5,7 @@ public static class DateTimeExtensions
     extension(DateTime startDate)
     {
         public IEnumerable<(int Year, int Month)> MonthsBetween(
-    DateTime endDate)
+            DateTime endDate)
         {
             DateTime iterator;
             DateTime limit;
@@ -29,7 +29,7 @@ public static class DateTimeExtensions
         }
 
         public IEnumerable<(int Year, int Month, int Day)> DaysBetween(
-    DateTime endDate)
+            DateTime endDate)
         {
             var iterator = (endDate > startDate ? startDate : endDate).Date;
             var limit = (endDate > startDate ? endDate : startDate).Date;

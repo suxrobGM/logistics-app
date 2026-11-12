@@ -14,7 +14,7 @@ public static class Registrar
         ///     Add payment infrastructure (Stripe standard + Connect).
         /// </summary>
         public IServiceCollection AddPaymentsInfrastructure(
-    IConfiguration configuration)
+            IConfiguration configuration)
         {
             // Configuration
             services.Configure<StripeOptions>(

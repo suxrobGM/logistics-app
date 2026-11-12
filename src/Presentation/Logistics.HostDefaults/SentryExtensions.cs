@@ -62,7 +62,7 @@ public static class SentryExtensions
         /// Routes Serilog into the SDK that <see cref="AddLogisticsSentry"/> initialised.
         /// </summary>
         public LoggerConfiguration WriteToSentryIfEnabled(
-    IConfiguration configuration)
+            IConfiguration configuration)
         {
             if (!configuration.IsSentryEnabled())
             {

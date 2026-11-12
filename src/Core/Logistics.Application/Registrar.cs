@@ -102,7 +102,7 @@ public static class Registrar
         /// to one slice, for hosts that don't want the whole Application layer.
         /// </summary>
         private IServiceCollection AddApplicationCommon(
-    Func<Type, bool>? typeFilter = null,
+            Func<Type, bool>? typeFilter = null,
             bool withFeatureCheck = true)
         {
             services.AddValidatorsFromAssembly(

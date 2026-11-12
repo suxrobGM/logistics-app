@@ -24,7 +24,7 @@ public static class HttpClientJsonExtensions
         /// service's logger category identifies which integration it was.
         /// </summary>
         public async Task<T?> TryGetFromJsonAsync<T>(
-    string url,
+            string url,
             ILogger logger,
             string action,
             JsonSerializerOptions? options = null,

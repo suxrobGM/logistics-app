@@ -16,7 +16,7 @@ public static class RateLimitingExtensions
         /// impersonation endpoints.
         /// </summary>
         public RateLimiterOptions AddIpFixedWindowPolicy(
-    string policyName, int permitLimit, TimeSpan window)
+            string policyName, int permitLimit, TimeSpan window)
         {
             options.AddPolicy(policyName, context =>
                 RateLimitPartition.GetFixedWindowLimiter(

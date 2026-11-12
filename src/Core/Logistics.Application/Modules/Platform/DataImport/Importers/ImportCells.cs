@@ -64,7 +64,7 @@ internal static class ImportCells
         }
 
         public TEnum? ReadEnum<TEnum>(
-    string key, string label, IReadOnlyDictionary<string, TEnum>? aliases = null)
+            string key, string label, IReadOnlyDictionary<string, TEnum>? aliases = null)
             where TEnum : struct, System.Enum
         {
             var raw = draft.Row.Get(key);
@@ -82,7 +82,7 @@ internal static class ImportCells
         ///     with <see cref="AddressValidator"/> and against the tenant's region.
         /// </summary>
         public Address? ReadAddress(
-    string? prefix, string label, ImportOptions options, bool required)
+            string? prefix, string label, ImportOptions options, bool required)
         {
             var row = draft.Row;
             var address = ImportAddressParser.Build(

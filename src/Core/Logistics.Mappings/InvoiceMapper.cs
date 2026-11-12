@@ -54,7 +54,7 @@ public static class InvoiceMapper
         /// SELECT per invoice for each collection.
         /// </summary>
         public InvoiceDto ToDto(
-    IEnumerable<Payment> payments,
+            IEnumerable<Payment> payments,
             IEnumerable<InvoiceLineItem> lineItems,
             long loadNumber,
             CustomerDto? customer)

@@ -19,7 +19,7 @@ internal static class HttpClientQboExtensions
     extension(HttpClient client)
     {
         public async Task<TResponse> GetQboAsync<TResponse>(
-    string url, string accessToken, string action, CancellationToken ct)
+            string url, string accessToken, string action, CancellationToken ct)
         {
             using var request = new HttpRequestMessage(HttpMethod.Get, url);
             Authorize(request, accessToken);
@@ -27,7 +27,7 @@ internal static class HttpClientQboExtensions
         }
 
         public async Task<TResponse> PostQboAsync<TResponse>(
-    string url, object payload, string accessToken, string action, CancellationToken ct)
+            string url, object payload, string accessToken, string action, CancellationToken ct)
         {
             using var request = new HttpRequestMessage(HttpMethod.Post, url)
             {

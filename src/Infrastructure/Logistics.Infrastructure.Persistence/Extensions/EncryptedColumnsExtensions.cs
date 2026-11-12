@@ -25,7 +25,7 @@ public static class EncryptedColumnsExtensions
         ///     is identical either way.
         /// </summary>
         public void ApplyEncryptedSecretColumns(
-    IDataProtectionProvider? dataProtectionProvider)
+            IDataProtectionProvider? dataProtectionProvider)
         {
             if (dataProtectionProvider is null)
             {

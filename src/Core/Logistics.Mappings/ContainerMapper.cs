@@ -46,7 +46,7 @@ public static partial class ContainerMapper
         }
 
         public ContainerDto ToDto(
-    DateTime now,
+            DateTime now,
             TerminalRef? currentTerminal,
             TerminalRef? emptyReturnTerminal)
         {

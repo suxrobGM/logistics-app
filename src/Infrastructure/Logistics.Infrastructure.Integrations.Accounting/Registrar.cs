@@ -15,7 +15,7 @@ public static class Registrar
         ///     Add accounting provider integrations (QuickBooks Online, Demo).
         /// </summary>
         public IServiceCollection AddAccountingIntegrations(
-    IConfiguration configuration)
+            IConfiguration configuration)
         {
             services.AddHttpClient<QuickBooksOAuthClient>();
             services.AddHttpClient<QuickBooksOnlineService>();

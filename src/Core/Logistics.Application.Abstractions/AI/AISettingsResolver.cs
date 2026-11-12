@@ -17,7 +17,7 @@ public static class AISettingsResolver
         /// <see cref="LlmOptions.DefaultReasoningEffort"/> from appsettings.
         /// </summary>
         public async Task<ReasoningEffort> ResolveReasoningEffortAsync(
-    LlmOptions config,
+            LlmOptions config,
             CancellationToken ct = default)
         {
             var setting = await systemSettings.GetAsync(AISettingsKeys.ReasoningEffort, ct);

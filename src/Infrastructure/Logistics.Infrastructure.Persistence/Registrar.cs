@@ -26,7 +26,7 @@ public static class Registrar
         /// <param name="configuration">The configuration.</param>
         /// <returns>The infrastructure builder.</returns>
         public IPersistenceInfrastructureBuilder AddPersistenceInfrastructure(
-    IConfiguration configuration)
+            IConfiguration configuration)
         {
             // This assembly holds no handlers; the interceptor just needs IMediator resolvable in
             // hosts (IdentityServer, DbMigrator) that never compose the Application layer.

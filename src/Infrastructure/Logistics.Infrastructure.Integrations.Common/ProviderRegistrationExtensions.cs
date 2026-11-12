@@ -18,7 +18,7 @@ public static class ProviderRegistrationExtensions
         /// <typeparamref name="TFactoryService"/>) with a scoped lifetime.
         /// </summary>
         public IServiceCollection AddProviderIntegration<TOptions, TFactoryService, TFactoryImplementation>(
-    IConfiguration configuration, string sectionName)
+            IConfiguration configuration, string sectionName)
             where TOptions : class
             where TFactoryService : class
             where TFactoryImplementation : class, TFactoryService

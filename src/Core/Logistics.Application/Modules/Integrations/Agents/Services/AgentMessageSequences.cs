@@ -13,7 +13,7 @@ public static class AgentMessageSequences
         /// the same conversation at once, so the counter must move in the database, never in memory.
         /// </summary>
         public async Task<int> ReserveSequencesAsync(
-    AgentConversation conversation, int count, CancellationToken ct)
+            AgentConversation conversation, int count, CancellationToken ct)
         {
             var last = await tenantUow.SqlQueryAsync<int>($"""
                     UPDATE agent_conversations SET last_sequence = last_sequence + {count}

@@ -33,7 +33,7 @@ public static class MediatorServiceCollectionExtensions
         /// registers handlers whose dependencies it never wires.
         /// </param>
         public IServiceCollection AddMediator(
-    Assembly assembly,
+            Assembly assembly,
             Func<Type, bool>? typeFilter = null)
         {
             ArgumentNullException.ThrowIfNull(services);

@@ -14,7 +14,7 @@ public static class DataProtectionExtensions
     extension(IServiceCollection services)
     {
         public IServiceCollection AddLogisticsDataProtection<TContext>(
-    string applicationName)
+            string applicationName)
             where TContext : DbContext, IDataProtectionKeyContext
         {
             services.AddDataProtection()

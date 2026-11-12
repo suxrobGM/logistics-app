@@ -26,7 +26,7 @@ public static class Registrar
         ///     Add communications infrastructure (SignalR, Email, Push Notifications).
         /// </summary>
         public IServiceCollection AddCommunicationsInfrastructure(
-    IConfiguration configuration)
+            IConfiguration configuration)
         {
             // Hub payloads must match the REST wire contract (snake_case string enums) - the generated
             // frontend types are string unions, so numeric enums silently fail every status comparison.

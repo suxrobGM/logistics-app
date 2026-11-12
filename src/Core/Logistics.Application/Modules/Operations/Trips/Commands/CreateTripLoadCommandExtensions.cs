@@ -7,7 +7,7 @@ internal static class CreateTripLoadCommandExtensions
     extension(CreateTripLoadCommand load)
     {
         public CreateLoadParameters ToCreateLoadParameters(
-    Guid? truckId, Guid? tripId) =>
+            Guid? truckId, Guid? tripId) =>
             new(
                 load.Name,
                 load.Type,

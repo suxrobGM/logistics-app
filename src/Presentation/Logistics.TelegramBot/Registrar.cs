@@ -26,7 +26,7 @@ public static class Registrar
         /// <param name="configuration">The configuration</param>
         /// <param name="isDevelopment">If true, uses long polling instead of webhook (for local development)</param>
         public IServiceCollection AddTelegramBotInfrastructure(
-    IConfiguration configuration, bool isDevelopment = false)
+            IConfiguration configuration, bool isDevelopment = false)
         {
             var section = configuration.GetSection(TelegramBotOptions.SectionName);
             services.Configure<TelegramBotOptions>(section);

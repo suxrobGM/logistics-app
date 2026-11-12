@@ -20,7 +20,7 @@ public static class TaxCalculationMappings
         /// (Amount * Quantity) as the taxable base.
         /// </summary>
         public IReadOnlyList<TaxCalculationLineItem> ToCalculationLines(
-    ) =>
+            ) =>
             lineItems
                 .Select(li => new TaxCalculationLineItem
                 {
@@ -38,7 +38,7 @@ public static class TaxCalculationMappings
         /// Builds calculator-line inputs from the preview-tax request DTOs.
         /// </summary>
         public IReadOnlyList<TaxCalculationLineItem> ToCalculationLines(
-    ) =>
+            ) =>
             lineItems
                 .Select(li => new TaxCalculationLineItem
                 {
@@ -74,7 +74,7 @@ public static class TaxCalculationMappings
         /// invoice currency and pre-tax totals.
         /// </summary>
         public PreviewInvoiceTaxResponse ToPreviewResponse(
-    string currency,
+            string currency,
             decimal subtotal,
             decimal taxTotal,
             decimal total) => new()

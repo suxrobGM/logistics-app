@@ -18,7 +18,7 @@ public static class Registrar
         ///     Add ELD provider integrations (Samsara, Motive, TT ELD, Demo).
         /// </summary>
         public IServiceCollection AddEldIntegrations(
-    IConfiguration configuration)
+            IConfiguration configuration)
         {
             services.AddHttpClient<SamsaraEldService>();
             services.AddHttpClient<MotiveEldService>();

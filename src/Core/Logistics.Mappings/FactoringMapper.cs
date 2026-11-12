@@ -36,7 +36,7 @@ public static partial class FactoringMapper
         /// the detail read.
         /// </summary>
         public FactoringBatchDto ToDto(
-    string? factoringCompanyName, IReadOnlyCollection<FactoringBatchItem> items,
+            string? factoringCompanyName, IReadOnlyCollection<FactoringBatchItem> items,
             IEnumerable<FactoringBatchItemDto>? itemDtos = null)
         {
             return entity.ToDtoCore() with
@@ -72,7 +72,7 @@ public static partial class FactoringMapper
     extension(FactoringBatchItem entity)
     {
         public FactoringBatchItemDto ToDto(
-    long invoiceNumber, long loadNumber, string? customerName,
+            long invoiceNumber, long loadNumber, string? customerName,
             FactoringAmounts estimate)
         {
             return entity.ToDtoCore() with

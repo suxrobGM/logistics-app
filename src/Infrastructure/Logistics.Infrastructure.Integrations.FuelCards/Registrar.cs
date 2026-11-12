@@ -16,7 +16,7 @@ public static class Registrar
         ///     Add fuel card provider integrations (WEX, EFS, Demo).
         /// </summary>
         public IServiceCollection AddFuelCardIntegrations(
-    IConfiguration configuration)
+            IConfiguration configuration)
         {
             // Fuel card providers (with HttpClient for external APIs)
             services.AddHttpClient<WexFuelCardService>();

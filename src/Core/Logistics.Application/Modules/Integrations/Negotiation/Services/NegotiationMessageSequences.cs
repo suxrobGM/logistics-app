@@ -13,7 +13,7 @@ public static class NegotiationMessageSequences
         /// move in the database, never in memory.
         /// </summary>
         public async Task<int> ReserveSequenceAsync(
-    RateNegotiation negotiation, CancellationToken ct)
+            RateNegotiation negotiation, CancellationToken ct)
         {
             var last = await tenantUow.SqlQueryAsync<int>($"""
                     UPDATE rate_negotiations SET last_sequence = last_sequence + 1

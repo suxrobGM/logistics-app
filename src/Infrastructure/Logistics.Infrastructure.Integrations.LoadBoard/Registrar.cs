@@ -16,7 +16,7 @@ public static class Registrar
         ///     Add LoadBoard provider integrations (DAT, Demo).
         /// </summary>
         public IServiceCollection AddLoadBoardIntegrations(
-    IConfiguration configuration)
+            IConfiguration configuration)
         {
             services.AddHttpClient<DatLoadBoardService>();
             services.AddScoped<DemoLoadBoardService>();

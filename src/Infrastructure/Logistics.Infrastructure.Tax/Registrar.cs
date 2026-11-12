@@ -18,7 +18,7 @@ public static class Registrar
         /// expose Stripe Tax onboarding info regardless of which calculator is selected.
         /// </summary>
         public IServiceCollection AddTaxInfrastructure(
-    IConfiguration configuration)
+            IConfiguration configuration)
         {
             services.Configure<TaxOptions>(configuration.GetSection(TaxOptions.SectionName));
             services.AddMemoryCache();

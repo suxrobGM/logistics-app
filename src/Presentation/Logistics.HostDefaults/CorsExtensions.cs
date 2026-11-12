@@ -16,7 +16,7 @@ public static class CorsExtensions
     extension(IServiceCollection services)
     {
         public IServiceCollection AddLogisticsCors(
-    params string[] productionOrigins)
+            params string[] productionOrigins)
         {
             services.AddCors(options =>
             {
