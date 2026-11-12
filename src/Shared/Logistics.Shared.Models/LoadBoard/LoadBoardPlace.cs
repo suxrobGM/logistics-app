@@ -34,12 +34,5 @@ public record LoadBoardPlace
         Country = State is not null && CanadianProvinces.Contains(State.ToUpperInvariant()) ? "CA" : "US"
     };
 
-    public static LoadBoardPlace FromAddress(Address address) => new()
-    {
-        City = NullIfEmpty(address.City),
-        State = NullIfEmpty(address.State),
-        PostalCode = NullIfEmpty(address.ZipCode)
-    };
-
     private static string? NullIfEmpty(string? value) => string.IsNullOrWhiteSpace(value) ? null : value;
 }

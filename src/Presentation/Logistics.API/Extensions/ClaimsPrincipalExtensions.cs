@@ -14,11 +14,6 @@ public static class ClaimsPrincipalExtensions
             return roles.Any(userIdentity.IsInRole);
         }
 
-        public string? GetRole()
-        {
-            return userIdentity.Claims.FirstOrDefault(i => i.Type == ClaimTypes.Role)?.Value;
-        }
-
         /// <summary>Rejects access to another tenant unless the caller is a platform admin.</summary>
         public void EnsureOwnsTenant(Guid tenantId)
         {

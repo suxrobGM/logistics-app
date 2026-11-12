@@ -30,22 +30,6 @@ public static class TenantRolePermissions
             : [];
     }
 
-    /// <summary>
-    /// Registers permissions for a role. Use this to add new roles dynamically.
-    /// </summary>
-    public static void RegisterRole(string roleName, Func<IEnumerable<string>> permissionsFunc)
-    {
-        RolePermissions[roleName] = permissionsFunc;
-    }
-
-    /// <summary>
-    /// Checks if a role has registered permissions.
-    /// </summary>
-    public static bool HasRegisteredPermissions(string roleName)
-    {
-        return RolePermissions.ContainsKey(roleName);
-    }
-
     public static IEnumerable<string> GetBasicPermissions() => AppRolePermissions.GetBasicPermissions();
 
     private static IEnumerable<string> GetOwnerPermissions()

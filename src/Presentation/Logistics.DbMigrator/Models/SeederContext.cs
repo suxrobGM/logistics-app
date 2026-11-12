@@ -103,18 +103,4 @@ public class SeederContext
         get => SharedState.TryGetValue(nameof(CreatedCustomerUsers), out var val) ? (IList<CustomerUser>)val : null;
         set => SharedState[nameof(CreatedCustomerUsers)] = value!;
     }
-
-    /// <summary>
-    /// Resets per-tenant shared state between tenant iterations.
-    /// </summary>
-    public void ResetPerTenantState()
-    {
-        SharedState.Remove(nameof(CreatedUsers));
-        SharedState.Remove(nameof(CreatedEmployees));
-        SharedState.Remove(nameof(CreatedCustomers));
-        SharedState.Remove(nameof(CreatedTrucks));
-        SharedState.Remove(nameof(CreatedTerminals));
-        SharedState.Remove(nameof(CreatedContainers));
-        SharedState.Remove(nameof(CreatedCustomerUsers));
-    }
 }
