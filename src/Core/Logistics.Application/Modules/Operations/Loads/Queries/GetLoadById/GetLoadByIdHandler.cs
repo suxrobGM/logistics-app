@@ -30,7 +30,6 @@ internal sealed class GetLoadByIdHandler(
 
         var lookup = await lookupBuilder.BuildAsync([load], ct);
         var dto = load.ToDto(lookup);
-        dto.Accessorials = load.Accessorials.Select(a => a.ToDto()).ToList();
         var trip = load.TripStops.FirstOrDefault()?.Trip;
         dto.TrailerId = trip?.TrailerId;
         dto.TrailerNumber = trip?.Trailer?.Number;

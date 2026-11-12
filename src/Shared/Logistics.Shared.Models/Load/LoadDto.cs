@@ -42,10 +42,6 @@ public class LoadDto
     public string? Dimensions { get; set; }
     public bool IsStackable { get; set; }
     public decimal FuelSurcharge { get; set; }
-
-    /// <summary>
-    ///     Filled on a single-load read only.
-    /// </summary>
     public List<LoadAccessorialDto> Accessorials { get; set; } = [];
     public Guid? ContainerId { get; set; }
     public string? ContainerNumber { get; set; }

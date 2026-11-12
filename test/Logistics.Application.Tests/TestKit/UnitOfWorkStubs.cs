@@ -38,6 +38,7 @@ internal static class UnitOfWorkStubs
             uow.Stub<TripStop>();
             uow.Stub<LoadInvoice>();
             uow.Stub<Customer>();
+            uow.Stub<LoadAccessorial>();
         }
     }
 }

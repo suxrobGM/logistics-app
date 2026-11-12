@@ -69,6 +69,14 @@ internal sealed class LoadLookupBuilder(ITenantUnitOfWork uow) : ILoadLookupBuil
                 .GroupBy(s => s.LoadId)
                 .ToDictionary(g => g.Key, g => new TripRef(g.First().Id, g.First().Name, g.First().Number));
 
+        var accessorials = loadIds.Length == 0
+            ? []
+            : (await uow.Repository<LoadAccessorial>().Query()
+                .Where(a => loadIds.Contains(a.LoadId))
+                .ToListAsync(ct))
+                .GroupBy(a => a.LoadId)
+                .ToDictionary(g => g.Key, g => g.Select(a => a.ToDto()).ToList());
+
         // The collections ride along in the same query instead of a lazy SELECT per invoice.
         var invoices = loadIds.Length == 0
             ? []
@@ -103,7 +111,7 @@ internal sealed class LoadLookupBuilder(ITenantUnitOfWork uow) : ILoadLookupBuil
             t.CurrentAddress,
             t.CurrentLocation));
 
-        return new LoadLookup(containers, terminals, customers, employeeNames, truckRefs, trips, invoicesByLoad);
+        return new LoadLookup(containers, terminals, customers, employeeNames, truckRefs, trips, invoicesByLoad, accessorials);
     }
 
     private sealed record InvoiceRows(LoadInvoice Invoice, List<Payment> Payments, List<InvoiceLineItem> LineItems);

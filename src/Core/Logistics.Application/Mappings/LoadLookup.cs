@@ -28,7 +28,8 @@ public sealed class LoadLookup(
     IReadOnlyDictionary<Guid, string> employeeNames,
     IReadOnlyDictionary<Guid, TruckRef> trucks,
     IReadOnlyDictionary<Guid, TripRef> tripsByLoad,
-    IReadOnlyDictionary<Guid, InvoiceDto> invoicesByLoad)
+    IReadOnlyDictionary<Guid, InvoiceDto> invoicesByLoad,
+    IReadOnlyDictionary<Guid, List<LoadAccessorialDto>> accessorialsByLoad)
 {
     public ContainerRef? FindContainer(Guid? id) =>
         id is { } key && containers.TryGetValue(key, out var found) ? found : null;
@@ -48,4 +49,7 @@ public sealed class LoadLookup(
         tripsByLoad.TryGetValue(loadId, out var found) ? found : null;
 
     public InvoiceDto? FindInvoice(Guid loadId) => invoicesByLoad.GetValueOrDefault(loadId);
+
+    public List<LoadAccessorialDto> FindAccessorials(Guid loadId) =>
+        accessorialsByLoad.TryGetValue(loadId, out var found) ? [.. found] : [];
 }
