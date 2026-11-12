@@ -1,5 +1,5 @@
 using Logistics.Application.Abstractions;
-using Logistics.Application.Modules.Operations.Loads.Specifications;
+using Logistics.Application.Modules.Operations.Loads;
 using Logistics.Domain.Entities;
 using Logistics.Domain.Extensions;
 using Logistics.Domain.Persistence;
@@ -32,14 +32,13 @@ internal sealed class GetDailyGrossesHandler(ITenantUnitOfWork tenantUow) : IReq
         var startDate = DateTime.SpecifyKind(req.StartDate, DateTimeKind.Utc);
         var endDate = DateTime.SpecifyKind(req.EndDate, DateTimeKind.Utc);
 
-        var spec = new FilterLoadsByDeliveryDate(truckId, startDate, endDate);
 
         var days = req.StartDate.DaysBetween(req.EndDate);
         var dict = days.ToDictionary(
             k => (k.Year, k.Month, k.Day),
             m => new DailyGrossDto(m.Year, m.Month, m.Day));
 
-        var filteredLoads = tenantUow.Repository<Load>().ApplySpecification(spec).ToArray();
+        var filteredLoads = tenantUow.Repository<Load>().Query().FilterDeliveredBetween(truckId, startDate, endDate).ToArray();
 
         foreach (var load in filteredLoads)
         {

@@ -171,7 +171,7 @@ LogisticsX-specific patterns that recur and are worth de-duplicating:
 
 | Pattern                                                           | Extract to                                         |
 | ----------------------------------------------------------------- | -------------------------------------------------- |
-| Same `where` filter used in 3+ specifications                     | A base spec or `IQueryable` extension              |
+| Same `where` filter used in 3+ handlers                           | An `IQueryable` extension next to the feature      |
 | Mapping logic outside Mapperly                                    | Mapperly mapper in `Logistics.Mappings`            |
 | Same auth / tenant validation in multiple controllers             | Custom `[AuthorizeAttribute]` or pipeline behavior |
 | HTTP error → DTO conversion pasted in many handlers               | Shared `Result.FromException` helper               |

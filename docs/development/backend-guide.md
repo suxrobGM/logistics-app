@@ -28,7 +28,6 @@ src/Core/Logistics.Domain/
 ├── Entities/           # Domain entities
 ├── ValueObjects/       # Value objects
 ├── Events/             # Domain events
-├── Specifications/     # Query specifications
 └── Interfaces/         # Abstractions
 
 src/Infrastructure/
@@ -236,27 +235,18 @@ public class Load : AggregateRoot
 }
 ```
 
-## Specifications
+## Query filters
 
-Most reads use an inline `.Query()` inside the handler now. Write a dedicated `Specification<T>` class
-**only** when the same query condition is reused across handlers (there are just a few left, e.g.
-`FilterLoadInvoices`, `FilterPayrollInvoices`, `FilterLoadsByDeliveryDate`).
+Reads filter with plain `.Query().Where(...)` chains inside the handler. When the same condition is reused
+across handlers, put it in an `IQueryable<T>` extension next to the feature - for example
+`LoadQueryableExtensions.FilterDeliveredBetween` in `Modules/Operations/Loads/`. Paged lists finish with
+`ToPagedResultAsync` (`Logistics.Application/Utilities/PagedQueryableExtensions.cs`), which always breaks
+sort ties by id so pages never repeat or skip rows.
 
 ```csharp
-public class ActiveLoadsByCustomerSpec : Specification<Load>
-{
-    public ActiveLoadsByCustomerSpec(Guid customerId)
-    {
-        Query
-            .Where(l => l.CustomerId == customerId)
-            .Where(l => l.Status == LoadStatus.Active)
-            .OrderByDescending(l => l.CreatedDate);
-    }
-}
-
-// Usage
-var loads = await unitOfWork.Repository<Load>()
-    .GetListAsync(new ActiveLoadsByCustomerSpec(customerId), ct);
+var loads = await tenantUow.Repository<Load>().Query()
+    .FilterDeliveredBetween(truckId, start, end)
+    .ToListAsync(ct);
 ```
 
 ## Domain Events

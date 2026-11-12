@@ -2,7 +2,6 @@ using Logistics.Application.Abstractions;
 using Logistics.Domain.Entities;
 using Logistics.Domain.Persistence;
 using Logistics.Domain.Primitives.Enums;
-using Logistics.Domain.Specifications;
 using Logistics.Mediator;
 using Logistics.Shared.Models;
 using Microsoft.EntityFrameworkCore;
@@ -17,7 +16,7 @@ internal sealed class GetAllDriversHosStatusHandler(ITenantUnitOfWork tenantUow)
         CancellationToken ct)
     {
         var hosStatuses = await tenantUow.Repository<DriverHosStatus>()
-            .ApplySpecification(new AllDriverHosStatusesSpec())
+            .Query()
             .Select(h => new DriverHosStatusDto
             {
                 EmployeeId = h.EmployeeId,
@@ -49,11 +48,3 @@ internal sealed class GetAllDriversHosStatusHandler(ITenantUnitOfWork tenantUow)
     }
 }
 
-// Simple specification to include Employee navigation
-internal class AllDriverHosStatusesSpec : BaseSpecification<DriverHosStatus>
-{
-    public AllDriverHosStatusesSpec()
-    {
-        AddInclude(h => h.Employee);
-    }
-}

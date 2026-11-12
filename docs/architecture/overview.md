@@ -85,7 +85,7 @@ flowchart TB
     P["Presentation<br/>API · IdentityServer · McpServer · TelegramBot · DbMigrator"]
     A["Application<br/>Modules · Commands · Queries · Behaviours · workflow services"]
     Ab["Application.Abstractions<br/>Infrastructure ports · marker interfaces · DTOs"]
-    D["Domain<br/>Entities · Aggregates · Events · Specifications"]
+    D["Domain<br/>Entities · Aggregates · Events"]
     Pr["Domain.Primitives<br/>Value objects · Enums"]
     I["Infrastructure<br/>Persistence · Communications · AI · Payments · Documents · Routing · Storage · Tax · Vin · Licensing<br/>Integrations.Common · Integrations.Eld · Integrations.LoadBoard · Integrations.FuelCards · Integrations.Accounting"]
 
@@ -214,25 +214,20 @@ flowchart LR
 
 Hangfire jobs do not go through the request pipeline, so `[RequiresFeature]` never applies to them - a job must gate features itself. CLAUDE.md holds the canonical rule.
 
-### Repository + Specification
+### Repository
 
-Repositories are scoped per aggregate root; specifications encapsulate reusable query conditions.
+Repositories are scoped per entity and expose `Query()` for filtering; reused conditions live in
+`IQueryable<T>` extensions next to their feature, and paged lists end with `ToPagedResultAsync`.
 
 ```csharp
-public interface IRepository<T> where T : class, IAggregateRoot
+public interface IRepository<TEntity, in TKey>
 {
-    Task<T?> GetAsync(ISpecification<T> spec, CancellationToken ct = default);
-    Task<IList<T>> GetListAsync(ISpecification<T> spec, CancellationToken ct = default);
-    Task AddAsync(T entity, CancellationToken ct = default);
-    void Update(T entity);
-    void Delete(T entity);
-}
-
-public class ActiveLoadsSpec : Specification<Load>
-{
-    public ActiveLoadsSpec()
-        => Query.Where(l => l.Status == LoadStatus.Active)
-                .OrderByDescending(l => l.CreatedDate);
+    IQueryable<TEntity> Query();
+    Task<TEntity?> GetByIdAsync(TKey id, CancellationToken ct = default);
+    Task<List<TEntity>> GetListAsync(Expression<Func<TEntity, bool>> predicate, CancellationToken ct = default);
+    Task AddAsync(TEntity entity, CancellationToken ct = default);
+    void Update(TEntity entity);
+    void Delete(TEntity? entity);
 }
 ```
 

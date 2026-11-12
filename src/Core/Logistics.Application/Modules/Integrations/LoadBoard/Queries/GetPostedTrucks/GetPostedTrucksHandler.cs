@@ -1,5 +1,5 @@
 using Logistics.Mediator;
-using System.Linq.Expressions;
+using Microsoft.EntityFrameworkCore;
 using Logistics.Domain.Entities;
 using Logistics.Domain.Persistence;
 using Logistics.Domain.Primitives.Enums;
@@ -12,28 +12,24 @@ internal sealed class GetPostedTrucksHandler(ITenantUnitOfWork tenantUow)
 {
     public async Task<Result<List<PostedTruckDto>>> Handle(GetPostedTrucksQuery req, CancellationToken ct)
     {
-        // Build predicate
-        Expression<Func<PostedTruck, bool>> predicate = p => true;
+        var query = tenantUow.Repository<PostedTruck>().Query();
 
         if (req.ProviderType.HasValue)
         {
-            var provider = req.ProviderType.Value;
-            predicate = CombinePredicates(predicate, p => p.ProviderType == provider);
+            query = query.Where(p => p.ProviderType == req.ProviderType.Value);
         }
 
         if (req.Status.HasValue)
         {
-            var status = req.Status.Value;
-            predicate = CombinePredicates(predicate, p => p.Status == status);
+            query = query.Where(p => p.Status == req.Status.Value);
         }
 
         if (req.TruckId.HasValue)
         {
-            var truckId = req.TruckId.Value;
-            predicate = CombinePredicates(predicate, p => p.TruckId == truckId);
+            query = query.Where(p => p.TruckId == req.TruckId.Value);
         }
 
-        var postedTrucks = await tenantUow.Repository<PostedTruck>().GetListAsync(predicate, ct);
+        var postedTrucks = await query.ToListAsync(ct);
 
         // Order by CreatedAt descending in memory
         var dtos = postedTrucks
@@ -64,25 +60,4 @@ internal sealed class GetPostedTrucksHandler(ITenantUnitOfWork tenantUow)
         return Result<List<PostedTruckDto>>.Ok(dtos);
     }
 
-    private static Expression<Func<PostedTruck, bool>> CombinePredicates(
-        Expression<Func<PostedTruck, bool>> left,
-        Expression<Func<PostedTruck, bool>> right)
-    {
-        var parameter = Expression.Parameter(typeof(PostedTruck), "p");
-        var leftBody = ReplaceParameter(left.Body, left.Parameters[0], parameter);
-        var rightBody = ReplaceParameter(right.Body, right.Parameters[0], parameter);
-        var combined = Expression.AndAlso(leftBody, rightBody);
-        return Expression.Lambda<Func<PostedTruck, bool>>(combined, parameter);
-    }
-
-    private static Expression ReplaceParameter(Expression body, ParameterExpression from, ParameterExpression to)
-    {
-        return new ParameterReplacer(from, to).Visit(body);
-    }
-
-    private sealed class ParameterReplacer(ParameterExpression from, ParameterExpression to) : ExpressionVisitor
-    {
-        protected override Expression VisitParameter(ParameterExpression node)
-            => node == from ? to : base.VisitParameter(node);
-    }
 }

@@ -1,7 +1,6 @@
 using System.Linq.Expressions;
 using Logistics.Domain.Core;
 using Logistics.Domain.Persistence;
-using Logistics.Domain.Specifications;
 using Logistics.Infrastructure.Persistence.Extensions;
 using Microsoft.EntityFrameworkCore;
 
@@ -16,11 +15,6 @@ public class Repository<TDbContext, TEntity, TEntityKey> : IRepository<TEntity, 
     protected Repository(TDbContext dbContext)
     {
         _dbContext = dbContext;
-    }
-
-    public IQueryable<TEntity> ApplySpecification(ISpecification<TEntity> specification)
-    {
-        return _dbContext.Set<TEntity>().ApplySpecification(specification);
     }
 
     public IQueryable<TEntity> Query()
@@ -55,17 +49,9 @@ public class Repository<TDbContext, TEntity, TEntityKey> : IRepository<TEntity, 
             .ToListAsync(ct);
     }
 
-    public Task<List<TEntity>> GetListAsync(ISpecification<TEntity>? specification = null,
-        CancellationToken ct = default)
+    public Task<List<TEntity>> GetListAsync(CancellationToken ct = default)
     {
-        if (specification is null)
-        {
-            return _dbContext.Set<TEntity>().ToListAsync(ct);
-        }
-
-        return _dbContext.Set<TEntity>()
-            .ApplySpecification(specification)
-            .ToListAsync(ct);
+        return _dbContext.Set<TEntity>().ToListAsync(ct);
     }
 
     public Task AddAsync(TEntity entity, CancellationToken ct = default)

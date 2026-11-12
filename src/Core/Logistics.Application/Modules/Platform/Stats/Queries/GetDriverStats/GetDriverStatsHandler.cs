@@ -1,10 +1,11 @@
 using Logistics.Application.Abstractions;
-using Logistics.Application.Modules.Operations.Loads.Specifications;
+using Logistics.Application.Modules.Operations.Loads;
 using Logistics.Domain.Entities;
 using Logistics.Domain.Persistence;
 using Logistics.Domain.Primitives.Enums;
 using Logistics.Mediator;
 using Logistics.Shared.Models;
+using Microsoft.EntityFrameworkCore;
 
 namespace Logistics.Application.Modules.Platform.Stats.Queries;
 
@@ -38,14 +39,10 @@ internal sealed class GetDriverStatsHandler(ITenantUnitOfWork tenantUow)
         var lastMonthStart = startOfMonth.AddMonths(-1);
 
         var loadsRepository = tenantUow.Repository<Load>();
-        var thisWeekLoads = await loadsRepository.GetListAsync(
-            new FilterLoadsByDeliveryDate(assignedTruck.Id, startOfWeek, now), ct);
-        var lastWeekLoads = await loadsRepository.GetListAsync(
-            new FilterLoadsByDeliveryDate(assignedTruck.Id, lastWeekStart, startOfWeek), ct);
-        var thisMonthLoads = await loadsRepository.GetListAsync(
-            new FilterLoadsByDeliveryDate(assignedTruck.Id, startOfMonth, now), ct);
-        var lastMonthLoads = await loadsRepository.GetListAsync(
-            new FilterLoadsByDeliveryDate(assignedTruck.Id, lastMonthStart, startOfMonth), ct);
+        var thisWeekLoads = await loadsRepository.Query().FilterDeliveredBetween(assignedTruck.Id, startOfWeek, now).ToListAsync(ct);
+        var lastWeekLoads = await loadsRepository.Query().FilterDeliveredBetween(assignedTruck.Id, lastWeekStart, startOfWeek).ToListAsync(ct);
+        var thisMonthLoads = await loadsRepository.Query().FilterDeliveredBetween(assignedTruck.Id, startOfMonth, now).ToListAsync(ct);
+        var lastMonthLoads = await loadsRepository.Query().FilterDeliveredBetween(assignedTruck.Id, lastMonthStart, startOfMonth).ToListAsync(ct);
 
         driverStats.ThisWeekGross = thisWeekLoads.Sum(l => l.DeliveryCost);
         driverStats.ThisWeekShare = driverStats.ThisWeekGross * driverIncomePercentage;

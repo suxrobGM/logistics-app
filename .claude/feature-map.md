@@ -12,8 +12,7 @@ This file answers _where_. For _how it works_, follow the deep dive: **AI dispat
 - **Commands**: `src/Core/Logistics.Application/Modules/{Module}/{Feature}/Commands/{Verb}{Entity}/`
 - **Queries**: `src/Core/Logistics.Application/Modules/{Module}/{Feature}/Queries/Get{Entity}/`
 - **Domain events**: `src/Core/Logistics.Domain/Events/`; handlers in `src/Core/Logistics.Application/Modules/{Module}/{Feature}/Events/`
-- **Domain specifications** (base classes only): `src/Core/Logistics.Domain/Specifications/`
-- **Application specifications** (feature-scoped, e.g. `FilterLoadInvoices`, `FilterLoadsByDeliveryDate`): `src/Core/Logistics.Application/Modules/{Module}/{Feature}/Specifications/`
+- **Reused query filters**: `IQueryable<T>` extensions next to the feature (e.g. `Modules/Operations/Loads/LoadQueryableExtensions.cs`); paged lists end with `Utilities/PagedQueryableExtensions.ToPagedResultAsync`
 - **Infrastructure-port interfaces** (implemented by Infrastructure): `src/Core/Logistics.Application.Abstractions/{Domain}/`
 - **Application workflow services** (stay in Application): `src/Core/Logistics.Application/Modules/{Module}/{Feature}/Services/`
 - **Application constants**: feature-scoped under `Modules/{Module}/{Feature}/Constants/`; cross-module shared in `Modules/Common/Constants/`
@@ -36,7 +35,7 @@ This file answers _where_. For _how it works_, follow the deep dive: **AI dispat
 ### Loads
 
 - Domain: `Entities/Load/`
-- Application: `Modules/Operations/Loads/` (Commands, Queries, Services, Specifications, Constants)
+- Application: `Modules/Operations/Loads/` (Commands, Queries, Services, Constants)
 - API/UI: `LoadController.cs`, `tms-portal/pages/loads/`
 - Car hauler vehicles: `Entities/Load/LoadVehicle.cs` + `Load.Vehicles.cs` (JSON complex collection `loads.vehicles`; `LoadVehicle.Id` is what a condition report points at), input `LoadVehicleInput` + `Validators/LoadVehicleInputValidator.cs`, `Services/LoadVehicleInputExtensions.cs`. Capacity warning: `Operations/Common/Services/VehicleCapacityChecker.cs` (used by `GetLoadByIdHandler` and `DispatchEligibilityService` as `VehicleCapacityExceeded`, a warning). eBOL: `Queries/GetVehicleBolPdf/` → `GET /loads/{id}/ebol`, `GET /portal/loads/{id}/ebol`; delivery email is the eBOL variant of the `ShipmentDelivered` customer update (see Customer updates). UI: `load-form/load-vehicles-section.ts` (per-row VIN decode, capacity warning), `pages/loads/components/load-vehicles-content/` (details + eBOL download), `shared/components/display/vehicle-damage-diagram/` (read-only diagram on condition-report-details), customer-portal `shipments/shipment-details` + `documents/`. Guide: [docs/car-hauler-guide.md](../docs/car-hauler-guide.md)
 - Charges and LTL: `Load.Billing.cs` (`FuelSurcharge`, `Accessorials`), `Load.Freight.cs` (freight class, NMFC, pallets, pieces, weight, dimensions, stackable), `LoadAccessorial.cs`; invoice lines from `Entities/Invoice/LoadInvoice.Charges.cs` (`ReplaceLoadCharges` - owns `BaseRate`, `FuelSurcharge` and lines whose `SourceId` is an accessorial). Application: `Services/LoadChargeService.cs` (replace accessorials, sync the invoice, write detention), `Commands/{Create,Update}Load/*Command.Charges.cs`. UI: `load-form/load-charges-section.ts`, `load-form/load-freight-section.ts`, `pages/loads/components/load-charges-content/`

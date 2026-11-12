@@ -62,7 +62,7 @@ internal sealed class LaneRateFloorResolver(ITenantUnitOfWork tenantUow) : ILane
     }
 
     private async Task<IReadOnlyList<LaneRateFloor>> GetFloorsAsync(CancellationToken ct) =>
-        _cachedFloors ??= await tenantUow.Repository<LaneRateFloor>().GetListAsync(specification: null, ct);
+        _cachedFloors ??= await tenantUow.Repository<LaneRateFloor>().GetListAsync(ct);
 
     private static EffectiveRateFloorDto Build(
         decimal minRatePerMile,

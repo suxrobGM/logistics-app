@@ -1,6 +1,6 @@
 # Domain Model
 
-The domain layer (`src/Core/Logistics.Domain/`) holds entities, aggregates, value objects, domain events, and specifications. Entities are split into two databases by marker interface:
+The domain layer (`src/Core/Logistics.Domain/`) holds entities, aggregates, value objects and domain events. Entities are split into two databases by marker interface:
 
 - `IMasterEntity` - lives in the **master DB** (platform state shared across tenants).
 - `ITenantEntity` - lives in **tenant DBs** (per-company operational data).
@@ -413,24 +413,19 @@ A non-exhaustive list of domain events:
 
 Handlers live in `src/Core/Logistics.Application/Events/` and produce side effects: notifications, follow-on jobs, audit log entries, etc.
 
-## Specifications
+## Query filters
 
-`ISpecification<T>` encapsulates reusable query conditions used by `IRepository<T>`. They are defined in `src/Core/Logistics.Domain/Specifications/`.
+Reads filter with plain `.Query().Where(...)` chains inside the handler. When the same condition is reused
+across handlers, put it in an `IQueryable<T>` extension next to the feature - for example
+`LoadQueryableExtensions.FilterDeliveredBetween` in `Modules/Operations/Loads/`. Paged lists finish with
+`ToPagedResultAsync` (`Logistics.Application/Utilities/PagedQueryableExtensions.cs`), which always breaks
+sort ties by id so pages never repeat or skip rows.
 
 ```csharp
-public class ActiveLoadsSpec : Specification<Load>
-{
-    public ActiveLoadsSpec()
-        => Query.Where(l => l.Status != LoadStatus.Cancelled
-                         && l.Status != LoadStatus.Delivered)
-                .OrderByDescending(l => l.CreatedAt);
-}
-
-// Used by a query handler:
-var activeLoads = await tenantUow.Repository<Load>().GetListAsync(new ActiveLoadsSpec(), ct);
+var loads = await tenantUow.Repository<Load>().Query()
+    .FilterDeliveredBetween(truckId, start, end)
+    .ToListAsync(ct);
 ```
-
-Specifications keep query intent in the domain layer rather than scattered across handlers.
 
 ## Auditing
 

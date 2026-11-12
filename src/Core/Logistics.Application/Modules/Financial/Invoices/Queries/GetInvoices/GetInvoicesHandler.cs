@@ -1,5 +1,5 @@
 using Logistics.Application.Abstractions;
-using Logistics.Application.Modules.Financial.Invoices.Specifications;
+using Logistics.Application.Utilities;
 using Logistics.Domain.Entities;
 using Logistics.Domain.Persistence;
 using Logistics.Domain.Primitives.Enums;
@@ -14,119 +14,133 @@ internal sealed class GetInvoicesHandler(ITenantUnitOfWork tenantUow)
 {
     public Task<PagedResult<InvoiceDto>> Handle(GetInvoicesQuery req, CancellationToken ct)
     {
-        // Determine which type of invoices to query
-        if (req.InvoiceType == InvoiceType.Load || req.LoadId.HasValue ||
-            req.CustomerId.HasValue || !string.IsNullOrEmpty(req.CustomerName) || req.FactoringStatus.HasValue)
+        var filtersLoadFields = req.LoadId.HasValue
+                                || req.CustomerId.HasValue
+                                || !string.IsNullOrEmpty(req.CustomerName)
+                                || req.FactoringStatus.HasValue;
+        if (req.InvoiceType == InvoiceType.Load || filtersLoadFields)
         {
-            return GetLoadInvoices(req);
+            return FilterLoadInvoices(req).ToPagedResultAsync(req, i => i.ToDto(), ct);
         }
 
-        if (req.EmployeeId.HasValue || !string.IsNullOrEmpty(req.EmployeeName) ||
-            req.InvoiceType == InvoiceType.Payroll)
+        var filtersPayrollFields = req.EmployeeId.HasValue || !string.IsNullOrEmpty(req.EmployeeName);
+        if (req.InvoiceType == InvoiceType.Payroll || filtersPayrollFields)
         {
-            return GetPayrollInvoices(req);
+            return FilterPayrollInvoices(req).ToPagedResultAsync(req, i => i.ToDto(), ct);
         }
 
-        return GetAllInvoices(req);
-    }
-
-    private Task<PagedResult<InvoiceDto>> GetAllInvoices(GetInvoicesQuery req)
-    {
         var query = tenantUow.Repository<Invoice>().Query();
-
         if (req.InvoiceType is not null)
         {
             query = query.Where(i => i.Type == req.InvoiceType);
         }
 
-        var totalItems = query.Count();
-
-        var invoicesDto = query
-            .OrderBy(req.OrderBy, x => x.Id)
-            .ApplyPaging(req.Page, req.PageSize)
-            .Select(i => i.ToDto())
-            .ToArray();
-
-        return Task.FromResult(PagedResult<InvoiceDto>.Ok(invoicesDto, totalItems, req.PageSize));
+        return query.ToPagedResultAsync(req, i => i.ToDto(), ct);
     }
 
-    private async Task<PagedResult<InvoiceDto>> GetLoadInvoices(GetInvoicesQuery req)
+    private IQueryable<LoadInvoice> FilterLoadInvoices(GetInvoicesQuery req)
     {
-        var specification = new FilterLoadInvoices(
-            req.LoadId,
-            req.Status,
-            req.CustomerId,
-            req.CustomerName,
-            req.Search,
-            req.StartDate,
-            req.EndDate,
-            req.OverdueOnly,
-            req.FactoringStatus,
-            req.OrderBy,
-            req.Page,
-            req.PageSize);
+        var query = tenantUow.Repository<LoadInvoice>().Query();
 
-        var repository = tenantUow.Repository<LoadInvoice>();
+        if (req.LoadId.HasValue)
+        {
+            query = query.Where(i => i.LoadId == req.LoadId.Value);
+        }
 
-        // Count with the same filter criteria (excluding pagination)
-        var countSpec = new FilterLoadInvoices(
-            req.LoadId,
-            req.Status,
-            req.CustomerId,
-            req.CustomerName,
-            req.Search,
-            req.StartDate,
-            req.EndDate,
-            req.OverdueOnly,
-            req.FactoringStatus,
-            null,
-            1,
-            int.MaxValue);
+        if (req.Status.HasValue)
+        {
+            query = query.Where(i => i.Status == req.Status.Value);
+        }
 
-        var totalItems = repository.ApplySpecification(countSpec).Count();
+        if (req.CustomerId.HasValue)
+        {
+            query = query.Where(i => i.CustomerId == req.CustomerId.Value);
+        }
 
-        var invoicesDto = repository
-            .ApplySpecification(specification)
-            .Select(i => i.ToDto())
-            .ToArray();
+        if (!string.IsNullOrWhiteSpace(req.CustomerName))
+        {
+            var name = req.CustomerName.ToLower();
+            query = query.Where(i => i.Customer.Name.ToLower().Contains(name));
+        }
 
-        return PagedResult<InvoiceDto>.Ok(invoicesDto, totalItems, req.PageSize);
+        if (!string.IsNullOrWhiteSpace(req.Search))
+        {
+            var search = req.Search.ToLower();
+
+            // A number matches the invoice or load number as well as the customer name.
+            query = long.TryParse(req.Search, out var number)
+                ? query.Where(i => i.Number == number
+                                   || i.Load.Number == number
+                                   || i.Customer.Name.ToLower().Contains(search))
+                : query.Where(i => i.Customer.Name.ToLower().Contains(search));
+        }
+
+        if (req.StartDate.HasValue)
+        {
+            query = query.Where(i => i.CreatedAt >= req.StartDate.Value);
+        }
+
+        if (req.EndDate.HasValue)
+        {
+            query = query.Where(i => i.CreatedAt <= req.EndDate.Value);
+        }
+
+        if (req.OverdueOnly == true)
+        {
+            var now = DateTime.UtcNow;
+            query = query.Where(i => i.DueDate.HasValue
+                                     && i.DueDate.Value < now
+                                     && i.Status != InvoiceStatus.Paid
+                                     && i.Status != InvoiceStatus.Cancelled);
+        }
+
+        if (req.FactoringStatus.HasValue)
+        {
+            query = query.Where(i => i.FactoringStatus == req.FactoringStatus.Value);
+        }
+
+        return query;
     }
 
-    private Task<PagedResult<InvoiceDto>> GetPayrollInvoices(GetInvoicesQuery req)
+    private IQueryable<PayrollInvoice> FilterPayrollInvoices(GetInvoicesQuery req)
     {
-        var specification = new FilterPayrollInvoices(
-            req.EmployeeId,
-            req.EmployeeName,
-            req.Status,
-            req.SalaryType,
-            req.StartDate,
-            req.EndDate,
-            req.OrderBy,
-            req.Page,
-            req.PageSize);
+        var query = tenantUow.Repository<PayrollInvoice>().Query();
 
-        var repository = tenantUow.Repository<PayrollInvoice>();
+        if (req.EmployeeId.HasValue)
+        {
+            query = query.Where(i => i.EmployeeId == req.EmployeeId.Value);
+        }
 
-        // Count with the same filter criteria (excluding pagination)
-        var countSpec = new FilterPayrollInvoices(
-            req.EmployeeId,
-            req.EmployeeName,
-            req.Status,
-            req.SalaryType,
-            req.StartDate,
-            req.EndDate,
-            null,
-            1,
-            int.MaxValue);
+        if (!string.IsNullOrWhiteSpace(req.EmployeeName))
+        {
+            var name = req.EmployeeName.ToLower();
+            query = query.Where(i => i.Employee.FirstName.ToLower().Contains(name)
+                                     || i.Employee.LastName.ToLower().Contains(name));
+        }
 
-        var totalItems = repository.ApplySpecification(countSpec).Count();
+        if (req.Status.HasValue)
+        {
+            query = query.Where(i => i.Status == req.Status.Value);
+        }
 
-        var invoicesDto = repository
-            .ApplySpecification(specification)
-            .Select(i => i.ToDto())
-            .ToArray();
+        if (req.SalaryType.HasValue)
+        {
+            query = query.Where(i => i.Employee.SalaryType == req.SalaryType.Value);
+        }
 
-        return Task.FromResult(PagedResult<InvoiceDto>.Ok(invoicesDto, totalItems, req.PageSize));
+        // A payroll matches when its period overlaps the requested range.
+        if (req.StartDate.HasValue)
+        {
+            var from = DateOnly.FromDateTime(req.StartDate.Value);
+            query = query.Where(i => i.PeriodEnd >= from);
+        }
+
+        if (req.EndDate.HasValue)
+        {
+            var to = DateOnly.FromDateTime(req.EndDate.Value);
+            query = query.Where(i => i.PeriodStart <= to);
+        }
+
+        return query;
     }
 }

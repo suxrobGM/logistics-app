@@ -1,6 +1,5 @@
 using System.Linq.Expressions;
 using Logistics.Domain.Core;
-using Logistics.Domain.Specifications;
 
 namespace Logistics.Domain.Persistence;
 
@@ -12,15 +11,8 @@ namespace Logistics.Domain.Persistence;
 public interface IRepository<TEntity, in TEntityKey> where TEntity : class, IEntity<TEntityKey>
 {
     /// <summary>
-    ///     Applies a specification to the entity query.
-    /// </summary>
-    /// <param name="specification"></param>
-    /// <returns></returns>
-    IQueryable<TEntity> ApplySpecification(ISpecification<TEntity> specification);
-
-    /// <summary>
-    ///     Direct access to a queryable entity set. Not recommended for general use.
-    ///     Instead, use <see cref="ApplySpecification" /> method or other repository methods.
+    ///     The queryable entity set, for filtering and projecting in the database. Lazy loading is on,
+    ///     so don't read navigations per row after materialising - project or batch instead.
     /// </summary>
     /// <returns></returns>
     IQueryable<TEntity> Query();
@@ -58,12 +50,9 @@ public interface IRepository<TEntity, in TEntityKey> where TEntity : class, IEnt
     Task<List<TEntity>> GetListAsync(Expression<Func<TEntity, bool>> predicate, CancellationToken ct = default);
 
     /// <summary>
-    ///     Gets a list of the entity objects
+    ///     Gets every row.
     /// </summary>
-    /// <param name="specification">Specification</param>
-    /// <param name="ct">Cancellation token</param>
-    /// <returns>List of entity objects</returns>
-    Task<List<TEntity>> GetListAsync(ISpecification<TEntity>? specification = null, CancellationToken ct = default);
+    Task<List<TEntity>> GetListAsync(CancellationToken ct = default);
 
     /// <summary>
     ///     Adds new entry to database.

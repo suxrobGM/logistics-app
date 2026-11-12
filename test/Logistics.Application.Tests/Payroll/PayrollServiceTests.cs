@@ -7,7 +7,6 @@ using Logistics.Domain.Entities;
 using Logistics.Domain.Persistence;
 using Logistics.Domain.Primitives.Enums;
 using Logistics.Domain.Primitives.ValueObjects;
-using Logistics.Domain.Specifications;
 using Microsoft.Extensions.Logging.Abstractions;
 using MockQueryable;
 using NSubstitute;

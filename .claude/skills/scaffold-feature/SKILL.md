@@ -80,11 +80,9 @@ numeric suffix, or date. Inspect the generated SQL before committing.
 
 ### 4. Reads (inline `.Query()` first)
 
-Default to an inline `.Query()` inside the query handler - do **not** create a `Specification<T>` class for a
-one-off read. Only add a dedicated spec (`src/Core/Logistics.Application/Modules/{Module}/{Feature}/Specifications/`)
-when the same condition is genuinely reused across handlers; there are just a few left in the codebase
-(`FilterLoadInvoices`, `FilterPayrollInvoices`, `FilterLoadsByDeliveryDate`). `Logistics.Domain/Specifications/`
-holds only the base classes.
+Default to an inline `.Query()` inside the query handler. When the same condition is genuinely reused across
+handlers, add an `IQueryable<T>` extension next to the feature (e.g. `LoadQueryableExtensions.FilterDeliveredBetween`).
+Paged list queries end with `ToPagedResultAsync(req, x => x.ToDto(), ct)`, which sorts with an id tie-breaker.
 
 ### 5. Commands and queries
 

@@ -1,5 +1,5 @@
 using Logistics.Application.Abstractions;
-using Logistics.Application.Modules.Operations.Loads.Specifications;
+using Logistics.Application.Modules.Operations.Loads;
 using Logistics.Domain.Entities;
 using Logistics.Domain.Extensions;
 using Logistics.Domain.Persistence;
@@ -32,9 +32,8 @@ internal sealed class GetMonthlyGrossesHandler(ITenantUnitOfWork tenantUow) : IR
         var startDate = DateTime.SpecifyKind(req.StartDate, DateTimeKind.Utc);
         var endDate = DateTime.SpecifyKind(req.EndDate, DateTimeKind.Utc);
 
-        var spec = new FilterLoadsByDeliveryDate(truckId, startDate, endDate);
         var months = req.StartDate.MonthsBetween(req.EndDate);
-        var filteredLoads = tenantUow.Repository<Load>().ApplySpecification(spec).ToArray();
+        var filteredLoads = tenantUow.Repository<Load>().Query().FilterDeliveredBetween(truckId, startDate, endDate).ToArray();
 
         var dict = months.ToDictionary(
             k => (k.Year, k.Month),
