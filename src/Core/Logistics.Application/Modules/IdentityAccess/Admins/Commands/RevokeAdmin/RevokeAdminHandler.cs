@@ -1,3 +1,4 @@
+using Logistics.Application.Utilities;
 using Logistics.Application.Abstractions;
 using Logistics.Domain.Entities;
 using Logistics.Mediator;
@@ -31,7 +32,7 @@ internal sealed class RevokeAdminHandler(UserManager<User> userManager)
         var result = await userManager.RemoveFromRoleAsync(user, AppRoles.Admin);
         if (!result.Succeeded)
         {
-            var errors = string.Join(", ", result.Errors.Select(e => e.Description));
+            var errors = result.DescribeErrors();
             return Result.Fail($"Failed to revoke admin role: {errors}");
         }
 

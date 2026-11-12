@@ -92,4 +92,11 @@ public class Invitation : AuditableEntity, IMasterEntity
 
     public bool IsExpired => DateTime.UtcNow > ExpiresAt;
     public bool IsValid => Status == InvitationStatus.Pending && !IsExpired;
+
+    public void Accept(Guid userId)
+    {
+        Status = InvitationStatus.Accepted;
+        AcceptedAt = DateTime.UtcNow;
+        AcceptedByUserId = userId;
+    }
 }

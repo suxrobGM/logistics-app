@@ -80,7 +80,7 @@ internal sealed class AcceptInvitationHandler(
                 var passwordResult = await userManager.AddPasswordAsync(user, req.Password);
                 if (!passwordResult.Succeeded)
                 {
-                    var errors = string.Join(", ", passwordResult.Errors.Select(e => e.Description));
+                    var errors = passwordResult.DescribeErrors();
                     return Result<AcceptInvitationResult>.Fail($"Failed to set password: {errors}");
                 }
 
@@ -91,23 +91,13 @@ internal sealed class AcceptInvitationHandler(
         }
         else
         {
-            // Create new user
-            user = new User
+            var created = await CreateInvitedUserAsync(req, invitation, invitation.TenantId);
+            if (!created.IsSuccess)
             {
-                UserName = invitation.Email,
-                Email = invitation.Email,
-                EmailConfirmed = true, // Pre-confirmed via invitation
-                FirstName = req.FirstName,
-                LastName = req.LastName,
-                TenantId = invitation.TenantId
-            };
-
-            var createResult = await userManager.CreateAsync(user, req.Password);
-            if (!createResult.Succeeded)
-            {
-                var errors = string.Join(", ", createResult.Errors.Select(e => e.Description));
-                return Result<AcceptInvitationResult>.Fail($"Failed to create user: {errors}");
+                return Result<AcceptInvitationResult>.Fail(created.Error!);
             }
+
+            user = created.Value!;
         }
 
         // Switch to tenant database
@@ -132,11 +122,7 @@ internal sealed class AcceptInvitationHandler(
         }
 
         // Update invitation status
-        invitation.Status = InvitationStatus.Accepted;
-        invitation.AcceptedAt = DateTime.UtcNow;
-        invitation.AcceptedByUserId = user.Id;
-
-        masterUow.Repository<Invitation>().Update(invitation);
+        invitation.Accept(user.Id);
         await masterUow.SaveChangesAsync(ct);
         await tenantUow.SaveChangesAsync(ct);
 
@@ -163,21 +149,13 @@ internal sealed class AcceptInvitationHandler(
         var user = await userManager.FindByEmailAsync(invitation.Email);
         if (user is null)
         {
-            user = new User
+            var created = await CreateInvitedUserAsync(req, invitation, tenantId: null);
+            if (!created.IsSuccess)
             {
-                UserName = invitation.Email,
-                Email = invitation.Email,
-                EmailConfirmed = true, // Pre-confirmed via invitation
-                FirstName = req.FirstName,
-                LastName = req.LastName
-            };
-
-            var createResult = await userManager.CreateAsync(user, req.Password);
-            if (!createResult.Succeeded)
-            {
-                var errors = string.Join(", ", createResult.Errors.Select(e => e.Description));
-                return Result<AcceptInvitationResult>.Fail($"Failed to create user: {errors}");
+                return Result<AcceptInvitationResult>.Fail(created.Error!);
             }
+
+            user = created.Value!;
         }
 
         if (!await userManager.IsInRoleAsync(user, appRole))
@@ -185,11 +163,7 @@ internal sealed class AcceptInvitationHandler(
             await userManager.AddToRoleAsync(user, appRole);
         }
 
-        invitation.Status = InvitationStatus.Accepted;
-        invitation.AcceptedAt = DateTime.UtcNow;
-        invitation.AcceptedByUserId = user.Id;
-
-        masterUow.Repository<Invitation>().Update(invitation);
+        invitation.Accept(user.Id);
         await masterUow.SaveChangesAsync(ct);
 
         return Result<AcceptInvitationResult>.Ok(new AcceptInvitationResult
@@ -199,6 +173,26 @@ internal sealed class AcceptInvitationHandler(
             TenantName = PlatformConstants.PlatformName,
             RoleDisplayName = InvitationMapper.GetAppRoleDisplayName(appRole)
         });
+    }
+
+    /// <summary>The invitation proves the address, so the new account starts with its email confirmed.</summary>
+    private async Task<Result<User>> CreateInvitedUserAsync(
+        AcceptInvitationCommand req, Invitation invitation, Guid? tenantId)
+    {
+        var user = new User
+        {
+            UserName = invitation.Email,
+            Email = invitation.Email,
+            EmailConfirmed = true,
+            FirstName = req.FirstName,
+            LastName = req.LastName,
+            TenantId = tenantId
+        };
+
+        var createResult = await userManager.CreateAsync(user, req.Password);
+        return createResult.Succeeded
+            ? Result<User>.Ok(user)
+            : Result<User>.Fail($"Failed to create user: {createResult.DescribeErrors()}");
     }
 
     private async Task<Result> CreateEmployeeAsync(

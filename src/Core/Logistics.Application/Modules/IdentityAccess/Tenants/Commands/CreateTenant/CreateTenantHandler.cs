@@ -121,7 +121,7 @@ internal sealed class CreateTenantHandler(
             if (!createResult.Succeeded)
             {
                 return Result.Fail(
-                    $"Failed to create owner account: {string.Join(", ", createResult.Errors.Select(e => e.Description))}");
+                    $"Failed to create owner account: {createResult.DescribeErrors()}");
             }
 
             await SendWelcomeEmailAsync(owner, tenant, temporaryPassword);

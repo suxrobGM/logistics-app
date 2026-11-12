@@ -51,7 +51,7 @@ internal sealed class AddAdminHandler(
             var addResult = await userManager.AddToRoleAsync(existingUser, AppRoles.Admin);
             if (!addResult.Succeeded)
             {
-                var errors = string.Join(", ", addResult.Errors.Select(e => e.Description));
+                var errors = addResult.DescribeErrors();
                 return Result<AddAdminResult>.Fail($"Failed to grant admin role: {errors}");
             }
 

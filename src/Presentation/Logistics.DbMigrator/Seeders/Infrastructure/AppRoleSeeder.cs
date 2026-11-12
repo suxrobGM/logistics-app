@@ -1,4 +1,5 @@
 using System.Security.Claims;
+using Logistics.Application.Utilities;
 using Logistics.DbMigrator.Abstractions;
 using Logistics.DbMigrator.Models;
 using Logistics.Domain.Entities;
@@ -50,7 +51,7 @@ internal class AppRoleSeeder(ILogger<AppRoleSeeder> logger) : SeederBase(logger)
                 else
                 {
                     Logger.LogError("Failed to create role '{RoleName}': {Errors}",
-                        role.Name, string.Join(", ", result.Errors.Select(e => e.Description)));
+                        role.Name, result.DescribeErrors());
                 }
             }
 

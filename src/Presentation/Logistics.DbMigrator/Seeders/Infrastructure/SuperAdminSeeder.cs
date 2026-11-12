@@ -1,3 +1,4 @@
+using Logistics.Application.Utilities;
 using Logistics.DbMigrator.Abstractions;
 using Logistics.DbMigrator.Models;
 using Logistics.Domain.Entities;
@@ -60,7 +61,7 @@ internal class SuperAdminSeeder(ILogger<SuperAdminSeeder> logger) : SeederBase(l
         if (!result.Succeeded)
         {
             throw new InvalidOperationException(
-                $"Failed to create super admin: {string.Join(", ", result.Errors.Select(e => e.Description))}");
+                $"Failed to create super admin: {result.DescribeErrors()}");
         }
 
         Logger.LogInformation("Created super admin '{Admin}'", user.Email);
@@ -112,7 +113,7 @@ internal class SuperAdminSeeder(ILogger<SuperAdminSeeder> logger) : SeederBase(l
         if (!result.Succeeded)
         {
             throw new InvalidOperationException(
-                $"Failed to sync super admin: {string.Join(", ", result.Errors.Select(e => e.Description))}");
+                $"Failed to sync super admin: {result.DescribeErrors()}");
         }
 
         Logger.LogInformation("Synced super admin '{Admin}'", superAdmin.Email);

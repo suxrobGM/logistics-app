@@ -1,3 +1,4 @@
+using Logistics.Application.Utilities;
 using Logistics.Application.Modules.IdentityAccess.Invitations.Commands;
 using Logistics.Application.Modules.IdentityAccess.Users.Services;
 using Logistics.Application.Modules.Platform.DataImport.Constants;
@@ -106,7 +107,7 @@ internal sealed class DriverImporter(
                 var result = await userManager.CreateAsync(user);
                 if (!result.Succeeded)
                 {
-                    draft.Errors.Add(string.Join(" ", result.Errors.Select(e => e.Description)));
+                    draft.Errors.Add(result.DescribeErrors(" "));
                     continue;
                 }
             }
