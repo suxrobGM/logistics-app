@@ -5,10 +5,7 @@ namespace Logistics.Domain.Entities;
 
 public partial class LoadInvoice : Invoice
 {
-    /// <summary>
-    /// A draft invoice carrying the load's charge lines (base rate, fuel surcharge, accessorials). It is issued
-    /// when the load is dispatched.
-    /// </summary>
+    /// <summary>A draft with the load's charge lines; it is issued when the load is dispatched.</summary>
     public static LoadInvoice Create(Load load)
     {
         var invoice = new LoadInvoice

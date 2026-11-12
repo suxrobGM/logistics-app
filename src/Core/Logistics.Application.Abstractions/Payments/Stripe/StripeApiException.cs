@@ -1,9 +1,6 @@
 namespace Logistics.Application.Abstractions.Payments.Stripe;
 
-/// <summary>
-/// Stripe rejected a request. Ports document which methods throw it, so callers can turn the
-/// failure into a result without referencing the Stripe SDK.
-/// </summary>
+/// <summary>Stripe rejected a request; lets callers handle it without referencing the Stripe SDK.</summary>
 public sealed class StripeApiException(string message, string? code = null, Exception? innerException = null)
     : Exception(message, innerException)
 {

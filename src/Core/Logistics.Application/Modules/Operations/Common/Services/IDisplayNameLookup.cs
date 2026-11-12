@@ -1,9 +1,6 @@
 namespace Logistics.Application.Modules.Operations.Common.Services;
 
-/// <summary>
-///     Names for a page of rows in one query each. Lazy loading would read every row's employee or truck
-///     separately, so list handlers collect the ids first and look them up here.
-/// </summary>
+/// <summary>Batches a page's name lookups so list handlers avoid a lazy load per row.</summary>
 public interface IDisplayNameLookup : IApplicationService
 {
     /// <summary>Employees' full names by id. Null ids and missing employees are left out.</summary>

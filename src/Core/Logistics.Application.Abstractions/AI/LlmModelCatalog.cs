@@ -2,11 +2,7 @@ using Logistics.Domain.Primitives.Enums;
 
 namespace Logistics.Application.Abstractions.AI;
 
-/// <summary>
-/// Single source of truth for the LLM models an admin can select as the platform-wide
-/// dispatch model, and for what each one costs. Keep the ids in sync with the appsettings
-/// <c>Llm:Providers:{Provider}:Model</c> values.
-/// </summary>
+/// <summary>Models an admin can pick, with prices. Ids must match appsettings <c>Llm:Providers:{Provider}:Model</c>.</summary>
 public static class LlmModelCatalog
 {
     // Prices as of October 2026, in dollars per million tokens.
@@ -31,10 +27,6 @@ public static class LlmModelCatalog
             ReasoningStyle.OpenAIEffort),
     ];
 
-    /// <summary>
-    /// Cost fallback for an unrecognised model: charging Sonnet rates is the conservative choice,
-    /// since an unknown model is most often a cheap or misconfigured one.
-    /// </summary>
     private static readonly LlmTokenPrices DefaultPrices = Find("claude-sonnet-5-5")!.Prices;
 
     public static LlmModelInfo? Find(string? id) =>
@@ -46,10 +38,7 @@ public static class LlmModelCatalog
     public static ReasoningStyle GetReasoningStyle(string? modelId) =>
         Find(modelId)?.Reasoning ?? ReasoningStyle.None;
 
-    /// <summary>
-    /// USD cost of one call. The weekly budget and Stripe overage both derive from this - there is no
-    /// separate tier or multiplier concept. Unknown models are charged Sonnet rates.
-    /// </summary>
+    /// <summary>USD cost of one call, used by the weekly budget and Stripe overage. Unknown models pay Sonnet rates.</summary>
     public static decimal CalculateCost(
         string model,
         int inputTokens,
@@ -80,10 +69,7 @@ public record LlmTokenPrices(
     decimal CacheReadPerMToken = 0m,
     decimal CacheWritePerMToken = 0m);
 
-/// <summary>
-/// Which reasoning control a model exposes. <see cref="None"/> models never receive a reasoning
-/// parameter.
-/// </summary>
+/// <summary>Which reasoning control a model exposes; <see cref="None"/> models never get a reasoning parameter.</summary>
 public enum ReasoningStyle
 {
     None,

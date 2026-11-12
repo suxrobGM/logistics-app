@@ -4,10 +4,7 @@ using Logistics.Shared.Models;
 
 namespace Logistics.Application.Modules.Operations.Loads.Commands;
 
-/// <summary>
-///     Everything a new load is built from. <see cref="CreateLoadCommand" /> and the loads a trip creates
-///     inline both carry it, so <see cref="Services.ILoadService" /> copies the fields onto the entity once.
-/// </summary>
+/// <summary>Everything a new load is built from, whether created alone or inline by a trip.</summary>
 public interface ILoadDetails : ILoadScheduleFields
 {
     string Name { get; }

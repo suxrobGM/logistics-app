@@ -7,11 +7,7 @@ public static class AgentMessageSequences
 {
     extension(ITenantUnitOfWork tenantUow)
     {
-        /// <summary>
-        /// Reserves <paramref name="count"/> consecutive message sequences on a saved conversation in one
-        /// atomic statement and returns the first. A turn, a decision note and a broker reply can append to
-        /// the same conversation at once, so the counter must move in the database, never in memory.
-        /// </summary>
+        /// <summary>Returns the first of <paramref name="count"/> sequences, reserved atomically because writers race.</summary>
         public async Task<int> ReserveSequencesAsync(
             AgentConversation conversation, int count, CancellationToken ct)
         {

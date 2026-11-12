@@ -1,9 +1,6 @@
 namespace Logistics.Application.Abstractions.Payments.Stripe;
 
-/// <summary>
-/// A verified Stripe event. Exactly one payload property is set, matching <see cref="Kind"/>;
-/// none is set for <see cref="StripeWebhookEventKind.Other"/>.
-/// </summary>
+/// <summary>Exactly one payload property is set, matching <see cref="Kind"/>; none for <see cref="StripeWebhookEventKind.Other"/>.</summary>
 public sealed record StripeWebhookEvent
 {
     public required string Id { get; init; }

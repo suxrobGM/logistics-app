@@ -7,10 +7,7 @@ public static class CustomerUnitOfWorkExtensions
 {
     extension(ITenantUnitOfWork tenantUow)
     {
-        /// <summary>
-        ///     Finds the customer whose name matches ignoring case, or adds a new one. The caller saves;
-        ///     <c>Created</c> tells it whether there is a new row to save.
-        /// </summary>
+        /// <summary>Matches the name ignoring case. The caller saves; <c>Created</c> says whether there is a new row.</summary>
         public async Task<(Customer Customer, bool Created)> FindOrAddCustomerAsync(string name, CancellationToken ct)
         {
             var lowerName = name.ToLower();

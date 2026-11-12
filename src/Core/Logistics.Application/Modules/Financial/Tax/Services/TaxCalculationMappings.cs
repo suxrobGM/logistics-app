@@ -5,20 +5,11 @@ using Logistics.Application.Abstractions.Tax;
 
 namespace Logistics.Application.Modules.Financial.Tax.Services;
 
-/// <summary>
-/// Mapping helpers between calculator inputs/outputs (which live in
-/// <c>Logistics.Application.Services.Tax</c>) and either domain entities or shared DTOs.
-/// Lives in Application because <c>Logistics.Mappings</c> doesn't reference Application,
-/// so calculator types are out of its scope.
-/// </summary>
 public static class TaxCalculationMappings
 {
     extension(IEnumerable<InvoiceLineItem> lineItems)
     {
-        /// <summary>
-        /// Builds calculator-line inputs from invoice line items, using each line's net total
-        /// (Amount * Quantity) as the taxable base.
-        /// </summary>
+        /// <summary>Taxes each line on its net total, Amount * Quantity.</summary>
         public IReadOnlyList<TaxCalculationLineItem> ToCalculationLines(
             ) =>
             lineItems
@@ -34,9 +25,6 @@ public static class TaxCalculationMappings
 
     extension(IEnumerable<PreviewInvoiceTaxLineItem> lineItems)
     {
-        /// <summary>
-        /// Builds calculator-line inputs from the preview-tax request DTOs.
-        /// </summary>
         public IReadOnlyList<TaxCalculationLineItem> ToCalculationLines(
             ) =>
             lineItems
@@ -69,10 +57,6 @@ public static class TaxCalculationMappings
 
     extension(TaxCalculationResult result)
     {
-        /// <summary>
-        /// Translate a <see cref="TaxCalculationResult"/> into the API's preview response, given the
-        /// invoice currency and pre-tax totals.
-        /// </summary>
         public PreviewInvoiceTaxResponse ToPreviewResponse(
             string currency,
             decimal subtotal,

@@ -7,11 +7,7 @@ public static class NegotiationMessageSequences
 {
     extension(ITenantUnitOfWork tenantUow)
     {
-        /// <summary>
-        /// Reserves the next message sequence on a saved negotiation in one atomic statement. A counter
-        /// offer and an inbound broker reply can land on the same thread at once, so the counter must
-        /// move in the database, never in memory.
-        /// </summary>
+        /// <summary>Reserved atomically in the database, since a counter offer and a broker reply can race.</summary>
         public async Task<int> ReserveSequenceAsync(
             RateNegotiation negotiation, CancellationToken ct)
         {

@@ -7,9 +7,7 @@ using static Logistics.Application.Modules.Platform.DataImport.Constants.ImportF
 
 namespace Logistics.Application.Modules.Platform.DataImport.Importers;
 
-/// <summary>
-///     Typed reads of a row's cells that record a readable error on the draft instead of throwing.
-/// </summary>
+/// <summary>Typed cell reads that record an error on the draft instead of throwing.</summary>
 internal static class ImportCells
 {
     private static readonly AddressValidator AddressValidator = new();
@@ -77,10 +75,7 @@ internal static class ImportCells
             return value;
         }
 
-        /// <summary>
-        ///     Reads an address group (optionally prefixed, e.g. pickup) and validates it like a form would:
-        ///     with <see cref="AddressValidator"/> and against the tenant's region.
-        /// </summary>
+        /// <summary>Validates like the form does, including against the tenant's region.</summary>
         public Address? ReadAddress(
             string? prefix, string label, ImportOptions options, bool required)
         {

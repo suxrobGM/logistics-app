@@ -10,31 +10,18 @@ public abstract partial class Invoice : AuditableEntity, ITenantEntity, IAuditab
     public abstract InvoiceType Type { get; set; }
     public InvoiceStatus Status { get; set; }
 
-    /// <summary>
-    /// Sum of line item nets (pre-tax) in the invoice currency. Set by <see cref="RecalculateTotals"/>.
-    /// </summary>
+    /// <summary>Pre-tax sum of the line nets; set by <see cref="RecalculateTotals"/>.</summary>
     public required Money Subtotal { get; set; }
 
-    /// <summary>
-    /// Tax owed across all line items in the invoice currency. Always 0 when
-    /// <see cref="TaxBehavior"/> is <see cref="TaxBehavior.ReverseCharge"/>.
-    /// </summary>
+    /// <summary>Always 0 under <see cref="TaxBehavior.ReverseCharge"/>.</summary>
     public required Money TaxTotal { get; set; }
 
-    /// <summary>
-    /// Total inclusive of tax &amp; discounts. Equals Subtotal + TaxTotal for exclusive pricing.
-    /// </summary>
+    /// <summary>Includes tax and discounts; Subtotal + TaxTotal under exclusive pricing.</summary>
     public required Money Total { get; set; }
 
-    /// <summary>
-    /// How tax is applied to line items. Defaults to Exclusive (tax added on top).
-    /// </summary>
     public TaxBehavior TaxBehavior { get; set; } = TaxBehavior.Exclusive;
 
-    /// <summary>
-    /// Persisted JSON of <see cref="InvoiceTaxLine"/> entries. Use
-    /// <see cref="GetTaxBreakdown"/> / <see cref="SetTaxBreakdown"/> to access.
-    /// </summary>
+    /// <summary>Read and write it through <see cref="GetTaxBreakdown"/> and <see cref="SetTaxBreakdown"/>.</summary>
     public string? TaxBreakdownJson { get; set; }
 
     public string? Notes { get; set; }
@@ -44,20 +31,13 @@ public abstract partial class Invoice : AuditableEntity, ITenantEntity, IAuditab
     public virtual List<InvoiceLineItem> LineItems { get; set; } = [];
     public virtual List<PaymentLink> PaymentLinks { get; set; } = [];
 
-    /// <summary>
-    /// When the invoice was sent to the customer.
-    /// </summary>
     public DateTime? SentAt { get; set; }
 
-    /// <summary>
-    /// Email address the invoice was sent to.
-    /// </summary>
     public string? SentToEmail { get; set; }
 
     /// <summary>
-    /// Swaps the lines <paramref name="owns"/> matches for <paramref name="fresh"/>, which go first in
-    /// the line order; the other lines keep their relative order after them. Returns the removed
-    /// lines. The caller registers the removed and added lines with the repository.
+    /// Puts <paramref name="fresh"/> first in line order and returns the removed lines. The caller registers
+    /// both with the repository.
     /// </summary>
     public IReadOnlyList<InvoiceLineItem> ReplaceLines(Func<InvoiceLineItem, bool> owns, IReadOnlyList<InvoiceLineItem> fresh)
     {
@@ -117,10 +97,7 @@ public abstract partial class Invoice : AuditableEntity, ITenantEntity, IAuditab
             : null;
     }
 
-    /// <summary>
-    /// Appends a hand-entered line after the existing ones. On a payroll the amount is signed by
-    /// <paramref name="type" />, so a deduction always lowers the pay. The caller adds the line to its repository.
-    /// </summary>
+    /// <summary>On a payroll the amount is signed by <paramref name="type" />. The caller adds the line to its repository.</summary>
     public InvoiceLineItem AddLineItem(
         string description, InvoiceLineItemType type, decimal amount, int quantity, string? notes)
     {
@@ -140,21 +117,13 @@ public abstract partial class Invoice : AuditableEntity, ITenantEntity, IAuditab
         return lineItem;
     }
 
-    /// <summary>
-    /// What settled payments add up to: only <see cref="PaymentStatus.Paid"/> payments in
-    /// <paramref name="currency"/> count. Pending, failed, cancelled and refunded payments stay on the
-    /// invoice but pay nothing. For callers that hold an invoice's payments without loading them through it.
-    /// </summary>
+    /// <summary>Counts only <see cref="PaymentStatus.Paid"/> payments in <paramref name="currency"/>.</summary>
     public static decimal SumPaid(IEnumerable<Payment> payments, string currency) => payments
         .Where(p => p.Status == PaymentStatus.Paid
                     && string.Equals(p.Amount.Currency, currency, StringComparison.OrdinalIgnoreCase))
         .Sum(p => p.Amount.Amount);
 
-    /// <summary>
-    /// Links the payment to this invoice, whatever its status, and recalculates the invoice status. A payment
-    /// that settles later pays the invoice once its status becomes <see cref="PaymentStatus.Paid"/> and the
-    /// status is recalculated.
-    /// </summary>
+    /// <summary>Links the payment whatever its status; a pending one pays only once it settles and the status is recalculated.</summary>
     public void ApplyPayment(Payment payment)
     {
         payment.InvoiceId = Id;
@@ -163,20 +132,14 @@ public abstract partial class Invoice : AuditableEntity, ITenantEntity, IAuditab
         RecalculatePaymentStatus(DateTime.UtcNow);
     }
 
-    /// <summary>
-    /// Reverses <see cref="ApplyPayment"/>: drops the payment and recalculates the status. The caller
-    /// deletes the payment.
-    /// </summary>
+    /// <summary>The caller deletes the payment.</summary>
     public void RemovePayment(Payment payment, DateTime now)
     {
         Payments.Remove(payment);
         RecalculatePaymentStatus(now);
     }
 
-    /// <summary>
-    /// Sets the status from <see cref="AmountPaid"/>. Call it after a payment's amount or status changes;
-    /// <see cref="RecalculateTotals"/> calls it when the total changes.
-    /// </summary>
+    /// <summary>Call after a payment's amount or status changes.</summary>
     public void RecalculatePaymentStatus(DateTime now)
     {
         var paid = AmountPaid;

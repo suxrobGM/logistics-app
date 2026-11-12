@@ -8,10 +8,7 @@ public static class PagedQueryableExtensions
 {
     extension<T>(IQueryable<T> query) where T : IEntity<Guid>
     {
-        /// <summary>
-        ///     Counts, sorts by <see cref="PagedQuery.OrderBy" /> with the id as the final key (so pages
-        ///     never repeat or skip rows), pages and maps in one go. Filter before calling.
-        /// </summary>
+        /// <summary>Filter before calling. Sorting ends on the id so pages never repeat or skip rows.</summary>
         public Task<PagedResult<TDto>> ToPagedResultAsync<TDto>(
             PagedQuery req,
             Func<T, TDto> map,
@@ -19,10 +16,7 @@ public static class PagedQueryableExtensions
             string? defaultOrderBy = null) =>
             query.ToPagedResultAsync(req, (page, _) => Task.FromResult(page.Select(map)), ct, defaultOrderBy);
 
-        /// <summary>
-        ///     Like the per-row overload, but maps the whole page at once - for lists that look up related
-        ///     names or children for every row in one query instead of lazy-loading them row by row.
-        /// </summary>
+        /// <summary>Maps the whole page at once, so related rows can be looked up in one query.</summary>
         public async Task<PagedResult<TDto>> ToPagedResultAsync<TDto>(
             PagedQuery req,
             Func<IReadOnlyList<T>, CancellationToken, Task<IEnumerable<TDto>>> mapPage,

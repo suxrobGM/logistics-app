@@ -1,9 +1,6 @@
 namespace Logistics.Application.Abstractions.Agents;
 
-/// <summary>
-///     Tool names that code outside the tool itself refers to - prompts that tell the agent which tool to call,
-///     and handlers that recognise a tool's decision. Renaming a tool here renames it everywhere.
-/// </summary>
+/// <summary>Tool names that prompts and handlers refer to outside the tool itself.</summary>
 public static class AgentToolNames
 {
     public const string GetTrip = "get_trip";

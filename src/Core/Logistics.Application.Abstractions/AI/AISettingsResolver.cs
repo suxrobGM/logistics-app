@@ -3,19 +3,12 @@ using Logistics.Domain.Primitives.Enums;
 
 namespace Logistics.Application.Abstractions.AI;
 
-/// <summary>
-/// Reads the admin-managed AI settings that both the runtime and the admin screen need. Lives here
-/// rather than beside either caller so the two cannot resolve the same setting differently - the
-/// AI Settings page would then display an effort the agents are not using.
-/// </summary>
+/// <summary>Shared by the agents and the AI Settings page so both resolve a setting the same way.</summary>
 public static class AISettingsResolver
 {
     extension(ISystemSettingsService systemSettings)
     {
-        /// <summary>
-        /// Global reasoning effort: system setting (<see cref="AISettingsKeys.ReasoningEffort"/>) →
-        /// <see cref="LlmOptions.DefaultReasoningEffort"/> from appsettings.
-        /// </summary>
+        /// <summary>The admin's setting, falling back to <see cref="LlmOptions.DefaultReasoningEffort"/>.</summary>
         public async Task<ReasoningEffort> ResolveReasoningEffortAsync(
             LlmOptions config,
             CancellationToken ct = default)

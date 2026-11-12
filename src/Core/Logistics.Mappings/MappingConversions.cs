@@ -2,9 +2,7 @@ using Logistics.Domain.Primitives.Enums;
 
 namespace Logistics.Mappings;
 
-/// <summary>
-/// Conversions the Mapperly mappers reference through <c>Use = nameof(@MappingConversions.X)</c>.
-/// </summary>
+/// <summary>Referenced by the mappers through <c>Use = nameof(...)</c>.</summary>
 public static class MappingConversions
 {
     public static string Describe(Enum value) => value.GetDescription();

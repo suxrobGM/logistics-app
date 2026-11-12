@@ -4,18 +4,12 @@ using Microsoft.Extensions.DependencyInjection.Extensions;
 
 namespace Microsoft.Extensions.DependencyInjection;
 
-/// <summary>
-/// Registers the mediator and discovers handlers. Pipeline behaviours are registered directly,
-/// outermost first: <c>services.AddTransient(typeof(IPipelineBehavior&lt;,&gt;), typeof(MyBehaviour&lt;,&gt;))</c>.
-/// </summary>
+/// <summary>Register pipeline behaviours yourself as open-generic transients, outermost first.</summary>
 public static class MediatorServiceCollectionExtensions
 {
     extension(IServiceCollection services)
     {
-        /// <summary>
-        /// Registers <see cref="IMediator" /> without scanning. Use in a host that dispatches requests
-        /// but owns none of the handlers.
-        /// </summary>
+        /// <summary>For a host that dispatches requests but owns none of the handlers.</summary>
         public IServiceCollection AddMediator()
         {
             ArgumentNullException.ThrowIfNull(services);
@@ -25,13 +19,7 @@ public static class MediatorServiceCollectionExtensions
             return services;
         }
 
-        /// <summary>
-        /// Registers <see cref="IMediator" /> and every handler in <paramref name="assembly" />.
-        /// </summary>
-        /// <param name="typeFilter">
-        /// Narrows the scan. A host that composes only one slice of an assembly must pass this, or it
-        /// registers handlers whose dependencies it never wires.
-        /// </param>
+        /// <summary>A host composing one slice must pass <paramref name="typeFilter"/>, or it registers handlers it can't build.</summary>
         public IServiceCollection AddMediator(
             Assembly assembly,
             Func<Type, bool>? typeFilter = null)

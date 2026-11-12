@@ -61,10 +61,7 @@ public static partial class InvoiceMapper
 
     extension(LoadInvoice loadInvoice)
     {
-        /// <summary>
-        /// Takes the related rows explicitly so a batch of loads can map its invoices without a lazy
-        /// SELECT per invoice for each collection.
-        /// </summary>
+        /// <summary>Takes the related rows explicitly so a batch maps without a lazy load per invoice.</summary>
         public InvoiceDto ToDto(
             IEnumerable<Payment> payments,
             IEnumerable<InvoiceLineItem> lineItems,

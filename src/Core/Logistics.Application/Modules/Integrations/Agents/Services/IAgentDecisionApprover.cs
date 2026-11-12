@@ -7,10 +7,8 @@ namespace Logistics.Application.Modules.Integrations.Agents.Services;
 internal interface IAgentDecisionApprover : IApplicationService
 {
     /// <summary>
-    /// Approves <paramref name="decision" /> for <paramref name="userId" />, runs its tool and appends the outcome to
-    /// the decision's conversation. Fails without touching the decision when the approver lacks the tool's own
-    /// permission - a surface's Manage permission is not enough to, say, send an invoice. A tool failure marks the
-    /// decision Failed and is returned; the note is written either way.
+    /// Requires the tool's own permission, not just the surface's Manage. A tool failure marks the decision Failed;
+    /// the outcome note is written either way.
     /// </summary>
     Task<Result> ApproveAsync(
         AgentDecision decision,

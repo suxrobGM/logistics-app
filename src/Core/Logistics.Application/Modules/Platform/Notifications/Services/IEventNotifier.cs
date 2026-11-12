@@ -2,10 +2,7 @@ using Logistics.Domain.Primitives.Enums;
 
 namespace Logistics.Application.Modules.Platform.Notifications.Services;
 
-/// <summary>
-///     The channels domain-event handlers notify people through. Every method swallows and logs its own
-///     failures: the change that raised the event is already saved, so a failed send must not undo it.
-/// </summary>
+/// <summary>Every method logs and swallows its failures, since the change that raised the event is already saved.</summary>
 public interface IEventNotifier : IApplicationService
 {
     /// <summary>Pushes to every device token that is set; null and empty tokens are skipped.</summary>

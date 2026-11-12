@@ -21,10 +21,7 @@ public static partial class FactoringMapper
 
     extension(FactoringBatch entity)
     {
-        /// <summary>
-        /// The schedule with its totals. Pass the items already loaded for the batch, and their DTOs only for
-        /// the detail read.
-        /// </summary>
+        /// <summary>Pass the batch's already loaded items, and their DTOs only for the detail read.</summary>
         public FactoringBatchDto ToDto(
             string? factoringCompanyName, IReadOnlyCollection<FactoringBatchItem> items,
             IEnumerable<FactoringBatchItemDto>? itemDtos = null)
