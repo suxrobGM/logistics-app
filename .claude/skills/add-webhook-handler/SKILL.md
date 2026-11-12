@@ -11,7 +11,7 @@ Inbound webhooks from external services (Stripe, Samsara, Motive, etc.) terminat
 
 1. `src/Presentation/Logistics.API/Controllers/WebhookController.cs` - endpoint route (`[Route("webhooks")]`)
 2. `src/Core/Logistics.Application/Modules/{Module}/{Feature}/Commands/Process{Provider}Webhook/` - command + handler (Stripe lives in `Modules/Integrations/Webhooks/Commands/`, ELD in `Modules/Compliance/Eld/Commands/`)
-3. Signature validation with a `WebhookSignature.*` helper, in one of two existing shapes: a verifier port in `Application.Abstractions` implemented in infrastructure (`IInboundEmailWebhookVerifier` → `ResendWebhookVerifier`), or the family's provider service verifies its own webhooks (ELD `{Name}EldService`)
+3. Signature validation with a `WebhookSignature.*` helper (or `SvixSignature` for Svix), in one of two existing shapes: a verifier port in `Application.Abstractions` implemented in infrastructure (`IInboundEmailWebhookVerifier` → `ResendWebhookVerifier`), or the family's provider service verifies its own webhooks (ELD `{Name}EldService`)
 4. Webhook secret - per-tenant integrations keep it on the `{Family}ProviderConfiguration` entity (`EldProviderConfiguration.WebhookSecret`); `appsettings.json` (env var, never committed) only for install-wide vendors (Stripe, Resend)
 5. `…/Process{Provider}Webhook/Process{Provider}WebhookValidator.cs` - schema validation (skip if the only rule is `Id NotEmpty`)
 6. Tests - at minimum: bad signature returns 400, replay returns 200 idempotent
@@ -27,7 +27,7 @@ Most providers use HMAC of the raw body with a shared secret, sent in a header:
 | Stripe | `Stripe-Signature` | HMAC-SHA256 with timestamp |
 | Samsara | `X-Samsara-Signature` + `X-Samsara-Timestamp` | `v1=` hex HMAC-SHA256 of `v1:{timestamp}:{body}`, base64-decoded secret (`WebhookSignature.VerifySamsara`) |
 | Motive | `X-Motive-Signature` | HMAC-SHA256 |
-| Resend (Svix) | `svix-id` + `svix-timestamp` + `svix-signature` | base64 HMAC-SHA256 of `{id}.{timestamp}.{body}`, `whsec_` secret (`WebhookSignature.VerifySvix`) |
+| Resend (Svix) | `svix-id` + `svix-timestamp` + `svix-signature` | base64 HMAC-SHA256 of `{id}.{timestamp}.{body}`, `whsec_` secret (`SvixSignature.Verify`, in `Infrastructure.Communications/Email/`) |
 
 For a new provider, find their signature spec in their docs **before** writing any code. If they don't sign webhooks, push back - unsigned webhooks are spoofable and should not be wired in without an alternative (mutual TLS, allowlisted source IPs).
 
@@ -74,7 +74,7 @@ Two shapes exist - copy whichever fits:
   internal sealed class ResendWebhookVerifier(IOptions<ResendOptions> options) : IInboundEmailWebhookVerifier
   {
       public bool Verify(string rawBody, string? messageId, string? timestamp, string? signature) =>
-          WebhookSignature.VerifySvix(rawBody, messageId, timestamp, signature, options.Value.WebhookSecret);
+          SvixSignature.Verify(rawBody, messageId, timestamp, signature, options.Value.WebhookSecret);
   }
   ```
 
@@ -82,8 +82,8 @@ Two shapes exist - copy whichever fits:
   secret (`SamsaraEldService` → `VerifySamsara`, `MotiveEldService` → `VerifyHmacSha256`).
 
 Never compare signatures with `==` or `string.Equals` - they leak timing information and enable forgery.
-Timestamped envelopes are already covered (`VerifySamsara`, `VerifySvix`); if a provider signs with a
-scheme no helper covers, extend `WebhookSignature` rather than open-coding a compare.
+Timestamped envelopes are already covered (`WebhookSignature.VerifySamsara`, `SvixSignature.Verify`); if a
+provider signs with a scheme no helper covers, extend `WebhookSignature` rather than open-coding a compare.
 
 For Stripe specifically, `StripeWebhookParser` (`Infrastructure.Payments`, behind `IStripeWebhookParser`) wraps
 `EventUtility.ConstructEvent` - it handles timestamp tolerance and constant-time compare for you.
@@ -176,7 +176,7 @@ running once; unknown event type → logged, 200, no crash; happy path → comma
 ## Verification checklist
 
 - [ ] Endpoint added to `WebhookController` with `[AllowAnonymous]` and raw-body reading
-- [ ] Signature verified with a `WebhookSignature.*` helper (or provider SDK's verify) - fails closed
+- [ ] Signature verified with a `WebhookSignature.*` / `SvixSignature` helper (or provider SDK's verify) - fails closed
 - [ ] Signature verified **before** payload parsing
 - [ ] Idempotency via `IWebhookEventTracker`; `EventKey` = provider event id, else `BuildKeyFromBody`
 - [ ] Event key recorded in the master-DB ledger after the work runs

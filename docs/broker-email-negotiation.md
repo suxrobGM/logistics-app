@@ -74,7 +74,7 @@ table:
 
 Inbound mail is the untrusted edge of the feature. What holds it:
 
-- **Signature first.** `WebhookSignature.VerifySvix` verifies before the body is parsed. It fails
+- **Signature first.** `SvixSignature.Verify` verifies before the body is parsed. It fails
   closed on a missing header, an unparsable timestamp, a timestamp more than five minutes off, or a
   malformed secret.
 - **Inbound cannot execute.** The webhook path appends a message and asks for a turn. Nothing else.

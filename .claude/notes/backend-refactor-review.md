@@ -162,7 +162,8 @@ Update `AssemblyAnchors`, the arch-tests csproj, `overview.md`, CLAUDE.md ("15 f
 - [x] ✅ **Projects 32 → 25 (src), done 2026-11-12.** `Shared.Geo` → `Domain.Primitives/Geo/`; `Mappings` → `Application/Mappings/` (one folder, namespace `Logistics.Mappings` kept); `Integrations.{Common,Eld,LoadBoard,FuelCards,Accounting}`, `Vin`, `Licensing` → `Infrastructure.Integrations` (one folder each, `AddIntegrationsInfrastructure` calls the family registrars; DbMigrator still calls only `AddFuelCardIntegrations`); `Tax` → `Infrastructure.Payments/Tax/`. Namespaces unchanged. Arch rule added: `Shared.Models` must not depend on `Domain`.
   - Decision: **`Domain.Primitives` stays its own project** instead of folding into `Domain`. `Shared.Models` references it and must not reference `Domain`, so merging would drag the entities into the client contract.
   - `NotificationService` (save + broadcast) moved to `Application/Modules/Platform/Notifications/Services/` with its interface; Communications only broadcasts the ready-made DTO through `IRealtimeNotificationService`.
-  - Not done (not in the approved list): moving `VerifySvix` to Communications and Telegram's own `FixedTimeEquals`.
+  - Not done (not in the approved list): Telegram's own `FixedTimeEquals`.
+- [x] ✅ **`VerifySvix` moved to Communications, done 2026-11-12.** Now `SvixSignature.Verify` in `Infrastructure.Communications/Email/`, next to `ResendWebhookVerifier`; Communications no longer references `Infrastructure.Integrations`. Tests in `Logistics.Infrastructure.Tests/Communications/Email/SvixSignatureTests.cs`.
 
 **Inside Application:**
 - [ ] CustomerUser queries live in `Platform/Portal/Queries`; move them to `IdentityAccess/CustomerUsers/Queries`.

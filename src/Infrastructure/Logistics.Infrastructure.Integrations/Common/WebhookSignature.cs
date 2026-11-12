@@ -9,7 +9,7 @@ namespace Logistics.Infrastructure.Integrations.Common;
 /// </summary>
 public static class WebhookSignature
 {
-    /// <summary>How far a signed timestamp (Svix, Samsara) may be from now, in either direction.</summary>
+    /// <summary>How far a signed Samsara timestamp may be from now, in either direction.</summary>
     private static readonly TimeSpan SignedTimestampTolerance = TimeSpan.FromMinutes(5);
 
     /// <summary>
@@ -24,64 +24,6 @@ public static class WebhookSignature
         }
 
         return HexHmacMatches(Encoding.UTF8.GetBytes(secret), Encoding.UTF8.GetBytes(payload), signatureHex);
-    }
-
-    /// <summary>
-    /// Verifies a Svix-signed webhook (Resend and others): base64 HMAC-SHA256 of
-    /// <c>{id}.{timestamp}.{payload}</c>, keyed by the base64-decoded secret with its
-    /// <c>whsec_</c> prefix removed. Fails closed on anything missing, malformed, or stale.
-    /// </summary>
-    public static bool VerifySvix(
-        string payload,
-        string? svixId,
-        string? svixTimestamp,
-        string? svixSignatureHeader,
-        string? secret)
-    {
-        if (string.IsNullOrEmpty(svixId) ||
-            string.IsNullOrEmpty(svixTimestamp) ||
-            string.IsNullOrEmpty(svixSignatureHeader) ||
-            string.IsNullOrEmpty(secret))
-        {
-            return false;
-        }
-
-        if (!long.TryParse(svixTimestamp, out var unixSeconds))
-        {
-            return false;
-        }
-
-        if (!IsFresh(unixSeconds, DateTimeOffset.UtcNow))
-        {
-            return false;
-        }
-
-        if (!TryDecodeSecret(secret, out var key))
-        {
-            return false;
-        }
-
-        var signedContent = Encoding.UTF8.GetBytes($"{svixId}.{svixTimestamp}.{payload}");
-        var expected = Encoding.UTF8.GetBytes(Convert.ToBase64String(HMACSHA256.HashData(key, signedContent)));
-
-        // The header carries every signature currently valid for the endpoint, so a secret being
-        // rotated has two. Any match is a pass.
-        foreach (var entry in svixSignatureHeader.Split(' ', StringSplitOptions.RemoveEmptyEntries))
-        {
-            if (!entry.StartsWith("v1,", StringComparison.Ordinal))
-            {
-                continue;
-            }
-
-            var provided = Encoding.UTF8.GetBytes(entry[3..]);
-            if (provided.Length == expected.Length &&
-                CryptographicOperations.FixedTimeEquals(provided, expected))
-            {
-                return true;
-            }
-        }
-
-        return false;
     }
 
     /// <summary>
@@ -145,21 +87,5 @@ public static class WebhookSignature
 
         return CryptographicOperations.FixedTimeEquals(
             Encoding.UTF8.GetBytes(provided), Encoding.UTF8.GetBytes(expected));
-    }
-
-    private static bool TryDecodeSecret(string secret, out byte[] key)
-    {
-        const string prefix = "whsec_";
-        var raw = secret.StartsWith(prefix, StringComparison.Ordinal) ? secret[prefix.Length..] : secret;
-
-        var buffer = new byte[raw.Length];
-        if (Convert.TryFromBase64String(raw, buffer, out var written) && written > 0)
-        {
-            key = buffer[..written];
-            return true;
-        }
-
-        key = [];
-        return false;
     }
 }
