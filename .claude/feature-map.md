@@ -286,7 +286,7 @@ registry, `AgentLoopRunner`, decisions, and quota. Gated by `TenantFeature.AICop
 
 ### ELD sync
 
-- Application: `Modules/Compliance/Eld/Services/EldSyncService.cs` - the only writer of ELD data: `SyncLiveAsync` (HOS clocks + vehicle GPS through `ITruckLocationRecorder`, broadcast via `IRealtimeLiveTrackingService`), `SyncHistoryAsync` (8-day rolling window of `HosLog` rows replaced from the provider, violations upserted). `Commands/ProcessEldWebhook/` (resolves the tenant from the URL, then signature, idempotency, dispatch) and `SyncAllDriversHosStatus` both call it
+- Application: `Modules/Compliance/Eld/Services/EldSyncService.cs` - the only writer of ELD data: `SyncLiveAsync` (HOS clocks + vehicle GPS through `ITruckLocationRecorder`, broadcast via `IRealtimeLiveTrackingService`), `SyncHistoryAsync` (8-day rolling window of `HosLog` rows replaced from the provider, violations upserted). `Modules/Integrations/Webhooks/Commands/ProcessEldWebhook/` (resolves the tenant from the URL, then signature, idempotency, dispatch) and `SyncAllDriversHosStatus` both call it
 - Infrastructure: `WebhookSignature.VerifySamsara` (`v1:{timestamp}:{body}`, base64 secret, 5-min window); `VerifyHmacSha256` for Motive / Geotab
 - API/UI: `Jobs/EldSyncJob.cs` (`eld-sync` every 5 min, `eld-history-sync` every 30 min, gated on `TenantFeature.Eld`), webhooks: `/webhooks/eld/{samsara,motive,geotab}/{tenantId}`
 

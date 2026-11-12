@@ -9,7 +9,7 @@ using Logistics.Mediator;
 using Logistics.Shared.Models;
 using Microsoft.Extensions.Logging;
 
-namespace Logistics.Application.Modules.Compliance.Eld.Commands;
+namespace Logistics.Application.Modules.Integrations.Webhooks.Commands;
 
 internal sealed class ProcessEldWebhookHandler(
     ITenantUnitOfWork tenantUow,

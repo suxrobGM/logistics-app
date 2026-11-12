@@ -1,6 +1,6 @@
 using Logistics.Domain.Primitives.Enums;
 
-namespace Logistics.Application.Modules.Compliance.Eld.Commands;
+namespace Logistics.Application.Modules.Integrations.Webhooks.Commands;
 
 /// <summary>
 /// An inbound ELD webhook. The endpoint is anonymous, so the tenant comes from the per-tenant URL

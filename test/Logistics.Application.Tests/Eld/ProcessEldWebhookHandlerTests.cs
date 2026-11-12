@@ -13,6 +13,7 @@ using Microsoft.Extensions.Logging.Abstractions;
 using NSubstitute;
 using NSubstitute.ExceptionExtensions;
 using Xunit;
+using Logistics.Application.Modules.Integrations.Webhooks.Commands;
 
 namespace Logistics.Application.Tests.Eld;
 
