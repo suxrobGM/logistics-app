@@ -87,13 +87,13 @@ These were confirmed by a name-usage scan of `src/`, `test/`, `tools/` and the p
 - [x] **Two "turn starter" services repeat the same flow** (append, save, claim, then schedule or queue). Add a shared `AppendAndStartTurnAsync`. Skipped for now: the two flows differ in wake-up scheduling.
 
 ### Domain and mappings
-- [ ] **`LoadFactory` / `TripFactory` duplicate `Load.Create` / `Trip.Create`.** `Load.Factory.cs` only forwards 12 params, and `LoadFactory.CreateTripStops` copies `TripFactory.AddStopsForLoads`. Move the bodies onto the entities and delete both static classes (~120 lines).
-- [ ] **State machines.** Trip: keep `CanModify` / `CanCancel` / `CanDispatch` as `Trip` properties and delete the file. Load and Container: stamp the timestamps directly in `UpdateStatus` and drop the `LoadStatusTimestamps` / `LoadStatusState` round-trip (~170 lines). No Stateless.
-- [ ] **Document factories repeat 6 file fields across 4 `Create` methods** (10-17 params). Add a `StoredFile` record and collapse the 3 branches in `UploadDocumentHandler`.
-- [ ] **24 of 55 "mapper" files are hand-written** `new XDto {}` (`LoadMapper.ToDto(LoadLookup)` alone is 70 lines), so a new field is silently left out. Convert them to Mapperly `partial` + `dto with {}`. Set `RequiredMappingStrategy.Target` assembly-wide to drop ~150 `MapperIgnoreSource` lines; keep the ignores on navigations.
-- [ ] **`IResult`** has one implementation and clashes with ASP.NET `IResult`. Use `Result`. Keep the hand-rolled `Result`: switching to ErrorOr/FluentResults would touch ~1,000 sites.
-- [ ] **`Money` is a record with `set` properties**, and its implicit `decimal` operator drops the currency. Make the properties `init`.
-- [ ] **Permissions:** replace the `list.AddRange` chains (`TenantRolePermissions.cs:50-170`) with module arrays plus `SelectMany`. Derive Owner as all permissions minus an exclude list, as Admin already is. `GetBasicPermissions` is appended in 3 places.
+- [x] **`LoadFactory` / `TripFactory` duplicate `Load.Create` / `Trip.Create`.** `Load.Factory.cs` only forwards 12 params, and `LoadFactory.CreateTripStops` copies `TripFactory.AddStopsForLoads`. Move the bodies onto the entities and delete both static classes (~120 lines). Done: folded into `Load.Create`/`Trip.Create`/`LoadInvoice.Create`; one `Trip.CreateStopPair`.
+- [x] **State machines.** Trip: keep `CanModify` / `CanCancel` / `CanDispatch` as `Trip` properties and delete the file. Load and Container: stamp the timestamps directly in `UpdateStatus` and drop the `LoadStatusTimestamps` / `LoadStatusState` round-trip (~170 lines). No Stateless. Done for Trip (properties) and Load (inlined). Container kept: it is a pure function with an injectable clock that its tests rely on.
+- [ ] **Document factories repeat 6 file fields across 4 `Create` methods** (10-17 params). Add a `StoredFile` record and collapse the 3 branches in `UploadDocumentHandler`. Skipped: `Document` has `required` members, so a `StoredFile` record only shortens call sites while every factory still sets the six fields.
+- [ ] **24 of 55 "mapper" files are hand-written** `new XDto {}` (`LoadMapper.ToDto(LoadLookup)` alone is 70 lines), so a new field is silently left out. Convert them to Mapperly `partial` + `dto with {}`. Set `RequiredMappingStrategy.Target` assembly-wide to drop ~150 `MapperIgnoreSource` lines; keep the ignores on navigations. Open. Follow-up: batch the truck number / driver / reviewer names for the DVIR, accident, maintenance and time-entry lists (lazy N+1 per row), then convert to Mapperly and set `RequiredMappingStrategy.Target`.
+- [x] **`IResult`** has one implementation and clashes with ASP.NET `IResult`. Use `Result`. Keep the hand-rolled `Result`: switching to ErrorOr/FluentResults would touch ~1,000 sites. Done.
+- [x] **`Money` is a record with `set` properties**, and its implicit `decimal` operator drops the currency. Make the properties `init`. Done (`init`). Implicit `decimal` operator kept for now.
+- [ ] **Permissions:** replace the `list.AddRange` chains (`TenantRolePermissions.cs:50-170`) with module arrays plus `SelectMany`. Derive Owner as all permissions minus an exclude list, as Admin already is. `GetBasicPermissions` is appended in 3 places. Skipped: deriving Owner as "all minus excludes" grants future modules automatically - a policy decision, not a refactor. The lists read fine as they are.
 
 ### Infrastructure and Presentation
 - [ ] **Snake-case conversion written 3×:** `SnakeCaseEnumConverter` (126 lines), `SnakeCaseEnumModelBinder`, and `JsonNamingPolicy.SnakeCaseLower`. Use the BCL policy in the converter, with a parity test over every domain enum so the stored values don't change.
@@ -136,7 +136,7 @@ Of the 291, most are fine: Mapperly mappers, pure calculators (`DetentionCalcula
 - **Should be entity methods:** `LoadFactory`, `TripFactory`, `TripStatusMachine`, and the Load/Container machine round-trip.
 - **Should be instance services** (they take services or a UoW): `DocumentBlobCleanup`, `ImportFileReader.Read(ISpreadsheetReader, …)`.
 - **Delete:** `PropertyUpdater`, `DateTimeHelpers` (one method; move it into `DateTimeExtensions`).
-- **In the wrong project:**
+- **In the wrong project:** (done: `Domain/Options` → Abstractions, `QueryableExtensions` → Application, `PrivacyDefaults` → Privacy module, `DateTimeHelpers` → `DateTime.GetIsoWeekStart`; kept: `HosLimits` is a value object with its own DTO, `TruckLoadCompatibility.Rules` is generated from the table beside it)
   - `Domain/Options/*` → Abstractions
   - `Domain/Extensions/QueryableExtensions` → Application (drops `System.Linq.Dynamic.Core` from Domain)
   - `PrivacyDefaults` → the Privacy module
