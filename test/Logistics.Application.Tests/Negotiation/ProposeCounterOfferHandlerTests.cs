@@ -215,17 +215,6 @@ public class ProposeCounterOfferHandlerTests
         await AssertNothingSent();
     }
 
-    [Fact]
-    public async Task Handle_InactiveAuthority_Blocks()
-    {
-        SetupCredit(score: 90, authorityActive: false);
-
-        var result = await _sut.Handle(_command, CancellationToken.None);
-
-        Assert.False(result.IsSuccess);
-        Assert.Equal(ErrorCodes.BrokerCreditBelowThreshold, result.ErrorCode);
-    }
-
     #endregion
 
     #region Floor gate

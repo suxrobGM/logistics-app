@@ -164,93 +164,24 @@ public class BookLoadBoardLoadHandlerTests
 
     #region Credit gate
 
-    [Fact]
-    public async Task Handle_NoThresholdConfigured_Books()
-    {
-        _tenant.Settings.MinBrokerCreditScore = null;
-        SetupCredit(score: 10);
-
-        var result = await _sut.Handle(_command, CancellationToken.None);
-
-        Assert.True(result.IsSuccess);
-        await _loadRepo.Received(1).AddAsync(Arg.Any<Load>(), Arg.Any<CancellationToken>());
-    }
-
-    [Fact]
-    public async Task Handle_ScoreBelowThreshold_BlocksWithErrorCode()
+    /// <summary>The verdict rules live in <c>BrokerCreditCheckerTests</c>; this pins that the handler honours them and passes the override through.</summary>
+    [Theory]
+    [InlineData(false)]
+    [InlineData(true)]
+    public async Task Handle_ScoreBelowThreshold_BooksOnlyWithOverride(bool overrideCheck)
     {
         _tenant.Settings.MinBrokerCreditScore = 70;
         SetupCredit(score: 50);
+        _command.OverrideCreditCheck = overrideCheck;
 
         var result = await _sut.Handle(_command, CancellationToken.None);
 
-        Assert.False(result.IsSuccess);
-        Assert.Equal(ErrorCodes.BrokerCreditBelowThreshold, result.ErrorCode);
-        await _loadRepo.DidNotReceiveWithAnyArgs().AddAsync(default!, default);
-    }
-
-    [Fact]
-    public async Task Handle_ScoreBelowThreshold_OverrideBooks()
-    {
-        _tenant.Settings.MinBrokerCreditScore = 70;
-        SetupCredit(score: 50);
-        _command.OverrideCreditCheck = true;
-
-        var result = await _sut.Handle(_command, CancellationToken.None);
-
-        Assert.True(result.IsSuccess);
-        await _loadRepo.Received(1).AddAsync(Arg.Any<Load>(), Arg.Any<CancellationToken>());
-    }
-
-    [Fact]
-    public async Task Handle_MissingScore_NeverBlocks()
-    {
-        _tenant.Settings.MinBrokerCreditScore = 70;
-        _brokerCreditService.GetBrokerCreditAsync(Arg.Any<string?>(), Arg.Any<CancellationToken>())
-            .Returns((BrokerCreditDto?)null);
-
-        var result = await _sut.Handle(_command, CancellationToken.None);
-
-        Assert.True(result.IsSuccess);
-        await _loadRepo.Received(1).AddAsync(Arg.Any<Load>(), Arg.Any<CancellationToken>());
-    }
-
-    [Fact]
-    public async Task Handle_InactiveAuthority_BlocksEvenWithoutThreshold()
-    {
-        _tenant.Settings.MinBrokerCreditScore = null;
-        SetupCredit(score: 90, authorityActive: false);
-
-        var result = await _sut.Handle(_command, CancellationToken.None);
-
-        Assert.False(result.IsSuccess);
-        Assert.Equal(ErrorCodes.BrokerCreditBelowThreshold, result.ErrorCode);
-        Assert.Contains("authority", result.Error, StringComparison.OrdinalIgnoreCase);
-    }
-
-    [Fact]
-    public async Task Handle_BlockedBooking_StillStampsCreditOnListing()
-    {
-        _tenant.Settings.MinBrokerCreditScore = 70;
-        SetupCredit(score: 50);
-
-        await _sut.Handle(_command, CancellationToken.None);
-
-        Assert.Equal(50, _listing.BrokerCreditScore);
-        Assert.Equal(30, _listing.BrokerDaysToPay);
-        Assert.NotNull(_listing.BrokerCreditCheckedAt);
-        await _tenantUow.Received().SaveChangesAsync(Arg.Any<CancellationToken>());
-    }
-
-    [Fact]
-    public async Task Handle_ScoreAtThreshold_Books()
-    {
-        _tenant.Settings.MinBrokerCreditScore = 70;
-        SetupCredit(score: 70);
-
-        var result = await _sut.Handle(_command, CancellationToken.None);
-
-        Assert.True(result.IsSuccess);
+        Assert.Equal(overrideCheck, result.IsSuccess);
+        await _loadRepo.Received(overrideCheck ? 1 : 0).AddAsync(Arg.Any<Load>(), Arg.Any<CancellationToken>());
+        if (!overrideCheck)
+        {
+            Assert.Equal(ErrorCodes.BrokerCreditBelowThreshold, result.ErrorCode);
+        }
     }
 
     #endregion
