@@ -165,11 +165,17 @@ internal sealed class AnthropicLlmProvider(LlmProviderOptions config, HttpClient
             _ => LlmStopReason.EndTurn
         };
 
-    internal static MessageParam ToMessageParam(LlmMessage message) => new()
+    internal static MessageParam ToMessageParam(LlmMessage message)
     {
-        Role = message.Role == LlmRole.User ? Role.User : Role.Assistant,
-        Content = message.Content.Select(ToBlockParam).ToList()
-    };
+        List<ContentBlockParam> content = [.. message.Content.Select(ToBlockParam)];
+
+        if (message.Role == LlmRole.User)
+        {
+            return new UserMessageParam { Content = content };
+        }
+
+        return new AssistantMessageParam { Content = content };
+    }
 
     private static ContentBlockParam ToBlockParam(LlmContentBlock block) => block switch
     {

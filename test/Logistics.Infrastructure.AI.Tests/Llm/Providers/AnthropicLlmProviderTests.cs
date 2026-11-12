@@ -135,6 +135,20 @@ public class AnthropicLlmProviderTests
         Assert.Equal("enc", content[1].GetProperty("content")[0].GetProperty("encrypted_content").GetString());
     }
 
+    [Theory]
+    [InlineData(true, "user")]
+    [InlineData(false, "assistant")]
+    public void ToMessageParam_SendsTheMessageRole(bool isUser, string expected)
+    {
+        var role = isUser ? LlmRole.User : LlmRole.Assistant;
+        var message = new LlmMessage(role, [new LlmTextBlock("Hello")]);
+
+        var wire = Wire(AnthropicLlmProvider.ToMessageParam(message));
+
+        Assert.Equal(expected, wire.GetProperty("role").GetString());
+        Assert.Equal("Hello", wire.GetProperty("content")[0].GetProperty("text").GetString());
+    }
+
     #endregion
 
     #region Prompt caching
