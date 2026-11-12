@@ -22,7 +22,10 @@ public static class Registrar
             return services;
         }
 
-        /// <summary>For hosts like DbMigrator that skip <see cref="AddApplicationLayer"/>, whose services need SignalR and blob storage.</summary>
+        /// <summary>
+        /// Registers only the tax services, for hosts like DbMigrator that can't call <see cref="AddApplicationLayer"/>
+        /// because they have no SignalR or blob storage.
+        /// </summary>
         public IServiceCollection AddApplicationTaxServices()
         {
             services.Scan(scan => scan
@@ -33,7 +36,7 @@ public static class Registrar
             return services;
         }
 
-        /// <summary>For hosts like DbMigrator that skip <see cref="AddApplicationLayer"/>.</summary>
+        /// <summary>Registers only the fuel card services, for hosts like DbMigrator.</summary>
         public IServiceCollection AddApplicationFuelCardServices()
         {
             services.Scan(scan => scan
@@ -44,7 +47,7 @@ public static class Registrar
             return services;
         }
 
-        /// <summary>For hosts like DbMigrator that skip <see cref="AddApplicationLayer"/>.</summary>
+        /// <summary>Registers only the payroll services, for hosts like DbMigrator.</summary>
         public IServiceCollection AddApplicationPayrollServices()
         {
             services.Scan(scan => scan
@@ -55,12 +58,13 @@ public static class Registrar
             return services;
         }
 
-        /// <summary>The GDPR self-service slice, for the IdentityServer, which skips <see cref="AddApplicationLayer"/>.</summary>
+        /// <summary>Registers only the GDPR export and account-deletion handlers, for the IdentityServer.</summary>
         public IServiceCollection AddApplicationPrivacyServices()
         {
             const string privacyNamespace = "Logistics.Application.Modules.Compliance.Privacy";
 
-            // Unfiltered, SaveChanges would build every notification handler; FeatureCheck needs services this host lacks.
+            // Without the filter, every domain event handler would be registered, and they need services the IdentityServer
+            // doesn't have. The feature check needs them too.
             return services.AddApplicationCommon(
                 typeFilter: type => type.Namespace?.StartsWith(privacyNamespace, StringComparison.Ordinal) == true,
                 withFeatureCheck: false);
@@ -79,7 +83,7 @@ public static class Registrar
             return services;
         }
 
-        /// <summary><paramref name="typeFilter"/> narrows the scan to one slice for hosts that skip the rest.</summary>
+        /// <summary><paramref name="typeFilter"/> limits which handlers and validators are registered, for hosts that need only a few.</summary>
         private IServiceCollection AddApplicationCommon(
             Func<Type, bool>? typeFilter = null,
             bool withFeatureCheck = true)

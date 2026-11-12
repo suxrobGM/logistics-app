@@ -8,7 +8,10 @@ public static class RateLimitingExtensions
 {
     extension(RateLimiterOptions options)
     {
-        /// <summary>Per-IP fixed window with no queue: excess requests are rejected at once.</summary>
+        /// <summary>
+        /// Lets each client IP make <paramref name="permitLimit" /> requests per <paramref name="window" />; the rest
+        /// fail with 503 straight away. Requests with no IP share one limit.
+        /// </summary>
         public RateLimiterOptions AddIpFixedWindowPolicy(
             string policyName, int permitLimit, TimeSpan window)
         {

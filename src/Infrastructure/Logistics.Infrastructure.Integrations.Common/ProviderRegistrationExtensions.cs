@@ -19,7 +19,10 @@ public static class ProviderRegistrationExtensions
             return services;
         }
 
-        /// <summary>Register <typeparamref name="TImplementation"/> itself too (typed client or scoped); its lifetime is what resolves.</summary>
+        /// <summary>
+        /// Maps <paramref name="providerType"/> to <typeparamref name="TImplementation"/>. Register the implementation
+        /// itself as well (as a typed HttpClient or a scoped service); that registration decides its lifetime.
+        /// </summary>
         public IServiceCollection AddKeyedProvider<TService, TImplementation>(Enum providerType)
             where TService : class
             where TImplementation : class, TService

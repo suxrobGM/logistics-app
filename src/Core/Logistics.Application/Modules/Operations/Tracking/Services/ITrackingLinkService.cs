@@ -12,6 +12,6 @@ public interface ITrackingLinkService : IApplicationService
 
     string GetUrl(TrackingLink link);
 
-    /// <summary>Switches to <paramref name="tenantId" /> first, since public tracking pages arrive without a login.</summary>
+    /// <summary>Sets the current tenant to <paramref name="tenantId" /> first, because a public tracking page has no signed-in user to take it from.</summary>
     Task<Result<TrackingLink>> OpenPublicLinkAsync(Guid tenantId, string token, CancellationToken ct = default);
 }

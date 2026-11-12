@@ -5,7 +5,7 @@ using Microsoft.EntityFrameworkCore.Metadata.Conventions;
 
 namespace Logistics.Infrastructure.Persistence.Conventions;
 
-/// <summary>Caps <see cref="Money.Currency"/> at 3 (ISO 4217) on every <see cref="Money"/>, nested ones included.</summary>
+/// <summary>Makes every <see cref="Money.Currency"/> column 3 characters long (an ISO 4217 code), including Money inside owned types.</summary>
 public class MoneyCurrencyLengthConvention : IModelFinalizingConvention
 {
     public void ProcessModelFinalizing(

@@ -1,6 +1,6 @@
 namespace Logistics.Application.Abstractions.Agents;
 
-/// <summary>Tool names that prompts and handlers refer to outside the tool itself.</summary>
+/// <summary>Names of the agent tools that prompts and handlers mention by name.</summary>
 public static class AgentToolNames
 {
     public const string GetTrip = "get_trip";

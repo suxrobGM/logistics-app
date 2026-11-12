@@ -7,7 +7,10 @@ public static class AgentMessageSequences
 {
     extension(ITenantUnitOfWork tenantUow)
     {
-        /// <summary>Returns the first of <paramref name="count"/> sequences, reserved atomically because writers race.</summary>
+        /// <summary>
+        /// Reserves <paramref name="count"/> message numbers in one database update and returns the first, so two
+        /// turns writing at once never get the same number.
+        /// </summary>
         public async Task<int> ReserveSequencesAsync(
             AgentConversation conversation, int count, CancellationToken ct)
         {

@@ -25,7 +25,7 @@ public static class Registrar
         public IServiceCollection AddCommunicationsInfrastructure(
             IConfiguration configuration)
         {
-            // Snake_case string enums like REST: the frontend's string unions fail every comparison against numbers.
+            // Send enums as snake_case strings, as the REST API does; the frontend compares them to strings, so numbers never match.
             services.AddSignalR().AddJsonProtocol(options =>
             {
                 options.PayloadSerializerOptions.Converters.Add(

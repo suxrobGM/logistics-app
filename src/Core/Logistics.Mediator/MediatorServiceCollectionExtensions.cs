@@ -4,12 +4,12 @@ using Microsoft.Extensions.DependencyInjection.Extensions;
 
 namespace Microsoft.Extensions.DependencyInjection;
 
-/// <summary>Register pipeline behaviours yourself as open-generic transients, outermost first.</summary>
+/// <summary>Pipeline behaviours are not registered here; add them as open-generic transients, outermost first.</summary>
 public static class MediatorServiceCollectionExtensions
 {
     extension(IServiceCollection services)
     {
-        /// <summary>For a host that dispatches requests but owns none of the handlers.</summary>
+        /// <summary>Registers only <see cref="IMediator"/>, for a host whose handlers are registered elsewhere.</summary>
         public IServiceCollection AddMediator()
         {
             ArgumentNullException.ThrowIfNull(services);
@@ -19,7 +19,10 @@ public static class MediatorServiceCollectionExtensions
             return services;
         }
 
-        /// <summary>A host composing one slice must pass <paramref name="typeFilter"/>, or it registers handlers it can't build.</summary>
+        /// <summary>
+        /// A host that needs only some handlers must pass <paramref name="typeFilter"/>; otherwise every handler in
+        /// <paramref name="assembly"/> is registered, including ones whose dependencies the host lacks.
+        /// </summary>
         public IServiceCollection AddMediator(
             Assembly assembly,
             Func<Type, bool>? typeFilter = null)

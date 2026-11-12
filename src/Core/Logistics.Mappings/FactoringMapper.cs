@@ -21,7 +21,10 @@ public static partial class FactoringMapper
 
     extension(FactoringBatch entity)
     {
-        /// <summary>Pass the batch's already loaded items, and their DTOs only for the detail read.</summary>
+        /// <summary>
+        /// <paramref name="items"/> gives the totals; pass <paramref name="itemDtos"/> only on the detail page, where
+        /// the items are listed too.
+        /// </summary>
         public FactoringBatchDto ToDto(
             string? factoringCompanyName, IReadOnlyCollection<FactoringBatchItem> items,
             IEnumerable<FactoringBatchItemDto>? itemDtos = null)

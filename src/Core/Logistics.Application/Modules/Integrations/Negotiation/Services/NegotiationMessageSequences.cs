@@ -7,7 +7,10 @@ public static class NegotiationMessageSequences
 {
     extension(ITenantUnitOfWork tenantUow)
     {
-        /// <summary>Reserved atomically in the database, since a counter offer and a broker reply can race.</summary>
+        /// <summary>
+        /// Reserves the next message number in one database update, so a counter offer and a broker reply arriving
+        /// at once never get the same number.
+        /// </summary>
         public async Task<int> ReserveSequenceAsync(
             RateNegotiation negotiation, CancellationToken ct)
         {

@@ -9,7 +9,10 @@ public interface IStripeSubscriptionService
 
     Task<StripeSubscriptionInfo> CancelSubscriptionAsync(string stripeSubscriptionId, bool cancelImmediately = true);
 
-    /// <summary>Reactivates, recreates, or bills the subscription, whichever its Stripe state calls for.</summary>
+    /// <summary>
+    /// Undoes a pending cancellation, creates a new subscription if there is none or Stripe has ended it, and
+    /// otherwise bills the active one now.
+    /// </summary>
     /// <exception cref="StripeApiException">Stripe rejected the renewal, for example for a missing payment method.</exception>
     Task<StripeSubscriptionInfo> RenewSubscriptionAsync(
         Subscription? subEntity, SubscriptionPlan plan, Tenant tenant, int truckCount);
@@ -17,6 +20,6 @@ public interface IStripeSubscriptionService
     Task<StripeSubscriptionInfo> ChangeSubscriptionPlanAsync(
         string stripeSubscriptionId, SubscriptionPlan newPlan, int truckCount);
 
-    /// <summary>Puts the plan's current AI overage price on each active subscription; returns how many changed.</summary>
+    /// <summary>Updates every active subscription on the plan to its current AI overage price; returns how many it changed.</summary>
     Task<int> SyncAIOverageItemAsync(SubscriptionPlan plan);
 }

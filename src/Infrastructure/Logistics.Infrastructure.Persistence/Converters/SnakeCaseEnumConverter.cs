@@ -9,7 +9,7 @@ namespace Logistics.Infrastructure.Persistence.Converters;
 public class SnakeCaseEnumConverter<TEnum> : ValueConverter<TEnum, string>
     where TEnum : struct, Enum
 {
-    /// <summary>Spellings existing rows keep, where a capital after a digit was not split.</summary>
+    /// <summary>Old spellings kept so existing rows still read, e.g. <c>euc1e</c> where the policy would write <c>euc1_e</c>.</summary>
     private static readonly FrozenDictionary<Enum, string> LegacyNames = new Dictionary<Enum, string>
     {
         [LicenseClass.EUC1E] = "euc1e"
