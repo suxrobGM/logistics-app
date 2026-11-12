@@ -29,16 +29,9 @@ public static partial class NegotiationMapper
         }
     }
 
-    [MapperIgnoreSource(nameof(RateNegotiation.DomainEvents))]
-    [MapperIgnoreSource(nameof(RateNegotiation.CreatedBy))]
-    [MapperIgnoreSource(nameof(RateNegotiation.UpdatedAt))]
-    [MapperIgnoreSource(nameof(RateNegotiation.UpdatedBy))]
-    [MapperIgnoreSource(nameof(RateNegotiation.ReplyToken))]
     [MapperIgnoreSource(nameof(RateNegotiation.LoadBoardListing))]
     [MapperIgnoreSource(nameof(RateNegotiation.Load))]
     [MapperIgnoreSource(nameof(RateNegotiation.Messages))]
-    [MapperIgnoreSource(nameof(RateNegotiation.IsOpen))]
-    [MapperIgnoreSource(nameof(RateNegotiation.CanCounter))]
     [MapperIgnoreTarget(nameof(RateNegotiationDto.Messages))]
     [MapperIgnoreTarget(nameof(RateNegotiationDto.MaxRounds))]
     [MapperIgnoreTarget(nameof(RateNegotiationDto.OriginCity))]
@@ -48,12 +41,7 @@ public static partial class NegotiationMapper
     [MapperIgnoreTarget(nameof(RateNegotiationDto.ListingTotalRate))]
     private static partial RateNegotiationDto Map(RateNegotiation entity);
 
-    [MapperIgnoreSource(nameof(NegotiationMessage.DomainEvents))]
     [MapperIgnoreSource(nameof(NegotiationMessage.Negotiation))]
-    [MapperIgnoreSource(nameof(NegotiationMessage.NegotiationId))]
-    [MapperIgnoreSource(nameof(NegotiationMessage.RawBody))]
-    [MapperIgnoreSource(nameof(NegotiationMessage.RfcMessageId))]
-    [MapperIgnoreSource(nameof(NegotiationMessage.InReplyToMessageId))]
     private static partial NegotiationMessageDto Map(NegotiationMessage entity);
 
     /// <summary>

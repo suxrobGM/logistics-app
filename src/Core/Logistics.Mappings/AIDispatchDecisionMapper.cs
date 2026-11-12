@@ -25,9 +25,7 @@ public static partial class AIDispatchDecisionMapper
         }
     }
 
-    [MapperIgnoreSource(nameof(AgentDecision.DomainEvents))]
     [MapperIgnoreSource(nameof(AgentDecision.Session))]
-    [MapperIgnoreSource(nameof(AgentDecision.ToolOutput))]
     [MapperIgnoreTarget(nameof(AgentDecisionDto.LoadName))]
     [MapperIgnoreTarget(nameof(AgentDecisionDto.TruckNumber))]
     [MapperIgnoreTarget(nameof(AgentDecisionDto.ToolResult))]

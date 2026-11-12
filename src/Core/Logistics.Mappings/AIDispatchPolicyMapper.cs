@@ -8,16 +8,5 @@ namespace Logistics.Mappings;
 public static partial class AIDispatchPolicyMapper
 {
     // ModelUsed stays out of the DTO - platform observability only.
-    [MapperIgnoreSource(nameof(AIDispatchPolicy.DomainEvents))]
-    [MapperIgnoreSource(nameof(AIDispatchPolicy.ModelUsed))]
-    [MapperIgnoreSource(nameof(AIDispatchPolicy.LastDecisionAt))]
-    [MapperIgnoreSource(nameof(AIDispatchPolicy.LastRunAt))]
-    [MapperIgnoreSource(nameof(AIDispatchPolicy.CreatedAt))]
-    [MapperIgnoreSource(nameof(AIDispatchPolicy.CreatedBy))]
-    [MapperIgnoreSource(nameof(AIDispatchPolicy.UpdatedAt))]
-    [MapperIgnoreSource(nameof(AIDispatchPolicy.UpdatedBy))]
-    [MapperIgnoreSource(nameof(AIDispatchPolicy.AutoApproveTypes))]
-    [MapperIgnoreSource(nameof(AIDispatchPolicy.AutoApproveStreak))]
-    [MapperIgnoreSource(nameof(AIDispatchPolicy.MinutesSavedPerDecision))]
     public static partial AIDispatchPolicyDto ToDto(this AIDispatchPolicy entity);
 }

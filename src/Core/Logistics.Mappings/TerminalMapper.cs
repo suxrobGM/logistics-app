@@ -7,9 +7,5 @@ namespace Logistics.Mappings;
 [Mapper]
 public static partial class TerminalMapper
 {
-    [MapperIgnoreSource(nameof(Terminal.DomainEvents))]
-    [MapperIgnoreSource(nameof(Terminal.CreatedBy))]
-    [MapperIgnoreSource(nameof(Terminal.UpdatedAt))]
-    [MapperIgnoreSource(nameof(Terminal.UpdatedBy))]
     public static partial TerminalDto ToDto(this Terminal entity);
 }

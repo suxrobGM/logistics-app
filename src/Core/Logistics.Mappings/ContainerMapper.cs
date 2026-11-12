@@ -9,10 +9,6 @@ public static partial class ContainerMapper
 {
     [MapperIgnoreSource(nameof(Container.CurrentTerminal))]
     [MapperIgnoreSource(nameof(Container.EmptyReturnTerminal))]
-    [MapperIgnoreSource(nameof(Container.DomainEvents))]
-    [MapperIgnoreSource(nameof(Container.CreatedBy))]
-    [MapperIgnoreSource(nameof(Container.UpdatedAt))]
-    [MapperIgnoreSource(nameof(Container.UpdatedBy))]
     [MapperIgnoreTarget(nameof(ContainerDto.CurrentTerminalName))]
     [MapperIgnoreTarget(nameof(ContainerDto.CurrentTerminalCode))]
     [MapperIgnoreTarget(nameof(ContainerDto.EmptyReturnTerminalName))]
@@ -24,7 +20,6 @@ public static partial class ContainerMapper
     [MapperIgnoreTarget(nameof(ContainerDto.TotalCharge))]
     private static partial ContainerDto ToDtoCore(this Container entity);
 
-    [MapperIgnoreSource(nameof(FreeTimeClock.NeedsAttention))]
     private static partial FreeTimeClockDto ToDto(this FreeTimeClock clock);
 
     private static partial ChassisUsageDto ToDto(this ChassisUsage usage);

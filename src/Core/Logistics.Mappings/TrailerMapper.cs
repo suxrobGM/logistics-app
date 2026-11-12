@@ -7,10 +7,6 @@ namespace Logistics.Mappings;
 [Mapper]
 public static partial class TrailerMapper
 {
-    [MapperIgnoreSource(nameof(Trailer.DomainEvents))]
-    [MapperIgnoreSource(nameof(Trailer.CreatedBy))]
-    [MapperIgnoreSource(nameof(Trailer.UpdatedAt))]
-    [MapperIgnoreSource(nameof(Trailer.UpdatedBy))]
     [MapperIgnoreTarget(nameof(TrailerDto.CurrentTruckId))]
     [MapperIgnoreTarget(nameof(TrailerDto.CurrentTruckNumber))]
     public static partial TrailerDto ToDto(this Trailer entity);

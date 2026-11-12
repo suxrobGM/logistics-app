@@ -8,15 +8,10 @@ namespace Logistics.Mappings;
 public static partial class PrivacyMapper
 {
     [MapperIgnoreSource(nameof(DataExportRequest.User))]
-    [MapperIgnoreSource(nameof(DataExportRequest.DomainEvents))]
-    [MapperIgnoreSource(nameof(DataExportRequest.BlobContainer))]
-    [MapperIgnoreSource(nameof(DataExportRequest.BlobName))]
-    [MapperIgnoreSource(nameof(DataExportRequest.BlobTenantId))]
     [MapperIgnoreTarget(nameof(DataExportRequestDto.DownloadUrl))]
     public static partial DataExportRequestDto ToDto(this DataExportRequest entity);
 
     [MapperIgnoreSource(nameof(DataDeletionRequest.User))]
-    [MapperIgnoreSource(nameof(DataDeletionRequest.DomainEvents))]
     [MapperIgnoreTarget(nameof(DataDeletionRequestDto.IsCancellable))]
     public static partial DataDeletionRequestDto ToDto(this DataDeletionRequest entity);
 
@@ -34,8 +29,5 @@ public static partial class PrivacyMapper
     }
 
     [MapperIgnoreSource(nameof(ConsentRecord.User))]
-    [MapperIgnoreSource(nameof(ConsentRecord.DomainEvents))]
-    [MapperIgnoreSource(nameof(ConsentRecord.IpAddress))]
-    [MapperIgnoreSource(nameof(ConsentRecord.UserAgent))]
     public static partial ConsentRecordDto ToDto(this ConsentRecord entity);
 }

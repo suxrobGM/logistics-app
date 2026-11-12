@@ -84,13 +84,9 @@ public static partial class LoadMapper
         }
     }
 
-    [MapperRequiredMapping(RequiredMappingStrategy.Target)]
-    [MapperIgnoreSource(nameof(Load.DomainEvents))]
     [MapperIgnoreSource(nameof(Load.Invoice))]
     [MapperIgnoreSource(nameof(Load.AssignedDispatcher))]
-    [MapperIgnoreSource(nameof(Load.AssignedDispatcherId))]
     [MapperIgnoreSource(nameof(Load.AssignedTruck))]
-    [MapperIgnoreSource(nameof(Load.AssignedTruckId))]
     [MapperIgnoreSource(nameof(Load.TripStops))]
     [MapProperty(nameof(Load.OriginLocation), nameof(TripLoadDto.OriginLocation))]
     [MapProperty(nameof(Load.DestinationLocation), nameof(TripLoadDto.DestinationLocation))]
