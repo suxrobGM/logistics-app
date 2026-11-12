@@ -7,7 +7,7 @@ using Microsoft.Extensions.Options;
 using NSubstitute;
 using Xunit;
 
-namespace Logistics.Application.Tests.LoadBoard;
+namespace Logistics.Infrastructure.Integrations.Tests.LoadBoard;
 
 public class BrokerCreditServiceTests
 {

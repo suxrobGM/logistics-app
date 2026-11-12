@@ -4,7 +4,7 @@ using Logistics.Infrastructure.Integrations.FuelCards.Providers.Efs;
 using Logistics.Infrastructure.Integrations.FuelCards.Providers.Wex;
 using Xunit;
 
-namespace Logistics.Application.Tests.FuelCards;
+namespace Logistics.Infrastructure.Integrations.Tests.FuelCards;
 
 public class FuelCardProviderMapperTests
 {

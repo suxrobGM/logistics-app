@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <ItemGroup>
-    <InternalsVisibleTo Include="Logistics.Application.Tests"/>
+    <InternalsVisibleTo Include="Logistics.Infrastructure.Integrations.Tests"/>
     <InternalsVisibleTo Include="DynamicProxyGenAssembly2"/>
   </ItemGroup>
 

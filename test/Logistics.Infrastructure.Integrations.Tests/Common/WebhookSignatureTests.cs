@@ -1,10 +1,10 @@
 using System.Security.Cryptography;
 using System.Text;
 using Logistics.Infrastructure.Integrations.Common;
-using Logistics.Application.Tests.TestKit;
+using Logistics.Infrastructure.Integrations.Tests.TestKit;
 using Xunit;
 
-namespace Logistics.Application.Tests.Eld;
+namespace Logistics.Infrastructure.Integrations.Tests.Common;
 
 public class WebhookSignatureTests
 {

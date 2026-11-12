@@ -10,7 +10,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <InternalsVisibleTo Include="Logistics.Application.Tests"/>
+    <InternalsVisibleTo Include="Logistics.Infrastructure.Integrations.Tests"/>
   </ItemGroup>
 
 </Project>

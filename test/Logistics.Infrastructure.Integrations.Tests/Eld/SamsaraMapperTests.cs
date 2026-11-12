@@ -5,7 +5,7 @@ using Logistics.Infrastructure.Integrations.Eld.Providers.Samsara;
 using Logistics.Shared.Models;
 using Xunit;
 
-namespace Logistics.Application.Tests.Eld;
+namespace Logistics.Infrastructure.Integrations.Tests.Eld;
 
 /// <summary>Payloads are the documented examples from developers.samsara.com, trimmed to the fields we read.</summary>
 public class SamsaraMapperTests

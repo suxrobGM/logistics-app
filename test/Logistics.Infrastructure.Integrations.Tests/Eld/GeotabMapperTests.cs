@@ -2,7 +2,7 @@ using Logistics.Domain.Primitives.Enums;
 using Logistics.Infrastructure.Integrations.Eld.Providers.Geotab;
 using Xunit;
 
-namespace Logistics.Application.Tests.Eld;
+namespace Logistics.Infrastructure.Integrations.Tests.Eld;
 
 public class GeotabMapperTests
 {

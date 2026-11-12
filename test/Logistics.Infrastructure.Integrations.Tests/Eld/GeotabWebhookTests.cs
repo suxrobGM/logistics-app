@@ -8,10 +8,10 @@ using Logistics.Shared.Models;
 using Microsoft.Extensions.Logging.Abstractions;
 using Microsoft.Extensions.Options;
 using NSubstitute;
-using Logistics.Application.Tests.TestKit;
+using Logistics.Infrastructure.Integrations.Tests.TestKit;
 using Xunit;
 
-namespace Logistics.Application.Tests.Eld;
+namespace Logistics.Infrastructure.Integrations.Tests.Eld;
 
 public class GeotabWebhookTests
 {

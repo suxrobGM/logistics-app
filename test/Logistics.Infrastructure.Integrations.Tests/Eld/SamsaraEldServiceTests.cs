@@ -8,7 +8,7 @@ using Microsoft.Extensions.Logging.Abstractions;
 using Microsoft.Extensions.Options;
 using Xunit;
 
-namespace Logistics.Application.Tests.Eld;
+namespace Logistics.Infrastructure.Integrations.Tests.Eld;
 
 public class SamsaraEldServiceTests
 {

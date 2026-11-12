@@ -1,7 +1,7 @@
 using System.Security.Cryptography;
 using System.Text;
 
-namespace Logistics.Application.Tests.TestKit;
+namespace Logistics.Infrastructure.Integrations.Tests.TestKit;
 
 internal static class WebhookTestKit
 {

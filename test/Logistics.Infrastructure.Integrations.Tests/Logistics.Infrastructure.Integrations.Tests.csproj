@@ -1,0 +1,22 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <IsPackable>false</IsPackable>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="NSubstitute" />
+    <PackageReference Include="xunit.v3" />
+    <PackageReference Include="coverlet.MTP" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\src\Infrastructure\Logistics.Infrastructure.Integrations.Accounting\Logistics.Infrastructure.Integrations.Accounting.csproj" />
+    <ProjectReference Include="..\..\src\Infrastructure\Logistics.Infrastructure.Integrations.Common\Logistics.Infrastructure.Integrations.Common.csproj" />
+    <ProjectReference Include="..\..\src\Infrastructure\Logistics.Infrastructure.Integrations.Eld\Logistics.Infrastructure.Integrations.Eld.csproj" />
+    <ProjectReference Include="..\..\src\Infrastructure\Logistics.Infrastructure.Integrations.FuelCards\Logistics.Infrastructure.Integrations.FuelCards.csproj" />
+    <ProjectReference Include="..\..\src\Infrastructure\Logistics.Infrastructure.Integrations.LoadBoard\Logistics.Infrastructure.Integrations.LoadBoard.csproj" />
+  </ItemGroup>
+
+</Project>

@@ -5,7 +5,7 @@ using Microsoft.Extensions.Logging.Abstractions;
 using Microsoft.Extensions.Options;
 using Xunit;
 
-namespace Logistics.Application.Tests.LoadBoard;
+namespace Logistics.Infrastructure.Integrations.Tests.LoadBoard;
 
 public class FmcsaClientTests
 {
