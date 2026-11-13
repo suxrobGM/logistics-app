@@ -42,7 +42,6 @@ public class NaturalKeySearchTests
     {
         Name = $"Terminal {code}",
         Code = code,
-        CountryCode = "US",
         Type = TerminalType.SeaPort,
         Address = new Address
         {

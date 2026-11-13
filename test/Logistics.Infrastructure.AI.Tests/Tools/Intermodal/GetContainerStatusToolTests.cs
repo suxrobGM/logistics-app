@@ -60,7 +60,6 @@ public class GetContainerStatusToolTests
         {
             Name = "Los Angeles",
             Code = "USLAX",
-            CountryCode = "US",
             Type = TerminalType.SeaPort,
             Address = new Address
             {

@@ -33,11 +33,6 @@ public class Terminal : AuditableEntity, ITenantEntity
     public static string NormalizeCode(string? value) =>
         value?.Trim().ToUpperInvariant() ?? "";
 
-    /// <summary>
-    /// ISO 3166-1 alpha-2 country code (e.g. "BE", "US", "DE").
-    /// </summary>
-    public required string CountryCode { get; set; }
-
     public required TerminalType Type { get; set; }
 
     public required Address Address { get; set; }

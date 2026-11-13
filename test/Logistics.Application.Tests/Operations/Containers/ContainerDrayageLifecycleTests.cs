@@ -13,7 +13,6 @@ public class ContainerDrayageLifecycleTests
     {
         Name = "Los Angeles",
         Code = "USLAX",
-        CountryCode = "US",
         Type = TerminalType.SeaPort,
         Address = new Address { Line1 = "1 Pier", City = "San Pedro", State = "CA", ZipCode = "90731", Country = "US" }
     };

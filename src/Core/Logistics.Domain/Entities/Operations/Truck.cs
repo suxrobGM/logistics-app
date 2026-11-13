@@ -59,7 +59,7 @@ public class Truck : Entity, ITenantEntity
     public string? LicensePlate { get; set; }
 
     /// <summary>
-    ///     State where the license plate is registered (e.g., "TX", "CA")
+    ///     Region where the plate is registered ("TX", "CA"), or the country code where plates have none ("DE")
     /// </summary>
     public string? LicensePlateState { get; set; }
 

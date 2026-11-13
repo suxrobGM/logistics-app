@@ -66,7 +66,7 @@ internal sealed class GetTerminalInfoTool(ITenantUnitOfWork tenantUow)
             code = terminal.Code,
             type = terminal.Type.ToString(),
             type_description = terminal.Type.GetDescription(),
-            country_code = terminal.CountryCode,
+            country_code = terminal.Address.Country,
             address = FormatAddress(terminal.Address),
             city = terminal.Address.City,
             notes = terminal.Notes

@@ -44,19 +44,19 @@ internal sealed class EURegionProfile : IRegionProfile
 
     public IReadOnlyList<TerminalSeed> Terminals { get; } =
     [
-        new("Port of Antwerp-Bruges", "BEANR", "BE", TerminalType.SeaPort,
+        new("Port of Antwerp-Bruges", "BEANR", TerminalType.SeaPort,
             new Address { Line1 = "Zaha Hadidplein 1", City = "Antwerp", State = "Antwerp", ZipCode = "2030", Country = "BE" }),
-        new("Port of Rotterdam", "NLRTM", "NL", TerminalType.SeaPort,
+        new("Port of Rotterdam", "NLRTM", TerminalType.SeaPort,
             new Address { Line1 = "Wilhelminakade 909", City = "Rotterdam", State = "South Holland", ZipCode = "3072 AP", Country = "NL" }),
-        new("Port of Hamburg", "DEHAM", "DE", TerminalType.SeaPort,
+        new("Port of Hamburg", "DEHAM", TerminalType.SeaPort,
             new Address { Line1 = "Bei St. Annen 1", City = "Hamburg", State = "Hamburg", ZipCode = "20457", Country = "DE" }),
-        new("Port of Bremerhaven", "DEBRV", "DE", TerminalType.SeaPort,
+        new("Port of Bremerhaven", "DEBRV", TerminalType.SeaPort,
             new Address { Line1 = "Senator-Borttscheller-Straße 1", City = "Bremerhaven", State = "Bremen", ZipCode = "27568", Country = "DE" }),
-        new("Duisburger Hafen Intermodal", "DEDUI", "DE", TerminalType.RailTerminal,
+        new("Duisburger Hafen Intermodal", "DEDUI", TerminalType.RailTerminal,
             new Address { Line1 = "Alte Ruhrorter Str. 42-52", City = "Duisburg", State = "North Rhine-Westphalia", ZipCode = "47119", Country = "DE" }),
-        new("Lyon Inland Depot", "FRLYS", "FR", TerminalType.InlandDepot,
+        new("Lyon Inland Depot", "FRLYS", TerminalType.InlandDepot,
             new Address { Line1 = "Rue de la Tour", City = "Lyon", State = "Auvergne-Rhône-Alpes", ZipCode = "69007", Country = "FR" }),
-        new("Port of Le Havre", "FRLEH", "FR", TerminalType.SeaPort,
+        new("Port of Le Havre", "FRLEH", TerminalType.SeaPort,
             new Address { Line1 = "Terre-Plein de la Barre", City = "Le Havre", State = "Normandy", ZipCode = "76600", Country = "FR" })
     ];
 

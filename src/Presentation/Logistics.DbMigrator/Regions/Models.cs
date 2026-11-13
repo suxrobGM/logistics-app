@@ -9,7 +9,7 @@ namespace Logistics.DbMigrator.Regions;
 /// </summary>
 public record RoutePoint(Address Address, double Longitude, double Latitude, string StateCode);
 
-public record TerminalSeed(string Name, string Code, string CountryCode, TerminalType Type, Address Address);
+public record TerminalSeed(string Name, string Code, TerminalType Type, Address Address);
 
 public record TruckMakeModel(string Make, string Model, string VinWmi);
 

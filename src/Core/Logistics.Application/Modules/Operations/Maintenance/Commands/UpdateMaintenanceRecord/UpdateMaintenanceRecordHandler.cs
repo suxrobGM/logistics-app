@@ -57,7 +57,7 @@ internal sealed class UpdateMaintenanceRecordHandler(ITenantUnitOfWork tenantUow
         record.InvoiceNumber = req.InvoiceNumber;
         record.LaborCost = req.LaborCost;
         record.PartsCost = req.PartsCost;
-        record.TotalCost = req.LaborCost + req.PartsCost;
+        record.RecalculateCosts();
         record.WorkPerformed = req.Notes;
 
         await tenantUow.SaveChangesAsync(ct);

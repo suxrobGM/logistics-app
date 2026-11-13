@@ -88,7 +88,7 @@ internal sealed class GetContainerStatusTool(ITenantUnitOfWork tenantUow)
                     name = terminal.Name,
                     code = terminal.Code,
                     type = terminal.Type.ToString(),
-                    country_code = terminal.CountryCode,
+                    country_code = terminal.Address.Country,
                     address = GetTerminalInfoTool.FormatAddress(terminal.Address)
                 },
             loaded_at = container.LoadedAt,

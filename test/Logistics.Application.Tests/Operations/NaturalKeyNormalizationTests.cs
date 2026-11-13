@@ -18,7 +18,6 @@ public class NaturalKeyNormalizationTests
     {
         Name = "Test",
         Code = code,
-        CountryCode = "US",
         Type = TerminalType.SeaPort,
         Address = new Address
         {

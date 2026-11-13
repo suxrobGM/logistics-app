@@ -32,7 +32,6 @@ internal class TerminalSeeder(ILogger<TerminalSeeder> logger) : SeederBase(logge
             {
                 Name = seed.Name,
                 Code = seed.Code,
-                CountryCode = seed.CountryCode,
                 Type = seed.Type,
                 Address = seed.Address
             };

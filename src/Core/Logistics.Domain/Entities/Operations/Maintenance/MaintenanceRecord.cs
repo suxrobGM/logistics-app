@@ -34,4 +34,15 @@ public class MaintenanceRecord : AuditableEntity, ITenantEntity
     public virtual Employee? PerformedBy { get; set; }
 
     public virtual List<MaintenancePart> Parts { get; set; } = [];
+
+    /// <summary>Itemized parts replace the lump-sum parts figure; the total is labor plus parts.</summary>
+    public void RecalculateCosts()
+    {
+        if (Parts.Count > 0)
+        {
+            PartsCost = Parts.Sum(p => p.TotalCost);
+        }
+
+        TotalCost = LaborCost + PartsCost;
+    }
 }

@@ -30,7 +30,7 @@ internal sealed class GetTerminalsHandler(ITenantUnitOfWork tenantUow)
 
         if (!string.IsNullOrEmpty(req.CountryCode))
         {
-            query = query.Where(i => i.CountryCode == req.CountryCode);
+            query = query.Where(i => i.Address.Country == req.CountryCode);
         }
 
         return await query.ToPagedResultAsync(req, i => i.ToDto(), ct);

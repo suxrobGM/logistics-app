@@ -10,7 +10,6 @@ public class CreateTerminalCommand : ICommand<Result<TerminalDto>>
 {
     public string Name { get; set; } = null!;
     public string Code { get; set; } = null!;
-    public string CountryCode { get; set; } = null!;
     public TerminalType Type { get; set; }
     public Address Address { get; set; } = null!;
     public string? Notes { get; set; }

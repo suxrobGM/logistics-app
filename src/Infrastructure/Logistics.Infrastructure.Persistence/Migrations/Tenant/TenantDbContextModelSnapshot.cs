@@ -1575,7 +1575,8 @@ namespace Logistics.Infrastructure.Persistence.Migrations.Tenant
 
                             b1.Property<string>("Country")
                                 .IsRequired()
-                                .HasColumnType("text")
+                                .HasMaxLength(2)
+                                .HasColumnType("character varying(2)")
                                 .HasColumnName("address_country");
 
                             b1.Property<string>("Line1")
@@ -2376,7 +2377,8 @@ namespace Logistics.Infrastructure.Persistence.Migrations.Tenant
 
                             b1.Property<string>("Country")
                                 .IsRequired()
-                                .HasColumnType("text")
+                                .HasMaxLength(2)
+                                .HasColumnType("character varying(2)")
                                 .HasColumnName("address_country");
 
                             b1.Property<string>("Line1")
@@ -2756,7 +2758,8 @@ namespace Logistics.Infrastructure.Persistence.Migrations.Tenant
 
                             b1.Property<string>("Country")
                                 .IsRequired()
-                                .HasColumnType("text")
+                                .HasMaxLength(2)
+                                .HasColumnType("character varying(2)")
                                 .HasColumnName("remit_to_address_country");
 
                             b1.Property<string>("Line1")
@@ -3728,7 +3731,8 @@ namespace Logistics.Infrastructure.Persistence.Migrations.Tenant
 
                             b1.Property<string>("Country")
                                 .IsRequired()
-                                .HasColumnType("text")
+                                .HasMaxLength(2)
+                                .HasColumnType("character varying(2)")
                                 .HasColumnName("destination_address_country");
 
                             b1.Property<string>("Line1")
@@ -3775,7 +3779,8 @@ namespace Logistics.Infrastructure.Persistence.Migrations.Tenant
 
                             b1.Property<string>("Country")
                                 .IsRequired()
-                                .HasColumnType("text")
+                                .HasMaxLength(2)
+                                .HasColumnType("character varying(2)")
                                 .HasColumnName("origin_address_country");
 
                             b1.Property<string>("Line1")
@@ -4152,7 +4157,8 @@ namespace Logistics.Infrastructure.Persistence.Migrations.Tenant
 
                             b1.Property<string>("Country")
                                 .IsRequired()
-                                .HasColumnType("text")
+                                .HasMaxLength(2)
+                                .HasColumnType("character varying(2)")
                                 .HasColumnName("destination_address_country");
 
                             b1.Property<string>("Line1")
@@ -4199,7 +4205,8 @@ namespace Logistics.Infrastructure.Persistence.Migrations.Tenant
 
                             b1.Property<string>("Country")
                                 .IsRequired()
-                                .HasColumnType("text")
+                                .HasMaxLength(2)
+                                .HasColumnType("character varying(2)")
                                 .HasColumnName("origin_address_country");
 
                             b1.Property<string>("Line1")
@@ -4916,7 +4923,8 @@ namespace Logistics.Infrastructure.Persistence.Migrations.Tenant
 
                             b1.Property<string>("Country")
                                 .IsRequired()
-                                .HasColumnType("text")
+                                .HasMaxLength(2)
+                                .HasColumnType("character varying(2)")
                                 .HasColumnName("billing_address_country");
 
                             b1.Property<string>("Line1")
@@ -5122,7 +5130,8 @@ namespace Logistics.Infrastructure.Persistence.Migrations.Tenant
 
                             b1.Property<string>("Country")
                                 .IsRequired()
-                                .HasColumnType("text")
+                                .HasMaxLength(2)
+                                .HasColumnType("character varying(2)")
                                 .HasColumnName("available_at_address_country");
 
                             b1.Property<string>("Line1")
@@ -5167,7 +5176,8 @@ namespace Logistics.Infrastructure.Persistence.Migrations.Tenant
 
                             b1.Property<string>("Country")
                                 .IsRequired()
-                                .HasColumnType("text")
+                                .HasMaxLength(2)
+                                .HasColumnType("character varying(2)")
                                 .HasColumnName("destination_preference_country");
 
                             b1.Property<string>("Line1")
@@ -5602,12 +5612,6 @@ namespace Logistics.Infrastructure.Persistence.Migrations.Tenant
                         .HasColumnType("character varying(5)")
                         .HasColumnName("code");
 
-                    b.Property<string>("CountryCode")
-                        .IsRequired()
-                        .HasMaxLength(2)
-                        .HasColumnType("character varying(2)")
-                        .HasColumnName("country_code");
-
                     b.Property<DateTime>("CreatedAt")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("timestamp with time zone")
@@ -5655,7 +5659,8 @@ namespace Logistics.Infrastructure.Persistence.Migrations.Tenant
 
                             b1.Property<string>("Country")
                                 .IsRequired()
-                                .HasColumnType("text")
+                                .HasMaxLength(2)
+                                .HasColumnType("character varying(2)")
                                 .HasColumnName("address_country");
 
                             b1.Property<string>("Line1")
@@ -6092,7 +6097,8 @@ namespace Logistics.Infrastructure.Persistence.Migrations.Tenant
 
                             b1.Property<string>("Country")
                                 .IsRequired()
-                                .HasColumnType("text")
+                                .HasMaxLength(2)
+                                .HasColumnType("character varying(2)")
                                 .HasColumnName("address_country");
 
                             b1.Property<string>("Line1")
@@ -6156,11 +6162,13 @@ namespace Logistics.Infrastructure.Persistence.Migrations.Tenant
                         .HasColumnName("is_hazmat_placarded");
 
                     b.Property<string>("LicensePlate")
-                        .HasColumnType("text")
+                        .HasMaxLength(20)
+                        .HasColumnType("character varying(20)")
                         .HasColumnName("license_plate");
 
                     b.Property<string>("LicensePlateState")
-                        .HasColumnType("text")
+                        .HasMaxLength(10)
+                        .HasColumnType("character varying(10)")
                         .HasColumnName("license_plate_state");
 
                     b.Property<Guid?>("MainDriverId")
@@ -6240,7 +6248,8 @@ namespace Logistics.Infrastructure.Persistence.Migrations.Tenant
 
                             b1.Property<string>("Country")
                                 .IsRequired()
-                                .HasColumnType("text")
+                                .HasMaxLength(2)
+                                .HasColumnType("character varying(2)")
                                 .HasColumnName("current_address_country");
 
                             b1.Property<string>("Line1")

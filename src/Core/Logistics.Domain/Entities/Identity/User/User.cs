@@ -8,6 +8,11 @@ public class User : IdentityUser<Guid>, IEntity<Guid>, IMasterEntity, IAuditable
     public required string FirstName { get; set; }
     public required string LastName { get; set; }
 
+    /// <summary>
+    /// The tenant the user signs in to by default: an employee's company, or a customer's first carrier.
+    /// It also puts the tenant claim on the token, which makes every other tenant need a
+    /// <see cref="UserTenantAccess"/> row - so it must stay set for customers too.
+    /// </summary>
     public Guid? TenantId { get; set; }
     public virtual Tenant? Tenant { get; set; }
 

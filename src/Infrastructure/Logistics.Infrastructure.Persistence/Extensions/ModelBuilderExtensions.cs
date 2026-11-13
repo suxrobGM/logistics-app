@@ -45,7 +45,7 @@ internal static class ModelBuilderExtensions
         public void AddLogisticsConventions()
         {
             configurationBuilder.Conventions.Add(_ => new SnakeCaseEnumConvention());
-            configurationBuilder.Conventions.Add(_ => new MoneyCurrencyLengthConvention());
+            configurationBuilder.Conventions.Add(_ => new IsoCodeLengthConvention());
             configurationBuilder.Properties<decimal>().HavePrecision(18, 2);
         }
     }

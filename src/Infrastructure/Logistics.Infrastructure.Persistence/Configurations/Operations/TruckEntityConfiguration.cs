@@ -16,6 +16,8 @@ internal sealed class TruckEntityConfiguration : IEntityTypeConfiguration<Truck>
         builder.Property(i => i.Number).HasMaxLength(50);
 
         builder.Property(i => i.Vin).HasMaxLength(17);
+        builder.Property(i => i.LicensePlate).HasMaxLength(20);
+        builder.Property(i => i.LicensePlateState).HasMaxLength(10);
         builder.HasIndex(i => i.Vin)
             .IsUnique()
             .HasFilter("vin IS NOT NULL");

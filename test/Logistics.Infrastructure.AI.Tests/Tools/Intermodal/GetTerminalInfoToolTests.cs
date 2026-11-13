@@ -107,7 +107,6 @@ public class GetTerminalInfoToolTests
         {
             Name = "Los Angeles",
             Code = "USLAX",
-            CountryCode = "US",
             Type = TerminalType.SeaPort,
             Address = new Address
             {

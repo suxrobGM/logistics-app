@@ -32,7 +32,6 @@ internal sealed class UpdateTerminalHandler(ITenantUnitOfWork tenantUow)
 
         terminal.Name = PropertyUpdater.UpdateIfChanged(req.Name, terminal.Name);
         terminal.Code = PropertyUpdater.UpdateIfChanged(req.Code, terminal.Code);
-        terminal.CountryCode = PropertyUpdater.UpdateIfChanged(req.CountryCode, terminal.CountryCode);
         terminal.Type = PropertyUpdater.UpdateIfChanged(req.Type, terminal.Type);
         terminal.Address = PropertyUpdater.UpdateIfChanged(req.Address, terminal.Address);
         terminal.Notes = PropertyUpdater.UpdateIfChanged(req.Notes, terminal.Notes);

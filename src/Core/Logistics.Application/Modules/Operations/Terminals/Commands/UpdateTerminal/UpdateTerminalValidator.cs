@@ -12,11 +12,6 @@ internal sealed class UpdateTerminalValidator : AbstractValidator<UpdateTerminal
             RuleFor(i => i.Code).Length(5)
                 .WithMessage("Terminal code must be 5 characters (UN/LOCODE).");
         });
-        When(i => !string.IsNullOrEmpty(i.CountryCode), () =>
-        {
-            RuleFor(i => i.CountryCode).Length(2)
-                .WithMessage("CountryCode must be a 2-letter ISO 3166-1 code.");
-        });
 
         RuleFor(i => i.Address!)
             .SetValidator(new AddressValidator())

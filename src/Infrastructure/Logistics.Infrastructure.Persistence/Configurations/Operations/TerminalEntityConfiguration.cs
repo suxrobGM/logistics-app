@@ -20,10 +20,6 @@ internal sealed class TerminalEntityConfiguration : IEntityTypeConfiguration<Ter
 
         builder.HasIndex(t => t.Code).IsUnique();
 
-        builder.Property(t => t.CountryCode)
-            .HasMaxLength(2)
-            .IsRequired();
-
         builder.Property(t => t.Notes).HasMaxLength(2000);
     }
 }

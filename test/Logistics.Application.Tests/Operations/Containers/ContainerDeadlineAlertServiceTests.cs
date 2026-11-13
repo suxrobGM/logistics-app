@@ -77,7 +77,6 @@ public class ContainerDeadlineAlertServiceTests
             {
                 Name = "Depot",
                 Code = "USLAX",
-                CountryCode = "US",
                 Type = TerminalType.InlandDepot,
                 Address = new Logistics.Domain.Primitives.ValueObjects.Address
                 {

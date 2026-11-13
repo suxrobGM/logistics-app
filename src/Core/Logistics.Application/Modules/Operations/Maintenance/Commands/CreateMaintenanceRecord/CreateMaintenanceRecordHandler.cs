@@ -59,13 +59,7 @@ internal sealed class CreateMaintenanceRecordHandler(ITenantUnitOfWork tenantUow
             record.Parts.Add(part);
         }
 
-        // Itemized parts replace the lump-sum figure rather than adding to it.
-        if (record.Parts.Count > 0)
-        {
-            record.PartsCost = record.Parts.Sum(p => p.TotalCost);
-        }
-
-        record.TotalCost = record.LaborCost + record.PartsCost;
+        record.RecalculateCosts();
 
         await tenantUow.Repository<MaintenanceRecord>().AddAsync(record, ct);
         await tenantUow.SaveChangesAsync(ct);

@@ -5,8 +5,11 @@ using Microsoft.EntityFrameworkCore.Metadata.Conventions;
 
 namespace Logistics.Infrastructure.Persistence.Conventions;
 
-/// <summary>Makes every <see cref="Money.Currency"/> column 3 characters long (an ISO 4217 code), including Money inside owned types.</summary>
-public class MoneyCurrencyLengthConvention : IModelFinalizingConvention
+/// <summary>
+/// Sizes the ISO code columns inside value objects, nested ones included: <see cref="Money.Currency"/> to 3
+/// characters (ISO 4217) and <see cref="Address.Country"/> to 2 (ISO 3166-1 alpha-2).
+/// </summary>
+public class IsoCodeLengthConvention : IModelFinalizingConvention
 {
     public void ProcessModelFinalizing(
         IConventionModelBuilder modelBuilder,
@@ -26,6 +29,11 @@ public class MoneyCurrencyLengthConvention : IModelFinalizingConvention
         if (complexType.ClrType == typeof(Money))
         {
             complexType.FindProperty(nameof(Money.Currency))?.Builder.HasMaxLength(3);
+        }
+
+        if (complexType.ClrType == typeof(Address))
+        {
+            complexType.FindProperty(nameof(Address.Country))?.Builder.HasMaxLength(2);
         }
 
         foreach (var nested in complexType.GetComplexProperties())

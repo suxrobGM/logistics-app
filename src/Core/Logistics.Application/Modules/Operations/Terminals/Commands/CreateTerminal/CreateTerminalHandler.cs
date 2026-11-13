@@ -24,7 +24,6 @@ internal sealed class CreateTerminalHandler(ITenantUnitOfWork tenantUow)
         {
             Name = req.Name,
             Code = code,
-            CountryCode = req.CountryCode,
             Type = req.Type,
             Address = req.Address,
             Notes = req.Notes

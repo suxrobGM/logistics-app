@@ -1351,7 +1351,8 @@ namespace Logistics.Infrastructure.Persistence.Migrations.Master
 
                             b1.Property<string>("Country")
                                 .IsRequired()
-                                .HasColumnType("text")
+                                .HasMaxLength(2)
+                                .HasColumnType("character varying(2)")
                                 .HasColumnName("company_address_country");
 
                             b1.Property<string>("Line1")

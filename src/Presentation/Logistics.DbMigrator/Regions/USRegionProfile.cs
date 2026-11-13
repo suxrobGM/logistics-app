@@ -45,19 +45,19 @@ internal sealed class USRegionProfile : IRegionProfile
 
     public IReadOnlyList<TerminalSeed> Terminals { get; } =
     [
-        new("Port of Los Angeles", "USLAX", "US", TerminalType.SeaPort,
+        new("Port of Los Angeles", "USLAX", TerminalType.SeaPort,
             new Address { Line1 = "425 S Palos Verdes St", City = "San Pedro", State = "CA", ZipCode = "90731", Country = "US" }),
-        new("Port of Long Beach", "USLGB", "US", TerminalType.SeaPort,
+        new("Port of Long Beach", "USLGB", TerminalType.SeaPort,
             new Address { Line1 = "415 W Ocean Blvd", City = "Long Beach", State = "CA", ZipCode = "90802", Country = "US" }),
-        new("Port of New York / New Jersey", "USNYC", "US", TerminalType.SeaPort,
+        new("Port of New York / New Jersey", "USNYC", TerminalType.SeaPort,
             new Address { Line1 = "4 World Trade Center", City = "New York", State = "NY", ZipCode = "10007", Country = "US" }),
-        new("Port of Houston", "USHOU", "US", TerminalType.SeaPort,
+        new("Port of Houston", "USHOU", TerminalType.SeaPort,
             new Address { Line1 = "111 East Loop N", City = "Houston", State = "TX", ZipCode = "77029", Country = "US" }),
-        new("Port of Savannah", "USSAV", "US", TerminalType.SeaPort,
+        new("Port of Savannah", "USSAV", TerminalType.SeaPort,
             new Address { Line1 = "2 E Bay St", City = "Savannah", State = "GA", ZipCode = "31401", Country = "US" }),
-        new("BNSF Chicago Logistics Park", "USCHI", "US", TerminalType.RailTerminal,
+        new("BNSF Chicago Logistics Park", "USCHI", TerminalType.RailTerminal,
             new Address { Line1 = "26664 S Baseline Rd", City = "Elwood", State = "IL", ZipCode = "60421", Country = "US" }),
-        new("Memphis Inland Depot", "USMEM", "US", TerminalType.InlandDepot,
+        new("Memphis Inland Depot", "USMEM", TerminalType.InlandDepot,
             new Address { Line1 = "3030 Airways Blvd", City = "Memphis", State = "TN", ZipCode = "38131", Country = "US" })
     ];
 
