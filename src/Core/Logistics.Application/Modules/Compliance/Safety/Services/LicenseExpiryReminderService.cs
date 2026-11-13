@@ -8,38 +8,15 @@ using Logistics.Application.Abstractions.Realtime;
 namespace Logistics.Application.Modules.Compliance.Safety.Services;
 
 internal sealed class LicenseExpiryReminderService(
-    IMasterUnitOfWork masterUow,
     ITenantUnitOfWork tenantUow,
     IRealtimeNotificationService notificationService,
     ILogger<LicenseExpiryReminderService> logger)
     : ILicenseExpiryReminderService
 {
-    /// <summary>
-    /// Reminder thresholds in days. Driver receives a notification once per threshold.
-    /// </summary>
+    /// <summary>A license is reminded once per threshold.</summary>
     private static readonly int[] ReminderDays = [60, 30, 7];
 
-    public async Task ProcessLicenseExpiryRemindersAsync(CancellationToken ct = default)
-    {
-        var tenants = await masterUow.Repository<Tenant>().GetListAsync(ct: ct);
-
-        foreach (var tenant in tenants)
-        {
-            try
-            {
-                tenantUow.SetCurrentTenant(tenant);
-                await ProcessTenantAsync(tenant, ct);
-            }
-            catch (Exception ex)
-            {
-                logger.LogError(ex,
-                    "Error processing license expiry reminders for tenant {TenantName}",
-                    tenant.Name);
-            }
-        }
-    }
-
-    private async Task ProcessTenantAsync(Tenant tenant, CancellationToken ct)
+    public async Task ProcessLicenseExpiryRemindersAsync(Tenant tenant, CancellationToken ct = default)
     {
         var today = DateOnly.FromDateTime(DateTime.UtcNow);
         var maxDate = today.AddDays(ReminderDays.Max());
@@ -55,8 +32,7 @@ internal sealed class LicenseExpiryReminderService(
         {
             var daysUntilExpiry = license.ExpiresAt.DayNumber - today.DayNumber;
 
-            // Pick the smallest threshold that the license is at or under.
-            // e.g. 25 days â†’ uses the 30-day threshold.
+            // Smallest threshold the license is at or under: 25 days uses the 30-day one.
             var threshold = ReminderDays.Where(t => daysUntilExpiry <= t).DefaultIfEmpty(-1).Min();
             if (threshold < 0)
             {
@@ -73,7 +49,6 @@ internal sealed class LicenseExpiryReminderService(
             await SendNotificationAsync(tenant.Id.ToString(), license, daysUntilExpiry);
 
             license.RecordReminderSent(threshold);
-            tenantUow.Repository<DriverLicense>().Update(license);
             sentCount++;
         }
 

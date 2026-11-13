@@ -281,6 +281,8 @@ internal static class Setup
             DetentionAlertJob.ScheduleJobs();
             AIDispatchPolicyLearningJob.ScheduleJobs();
             NegotiationExpirySweepJob.ScheduleJobs();
+            DataRetentionJob.ScheduleJobs();
+            LicenseExpiryReminderJob.ScheduleJobs();
             RecurringJobs.Schedule();
 
             // Jobs whose code is gone.

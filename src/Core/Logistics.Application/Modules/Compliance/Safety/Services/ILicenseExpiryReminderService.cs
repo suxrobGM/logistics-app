@@ -1,9 +1,9 @@
+using Logistics.Domain.Entities;
+
 namespace Logistics.Application.Modules.Compliance.Safety.Services;
 
-/// <summary>
-/// Generates notifications for driver licenses approaching expiry. Invoked daily by Hangfire.
-/// </summary>
+/// <summary>Notifies the current tenant about driver licenses approaching expiry.</summary>
 public interface ILicenseExpiryReminderService : IApplicationService
 {
-    Task ProcessLicenseExpiryRemindersAsync(CancellationToken ct = default);
+    Task ProcessLicenseExpiryRemindersAsync(Tenant tenant, CancellationToken ct = default);
 }

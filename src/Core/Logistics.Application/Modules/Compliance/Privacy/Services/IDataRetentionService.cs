@@ -1,10 +1,9 @@
+using Logistics.Domain.Entities;
+
 namespace Logistics.Application.Modules.Compliance.Privacy.Services;
 
-/// <summary>
-/// Daily retention sweeper - deletes per-tenant entities that have outlived
-/// their GDPR retention window (read notifications &gt; 1y, dispatch sessions &gt; 2y).
-/// </summary>
+/// <summary>Deletes the current tenant's notifications and dispatch sessions past their GDPR retention window.</summary>
 public interface IDataRetentionService : IApplicationService
 {
-    Task PurgeAsync(CancellationToken ct = default);
+    Task PurgeAsync(Tenant tenant, CancellationToken ct = default);
 }
