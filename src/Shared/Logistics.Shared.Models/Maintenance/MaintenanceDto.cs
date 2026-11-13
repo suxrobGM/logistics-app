@@ -12,7 +12,7 @@ public class MaintenanceRecordDto
     public string TypeDisplay { get; set; } = string.Empty;
     public string Description { get; set; } = string.Empty;
 
-    public DateTime ServiceDate { get; set; }
+    public DateOnly ServiceDate { get; set; }
     public long? OdometerMeters { get; set; }
     public decimal? EngineHours { get; set; }
 

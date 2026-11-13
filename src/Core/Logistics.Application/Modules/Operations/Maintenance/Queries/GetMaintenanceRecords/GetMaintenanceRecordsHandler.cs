@@ -28,12 +28,12 @@ internal sealed class GetMaintenanceRecordsHandler(ITenantUnitOfWork tenantUow, 
 
         if (req.FromDate.HasValue)
         {
-            baseQuery = baseQuery.Where(r => r.ServiceDate >= req.FromDate);
+            baseQuery = baseQuery.Where(r => r.ServiceDate >= DateOnly.FromDateTime(req.FromDate.Value));
         }
 
         if (req.ToDate.HasValue)
         {
-            baseQuery = baseQuery.Where(r => r.ServiceDate <= req.ToDate);
+            baseQuery = baseQuery.Where(r => r.ServiceDate <= DateOnly.FromDateTime(req.ToDate.Value));
         }
 
         return await baseQuery.ToPagedResultAsync(req, MapPageAsync, ct, defaultOrderBy: "-ServiceDate");

@@ -118,8 +118,8 @@ public class EldSyncServiceTests
     public async Task SyncHistoryAsync_EditedLogs_UpdatesMatchesDeletesStaleAndAddsNew()
     {
         var start = DateTime.UtcNow.AddHours(-6);
-        var kept = new HosLog { EmployeeId = _mapping.EmployeeId, LogDate = start.Date, DutyStatus = DutyStatus.OffDuty, StartedAt = start, ExternalLogId = "a" };
-        var stale = new HosLog { EmployeeId = _mapping.EmployeeId, LogDate = start.Date, DutyStatus = DutyStatus.OffDuty, StartedAt = start, ExternalLogId = "b" };
+        var kept = new HosLog { EmployeeId = _mapping.EmployeeId, LogDate = DateOnly.FromDateTime(start.Date), DutyStatus = DutyStatus.OffDuty, StartedAt = start, ExternalLogId = "a" };
+        var stale = new HosLog { EmployeeId = _mapping.EmployeeId, LogDate = DateOnly.FromDateTime(start.Date), DutyStatus = DutyStatus.OffDuty, StartedAt = start, ExternalLogId = "b" };
         _logs.GetListAsync(Any<HosLog>(), Arg.Any<CancellationToken>()).Returns([kept, stale]);
         _provider.GetDriverHosLogsAsync("88668", Arg.Any<DateTime>(), Arg.Any<DateTime>()).Returns(
         [
@@ -167,7 +167,7 @@ public class EldSyncServiceTests
         {
             EmployeeId = _mapping.EmployeeId,
             ProviderType = EldProviderType.Samsara,
-            LogDate = DateTime.UtcNow.AddDays(-9).Date,
+            LogDate = DateOnly.FromDateTime(DateTime.UtcNow.AddDays(-9).Date),
             DutyStatus = DutyStatus.OffDuty,
             StartedAt = DateTime.UtcNow.AddDays(-9),
             ExternalLogId = "a"

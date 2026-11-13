@@ -65,7 +65,7 @@ internal sealed class AccountingPayablesSyncService(
         var from = run.SyncFrom;
         var expenses = await tenantUow.Repository<Expense>().Query()
             .Where(mappingService.NotUpToDate<Expense>(QboLocalEntityType.Expense))
-            .Where(e => ExpenseStatuses.Counted.Contains(e.Status) && e.ExpenseDate >= from)
+            .Where(e => ExpenseStatuses.Counted.Contains(e.Status) && e.ExpenseDate >= DateOnly.FromDateTime(from))
             .OrderBy(e => e.CreatedAt)
             .Take(SyncRun.BatchSize)
             .ToListAsync(ct);

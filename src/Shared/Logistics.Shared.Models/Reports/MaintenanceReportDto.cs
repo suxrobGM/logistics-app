@@ -53,5 +53,5 @@ public record MaintenanceTruckSummaryDto
     public string TruckNumber { get; set; } = string.Empty;
     public int ServiceCount { get; set; }
     public decimal TotalCost { get; set; }
-    public DateTime? LastServiceDate { get; set; }
+    public DateOnly? LastServiceDate { get; set; }
 }

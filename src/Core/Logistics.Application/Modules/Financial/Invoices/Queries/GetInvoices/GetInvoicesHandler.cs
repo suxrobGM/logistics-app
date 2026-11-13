@@ -88,7 +88,7 @@ internal sealed class GetInvoicesHandler(ITenantUnitOfWork tenantUow)
         {
             var now = DateTime.UtcNow;
             query = query.Where(i => i.DueDate.HasValue
-                                     && i.DueDate.Value < now
+                                     && i.DueDate.Value < DateOnly.FromDateTime(now)
                                      && i.Status != InvoiceStatus.Paid
                                      && i.Status != InvoiceStatus.Cancelled);
         }

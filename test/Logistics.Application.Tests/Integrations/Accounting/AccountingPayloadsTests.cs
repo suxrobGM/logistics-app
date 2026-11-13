@@ -32,7 +32,7 @@ public class AccountingPayloadsTests
 
         Assert.Equal(["1", "3"], payload.Lines.Select(l => l.ItemId));
         Assert.Equal(invoice.CreatedAt, payload.TxnDate);
-        Assert.Equal(invoice.DueDate, payload.DueDate);
+        Assert.Equal(invoice.DueDate?.ToDateTime(TimeOnly.MinValue, DateTimeKind.Utc), payload.DueDate);
     }
 
     [Fact]
@@ -118,7 +118,7 @@ public class AccountingPayloadsTests
         {
             Category = CompanyExpenseCategory.Insurance,
             Amount = 900m,
-            ExpenseDate = DateTime.UtcNow
+            ExpenseDate = DateOnly.FromDateTime(DateTime.UtcNow)
         };
 
         Assert.Equal("70", AccountingPayloads.ExpenseAccountId(expense, _config, mappings));
@@ -171,7 +171,7 @@ public class AccountingPayloadsTests
         CustomerId = Guid.NewGuid(),
         Number = 1007,
         CreatedAt = new DateTime(2026, 7, 1, 0, 0, 0, DateTimeKind.Utc),
-        DueDate = new DateTime(2026, 7, 31, 0, 0, 0, DateTimeKind.Utc),
+        DueDate = DateOnly.FromDateTime(new DateTime(2026, 7, 31, 0, 0, 0, DateTimeKind.Utc)),
         Subtotal = 0m,
         TaxTotal = 0m,
         Total = 0m
@@ -191,6 +191,6 @@ public class AccountingPayloadsTests
         TruckId = Guid.NewGuid(),
         Category = category,
         Amount = 100m,
-        ExpenseDate = DateTime.UtcNow
+        ExpenseDate = DateOnly.FromDateTime(DateTime.UtcNow)
     };
 }

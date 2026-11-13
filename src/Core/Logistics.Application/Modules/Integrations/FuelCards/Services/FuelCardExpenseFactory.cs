@@ -22,7 +22,7 @@ internal static class FuelCardExpenseFactory
             Category = TruckExpenseCategory.Fuel,
             Status = ExpenseStatus.Paid,
             Amount = transaction.Amount.Amount,
-            ExpenseDate = transaction.TransactionDate,
+            ExpenseDate = DateOnly.FromDateTime(transaction.TransactionDate),
             VendorName = transaction.MerchantName,
             Quantity = transaction.Quantity,
             QuantityUnit = transaction.QuantityUnit,

@@ -94,7 +94,7 @@ internal class TripSeeder(
 
                 var invoice = load.Invoice!;
                 var deliveredAt = load.DeliveredAt ?? DateTime.UtcNow;
-                invoice.DueDate = deliveredAt.AddDays(30);
+                invoice.DueDate = DateOnly.FromDateTime(deliveredAt.AddDays(30));
                 invoice.SentAt = deliveredAt.AddDays(1);
                 await taxApplier.ApplyAsync(invoice, cancellationToken);
 

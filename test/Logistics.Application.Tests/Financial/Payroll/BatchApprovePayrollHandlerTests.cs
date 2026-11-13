@@ -54,7 +54,7 @@ public class BatchApprovePayrollHandlerTests
             TaxTotal = 0m,
             Total = total,
             Status = status,
-            DueDate = DateTime.UtcNow
+            DueDate = DateOnly.FromDateTime(DateTime.UtcNow)
         };
     }
 }

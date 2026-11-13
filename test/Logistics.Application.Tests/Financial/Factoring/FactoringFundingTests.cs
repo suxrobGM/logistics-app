@@ -135,7 +135,7 @@ public class FactoringFundingTests
     {
         var (batch, item, invoice) = SubmittedBatch(Company());
         invoice.SentAt = DateTime.UtcNow.AddDays(-5);
-        invoice.DueDate = DateTime.UtcNow.AddDays(10);
+        invoice.DueDate = DateOnly.FromDateTime(DateTime.UtcNow.AddDays(10));
         var sale = item.Fund(900m, 30m, DateTime.UtcNow, Address);
 
         var removed = item.ChargeBack(DateTime.UtcNow);
@@ -155,7 +155,7 @@ public class FactoringFundingTests
     public void ChargeBack_PastDue_InvoiceIsOverdue()
     {
         var (_, item, invoice) = SubmittedBatch(Company());
-        invoice.DueDate = DateTime.UtcNow.AddDays(-1);
+        invoice.DueDate = DateOnly.FromDateTime(DateTime.UtcNow.AddDays(-1));
         item.Fund(900m, 30m, DateTime.UtcNow.AddDays(-20), Address);
 
         item.ChargeBack(DateTime.UtcNow);

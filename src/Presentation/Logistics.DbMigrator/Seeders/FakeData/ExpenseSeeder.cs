@@ -106,7 +106,7 @@ internal class ExpenseSeeder(ILogger<ExpenseSeeder> logger) : SeederBase(logger)
         {
             Amount = amount,
             VendorName = random.Pick(VendorNames),
-            ExpenseDate = expenseDate,
+            ExpenseDate = DateOnly.FromDateTime(expenseDate),
             ReceiptBlobPath = $"receipts/company/{Guid.NewGuid()}.pdf",
             Notes = $"Company expense for {category}",
             Category = category,
@@ -135,7 +135,7 @@ internal class ExpenseSeeder(ILogger<ExpenseSeeder> logger) : SeederBase(logger)
         {
             Amount = amount,
             VendorName = random.Pick(VendorNames),
-            ExpenseDate = expenseDate,
+            ExpenseDate = DateOnly.FromDateTime(expenseDate),
             ReceiptBlobPath = $"receipts/truck/{Guid.NewGuid()}.pdf",
             Notes = $"Truck expense for {truck.Number}",
             TruckId = truck.Id,
@@ -167,15 +167,15 @@ internal class ExpenseSeeder(ILogger<ExpenseSeeder> logger) : SeederBase(logger)
         {
             Amount = random.Next(1000, 8000),
             VendorName = random.Pick(["Joe's Body Shop", "Premier Collision Center", "Elite Auto Body", "Quality Auto Repair"]),
-            ExpenseDate = expenseDate,
+            ExpenseDate = DateOnly.FromDateTime(expenseDate),
             ReceiptBlobPath = $"receipts/bodyshop/{Guid.NewGuid()}.pdf",
             Notes = $"Body shop repair for truck {truck.Number}",
             TruckId = truck.Id,
             VendorAddress = "123 Auto Repair Lane, Dallas, TX 75001",
             VendorPhone = "(555) 123-4567",
             RepairDescription = random.Pick(repairDescriptions),
-            EstimatedCompletionDate = completionDate,
-            ActualCompletionDate = completionDate.AddDays(random.Next(-2, 3)),
+            EstimatedCompletionDate = DateOnly.FromDateTime(completionDate),
+            ActualCompletionDate = DateOnly.FromDateTime(completionDate.AddDays(random.Next(-2, 3))),
             Status = GetRandomStatus()
         };
 

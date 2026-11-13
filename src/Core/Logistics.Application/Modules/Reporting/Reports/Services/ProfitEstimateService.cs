@@ -79,7 +79,7 @@ internal sealed class ProfitEstimateService(ITenantUnitOfWork tenantUow) : IProf
 
         var expenses = await tenantUow.Repository<Expense>().Query()
             .OfType<TruckLinkedExpense>()
-            .Where(e => ExpenseStatuses.Counted.Contains(e.Status) && e.ExpenseDate >= from)
+            .Where(e => ExpenseStatuses.Counted.Contains(e.Status) && e.ExpenseDate >= DateOnly.FromDateTime(from))
             .GroupBy(e => e.TruckId)
             .Select(g => new { TruckId = g.Key, Amount = g.Sum(e => e.Amount) })
             .ToDictionaryAsync(e => e.TruckId, e => e.Amount, ct);

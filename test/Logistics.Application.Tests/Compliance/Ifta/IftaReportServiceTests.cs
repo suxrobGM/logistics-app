@@ -71,7 +71,7 @@ public class IftaReportServiceTests
         TruckId = _truckId,
         Category = TruckExpenseCategory.Fuel,
         Amount = quantity * 4,
-        ExpenseDate = new DateTime(2026, 5, 10, 0, 0, 0, DateTimeKind.Utc),
+        ExpenseDate = DateOnly.FromDateTime(new DateTime(2026, 5, 10, 0, 0, 0, DateTimeKind.Utc)),
         Quantity = quantity,
         QuantityUnit = unit,
         PurchaseJurisdiction = region is null ? null : new TaxJurisdiction { CountryCode = "US", Region = region }

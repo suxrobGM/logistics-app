@@ -218,7 +218,7 @@ internal sealed class EldSyncService(
                 EmployeeId = mapping.EmployeeId,
                 ProviderType = mapping.ProviderType,
                 ExternalLogId = key,
-                LogDate = entry.LogDate,
+                LogDate = DateOnly.FromDateTime(entry.LogDate),
                 DutyStatus = entry.DutyStatus,
                 StartedAt = entry.StartTime
             };
@@ -228,7 +228,7 @@ internal sealed class EldSyncService(
 
         static void Apply(HosLog log, EldHosLogEntryDto entry)
         {
-            log.LogDate = entry.LogDate;
+            log.LogDate = DateOnly.FromDateTime(entry.LogDate);
             log.DutyStatus = entry.DutyStatus;
             log.StartedAt = entry.StartTime;
             log.EndedAt = entry.EndTime;

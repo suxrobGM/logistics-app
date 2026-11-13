@@ -31,7 +31,7 @@ public record InvoiceDto
     public IEnumerable<InvoiceTaxLineDto> TaxBreakdown { get; set; } = [];
 
     public string? Notes { get; set; }
-    public DateTime? DueDate { get; set; }
+    public DateOnly? DueDate { get; set; }
 
     public IEnumerable<PaymentDto> Payments { get; set; } = [];
 

@@ -67,7 +67,7 @@ public class CreateMaintenanceRecordHandlerTests
         TruckId = _truck.Id,
         Type = Enum.GetValues<MaintenanceType>()[0],
         Description = "Oil change",
-        ServiceDate = DateTime.UtcNow,
+        ServiceDate = DateOnly.FromDateTime(DateTime.UtcNow),
         LaborCost = 100m,
         PartsCost = partsCost,
         Parts = parts

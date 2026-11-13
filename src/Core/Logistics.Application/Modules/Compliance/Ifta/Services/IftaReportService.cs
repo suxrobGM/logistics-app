@@ -54,8 +54,8 @@ internal sealed class IftaReportService(
             .Where(e => e.Category == TruckExpenseCategory.Fuel
                 && e.Status != ExpenseStatus.Rejected
                 && e.Quantity != null
-                && e.ExpenseDate >= start
-                && e.ExpenseDate < end)
+                && e.ExpenseDate >= startDate
+                && e.ExpenseDate < endDate)
             .Select(e => new
             {
                 e.Quantity,

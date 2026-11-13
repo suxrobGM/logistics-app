@@ -44,7 +44,7 @@ internal sealed class FinancialsReportHandler(ITenantUnitOfWork tenantUow)
         var averageInvoiceValue = totalCount > 0 ? totalInvoiced / totalCount : 0;
         var collectionRate = totalInvoiced > 0 ? (totalPaid / totalInvoiced) * 100 : 0;
         var now = DateTime.UtcNow;
-        var overdue = invoices.Where(i => InvoiceStatuses.Open.Contains(i.Status) && i.DueDate < now).ToList();
+        var overdue = invoices.Where(i => InvoiceStatuses.Open.Contains(i.Status) && i.DueDate < DateOnly.FromDateTime(now)).ToList();
         var overdueAmount = overdue.Sum(i => i.AmountDue);
         var overdueInvoices = overdue.Count;
 
@@ -206,7 +206,7 @@ internal sealed class FinancialsReportHandler(ITenantUnitOfWork tenantUow)
     {
         var rows = await tenantUow.Repository<Expense>().Query()
             .Where(e => ExpenseStatuses.Counted.Contains(e.Status))
-            .Where(e => e.ExpenseDate >= from && e.ExpenseDate < to)
+            .Where(e => e.ExpenseDate >= DateOnly.FromDateTime(from) && e.ExpenseDate < DateOnly.FromDateTime(to))
             .GroupBy(e => new { e.ExpenseDate.Year, e.ExpenseDate.Month })
             .Select(g => new { g.Key.Year, g.Key.Month, Total = g.Sum(e => e.Amount) })
             .ToListAsync(ct);

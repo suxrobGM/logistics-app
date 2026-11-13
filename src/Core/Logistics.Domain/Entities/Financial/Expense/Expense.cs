@@ -27,7 +27,7 @@ public abstract class Expense : AuditableEntity, ITenantEntity
     /// <summary>
     ///     Date when the expense occurred.
     /// </summary>
-    public required DateTime ExpenseDate { get; set; }
+    public required DateOnly ExpenseDate { get; set; }
 
     /// <summary>
     ///     Path to the receipt blob in storage. Required for all expenses.

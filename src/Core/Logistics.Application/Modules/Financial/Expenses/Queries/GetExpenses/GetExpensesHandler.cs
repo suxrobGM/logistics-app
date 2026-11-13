@@ -39,12 +39,12 @@ internal sealed class GetExpensesHandler(ITenantUnitOfWork tenantUow, ITruckDtoM
         // Apply date range filter
         if (req.FromDate.HasValue)
         {
-            query = query.Where(e => e.ExpenseDate >= req.FromDate.Value);
+            query = query.Where(e => e.ExpenseDate >= DateOnly.FromDateTime(req.FromDate.Value));
         }
 
         if (req.ToDate.HasValue)
         {
-            query = query.Where(e => e.ExpenseDate <= req.ToDate.Value);
+            query = query.Where(e => e.ExpenseDate <= DateOnly.FromDateTime(req.ToDate.Value));
         }
 
         // Apply search (case-insensitive)

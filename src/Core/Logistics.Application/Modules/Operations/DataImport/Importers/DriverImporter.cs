@@ -50,7 +50,7 @@ internal sealed class DriverImporter(
             draft.Errors.Add("First and last name are required (or a full name column).");
         }
 
-        draft.HireDate = draft.ReadDate(HireDate, "Hire date", options);
+        draft.HireDate = draft.ReadDate(HireDate, "Hire date", options) is { } hired ? DateOnly.FromDateTime(hired) : null;
         draft.Address = draft.ReadAddress(null, "Address", options, required: false);
         return draft;
     }
@@ -135,7 +135,7 @@ internal sealed class DriverImporter(
 
             var driver = Employee.CreateEmployeeFromUser(user);
             driver.Address = draft.Address;
-            driver.JoinedDate = draft.HireDate ?? DateTime.UtcNow;
+            driver.JoinedDate = draft.HireDate ?? DateOnly.FromDateTime(DateTime.UtcNow);
             driver.Role = driverRole;
             await tenantUow.Repository<Employee>().AddAsync(driver, ct);
             created.Add(draft);
@@ -211,7 +211,7 @@ internal sealed class DriverImporter(
     {
         public string? FirstName { get; set; }
         public string? LastName { get; set; }
-        public DateTime? HireDate { get; set; }
+        public DateOnly? HireDate { get; set; }
         public Address? Address { get; set; }
         public Employee? Existing { get; set; }
         public User? User { get; set; }

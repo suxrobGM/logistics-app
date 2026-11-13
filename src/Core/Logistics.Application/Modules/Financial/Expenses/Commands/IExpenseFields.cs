@@ -8,7 +8,7 @@ public interface IExpenseFields
 {
     decimal Amount { get; }
     string? VendorName { get; }
-    DateTime ExpenseDate { get; }
+    DateOnly ExpenseDate { get; }
     string? ReceiptBlobPath { get; }
     string? Notes { get; }
 }

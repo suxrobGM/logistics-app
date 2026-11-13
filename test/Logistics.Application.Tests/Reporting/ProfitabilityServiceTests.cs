@@ -71,7 +71,7 @@ public class ProfitabilityServiceTests
             Category = category,
             Status = status,
             Amount = amount,
-            ExpenseDate = From.AddDays(3)
+            ExpenseDate = DateOnly.FromDateTime(From.AddDays(3))
         });
 
     private void PayDriver(SalaryType type, decimal rate)
@@ -216,7 +216,7 @@ public class ProfitabilityServiceTests
             Category = CompanyExpenseCategory.Insurance,
             Status = ExpenseStatus.Approved,
             Amount = 400m,
-            ExpenseDate = From.AddDays(1)
+            ExpenseDate = DateOnly.FromDateTime(From.AddDays(1))
         });
 
         var summary = (await _sut.BuildAsync(From, From.AddDays(7))).Summary;

@@ -40,7 +40,7 @@ public class GetInvoiceDashboardHandlerTests
     private static LoadInvoice PastDue(InvoiceStatus status, decimal total = 1000m)
     {
         var invoice = Invoice(Customer(null), total: total, status: status);
-        invoice.DueDate = DateTime.UtcNow.AddDays(-5);
+        invoice.DueDate = DateOnly.FromDateTime(DateTime.UtcNow.AddDays(-5));
         return invoice;
     }
 
@@ -63,7 +63,7 @@ public class GetInvoiceDashboardHandlerTests
     public async Task Handle_SentNotDue_CountsAsPending()
     {
         var invoice = Invoice(Customer(null), status: InvoiceStatus.Sent);
-        invoice.DueDate = DateTime.UtcNow.AddDays(10);
+        invoice.DueDate = DateOnly.FromDateTime(DateTime.UtcNow.AddDays(10));
         GivenInvoices(invoice);
 
         var result = await _sut.Handle(new GetInvoiceDashboardQuery(), CancellationToken.None);

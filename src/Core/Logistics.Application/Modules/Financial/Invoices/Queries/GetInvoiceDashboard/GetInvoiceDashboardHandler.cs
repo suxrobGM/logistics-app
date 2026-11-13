@@ -28,7 +28,7 @@ internal sealed class GetInvoiceDashboardHandler(ITenantUnitOfWork tenantUow)
 
         var draftInvoices = invoices.Where(i => i.Status == InvoiceStatus.Draft).ToList();
         var openInvoices = invoices.Where(i => InvoiceStatuses.Open.Contains(i.Status)).ToList();
-        var overdueInvoices = openInvoices.Where(i => i.DueDate < now).ToList();
+        var overdueInvoices = openInvoices.Where(i => i.DueDate < DateOnly.FromDateTime(now)).ToList();
         var notDueInvoices = openInvoices.Except(overdueInvoices).ToList();
         var pendingInvoices = notDueInvoices.Where(i => i.Status != InvoiceStatus.PartiallyPaid).ToList();
         var partiallyPaidInvoices = notDueInvoices.Where(i => i.Status == InvoiceStatus.PartiallyPaid).ToList();

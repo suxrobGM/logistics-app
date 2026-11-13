@@ -16,7 +16,7 @@ public record ExpenseDto
     public decimal Amount { get; init; }
 
     public string? VendorName { get; init; }
-    public DateTime ExpenseDate { get; init; }
+    public DateOnly ExpenseDate { get; init; }
     public string ReceiptBlobPath { get; init; } = string.Empty;
     public string? ReceiptDownloadUrl { get; init; }
     public string? Notes { get; init; }
@@ -48,6 +48,6 @@ public record ExpenseDto
     public string? VendorAddress { get; init; }
     public string? VendorPhone { get; init; }
     public string? RepairDescription { get; init; }
-    public DateTime? EstimatedCompletionDate { get; init; }
-    public DateTime? ActualCompletionDate { get; init; }
+    public DateOnly? EstimatedCompletionDate { get; init; }
+    public DateOnly? ActualCompletionDate { get; init; }
 }

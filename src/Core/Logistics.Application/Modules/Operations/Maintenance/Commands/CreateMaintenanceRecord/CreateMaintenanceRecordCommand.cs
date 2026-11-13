@@ -10,7 +10,7 @@ public record CreateMaintenanceRecordCommand : ICommand<Result<MaintenanceRecord
     public required Guid TruckId { get; set; }
     public required MaintenanceType Type { get; set; }
     public required string Description { get; set; }
-    public required DateTime ServiceDate { get; set; }
+    public required DateOnly ServiceDate { get; set; }
     public long? OdometerMeters { get; set; }
     public decimal? EngineHours { get; set; }
     public string? VendorName { get; set; }

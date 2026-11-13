@@ -8,7 +8,7 @@ public class UpdateExpenseCommand : ICommand<Result>, IExpenseFields
     public Guid Id { get; set; }
     public decimal Amount { get; set; }
     public string? VendorName { get; set; }
-    public DateTime ExpenseDate { get; set; }
+    public DateOnly ExpenseDate { get; set; }
     public string? ReceiptBlobPath { get; set; }
     public string? Notes { get; set; }
 
@@ -25,6 +25,6 @@ public class UpdateExpenseCommand : ICommand<Result>, IExpenseFields
     public string? VendorAddress { get; set; }
     public string? VendorPhone { get; set; }
     public string? RepairDescription { get; set; }
-    public DateTime? EstimatedCompletionDate { get; set; }
-    public DateTime? ActualCompletionDate { get; set; }
+    public DateOnly? EstimatedCompletionDate { get; set; }
+    public DateOnly? ActualCompletionDate { get; set; }
 }

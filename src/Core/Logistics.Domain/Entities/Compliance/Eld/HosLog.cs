@@ -11,7 +11,7 @@ public class HosLog : Entity, ITenantEntity
     /// <summary>
     /// The date of this log entry (for daily grouping)
     /// </summary>
-    public required DateTime LogDate { get; set; }
+    public required DateOnly LogDate { get; set; }
 
     /// <summary>
     /// The duty status during this log period

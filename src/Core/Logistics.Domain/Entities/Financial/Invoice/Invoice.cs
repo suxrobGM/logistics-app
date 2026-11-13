@@ -25,7 +25,7 @@ public abstract partial class Invoice : AuditableEntity, ITenantEntity, IAuditab
     public string? TaxBreakdownJson { get; set; }
 
     public string? Notes { get; set; }
-    public DateTime? DueDate { get; set; }
+    public DateOnly? DueDate { get; set; }
 
     public virtual List<Payment> Payments { get; set; } = [];
     public virtual List<InvoiceLineItem> LineItems { get; set; } = [];
@@ -156,7 +156,7 @@ public abstract partial class Invoice : AuditableEntity, ITenantEntity, IAuditab
     /// <summary>The status of an invoice with nothing paid: from the due date and whether it was sent.</summary>
     protected virtual InvoiceStatus UnpaidStatus(DateTime now)
     {
-        if (DueDate < now)
+        if (DueDate < DateOnly.FromDateTime(now))
         {
             return InvoiceStatus.Overdue;
         }

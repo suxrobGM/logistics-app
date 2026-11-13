@@ -7,7 +7,7 @@ public record HosLogDto
     public Guid Id { get; set; }
     public Guid EmployeeId { get; set; }
     public string? EmployeeName { get; set; }
-    public DateTime LogDate { get; set; }
+    public DateOnly LogDate { get; set; }
     public DutyStatus DutyStatus { get; set; }
     public string? DutyStatusDisplay { get; set; }
     public DateTime StartedAt { get; set; }

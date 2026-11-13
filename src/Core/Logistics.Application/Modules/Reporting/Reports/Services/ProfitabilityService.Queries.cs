@@ -53,14 +53,14 @@ internal sealed partial class ProfitabilityService
     {
         var truckExpenses = await tenantUow.Repository<Expense>().Query()
             .OfType<TruckExpense>()
-            .Where(e => ExpenseStatuses.Counted.Contains(e.Status) && e.ExpenseDate >= from && e.ExpenseDate < to)
+            .Where(e => ExpenseStatuses.Counted.Contains(e.Status) && e.ExpenseDate >= DateOnly.FromDateTime(from) && e.ExpenseDate < DateOnly.FromDateTime(to))
             .GroupBy(e => new { e.TruckId, e.Category })
             .Select(g => new { g.Key.TruckId, g.Key.Category, Amount = g.Sum(e => e.Amount) })
             .ToListAsync(ct);
 
         var repairs = await tenantUow.Repository<Expense>().Query()
             .OfType<BodyShopExpense>()
-            .Where(e => ExpenseStatuses.Counted.Contains(e.Status) && e.ExpenseDate >= from && e.ExpenseDate < to)
+            .Where(e => ExpenseStatuses.Counted.Contains(e.Status) && e.ExpenseDate >= DateOnly.FromDateTime(from) && e.ExpenseDate < DateOnly.FromDateTime(to))
             .GroupBy(e => e.TruckId)
             .Select(g => new { TruckId = g.Key, Amount = g.Sum(e => e.Amount) })
             .ToListAsync(ct);
@@ -115,7 +115,7 @@ internal sealed partial class ProfitabilityService
     private Task<decimal> SumOverheadAsync(DateTime from, DateTime to, CancellationToken ct) =>
         tenantUow.Repository<Expense>().Query()
             .OfType<CompanyExpense>()
-            .Where(e => ExpenseStatuses.Counted.Contains(e.Status) && e.ExpenseDate >= from && e.ExpenseDate < to)
+            .Where(e => ExpenseStatuses.Counted.Contains(e.Status) && e.ExpenseDate >= DateOnly.FromDateTime(from) && e.ExpenseDate < DateOnly.FromDateTime(to))
             .SumAsync(e => e.Amount, ct);
 
     /// <summary>Period-paid employees who are not driving: dispatchers, office and management.</summary>

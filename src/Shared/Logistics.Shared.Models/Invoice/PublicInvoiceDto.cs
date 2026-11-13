@@ -19,7 +19,7 @@ public record PublicInvoiceDto
     public required string Currency { get; set; }
     public TaxBehavior TaxBehavior { get; set; }
     public IEnumerable<InvoiceTaxLineDto> TaxBreakdown { get; set; } = [];
-    public DateTime? DueDate { get; set; }
+    public DateOnly? DueDate { get; set; }
 
     /// <summary>
     /// Amount remaining to be paid (Total - sum of payments).

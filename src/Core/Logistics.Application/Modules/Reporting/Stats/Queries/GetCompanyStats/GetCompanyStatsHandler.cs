@@ -165,7 +165,7 @@ internal sealed class GetCompanyStatsHandler(ITenantUnitOfWork tenantUow, IProfi
                 OutstandingTotal = _.Sum(i => i.Total - i.Payments
                     .Where(p => p.Status == PaymentStatus.Paid)
                     .Sum(p => p.Amount)),
-                OverdueCount = _.Count(i => i.DueDate < now)
+                OverdueCount = _.Count(i => i.DueDate < DateOnly.FromDateTime(now))
             })
             .FirstOrDefaultAsync(ct);
 

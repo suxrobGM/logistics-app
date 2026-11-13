@@ -2324,8 +2324,8 @@ namespace Logistics.Infrastructure.Persistence.Migrations.Tenant
                         .HasColumnType("text")
                         .HasColumnName("first_name");
 
-                    b.Property<DateTime>("JoinedDate")
-                        .HasColumnType("timestamp with time zone")
+                    b.Property<DateOnly>("JoinedDate")
+                        .HasColumnType("date")
                         .HasColumnName("joined_date");
 
                     b.Property<string>("LastName")
@@ -2442,8 +2442,8 @@ namespace Logistics.Infrastructure.Persistence.Migrations.Tenant
                         .HasColumnType("character varying(50)")
                         .HasColumnName("created_by");
 
-                    b.Property<DateTime>("ExpenseDate")
-                        .HasColumnType("timestamp with time zone")
+                    b.Property<DateOnly>("ExpenseDate")
+                        .HasColumnType("date")
                         .HasColumnName("expense_date");
 
                     b.Property<string>("Notes")
@@ -3108,8 +3108,8 @@ namespace Logistics.Infrastructure.Persistence.Migrations.Tenant
                         .HasColumnType("character varying(500)")
                         .HasColumnName("location");
 
-                    b.Property<DateTime>("LogDate")
-                        .HasColumnType("timestamp with time zone")
+                    b.Property<DateOnly>("LogDate")
+                        .HasColumnType("date")
                         .HasColumnName("log_date");
 
                     b.Property<double?>("Longitude")
@@ -3286,8 +3286,8 @@ namespace Logistics.Infrastructure.Persistence.Migrations.Tenant
                         .HasColumnType("character varying(50)")
                         .HasColumnName("created_by");
 
-                    b.Property<DateTime?>("DueDate")
-                        .HasColumnType("timestamp with time zone")
+                    b.Property<DateOnly?>("DueDate")
+                        .HasColumnType("date")
                         .HasColumnName("due_date");
 
                     b.Property<string>("Notes")
@@ -4574,8 +4574,8 @@ namespace Logistics.Infrastructure.Persistence.Migrations.Tenant
                         .HasColumnType("uuid")
                         .HasColumnName("performed_by_id");
 
-                    b.Property<DateTime>("ServiceDate")
-                        .HasColumnType("timestamp with time zone")
+                    b.Property<DateOnly>("ServiceDate")
+                        .HasColumnType("date")
                         .HasColumnName("service_date");
 
                     b.Property<decimal>("TotalCost")
@@ -6627,12 +6627,12 @@ namespace Logistics.Infrastructure.Persistence.Migrations.Tenant
                 {
                     b.HasBaseType("Logistics.Domain.Entities.TruckLinkedExpense");
 
-                    b.Property<DateTime?>("ActualCompletionDate")
-                        .HasColumnType("timestamp with time zone")
+                    b.Property<DateOnly?>("ActualCompletionDate")
+                        .HasColumnType("date")
                         .HasColumnName("actual_completion_date");
 
-                    b.Property<DateTime?>("EstimatedCompletionDate")
-                        .HasColumnType("timestamp with time zone")
+                    b.Property<DateOnly?>("EstimatedCompletionDate")
+                        .HasColumnType("date")
                         .HasColumnName("estimated_completion_date");
 
                     b.Property<string>("RepairDescription")

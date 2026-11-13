@@ -62,7 +62,7 @@ internal static class AccountingPayloads
             DocNumber = invoice.Number.ToString(CultureInfo.InvariantCulture),
             CurrencyCode = currency,
             TxnDate = invoice.CreatedAt,
-            DueDate = invoice.DueDate,
+            DueDate = invoice.DueDate?.ToDateTime(TimeOnly.MinValue, DateTimeKind.Utc),
             TaxTotal = invoice.TaxTotal,
             Lines = lines
         });
@@ -103,7 +103,7 @@ internal static class AccountingPayloads
             ExpenseAccountId = expenseAccountId,
             Amount = expense.Amount,
             CurrencyCode = currency,
-            TxnDate = expense.ExpenseDate,
+            TxnDate = expense.ExpenseDate.ToDateTime(TimeOnly.MinValue, DateTimeKind.Utc),
             DocNumber = $"EXP-{expense.Number.ToString(CultureInfo.InvariantCulture)}",
             Description = ExpenseDescription(expense)
         });
@@ -147,7 +147,7 @@ internal static class AccountingPayloads
             Amount = payroll.Total,
             CurrencyCode = currency,
             TxnDate = payroll.PeriodEnd.ToDateTime(TimeOnly.MinValue, DateTimeKind.Utc),
-            DueDate = payroll.DueDate,
+            DueDate = payroll.DueDate?.ToDateTime(TimeOnly.MinValue, DateTimeKind.Utc),
             DocNumber = $"PAY-{payroll.Number.ToString(CultureInfo.InvariantCulture)}",
             Description = $"Driver pay {Date(payroll.PeriodStart)} to {Date(payroll.PeriodEnd)}"
         });

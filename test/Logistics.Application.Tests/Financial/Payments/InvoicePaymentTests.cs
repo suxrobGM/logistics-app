@@ -107,7 +107,7 @@ public class InvoicePaymentTests
     public void RemovePayment_NothingPaidAndPastDue_Overdue()
     {
         var invoice = Invoice(Customer(null));
-        invoice.DueDate = Now.AddDays(-1);
+        invoice.DueDate = DateOnly.FromDateTime(Now.AddDays(-1));
         var payment = Payment(1000m);
         invoice.ApplyPayment(payment);
 
@@ -122,7 +122,7 @@ public class InvoicePaymentTests
     public void RemovePayment_NothingPaidNotDue_SentOrIssued(bool sent, InvoiceStatus expected)
     {
         var invoice = Invoice(Customer(null));
-        invoice.DueDate = Now.AddDays(10);
+        invoice.DueDate = DateOnly.FromDateTime(Now.AddDays(10));
         invoice.SentAt = sent ? Now.AddDays(-2) : null;
         var payment = Payment(1000m);
         invoice.ApplyPayment(payment);
@@ -144,7 +144,7 @@ public class InvoicePaymentTests
             TaxTotal = 0m,
             Total = total,
             Status = InvoiceStatus.Approved,
-            DueDate = Now.AddDays(-1)
+            DueDate = DateOnly.FromDateTime(Now.AddDays(-1))
         };
         var payment = Payment(1000m);
         payroll.ApplyPayment(payment);
@@ -186,7 +186,7 @@ public class InvoicePaymentTests
         tenantUow.Repository<Payment>().Returns(paymentRepo);
 
         var invoice = Invoice(Customer(null));
-        invoice.DueDate = DateTime.UtcNow.AddDays(10);
+        invoice.DueDate = DateOnly.FromDateTime(DateTime.UtcNow.AddDays(10));
         var payment = Payment(1000m);
         invoice.ApplyPayment(payment);
         paymentRepo.GetByIdAsync(payment.Id, Arg.Any<CancellationToken>()).Returns(payment);

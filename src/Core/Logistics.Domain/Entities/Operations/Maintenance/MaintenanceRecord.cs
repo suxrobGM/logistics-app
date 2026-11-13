@@ -12,7 +12,7 @@ public class MaintenanceRecord : AuditableEntity, ITenantEntity
     public virtual Truck Truck { get; set; } = null!;
 
     public required MaintenanceType MaintenanceType { get; set; }
-    public required DateTime ServiceDate { get; set; }
+    public required DateOnly ServiceDate { get; set; }
     public required long OdometerMeters { get; set; }
     public decimal? EngineHours { get; set; }
 

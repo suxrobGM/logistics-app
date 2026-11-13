@@ -7,7 +7,7 @@ public class CreateCompanyExpenseCommand : ICommand<Result<Guid>>, IExpenseField
 {
     public decimal Amount { get; set; }
     public string? VendorName { get; set; }
-    public DateTime ExpenseDate { get; set; }
+    public DateOnly ExpenseDate { get; set; }
     public string? ReceiptBlobPath { get; set; }
     public string? Notes { get; set; }
     public CompanyExpenseCategory Category { get; set; }

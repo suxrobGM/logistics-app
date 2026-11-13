@@ -28,10 +28,10 @@ public class BodyShopExpense : TruckLinkedExpense
     /// <summary>
     ///     Estimated completion date for the repair.
     /// </summary>
-    public DateTime? EstimatedCompletionDate { get; set; }
+    public DateOnly? EstimatedCompletionDate { get; set; }
 
     /// <summary>
     ///     Actual completion date of the repair.
     /// </summary>
-    public DateTime? ActualCompletionDate { get; set; }
+    public DateOnly? ActualCompletionDate { get; set; }
 }
