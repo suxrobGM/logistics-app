@@ -2,7 +2,7 @@ using Logistics.Domain.Entities;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
-namespace Logistics.Infrastructure.Persistence.Configurations.Privacy;
+namespace Logistics.Infrastructure.Persistence.Configurations;
 
 internal sealed class ConsentRecordEntityConfiguration : IEntityTypeConfiguration<ConsentRecord>
 {
