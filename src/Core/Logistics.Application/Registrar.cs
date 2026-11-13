@@ -2,6 +2,8 @@ using System.Reflection;
 using FluentValidation;
 using Logistics.Application.Behaviours;
 using Logistics.Mediator;
+using Logistics.Application.Modules.Financial.Tax.Services;
+using Logistics.Application.Modules.Integrations.FuelCards.Services;
 using Logistics.Application.Modules.Platform.ProductLicense.Services;
 using Microsoft.Extensions.DependencyInjection;
 
@@ -30,7 +32,7 @@ public static class Registrar
         {
             services.Scan(scan => scan
                 .FromAssemblies(typeof(Registrar).Assembly)
-                .AddClasses(c => c.InNamespaces("Logistics.Application.Modules.Financial.Tax.Services"), publicOnly: false)
+                .AddClasses(c => c.InNamespaceOf<IInvoiceTaxApplier>(), publicOnly: false)
                 .AsImplementedInterfaces()
                 .WithScopedLifetime());
             return services;
@@ -41,7 +43,7 @@ public static class Registrar
         {
             services.Scan(scan => scan
                 .FromAssemblies(typeof(Registrar).Assembly)
-                .AddClasses(c => c.InNamespaces("Logistics.Application.Modules.Integrations.FuelCards.Services"), publicOnly: false)
+                .AddClasses(c => c.InNamespaceOf<IFuelCardSyncService>(), publicOnly: false)
                 .AsImplementedInterfaces()
                 .WithScopedLifetime());
             return services;
@@ -61,7 +63,9 @@ public static class Registrar
         /// <summary>Registers only the GDPR export and account-deletion handlers, for the IdentityServer.</summary>
         public IServiceCollection AddApplicationPrivacyServices()
         {
-            const string privacyNamespace = "Logistics.Application.Modules.Compliance.Privacy";
+            // nameof keeps a move of the Privacy feature a compile error rather than an empty registration.
+            const string privacyNamespace =
+                $"{nameof(Logistics)}.{nameof(Application)}.{nameof(Modules)}.{nameof(Modules.Compliance)}.{nameof(Modules.Compliance.Privacy)}";
 
             // Without the filter, every domain event handler would be registered, and they need services the IdentityServer
             // doesn't have. The feature check needs them too.

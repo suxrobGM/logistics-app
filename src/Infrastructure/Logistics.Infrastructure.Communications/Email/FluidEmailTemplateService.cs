@@ -4,6 +4,7 @@ using System.Text.Encodings.Web;
 using System.Text.Unicode;
 using Fluid;
 using Logistics.Application.Abstractions.Email;
+using Logistics.Application.Abstractions.Email.Models;
 using Microsoft.Extensions.Logging;
 
 namespace Logistics.Infrastructure.Communications.Email;
@@ -63,12 +64,8 @@ internal sealed class FluidEmailTemplateService : IEmailTemplateService
 
     private void RegisterEmailModels()
     {
-        const string emailModelNamespace = "Logistics.Application.Abstractions.Email.Models";
-        var emailModelAssembly = AppDomain.CurrentDomain.GetAssemblies()
-            .FirstOrDefault(a => a.GetName().Name == "Logistics.Application.Abstractions")
-            ?? Assembly.Load("Logistics.Application.Abstractions");
-
-        var emailModelTypes = emailModelAssembly.GetTypes()
+        var emailModelNamespace = typeof(InvitationEmailModel).Namespace;
+        var emailModelTypes = typeof(InvitationEmailModel).Assembly.GetTypes()
             .Where(t => t.Namespace == emailModelNamespace && t is { IsClass: true, IsAbstract: false });
 
         foreach (var type in emailModelTypes)
