@@ -97,7 +97,7 @@ public class TruckLocationRecorderTests
 
         var sql = _upsert!.Format;
         Assert.Contains("ON CONFLICT (truck_id, date, jurisdiction_country_code, jurisdiction_region)", sql);
-        Assert.Contains("meters = truck_jurisdiction_mileage.meters + excluded.meters", sql);
+        Assert.Contains("meters = truck_jurisdiction_distances.meters + excluded.meters", sql);
     }
 
     [Fact]

@@ -24,7 +24,7 @@ public class ProfitabilityServiceTests
     private readonly List<FactoringBatchItem> _factoringItems = [];
     private readonly List<FactoringCompany> _factors = [];
     private readonly List<FuelCardTransaction> _fuel = [];
-    private readonly List<TruckJurisdictionMileage> _mileage = [];
+    private readonly List<TruckJurisdictionDistance> _mileage = [];
     private readonly Customer _customer = new() { Name = "Acme" };
     private readonly Employee _driver = TestData.Driver();
     private readonly Truck _truck;
@@ -286,7 +286,7 @@ public class ProfitabilityServiceTests
         Assert.Equal((1, 900m), (busy.LoadCount, busy.Margin));
     }
 
-    private static TruckJurisdictionMileage Mileage(Truck truck, decimal miles) => new()
+    private static TruckJurisdictionDistance Mileage(Truck truck, decimal miles) => new()
     {
         TruckId = truck.Id,
         Jurisdiction = TaxJurisdiction.Create("US", "TX"),

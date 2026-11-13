@@ -16,8 +16,8 @@ public class IftaReportServiceTests
     private readonly ITenantUnitOfWork _tenantUow = Substitute.For<ITenantUnitOfWork>();
     private readonly IMasterUnitOfWork _masterUow = Substitute.For<IMasterUnitOfWork>();
 
-    private readonly ITenantRepository<TruckJurisdictionMileage, Guid> _mileageRepo =
-        Substitute.For<ITenantRepository<TruckJurisdictionMileage, Guid>>();
+    private readonly ITenantRepository<TruckJurisdictionDistance, Guid> _mileageRepo =
+        Substitute.For<ITenantRepository<TruckJurisdictionDistance, Guid>>();
     private readonly ITenantRepository<Expense, Guid> _expenseRepo =
         Substitute.For<ITenantRepository<Expense, Guid>>();
     private readonly ITenantRepository<IftaQuarterSnapshot, Guid> _snapshotRepo =
@@ -30,7 +30,7 @@ public class IftaReportServiceTests
 
     public IftaReportServiceTests()
     {
-        _tenantUow.Repository<TruckJurisdictionMileage>().Returns(_mileageRepo);
+        _tenantUow.Repository<TruckJurisdictionDistance>().Returns(_mileageRepo);
         _tenantUow.Repository<Expense>().Returns(_expenseRepo);
         _tenantUow.Repository<IftaQuarterSnapshot>().Returns(_snapshotRepo);
         _masterUow.Repository<IftaTaxRate>().Returns(_rateRepo);
@@ -46,7 +46,7 @@ public class IftaReportServiceTests
         _sut = new IftaReportService(_tenantUow, _masterUow);
     }
 
-    private void SetupMileage(List<TruckJurisdictionMileage> rows) =>
+    private void SetupMileage(List<TruckJurisdictionDistance> rows) =>
         _mileageRepo.Query().Returns(rows.BuildMock());
 
     private void SetupExpenses(List<Expense> rows) =>
@@ -58,7 +58,7 @@ public class IftaReportServiceTests
                 Arg.Any<CancellationToken>())
             .Returns(rates);
 
-    private TruckJurisdictionMileage Mileage(string region, decimal miles, DateOnly? date = null) => new()
+    private TruckJurisdictionDistance Mileage(string region, decimal miles, DateOnly? date = null) => new()
     {
         TruckId = _truckId,
         Jurisdiction = new TaxJurisdiction { CountryCode = "US", Region = region },

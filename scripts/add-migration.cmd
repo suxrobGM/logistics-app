@@ -4,7 +4,7 @@ cd ../src/Infrastructure/Logistics.Infrastructure.Persistence
 
 call :CreateMigration "master database" "MasterDbContext" "Master"
 call :CreateMigration "tenant database" "TenantDbContext" "Tenant"
-call :CreateMigration "Duende operational store" "PersistedGrantDbContext" "Duende"
+call :CreateMigration "identity operational store" "PersistedGrantDbContext" "OperationalStore"
 
 pause
 goto :eof

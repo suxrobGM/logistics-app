@@ -120,11 +120,11 @@ internal sealed class TruckLocationRecorder(
         // One atomic statement against the (truck, date, jurisdiction) unique index, NULLS NOT DISTINCT on
         // region: concurrent pings for the same day add up instead of racing a read-then-insert.
         await tenantUow.ExecuteSqlAsync($"""
-            INSERT INTO truck_jurisdiction_mileage
+            INSERT INTO truck_jurisdiction_distances
                 (id, truck_id, date, meters, jurisdiction_country_code, jurisdiction_region)
             VALUES ({Guid.CreateVersion7()}, {truck.Id}, {date}, {segmentMeters}, {jurisdiction.CountryCode}, {jurisdiction.Region})
             ON CONFLICT (truck_id, date, jurisdiction_country_code, jurisdiction_region)
-            DO UPDATE SET meters = truck_jurisdiction_mileage.meters + excluded.meters
+            DO UPDATE SET meters = truck_jurisdiction_distances.meters + excluded.meters
             """, ct);
     }
 

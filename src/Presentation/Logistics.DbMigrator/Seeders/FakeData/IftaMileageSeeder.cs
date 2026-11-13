@@ -32,7 +32,7 @@ internal class IftaMileageSeeder(ILogger<IftaMileageSeeder> logger) : SeederBase
 
     protected override async Task<bool> HasExistingDataAsync(SeederContext context, CancellationToken cancellationToken)
     {
-        return await context.TenantUnitOfWork.Repository<TruckJurisdictionMileage>()
+        return await context.TenantUnitOfWork.Repository<TruckJurisdictionDistance>()
             .CountAsync(ct: cancellationToken) > 0;
     }
 
@@ -53,7 +53,7 @@ internal class IftaMileageSeeder(ILogger<IftaMileageSeeder> logger) : SeederBase
             return;
         }
 
-        var rollupRepo = context.TenantUnitOfWork.Repository<TruckJurisdictionMileage>();
+        var rollupRepo = context.TenantUnitOfWork.Repository<TruckJurisdictionDistance>();
         var historyRepo = context.TenantUnitOfWork.Repository<TruckLocationHistory>();
 
         // Previous quarter start → yesterday covers the prior quarter (for the close job)
@@ -84,7 +84,7 @@ internal class IftaMileageSeeder(ILogger<IftaMileageSeeder> logger) : SeederBase
                     var (region, longitude, latitude) = Corridor[(startIndex + i) % Corridor.Length];
                     var miles = 80 + (int)(Seed($"{truck.Number}|{date:yyyyMMdd}|{region}") % 220);
 
-                    await rollupRepo.AddAsync(new TruckJurisdictionMileage
+                    await rollupRepo.AddAsync(new TruckJurisdictionDistance
                     {
                         TruckId = truck.Id,
                         Jurisdiction = new TaxJurisdiction { CountryCode = "US", Region = region },

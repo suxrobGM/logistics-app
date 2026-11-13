@@ -14,7 +14,7 @@ public static class IftaMileageUnitOfWorkExtensions
         {
             var fromDay = DateOnly.FromDateTime(from);
             var toDay = DateOnly.FromDateTime(to);
-            var logged = await tenantUow.Repository<TruckJurisdictionMileage>().Query()
+            var logged = await tenantUow.Repository<TruckJurisdictionDistance>().Query()
                 .Where(m => m.Date >= fromDay && m.Date < toDay)
                 .GroupBy(m => m.TruckId)
                 .Select(g => new { TruckId = g.Key, Meters = g.Sum(m => m.Meters) })

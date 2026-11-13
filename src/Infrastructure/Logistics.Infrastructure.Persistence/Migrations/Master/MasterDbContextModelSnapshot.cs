@@ -553,9 +553,6 @@ namespace Logistics.Infrastructure.Persistence.Migrations.Master
                     b.HasKey("Id")
                         .HasName("pk_ifta_tax_rates");
 
-                    b.HasIndex("Year", "Quarter")
-                        .HasDatabaseName("ix_ifta_tax_rates_year_quarter");
-
                     b.ToTable("ifta_tax_rates", (string)null);
                 });
 

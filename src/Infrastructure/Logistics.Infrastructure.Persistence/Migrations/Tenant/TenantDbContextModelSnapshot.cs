@@ -6239,7 +6239,7 @@ namespace Logistics.Infrastructure.Persistence.Migrations.Tenant
                         });
                 });
 
-            modelBuilder.Entity("Logistics.Domain.Entities.TruckJurisdictionMileage", b =>
+            modelBuilder.Entity("Logistics.Domain.Entities.TruckJurisdictionDistance", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
@@ -6259,7 +6259,7 @@ namespace Logistics.Infrastructure.Persistence.Migrations.Tenant
                         .HasColumnType("uuid")
                         .HasColumnName("truck_id");
 
-                    b.ComplexProperty(typeof(Dictionary<string, object>), "Jurisdiction", "Logistics.Domain.Entities.TruckJurisdictionMileage.Jurisdiction#TaxJurisdiction", b1 =>
+                    b.ComplexProperty(typeof(Dictionary<string, object>), "Jurisdiction", "Logistics.Domain.Entities.TruckJurisdictionDistance.Jurisdiction#TaxJurisdiction", b1 =>
                         {
                             b1.IsRequired();
 
@@ -6276,15 +6276,15 @@ namespace Logistics.Infrastructure.Persistence.Migrations.Tenant
                         });
 
                     b.HasKey("Id")
-                        .HasName("pk_truck_jurisdiction_mileage");
+                        .HasName("pk_truck_jurisdiction_distances");
 
                     b.HasIndex("Date")
-                        .HasDatabaseName("ix_truck_jurisdiction_mileage_date");
+                        .HasDatabaseName("ix_truck_jurisdiction_distances_date");
 
                     b.HasIndex("TruckId", "Date")
-                        .HasDatabaseName("ix_truck_jurisdiction_mileage_truck_id_date");
+                        .HasDatabaseName("ix_truck_jurisdiction_distances_truck_id_date");
 
-                    b.ToTable("truck_jurisdiction_mileage", (string)null);
+                    b.ToTable("truck_jurisdiction_distances", (string)null);
                 });
 
             modelBuilder.Entity("Logistics.Domain.Entities.TruckLocationHistory", b =>
@@ -7534,14 +7534,14 @@ namespace Logistics.Infrastructure.Persistence.Migrations.Tenant
                     b.Navigation("SecondaryDriver");
                 });
 
-            modelBuilder.Entity("Logistics.Domain.Entities.TruckJurisdictionMileage", b =>
+            modelBuilder.Entity("Logistics.Domain.Entities.TruckJurisdictionDistance", b =>
                 {
                     b.HasOne("Logistics.Domain.Entities.Truck", "Truck")
                         .WithMany()
                         .HasForeignKey("TruckId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired()
-                        .HasConstraintName("fk_truck_jurisdiction_mileage_trucks_truck_id");
+                        .HasConstraintName("fk_truck_jurisdiction_distances_trucks_truck_id");
 
                     b.Navigation("Truck");
                 });

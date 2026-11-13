@@ -39,7 +39,7 @@ internal sealed class IftaReportService(
         var endDate = DateOnly.FromDateTime(end);
 
         // Distance per jurisdiction from the daily rollups; IFTA files in miles
-        var logged = await tenantUow.Repository<TruckJurisdictionMileage>().Query()
+        var logged = await tenantUow.Repository<TruckJurisdictionDistance>().Query()
             .Where(m => m.Date >= startDate && m.Date < endDate)
             .GroupBy(m => new { m.Jurisdiction.CountryCode, m.Jurisdiction.Region })
             .Select(g => new { g.Key.CountryCode, g.Key.Region, Meters = g.Sum(m => m.Meters) })
