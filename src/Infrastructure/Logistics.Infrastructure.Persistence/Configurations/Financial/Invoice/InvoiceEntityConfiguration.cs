@@ -29,7 +29,7 @@ internal sealed class InvoiceEntityConfiguration : IEntityTypeConfiguration<Invo
             .HasDefaultValue(TaxBehavior.Exclusive);
 
         builder.Property(i => i.TaxBreakdownJson)
-            .HasColumnType("text");
+            .HasColumnType("jsonb");
     }
 
     #region Derived Types Configuration

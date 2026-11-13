@@ -785,7 +785,7 @@ namespace Logistics.Infrastructure.Persistence.Migrations.Tenant
                         .HasColumnName("status");
 
                     b.Property<string>("ToolInput")
-                        .HasColumnType("text")
+                        .HasColumnType("jsonb")
                         .HasColumnName("tool_input");
 
                     b.Property<string>("ToolName")
@@ -794,7 +794,7 @@ namespace Logistics.Infrastructure.Persistence.Migrations.Tenant
                         .HasColumnName("tool_name");
 
                     b.Property<string>("ToolOutput")
-                        .HasColumnType("text")
+                        .HasColumnType("jsonb")
                         .HasColumnName("tool_output");
 
                     b.Property<Guid?>("TripId")
@@ -3287,7 +3287,7 @@ namespace Logistics.Infrastructure.Persistence.Migrations.Tenant
                         .HasColumnName("tax_behavior");
 
                     b.Property<string>("TaxBreakdownJson")
-                        .HasColumnType("text")
+                        .HasColumnType("jsonb")
                         .HasColumnName("tax_breakdown_json");
 
                     b.Property<decimal>("TaxTotal")

@@ -19,6 +19,12 @@ internal sealed class AgentDecisionEntityConfiguration : IEntityTypeConfiguratio
         builder.Property(d => d.RejectionReason)
             .HasMaxLength(1000);
 
+        builder.Property(d => d.ToolInput)
+            .HasColumnType("jsonb");
+
+        builder.Property(d => d.ToolOutput)
+            .HasColumnType("jsonb");
+
         builder.HasIndex(d => d.SessionId);
         builder.HasIndex(d => d.Status);
     }
