@@ -1,34 +1,33 @@
 #!/usr/bin/env bash
-# Auto-formatter hook for Claude Code (PostToolUse: Edit|Write)
-# - TypeScript, HTML, SCSS, CSS, JSON → Prettier (Angular project only)
-# - C# → dotnet format (nearest .csproj)
+# PostToolUse(Edit|Write): format the edited file the way `bun run format` would.
+# Angular: Biome for ts/json/css, Prettier for templates. C#: dotnet format on the nearest csproj.
 
 INPUT=$(cat)
-FILE_PATH=$(echo "$INPUT" | node -e "process.stdin.resume();let d='';process.stdin.on('data',c=>d+=c);process.stdin.on('end',()=>{try{console.log(JSON.parse(d).tool_input.file_path||'')}catch{console.log('')}})")
+FILE_PATH=$(echo "$INPUT" | node -e "let d='';process.stdin.on('data',c=>d+=c).on('end',()=>{try{console.log(JSON.parse(d).tool_input.file_path||'')}catch{console.log('')}})")
 
-# Skip if no file path or file doesn't exist
 [[ -z "$FILE_PATH" || ! -f "$FILE_PATH" ]] && exit 0
 
 EXT="${FILE_PATH##*.}"
-EXT="${EXT,,}" # lowercase
-
+EXT="${EXT,,}"
 ANGULAR_DIR="private/src/Client/Logistics.Angular"
+NORMALIZED="${FILE_PATH//\\//}"
 
 case "$EXT" in
-  ts|html|scss|css|json)
-    # Only format files inside the Angular project
-    if [[ "$FILE_PATH" == *"$ANGULAR_DIR"* ]]; then
-      ANGULAR_ROOT="${FILE_PATH%%$ANGULAR_DIR*}${ANGULAR_DIR}"
-      (cd "$ANGULAR_ROOT" && bun run prettier --write "$FILE_PATH" 2>/dev/null) && echo "Formatted: $FILE_PATH"
+  ts|json|css|html)
+    [[ "$NORMALIZED" != *"$ANGULAR_DIR"* ]] && exit 0
+    ANGULAR_ROOT="${NORMALIZED%%$ANGULAR_DIR*}${ANGULAR_DIR}"
+    if [[ "$EXT" == "html" ]]; then
+      (cd "$ANGULAR_ROOT" && bun run prettier --write "$NORMALIZED" >/dev/null 2>&1)
+    else
+      (cd "$ANGULAR_ROOT" && bun run biome check --write "$NORMALIZED" >/dev/null 2>&1)
     fi
     ;;
   cs)
-    # Walk up to find nearest .csproj
-    DIR=$(dirname "$FILE_PATH")
-    while [[ -n "$DIR" && "$DIR" != "/" ]]; do
+    DIR=$(dirname "$NORMALIZED")
+    while [[ -n "$DIR" && "$DIR" != "/" && "$DIR" != "." ]]; do
       CSPROJ=$(find "$DIR" -maxdepth 1 -name '*.csproj' -print -quit 2>/dev/null)
       if [[ -n "$CSPROJ" ]]; then
-        dotnet format "$CSPROJ" --include "$FILE_PATH" --verbosity quiet 2>/dev/null && echo "Formatted: $FILE_PATH"
+        dotnet format "$CSPROJ" --include "$NORMALIZED" --verbosity quiet >/dev/null 2>&1
         break
       fi
       DIR=$(dirname "$DIR")
