@@ -34,23 +34,13 @@ internal sealed partial class ProfitabilityService
     /// <returns>Each load's trips with their drivers and how many of the load's stops departed, keyed by load.</returns>
     private async Task<ILookup<Guid, TripDriverRow>> GetTripDriversAsync(DateTime from, DateTime to, CancellationToken ct)
     {
-        var stops = await tenantUow.Repository<TripStop>().Query()
+        var trips = await tenantUow.Repository<TripStop>().Query()
             .Where(s => s.Load.DeliveredAt >= from && s.Load.DeliveredAt < to)
-            .Select(s => new
-            {
-                s.LoadId,
-                s.TripId,
-                s.Trip.DriverId,
-                s.Trip.SecondaryDriverId,
-                Departed = s.DepartedAt != null
-            })
-            .ToListAsync(ct);
-
-        return stops
-            .GroupBy(s => (s.LoadId, s.TripId))
+            .GroupBy(s => new { s.LoadId, s.TripId, s.Trip.DriverId, s.Trip.SecondaryDriverId })
             .Select(g => new TripDriverRow(
-                g.Key.LoadId, g.First().DriverId, g.First().SecondaryDriverId, g.Count(s => s.Departed)))
-            .ToLookup(t => t.LoadId);
+                g.Key.LoadId, g.Key.DriverId, g.Key.SecondaryDriverId, g.Count(s => s.DepartedAt != null)))
+            .ToListAsync(ct);
+        return trips.ToLookup(t => t.LoadId);
     }
 
     private Task<Dictionary<Guid, TruckRow>> GetTrucksAsync(CancellationToken ct) =>
@@ -82,16 +72,13 @@ internal sealed partial class ProfitabilityService
     }
 
     /// <returns>Fees the factor actually charged, keyed by load.</returns>
-    private async Task<Dictionary<Guid, decimal>> GetFundedFactoringFeesAsync(DateTime from, DateTime to, CancellationToken ct)
-    {
-        var fees = await tenantUow.Repository<FactoringBatchItem>().Query()
+    private Task<Dictionary<Guid, decimal>> GetFundedFactoringFeesAsync(DateTime from, DateTime to, CancellationToken ct) =>
+        tenantUow.Repository<FactoringBatchItem>().Query()
             .Where(f => f.FeeAmount != null &&
                         f.Invoice.Load.DeliveredAt >= from && f.Invoice.Load.DeliveredAt < to)
-            .Select(f => new { f.Invoice.LoadId, Fee = f.FeeAmount!.Value })
-            .ToListAsync(ct);
-
-        return fees.GroupBy(f => f.LoadId).ToDictionary(g => g.Key, g => g.Sum(f => f.Fee));
-    }
+            .GroupBy(f => f.Invoice.LoadId)
+            .Select(g => new { LoadId = g.Key, Fee = g.Sum(f => f.FeeAmount!.Value) })
+            .ToDictionaryAsync(f => f.LoadId, f => f.Fee, ct);
 
     private async Task<Dictionary<Guid, FactoringCompany>> GetFactoringCompaniesAsync(CancellationToken ct)
     {
