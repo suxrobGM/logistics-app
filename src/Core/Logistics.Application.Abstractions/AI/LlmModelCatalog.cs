@@ -5,13 +5,7 @@ namespace Logistics.Application.Abstractions.AI;
 /// <summary>Models an admin can pick, with prices. Ids must match appsettings <c>Llm:Providers:{Provider}:Model</c>.</summary>
 public static class LlmModelCatalog
 {
-    // Prices as of October 2026, in dollars per million tokens.
-    // Anthropic - https://platform.claude.com/docs/en/about-claude/pricing
-    //   Haiku 5.5 rates cover prompts up to 100K tokens (0.50 / 2.50 beyond).
-    // OpenAI GPT-6 - https://developers.openai.com/api/docs/pricing
-    //   Short-context rates; prompts over 272K input tokens bill higher.
-    // DeepSeek - https://api-docs.deepseek.com/quick_start/pricing/
-    //   Peak-hour rates (off-peak is half): the call time is unknown, so charge the higher one.
+    // Vendor pricing pages as of October 2026 (short-context, peak-hour rates), $ per million tokens.
     // Models[0] is the UI fallback - keep the platform default (gpt-6-luna) first.
     public static readonly IReadOnlyList<LlmModelInfo> Models =
     [

@@ -99,4 +99,35 @@ public class Invitation : AuditableEntity, IMasterEntity
         AcceptedAt = DateTime.UtcNow;
         AcceptedByUserId = userId;
     }
+
+    /// <summary>Swaps in a fresh token hash, or returns why the invitation can't be resent.</summary>
+    public string? Resend(string tokenHash)
+    {
+        if (Status != InvitationStatus.Pending)
+        {
+            return "Only pending invitations can be resent.";
+        }
+
+        if (IsExpired)
+        {
+            return "Cannot resend an expired invitation. Please create a new invitation.";
+        }
+
+        TokenHash = tokenHash;
+        SendCount++;
+        LastSentAt = DateTime.UtcNow;
+        return null;
+    }
+
+    /// <summary>Cancels the invitation, or returns why it can't be cancelled.</summary>
+    public string? Cancel()
+    {
+        if (Status != InvitationStatus.Pending)
+        {
+            return "Only pending invitations can be cancelled.";
+        }
+
+        Status = InvitationStatus.Cancelled;
+        return null;
+    }
 }

@@ -14,7 +14,6 @@ public interface IRepository<TEntity, in TEntityKey> where TEntity : class, IEnt
     ///     The queryable entity set, for filtering and projecting in the database. Lazy loading is on,
     ///     so don't read navigations per row after materialising - project or batch instead.
     /// </summary>
-    /// <returns></returns>
     IQueryable<TEntity> Query();
 
     /// <summary>

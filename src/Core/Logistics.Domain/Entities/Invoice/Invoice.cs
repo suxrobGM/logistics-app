@@ -67,7 +67,7 @@ public abstract partial class Invoice : AuditableEntity, ITenantEntity, IAuditab
     public decimal AmountDue => Total.Amount - AmountPaid;
 
     /// <summary>Why the invoice's lines can't change - it is paid or cancelled - or null when they can.</summary>
-    public string? EditBlockedReason() => Status switch
+    public string? GetEditBlockedReason() => Status switch
     {
         InvoiceStatus.Paid => "Cannot modify a paid invoice.",
         InvoiceStatus.Cancelled => "Cannot modify a cancelled invoice.",
@@ -75,7 +75,7 @@ public abstract partial class Invoice : AuditableEntity, ITenantEntity, IAuditab
     };
 
     /// <summary>Why a payment of <paramref name="amount" /> can't be taken against this invoice, or null when it can.</summary>
-    public string? PaymentBlockedReason(decimal amount)
+    public string? GetPaymentBlockedReason(decimal amount)
     {
         if (Status == InvoiceStatus.Paid)
         {
@@ -101,13 +101,12 @@ public abstract partial class Invoice : AuditableEntity, ITenantEntity, IAuditab
     public InvoiceLineItem AddLineItem(
         string description, InvoiceLineItemType type, decimal amount, int quantity, string? notes)
     {
-        var signedAmount = this is PayrollInvoice ? PayrollInvoice.SignedLineAmount(type, amount) : amount;
         var lineItem = new InvoiceLineItem
         {
             InvoiceId = Id,
             Description = description,
             Type = type,
-            Amount = Total with { Amount = signedAmount },
+            Amount = Total with { Amount = SignLineAmount(type, amount) },
             Quantity = quantity,
             Order = LineItems.Count > 0 ? LineItems.Max(li => li.Order) + 1 : 0,
             Notes = notes
@@ -116,6 +115,8 @@ public abstract partial class Invoice : AuditableEntity, ITenantEntity, IAuditab
         LineItems.Add(lineItem);
         return lineItem;
     }
+
+    protected virtual decimal SignLineAmount(InvoiceLineItemType type, decimal amount) => amount;
 
     /// <summary>Counts only <see cref="PaymentStatus.Paid"/> payments in <paramref name="currency"/>.</summary>
     public static decimal SumPaid(IEnumerable<Payment> payments, string currency) => payments

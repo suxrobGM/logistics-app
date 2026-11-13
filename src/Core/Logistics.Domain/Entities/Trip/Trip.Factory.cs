@@ -82,9 +82,11 @@ public partial class Trip
         }
     ];
 
+    internal int GetNextStopOrder() => Stops.Count == 0 ? 1 : Stops.Max(s => s.Order) + 1;
+
     private void AddStopsForLoads(IEnumerable<Load> loads)
     {
-        var order = Stops.Count == 0 ? 1 : Stops.Max(s => s.Order) + 1;
+        var order = GetNextStopOrder();
 
         foreach (var load in loads)
         {

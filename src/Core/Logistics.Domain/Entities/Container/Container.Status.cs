@@ -8,7 +8,6 @@ namespace Logistics.Domain.Entities;
 /// </summary>
 public partial class Container
 {
-
     /// <summary>
     /// Enforces valid status transitions and updates timestamps accordingly.
     /// Raises <see cref="ContainerStatusChangedEvent"/> on every successful transition.

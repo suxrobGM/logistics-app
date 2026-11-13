@@ -4,7 +4,7 @@ namespace Logistics.Application.Abstractions.Tax;
 /// <summary>
 /// Reads tenant-level tax configuration from Stripe (cached): the default Stripe tax code
 /// used when individual line items don't specify one. Implementation lives in
-/// <c>Logistics.Infrastructure.Tax</c>.
+/// <c>Logistics.Infrastructure.Payments.Tax</c>.
 /// </summary>
 public interface IStripeTaxConfigService
 {

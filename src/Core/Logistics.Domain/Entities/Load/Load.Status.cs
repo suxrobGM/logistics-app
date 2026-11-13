@@ -8,7 +8,6 @@ namespace Logistics.Domain.Entities;
 /// </summary>
 public partial class Load
 {
-
     /// <summary>
     /// Enforces valid status transitions and sets timestamps accordingly.
     /// Raises <see cref="LoadStatusChangedEvent"/> when the status actually changes.

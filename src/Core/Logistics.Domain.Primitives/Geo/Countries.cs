@@ -1,4 +1,4 @@
-namespace Logistics.Shared.Geo;
+namespace Logistics.Domain.Primitives.Geo;
 
 public static class Countries
 {

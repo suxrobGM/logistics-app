@@ -37,7 +37,7 @@ public class SubscriptionPlan : AuditableEntity, IMasterEntity
     public int? MaxTrucks { get; set; }
 
     /// <summary>Why a tenant can't run <paramref name="truckCount" /> trucks on this plan, or null when it can.</summary>
-    public string? TruckLimitReason(int truckCount) => MaxTrucks is { } max && truckCount > max
+    public string? GetTruckLimitReason(int truckCount) => MaxTrucks is { } max && truckCount > max
         ? $"Your {Name} plan allows a maximum of {max} trucks. Please upgrade your plan to add more."
         : null;
 

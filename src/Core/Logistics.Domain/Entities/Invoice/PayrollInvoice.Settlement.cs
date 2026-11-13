@@ -19,6 +19,9 @@ public partial class PayrollInvoice
     public static decimal SignedLineAmount(InvoiceLineItemType type, decimal amount) =>
         type.IsPayDeduction() && type != InvoiceLineItemType.Escrow ? -Math.Abs(amount) : amount;
 
+    protected override decimal SignLineAmount(InvoiceLineItemType type, decimal amount) =>
+        SignedLineAmount(type, amount);
+
     /// <summary>
     /// Swaps the generated lines for ones built from <paramref name="inputs"/> and recalculates the
     /// totals. The caller registers the removed and added lines with the repository.

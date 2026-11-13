@@ -47,8 +47,7 @@ public partial class Load
         if (trip is not null)
         {
             // Linked through the load only; EF adds them to trip.Stops when it saves the graph.
-            var order = trip.Stops.Count == 0 ? 1 : trip.Stops.Max(s => s.Order) + 1;
-            foreach (var stop in Trip.CreateStopPair(trip, load, order))
+            foreach (var stop in Trip.CreateStopPair(trip, load, trip.GetNextStopOrder()))
             {
                 load.TripStops.Add(stop);
             }
@@ -61,13 +60,7 @@ public partial class Load
 
         if (assignedTruck is not null)
         {
-            load.DomainEvents.Add(new LoadAssignedToTruckEvent(
-                load.Id,
-                assignedTruck.Id,
-                assignedTruck.Number,
-                assignedTruck.MainDriver?.DeviceToken,
-                assignedTruck.SecondaryDriver?.DeviceToken,
-                assignedTruck.MainDriver?.GetFullName() ?? assignedTruck.Number));
+            load.RaiseAssignedToTruckEvent(assignedTruck);
         }
 
         return load;

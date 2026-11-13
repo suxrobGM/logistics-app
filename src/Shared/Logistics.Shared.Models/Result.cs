@@ -44,6 +44,14 @@ public record Result
     {
         return new Result { Error = error, ErrorCode = errorCode };
     }
+
+    /// <summary>
+    ///     Re-wraps another failed result, keeping its error message and code.
+    /// </summary>
+    public static Result Fail(Result failed)
+    {
+        return new Result { Error = failed.Error, ErrorCode = failed.ErrorCode };
+    }
 }
 
 /// <summary>
@@ -93,5 +101,13 @@ public record Result<T> : Result
     public static new Result<T> Fail(string error, string errorCode)
     {
         return new Result<T> { Error = error, ErrorCode = errorCode };
+    }
+
+    /// <summary>
+    ///     Re-wraps another failed result, keeping its error message and code.
+    /// </summary>
+    public static new Result<T> Fail(Result failed)
+    {
+        return new Result<T> { Error = failed.Error, ErrorCode = failed.ErrorCode };
     }
 }

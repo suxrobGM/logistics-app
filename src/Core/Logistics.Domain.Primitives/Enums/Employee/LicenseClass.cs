@@ -1,4 +1,5 @@
 using System.ComponentModel;
+using System.Runtime.Serialization;
 
 namespace Logistics.Domain.Primitives.Enums;
 
@@ -31,6 +32,7 @@ public enum LicenseClass
     [Description("EU Category C1")]
     EUC1,
 
-    [Description("EU Category C1+E")]
+    /// <summary>Stored as <c>euc1e</c>, the spelling existing rows use.</summary>
+    [Description("EU Category C1+E"), EnumMember(Value = "euc1e")]
     EUC1E
 }
