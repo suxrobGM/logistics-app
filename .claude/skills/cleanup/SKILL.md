@@ -44,7 +44,7 @@ Ask the one question now, covering: new architectural pieces, deleting UNCERTAIN
 
 ## 4. Execute and report
 
-Behaviour must not change. Run `dotnet build` / `dotnet test --filter-class`, `bun run lint` / `bun run check` once per phase. Update `feature-map.md` if a feature's main file moves. Report the ratings, line counts before and after, and findings fixed, KEPT and UNCERTAIN.
+Behaviour must not change. Run `dotnet build` / `dotnet test --filter-class`, `bun run lint` / `bun run check` once per phase. Update `feature-map.md` if a moved file had a row there. Report the ratings, line counts before and after, and findings fixed, KEPT and UNCERTAIN.
 
 ## Agents
 

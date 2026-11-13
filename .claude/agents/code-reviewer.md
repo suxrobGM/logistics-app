@@ -13,7 +13,7 @@ Review what you are given (default: `git diff` plus `git diff --staged`, in the 
 ## What to look for, in priority order
 
 1. **Correctness:** wrong tenant context (`Repository<T>()` before the tenant is set, Hangfire jobs without `SetCurrentTenantByIdAsync`), missing `[Authorize(Policy)]` or `[RequiresFeature]` on queries as well as commands, jobs missing the `IFeatureService` check, new entities not passed to `AddAsync`, `(decimal)` casts on doubles, N+1 navigation reads in mappers or loops, `.Include()`, signature checks after parsing, unsafe raw SQL.
-2. **Silent wiring gaps:** permissions not mirrored in `permissions.ts`, error codes not mirrored in `upgrade-handler.ts`, jobs not registered in `Setup.cs`, seeders not in `AddSeeders()`, tools missing `RequiredPermission`, `Surfaces` or `[AgentEntityId]`, nav item permission differing from the route's, missing `ttl: 0` cache rule for SignalR data, feature-map not updated.
+2. **Silent wiring gaps:** permissions not mirrored in `permissions.ts`, error codes not mirrored in `upgrade-handler.ts`, jobs not registered in `Setup.cs`, seeders not in `AddSeeders()`, tools missing `RequiredPermission`, `Surfaces` or `[AgentEntityId]`, nav item permission differing from the route's, missing `ttl: 0` cache rule for SignalR data, a feature that breaks the folder conventions without a `feature-map.md` row.
 3. **User conventions** (they reject these on sight):
    - over-engineering: new layers, interfaces, ledgers, idempotency machinery, pipeline behaviours, shims or kept-for-compat code
    - nested ternaries; multi-line `if` conditions with buried awaits

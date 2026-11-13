@@ -49,7 +49,6 @@ Constants in `tms-portal/src/app/pages/{family}/components/{family}.constants.ts
 
 Run `bun run gen:api` (or `gen:api:live`) after the enum change, or the casts to the generated union fail. A new credential layout projects into `<app-provider-connect-dialog>`; never a standalone dialog.
 
-Add the provider to `.claude/feature-map.md`.
 
 ## A new family
 

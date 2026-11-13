@@ -2,7 +2,7 @@
 
 Multi-tenant fleet management platform for trucking companies (intermodal containers, vehicle transport, freight).
 
-- **Before grepping for a feature**, read [.claude/feature-map.md](.claude/feature-map.md) (feature → entity, handlers, services, pages). Update it when you add or move a top-level feature.
+- **Before grepping for a feature**, read [.claude/feature-map.md](.claude/feature-map.md): the folder conventions plus the features that break them. Add a row only when a feature doesn't follow the conventions.
 - Multi-phase work keeps a follow-up list in [.claude/notes/](.claude/notes/); tick items off as they land.
 - Deep dives: [docs/](docs/README.md) ([architecture](docs/architecture/overview.md), [multi-tenancy](docs/architecture/multi-tenancy.md), [domain model](docs/architecture/domain-model.md), [AI dispatch](docs/ai-dispatch.md), [roadmap](docs/roadmap/README.md)).
 - [private/](private/README.md) is a closed-source submodule (web portals, driver app) with its own `CLAUDE.md`. Empty in a public clone.

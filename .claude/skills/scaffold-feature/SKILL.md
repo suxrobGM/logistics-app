@@ -1,6 +1,6 @@
 ---
 name: scaffold-feature
-description: Scaffold a full vertical slice for a new domain feature - entity, EF configuration, migration, commands/queries, controller, DTO and mapper, permissions, Angular page and feature-map row. Use when the user asks for a new top-level feature (e.g. "add a Subcontractor entity with CRUD").
+description: Scaffold a full vertical slice for a new domain feature - entity, EF configuration, migration, commands/queries, controller, DTO and mapper, permissions and Angular page. Use when the user asks for a new top-level feature (e.g. "add a Subcontractor entity with CRUD").
 ---
 
 # Scaffold a feature
@@ -32,4 +32,4 @@ Work in order; later steps depend on earlier ones. Conventions come from `.claud
 
 ## Finish
 
-Add the feature to `.claude/feature-map.md` (unlisted features are invisible to later sessions). `dotnet build`, `bun run lint`, then exercise it end to end in the running app.
+If any layer's name or location breaks the convention, add a row to `.claude/feature-map.md`. `dotnet build`, `bun run lint`, then exercise it end to end in the running app.
