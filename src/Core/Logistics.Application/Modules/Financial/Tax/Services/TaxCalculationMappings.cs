@@ -1,7 +1,7 @@
-using Logistics.Domain.Entities;
-using Logistics.Mappings;
-using Logistics.Shared.Models;
 using Logistics.Application.Abstractions.Tax;
+using Logistics.Application.Modules.Financial.Invoices;
+using Logistics.Domain.Entities;
+using Logistics.Shared.Models;
 
 namespace Logistics.Application.Modules.Financial.Tax.Services;
 

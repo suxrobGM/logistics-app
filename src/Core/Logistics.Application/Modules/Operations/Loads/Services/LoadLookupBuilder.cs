@@ -1,7 +1,9 @@
 using Logistics.Application.Common.Services;
+using Logistics.Application.Modules.Financial.Accessorials;
+using Logistics.Application.Modules.Financial.Invoices;
+using Logistics.Application.Modules.IdentityAccess.Customers;
 using Logistics.Domain.Entities;
 using Logistics.Domain.Persistence;
-using Logistics.Mappings;
 using Logistics.Shared.Models;
 using Microsoft.EntityFrameworkCore;
 

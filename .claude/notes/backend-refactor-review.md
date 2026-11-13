@@ -160,6 +160,7 @@ Of the 291, most are fine: Mapperly mappers, pure calculators (`DetentionCalcula
 Update `AssemblyAnchors`, the arch-tests csproj, `overview.md`, CLAUDE.md ("15 focused projects") and the provider skill. Add an arch rule: Shared.Models must not use `Domain.Entities`.
 
 - [x] ✅ **Projects 32 → 25 (src), done 2026-11-12.** `Shared.Geo` → `Domain.Primitives/Geo/`; `Mappings` → `Application/Mappings/` (one folder, namespace `Logistics.Mappings` kept); `Integrations.{Common,Eld,LoadBoard,FuelCards,Accounting}`, `Vin`, `Licensing` → `Infrastructure.Integrations` (one folder each, `AddIntegrationsInfrastructure` calls the family registrars; DbMigrator still calls only `AddFuelCardIntegrations`); `Tax` → `Infrastructure.Payments/Tax/`. Namespaces unchanged. Arch rule added: `Shared.Models` must not depend on `Domain`.
+  - ✅ Mappers moved next to their features, done 2026-11-13 (namespace = the feature's); `MappingConversions` and `MapperDefaults` in `Application/Common/Mapping/`, `LoadLookup` beside `LoadLookupBuilder`.
   - Decision: **`Domain.Primitives` stays its own project** instead of folding into `Domain`. `Shared.Models` references it and must not reference `Domain`, so merging would drag the entities into the client contract.
   - `NotificationService` (save + broadcast) moved to `Application/Modules/Platform/Notifications/Services/` with its interface; Communications only broadcasts the ready-made DTO through `IRealtimeNotificationService`.
   - Not done (not in the approved list): Telegram's own `FixedTimeEquals`.

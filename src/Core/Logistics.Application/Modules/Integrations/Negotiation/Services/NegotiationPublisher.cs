@@ -1,7 +1,6 @@
 using Logistics.Application.Abstractions.AIDispatch;
 using Logistics.Domain.Entities;
 using Logistics.Domain.Persistence;
-using Logistics.Mappings;
 
 namespace Logistics.Application.Modules.Integrations.Negotiation.Services;
 

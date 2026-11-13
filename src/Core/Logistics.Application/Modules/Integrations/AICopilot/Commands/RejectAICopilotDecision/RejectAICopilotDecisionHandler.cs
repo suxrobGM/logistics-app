@@ -4,7 +4,6 @@ using Logistics.Application.Abstractions.CurrentUser;
 using Logistics.Application.Modules.Integrations.AICopilot.Services;
 using Logistics.Application.Modules.Integrations.Agents.Services;
 using Logistics.Domain.Persistence;
-using Logistics.Mappings;
 using Logistics.Mediator;
 using Logistics.Shared.Models;
 

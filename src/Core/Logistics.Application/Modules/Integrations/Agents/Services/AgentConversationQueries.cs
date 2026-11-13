@@ -1,6 +1,6 @@
+using Logistics.Application.Modules.Integrations.AIDispatch;
 using Logistics.Domain.Entities;
 using Logistics.Domain.Persistence;
-using Logistics.Mappings;
 using Logistics.Shared.Models;
 using Microsoft.EntityFrameworkCore;
 

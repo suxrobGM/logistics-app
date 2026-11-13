@@ -3,7 +3,6 @@ using Logistics.Domain.Entities;
 using Logistics.Domain.Entities.Safety;
 using Logistics.Domain.Persistence;
 using Logistics.Domain.Primitives.Enums.Safety;
-using Logistics.Mappings;
 using Logistics.Mediator;
 using Logistics.Shared.Models;
 

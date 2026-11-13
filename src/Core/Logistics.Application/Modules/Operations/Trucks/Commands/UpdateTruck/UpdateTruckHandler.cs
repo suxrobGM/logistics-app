@@ -5,7 +5,6 @@ using Logistics.Application.Modules.Operations.Trailers.Services;
 using Logistics.Application.Modules.Operations.Trucks.Services;
 using Logistics.Domain.Entities;
 using Logistics.Domain.Persistence;
-using Logistics.Mappings;
 using Logistics.Mediator;
 using Logistics.Shared.Models;
 

@@ -1,7 +1,6 @@
 using Logistics.Application.Common.Services;
 using Logistics.Domain.Entities.Safety;
 using Logistics.Domain.Persistence;
-using Logistics.Mappings;
 using Logistics.Shared.Models;
 using Microsoft.EntityFrameworkCore;
 

@@ -1,6 +1,5 @@
 using Logistics.Domain.Entities;
 using Logistics.Domain.Persistence;
-using Logistics.Mappings;
 using Logistics.Shared.Models;
 
 namespace Logistics.Application.Modules.IdentityAccess.CustomerUsers.Queries;

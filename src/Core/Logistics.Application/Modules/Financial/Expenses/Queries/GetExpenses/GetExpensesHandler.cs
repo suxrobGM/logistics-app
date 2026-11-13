@@ -3,7 +3,6 @@ using Logistics.Application.Common.Extensions;
 using Logistics.Application.Modules.Operations.Trucks.Services;
 using Logistics.Domain.Entities;
 using Logistics.Domain.Persistence;
-using Logistics.Mappings;
 using Logistics.Mediator;
 using Logistics.Shared.Models;
 using Microsoft.EntityFrameworkCore;

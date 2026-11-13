@@ -3,7 +3,6 @@ using Logistics.Application.Abstractions.AIDispatch;
 using Logistics.Application.Modules.Integrations.AICopilot.Queries;
 using Logistics.Application.Modules.Integrations.AIDispatch.Queries;
 using Logistics.Domain.Persistence;
-using Logistics.Mappings;
 using Logistics.Mediator;
 using Logistics.Shared.Models;
 

@@ -1,5 +1,4 @@
 using Logistics.Domain.Entities;
-using Logistics.Mappings;
 
 namespace Logistics.Application.Modules.Operations.Loads.Services;
 

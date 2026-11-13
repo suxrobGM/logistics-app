@@ -253,7 +253,7 @@ There are two UoWs - one per database type:
 
 The infrastructure layer is split into eight projects. AI, Persistence, Documents, Communications, Routing and Storage each bring heavy dependencies of their own; the light HTTP integrations share one `Integrations` project with a folder per family.
 
-Entity-to-DTO mappers live in `Logistics.Application/Mappings/` (namespace `Logistics.Mappings`). `Domain.Primitives` stays its own project: `Shared.Models` references it and must not reference `Domain` (an architecture test pins that).
+Entity-to-DTO mappers live next to their feature (`Modules/{Module}/{Feature}/{Entity}Mapper.cs`), with the shared `MappingConversions` in `Common/Mapping/`. `Domain.Primitives` stays its own project: `Shared.Models` references it and must not reference `Domain` (an architecture test pins that).
 
 ### Logistics.Infrastructure.Persistence
 

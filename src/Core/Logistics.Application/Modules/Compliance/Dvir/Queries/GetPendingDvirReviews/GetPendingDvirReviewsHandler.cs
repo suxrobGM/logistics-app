@@ -1,11 +1,10 @@
 using Logistics.Application.Abstractions;
+using Logistics.Application.Modules.Compliance.Dvir.Services;
 using Logistics.Domain.Entities.Safety;
 using Logistics.Domain.Persistence;
 using Logistics.Domain.Primitives.Enums.Safety;
-using Logistics.Mappings;
 using Logistics.Mediator;
 using Logistics.Shared.Models;
-using Logistics.Application.Modules.Compliance.Dvir.Services;
 using Microsoft.EntityFrameworkCore;
 
 namespace Logistics.Application.Modules.Compliance.Dvir.Queries;

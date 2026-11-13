@@ -1,7 +1,7 @@
 using Logistics.Application.Abstractions;
+using Logistics.Application.Modules.IdentityAccess.Tenants;
 using Logistics.Domain.Entities;
 using Logistics.Domain.Persistence;
-using Logistics.Mappings;
 using Logistics.Mediator;
 using Logistics.Shared.Models;
 

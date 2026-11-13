@@ -1,10 +1,10 @@
 using Logistics.Application.Abstractions;
+using Logistics.Application.Modules.Operations.Loads.Services;
+using Logistics.Application.Modules.Operations.Loads;
 using Logistics.Domain.Entities;
 using Logistics.Domain.Persistence;
-using Logistics.Mappings;
 using Logistics.Mediator;
 using Logistics.Shared.Models;
-using Logistics.Application.Modules.Operations.Loads.Services;
 
 namespace Logistics.Application.Modules.Operations.Trucks.Queries;
 

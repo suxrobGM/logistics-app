@@ -1,9 +1,9 @@
 using Logistics.Application.Abstractions.CurrentUser;
 using Logistics.Application.Modules.Integrations.AIDispatch.Commands;
 using Logistics.Application.Modules.Integrations.AIDispatch.Queries;
+using Logistics.Application.Modules.Integrations.AIDispatch;
 using Logistics.Domain.Entities;
 using Logistics.Domain.Persistence;
-using Logistics.Mappings;
 using MockQueryable;
 using NSubstitute;
 using Xunit;

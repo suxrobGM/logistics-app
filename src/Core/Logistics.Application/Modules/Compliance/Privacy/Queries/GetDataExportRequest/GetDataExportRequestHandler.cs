@@ -1,14 +1,13 @@
 using Logistics.Application.Abstractions;
+using Logistics.Application.Abstractions.CurrentUser;
+using Logistics.Application.Abstractions.Storage;
+using Logistics.Application.Modules.Compliance.Privacy.Constants;
 using Logistics.Domain.Entities;
 using Logistics.Domain.Persistence;
 using Logistics.Domain.Primitives;
 using Logistics.Domain.Primitives.Enums;
-using Logistics.Mappings;
 using Logistics.Mediator;
 using Logistics.Shared.Models;
-using Logistics.Application.Abstractions.Storage;
-using Logistics.Application.Abstractions.CurrentUser;
-using Logistics.Application.Modules.Compliance.Privacy.Constants;
 
 namespace Logistics.Application.Modules.Compliance.Privacy.Queries;
 

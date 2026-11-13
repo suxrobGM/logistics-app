@@ -3,7 +3,6 @@ using Logistics.Application.Abstractions.AICopilot;
 using Logistics.Application.Modules.IdentityAccess.Users.Services;
 using Logistics.Domain.Entities;
 using Logistics.Domain.Primitives.Enums;
-using Logistics.Mappings;
 using Logistics.Shared.Models;
 
 namespace Logistics.Infrastructure.AI.Agents.Copilot;

@@ -4,7 +4,6 @@ using Logistics.Application.Abstractions.Options;
 using Logistics.Application.Common.Constants;
 using Logistics.Domain.Entities;
 using Logistics.Domain.Primitives.Enums;
-using Logistics.Mappings;
 using Microsoft.Extensions.Options;
 
 namespace Logistics.Application.Modules.IdentityAccess.Invitations.Services;
