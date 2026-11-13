@@ -1,4 +1,5 @@
 using Logistics.Domain.Entities;
+using Logistics.IdentityServer.Extensions;
 
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
@@ -50,7 +51,7 @@ public class LoginWith2faModel(SignInManager<User> signInManager, ILogger<LoginW
             throw new InvalidOperationException($"Unable to load two-factor authentication user.");
         }
 
-        var authenticatorCode = Input.TwoFactorCode.Replace(" ", string.Empty).Replace("-", string.Empty);
+        var authenticatorCode = Input.TwoFactorCode.NormalizeVerificationCode();
 
         var result = await signInManager.TwoFactorAuthenticatorSignInAsync(authenticatorCode, rememberMe, Input.RememberMachine);
 

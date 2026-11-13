@@ -65,9 +65,7 @@ public class BlogPostController(IMediator mediator) : ControllerBase
     public async Task<IActionResult> CreateBlogPost([FromBody] CreateBlogPostCommand request)
     {
         var result = await mediator.Send(request);
-        return result.IsSuccess
-            ? CreatedAtRoute("GetBlogPostById", new { id = result.Value }, result.Value)
-            : BadRequest(ErrorResponse.FromResult(result));
+        return result.ToCreatedResult("GetBlogPostById", id => new { id });
     }
 
     [HttpPut("{id:guid}", Name = "UpdateBlogPost")]

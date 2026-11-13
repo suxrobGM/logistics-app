@@ -10,6 +10,8 @@ public class GenerateRecoveryCodesModel(
     UserManager<User> userManager,
     ILogger<GenerateRecoveryCodesModel> logger) : PageModel
 {
+    public const int RecoveryCodeCount = 10;
+
     [TempData]
     public string[]? RecoveryCodes { get; set; }
 
@@ -49,7 +51,7 @@ public class GenerateRecoveryCodesModel(
             throw new InvalidOperationException($"Cannot generate recovery codes for user with ID '{userId}' as they do not have 2FA enabled.");
         }
 
-        var recoveryCodes = await userManager.GenerateNewTwoFactorRecoveryCodesAsync(user, 10);
+        var recoveryCodes = await userManager.GenerateNewTwoFactorRecoveryCodesAsync(user, RecoveryCodeCount);
         RecoveryCodes = recoveryCodes?.ToArray();
 
         logger.LogInformation("User with ID '{UserId}' has generated new 2FA recovery codes.", userId);

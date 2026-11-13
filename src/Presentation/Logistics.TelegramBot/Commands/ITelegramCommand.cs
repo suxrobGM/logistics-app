@@ -12,11 +12,8 @@ internal interface ITelegramCommand
     Task ExecuteAsync(ITelegramBotClient bot, Message message, TelegramChatContext? context, CancellationToken ct);
 }
 
+/// <summary>Handles the Prev/Next buttons of a paged list command.</summary>
 internal interface ICallbackHandler
 {
-    Task HandleCallbackAsync(
-        ITelegramBotClient bot,
-        CallbackQuery callbackQuery,
-        TelegramChatContext? context,
-        CancellationToken ct);
+    Task HandleCallbackAsync(ITelegramBotClient bot, long chatId, int messageId, int page, CancellationToken ct);
 }

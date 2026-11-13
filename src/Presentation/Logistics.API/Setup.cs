@@ -26,7 +26,7 @@ using Logistics.Infrastructure.Persistence.Data;
 using Logistics.Infrastructure.Persistence.Services.Accounting;
 using Logistics.Infrastructure.Payments;
 using Logistics.Infrastructure.Persistence;
-using Logistics.Infrastructure.Tax;
+using Logistics.Infrastructure.Payments.Tax;
 using Logistics.Infrastructure.Routing;
 using Logistics.Infrastructure.AI;
 using Logistics.Infrastructure.Storage;

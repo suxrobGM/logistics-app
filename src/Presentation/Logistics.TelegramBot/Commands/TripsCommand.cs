@@ -10,7 +10,6 @@ namespace Logistics.TelegramBot.Commands;
 internal sealed class TripsCommand(IMediator mediator) : ITelegramCommand, ICallbackHandler
 {
     private const int PageSize = 5;
-    private const string CallbackCommand = "trips";
 
     public string Name => "/trips";
     public string Description => "View active trips";
@@ -23,14 +22,9 @@ internal sealed class TripsCommand(IMediator mediator) : ITelegramCommand, ICall
     }
 
     public async Task HandleCallbackAsync(
-        ITelegramBotClient bot, CallbackQuery callbackQuery, TelegramChatContext? context, CancellationToken ct)
+        ITelegramBotClient bot, long chatId, int messageId, int page, CancellationToken ct)
     {
-        if (callbackQuery.Message is not { } message || !callbackQuery.TryGetPage(CallbackCommand, out var page))
-        {
-            return;
-        }
-
-        await SendPageAsync(bot, message.Chat.Id, page, message.MessageId, ct);
+        await SendPageAsync(bot, chatId, page, messageId, ct);
     }
 
     private async Task SendPageAsync(
@@ -46,7 +40,7 @@ internal sealed class TripsCommand(IMediator mediator) : ITelegramCommand, ICall
 
         var trips = result.Value?.ToList() ?? [];
         var text = TelegramMessageFormatter.FormatTrips(trips, page, result.TotalPages);
-        var keyboard = TelegramMessageFormatter.BuildPaginationKeyboard(CallbackCommand, page, result.TotalPages);
+        var keyboard = TelegramMessageFormatter.BuildPaginationKeyboard(Name[1..], page, result.TotalPages);
 
         await bot.SendOrEditPageAsync(chatId, editMessageId, text, keyboard, ct);
     }

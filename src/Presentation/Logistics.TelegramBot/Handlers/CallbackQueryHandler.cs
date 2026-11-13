@@ -5,18 +5,11 @@ using Telegram.Bot.Types;
 
 namespace Logistics.TelegramBot.Handlers;
 
-/// <summary>
-/// Handles Telegram callback queries for interactive elements like inline keyboards.
-/// Parses the callback data to determine which command and action to invoke,
-/// then dispatches to the appropriate command handler.
-/// </summary>
+/// <summary>Routes inline-keyboard page buttons to the list command that built them.</summary>
 internal sealed class CallbackQueryHandler(IEnumerable<ITelegramCommand> telegramCommands)
 {
     private readonly Dictionary<string, ITelegramCommand> _commands = telegramCommands.ToDictionary(c => c.Name);
 
-    /// <summary>
-    /// Processes an incoming callback query from Telegram.
-    /// </summary>
     public async Task HandleAsync(
         ITelegramBotClient bot,
         CallbackQuery callbackQuery,
@@ -30,27 +23,23 @@ internal sealed class CallbackQueryHandler(IEnumerable<ITelegramCommand> telegra
         // Acknowledge the callback to dismiss loading indicator
         await bot.AnswerCallbackQuery(callbackQuery.Id, cancellationToken: ct);
 
-        // Parse callback data: "command:action:params" (e.g., "loads:page:2")
+        // Callback data is "{command}:page:{n}", as built by TelegramMessageFormatter.BuildPaginationKeyboard.
         var parts = data.Split(':');
-        if (parts.Length < 2)
+        if (parts.Length != 3 || parts[1] != "page" || !int.TryParse(parts[2], out var page))
             return;
 
-        var commandName = $"/{parts[0]}";
-        if (!_commands.TryGetValue(commandName, out var command))
+        if (!_commands.TryGetValue($"/{parts[0]}", out var command))
             return;
 
         if (command.RequiresAuth && context is null)
             return;
 
-        // Create a synthetic message from the callback for the command to use
         if (callbackQuery.Message is not Message message)
             return;
 
-        // Store callback data in message text so commands can parse pagination params
-
         if (command is ICallbackHandler callbackHandler)
         {
-            await callbackHandler.HandleCallbackAsync(bot, callbackQuery, context, ct);
+            await callbackHandler.HandleCallbackAsync(bot, message.Chat.Id, message.MessageId, page, ct);
         }
     }
 }

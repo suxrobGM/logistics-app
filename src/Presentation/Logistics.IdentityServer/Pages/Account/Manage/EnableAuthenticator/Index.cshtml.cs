@@ -1,6 +1,8 @@
 using System.Text;
 using System.Text.Encodings.Web;
 using Logistics.Domain.Entities;
+using Logistics.IdentityServer.Extensions;
+using Logistics.IdentityServer.Pages.Account.Manage.GenerateRecoveryCodes;
 using Logistics.Shared.Models;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
@@ -13,8 +15,6 @@ public class EnableAuthenticatorModel(
     UserManager<User> userManager,
     ILogger<EnableAuthenticatorModel> logger) : PageModel
 {
-    private const int RecoveryCodeCount = 10;
-
     [BindProperty]
     public InputModel Input { get; set; } = new();
 
@@ -55,7 +55,7 @@ public class EnableAuthenticatorModel(
             return Page();
         }
 
-        var code = Input.Code.Replace(" ", string.Empty).Replace("-", string.Empty);
+        var code = Input.Code.NormalizeVerificationCode();
         var isValid = await userManager.VerifyTwoFactorTokenAsync(
             user, userManager.Options.Tokens.AuthenticatorTokenProvider, code);
 
@@ -70,7 +70,7 @@ public class EnableAuthenticatorModel(
         logger.LogInformation("User with ID '{UserId}' has enabled 2FA with an authenticator app.", user.Id);
 
         StatusMessage = "Your authenticator app has been verified.";
-        var recoveryCodes = await userManager.GenerateNewTwoFactorRecoveryCodesAsync(user, RecoveryCodeCount);
+        var recoveryCodes = await userManager.GenerateNewTwoFactorRecoveryCodesAsync(user, GenerateRecoveryCodesModel.RecoveryCodeCount);
         RecoveryCodes = recoveryCodes?.ToArray();
         return RedirectToPage("/Account/Manage/ShowRecoveryCodes/Index");
     }

@@ -49,12 +49,7 @@ public class AccidentController(IMediator mediator) : ControllerBase
     public async Task<IActionResult> Create([FromBody] CreateAccidentReportCommand request)
     {
         var result = await mediator.Send(request);
-        if (!result.IsSuccess)
-        {
-            return BadRequest(ErrorResponse.FromResult(result));
-        }
-
-        return CreatedAtRoute("GetAccidentReportById", new { id = result.Value!.Id }, result.Value);
+        return result.ToCreatedResult("GetAccidentReportById", x => new { id = x.Id });
     }
 
     /// <summary>

@@ -111,9 +111,7 @@ public class ExpenseController(IMediator mediator) : ControllerBase
     public async Task<IActionResult> CreateCompanyExpense([FromBody] CreateCompanyExpenseCommand request)
     {
         var result = await mediator.Send(request);
-        return result.IsSuccess
-            ? CreatedAtRoute("GetExpenseById", new { id = result.Value }, result.Value)
-            : BadRequest(ErrorResponse.FromResult(result));
+        return result.ToCreatedResult("GetExpenseById", id => new { id });
     }
 
     [HttpPost("truck", Name = "CreateTruckExpense")]
@@ -123,9 +121,7 @@ public class ExpenseController(IMediator mediator) : ControllerBase
     public async Task<IActionResult> CreateTruckExpense([FromBody] CreateTruckExpenseCommand request)
     {
         var result = await mediator.Send(request);
-        return result.IsSuccess
-            ? CreatedAtRoute("GetExpenseById", new { id = result.Value }, result.Value)
-            : BadRequest(ErrorResponse.FromResult(result));
+        return result.ToCreatedResult("GetExpenseById", id => new { id });
     }
 
     [HttpPost("bodyshop", Name = "CreateBodyShopExpense")]
@@ -135,9 +131,7 @@ public class ExpenseController(IMediator mediator) : ControllerBase
     public async Task<IActionResult> CreateBodyShopExpense([FromBody] CreateBodyShopExpenseCommand request)
     {
         var result = await mediator.Send(request);
-        return result.IsSuccess
-            ? CreatedAtRoute("GetExpenseById", new { id = result.Value }, result.Value)
-            : BadRequest(ErrorResponse.FromResult(result));
+        return result.ToCreatedResult("GetExpenseById", id => new { id });
     }
 
     #endregion

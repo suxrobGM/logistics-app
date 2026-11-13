@@ -3,7 +3,7 @@ using Logistics.DbMigrator.Models;
 using Logistics.Domain.Entities;
 using Logistics.Domain.Primitives.Enums;
 using Logistics.Domain.Primitives.ValueObjects;
-using Logistics.Infrastructure.Tax.Data;
+using Logistics.Infrastructure.Payments.Tax.Data;
 
 namespace Logistics.DbMigrator.Seeders.Infrastructure;
 

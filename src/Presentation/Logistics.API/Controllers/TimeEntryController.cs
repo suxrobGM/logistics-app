@@ -46,9 +46,7 @@ public class TimeEntryController(IMediator mediator) : ControllerBase
     public async Task<IActionResult> Create([FromBody] CreateTimeEntryCommand request)
     {
         var result = await mediator.Send(request);
-        return result.IsSuccess
-            ? CreatedAtRoute("GetTimeEntryById", new { id = result.Value }, result.Value)
-            : BadRequest(ErrorResponse.FromResult(result));
+        return result.ToCreatedResult("GetTimeEntryById", id => new { id });
     }
 
     [HttpPut("{id:guid}", Name = "UpdateTimeEntry")]

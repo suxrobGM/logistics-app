@@ -36,31 +36,29 @@ public class LoadBoardSyncJob(
     [AutomaticRetry(Attempts = 2)]
     public Task ReconcilePostedTrucksAsync(CancellationToken ct) =>
         TenantJobRunner.ForEachTenantAsync(
-            scopeFactory, logger, "load board post reconciliation", ReconcileTenantTrucksAsync, ct);
+            scopeFactory, logger, "load board post reconciliation",
+            (scope, tenant, token) => RunIfEnabledAsync(scope, tenant, (sync, t) => sync.ReconcilePostedTrucksAsync(t), token),
+            ct);
 
     [AutomaticRetry(Attempts = 2)]
     public Task CleanupExpiredDataAsync(CancellationToken ct) =>
         TenantJobRunner.ForEachTenantAsync(
-            scopeFactory, logger, "load board cleanup", CleanupTenantDataAsync, ct);
+            scopeFactory, logger, "load board cleanup",
+            (scope, tenant, token) => RunIfEnabledAsync(scope, tenant, (sync, t) => sync.CleanupExpiredDataAsync(t), token),
+            ct);
 
-    private static async Task ReconcileTenantTrucksAsync(IServiceScope scope, Tenant tenant, CancellationToken ct)
+    private static async Task RunIfEnabledAsync(
+        IServiceScope scope,
+        Tenant tenant,
+        Func<ILoadBoardSyncService, CancellationToken, Task> run,
+        CancellationToken ct)
     {
         if (!await IsLoadBoardEnabledAsync(scope, tenant))
         {
             return;
         }
 
-        await scope.ServiceProvider.GetRequiredService<ILoadBoardSyncService>().ReconcilePostedTrucksAsync(ct);
-    }
-
-    private static async Task CleanupTenantDataAsync(IServiceScope scope, Tenant tenant, CancellationToken ct)
-    {
-        if (!await IsLoadBoardEnabledAsync(scope, tenant))
-        {
-            return;
-        }
-
-        await scope.ServiceProvider.GetRequiredService<ILoadBoardSyncService>().CleanupExpiredDataAsync(ct);
+        await run(scope.ServiceProvider.GetRequiredService<ILoadBoardSyncService>(), ct);
     }
 
     /// <summary>

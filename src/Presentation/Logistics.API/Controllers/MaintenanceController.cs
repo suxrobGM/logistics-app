@@ -62,12 +62,7 @@ public class MaintenanceController(IMediator mediator) : ControllerBase
     public async Task<IActionResult> CreateRecord([FromBody] CreateMaintenanceRecordCommand request)
     {
         var result = await mediator.Send(request);
-        if (!result.IsSuccess)
-        {
-            return BadRequest(ErrorResponse.FromResult(result));
-        }
-
-        return CreatedAtRoute("GetMaintenanceRecordById", new { id = result.Value!.Id }, result.Value);
+        return result.ToCreatedResult("GetMaintenanceRecordById", x => new { id = x.Id });
     }
 
     /// <summary>
@@ -82,14 +77,6 @@ public class MaintenanceController(IMediator mediator) : ControllerBase
     {
         request = request with { Id = id };
         var result = await mediator.Send(request);
-
-        if (!result.IsSuccess)
-        {
-            return result.Error?.Contains("not found") == true
-                ? NotFound(ErrorResponse.FromResult(result))
-                : BadRequest(ErrorResponse.FromResult(result));
-        }
-
-        return Ok(result.Value);
+        return result.ToActionResult();
     }
 }

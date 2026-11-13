@@ -40,9 +40,7 @@ public class IftaTaxRateController(IMediator mediator) : ControllerBase
     public async Task<IActionResult> CreateIftaTaxRate([FromBody] CreateIftaTaxRateCommand request)
     {
         var result = await mediator.Send(request);
-        return result.IsSuccess
-            ? CreatedAtRoute("GetIftaTaxRateById", new { id = result.Value }, result.Value)
-            : BadRequest(ErrorResponse.FromResult(result));
+        return result.ToCreatedResult("GetIftaTaxRateById", id => new { id });
     }
 
     [HttpPut("{id:guid}", Name = "UpdateIftaTaxRate")]

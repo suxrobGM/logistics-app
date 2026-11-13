@@ -7,7 +7,7 @@ using Logistics.Application;
 using Logistics.Infrastructure.Integrations.FuelCards;
 using Logistics.Infrastructure.Payments;
 using Logistics.Infrastructure.Persistence;
-using Logistics.Infrastructure.Tax;
+using Logistics.Infrastructure.Payments.Tax;
 using Serilog;
 
 Log.Logger = new LoggerConfiguration()

@@ -1,5 +1,4 @@
 using Telegram.Bot;
-using Telegram.Bot.Types;
 using Telegram.Bot.Types.Enums;
 using Telegram.Bot.Types.ReplyMarkups;
 
@@ -8,26 +7,6 @@ namespace Logistics.TelegramBot.Commands;
 /// <summary>Paging for the list commands (/loads, /trucks, /trips).</summary>
 internal static class PagedListExtensions
 {
-    extension(CallbackQuery callbackQuery)
-    {
-        /// <summary>
-        /// Reads the page number from a Prev/Next button whose data is "{command}:page:{n}", as built by
-        /// <c>TelegramMessageFormatter.BuildPaginationKeyboard</c>.
-        /// </summary>
-        public bool TryGetPage(string command, out int page)
-        {
-            page = 0;
-            var prefix = $"{command}:page:";
-            var data = callbackQuery.Data;
-            if (data is null || !data.StartsWith(prefix))
-            {
-                return false;
-            }
-
-            return int.TryParse(data[prefix.Length..], out page);
-        }
-    }
-
     extension(ITelegramBotClient bot)
     {
         /// <summary>
