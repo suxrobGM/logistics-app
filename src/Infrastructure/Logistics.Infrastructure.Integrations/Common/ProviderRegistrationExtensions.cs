@@ -36,15 +36,9 @@ public static class ProviderRegistrationExtensions
     {
         /// <exception cref="NotSupportedException">No provider is registered for that type.</exception>
         public TService GetRequiredProvider<TService>(Enum providerType, string familyName)
-            where TService : notnull
-        {
-            if (!serviceProvider.HasProvider<TService>(providerType))
-            {
-                throw new NotSupportedException($"{familyName} provider '{providerType}' is not supported");
-            }
-
-            return serviceProvider.GetRequiredKeyedService<TService>(providerType);
-        }
+            where TService : notnull =>
+            serviceProvider.GetKeyedService<TService>(providerType)
+            ?? throw new NotSupportedException($"{familyName} provider '{providerType}' is not supported");
 
         /// <summary>Whether a <typeparamref name="TService"/> is registered for <paramref name="providerType"/>.</summary>
         public bool HasProvider<TService>(Enum providerType) =>

@@ -1,4 +1,5 @@
 using Logistics.Domain.Core;
+using Logistics.Infrastructure.Persistence.Conventions;
 using Microsoft.EntityFrameworkCore;
 
 namespace Logistics.Infrastructure.Persistence.Extensions;
@@ -35,6 +36,17 @@ internal static class ModelBuilderExtensions
                 type => IsConfigurationFor<IMasterEntity>(type));
 
             modelBuilder.ApplyAuditableConventions();
+        }
+    }
+
+    extension(ModelConfigurationBuilder configurationBuilder)
+    {
+        /// <summary>Conventions shared by the master and tenant contexts.</summary>
+        public void AddLogisticsConventions()
+        {
+            configurationBuilder.Conventions.Add(_ => new SnakeCaseEnumConvention());
+            configurationBuilder.Conventions.Add(_ => new MoneyCurrencyLengthConvention());
+            configurationBuilder.Properties<decimal>().HavePrecision(18, 2);
         }
     }
 

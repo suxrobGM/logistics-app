@@ -1,7 +1,6 @@
 using System.Linq.Expressions;
 using Logistics.Domain.Core;
 using Logistics.Domain.Persistence;
-using Logistics.Infrastructure.Persistence.Extensions;
 using Microsoft.EntityFrameworkCore;
 
 namespace Logistics.Infrastructure.Persistence.Repositories;

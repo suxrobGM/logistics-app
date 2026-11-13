@@ -3,7 +3,7 @@ using Logistics.Shared.Models;
 using Microsoft.Extensions.Logging;
 using Logistics.Application.Abstractions.Vin;
 
-namespace Logistics.Infrastructure.Vin;
+namespace Logistics.Infrastructure.Integrations.Vin;
 
 /// <summary>
 ///     Full-VIN decoder using NHTSA's <c>DecodeVinValues</c> endpoint.

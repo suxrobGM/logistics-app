@@ -1,6 +1,7 @@
 using System.Collections.Frozen;
+using System.Reflection;
+using System.Runtime.Serialization;
 using System.Text.Json;
-using Logistics.Domain.Primitives.Enums;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace Logistics.Infrastructure.Persistence.Converters;
@@ -9,12 +10,6 @@ namespace Logistics.Infrastructure.Persistence.Converters;
 public class SnakeCaseEnumConverter<TEnum> : ValueConverter<TEnum, string>
     where TEnum : struct, Enum
 {
-    /// <summary>Old spellings kept so existing rows still read, e.g. <c>euc1e</c> where the policy would write <c>euc1_e</c>.</summary>
-    private static readonly FrozenDictionary<Enum, string> LegacyNames = new Dictionary<Enum, string>
-    {
-        [LicenseClass.EUC1E] = "euc1e"
-    }.ToFrozenDictionary();
-
     private static readonly FrozenDictionary<TEnum, string> EnumToSnake =
         Enum.GetValues<TEnum>().Distinct().ToFrozenDictionary(v => v, ConvertName);
 
@@ -26,8 +21,13 @@ public class SnakeCaseEnumConverter<TEnum> : ValueConverter<TEnum, string>
     {
     }
 
-    private static string ConvertName(TEnum value) =>
-        LegacyNames.GetValueOrDefault(value) ?? JsonNamingPolicy.SnakeCaseLower.ConvertName(value.ToString());
+    /// <summary>An <see cref="EnumMemberAttribute" /> value wins, so legacy spellings in existing rows still read.</summary>
+    private static string ConvertName(TEnum value)
+    {
+        var name = value.ToString();
+        var storedName = typeof(TEnum).GetField(name)?.GetCustomAttribute<EnumMemberAttribute>()?.Value;
+        return storedName ?? JsonNamingPolicy.SnakeCaseLower.ConvertName(name);
+    }
 
     private static string ToSnakeCase(TEnum value)
     {

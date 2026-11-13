@@ -10,8 +10,6 @@ internal sealed class PaymentEntityConfiguration : IEntityTypeConfiguration<Paym
     {
         builder.ToTable("payments");
 
-        builder.ComplexProperty(i => i.Amount);
-
         builder.HasIndex(p => p.StripePaymentIntentId)
             .IsUnique()
             .HasFilter("stripe_payment_intent_id IS NOT NULL");

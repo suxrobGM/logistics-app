@@ -33,7 +33,5 @@ internal sealed class NegotiationMessageEntityConfiguration : IEntityTypeConfigu
 
         builder.Property(m => m.InReplyToMessageId)
             .HasMaxLength(200);
-
-        builder.ComplexProperty(m => m.ProposedTotalRate);
     }
 }

@@ -29,8 +29,6 @@ internal sealed class ExpenseEntityConfiguration : IEntityTypeConfiguration<Expe
         builder.HasIndex(e => e.Number)
             .IsUnique();
 
-        builder.ComplexProperty(e => e.Amount);
-
         builder.Property(e => e.VendorName).HasMaxLength(255);
         builder.Property(e => e.ReceiptBlobPath).HasMaxLength(500);
         builder.Property(e => e.Notes).HasMaxLength(2000);

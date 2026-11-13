@@ -10,6 +10,6 @@ namespace Logistics.Infrastructure.Integrations.FuelCards;
 public record FuelCardsOptions
 {
     public const string SectionName = "FuelCards";
-    public WexOptions? Wex { get; set; }
-    public EfsOptions? Efs { get; set; }
+    public WexOptions Wex { get; set; } = new();
+    public EfsOptions Efs { get; set; } = new();
 }

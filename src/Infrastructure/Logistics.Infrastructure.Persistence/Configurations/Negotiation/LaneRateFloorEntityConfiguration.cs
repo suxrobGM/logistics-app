@@ -38,7 +38,5 @@ internal sealed class LaneRateFloorEntityConfiguration : IEntityTypeConfiguratio
 
         builder.Property(f => f.Notes)
             .HasMaxLength(2000);
-
-        builder.ComplexProperty(f => f.MinTotalRate);
     }
 }

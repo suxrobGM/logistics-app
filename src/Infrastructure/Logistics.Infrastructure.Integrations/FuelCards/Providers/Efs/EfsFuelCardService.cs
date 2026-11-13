@@ -16,7 +16,7 @@ internal sealed class EfsFuelCardService(
     ILogger<EfsFuelCardService> logger)
     : BearerFuelCardService<EfsTransactionsResponse>(httpClient, logger)
 {
-    private readonly EfsOptions _options = options.Value.Efs ?? new EfsOptions();
+    private readonly EfsOptions _options = options.Value.Efs;
 
     public override FuelCardProviderType ProviderType => FuelCardProviderType.Efs;
 

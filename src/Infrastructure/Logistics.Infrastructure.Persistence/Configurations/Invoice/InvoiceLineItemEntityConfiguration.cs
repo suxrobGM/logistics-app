@@ -17,8 +17,6 @@ internal sealed class InvoiceLineItemEntityConfiguration : IEntityTypeConfigurat
         builder.Property(i => i.Notes)
             .HasMaxLength(1000);
 
-        builder.ComplexProperty(i => i.Amount);
-
         builder.Property(i => i.TaxRatePercent)
             .HasPrecision(7, 4);
 

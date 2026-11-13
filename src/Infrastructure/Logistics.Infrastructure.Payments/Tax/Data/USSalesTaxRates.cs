@@ -1,4 +1,4 @@
-namespace Logistics.Infrastructure.Tax.Data;
+namespace Logistics.Infrastructure.Payments.Tax.Data;
 
 /// <summary>
 /// US state-level base sales-tax rates as of 2026-05.

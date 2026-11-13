@@ -1,4 +1,4 @@
-namespace Logistics.Infrastructure.Tax;
+namespace Logistics.Infrastructure.Payments.Tax;
 
 public class TaxOptions
 {

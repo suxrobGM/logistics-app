@@ -17,6 +17,10 @@
   </ItemGroup>
 
   <ItemGroup>
+    <InternalsVisibleTo Include="Logistics.Infrastructure.Tests" />
+  </ItemGroup>
+
+  <ItemGroup>
     <EmbeddedResource Include="Email\Templates\*.liquid" />
   </ItemGroup>
 

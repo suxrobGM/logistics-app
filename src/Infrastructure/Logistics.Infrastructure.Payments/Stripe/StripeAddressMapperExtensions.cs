@@ -1,4 +1,4 @@
-using Logistics.Shared.Geo;
+using Logistics.Domain.Primitives.Geo;
 using Stripe;
 
 using AddressValueObject = Logistics.Domain.Primitives.ValueObjects.Address;

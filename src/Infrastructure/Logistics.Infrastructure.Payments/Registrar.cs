@@ -16,7 +16,7 @@ public static class Registrar
             services.Configure<StripeOptions>(
                 configuration.GetSection(StripeOptions.SectionName));
 
-            // Sets Stripe.NET's static API key once; the services here and in Infrastructure.Tax rely on it.
+            // Sets Stripe.NET's static API key once.
             services.AddHostedService<StripeApiKeyInitializer>();
 
             services.AddSingleton<IStripeWebhookParser, StripeWebhookParser>();

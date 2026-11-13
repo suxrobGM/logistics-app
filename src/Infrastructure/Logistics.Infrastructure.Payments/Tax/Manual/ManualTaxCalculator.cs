@@ -2,11 +2,11 @@ using Logistics.Domain.Entities;
 using Logistics.Domain.Persistence;
 using Logistics.Domain.Primitives.Enums;
 using Logistics.Domain.Primitives.ValueObjects;
-using Logistics.Infrastructure.Tax.Data;
+using Logistics.Infrastructure.Payments.Tax.Data;
 using Microsoft.Extensions.Logging;
 using Logistics.Application.Abstractions.Tax;
 
-namespace Logistics.Infrastructure.Tax.Manual;
+namespace Logistics.Infrastructure.Payments.Tax.Manual;
 
 /// <summary>
 /// Tenant-managed-rate calculator. Authority order:

@@ -20,7 +20,7 @@ internal class SamsaraEldService(
     ILogger<SamsaraEldService> logger)
     : IEldProviderService, IEldGpsTrackingProvider
 {
-    private readonly SamsaraOptions _options = options.Value.Samsara ?? new SamsaraOptions();
+    private readonly SamsaraOptions _options = options.Value.Samsara;
     private string? _region;
 
     private string BaseUrl => _options.BaseUrlFor(_region);

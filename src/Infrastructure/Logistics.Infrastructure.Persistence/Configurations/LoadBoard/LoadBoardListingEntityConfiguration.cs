@@ -20,8 +20,6 @@ internal sealed class LoadBoardListingEntityConfiguration : IEntityTypeConfigura
             .HasMaxLength(100)
             .IsRequired();
 
-        builder.ComplexProperty(i => i.TotalRate);
-
         builder.Property(i => i.Commodity)
             .HasMaxLength(200);
 

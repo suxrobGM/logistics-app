@@ -15,7 +15,7 @@ internal sealed class WexFuelCardService(
     ILogger<WexFuelCardService> logger)
     : BearerFuelCardService<WexTransactionsResponse>(httpClient, logger)
 {
-    private readonly WexOptions _options = options.Value.Wex ?? new WexOptions();
+    private readonly WexOptions _options = options.Value.Wex;
 
     public override FuelCardProviderType ProviderType => FuelCardProviderType.Wex;
 

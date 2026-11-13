@@ -1,6 +1,5 @@
 using Logistics.Domain.Entities;
 using Logistics.Application.Abstractions.Options;
-using Logistics.Infrastructure.Persistence.Conventions;
 using Logistics.Infrastructure.Persistence.Extensions;
 using Logistics.Infrastructure.Persistence.Helpers;
 using Logistics.Infrastructure.Persistence.Interceptors;
@@ -82,9 +81,7 @@ public class TenantDbContext : DbContext
 
     protected override void ConfigureConventions(ModelConfigurationBuilder configurationBuilder)
     {
-        configurationBuilder.Conventions.Add(_ => new SnakeCaseEnumConvention());
-        configurationBuilder.Conventions.Add(_ => new MoneyCurrencyLengthConvention());
-        configurationBuilder.Properties<decimal>().HavePrecision(18, 2);
+        configurationBuilder.AddLogisticsConventions();
     }
 
     protected override void OnModelCreating(ModelBuilder builder)

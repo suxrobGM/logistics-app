@@ -10,8 +10,6 @@ internal sealed class FactoringBatchItemEntityConfiguration : IEntityTypeConfigu
     {
         builder.ToTable("factoring_batch_items");
 
-        builder.ComplexProperty(i => i.Amount);
-
         builder.Property(i => i.RejectionReason).HasMaxLength(1000);
         builder.Ignore(i => i.ReserveOutstanding);
 

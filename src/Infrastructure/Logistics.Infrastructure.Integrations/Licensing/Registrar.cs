@@ -1,7 +1,7 @@
 using Logistics.Application.Abstractions.ProductLicense;
 using Microsoft.Extensions.DependencyInjection;
 
-namespace Logistics.Infrastructure.Licensing;
+namespace Logistics.Infrastructure.Integrations.Licensing;
 
 public static class Registrar
 {

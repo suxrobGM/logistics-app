@@ -17,8 +17,6 @@ internal sealed class FactoringBatchEntityConfiguration : IEntityTypeConfigurati
             .Metadata.SetAfterSaveBehavior(PropertySaveBehavior.Ignore);
         builder.HasIndex(b => b.Number).IsUnique();
 
-        builder.ComplexProperty(b => b.Total);
-
         builder.Property(b => b.SubmittedToEmail).HasMaxLength(320).IsRequired();
         builder.Property(b => b.Notes).HasMaxLength(2000);
         builder.HasIndex(b => b.Status);

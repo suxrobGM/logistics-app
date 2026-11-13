@@ -1,4 +1,4 @@
-namespace Logistics.Infrastructure.Tax.Data;
+namespace Logistics.Infrastructure.Payments.Tax.Data;
 
 /// <summary>
 /// Minimal country-level GST/VAT defaults outside EU/US so the manual calculator never crashes

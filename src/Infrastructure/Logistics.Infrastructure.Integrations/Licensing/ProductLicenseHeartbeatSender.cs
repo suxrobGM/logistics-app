@@ -5,7 +5,7 @@ using Logistics.Shared.Models;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 
-namespace Logistics.Infrastructure.Licensing;
+namespace Logistics.Infrastructure.Integrations.Licensing;
 
 internal sealed class ProductLicenseHeartbeatSender(
     HttpClient client,

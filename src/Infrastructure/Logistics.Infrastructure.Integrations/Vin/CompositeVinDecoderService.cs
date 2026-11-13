@@ -2,7 +2,7 @@ using Logistics.Shared.Models;
 using Microsoft.Extensions.Logging;
 using Logistics.Application.Abstractions.Vin;
 
-namespace Logistics.Infrastructure.Vin;
+namespace Logistics.Infrastructure.Integrations.Vin;
 
 /// <summary>
 ///     Orchestrates a chain of VIN decoders: WMI prefix lookup (covers EU / non-US VINs)

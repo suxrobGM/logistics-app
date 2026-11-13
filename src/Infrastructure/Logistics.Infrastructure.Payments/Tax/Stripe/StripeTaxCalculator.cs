@@ -9,7 +9,7 @@ using Logistics.Application.Abstractions.Tax;
 using DomainAddress = Logistics.Domain.Primitives.ValueObjects.Address;
 using DomainTaxJurisdiction = Logistics.Domain.Primitives.ValueObjects.TaxJurisdiction;
 
-namespace Logistics.Infrastructure.Tax.Stripe;
+namespace Logistics.Infrastructure.Payments.Tax.Stripe;
 
 /// <summary>
 /// Region-agnostic tax calculator backed by <see cref="IStripeTaxCalculationApi"/>.

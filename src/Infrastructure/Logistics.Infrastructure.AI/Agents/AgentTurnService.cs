@@ -111,11 +111,7 @@ internal sealed class AgentTurnService(
         await overageReporter.ReportIfOverBudgetAsync(session, request.TenantId);
     }
 
-    /// <summary>
-    /// Returns the tenant's quota when the turn may run. Returns null when AI is switched off for the
-    /// tenant or its weekly budget is spent with overage blocked; the conversation then gets a
-    /// system notice saying why and the turn ends without a session.
-    /// </summary>
+    /// <summary>Null when AI is off or the budget is spent; the conversation then gets a notice saying why.</summary>
     private async Task<AIQuotaStatus?> CheckTurnAllowedAsync(
         AgentTurnRequest request, IAgentSurface surface, AgentConversation conversation, CancellationToken ct)
     {
@@ -145,10 +141,7 @@ internal sealed class AgentTurnService(
         return quota;
     }
 
-    /// <summary>
-    /// Saves the messages the turn added, titles the conversation from its first user message and
-    /// ends the turn. Uses CancellationToken.None so a cancelled turn still saves what it produced.
-    /// </summary>
+    /// <summary>Uses CancellationToken.None so a cancelled turn still saves what it produced.</summary>
     private async Task<List<AgentMessage>> SaveTurnAsync(
         AgentConversation conversation, AgentSession session, LlmConversation? state, int priorMessageCount)
     {

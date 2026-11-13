@@ -4,12 +4,7 @@ using Microsoft.Extensions.Logging;
 
 namespace Logistics.Infrastructure.Integrations.Common;
 
-/// <summary>
-/// Write-side HttpClient extension shared by the integrations. The read side lives in
-/// <see cref="HttpClientJsonExtensions"/>. Like it, this never throws - a failure is logged and
-/// surfaced as <c>false</c>. Push paths that must surface an error to the caller (e.g. the
-/// QuickBooks helpers in Integrations.Accounting) deliberately do NOT belong here.
-/// </summary>
+/// <summary>Write side of <see cref="HttpClientJsonExtensions"/>: never throws, a failure is logged and returns <c>false</c>.</summary>
 public static class HttpClientWriteExtensions
 {
     extension(HttpClient client)

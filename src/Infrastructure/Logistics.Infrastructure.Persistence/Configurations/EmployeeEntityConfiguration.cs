@@ -13,8 +13,6 @@ internal sealed class EmployeeEntityConfiguration : IEntityTypeConfiguration<Emp
         // Email is unique case-insensitively through the raw-SQL index ux_employees_email_lower, created in the
         // migration because EF can't model an expression index. DriverImporter matches drivers on it.
 
-        builder.ComplexProperty(i => i.Salary);
-
         builder.HasOne(i => i.Role)
             .WithMany(i => i.Employees)
             .HasForeignKey(i => i.RoleId)

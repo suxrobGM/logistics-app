@@ -8,8 +8,8 @@ namespace Logistics.Infrastructure.Integrations.Eld;
 public record EldOptions
 {
     public const string SectionName = "Eld";
-    public SamsaraOptions? Samsara { get; set; }
-    public MotiveOptions? Motive { get; set; }
-    public TtEldOptions? TtEld { get; set; }
-    public GeotabOptions? Geotab { get; set; }
+    public SamsaraOptions Samsara { get; set; } = new();
+    public MotiveOptions Motive { get; set; } = new();
+    public TtEldOptions TtEld { get; set; } = new();
+    public GeotabOptions Geotab { get; set; } = new();
 }

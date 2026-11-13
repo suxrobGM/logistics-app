@@ -1,4 +1,4 @@
-namespace Logistics.Infrastructure.Tax.Data;
+namespace Logistics.Infrastructure.Payments.Tax.Data;
 
 /// <summary>
 /// Standard VAT rates per EU member state (and EEA/UK), as of 2026-05.

@@ -4,7 +4,7 @@ using Logistics.Shared.Models;
 using Microsoft.Extensions.Logging;
 using Logistics.Application.Abstractions.Vin;
 
-namespace Logistics.Infrastructure.Vin;
+namespace Logistics.Infrastructure.Integrations.Vin;
 
 /// <summary>
 ///     Decodes the 3-character World Manufacturer Identifier (WMI) prefix of a VIN

@@ -1,6 +1,6 @@
 using System.Text.Json.Serialization;
 
-namespace Logistics.Infrastructure.Vin;
+namespace Logistics.Infrastructure.Integrations.Vin;
 
 internal class NhtsaVinValuesResponse
 {

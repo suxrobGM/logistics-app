@@ -25,12 +25,6 @@ internal sealed class InvoiceEntityConfiguration : IEntityTypeConfiguration<Invo
         builder.HasIndex(i => i.Number)
             .IsUnique();
 
-        builder.ComplexProperty(i => i.Subtotal);
-
-        builder.ComplexProperty(i => i.TaxTotal);
-
-        builder.ComplexProperty(i => i.Total);
-
         builder.Property(i => i.TaxBehavior)
             .HasDefaultValue(TaxBehavior.Exclusive);
 

@@ -1,6 +1,6 @@
 using Stripe.Tax;
 
-namespace Logistics.Infrastructure.Tax.Stripe;
+namespace Logistics.Infrastructure.Payments.Tax.Stripe;
 
 internal sealed class StripeTaxCalculationApi : IStripeTaxCalculationApi
 {

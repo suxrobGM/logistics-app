@@ -1,6 +1,7 @@
+using System.Collections.Frozen;
 using Logistics.Domain.Primitives;
 
-namespace Logistics.Infrastructure.Tax.Data;
+namespace Logistics.Infrastructure.Payments.Tax.Data;
 
 /// <summary>
 /// EU membership + reverse-charge eligibility check over <see cref="RegionCountries.EUMemberStates"/>
@@ -9,8 +10,11 @@ namespace Logistics.Infrastructure.Tax.Data;
 /// </summary>
 public static class EUVatRules
 {
+    private static readonly FrozenSet<string> EUMembers =
+        RegionCountries.EUMemberStates.ToFrozenSet(StringComparer.OrdinalIgnoreCase);
+
     public static bool IsEUMember(string? countryCode) =>
-        !string.IsNullOrEmpty(countryCode) && RegionCountries.EUMemberStates.Contains(countryCode.ToUpperInvariant());
+        !string.IsNullOrEmpty(countryCode) && EUMembers.Contains(countryCode);
 
     /// <summary>
     /// EU cross-border B2B reverse charge applies when:

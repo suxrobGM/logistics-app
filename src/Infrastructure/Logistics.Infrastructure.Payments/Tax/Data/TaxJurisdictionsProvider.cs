@@ -1,7 +1,7 @@
 using Logistics.Application.Abstractions.Tax;
 using Logistics.Domain.Primitives;
 
-namespace Logistics.Infrastructure.Tax.Data;
+namespace Logistics.Infrastructure.Payments.Tax.Data;
 
 internal sealed class TaxJurisdictionsProvider : ITaxJurisdictionsProvider
 {

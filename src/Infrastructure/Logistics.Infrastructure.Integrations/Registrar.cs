@@ -2,8 +2,8 @@ using Logistics.Infrastructure.Integrations.Accounting;
 using Logistics.Infrastructure.Integrations.Eld;
 using Logistics.Infrastructure.Integrations.FuelCards;
 using Logistics.Infrastructure.Integrations.LoadBoard;
-using Logistics.Infrastructure.Licensing;
-using Logistics.Infrastructure.Vin;
+using Logistics.Infrastructure.Integrations.Licensing;
+using Logistics.Infrastructure.Integrations.Vin;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 

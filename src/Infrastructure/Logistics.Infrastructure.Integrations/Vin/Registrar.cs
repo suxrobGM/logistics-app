@@ -1,7 +1,7 @@
 using Microsoft.Extensions.DependencyInjection;
 using Logistics.Application.Abstractions.Vin;
 
-namespace Logistics.Infrastructure.Vin;
+namespace Logistics.Infrastructure.Integrations.Vin;
 
 public static class Registrar
 {

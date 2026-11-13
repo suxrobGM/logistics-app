@@ -27,7 +27,5 @@ internal sealed class TenantEntityConfiguration : IEntityTypeConfiguration<Tenan
         // SnakeCaseEnumConvention skips collection elements, so the converter is set here.
         builder.PrimitiveCollection(t => t.Presets)
             .ElementType(e => e.HasConversion<SnakeCaseEnumConverter<TenantPreset>>());
-
-        builder.ComplexProperty(t => t.Settings);
     }
 }

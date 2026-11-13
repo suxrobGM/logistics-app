@@ -10,8 +10,6 @@ internal sealed class CashAdvanceEntityConfiguration : IEntityTypeConfiguration<
     {
         builder.ToTable("cash_advances");
 
-        builder.ComplexProperty(a => a.Amount);
-
         builder.Property(a => a.Reason).HasMaxLength(500);
 
         builder.HasOne(a => a.Employee)

@@ -1,6 +1,6 @@
 using Logistics.Domain.Entities;
 using Logistics.Domain.Primitives.Enums;
-using Logistics.Shared.Geo;
+using Logistics.Domain.Primitives.Geo;
 using Microsoft.Extensions.Logging;
 using Stripe;
 using Stripe.Checkout;

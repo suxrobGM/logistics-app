@@ -24,7 +24,7 @@ internal class GeotabEldService(
     ILogger<GeotabEldService> logger)
     : IEldProviderService
 {
-    private readonly string _baseUrl = (options.Value.Geotab ?? new GeotabOptions()).BaseUrl;
+    private readonly string _baseUrl = options.Value.Geotab.BaseUrl;
 
     public EldProviderType ProviderType => EldProviderType.Geotab;
 

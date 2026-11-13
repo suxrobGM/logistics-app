@@ -33,7 +33,7 @@ internal sealed class DatLoadBoardService(
     /// </summary>
     private static readonly TimeSpan FallbackTokenLifetime = TimeSpan.FromMinutes(30);
 
-    private readonly DatOptions _options = options.Value.Dat ?? new DatOptions();
+    private readonly DatOptions _options = options.Value.Dat;
     private LoadBoardConfiguration? _configuration;
 
     public LoadBoardProviderType ProviderType => LoadBoardProviderType.Dat;

@@ -22,12 +22,12 @@ public static class Registrar
             services.AddHttpClient<SamsaraEldService>();
             services.AddHttpClient<MotiveEldService>((sp, client) =>
             {
-                var motive = sp.GetRequiredService<IOptions<EldOptions>>().Value.Motive ?? new MotiveOptions();
+                var motive = sp.GetRequiredService<IOptions<EldOptions>>().Value.Motive;
                 client.BaseAddress = ToBaseAddress(motive.BaseUrl);
             });
             services.AddHttpClient<TtEldService>((sp, client) =>
             {
-                var ttEld = sp.GetRequiredService<IOptions<EldOptions>>().Value.TtEld ?? new TtEldOptions();
+                var ttEld = sp.GetRequiredService<IOptions<EldOptions>>().Value.TtEld;
                 client.BaseAddress = ToBaseAddress(ttEld.BaseUrl);
             });
             services.AddHttpClient<GeotabClient>();

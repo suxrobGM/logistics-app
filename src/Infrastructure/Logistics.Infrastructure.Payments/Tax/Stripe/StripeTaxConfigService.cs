@@ -5,7 +5,7 @@ using Stripe;
 using Stripe.Tax;
 using Logistics.Application.Abstractions.Tax;
 
-namespace Logistics.Infrastructure.Tax.Stripe;
+namespace Logistics.Infrastructure.Payments.Tax.Stripe;
 
 internal sealed class StripeTaxConfigService(
     IOptions<TaxOptions> taxOptions,

@@ -1,6 +1,6 @@
 using Stripe.Tax;
 
-namespace Logistics.Infrastructure.Tax.Stripe;
+namespace Logistics.Infrastructure.Payments.Tax.Stripe;
 
 /// <summary>
 /// One-method seam over <see cref="CalculationService"/> so the calculator can be unit-tested

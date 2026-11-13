@@ -1,4 +1,5 @@
 using Logistics.Domain.Entities;
+using Logistics.Domain.Primitives.ValueObjects;
 using Microsoft.Extensions.Logging;
 using Stripe;
 using Logistics.Application.Abstractions.SystemSettings;
@@ -39,12 +40,10 @@ internal sealed class StripePlanService(
         logger.LogInformation("Created Stripe product for plan {PlanId}", plan.Id);
 
         // 2. Create base price
-        var basePrice = await CreateLicensedPriceAsync(priceService, product.Id, plan,
-            StripeMoneyConversion.ToMinorUnits(plan.Price.Amount, plan.Price.Currency), plan.Price.Currency, "base");
+        var basePrice = await CreateLicensedPriceAsync(priceService, product.Id, plan, plan.Price, "base");
 
         // 3. Create per-truck price
-        var perTruckPrice = await CreateLicensedPriceAsync(priceService, product.Id, plan,
-            StripeMoneyConversion.ToMinorUnits(plan.PerTruckPrice.Amount, plan.PerTruckPrice.Currency), plan.PerTruckPrice.Currency, "per_truck");
+        var perTruckPrice = await CreateLicensedPriceAsync(priceService, product.Id, plan, plan.PerTruckPrice, "per_truck");
 
         // 4. Create the AI overage metered price - every plan has a budget to run past
         var aiOveragePrice = await CreateMeteredOveragePriceAsync(priceService, product.Id, plan);
@@ -111,8 +110,7 @@ internal sealed class StripePlanService(
         });
 
         // Check if base price needs recreation
-        var activeBasePrice = await RecreateIfChangedAsync(priceService, plan, plan.StripePriceId,
-            StripeMoneyConversion.ToMinorUnits(plan.Price.Amount, plan.Price.Currency), plan.Price.Currency, "base");
+        var activeBasePrice = await RecreateIfChangedAsync(priceService, plan, plan.StripePriceId, plan.Price, "base");
         if (activeBasePrice.Id != plan.StripePriceId)
             plan.StripePriceId = activeBasePrice.Id;
 
@@ -120,15 +118,13 @@ internal sealed class StripePlanService(
         Price activePerTruckPrice;
         if (!string.IsNullOrEmpty(plan.StripePerTruckPriceId))
         {
-            activePerTruckPrice = await RecreateIfChangedAsync(priceService, plan, plan.StripePerTruckPriceId,
-                StripeMoneyConversion.ToMinorUnits(plan.PerTruckPrice.Amount, plan.PerTruckPrice.Currency), plan.PerTruckPrice.Currency, "per_truck");
+            activePerTruckPrice = await RecreateIfChangedAsync(priceService, plan, plan.StripePerTruckPriceId, plan.PerTruckPrice, "per_truck");
             if (activePerTruckPrice.Id != plan.StripePerTruckPriceId)
                 plan.StripePerTruckPriceId = activePerTruckPrice.Id;
         }
         else
         {
-            activePerTruckPrice = await CreateLicensedPriceAsync(priceService, plan.StripeProductId, plan,
-                StripeMoneyConversion.ToMinorUnits(plan.PerTruckPrice.Amount, plan.PerTruckPrice.Currency), plan.PerTruckPrice.Currency, "per_truck");
+            activePerTruckPrice = await CreateLicensedPriceAsync(priceService, plan.StripeProductId, plan, plan.PerTruckPrice, "per_truck");
             plan.StripePerTruckPriceId = activePerTruckPrice.Id;
         }
 
@@ -187,14 +183,13 @@ internal sealed class StripePlanService(
     }
 
     private async Task<Price> CreateLicensedPriceAsync(
-        PriceService priceService, string productId, SubscriptionPlan plan,
-        decimal unitAmountCents, string currency, string priceType)
+        PriceService priceService, string productId, SubscriptionPlan plan, Money price, string priceType)
     {
         return await priceService.CreateAsync(new PriceCreateOptions
         {
             Product = productId,
-            UnitAmountDecimal = unitAmountCents,
-            Currency = currency.ToLower(),
+            UnitAmountDecimal = StripeMoneyConversion.ToMinorUnits(price.Amount, price.Currency),
+            Currency = price.Currency.ToLower(),
             Recurring = new PriceRecurringOptions
             {
                 Interval = plan.Interval.ToString().ToLower(),
@@ -243,15 +238,14 @@ internal sealed class StripePlanService(
     }
 
     private async Task<Price> RecreateIfChangedAsync(
-        PriceService priceService, SubscriptionPlan plan, string existingPriceId,
-        decimal expectedAmountCents, string expectedCurrency, string priceType)
+        PriceService priceService, SubscriptionPlan plan, string existingPriceId, Money expected, string priceType)
     {
         var existing = await priceService.GetAsync(existingPriceId);
-        if (!HasDrifted(existing, plan, expectedAmountCents, expectedCurrency))
+        var expectedAmountCents = StripeMoneyConversion.ToMinorUnits(expected.Amount, expected.Currency);
+        if (!HasDrifted(existing, plan, expectedAmountCents, expected.Currency))
             return existing;
 
-        var newPrice = await CreateLicensedPriceAsync(
-            priceService, plan.StripeProductId!, plan, expectedAmountCents, expectedCurrency, priceType);
+        var newPrice = await CreateLicensedPriceAsync(priceService, plan.StripeProductId!, plan, expected, priceType);
         logger.LogInformation("Recreated Stripe {PriceType} price for plan {PlanId}", priceType, plan.Id);
         return newPrice;
     }

@@ -11,8 +11,6 @@ internal sealed class LoadEntityConfiguration : IEntityTypeConfiguration<Load>
     {
         builder.ToTable("loads");
 
-        builder.ComplexProperty(i => i.DeliveryCost);
-
         builder.ComplexCollection(i => i.Vehicles, vehicles => vehicles.ToJson("vehicles"));
         builder.ComplexCollection(i => i.CustomerUpdates, updates => updates.ToJson("customer_updates"));
 
