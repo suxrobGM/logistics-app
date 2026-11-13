@@ -50,7 +50,7 @@ public class ProfitabilityServiceTests
         _tenantUow.Stub<TimeEntry>();
         _tenantUow.Stub(_mileage);
 
-        _sut = new ProfitabilityService(_tenantUow, new DriverPayCalculator());
+        _sut = new ProfitabilityService(_tenantUow);
     }
 
     private Load Delivered(decimal linehaul, double distance, Customer? customer = null, Truck? truck = null)

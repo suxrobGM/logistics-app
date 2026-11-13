@@ -2,6 +2,7 @@ using System.Globalization;
 using Logistics.Domain.Entities;
 using Logistics.Domain.Primitives;
 using Logistics.Domain.Primitives.Enums;
+using Logistics.Domain.Primitives.ValueObjects;
 using Microsoft.EntityFrameworkCore;
 
 namespace Logistics.Application.Modules.Financial.Payroll.Services;
@@ -19,7 +20,7 @@ internal partial class PayrollService
             case SalaryType.ShareOfGross:
                 {
                     var loads = await GetDeliveredLoadsAsync(employee.Id, from, to, ct);
-                    return new GrossPay(payCalculator.PayForLoads(employee, loads, GetDistanceUnit()),
+                    return new GrossPay(employee.PayForLoads(loads, GetDistanceUnit()),
                         $"{Percent(rate)} of {employee.PayableRevenueBasis()} on {loads.Count} load(s)");
                 }
             case SalaryType.Weekly:
@@ -34,7 +35,7 @@ internal partial class PayrollService
                     var meters = loads.Sum(l => l.Distance);
                     var unit = GetDistanceUnit();
                     var distance = unit.FromMeters(meters);
-                    return new GrossPay(payCalculator.PayForLoads(employee, loads, unit),
+                    return new GrossPay(employee.PayForLoads(loads, unit),
                         $"{loads.Count} load(s), {distance:0} {unit.Abbreviation()} x {rate:0.00}",
                         Distance: meters);
                 }
@@ -48,7 +49,7 @@ internal partial class PayrollService
             case SalaryType.PerLoad:
                 {
                     var loads = await GetDeliveredLoadsAsync(employee.Id, from, to, ct);
-                    return new GrossPay(payCalculator.PayForLoads(employee, loads, GetDistanceUnit()),
+                    return new GrossPay(employee.PayForLoads(loads, GetDistanceUnit()),
                         $"{loads.Count} load(s) x {rate:0.00}");
                 }
             case SalaryType.PerStop:

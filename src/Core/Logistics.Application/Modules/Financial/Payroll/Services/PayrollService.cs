@@ -9,7 +9,6 @@ namespace Logistics.Application.Modules.Financial.Payroll.Services;
 
 internal partial class PayrollService(
     ITenantUnitOfWork tenantUow,
-    IDriverPayCalculator payCalculator,
     ILogger<PayrollService> logger)
     : IPayrollService
 {

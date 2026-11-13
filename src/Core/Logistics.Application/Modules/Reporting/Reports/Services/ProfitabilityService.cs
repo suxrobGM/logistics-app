@@ -1,5 +1,4 @@
 using Logistics.Application.Modules.AI.Negotiation;
-using Logistics.Application.Modules.Financial.Payroll.Services;
 using Logistics.Domain.Entities;
 using Logistics.Domain.Persistence;
 using Logistics.Domain.Primitives;
@@ -9,9 +8,7 @@ using Logistics.Shared.Models;
 
 namespace Logistics.Application.Modules.Reporting.Reports.Services;
 
-internal sealed partial class ProfitabilityService(
-    ITenantUnitOfWork tenantUow,
-    IDriverPayCalculator payCalculator) : IProfitabilityService
+internal sealed partial class ProfitabilityService(ITenantUnitOfWork tenantUow) : IProfitabilityService
 {
     public async Task<ProfitabilityReportDto> BuildAsync(DateTime from, DateTime to, CancellationToken ct = default)
     {
@@ -104,7 +101,7 @@ internal sealed partial class ProfitabilityService(
     }
 
     /// <returns>Period pay of drivers with no load to spread it on.</returns>
-    private decimal AddDriverPay(
+    private static decimal AddDriverPay(
         Dictionary<Guid, LoadProfitDto> rows,
         ILookup<Guid, DeliveredLoadRow> loadsByDriver,
         ILookup<Guid, TripDriverRow> tripDrivers,
@@ -124,7 +121,7 @@ internal sealed partial class ProfitabilityService(
                     .Where(t => t.DriverIds().Contains(driver.Id))
                     .Sum(t => t.DepartedStops);
                 var basis = new LoadPayBasis(load.Linehaul, load.FuelSurcharge, load.Accessorials, load.Distance, stops);
-                rows[load.Id].DriverPay += payCalculator.PayForLoads(driver, [basis], unit);
+                rows[load.Id].DriverPay += driver.PayForLoads([basis], unit);
             }
 
             var periodPay = CalculatePeriodPay(driver, period, hours);
@@ -189,9 +186,8 @@ internal sealed partial class ProfitabilityService(
         return unallocated;
     }
 
-    private decimal CalculatePeriodPay(Employee employee, PayPeriod period, Dictionary<Guid, decimal> hours) =>
-        Math.Round(payCalculator.PayForPeriod(
-            employee, period.Weeks, period.Months, hours.GetValueOrDefault(employee.Id)), 2);
+    private static decimal CalculatePeriodPay(Employee employee, PayPeriod period, Dictionary<Guid, decimal> hours) =>
+        Math.Round(employee.PayForPeriod(period.Weeks, period.Months, hours.GetValueOrDefault(employee.Id)), 2);
 
     /// <summary>Splits an amount by weight to the cent; the last share takes the rounding so the parts add up exactly.</summary>
     internal static decimal[] Spread(decimal amount, IReadOnlyList<double> weights)

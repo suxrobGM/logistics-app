@@ -1,4 +1,5 @@
 using Logistics.Domain.Core;
+using Logistics.Domain.Primitives;
 using Logistics.Domain.Primitives.Enums;
 using Logistics.Domain.Primitives.ValueObjects;
 
@@ -90,6 +91,35 @@ public class Employee : Entity, ITenantEntity
     /// <summary>The part of a load's revenue share-of-gross pay is computed on, after the pay exclusions.</summary>
     public decimal PayableRevenue(decimal linehaul, decimal fuelSurcharge, decimal accessorials) =>
         linehaul + (PayExcludesFuelSurcharge ? 0 : fuelSurcharge) + (PayExcludesAccessorials ? 0 : accessorials);
+
+    /// <summary>Pay earned on the given loads by a per-load salary type; 0 for period-paid types.</summary>
+    public decimal PayForLoads(IReadOnlyCollection<LoadPayBasis> loads, DistanceUnit unit)
+    {
+        var rate = Salary.Amount;
+        return SalaryType switch
+        {
+            SalaryType.ShareOfGross =>
+                loads.Sum(l => PayableRevenue(l.Linehaul, l.FuelSurcharge, l.Accessorials)) * rate,
+            SalaryType.RatePerDistance => unit.FromMeters(loads.Sum(l => l.Distance)).ToDecimal() * rate,
+            SalaryType.PerLoad => loads.Count * rate,
+            SalaryType.PerStop => loads.Sum(l => l.DepartedStops) * rate,
+            _ => 0m
+        };
+    }
+
+    /// <summary>Pay for a period by a Weekly, Monthly or Hourly type, or the base pay of an untyped salary; 0 for per-load types.</summary>
+    public decimal PayForPeriod(decimal weeks, decimal months, decimal hours)
+    {
+        var rate = Salary.Amount;
+        return SalaryType switch
+        {
+            SalaryType.Weekly => weeks * rate,
+            SalaryType.Monthly => months * rate,
+            SalaryType.Hourly => hours * rate,
+            SalaryType.ShareOfGross or SalaryType.RatePerDistance or SalaryType.PerLoad or SalaryType.PerStop => 0m,
+            _ => rate
+        };
+    }
 
     /// <summary>Names what <see cref="PayableRevenue"/> covers, for the gross pay line of a settlement.</summary>
     public string PayableRevenueBasis() => (PayExcludesFuelSurcharge, PayExcludesAccessorials) switch

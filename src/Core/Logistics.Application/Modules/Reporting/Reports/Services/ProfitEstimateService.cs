@@ -1,16 +1,14 @@
 using Logistics.Application.Abstractions.ApplicationServices;
-using Logistics.Application.Modules.Financial.Payroll.Services;
 using Logistics.Domain.Entities;
 using Logistics.Domain.Persistence;
 using Logistics.Domain.Primitives;
 using Logistics.Domain.Primitives.Enums;
+using Logistics.Domain.Primitives.ValueObjects;
 using Microsoft.EntityFrameworkCore;
 
 namespace Logistics.Application.Modules.Reporting.Reports.Services;
 
-internal sealed class ProfitEstimateService(
-    ITenantUnitOfWork tenantUow,
-    IDriverPayCalculator payCalculator) : IProfitEstimateService
+internal sealed class ProfitEstimateService(ITenantUnitOfWork tenantUow) : IProfitEstimateService
 {
     private const int TrailingDays = 90;
     private static readonly decimal MetersPerMile = DistanceUnit.Miles.ToMeters(1).ToDecimal();
@@ -54,7 +52,7 @@ internal sealed class ProfitEstimateService(
             }
 
             var driverPay = drivers.TryGetValue(request.TruckId, out var driver)
-                ? payCalculator.PayForLoads(driver, [load], unit)
+                ? driver.PayForLoads([load], unit)
                 : 0m;
             var revenue = load.Linehaul + load.FuelSurcharge + load.Accessorials;
             var operatingCost = Math.Round(costPerMetre.Value * request.TotalMeters.ToDecimal(), 2);
