@@ -1,4 +1,5 @@
 using Logistics.Application.Modules.AI.Negotiation;
+using Logistics.Application.Modules.Compliance.Ifta.Services;
 using Logistics.Domain.Entities;
 using Logistics.Domain.Persistence;
 using Logistics.Domain.Primitives;
@@ -43,7 +44,7 @@ internal sealed partial class ProfitabilityService(ITenantUnitOfWork tenantUow) 
         }
 
         var loadRows = rows.Values.OrderBy(r => r.Margin).ToList();
-        var actualDistance = await GetActualDistanceAsync(from, to, ct);
+        var actualDistance = await tenantUow.SumLoggedMetersByTruckAsync(from, to, ct);
         var overhead = await SumOverheadAsync(from, to, ct);
         var unassignedFuel = await SumUnassignedFuelAsync(from, to, ct);
         var staffPay = await SumStaffPayAsync(drivers.Keys, period, from, to, ct);

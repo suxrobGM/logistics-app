@@ -125,19 +125,6 @@ internal sealed partial class ProfitabilityService
         return hours.ToDictionary(h => h.EmployeeId, h => h.Hours);
     }
 
-    /// <returns>Metres each truck drove per the IFTA mileage log.</returns>
-    private async Task<Dictionary<Guid, double>> GetActualDistanceAsync(DateTime from, DateTime to, CancellationToken ct)
-    {
-        var fromDay = DateOnly.FromDateTime(from);
-        var toDay = DateOnly.FromDateTime(to);
-        var miles = await tenantUow.Repository<TruckJurisdictionMileage>().Query()
-            .Where(m => m.Date >= fromDay && m.Date < toDay)
-            .GroupBy(m => m.TruckId)
-            .Select(g => new { TruckId = g.Key, Miles = g.Sum(m => m.Miles) })
-            .ToListAsync(ct);
-        return miles.ToDictionary(m => m.TruckId, m => DistanceUnit.Miles.ToMeters((double)m.Miles));
-    }
-
     private Task<decimal> SumOverheadAsync(DateTime from, DateTime to, CancellationToken ct) =>
         tenantUow.Repository<Expense>().Query()
             .OfType<CompanyExpense>()

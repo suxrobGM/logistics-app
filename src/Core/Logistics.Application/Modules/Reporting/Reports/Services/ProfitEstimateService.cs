@@ -1,4 +1,5 @@
 using Logistics.Application.Abstractions.ApplicationServices;
+using Logistics.Application.Modules.Compliance.Ifta.Services;
 using Logistics.Domain.Entities;
 using Logistics.Domain.Persistence;
 using Logistics.Domain.Primitives;
@@ -73,8 +74,8 @@ internal sealed class ProfitEstimateService(ITenantUnitOfWork tenantUow) : IProf
             return new OperatingCosts([], costPerMile / MetersPerMile);
         }
 
-        var from = DateTime.UtcNow.AddDays(-TrailingDays);
-        var fromDay = DateOnly.FromDateTime(from);
+        var now = DateTime.UtcNow;
+        var from = now.AddDays(-TrailingDays);
 
         var expenses = await tenantUow.Repository<Expense>().Query()
             .OfType<TruckLinkedExpense>()
@@ -82,11 +83,7 @@ internal sealed class ProfitEstimateService(ITenantUnitOfWork tenantUow) : IProf
             .GroupBy(e => e.TruckId)
             .Select(g => new { TruckId = g.Key, Amount = g.Sum(e => e.Amount.Amount) })
             .ToDictionaryAsync(e => e.TruckId, e => e.Amount, ct);
-        var miles = await tenantUow.Repository<TruckJurisdictionMileage>().Query()
-            .Where(m => m.Date >= fromDay)
-            .GroupBy(m => m.TruckId)
-            .Select(g => new { TruckId = g.Key, Miles = g.Sum(m => m.Miles) })
-            .ToDictionaryAsync(m => m.TruckId, m => DistanceUnit.Miles.ToMeters((double)m.Miles), ct);
+        var miles = await tenantUow.SumLoggedMetersByTruckAsync(from, now.AddDays(1), ct);
         var loaded = await tenantUow.Repository<Load>().Query()
             .Where(l => l.DeliveredAt >= from && l.AssignedTruckId != null)
             .GroupBy(l => l.AssignedTruckId!.Value)
