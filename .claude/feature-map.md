@@ -127,6 +127,13 @@ Template emails, no LLM. Gated by `TenantFeature.CustomerUpdates` (every plan).
 - Application: `Modules/Reporting/Stats/Queries/`, `Modules/Reporting/Reports/Queries/`
 - API/UI: `StatController.cs`, `ReportController.cs`, `tms-portal/pages/home/` (+ its `components/` panels), `pages/reports/`. `pages/dashboard/` is a redirect-only stub kept for old bookmarks - don't add anything there
 
+### Profitability (profit per load, truck and lane)
+
+- Application: `Modules/Reporting/Reports/Services/ProfitabilityService*.cs` (compute-on-read, no table; spreads truck costs and salaried pay over loads by distance; unallocated lines keep net profit reconciled), `ProfitEstimateService` (forward-looking margin for AI dispatch and the load board, behind `Application.Abstractions/ApplicationServices/IProfitEstimateService`), `Modules/Reporting/Reports/Queries/Profitability/`; driver pay rules shared with payroll in `Modules/Financial/Payroll/Services/DriverPayCalculator.cs`
+- Domain: `TenantSettings.CostPerMile` (null = trailing 90-day truck cost)
+- API/UI: `ReportController` `/reports/profitability/{loads,trucks,lanes,summary}`, `LoadController` `/loads/{id}/profit` (all `Stat.View`), `tms-portal/pages/reports/profitability-report/`, `pages/loads/components/load-profit-content/`, truck-details margin stats, home top performers (ranked by margin)
+- AI: `est_margin` / `margin_per_{unit}` in `Tools/Dispatch/CalculateAssignmentMetricsTool.cs` and `GetDispatchCandidatesTool.cs`, `est_margin_per_mile` in `SearchLoadBoardTool`, `Tools/Financial/GetProfitabilityTool.cs` (`get_profitability`, copilot + MCP)
+
 ### Onboarding
 
 - Application: `Modules/Tenancy/Onboarding/Queries/GetOnboardingProgress/` - read-only checklist; step keys are camelCase, labels/icons/routes live on the client. Each step declares a `TenantFeature`, so a disabled feature drops its step rather than shipping one that can never complete
