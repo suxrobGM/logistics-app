@@ -1,7 +1,7 @@
 namespace Logistics.Shared.Models;
 
 /// <summary>
-/// Company totals for a period. NetProfit = LoadMargin - UnallocatedTruckCosts - UnallocatedDriverPay - Overhead.
+/// Company totals for a period. NetProfit = LoadMargin - UnallocatedTruckCosts - UnallocatedDriverPay - StaffPay - Overhead.
 /// </summary>
 public record ProfitabilitySummaryDto
 {
@@ -17,6 +17,9 @@ public record ProfitabilitySummaryDto
 
     /// <summary>Salaried or hourly pay of drivers who delivered nothing in the period.</summary>
     public decimal UnallocatedDriverPay { get; set; }
+
+    /// <summary>Weekly, monthly and hourly pay of employees who are not driving, prorated to the period.</summary>
+    public decimal StaffPay { get; set; }
 
     /// <summary>Approved or paid company expenses.</summary>
     public decimal Overhead { get; set; }

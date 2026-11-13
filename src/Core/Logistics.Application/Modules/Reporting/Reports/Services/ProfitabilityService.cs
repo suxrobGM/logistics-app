@@ -13,8 +13,6 @@ internal sealed partial class ProfitabilityService(
     ITenantUnitOfWork tenantUow,
     IDriverPayCalculator payCalculator) : IProfitabilityService
 {
-    private const decimal DaysPerMonth = 365.25m / 12;
-
     public async Task<ProfitabilityResult> BuildAsync(DateTime from, DateTime to, CancellationToken ct = default)
     {
         from = DateTime.SpecifyKind(from, DateTimeKind.Utc);
@@ -33,8 +31,9 @@ internal sealed partial class ProfitabilityService(
         var drivers = await GetDriversAsync(driverIds, ct);
         var hours = await GetHoursAsync(drivers.Values, from, to, ct);
 
+        var period = PayPeriod.Of(from, to);
         var rows = loads.ToDictionary(l => l.Id, l => NewRow(l, trucks, funded, factors));
-        var unallocatedDriverPay = AddDriverPay(loads, rows, creditedDrivers, tripDrivers, drivers, hours, unit, from, to);
+        var unallocatedDriverPay = AddDriverPay(loads, rows, creditedDrivers, tripDrivers, drivers, hours, unit, period);
         var unallocatedTruckCosts = AddTruckCosts(loads, rows, truckCosts);
 
         foreach (var row in rows.Values)
@@ -48,12 +47,13 @@ internal sealed partial class ProfitabilityService(
         var actualDistance = await GetActualDistanceAsync(from, to, ct);
         var overhead = await SumOverheadAsync(from, to, ct);
         var unassignedFuel = await SumUnassignedFuelAsync(from, to, ct);
+        var staffPay = await SumStaffPayAsync(drivers.Keys, period, from, to, ct);
 
         return new ProfitabilityResult(
             loadRows,
             GroupByTruck(loadRows, trucks, truckCosts, actualDistance, unit),
             GroupByLane(loadRows, unit),
-            Summarize(loadRows, unallocatedTruckCosts, unallocatedDriverPay, overhead, unassignedFuel));
+            Summarize(loadRows, unallocatedTruckCosts, unallocatedDriverPay, staffPay, overhead, unassignedFuel));
     }
 
     private static LoadProfitDto NewRow(
@@ -111,12 +111,8 @@ internal sealed partial class ProfitabilityService(
         Dictionary<Guid, Employee> drivers,
         Dictionary<Guid, decimal> hours,
         DistanceUnit unit,
-        DateTime from,
-        DateTime to)
+        PayPeriod period)
     {
-        var days = (to - from).TotalDays.ToDecimal();
-        var weeks = days / 7;
-        var months = days / DaysPerMonth;
         var unallocated = 0m;
 
         foreach (var driver in drivers.Values)
@@ -131,8 +127,7 @@ internal sealed partial class ProfitabilityService(
                 rows[load.Id].DriverPay += payCalculator.PayForLoads(driver, [basis], unit);
             }
 
-            var periodPay = Math.Round(
-                payCalculator.PayForPeriod(driver, weeks, months, hours.GetValueOrDefault(driver.Id)), 2);
+            var periodPay = PeriodPay(driver, period, hours);
             if (periodPay == 0)
             {
                 continue;
@@ -194,6 +189,10 @@ internal sealed partial class ProfitabilityService(
         return unallocated;
     }
 
+    private decimal PeriodPay(Employee employee, PayPeriod period, Dictionary<Guid, decimal> hours) =>
+        Math.Round(payCalculator.PayForPeriod(
+            employee, period.Weeks, period.Months, hours.GetValueOrDefault(employee.Id)), 2);
+
     /// <summary>Splits an amount by weight to the cent; the last share takes the rounding so the parts add up exactly.</summary>
     internal static decimal[] Spread(decimal amount, IReadOnlyList<double> weights)
     {
@@ -231,5 +230,17 @@ internal sealed partial class ProfitabilityService(
     {
         var distance = unit.FromMeters(meters);
         return distance > 0 ? Math.Round(amount / distance.ToDecimal(), 2) : null;
+    }
+
+    /// <summary>A report period in the units salaries are paid in, prorated rather than rounded up as payroll does.</summary>
+    private sealed record PayPeriod(decimal Weeks, decimal Months)
+    {
+        private const decimal DaysPerMonth = 365.25m / 12;
+
+        public static PayPeriod Of(DateTime from, DateTime to)
+        {
+            var days = (to - from).TotalDays.ToDecimal();
+            return new PayPeriod(days / 7, days / DaysPerMonth);
+        }
     }
 }

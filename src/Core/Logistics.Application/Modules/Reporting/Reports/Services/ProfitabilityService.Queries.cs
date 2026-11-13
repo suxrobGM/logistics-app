@@ -147,6 +147,22 @@ internal sealed partial class ProfitabilityService
             .Where(e => CountedStatuses.Contains(e.Status) && e.ExpenseDate >= from && e.ExpenseDate < to)
             .SumAsync(e => e.Amount.Amount, ct);
 
+    /// <summary>Period-paid employees who are not driving: dispatchers, office and management.</summary>
+    private static readonly SalaryType[] StaffSalaryTypes = [SalaryType.Weekly, SalaryType.Monthly, SalaryType.Hourly];
+
+    private async Task<decimal> SumStaffPayAsync(
+        IEnumerable<Guid> driverIds, PayPeriod period, DateTime from, DateTime to, CancellationToken ct)
+    {
+        var excluded = driverIds.ToList();
+        var staff = await tenantUow.Repository<Employee>().Query()
+            .Where(e => !excluded.Contains(e.Id) &&
+                        e.Status != EmployeeStatus.Terminated &&
+                        StaffSalaryTypes.Contains(e.SalaryType))
+            .ToListAsync(ct);
+        var hours = await GetHoursAsync(staff, from, to, ct);
+        return staff.Sum(e => PeriodPay(e, period, hours));
+    }
+
     private Task<decimal> SumUnassignedFuelAsync(DateTime from, DateTime to, CancellationToken ct) =>
         tenantUow.Repository<FuelCardTransaction>().Query()
             .Where(t => t.Status == FuelCardTransactionStatus.Pending &&

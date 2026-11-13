@@ -34,7 +34,7 @@ internal sealed class GetProfitabilityTool(IMediator mediator, ITenantUnitOfWork
 
     public static AgentToolDefinition Definition => new(
         "get_profitability",
-        "Margin of delivered loads for a period, grouped by truck, lane (origin state to destination state) or load, worst margin first, plus company totals. Margin is revenue minus driver pay, the load's share of truck expenses and the factoring fee; net_profit also takes off company overhead. Answers questions like 'which lanes lost money last month'.")
+        "Margin of delivered loads for a period, grouped by truck, lane (origin state to destination state) or load, worst margin first, plus company totals. Margin is revenue minus driver pay, the load's share of truck expenses and the factoring fee; net_profit also takes off non-driving staff pay and company overhead. Answers questions like 'which lanes lost money last month'.")
     {
         RequiredFeature = TenantFeature.Reports,
         RequiredPermission = Permission.Stat.View,
@@ -68,6 +68,7 @@ internal sealed class GetProfitabilityTool(IMediator mediator, ITenantUnitOfWork
                 load_margin = s.LoadMargin,
                 unallocated_truck_costs = s.UnallocatedTruckCosts,
                 unallocated_driver_pay = s.UnallocatedDriverPay,
+                staff_pay = s.StaffPay,
                 overhead = s.Overhead,
                 net_profit = s.NetProfit,
                 unassigned_fuel = s.UnassignedFuel

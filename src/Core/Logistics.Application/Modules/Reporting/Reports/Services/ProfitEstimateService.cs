@@ -70,7 +70,7 @@ internal sealed class ProfitEstimateService(
 
     /// <summary>
     /// The tenant's cost per mile when set. Otherwise each truck's trailing expenses over the distance it
-    /// drove (IFTA mileage, else loaded distance), with the fleet's average for trucks with no history.
+    /// drove (IFTA mileage or loaded distance, whichever is longer), with the fleet's average for trucks with no history.
     /// </summary>
     private async Task<OperatingCosts> GetCostPerMetreAsync(CancellationToken ct)
     {
@@ -104,11 +104,8 @@ internal sealed class ProfitEstimateService(
         var fleetMeters = 0d;
         foreach (var (truckId, amount) in expenses)
         {
-            var meters = miles.GetValueOrDefault(truckId);
-            if (meters <= 0)
-            {
-                meters = loaded.GetValueOrDefault(truckId);
-            }
+            // A log shorter than the loaded distance is missing days; the longer figure is the truer one.
+            var meters = Math.Max(miles.GetValueOrDefault(truckId), loaded.GetValueOrDefault(truckId));
 
             if (meters <= 0)
             {

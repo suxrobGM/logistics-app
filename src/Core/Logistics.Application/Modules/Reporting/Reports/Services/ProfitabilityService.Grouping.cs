@@ -26,7 +26,7 @@ internal sealed partial class ProfitabilityService
                 var factoringFee = truckLoads.Sum(l => l.FactoringFee);
                 var costsTotal = costs.Sum(c => c.Amount);
                 var loaded = truckLoads.Sum(l => l.Distance);
-                double? actual = actualDistance.TryGetValue(truckId, out var meters) ? meters : null;
+                double? actual = LoggedDistance(actualDistance, truckId, loaded);
 
                 return new TruckProfitDto
                 {
@@ -49,6 +49,13 @@ internal sealed partial class ProfitabilityService
             .ToList();
     }
 
+    /// <summary>
+    /// A log shorter than the loads the truck delivered is missing days, so it would show no deadhead and
+    /// overstate cost per distance; such a truck is treated as having no log.
+    /// </summary>
+    private static double? LoggedDistance(Dictionary<Guid, double> actualDistance, Guid truckId, double loaded) =>
+        actualDistance.TryGetValue(truckId, out var meters) && meters >= loaded ? meters : null;
+
     private static double? DeadheadPercent(double loaded, double? actual)
     {
         if (actual is not > 0)
@@ -56,7 +63,7 @@ internal sealed partial class ProfitabilityService
             return null;
         }
 
-        return Math.Round(Math.Max(0, actual.Value - loaded) / actual.Value * 100, 1);
+        return Math.Round((actual.Value - loaded) / actual.Value * 100, 1);
     }
 
     private static List<LaneProfitDto> GroupByLane(IReadOnlyList<LoadProfitDto> loads, DistanceUnit unit) =>
@@ -92,6 +99,7 @@ internal sealed partial class ProfitabilityService
         IReadOnlyList<LoadProfitDto> loads,
         decimal unallocatedTruckCosts,
         decimal unallocatedDriverPay,
+        decimal staffPay,
         decimal overhead,
         decimal unassignedFuel)
     {
@@ -106,8 +114,9 @@ internal sealed partial class ProfitabilityService
             LoadMargin = loadMargin,
             UnallocatedTruckCosts = unallocatedTruckCosts,
             UnallocatedDriverPay = unallocatedDriverPay,
+            StaffPay = staffPay,
             Overhead = overhead,
-            NetProfit = loadMargin - unallocatedTruckCosts - unallocatedDriverPay - overhead,
+            NetProfit = loadMargin - unallocatedTruckCosts - unallocatedDriverPay - staffPay - overhead,
             UnassignedFuel = unassignedFuel
         };
     }

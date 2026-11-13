@@ -24,6 +24,7 @@ public class ProfitabilityServiceTests
     private readonly List<FactoringBatchItem> _factoringItems = [];
     private readonly List<FactoringCompany> _factors = [];
     private readonly List<FuelCardTransaction> _fuel = [];
+    private readonly List<TruckJurisdictionMileage> _mileage = [];
     private readonly Customer _customer = new() { Name = "Acme" };
     private readonly Employee _driver = TestData.Driver();
     private readonly Truck _truck;
@@ -47,7 +48,7 @@ public class ProfitabilityServiceTests
         _tenantUow.Stub(_fuel);
         _tenantUow.Stub<TripStop>();
         _tenantUow.Stub<TimeEntry>();
-        _tenantUow.Stub<TruckJurisdictionMileage>();
+        _tenantUow.Stub(_mileage);
 
         _sut = new ProfitabilityService(_tenantUow, new DriverPayCalculator());
     }
@@ -228,6 +229,48 @@ public class ProfitabilityServiceTests
     }
 
     [Fact]
+    public async Task Build_SalariedStaffWhoDoNotDrive_CountedAsStaffPay()
+    {
+        Delivered(1000m, 100 * Km);
+        var dispatcher = TestData.Driver();
+        dispatcher.SalaryType = SalaryType.Monthly;
+        dispatcher.Salary = new Money { Amount = 4000m, Currency = "USD" };
+        var formerDispatcher = TestData.Driver();
+        formerDispatcher.SalaryType = SalaryType.Monthly;
+        formerDispatcher.Salary = new Money { Amount = 9000m, Currency = "USD" };
+        formerDispatcher.Status = EmployeeStatus.Terminated;
+        _employees.AddRange([dispatcher, formerDispatcher]);
+
+        var summary = (await _sut.BuildAsync(From, From.AddDays(7))).Summary;
+
+        Assert.Equal(Math.Round(4000m * 7 / (365.25m / 12), 2), summary.StaffPay);
+        Assert.Equal(summary.LoadMargin - summary.StaffPay, summary.NetProfit);
+    }
+
+    [Fact]
+    public async Task Build_MileageLogShorterThanLoadedDistance_TreatedAsMissing()
+    {
+        Delivered(1000m, 500 * Km);
+        _mileage.Add(Mileage(_truck, miles: 100m));
+
+        var truck = (await _sut.BuildAsync(From, To)).Trucks.Single();
+
+        Assert.Null(truck.ActualDistance);
+        Assert.Null(truck.DeadheadPercent);
+    }
+
+    [Fact]
+    public async Task Build_MileageLog_GivesDeadheadShare()
+    {
+        Delivered(1000m, DistanceUnit.Miles.ToMeters(300));
+        _mileage.Add(Mileage(_truck, miles: 400m));
+
+        var truck = (await _sut.BuildAsync(From, To)).Trucks.Single();
+
+        Assert.Equal(25, truck.DeadheadPercent);
+    }
+
+    [Fact]
     public async Task Build_Trucks_GroupLoadsAndKeepIdleTrucksCosts()
     {
         Delivered(1000m, 100 * Km);
@@ -242,6 +285,14 @@ public class ProfitabilityServiceTests
         var busy = trucks.Single(t => t.TruckId == _truck.Id);
         Assert.Equal((1, 900m), (busy.LoadCount, busy.Margin));
     }
+
+    private static TruckJurisdictionMileage Mileage(Truck truck, decimal miles) => new()
+    {
+        TruckId = truck.Id,
+        Jurisdiction = TaxJurisdiction.Create("US", "TX"),
+        Date = DateOnly.FromDateTime(From.AddDays(2)),
+        Miles = miles
+    };
 
     private FuelCardTransaction FuelTransaction(decimal amount, FuelCardTransactionStatus status, Guid? truckId) => new()
     {
