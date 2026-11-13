@@ -657,7 +657,7 @@ All under `test/` (singular):
 - `Logistics.Application.Tests/` - application handlers, services; folders mirror `Modules/`, shared fixtures in `TestKit/`
 - `Logistics.Architecture.Tests/` - layering/dependency boundaries; discovers projects, never hard-code a list
 - `Logistics.Infrastructure.AI.Tests/` - AI agent, tools, prompts, pricing (quota lives in `Logistics.Infrastructure.Tests/Persistence/`, next to `AIQuotaService`)
-- `Logistics.Infrastructure.Tests/` - every other infrastructure project, one folder each (`Communications`, `Documents`, `Integrations`, `Payments`, `Persistence`, `Routing`, `Tax`, `Vin`), plus `HostDefaults/` (Sentry scrubbing and tenant tagging)
+- `Logistics.Infrastructure.Tests/` - every other infrastructure project, one folder each (`Communications`, `Documents`, `Integrations` incl. `Vin`, `Payments` incl. `Tax`, `Persistence`, `Routing`), plus `HostDefaults/` (Sentry scrubbing and tenant tagging)
 - `Logistics.Mediator.Tests/` - the in-repo mediator
 
 ## Updating this map

@@ -14,11 +14,12 @@ paths:
 | `Logistics.Infrastructure.Tests`             | Every other infrastructure project and HostDefaults, one folder each | `MockQueryable.NSubstitute`, EF InMemory, QuestPDF |
 | `Logistics.Architecture.Tests`               | Layering / dependency boundaries                      | `TngTech.ArchUnitNET.xUnitV3` |
 
-`Logistics.Infrastructure.Tests` has one folder per area: `Persistence/` (services, converters, AI
-quota), `Integrations/` (QBO, ELD, DAT, FMCSA, fuel cards, webhook signatures), `Payments/`, `Tax/`,
-`Vin/`, `Routing/`, `Communications/`, `Documents/` and `HostDefaults/`. Namespaces kept the old
-project names (`Logistics.Infrastructure.Tax.Tests`, ...). A test of infrastructure code goes there,
-never in `Application.Tests`.
+`Logistics.Infrastructure.Tests` has one folder per source project: `Persistence/` (services,
+converters, AI quota), `Integrations/` (QBO, ELD, DAT, FMCSA, fuel cards, VIN, webhook signatures),
+`Payments/` (Stripe, and tax under `Payments/Tax/`), `Routing/`, `Communications/`, `Documents/` and
+`HostDefaults/`. The namespace follows the folder (`Logistics.Infrastructure.Tests.Payments.Tax.Data`).
+`TestKit/StubHttpMessageHandler` is the one-response HTTP fake (`Json(...)`, `Throws(...)`, recorded
+`Requests`). A test of infrastructure code goes there, never in `Application.Tests`.
 
 `Application.Tests` folders mirror `src/Core/Logistics.Application/Modules/`
 (`Operations/Loads/`, `Integrations/AIDispatch/`, ...) and the namespace follows the folder. Tests
@@ -30,15 +31,16 @@ of code outside `Modules/` sit in `Behaviours/`, `Validators/`, `Utilities/` and
 `Logistics.Application.Tests/TestKit/` - use it instead of hand-building fixtures:
 
 - `TestData.Address/Load/Truck/Driver(...)` - valid entities; parameters are only the fields tests
-  vary, set anything else on the result.
+  vary, set anything else on the result. `TestData.TripLoadCommand()` is a valid new-load request.
 - `TestTenant.Create(...)` - a valid tenant (company name, MC number, distance unit).
-- `uow.Stub<T>(rows)` - wires `Repository<T>()` to a substitute whose `Query()` reads `rows` on every
-  call (pass a `List` to see rows added later); returns the repository for `Received` checks.
+- `uow.Stub<T>(rows)` - wires `Repository<T>()` to a substitute whose `Query`, `GetByIdAsync`,
+  `GetAsync` and `GetListAsync` read `rows` on every call (pass a `List` to see rows added later);
+  returns the repository for `Received` checks.
   `uow.StubLoadLookups()` stubs everything `LoadLookupBuilder` reads.
 - `AgentTestContext` - the substitute rig for the AI dispatch/copilot handler tests.
 
-`TestData.cs` and `TestTenant.cs` are compiled into `Logistics.Infrastructure.AI.Tests` as linked
-files (see its csproj), so both projects share one copy.
+`TestData.cs`, `TestTenant.cs` and `UnitOfWorkStubs.cs` are compiled into
+`Logistics.Infrastructure.AI.Tests` as linked files (see its csproj), so both projects share one copy.
 
 ## Stack
 

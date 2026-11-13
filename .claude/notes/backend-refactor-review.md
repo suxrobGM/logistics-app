@@ -163,7 +163,7 @@ Update `AssemblyAnchors`, the arch-tests csproj, `overview.md`, CLAUDE.md ("15 f
   - Decision: **`Domain.Primitives` stays its own project** instead of folding into `Domain`. `Shared.Models` references it and must not reference `Domain`, so merging would drag the entities into the client contract.
   - `NotificationService` (save + broadcast) moved to `Application/Modules/Platform/Notifications/Services/` with its interface; Communications only broadcasts the ready-made DTO through `IRealtimeNotificationService`.
   - Not done (not in the approved list): Telegram's own `FixedTimeEquals`.
-- [x] ✅ **`VerifySvix` moved to Communications, done 2026-11-12.** Now `SvixSignature.Verify` in `Infrastructure.Communications/Email/`, next to `ResendWebhookVerifier`; Communications no longer references `Infrastructure.Integrations`. Tests in `Logistics.Infrastructure.Tests/Communications/Email/SvixSignatureTests.cs`.
+- [x] ✅ **`VerifySvix` moved to Communications, done 2026-11-12.** Now `SvixSignature.Verify` in `Infrastructure.Communications/Email/`, next to `ResendWebhookVerifier`; Communications no longer references `Infrastructure.Integrations`. Tests in `Logistics.Infrastructure.Tests/Communications/Email/ResendWebhookVerifierTests.cs`.
 
 **Inside Application:**
 - [ ] CustomerUser queries live in `Platform/Portal/Queries`; move them to `IdentityAccess/CustomerUsers/Queries`.

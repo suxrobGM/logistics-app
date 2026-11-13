@@ -289,7 +289,7 @@ See [AI Dispatch](../ai-dispatch.md).
 
 ### Logistics.Infrastructure.Integrations
 
-Third-party integrations, one folder per family: `Common/`, `Eld/`, `LoadBoard/`, `FuelCards/`, `Accounting/`, `Vin/` and `Licensing/`. Namespaces follow the old project names (`Logistics.Infrastructure.Integrations.Eld`, `Logistics.Infrastructure.Vin`, ...). `AddIntegrationsInfrastructure` registers every family; a host that needs only some calls the family registrar directly (DbMigrator calls `AddFuelCardIntegrations`).
+Third-party integrations, one folder per family: `Common/`, `Eld/`, `LoadBoard/`, `FuelCards/`, `Accounting/`, `Vin/` and `Licensing/`. Namespaces follow the folders (`Logistics.Infrastructure.Integrations.Eld`, `Logistics.Infrastructure.Integrations.Vin`, ...). `AddIntegrationsInfrastructure` registers every family; a host that needs only some calls the family registrar directly (DbMigrator calls `AddFuelCardIntegrations`).
 
 #### Common/
 
@@ -343,7 +343,7 @@ Accounting sync providers: QuickBooks Online and a Demo provider, selected throu
 
 #### Tax/
 
-`AddTaxInfrastructure` (namespace `Logistics.Infrastructure.Tax`) registers it:
+`AddTaxInfrastructure` (namespace `Logistics.Infrastructure.Payments.Tax`) registers it:
 
 - `ITaxCalculator` selected per the `Tax:Provider` value (`stripe` | `manual`), defaulting to Stripe
 - Stripe Tax calculation API client and `IStripeTaxConfigService` for onboarding info, registered regardless of the selected calculator
