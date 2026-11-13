@@ -1,4 +1,5 @@
 using Logistics.Application.Abstractions;
+using Logistics.Application.Modules.Common.Services;
 using Logistics.Domain.Entities;
 using Logistics.Domain.Persistence;
 using Logistics.Domain.Primitives.Enums;
@@ -10,7 +11,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Logistics.Application.Modules.Operations.Trips.Queries;
 
-internal sealed class GetTripsHandler(ITenantUnitOfWork tenantUow)
+internal sealed class GetTripsHandler(ITenantUnitOfWork tenantUow, IDisplayNameLookup names)
     : IRequestHandler<GetTripsQuery, PagedResult<TripDto>>
 {
     public Task<PagedResult<TripDto>> Handle(
@@ -54,12 +55,54 @@ internal sealed class GetTripsHandler(ITenantUnitOfWork tenantUow)
 
     private async Task<IEnumerable<TripDto>> MapPageAsync(IReadOnlyList<Trip> trips, CancellationToken ct)
     {
-        var trailerIds = trips.Where(t => t.TrailerId is not null).Select(t => t.TrailerId!.Value).Distinct().ToList();
-        var trailerNumbers = await tenantUow.Repository<Trailer>().Query()
-            .Where(t => trailerIds.Contains(t.Id))
-            .Select(t => new { t.Id, t.Number })
-            .ToDictionaryAsync(t => t.Id, t => t.Number, ct);
+        var tripIds = trips.Select(t => t.Id).ToArray();
+        var truckNumbers = await names.GetTruckNumbersAsync(trips.Select(t => t.TruckId), ct);
+        var trailerNumbers = await GetTrailerNumbersAsync(trips, ct);
 
-        return trips.Select(trip => trip.ToDto(trip.TrailerId is { } id ? trailerNumbers.GetValueOrDefault(id) : null));
+        var stops = await tenantUow.Repository<TripStop>().Query()
+            .Where(s => tripIds.Contains(s.TripId))
+            .OrderBy(s => s.Order)
+            .ToListAsync(ct);
+        var stopsByTrip = stops.ToLookup(s => s.TripId);
+        var loads = await GetTripLoadsAsync(stops, ct);
+
+        return trips.Select(trip =>
+        {
+            var tripStops = stopsByTrip[trip.Id].ToArray();
+            var tripLoads = tripStops.Select(s => s.LoadId)
+                .Distinct()
+                .Where(loads.ContainsKey)
+                .Select(id => loads[id])
+                .ToArray();
+
+            return trip.ToDto(
+                truckNumbers.Find(trip.TruckId),
+                trailerNumbers.Find(trip.TrailerId),
+                tripStops,
+                tripLoads);
+        });
+    }
+
+    private async Task<Dictionary<Guid, string>> GetTrailerNumbersAsync(IReadOnlyList<Trip> trips, CancellationToken ct)
+    {
+        var trailerIds = trips.Select(t => t.TrailerId).OfType<Guid>().Distinct().ToArray();
+        return await tenantUow.Repository<Trailer>().Query()
+            .Where(t => trailerIds.Contains(t.Id))
+            .ToDictionaryAsync(t => t.Id, t => t.Number, ct);
+    }
+
+    private async Task<Dictionary<Guid, TripLoadDto>> GetTripLoadsAsync(List<TripStop> stops, CancellationToken ct)
+    {
+        var loadIds = stops.Select(s => s.LoadId).Distinct().ToArray();
+        var loads = await tenantUow.Repository<Load>().Query()
+            .Where(l => loadIds.Contains(l.Id))
+            .ToListAsync(ct);
+
+        var customerIds = loads.Select(l => l.CustomerId).Distinct().ToArray();
+        var customers = await tenantUow.Repository<Customer>().Query()
+            .Where(c => customerIds.Contains(c.Id))
+            .ToDictionaryAsync(c => c.Id, c => c.ToDto(), ct);
+
+        return loads.ToDictionary(l => l.Id, l => l.ToTripLoadDto(customers[l.CustomerId]));
     }
 }

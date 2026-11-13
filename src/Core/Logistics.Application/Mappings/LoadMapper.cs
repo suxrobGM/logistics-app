@@ -88,8 +88,12 @@ public static partial class LoadMapper
     [MapperIgnoreSource(nameof(Load.AssignedDispatcher))]
     [MapperIgnoreSource(nameof(Load.AssignedTruck))]
     [MapperIgnoreSource(nameof(Load.TripStops))]
+    [MapperIgnoreSource(nameof(Load.Customer))]
     [MapProperty(nameof(Load.OriginLocation), nameof(TripLoadDto.OriginLocation))]
     [MapProperty(nameof(Load.DestinationLocation), nameof(TripLoadDto.DestinationLocation))]
     [MapProperty(nameof(Load.Type), nameof(TripLoadDto.Type))]
-    public static partial TripLoadDto ToTripLoadDto(this Load load);
+    public static partial TripLoadDto ToTripLoadDto(this Load load, CustomerDto customer);
+
+    /// <summary>Single rows only; lists batch the customers and pass them in.</summary>
+    public static TripLoadDto ToTripLoadDto(this Load load) => load.ToTripLoadDto(load.Customer.ToDto());
 }

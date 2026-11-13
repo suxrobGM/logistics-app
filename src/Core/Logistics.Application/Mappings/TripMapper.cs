@@ -1,4 +1,5 @@
 using Logistics.Domain.Entities;
+using Logistics.Domain.Primitives.Enums;
 using Logistics.Domain.Primitives.ValueObjects;
 using Logistics.Shared.Models;
 using Riok.Mapperly.Abstractions;
@@ -6,53 +7,49 @@ using Riok.Mapperly.Abstractions;
 namespace Logistics.Mappings;
 
 [Mapper]
-[UseStaticMapper(typeof(TripStopMapper))]
 public static partial class TripMapper
 {
-    [MapProperty(nameof(Trip.Truck.Number), nameof(TripDto.TruckNumber))]
+    [MapperIgnoreSource(nameof(Trip.Truck))]
     [MapperIgnoreSource(nameof(Trip.Trailer))]
+    [MapperIgnoreSource(nameof(Trip.Stops))]
+    [MapperIgnoreTarget(nameof(TripDto.TruckNumber))]
     [MapperIgnoreTarget(nameof(TripDto.TrailerNumber))]
-    [MapProperty(nameof(Trip.Stops), nameof(TripDto.Stops))]
+    [MapperIgnoreTarget(nameof(TripDto.Stops))]
+    [MapperIgnoreTarget(nameof(TripDto.Loads))]
+    [MapperIgnoreTarget(nameof(TripDto.LoadsCount))]
+    [MapperIgnoreTarget(nameof(TripDto.TotalRevenue))]
     [MapProperty(nameof(Trip.CreatedAt), nameof(TripDto.CreatedAt))]
-    [MapPropertyFromSource(nameof(TripDto.OriginAddress), Use = nameof(MapOriginAddress))]
-    [MapPropertyFromSource(nameof(TripDto.DestinationAddress), Use = nameof(MapDestinationAddress))]
-    [MapPropertyFromSource(nameof(TripDto.Loads), Use = nameof(MapLoads))]
-    [MapPropertyFromSource(nameof(TripDto.LoadsCount), Use = nameof(MapLoadsCount))]
-    [MapPropertyFromSource(nameof(TripDto.TotalRevenue), Use = nameof(MapTotalRevenue))]
-    private static partial TripDto MapTrip(Trip entity);
+    private static partial TripDto MapTrip(Trip entity, Address originAddress, Address destinationAddress);
 
     extension(Trip entity)
     {
-        /// <summary>
-        /// <paramref name="trailerNumber"/> is passed in rather than read off <c>Trip.Trailer</c>, which would lazy-load one
-        /// trailer per row in a list.
-        /// </summary>
-        public TripDto ToDto(string? trailerNumber) =>
-            MapTrip(entity) with { TrailerNumber = trailerNumber };
-    }
+        /// <summary>Single rows only; lists batch the truck, stops and loads and pass them in.</summary>
+        public TripDto ToDto(string? trailerNumber) => entity.ToDto(
+            entity.Truck?.Number,
+            trailerNumber,
+            entity.Stops,
+            [.. entity.GetLoads().Select(LoadMapper.ToTripLoadDto)]);
 
-    private static IEnumerable<TripLoadDto> MapLoads(Trip trip)
-    {
-        return trip.GetLoads().Select(LoadMapper.ToTripLoadDto);
-    }
+        /// <param name="loads">The distinct loads on <paramref name="stops"/>.</param>
+        public TripDto ToDto(
+            string? truckNumber,
+            string? trailerNumber,
+            IReadOnlyCollection<TripStop> stops,
+            IReadOnlyList<TripLoadDto> loads)
+        {
+            var ordered = stops.OrderBy(s => s.Order).ToArray();
+            var deliveryCosts = loads.ToDictionary(l => l.Id, l => l.DeliveryCost);
 
-    private static Address MapOriginAddress(Trip trip)
-    {
-        return trip.GetOriginAddress();
-    }
-
-    private static Address MapDestinationAddress(Trip trip)
-    {
-        return trip.GetDestinationAddress();
-    }
-
-    private static int MapLoadsCount(Trip trip)
-    {
-        return trip.GetLoads().Count();
-    }
-
-    private static decimal MapTotalRevenue(Trip trip)
-    {
-        return trip.CalcTotalRevenue();
+            var dto = MapTrip(entity, ordered.First().Address, ordered.Last().Address);
+            dto.TruckNumber = truckNumber;
+            dto.TrailerNumber = trailerNumber;
+            dto.Stops = stops.Select(TripStopMapper.ToDto).ToArray();
+            dto.Loads = loads;
+            dto.LoadsCount = loads.Count;
+            dto.TotalRevenue = stops
+                .Where(s => s.Type == TripStopType.DropOff)
+                .Sum(s => deliveryCosts[s.LoadId]);
+            return dto;
+        }
     }
 }

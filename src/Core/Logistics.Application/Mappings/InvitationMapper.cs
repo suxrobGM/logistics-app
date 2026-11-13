@@ -33,7 +33,7 @@ public static partial class InvitationMapper
 
         public InvitationDto ToDto(string tenantName, string invitedByName, string? customerName = null)
         {
-            var dto = entity.ToDto();
+            var dto = MapInvitation(entity);
             return dto with
             {
                 TenantName = tenantName,

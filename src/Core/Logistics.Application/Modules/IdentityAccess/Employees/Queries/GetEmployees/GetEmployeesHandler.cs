@@ -5,6 +5,7 @@ using Logistics.Domain.Persistence;
 using Logistics.Mappings;
 using Logistics.Mediator;
 using Logistics.Shared.Models;
+using Microsoft.EntityFrameworkCore;
 
 namespace Logistics.Application.Modules.IdentityAccess.Employees.Queries;
 
@@ -31,6 +32,16 @@ internal sealed class GetEmployeesHandler(ITenantUnitOfWork tenantUow) : IReques
             query = query.Where(e => e.Role != null && req.Roles.Contains(e.Role.Name));
         }
 
-        return await query.ToPagedResultAsync(req, i => i.ToDto(), ct);
+        return await query.ToPagedResultAsync(req, MapPageAsync, ct);
+    }
+
+    private async Task<IEnumerable<EmployeeDto>> MapPageAsync(IReadOnlyList<Employee> employees, CancellationToken ct)
+    {
+        var roleIds = employees.Select(e => e.RoleId).OfType<Guid>().Distinct().ToArray();
+        var roles = await tenantUow.Repository<TenantRole>().Query()
+            .Where(r => roleIds.Contains(r.Id))
+            .ToDictionaryAsync(r => r.Id, ct);
+
+        return employees.Select(e => e.ToDto(e.RoleId is { } roleId ? roles.GetValueOrDefault(roleId) : null));
     }
 }

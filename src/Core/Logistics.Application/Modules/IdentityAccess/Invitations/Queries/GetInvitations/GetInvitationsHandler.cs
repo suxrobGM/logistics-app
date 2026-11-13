@@ -64,6 +64,15 @@ internal sealed class GetInvitationsHandler(
                 .ToDictionaryAsync(c => c.Id, c => c.Name, ct);
         }
 
+        // Same format as User.GetFullName, which can't run inside the query.
+        var inviterIds = invitations.Select(i => i.InvitedByUserId).Distinct().ToArray();
+        var inviterNames = (await masterUow.Repository<User>()
+                .Query()
+                .Where(u => inviterIds.Contains(u.Id))
+                .Select(u => new { u.Id, u.FirstName, u.LastName })
+                .ToListAsync(ct))
+            .ToDictionary(u => u.Id, u => string.Join(" ", u.FirstName, u.LastName));
+
         return invitations.Select(i =>
         {
             var customerName = i.CustomerId.HasValue && customerNames.TryGetValue(i.CustomerId.Value, out var name)
@@ -72,7 +81,7 @@ internal sealed class GetInvitationsHandler(
 
             return i.ToDto(
                 tenant.DisplayName,
-                i.InvitedByUser?.GetFullName() ?? string.Empty,
+                inviterNames.GetValueOrDefault(i.InvitedByUserId, string.Empty),
                 customerName);
         });
     }
