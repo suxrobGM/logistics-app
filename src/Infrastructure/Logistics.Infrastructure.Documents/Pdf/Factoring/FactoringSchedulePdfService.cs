@@ -12,7 +12,7 @@ internal sealed class FactoringSchedulePdfService : IFactoringSchedulePdfService
 {
     public byte[] GenerateSchedulePdf(FactoringBatch batch, Tenant tenant)
     {
-        var currency = batch.Total.Currency;
+        var currency = tenant.Currency;
         var companyName = tenant.DisplayName;
         var items = batch.Items.OrderBy(i => i.Invoice.Number).ToList();
 
@@ -76,14 +76,14 @@ internal sealed class FactoringSchedulePdfService : IFactoringSchedulePdfService
                             table.Cell().Element(PdfStyles.Cell).Text(invoice.Load.Number.ToString());
                             table.Cell().Element(PdfStyles.Cell).Text(invoice.Customer.Name);
                             table.Cell().Element(PdfStyles.Cell).AlignRight()
-                                .Text(PdfFormatting.Money(item.Amount.Amount, currency));
+                                .Text(PdfFormatting.Money(item.Amount, currency));
                         }
                     });
 
                     col.Item().AlignRight().Text(text =>
                     {
                         text.Span($"{items.Count} invoice(s), total ").Bold();
-                        text.Span(PdfFormatting.Money(batch.Total.Amount, currency)).Bold().FontSize(12);
+                        text.Span(PdfFormatting.Money(batch.Total, currency)).Bold().FontSize(12);
                     });
 
                     col.Item().Text(

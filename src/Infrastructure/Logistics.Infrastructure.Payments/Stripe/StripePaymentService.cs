@@ -48,8 +48,8 @@ internal sealed class StripePaymentService(ILogger<StripePaymentService> logger)
 
         var createOptions = new PaymentIntentCreateOptions
         {
-            Amount = StripeMoneyConversion.ToMinorUnits(payment.Amount.Amount, payment.Amount.Currency),
-            Currency = payment.Amount.Currency.ToLower(),
+            Amount = StripeMoneyConversion.ToMinorUnits(payment.Amount, tenant.Currency),
+            Currency = tenant.Currency.ToLowerInvariant(),
             Customer = tenant.StripeCustomerId,
             PaymentMethod = payment.StripePaymentMethodId,
             Confirm = true,

@@ -187,7 +187,7 @@ public class LaneRateFloorResolverTests
             OriginState = "TX",
             DestinationState = "IL",
             MinRatePerMile = 3.00m,
-            MinTotalRate = new Money { Amount = 1000m, Currency = "USD" }
+            MinTotalRate = 1000m
         };
         SetupLanes(lane);
 

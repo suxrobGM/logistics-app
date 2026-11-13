@@ -119,8 +119,7 @@ internal sealed class BookLoadBoardLoadHandler(
             destinationLocation: listing.DestinationLocation,
             customer: customer,
             assignedTruck: truck,
-            assignedDispatcher: dispatcher,
-            currency: tenantUow.GetCurrentTenant().Settings.Currency.ToString()
+            assignedDispatcher: dispatcher
         );
 
         load.Source = LoadSource.LoadBoard;

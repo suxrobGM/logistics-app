@@ -32,7 +32,7 @@ internal sealed class InvoiceTaxApplier(
         var tenant = tenantUow.GetCurrentTenant();
         var request = new TaxCalculationRequest
         {
-            Currency = invoice.Total.Currency,
+            Currency = tenant.Currency,
             TenantId = tenant.Id,
             TenantRegion = tenant.Settings?.Region ?? Region.US,
             TenantAddress = tenant.CompanyAddress,

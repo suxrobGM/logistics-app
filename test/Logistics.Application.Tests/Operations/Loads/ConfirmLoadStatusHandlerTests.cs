@@ -49,7 +49,7 @@ public class ConfirmLoadStatusHandlerTests
             OriginLocation = new GeoPoint(0, 0),
             DestinationAddress = address,
             DestinationLocation = new GeoPoint(0, 0),
-            DeliveryCost = Money.Zero("USD"),
+            DeliveryCost = 0m,
             AssignedTruck = _truck,
             AssignedTruckId = _truck.Id
         };

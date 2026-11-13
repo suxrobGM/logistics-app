@@ -12,5 +12,4 @@ public record InvoiceTotalsRecalculatedEvent(
     decimal Subtotal,
     decimal TaxTotal,
     decimal Total,
-    string Currency,
     TaxBehavior TaxBehavior) : IDomainEvent;

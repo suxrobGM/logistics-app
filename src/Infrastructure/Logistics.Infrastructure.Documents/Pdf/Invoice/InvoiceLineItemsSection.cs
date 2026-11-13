@@ -18,9 +18,8 @@ internal static class InvoiceLineItemsSection
         "Reverse charge - VAT to be accounted for by the recipient " +
         "(Article 196, Council Directive 2006/112/EC).";
 
-    public static void Render(IContainer container, LoadInvoice invoice, string taxLabel)
+    public static void Render(IContainer container, LoadInvoice invoice, string taxLabel, string currency)
     {
-        var currency = invoice.Total.Currency;
         var showTax = ShouldShowTaxColumns(invoice);
 
         container.Column(column =>
@@ -44,7 +43,7 @@ internal static class InvoiceLineItemsSection
 
     private static bool ShouldShowTaxColumns(LoadInvoice invoice) =>
         invoice.TaxBehavior != TaxBehavior.Exclusive
-        || invoice.TaxTotal.Amount > 0m
+        || invoice.TaxTotal > 0m
         || invoice.LineItems.Any(li => li.TaxAmount > 0m || li.TaxRatePercent > 0m);
 
     private static void RenderLineItemsTable(
@@ -83,7 +82,7 @@ internal static class InvoiceLineItemsSection
             var lines = invoice.LineItems.OrderBy(li => li.Order).ToList();
             if (lines.Count == 0 && invoice.Load is not null)
             {
-                RenderFallbackRow(table, invoice.Load.DeliveryCost.Amount, currency, showTax);
+                RenderFallbackRow(table, invoice.Load.DeliveryCost, currency, showTax);
                 return;
             }
 
@@ -91,7 +90,7 @@ internal static class InvoiceLineItemsSection
             {
                 table.Cell().Element(PdfStyles.Cell).Text(item.Description);
                 table.Cell().Element(PdfStyles.Cell).AlignCenter().Text(item.Quantity.ToString());
-                table.Cell().Element(PdfStyles.Cell).AlignRight().Text(PdfFormatting.Money(item.Amount.Amount, currency));
+                table.Cell().Element(PdfStyles.Cell).AlignRight().Text(PdfFormatting.Money(item.Amount, currency));
                 table.Cell().Element(PdfStyles.Cell).AlignRight().Text(PdfFormatting.Money(item.Total, currency));
                 if (showTax)
                 {

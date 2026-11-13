@@ -11,9 +11,12 @@ public record PublicInvoiceDto
     public Guid Id { get; set; }
     public long Number { get; set; }
     public InvoiceStatus Status { get; set; }
-    public Money Subtotal { get; set; } = null!;
-    public Money TaxTotal { get; set; } = null!;
-    public Money Total { get; set; } = null!;
+    public decimal Subtotal { get; set; }
+    public decimal TaxTotal { get; set; }
+    public decimal Total { get; set; }
+
+    /// <summary>ISO 4217 code of the issuing tenant's currency.</summary>
+    public required string Currency { get; set; }
     public TaxBehavior TaxBehavior { get; set; }
     public IEnumerable<InvoiceTaxLineDto> TaxBreakdown { get; set; } = [];
     public DateTime? DueDate { get; set; }

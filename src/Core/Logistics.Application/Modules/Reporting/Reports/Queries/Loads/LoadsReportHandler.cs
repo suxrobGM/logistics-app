@@ -31,7 +31,7 @@ internal sealed class LoadsReportHandler(ITenantUnitOfWork tenantUow) : IRequest
         }
 
         var totalLoads = queryable.Count();
-        var totalRevenue = queryable.Select(l => l.DeliveryCost.Amount).Sum();
+        var totalRevenue = queryable.Select(l => l.DeliveryCost).Sum();
         var totalDistance = queryable.Sum(l => l.Distance);
 
         var averageRevenuePerLoad = totalLoads > 0 ? totalRevenue / totalLoads : 0;
@@ -44,7 +44,7 @@ internal sealed class LoadsReportHandler(ITenantUnitOfWork tenantUow) : IRequest
         {
             Status = g.Key,
             Count = g.Count(),
-            TotalRevenue = g.Sum(l => l.DeliveryCost.Amount)
+            TotalRevenue = g.Sum(l => l.DeliveryCost)
         })
         .ToArray();
 
@@ -54,7 +54,7 @@ internal sealed class LoadsReportHandler(ITenantUnitOfWork tenantUow) : IRequest
         {
             Type = g.Key,
             Count = g.Count(),
-            TotalRevenue = g.Sum(l => l.DeliveryCost.Amount)
+            TotalRevenue = g.Sum(l => l.DeliveryCost)
         })
         .ToArray();
 
@@ -107,7 +107,7 @@ internal sealed class LoadsReportHandler(ITenantUnitOfWork tenantUow) : IRequest
             {
                 Period = monthStart.ToString("MMM yyyy"),
                 LoadCount = monthLoads.Count,
-                Revenue = monthLoads.Sum(l => l.DeliveryCost.Amount),
+                Revenue = monthLoads.Sum(l => l.DeliveryCost),
                 Distance = monthLoads.Sum(l => l.Distance)
             });
 
@@ -126,7 +126,7 @@ internal sealed class LoadsReportHandler(ITenantUnitOfWork tenantUow) : IRequest
             {
                 CustomerName = g.Key,
                 LoadCount = g.Count(),
-                TotalRevenue = g.Sum(l => l.DeliveryCost.Amount),
+                TotalRevenue = g.Sum(l => l.DeliveryCost),
                 TotalDistance = g.Sum(l => l.Distance),
                 AverageDistance = g.Average(l => l.Distance)
             })

@@ -23,7 +23,7 @@ internal sealed class FactoringBatchDtoBuilder(ITenantUnitOfWork tenantUow) : IF
             .Select(i =>
             {
                 invoices.TryGetValue(i.InvoiceId, out var inv);
-                var estimate = company?.EstimateAmounts(i.Amount.Amount) ?? new FactoringAmounts(0m, 0m, i.Amount.Amount);
+                var estimate = company?.EstimateAmounts(i.Amount) ?? new FactoringAmounts(0m, 0m, i.Amount);
                 return i.ToDto(inv?.Number ?? 0, inv?.LoadNumber ?? 0, inv?.CustomerName, estimate);
             })
             .ToList();

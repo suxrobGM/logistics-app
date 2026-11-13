@@ -3,6 +3,7 @@ using System.Globalization;
 
 namespace Logistics.Domain.Primitives.ValueObjects;
 
+/// <summary>An amount in a foreign currency. Tenant-internal amounts are plain decimals in <c>Tenant.Currency</c>.</summary>
 [ComplexType]
 public record Money
 {
@@ -18,11 +19,4 @@ public record Money
         currency.Equals("USD", StringComparison.OrdinalIgnoreCase)
             ? amount.ToString("C", CultureInfo.GetCultureInfo("en-US"))
             : $"{amount.ToString("N2", CultureInfo.InvariantCulture)} {currency.ToUpperInvariant()}";
-
-    /// <summary>
-    /// Implicitly converts a Money object to a decimal.
-    /// </summary>
-    /// <param name="entity">The Money object to convert.</param>
-    /// <returns>The decimal amount of the Money object.</returns>
-    public static implicit operator decimal(Money entity) => entity.Amount;
 }

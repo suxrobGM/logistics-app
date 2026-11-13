@@ -7,7 +7,7 @@ public record CashAdvanceDto
     public Guid Id { get; set; }
     public Guid EmployeeId { get; set; }
     public string? EmployeeName { get; set; }
-    public required Money Amount { get; set; }
+    public required decimal Amount { get; set; }
     public string? Reason { get; set; }
     public DateTime CreatedAt { get; set; }
 

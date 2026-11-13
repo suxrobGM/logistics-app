@@ -23,12 +23,12 @@ internal sealed partial class ProfitabilityService
                 l.OriginAddress,
                 l.DestinationAddress,
                 l.DeliveredAt!.Value,
-                l.DeliveryCost.Amount,
+                l.DeliveryCost,
                 l.FuelSurcharge,
                 l.Accessorials.Sum(a => a.Rate * a.Quantity),
                 l.Distance,
                 l.TripStops.Any(),
-                l.Invoice != null ? l.Invoice.Total.Amount : null))
+                l.Invoice != null ? l.Invoice.Total : null))
             .ToListAsync(ct);
 
     /// <returns>Each load's trips with their drivers and how many of the load's stops departed, keyed by load.</returns>
@@ -55,14 +55,14 @@ internal sealed partial class ProfitabilityService
             .OfType<TruckExpense>()
             .Where(e => ExpenseStatuses.Counted.Contains(e.Status) && e.ExpenseDate >= from && e.ExpenseDate < to)
             .GroupBy(e => new { e.TruckId, e.Category })
-            .Select(g => new { g.Key.TruckId, g.Key.Category, Amount = g.Sum(e => e.Amount.Amount) })
+            .Select(g => new { g.Key.TruckId, g.Key.Category, Amount = g.Sum(e => e.Amount) })
             .ToListAsync(ct);
 
         var repairs = await tenantUow.Repository<Expense>().Query()
             .OfType<BodyShopExpense>()
             .Where(e => ExpenseStatuses.Counted.Contains(e.Status) && e.ExpenseDate >= from && e.ExpenseDate < to)
             .GroupBy(e => e.TruckId)
-            .Select(g => new { TruckId = g.Key, Amount = g.Sum(e => e.Amount.Amount) })
+            .Select(g => new { TruckId = g.Key, Amount = g.Sum(e => e.Amount) })
             .ToListAsync(ct);
 
         return truckExpenses
@@ -116,7 +116,7 @@ internal sealed partial class ProfitabilityService
         tenantUow.Repository<Expense>().Query()
             .OfType<CompanyExpense>()
             .Where(e => ExpenseStatuses.Counted.Contains(e.Status) && e.ExpenseDate >= from && e.ExpenseDate < to)
-            .SumAsync(e => e.Amount.Amount, ct);
+            .SumAsync(e => e.Amount, ct);
 
     /// <summary>Period-paid employees who are not driving: dispatchers, office and management.</summary>
     private static readonly SalaryType[] StaffSalaryTypes = [SalaryType.Weekly, SalaryType.Monthly, SalaryType.Hourly];
@@ -134,11 +134,16 @@ internal sealed partial class ProfitabilityService
         return staff.Sum(e => CalculatePeriodPay(e, period, hours));
     }
 
-    private Task<decimal> SumUnassignedFuelAsync(DateTime from, DateTime to, CancellationToken ct) =>
-        tenantUow.Repository<FuelCardTransaction>().Query()
+    /// <summary>Card money in another currency can't be summed with the tenant's, so it is left out.</summary>
+    private Task<decimal> SumUnassignedFuelAsync(DateTime from, DateTime to, CancellationToken ct)
+    {
+        var currency = tenantUow.GetCurrentTenant().Currency;
+        return tenantUow.Repository<FuelCardTransaction>().Query()
             .Where(t => t.Status == FuelCardTransactionStatus.Pending &&
+                        t.Amount.Currency == currency &&
                         t.TransactionDate >= from && t.TransactionDate < to)
             .SumAsync(t => t.Amount.Amount, ct);
+    }
 
     private sealed record DeliveredLoadRow(
         Guid Id,

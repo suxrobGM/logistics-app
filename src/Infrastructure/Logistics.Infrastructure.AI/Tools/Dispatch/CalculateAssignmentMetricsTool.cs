@@ -87,7 +87,7 @@ internal sealed class CalculateAssignmentMetricsTool(ITenantUnitOfWork tenantUow
         {
             var deadhead = DispatchUnits.FromMeters(deadheadMeters, unit);
             var total = DispatchUnits.FromMeters(deadheadMeters + load.Distance, unit);
-            var linehaul = load.DeliveryCost?.Amount ?? 0;
+            var linehaul = load.DeliveryCost;
             var rate = DispatchUnits.RatePer(linehaul, total);
 
             // Keys carry the unit so the model never has to guess whether to convert.

@@ -14,6 +14,9 @@ internal sealed record CopilotPromptContext(string CompanyName)
 {
     public DistanceUnit DistanceUnit { get; init; } = DistanceUnit.Miles;
 
+    /// <summary>ISO 4217 code every tenant amount is in.</summary>
+    public string Currency { get; init; } = "USD";
+
     /// <summary>Drops the fleet-wide framing.</summary>
     public bool IsSolo { get; init; }
 

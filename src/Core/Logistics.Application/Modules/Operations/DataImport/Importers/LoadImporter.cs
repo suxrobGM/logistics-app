@@ -190,7 +190,7 @@ internal sealed class LoadImporter(
             }
 
             var created = Load.Create(draft.Key, draft.Type, draft.Rate!.Value, draft.Origin!, origin,
-                draft.Destination!, destination, draft.Customer!, draft.Truck, draft.Dispatcher!, options.Currency);
+                draft.Destination!, destination, draft.Customer!, draft.Truck, draft.Dispatcher!);
 
             // History must not push "new load" and "assigned to you" notifications to drivers.
             created.DomainEvents.Clear();

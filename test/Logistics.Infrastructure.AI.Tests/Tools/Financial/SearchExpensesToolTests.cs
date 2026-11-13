@@ -31,7 +31,7 @@ public class SearchExpensesToolTests
                     Id = Guid.NewGuid(),
                     Type = ExpenseType.Truck,
                     Status = ExpenseStatus.Approved,
-                    Amount = CopilotToolTestData.Usd(450m),
+                    Amount = 450m,
                     TruckCategory = TruckExpenseCategory.Tires
                 }], 1, 20));
 

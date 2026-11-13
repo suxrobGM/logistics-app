@@ -9,9 +9,9 @@ public class PayrollInvoicePeriodTests
     private static PayrollInvoice Period(DateOnly start, DateOnly end) => new()
     {
         EmployeeId = Guid.NewGuid(),
-        Subtotal = Money.Zero("USD"),
-        TaxTotal = Money.Zero("USD"),
-        Total = Money.Zero("USD"),
+        Subtotal = 0m,
+        TaxTotal = 0m,
+        Total = 0m,
         PeriodStart = start,
         PeriodEnd = end
     };

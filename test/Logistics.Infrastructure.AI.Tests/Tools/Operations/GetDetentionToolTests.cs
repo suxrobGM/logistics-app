@@ -86,7 +86,7 @@ public class GetDetentionToolTests
             OriginLocation = new GeoPoint(0, 0),
             DestinationAddress = address,
             DestinationLocation = new GeoPoint(0, 0),
-            DeliveryCost = Money.Zero("USD")
+            DeliveryCost = 0m
         };
         var trip = new Trip { Name = "Trip", Truck = new Truck { Number = truckNumber, Type = TruckType.FreightTruck } };
         return new TripStop

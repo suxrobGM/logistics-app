@@ -72,6 +72,6 @@ public partial class Trip : AuditableEntity, ITenantEntity
     {
         return Stops
             .Where(s => s.Type == TripStopType.DropOff)
-            .Sum(s => s.Load.DeliveryCost.Amount);
+            .Sum(s => s.Load.DeliveryCost);
     }
 }

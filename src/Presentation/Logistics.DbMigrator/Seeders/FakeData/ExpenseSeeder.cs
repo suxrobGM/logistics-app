@@ -104,7 +104,7 @@ internal class ExpenseSeeder(ILogger<ExpenseSeeder> logger) : SeederBase(logger)
 
         var expense = new CompanyExpense
         {
-            Amount = new Money { Amount = amount, Currency = "USD" },
+            Amount = amount,
             VendorName = random.Pick(VendorNames),
             ExpenseDate = expenseDate,
             ReceiptBlobPath = $"receipts/company/{Guid.NewGuid()}.pdf",
@@ -133,7 +133,7 @@ internal class ExpenseSeeder(ILogger<ExpenseSeeder> logger) : SeederBase(logger)
 
         var expense = new TruckExpense
         {
-            Amount = new Money { Amount = amount, Currency = "USD" },
+            Amount = amount,
             VendorName = random.Pick(VendorNames),
             ExpenseDate = expenseDate,
             ReceiptBlobPath = $"receipts/truck/{Guid.NewGuid()}.pdf",
@@ -165,7 +165,7 @@ internal class ExpenseSeeder(ILogger<ExpenseSeeder> logger) : SeederBase(logger)
 
         var expense = new BodyShopExpense
         {
-            Amount = new Money { Amount = random.Next(1000, 8000), Currency = "USD" },
+            Amount = random.Next(1000, 8000),
             VendorName = random.Pick(["Joe's Body Shop", "Premier Collision Center", "Elite Auto Body", "Quality Auto Repair"]),
             ExpenseDate = expenseDate,
             ReceiptBlobPath = $"receipts/bodyshop/{Guid.NewGuid()}.pdf",

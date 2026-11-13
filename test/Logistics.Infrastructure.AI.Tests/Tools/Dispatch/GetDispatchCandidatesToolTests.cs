@@ -56,7 +56,7 @@ public class GetDispatchCandidatesToolTests
     private static (Truck Truck, Employee Driver, DriverHosStatus Hos) Truck(
         string number, TruckType type, GeoPoint at, int drivingMinutesLeft = 600)
     {
-        var driver = new Employee { Id = Guid.NewGuid(), Email = $"{number}@test.com", FirstName = "Dana", LastName = number, Salary = Money.Zero("USD") };
+        var driver = new Employee { Id = Guid.NewGuid(), Email = $"{number}@test.com", FirstName = "Dana", LastName = number, Salary = 0m };
         var truck = new Truck
         {
             Id = Guid.NewGuid(),

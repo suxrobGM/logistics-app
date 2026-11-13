@@ -27,6 +27,12 @@ internal sealed class LaneRateFloorResolver(ITenantUnitOfWork tenantUow) : ILane
 
     public async Task<EffectiveRateFloorDto> ResolveAsync(LoadBoardListing listing, CancellationToken ct = default)
     {
+        var tenant = tenantUow.GetCurrentTenant();
+        if (!ListingCurrency.IsTenantCurrency(listing, tenant))
+        {
+            return new EffectiveRateFloorDto { HasFloor = false, Source = RateFloorSource.None };
+        }
+
         var originCountry = LaneKey.Country(listing.OriginAddress.Country);
         var originState = LaneKey.State(listing.OriginAddress.State);
         var destinationCountry = LaneKey.Country(listing.DestinationAddress.Country);
@@ -52,7 +58,7 @@ internal sealed class LaneRateFloorResolver(ITenantUnitOfWork tenantUow) : ILane
             return Build(matched.MinRatePerMile, matched.MinTotalRate, source, listing);
         }
 
-        var defaultRatePerMile = tenantUow.GetCurrentTenant().Settings.DefaultRateFloorPerMile;
+        var defaultRatePerMile = tenant.Settings.DefaultRateFloorPerMile;
         if (defaultRatePerMile.HasValue)
         {
             return Build(defaultRatePerMile.Value, null, RateFloorSource.TenantDefault, listing);
@@ -66,7 +72,7 @@ internal sealed class LaneRateFloorResolver(ITenantUnitOfWork tenantUow) : ILane
 
     private static EffectiveRateFloorDto Build(
         decimal minRatePerMile,
-        Money? minTotalRate,
+        decimal? minTotalRate,
         RateFloorSource source,
         LoadBoardListing listing)
     {
@@ -93,12 +99,12 @@ internal sealed class LaneRateFloorResolver(ITenantUnitOfWork tenantUow) : ILane
     /// comparison against the listing's rate per mile.
     /// </summary>
     private static (decimal? floorTotal, bool belowFloor, decimal? gapPerMile) Evaluate(
-        decimal minRatePerMile, Money? minTotalRate, LoadBoardListing listing)
+        decimal minRatePerMile, decimal? minTotalRate, LoadBoardListing listing)
     {
         var distanceMiles = listing.Distance;
         decimal? floorTotal = distanceMiles is > 0
-            ? Math.Max(minRatePerMile * distanceMiles.Value.ToDecimal(), minTotalRate?.Amount ?? 0M)
-            : minTotalRate?.Amount;
+            ? Math.Max(minRatePerMile * distanceMiles.Value.ToDecimal(), minTotalRate ?? 0M)
+            : minTotalRate;
 
         var listingTotal = listing.TotalRate?.Amount
             ?? (listing.RatePerMile.HasValue && distanceMiles is > 0

@@ -133,7 +133,7 @@ internal sealed class DriverImporter(
                 continue;
             }
 
-            var driver = Employee.CreateEmployeeFromUser(user, options.Currency);
+            var driver = Employee.CreateEmployeeFromUser(user);
             driver.Address = draft.Address;
             driver.JoinedDate = draft.HireDate ?? DateTime.UtcNow;
             driver.Role = driverRole;

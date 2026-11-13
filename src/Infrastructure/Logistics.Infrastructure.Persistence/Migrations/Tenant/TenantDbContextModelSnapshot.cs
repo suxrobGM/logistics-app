@@ -155,6 +155,367 @@ namespace Logistics.Infrastructure.Persistence.Migrations.Tenant
                     b.ToTable("accessorial_charges", (string)null);
                 });
 
+            modelBuilder.Entity("Logistics.Domain.Entities.AccidentReport", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid")
+                        .HasColumnName("id");
+
+                    b.Property<DateTime>("AccidentDateTime")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("accident_date_time");
+
+                    b.Property<string>("AccidentType")
+                        .IsRequired()
+                        .HasColumnType("text")
+                        .HasColumnName("accident_type");
+
+                    b.Property<string>("Address")
+                        .HasMaxLength(500)
+                        .HasColumnType("character varying(500)")
+                        .HasColumnName("address");
+
+                    b.Property<bool>("AnyInjuries")
+                        .HasColumnType("boolean")
+                        .HasColumnName("any_injuries");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("created_at")
+                        .HasDefaultValueSql("CURRENT_TIMESTAMP");
+
+                    b.Property<string>("CreatedBy")
+                        .HasMaxLength(50)
+                        .HasColumnType("character varying(50)")
+                        .HasColumnName("created_by");
+
+                    b.Property<string>("Description")
+                        .HasMaxLength(4000)
+                        .HasColumnType("character varying(4000)")
+                        .HasColumnName("description");
+
+                    b.Property<Guid>("DriverId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("driver_id");
+
+                    b.Property<string>("DriverSignature")
+                        .HasColumnType("text")
+                        .HasColumnName("driver_signature");
+
+                    b.Property<DateTime?>("DriverSignedAt")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("driver_signed_at");
+
+                    b.Property<string>("DriverStatement")
+                        .HasMaxLength(4000)
+                        .HasColumnType("character varying(4000)")
+                        .HasColumnName("driver_statement");
+
+                    b.Property<decimal?>("EstimatedDamageCost")
+                        .HasPrecision(18, 2)
+                        .HasColumnType("numeric(18,2)")
+                        .HasColumnName("estimated_damage_cost");
+
+                    b.Property<bool>("FatalitiesReported")
+                        .HasColumnType("boolean")
+                        .HasColumnName("fatalities_reported");
+
+                    b.Property<string>("HazmatDescription")
+                        .HasMaxLength(2000)
+                        .HasColumnType("character varying(2000)")
+                        .HasColumnName("hazmat_description");
+
+                    b.Property<bool>("HazmatInvolved")
+                        .HasColumnType("boolean")
+                        .HasColumnName("hazmat_involved");
+
+                    b.Property<string>("InjuryDescription")
+                        .HasMaxLength(2000)
+                        .HasColumnType("character varying(2000)")
+                        .HasColumnName("injury_description");
+
+                    b.Property<string>("InsuranceClaimNumber")
+                        .HasMaxLength(100)
+                        .HasColumnType("character varying(100)")
+                        .HasColumnName("insurance_claim_number");
+
+                    b.Property<bool>("InsuranceNotified")
+                        .HasColumnType("boolean")
+                        .HasColumnName("insurance_notified");
+
+                    b.Property<DateTime?>("InsuranceNotifiedAt")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("insurance_notified_at");
+
+                    b.Property<double>("Latitude")
+                        .HasColumnType("double precision")
+                        .HasColumnName("latitude");
+
+                    b.Property<double>("Longitude")
+                        .HasColumnType("double precision")
+                        .HasColumnName("longitude");
+
+                    b.Property<int?>("NumberOfFatalities")
+                        .HasColumnType("integer")
+                        .HasColumnName("number_of_fatalities");
+
+                    b.Property<int?>("NumberOfInjuries")
+                        .HasColumnType("integer")
+                        .HasColumnName("number_of_injuries");
+
+                    b.Property<string>("PoliceDepartment")
+                        .HasMaxLength(200)
+                        .HasColumnType("character varying(200)")
+                        .HasColumnName("police_department");
+
+                    b.Property<string>("PoliceOfficerBadge")
+                        .HasMaxLength(50)
+                        .HasColumnType("character varying(50)")
+                        .HasColumnName("police_officer_badge");
+
+                    b.Property<string>("PoliceOfficerName")
+                        .HasMaxLength(200)
+                        .HasColumnType("character varying(200)")
+                        .HasColumnName("police_officer_name");
+
+                    b.Property<bool>("PoliceReportFiled")
+                        .HasColumnType("boolean")
+                        .HasColumnName("police_report_filed");
+
+                    b.Property<string>("PoliceReportNumber")
+                        .HasMaxLength(100)
+                        .HasColumnType("character varying(100)")
+                        .HasColumnName("police_report_number");
+
+                    b.Property<string>("ReviewNotes")
+                        .HasMaxLength(2000)
+                        .HasColumnType("character varying(2000)")
+                        .HasColumnName("review_notes");
+
+                    b.Property<DateTime?>("ReviewedAt")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("reviewed_at");
+
+                    b.Property<Guid?>("ReviewedById")
+                        .HasColumnType("uuid")
+                        .HasColumnName("reviewed_by_id");
+
+                    b.Property<string>("RoadConditions")
+                        .HasMaxLength(200)
+                        .HasColumnType("character varying(200)")
+                        .HasColumnName("road_conditions");
+
+                    b.Property<string>("Severity")
+                        .IsRequired()
+                        .HasColumnType("text")
+                        .HasColumnName("severity");
+
+                    b.Property<string>("Status")
+                        .IsRequired()
+                        .HasColumnType("text")
+                        .HasColumnName("status");
+
+                    b.Property<string>("TowCompany")
+                        .HasMaxLength(200)
+                        .HasColumnType("character varying(200)")
+                        .HasColumnName("tow_company");
+
+                    b.Property<Guid?>("TripId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("trip_id");
+
+                    b.Property<Guid>("TruckId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("truck_id");
+
+                    b.Property<DateTime?>("UpdatedAt")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("updated_at");
+
+                    b.Property<string>("UpdatedBy")
+                        .HasMaxLength(50)
+                        .HasColumnType("character varying(50)")
+                        .HasColumnName("updated_by");
+
+                    b.Property<string>("VehicleDamageDescription")
+                        .HasMaxLength(2000)
+                        .HasColumnType("character varying(2000)")
+                        .HasColumnName("vehicle_damage_description");
+
+                    b.Property<bool>("VehicleDamaged")
+                        .HasColumnType("boolean")
+                        .HasColumnName("vehicle_damaged");
+
+                    b.Property<bool>("VehicleDrivable")
+                        .HasColumnType("boolean")
+                        .HasColumnName("vehicle_drivable");
+
+                    b.Property<bool>("VehicleTowed")
+                        .HasColumnType("boolean")
+                        .HasColumnName("vehicle_towed");
+
+                    b.Property<string>("WeatherConditions")
+                        .HasMaxLength(200)
+                        .HasColumnType("character varying(200)")
+                        .HasColumnName("weather_conditions");
+
+                    b.HasKey("Id")
+                        .HasName("pk_accident_reports");
+
+                    b.HasIndex("ReviewedById")
+                        .HasDatabaseName("ix_accident_reports_reviewed_by_id");
+
+                    b.HasIndex("Severity")
+                        .HasDatabaseName("ix_accident_reports_severity");
+
+                    b.HasIndex("Status")
+                        .HasDatabaseName("ix_accident_reports_status");
+
+                    b.HasIndex("TripId")
+                        .HasDatabaseName("ix_accident_reports_trip_id");
+
+                    b.HasIndex("TruckId")
+                        .HasDatabaseName("ix_accident_reports_truck_id");
+
+                    b.HasIndex("DriverId", "AccidentDateTime")
+                        .HasDatabaseName("ix_accident_reports_driver_id_accident_date_time");
+
+                    b.ToTable("accident_reports", (string)null);
+                });
+
+            modelBuilder.Entity("Logistics.Domain.Entities.AccidentThirdParty", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid")
+                        .HasColumnName("id");
+
+                    b.Property<Guid>("AccidentReportId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("accident_report_id");
+
+                    b.Property<string>("Address")
+                        .HasMaxLength(500)
+                        .HasColumnType("character varying(500)")
+                        .HasColumnName("address");
+
+                    b.Property<string>("DriverLicense")
+                        .HasMaxLength(50)
+                        .HasColumnType("character varying(50)")
+                        .HasColumnName("driver_license");
+
+                    b.Property<string>("InsuranceAgentPhone")
+                        .HasMaxLength(50)
+                        .HasColumnType("character varying(50)")
+                        .HasColumnName("insurance_agent_phone");
+
+                    b.Property<string>("InsuranceCompany")
+                        .HasMaxLength(200)
+                        .HasColumnType("character varying(200)")
+                        .HasColumnName("insurance_company");
+
+                    b.Property<string>("InsurancePolicyNumber")
+                        .HasMaxLength(100)
+                        .HasColumnType("character varying(100)")
+                        .HasColumnName("insurance_policy_number");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasMaxLength(200)
+                        .HasColumnType("character varying(200)")
+                        .HasColumnName("name");
+
+                    b.Property<string>("PhoneNumber")
+                        .HasMaxLength(50)
+                        .HasColumnType("character varying(50)")
+                        .HasColumnName("phone_number");
+
+                    b.Property<string>("VehicleColor")
+                        .HasMaxLength(50)
+                        .HasColumnType("character varying(50)")
+                        .HasColumnName("vehicle_color");
+
+                    b.Property<string>("VehicleLicensePlate")
+                        .HasMaxLength(20)
+                        .HasColumnType("character varying(20)")
+                        .HasColumnName("vehicle_license_plate");
+
+                    b.Property<string>("VehicleMake")
+                        .HasMaxLength(100)
+                        .HasColumnType("character varying(100)")
+                        .HasColumnName("vehicle_make");
+
+                    b.Property<string>("VehicleModel")
+                        .HasMaxLength(100)
+                        .HasColumnType("character varying(100)")
+                        .HasColumnName("vehicle_model");
+
+                    b.Property<string>("VehicleVin")
+                        .HasMaxLength(20)
+                        .HasColumnType("character varying(20)")
+                        .HasColumnName("vehicle_vin");
+
+                    b.Property<int?>("VehicleYear")
+                        .HasColumnType("integer")
+                        .HasColumnName("vehicle_year");
+
+                    b.HasKey("Id")
+                        .HasName("pk_accident_third_parties");
+
+                    b.HasIndex("AccidentReportId")
+                        .HasDatabaseName("ix_accident_third_parties_accident_report_id");
+
+                    b.ToTable("accident_third_parties", (string)null);
+                });
+
+            modelBuilder.Entity("Logistics.Domain.Entities.AccidentWitness", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid")
+                        .HasColumnName("id");
+
+                    b.Property<Guid>("AccidentReportId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("accident_report_id");
+
+                    b.Property<string>("Address")
+                        .HasMaxLength(500)
+                        .HasColumnType("character varying(500)")
+                        .HasColumnName("address");
+
+                    b.Property<string>("Email")
+                        .HasMaxLength(200)
+                        .HasColumnType("character varying(200)")
+                        .HasColumnName("email");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasMaxLength(200)
+                        .HasColumnType("character varying(200)")
+                        .HasColumnName("name");
+
+                    b.Property<string>("PhoneNumber")
+                        .HasMaxLength(50)
+                        .HasColumnType("character varying(50)")
+                        .HasColumnName("phone_number");
+
+                    b.Property<string>("Statement")
+                        .HasMaxLength(4000)
+                        .HasColumnType("character varying(4000)")
+                        .HasColumnName("statement");
+
+                    b.HasKey("Id")
+                        .HasName("pk_accident_witnesses");
+
+                    b.HasIndex("AccidentReportId")
+                        .HasDatabaseName("ix_accident_witnesses_accident_report_id");
+
+                    b.ToTable("accident_witnesses", (string)null);
+                });
+
             modelBuilder.Entity("Logistics.Domain.Entities.AccountingProviderConfiguration", b =>
                 {
                     b.Property<Guid>("Id")
@@ -736,6 +1097,11 @@ namespace Logistics.Infrastructure.Persistence.Migrations.Tenant
                         .HasColumnType("uuid")
                         .HasColumnName("id");
 
+                    b.Property<decimal>("Amount")
+                        .HasPrecision(18, 2)
+                        .HasColumnType("numeric(18,2)")
+                        .HasColumnName("amount");
+
                     b.Property<DateTime>("CreatedAt")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("timestamp with time zone")
@@ -768,22 +1134,6 @@ namespace Logistics.Infrastructure.Persistence.Migrations.Tenant
                         .HasMaxLength(50)
                         .HasColumnType("character varying(50)")
                         .HasColumnName("updated_by");
-
-                    b.ComplexProperty(typeof(Dictionary<string, object>), "Amount", "Logistics.Domain.Entities.CashAdvance.Amount#Money", b1 =>
-                        {
-                            b1.IsRequired();
-
-                            b1.Property<decimal>("Amount")
-                                .HasPrecision(18, 2)
-                                .HasColumnType("numeric(18,2)")
-                                .HasColumnName("amount_amount");
-
-                            b1.Property<string>("Currency")
-                                .IsRequired()
-                                .HasMaxLength(3)
-                                .HasColumnType("character varying(3)")
-                                .HasColumnName("amount_currency");
-                        });
 
                     b.HasKey("Id")
                         .HasName("pk_cash_advances");
@@ -1062,6 +1412,86 @@ namespace Logistics.Infrastructure.Persistence.Migrations.Tenant
                         .HasDatabaseName("ix_containers_number");
 
                     b.ToTable("containers", (string)null);
+                });
+
+            modelBuilder.Entity("Logistics.Domain.Entities.Conversation", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid")
+                        .HasColumnName("id");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("created_at");
+
+                    b.Property<bool>("IsTenantChat")
+                        .HasColumnType("boolean")
+                        .HasColumnName("is_tenant_chat");
+
+                    b.Property<DateTime?>("LastMessageAt")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("last_message_at");
+
+                    b.Property<Guid?>("LoadId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("load_id");
+
+                    b.Property<string>("Name")
+                        .HasMaxLength(200)
+                        .HasColumnType("character varying(200)")
+                        .HasColumnName("name");
+
+                    b.HasKey("Id")
+                        .HasName("pk_conversations");
+
+                    b.HasIndex("LastMessageAt")
+                        .HasDatabaseName("ix_conversations_last_message_at");
+
+                    b.HasIndex("LoadId")
+                        .HasDatabaseName("ix_conversations_load_id");
+
+                    b.ToTable("conversations", (string)null);
+                });
+
+            modelBuilder.Entity("Logistics.Domain.Entities.ConversationParticipant", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid")
+                        .HasColumnName("id");
+
+                    b.Property<Guid>("ConversationId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("conversation_id");
+
+                    b.Property<Guid>("EmployeeId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("employee_id");
+
+                    b.Property<bool>("IsMuted")
+                        .HasColumnType("boolean")
+                        .HasColumnName("is_muted");
+
+                    b.Property<DateTime>("JoinedAt")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("joined_at");
+
+                    b.Property<DateTime?>("LastReadAt")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("last_read_at");
+
+                    b.HasKey("Id")
+                        .HasName("pk_conversation_participants");
+
+                    b.HasIndex("EmployeeId")
+                        .HasDatabaseName("ix_conversation_participants_employee_id");
+
+                    b.HasIndex("ConversationId", "EmployeeId")
+                        .IsUnique()
+                        .HasDatabaseName("ix_conversation_participants_conversation_id_employee_id");
+
+                    b.ToTable("conversation_participants", (string)null);
                 });
 
             modelBuilder.Entity("Logistics.Domain.Entities.Customer", b =>
@@ -1517,6 +1947,185 @@ namespace Logistics.Infrastructure.Persistence.Migrations.Tenant
                     b.ToTable("driver_licenses", (string)null);
                 });
 
+            modelBuilder.Entity("Logistics.Domain.Entities.DvirDefect", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid")
+                        .HasColumnName("id");
+
+                    b.Property<string>("Category")
+                        .IsRequired()
+                        .HasColumnType("text")
+                        .HasColumnName("category");
+
+                    b.Property<DateTime?>("CorrectedAt")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("corrected_at");
+
+                    b.Property<Guid?>("CorrectedById")
+                        .HasColumnType("uuid")
+                        .HasColumnName("corrected_by_id");
+
+                    b.Property<string>("CorrectionNotes")
+                        .HasMaxLength(1000)
+                        .HasColumnType("character varying(1000)")
+                        .HasColumnName("correction_notes");
+
+                    b.Property<string>("Description")
+                        .IsRequired()
+                        .HasMaxLength(1000)
+                        .HasColumnType("character varying(1000)")
+                        .HasColumnName("description");
+
+                    b.Property<Guid>("DvirReportId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("dvir_report_id");
+
+                    b.Property<bool>("IsCorrected")
+                        .HasColumnType("boolean")
+                        .HasColumnName("is_corrected");
+
+                    b.Property<string>("Severity")
+                        .IsRequired()
+                        .HasColumnType("text")
+                        .HasColumnName("severity");
+
+                    b.HasKey("Id")
+                        .HasName("pk_dvir_defects");
+
+                    b.HasIndex("CorrectedById")
+                        .HasDatabaseName("ix_dvir_defects_corrected_by_id");
+
+                    b.HasIndex("DvirReportId")
+                        .HasDatabaseName("ix_dvir_defects_dvir_report_id");
+
+                    b.HasIndex("Category", "Severity")
+                        .HasDatabaseName("ix_dvir_defects_category_severity");
+
+                    b.ToTable("dvir_defects", (string)null);
+                });
+
+            modelBuilder.Entity("Logistics.Domain.Entities.DvirReport", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid")
+                        .HasColumnName("id");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("created_at")
+                        .HasDefaultValueSql("CURRENT_TIMESTAMP");
+
+                    b.Property<string>("CreatedBy")
+                        .HasMaxLength(50)
+                        .HasColumnType("character varying(50)")
+                        .HasColumnName("created_by");
+
+                    b.Property<bool?>("DefectsCorrected")
+                        .HasColumnType("boolean")
+                        .HasColumnName("defects_corrected");
+
+                    b.Property<Guid>("DriverId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("driver_id");
+
+                    b.Property<string>("DriverNotes")
+                        .HasMaxLength(2000)
+                        .HasColumnType("character varying(2000)")
+                        .HasColumnName("driver_notes");
+
+                    b.Property<string>("DriverSignature")
+                        .HasColumnType("text")
+                        .HasColumnName("driver_signature");
+
+                    b.Property<bool>("HasDefects")
+                        .HasColumnType("boolean")
+                        .HasColumnName("has_defects");
+
+                    b.Property<DateTime>("InspectionDate")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("inspection_date");
+
+                    b.Property<double?>("Latitude")
+                        .HasColumnType("double precision")
+                        .HasColumnName("latitude");
+
+                    b.Property<double?>("Longitude")
+                        .HasColumnType("double precision")
+                        .HasColumnName("longitude");
+
+                    b.Property<string>("MechanicNotes")
+                        .HasMaxLength(2000)
+                        .HasColumnType("character varying(2000)")
+                        .HasColumnName("mechanic_notes");
+
+                    b.Property<string>("MechanicSignature")
+                        .HasColumnType("text")
+                        .HasColumnName("mechanic_signature");
+
+                    b.Property<int?>("OdometerReading")
+                        .HasColumnType("integer")
+                        .HasColumnName("odometer_reading");
+
+                    b.Property<DateTime?>("ReviewedAt")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("reviewed_at");
+
+                    b.Property<Guid?>("ReviewedById")
+                        .HasColumnType("uuid")
+                        .HasColumnName("reviewed_by_id");
+
+                    b.Property<string>("Status")
+                        .IsRequired()
+                        .HasColumnType("text")
+                        .HasColumnName("status");
+
+                    b.Property<Guid?>("TripId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("trip_id");
+
+                    b.Property<Guid>("TruckId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("truck_id");
+
+                    b.Property<string>("Type")
+                        .IsRequired()
+                        .HasColumnType("text")
+                        .HasColumnName("type");
+
+                    b.Property<DateTime?>("UpdatedAt")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("updated_at");
+
+                    b.Property<string>("UpdatedBy")
+                        .HasMaxLength(50)
+                        .HasColumnType("character varying(50)")
+                        .HasColumnName("updated_by");
+
+                    b.HasKey("Id")
+                        .HasName("pk_dvir_reports");
+
+                    b.HasIndex("ReviewedById")
+                        .HasDatabaseName("ix_dvir_reports_reviewed_by_id");
+
+                    b.HasIndex("Status")
+                        .HasDatabaseName("ix_dvir_reports_status");
+
+                    b.HasIndex("TripId")
+                        .HasDatabaseName("ix_dvir_reports_trip_id");
+
+                    b.HasIndex("DriverId", "InspectionDate")
+                        .HasDatabaseName("ix_dvir_reports_driver_id_inspection_date");
+
+                    b.HasIndex("TruckId", "InspectionDate")
+                        .HasDatabaseName("ix_dvir_reports_truck_id_inspection_date");
+
+                    b.ToTable("dvir_reports", (string)null);
+                });
+
             modelBuilder.Entity("Logistics.Domain.Entities.EldDriverMapping", b =>
                 {
                     b.Property<Guid>("Id")
@@ -1738,6 +2347,11 @@ namespace Logistics.Infrastructure.Persistence.Migrations.Tenant
                         .HasColumnType("uuid")
                         .HasColumnName("role_id");
 
+                    b.Property<decimal>("Salary")
+                        .HasPrecision(18, 2)
+                        .HasColumnType("numeric(18,2)")
+                        .HasColumnName("salary");
+
                     b.Property<string>("SalaryType")
                         .IsRequired()
                         .HasColumnType("text")
@@ -1784,22 +2398,6 @@ namespace Logistics.Infrastructure.Persistence.Migrations.Tenant
                                 .HasColumnName("address_zip_code");
                         });
 
-                    b.ComplexProperty(typeof(Dictionary<string, object>), "Salary", "Logistics.Domain.Entities.Employee.Salary#Money", b1 =>
-                        {
-                            b1.IsRequired();
-
-                            b1.Property<decimal>("Amount")
-                                .HasPrecision(18, 2)
-                                .HasColumnType("numeric(18,2)")
-                                .HasColumnName("salary_amount");
-
-                            b1.Property<string>("Currency")
-                                .IsRequired()
-                                .HasMaxLength(3)
-                                .HasColumnType("character varying(3)")
-                                .HasColumnName("salary_currency");
-                        });
-
                     b.HasKey("Id")
                         .HasName("pk_employees");
 
@@ -1815,6 +2413,11 @@ namespace Logistics.Infrastructure.Persistence.Migrations.Tenant
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uuid")
                         .HasColumnName("id");
+
+                    b.Property<decimal>("Amount")
+                        .HasPrecision(18, 2)
+                        .HasColumnType("numeric(18,2)")
+                        .HasColumnName("amount");
 
                     b.Property<DateTime?>("ApprovedAt")
                         .HasColumnType("timestamp with time zone")
@@ -1885,22 +2488,6 @@ namespace Logistics.Infrastructure.Persistence.Migrations.Tenant
                         .HasMaxLength(255)
                         .HasColumnType("character varying(255)")
                         .HasColumnName("vendor_name");
-
-                    b.ComplexProperty(typeof(Dictionary<string, object>), "Amount", "Logistics.Domain.Entities.Expense.Amount#Money", b1 =>
-                        {
-                            b1.IsRequired();
-
-                            b1.Property<decimal>("Amount")
-                                .HasPrecision(18, 2)
-                                .HasColumnType("numeric(18,2)")
-                                .HasColumnName("amount_amount");
-
-                            b1.Property<string>("Currency")
-                                .IsRequired()
-                                .HasMaxLength(3)
-                                .HasColumnType("character varying(3)")
-                                .HasColumnName("amount_currency");
-                        });
 
                     b.HasKey("Id")
                         .HasName("pk_expenses");
@@ -1974,6 +2561,11 @@ namespace Logistics.Infrastructure.Persistence.Migrations.Tenant
                         .HasColumnType("character varying(320)")
                         .HasColumnName("submitted_to_email");
 
+                    b.Property<decimal>("Total")
+                        .HasPrecision(18, 2)
+                        .HasColumnType("numeric(18,2)")
+                        .HasColumnName("total");
+
                     b.Property<DateTime?>("UpdatedAt")
                         .HasColumnType("timestamp with time zone")
                         .HasColumnName("updated_at");
@@ -1982,22 +2574,6 @@ namespace Logistics.Infrastructure.Persistence.Migrations.Tenant
                         .HasMaxLength(50)
                         .HasColumnType("character varying(50)")
                         .HasColumnName("updated_by");
-
-                    b.ComplexProperty(typeof(Dictionary<string, object>), "Total", "Logistics.Domain.Entities.FactoringBatch.Total#Money", b1 =>
-                        {
-                            b1.IsRequired();
-
-                            b1.Property<decimal>("Amount")
-                                .HasPrecision(18, 2)
-                                .HasColumnType("numeric(18,2)")
-                                .HasColumnName("total_amount");
-
-                            b1.Property<string>("Currency")
-                                .IsRequired()
-                                .HasMaxLength(3)
-                                .HasColumnType("character varying(3)")
-                                .HasColumnName("total_currency");
-                        });
 
                     b.HasKey("Id")
                         .HasName("pk_factoring_batches");
@@ -2026,6 +2602,11 @@ namespace Logistics.Infrastructure.Persistence.Migrations.Tenant
                         .HasPrecision(18, 2)
                         .HasColumnType("numeric(18,2)")
                         .HasColumnName("advance_amount");
+
+                    b.Property<decimal>("Amount")
+                        .HasPrecision(18, 2)
+                        .HasColumnType("numeric(18,2)")
+                        .HasColumnName("amount");
 
                     b.Property<Guid>("BatchId")
                         .HasColumnType("uuid")
@@ -2095,22 +2676,6 @@ namespace Logistics.Infrastructure.Persistence.Migrations.Tenant
                         .HasMaxLength(50)
                         .HasColumnType("character varying(50)")
                         .HasColumnName("updated_by");
-
-                    b.ComplexProperty(typeof(Dictionary<string, object>), "Amount", "Logistics.Domain.Entities.FactoringBatchItem.Amount#Money", b1 =>
-                        {
-                            b1.IsRequired();
-
-                            b1.Property<decimal>("Amount")
-                                .HasPrecision(18, 2)
-                                .HasColumnType("numeric(18,2)")
-                                .HasColumnName("amount_amount");
-
-                            b1.Property<string>("Currency")
-                                .IsRequired()
-                                .HasMaxLength(3)
-                                .HasColumnType("character varying(3)")
-                                .HasColumnName("amount_currency");
-                        });
 
                     b.HasKey("Id")
                         .HasName("pk_factoring_batch_items");
@@ -2458,13 +3023,13 @@ namespace Logistics.Infrastructure.Persistence.Migrations.Tenant
                             b1.Property<decimal>("Amount")
                                 .HasPrecision(18, 2)
                                 .HasColumnType("numeric(18,2)")
-                                .HasColumnName("amount_amount");
+                                .HasColumnName("amount");
 
                             b1.Property<string>("Currency")
                                 .IsRequired()
                                 .HasMaxLength(3)
                                 .HasColumnType("character varying(3)")
-                                .HasColumnName("amount_currency");
+                                .HasColumnName("currency");
                         });
 
                     b.ComplexProperty(typeof(Dictionary<string, object>), "PurchaseJurisdiction", "Logistics.Domain.Entities.FuelCardTransaction.PurchaseJurisdiction#TaxJurisdiction", b1 =>
@@ -2745,6 +3310,11 @@ namespace Logistics.Infrastructure.Persistence.Migrations.Tenant
                         .HasColumnType("text")
                         .HasColumnName("status");
 
+                    b.Property<decimal>("Subtotal")
+                        .HasPrecision(18, 2)
+                        .HasColumnType("numeric(18,2)")
+                        .HasColumnName("subtotal");
+
                     b.Property<string>("TaxBehavior")
                         .IsRequired()
                         .ValueGeneratedOnAdd()
@@ -2755,6 +3325,16 @@ namespace Logistics.Infrastructure.Persistence.Migrations.Tenant
                     b.Property<string>("TaxBreakdownJson")
                         .HasColumnType("text")
                         .HasColumnName("tax_breakdown_json");
+
+                    b.Property<decimal>("TaxTotal")
+                        .HasPrecision(18, 2)
+                        .HasColumnType("numeric(18,2)")
+                        .HasColumnName("tax_total");
+
+                    b.Property<decimal>("Total")
+                        .HasPrecision(18, 2)
+                        .HasColumnType("numeric(18,2)")
+                        .HasColumnName("total");
 
                     b.Property<string>("Type")
                         .IsRequired()
@@ -2769,54 +3349,6 @@ namespace Logistics.Infrastructure.Persistence.Migrations.Tenant
                         .HasMaxLength(50)
                         .HasColumnType("character varying(50)")
                         .HasColumnName("updated_by");
-
-                    b.ComplexProperty(typeof(Dictionary<string, object>), "Subtotal", "Logistics.Domain.Entities.Invoice.Subtotal#Money", b1 =>
-                        {
-                            b1.IsRequired();
-
-                            b1.Property<decimal>("Amount")
-                                .HasPrecision(18, 2)
-                                .HasColumnType("numeric(18,2)")
-                                .HasColumnName("subtotal_amount");
-
-                            b1.Property<string>("Currency")
-                                .IsRequired()
-                                .HasMaxLength(3)
-                                .HasColumnType("character varying(3)")
-                                .HasColumnName("subtotal_currency");
-                        });
-
-                    b.ComplexProperty(typeof(Dictionary<string, object>), "TaxTotal", "Logistics.Domain.Entities.Invoice.TaxTotal#Money", b1 =>
-                        {
-                            b1.IsRequired();
-
-                            b1.Property<decimal>("Amount")
-                                .HasPrecision(18, 2)
-                                .HasColumnType("numeric(18,2)")
-                                .HasColumnName("tax_total_amount");
-
-                            b1.Property<string>("Currency")
-                                .IsRequired()
-                                .HasMaxLength(3)
-                                .HasColumnType("character varying(3)")
-                                .HasColumnName("tax_total_currency");
-                        });
-
-                    b.ComplexProperty(typeof(Dictionary<string, object>), "Total", "Logistics.Domain.Entities.Invoice.Total#Money", b1 =>
-                        {
-                            b1.IsRequired();
-
-                            b1.Property<decimal>("Amount")
-                                .HasPrecision(18, 2)
-                                .HasColumnType("numeric(18,2)")
-                                .HasColumnName("total_amount");
-
-                            b1.Property<string>("Currency")
-                                .IsRequired()
-                                .HasMaxLength(3)
-                                .HasColumnType("character varying(3)")
-                                .HasColumnName("total_currency");
-                        });
 
                     b.HasKey("Id")
                         .HasName("pk_invoices");
@@ -2838,6 +3370,11 @@ namespace Logistics.Infrastructure.Persistence.Migrations.Tenant
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uuid")
                         .HasColumnName("id");
+
+                    b.Property<decimal>("Amount")
+                        .HasPrecision(18, 2)
+                        .HasColumnType("numeric(18,2)")
+                        .HasColumnName("amount");
 
                     b.Property<string>("Description")
                         .IsRequired()
@@ -2886,22 +3423,6 @@ namespace Logistics.Infrastructure.Persistence.Migrations.Tenant
                         .HasColumnType("text")
                         .HasColumnName("type");
 
-                    b.ComplexProperty(typeof(Dictionary<string, object>), "Amount", "Logistics.Domain.Entities.InvoiceLineItem.Amount#Money", b1 =>
-                        {
-                            b1.IsRequired();
-
-                            b1.Property<decimal>("Amount")
-                                .HasPrecision(18, 2)
-                                .HasColumnType("numeric(18,2)")
-                                .HasColumnName("amount_amount");
-
-                            b1.Property<string>("Currency")
-                                .IsRequired()
-                                .HasMaxLength(3)
-                                .HasColumnType("character varying(3)")
-                                .HasColumnName("amount_currency");
-                        });
-
                     b.HasKey("Id")
                         .HasName("pk_invoice_line_items");
 
@@ -2945,6 +3466,11 @@ namespace Logistics.Infrastructure.Persistence.Migrations.Tenant
                         .HasColumnType("numeric(18,2)")
                         .HasColumnName("min_rate_per_mile");
 
+                    b.Property<decimal?>("MinTotalRate")
+                        .HasPrecision(18, 2)
+                        .HasColumnType("numeric(18,2)")
+                        .HasColumnName("min_total_rate");
+
                     b.Property<string>("Notes")
                         .HasMaxLength(2000)
                         .HasColumnType("character varying(2000)")
@@ -2969,20 +3495,6 @@ namespace Logistics.Infrastructure.Persistence.Migrations.Tenant
                         .HasMaxLength(50)
                         .HasColumnType("character varying(50)")
                         .HasColumnName("updated_by");
-
-                    b.ComplexProperty(typeof(Dictionary<string, object>), "MinTotalRate", "Logistics.Domain.Entities.LaneRateFloor.MinTotalRate#Money", b1 =>
-                        {
-                            b1.Property<decimal>("Amount")
-                                .HasPrecision(18, 2)
-                                .HasColumnType("numeric(18,2)")
-                                .HasColumnName("min_total_rate_amount");
-
-                            b1.Property<string>("Currency")
-                                .IsRequired()
-                                .HasMaxLength(3)
-                                .HasColumnType("character varying(3)")
-                                .HasColumnName("min_total_rate_currency");
-                        });
 
                     b.HasKey("Id")
                         .HasName("pk_lane_rate_floors");
@@ -3045,6 +3557,11 @@ namespace Logistics.Infrastructure.Persistence.Migrations.Tenant
                     b.Property<DateTime?>("DeliveryAppointmentTo")
                         .HasColumnType("timestamp with time zone")
                         .HasColumnName("delivery_appointment_to");
+
+                    b.Property<decimal>("DeliveryCost")
+                        .HasPrecision(18, 2)
+                        .HasColumnType("numeric(18,2)")
+                        .HasColumnName("delivery_cost");
 
                     b.Property<Guid?>("DestinationTerminalId")
                         .HasColumnType("uuid")
@@ -3195,22 +3712,6 @@ namespace Logistics.Infrastructure.Persistence.Migrations.Tenant
                             b1
                                 .ToJson("customer_updates")
                                 .HasColumnType("jsonb");
-                        });
-
-                    b.ComplexProperty(typeof(Dictionary<string, object>), "DeliveryCost", "Logistics.Domain.Entities.Load.DeliveryCost#Money", b1 =>
-                        {
-                            b1.IsRequired();
-
-                            b1.Property<decimal>("Amount")
-                                .HasPrecision(18, 2)
-                                .HasColumnType("numeric(18,2)")
-                                .HasColumnName("delivery_cost_amount");
-
-                            b1.Property<string>("Currency")
-                                .IsRequired()
-                                .HasMaxLength(3)
-                                .HasColumnType("character varying(3)")
-                                .HasColumnName("delivery_cost_currency");
                         });
 
                     b.ComplexProperty(typeof(Dictionary<string, object>), "DestinationAddress", "Logistics.Domain.Entities.Load.DestinationAddress#Address", b1 =>
@@ -4111,86 +4612,6 @@ namespace Logistics.Infrastructure.Persistence.Migrations.Tenant
                     b.ToTable("maintenance_records", (string)null);
                 });
 
-            modelBuilder.Entity("Logistics.Domain.Entities.Conversation", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uuid")
-                        .HasColumnName("id");
-
-                    b.Property<DateTime>("CreatedAt")
-                        .HasColumnType("timestamp with time zone")
-                        .HasColumnName("created_at");
-
-                    b.Property<bool>("IsTenantChat")
-                        .HasColumnType("boolean")
-                        .HasColumnName("is_tenant_chat");
-
-                    b.Property<DateTime?>("LastMessageAt")
-                        .HasColumnType("timestamp with time zone")
-                        .HasColumnName("last_message_at");
-
-                    b.Property<Guid?>("LoadId")
-                        .HasColumnType("uuid")
-                        .HasColumnName("load_id");
-
-                    b.Property<string>("Name")
-                        .HasMaxLength(200)
-                        .HasColumnType("character varying(200)")
-                        .HasColumnName("name");
-
-                    b.HasKey("Id")
-                        .HasName("pk_conversations");
-
-                    b.HasIndex("LastMessageAt")
-                        .HasDatabaseName("ix_conversations_last_message_at");
-
-                    b.HasIndex("LoadId")
-                        .HasDatabaseName("ix_conversations_load_id");
-
-                    b.ToTable("conversations", (string)null);
-                });
-
-            modelBuilder.Entity("Logistics.Domain.Entities.ConversationParticipant", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uuid")
-                        .HasColumnName("id");
-
-                    b.Property<Guid>("ConversationId")
-                        .HasColumnType("uuid")
-                        .HasColumnName("conversation_id");
-
-                    b.Property<Guid>("EmployeeId")
-                        .HasColumnType("uuid")
-                        .HasColumnName("employee_id");
-
-                    b.Property<bool>("IsMuted")
-                        .HasColumnType("boolean")
-                        .HasColumnName("is_muted");
-
-                    b.Property<DateTime>("JoinedAt")
-                        .HasColumnType("timestamp with time zone")
-                        .HasColumnName("joined_at");
-
-                    b.Property<DateTime?>("LastReadAt")
-                        .HasColumnType("timestamp with time zone")
-                        .HasColumnName("last_read_at");
-
-                    b.HasKey("Id")
-                        .HasName("pk_conversation_participants");
-
-                    b.HasIndex("EmployeeId")
-                        .HasDatabaseName("ix_conversation_participants_employee_id");
-
-                    b.HasIndex("ConversationId", "EmployeeId")
-                        .IsUnique()
-                        .HasDatabaseName("ix_conversation_participants_conversation_id_employee_id");
-
-                    b.ToTable("conversation_participants", (string)null);
-                });
-
             modelBuilder.Entity("Logistics.Domain.Entities.Message", b =>
                 {
                     b.Property<Guid>("Id")
@@ -4419,6 +4840,11 @@ namespace Logistics.Infrastructure.Persistence.Migrations.Tenant
                         .HasColumnType("uuid")
                         .HasColumnName("id");
 
+                    b.Property<decimal>("Amount")
+                        .HasPrecision(18, 2)
+                        .HasColumnType("numeric(18,2)")
+                        .HasColumnName("amount");
+
                     b.Property<DateTime>("CreatedAt")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("timestamp with time zone")
@@ -4471,22 +4897,6 @@ namespace Logistics.Infrastructure.Persistence.Migrations.Tenant
                         .HasMaxLength(50)
                         .HasColumnType("character varying(50)")
                         .HasColumnName("updated_by");
-
-                    b.ComplexProperty(typeof(Dictionary<string, object>), "Amount", "Logistics.Domain.Entities.Payment.Amount#Money", b1 =>
-                        {
-                            b1.IsRequired();
-
-                            b1.Property<decimal>("Amount")
-                                .HasPrecision(18, 2)
-                                .HasColumnType("numeric(18,2)")
-                                .HasColumnName("amount_amount");
-
-                            b1.Property<string>("Currency")
-                                .IsRequired()
-                                .HasMaxLength(3)
-                                .HasColumnType("character varying(3)")
-                                .HasColumnName("amount_currency");
-                        });
 
                     b.ComplexProperty(typeof(Dictionary<string, object>), "BillingAddress", "Logistics.Domain.Entities.Payment.BillingAddress#Address", b1 =>
                         {
@@ -5070,546 +5480,6 @@ namespace Logistics.Infrastructure.Persistence.Migrations.Tenant
                         .HasDatabaseName("ix_recurring_deductions_employee_id");
 
                     b.ToTable("recurring_deductions", (string)null);
-                });
-
-            modelBuilder.Entity("Logistics.Domain.Entities.AccidentReport", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uuid")
-                        .HasColumnName("id");
-
-                    b.Property<DateTime>("AccidentDateTime")
-                        .HasColumnType("timestamp with time zone")
-                        .HasColumnName("accident_date_time");
-
-                    b.Property<string>("AccidentType")
-                        .IsRequired()
-                        .HasColumnType("text")
-                        .HasColumnName("accident_type");
-
-                    b.Property<string>("Address")
-                        .HasMaxLength(500)
-                        .HasColumnType("character varying(500)")
-                        .HasColumnName("address");
-
-                    b.Property<bool>("AnyInjuries")
-                        .HasColumnType("boolean")
-                        .HasColumnName("any_injuries");
-
-                    b.Property<DateTime>("CreatedAt")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("timestamp with time zone")
-                        .HasColumnName("created_at")
-                        .HasDefaultValueSql("CURRENT_TIMESTAMP");
-
-                    b.Property<string>("CreatedBy")
-                        .HasMaxLength(50)
-                        .HasColumnType("character varying(50)")
-                        .HasColumnName("created_by");
-
-                    b.Property<string>("Description")
-                        .HasMaxLength(4000)
-                        .HasColumnType("character varying(4000)")
-                        .HasColumnName("description");
-
-                    b.Property<Guid>("DriverId")
-                        .HasColumnType("uuid")
-                        .HasColumnName("driver_id");
-
-                    b.Property<string>("DriverSignature")
-                        .HasColumnType("text")
-                        .HasColumnName("driver_signature");
-
-                    b.Property<DateTime?>("DriverSignedAt")
-                        .HasColumnType("timestamp with time zone")
-                        .HasColumnName("driver_signed_at");
-
-                    b.Property<string>("DriverStatement")
-                        .HasMaxLength(4000)
-                        .HasColumnType("character varying(4000)")
-                        .HasColumnName("driver_statement");
-
-                    b.Property<decimal?>("EstimatedDamageCost")
-                        .HasPrecision(18, 2)
-                        .HasColumnType("numeric(18,2)")
-                        .HasColumnName("estimated_damage_cost");
-
-                    b.Property<bool>("FatalitiesReported")
-                        .HasColumnType("boolean")
-                        .HasColumnName("fatalities_reported");
-
-                    b.Property<string>("HazmatDescription")
-                        .HasMaxLength(2000)
-                        .HasColumnType("character varying(2000)")
-                        .HasColumnName("hazmat_description");
-
-                    b.Property<bool>("HazmatInvolved")
-                        .HasColumnType("boolean")
-                        .HasColumnName("hazmat_involved");
-
-                    b.Property<string>("InjuryDescription")
-                        .HasMaxLength(2000)
-                        .HasColumnType("character varying(2000)")
-                        .HasColumnName("injury_description");
-
-                    b.Property<string>("InsuranceClaimNumber")
-                        .HasMaxLength(100)
-                        .HasColumnType("character varying(100)")
-                        .HasColumnName("insurance_claim_number");
-
-                    b.Property<bool>("InsuranceNotified")
-                        .HasColumnType("boolean")
-                        .HasColumnName("insurance_notified");
-
-                    b.Property<DateTime?>("InsuranceNotifiedAt")
-                        .HasColumnType("timestamp with time zone")
-                        .HasColumnName("insurance_notified_at");
-
-                    b.Property<double>("Latitude")
-                        .HasColumnType("double precision")
-                        .HasColumnName("latitude");
-
-                    b.Property<double>("Longitude")
-                        .HasColumnType("double precision")
-                        .HasColumnName("longitude");
-
-                    b.Property<int?>("NumberOfFatalities")
-                        .HasColumnType("integer")
-                        .HasColumnName("number_of_fatalities");
-
-                    b.Property<int?>("NumberOfInjuries")
-                        .HasColumnType("integer")
-                        .HasColumnName("number_of_injuries");
-
-                    b.Property<string>("PoliceDepartment")
-                        .HasMaxLength(200)
-                        .HasColumnType("character varying(200)")
-                        .HasColumnName("police_department");
-
-                    b.Property<string>("PoliceOfficerBadge")
-                        .HasMaxLength(50)
-                        .HasColumnType("character varying(50)")
-                        .HasColumnName("police_officer_badge");
-
-                    b.Property<string>("PoliceOfficerName")
-                        .HasMaxLength(200)
-                        .HasColumnType("character varying(200)")
-                        .HasColumnName("police_officer_name");
-
-                    b.Property<bool>("PoliceReportFiled")
-                        .HasColumnType("boolean")
-                        .HasColumnName("police_report_filed");
-
-                    b.Property<string>("PoliceReportNumber")
-                        .HasMaxLength(100)
-                        .HasColumnType("character varying(100)")
-                        .HasColumnName("police_report_number");
-
-                    b.Property<string>("ReviewNotes")
-                        .HasMaxLength(2000)
-                        .HasColumnType("character varying(2000)")
-                        .HasColumnName("review_notes");
-
-                    b.Property<DateTime?>("ReviewedAt")
-                        .HasColumnType("timestamp with time zone")
-                        .HasColumnName("reviewed_at");
-
-                    b.Property<Guid?>("ReviewedById")
-                        .HasColumnType("uuid")
-                        .HasColumnName("reviewed_by_id");
-
-                    b.Property<string>("RoadConditions")
-                        .HasMaxLength(200)
-                        .HasColumnType("character varying(200)")
-                        .HasColumnName("road_conditions");
-
-                    b.Property<string>("Severity")
-                        .IsRequired()
-                        .HasColumnType("text")
-                        .HasColumnName("severity");
-
-                    b.Property<string>("Status")
-                        .IsRequired()
-                        .HasColumnType("text")
-                        .HasColumnName("status");
-
-                    b.Property<string>("TowCompany")
-                        .HasMaxLength(200)
-                        .HasColumnType("character varying(200)")
-                        .HasColumnName("tow_company");
-
-                    b.Property<Guid?>("TripId")
-                        .HasColumnType("uuid")
-                        .HasColumnName("trip_id");
-
-                    b.Property<Guid>("TruckId")
-                        .HasColumnType("uuid")
-                        .HasColumnName("truck_id");
-
-                    b.Property<DateTime?>("UpdatedAt")
-                        .HasColumnType("timestamp with time zone")
-                        .HasColumnName("updated_at");
-
-                    b.Property<string>("UpdatedBy")
-                        .HasMaxLength(50)
-                        .HasColumnType("character varying(50)")
-                        .HasColumnName("updated_by");
-
-                    b.Property<string>("VehicleDamageDescription")
-                        .HasMaxLength(2000)
-                        .HasColumnType("character varying(2000)")
-                        .HasColumnName("vehicle_damage_description");
-
-                    b.Property<bool>("VehicleDamaged")
-                        .HasColumnType("boolean")
-                        .HasColumnName("vehicle_damaged");
-
-                    b.Property<bool>("VehicleDrivable")
-                        .HasColumnType("boolean")
-                        .HasColumnName("vehicle_drivable");
-
-                    b.Property<bool>("VehicleTowed")
-                        .HasColumnType("boolean")
-                        .HasColumnName("vehicle_towed");
-
-                    b.Property<string>("WeatherConditions")
-                        .HasMaxLength(200)
-                        .HasColumnType("character varying(200)")
-                        .HasColumnName("weather_conditions");
-
-                    b.HasKey("Id")
-                        .HasName("pk_accident_reports");
-
-                    b.HasIndex("ReviewedById")
-                        .HasDatabaseName("ix_accident_reports_reviewed_by_id");
-
-                    b.HasIndex("Severity")
-                        .HasDatabaseName("ix_accident_reports_severity");
-
-                    b.HasIndex("Status")
-                        .HasDatabaseName("ix_accident_reports_status");
-
-                    b.HasIndex("TripId")
-                        .HasDatabaseName("ix_accident_reports_trip_id");
-
-                    b.HasIndex("TruckId")
-                        .HasDatabaseName("ix_accident_reports_truck_id");
-
-                    b.HasIndex("DriverId", "AccidentDateTime")
-                        .HasDatabaseName("ix_accident_reports_driver_id_accident_date_time");
-
-                    b.ToTable("accident_reports", (string)null);
-                });
-
-            modelBuilder.Entity("Logistics.Domain.Entities.AccidentThirdParty", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uuid")
-                        .HasColumnName("id");
-
-                    b.Property<Guid>("AccidentReportId")
-                        .HasColumnType("uuid")
-                        .HasColumnName("accident_report_id");
-
-                    b.Property<string>("Address")
-                        .HasMaxLength(500)
-                        .HasColumnType("character varying(500)")
-                        .HasColumnName("address");
-
-                    b.Property<string>("DriverLicense")
-                        .HasMaxLength(50)
-                        .HasColumnType("character varying(50)")
-                        .HasColumnName("driver_license");
-
-                    b.Property<string>("InsuranceAgentPhone")
-                        .HasMaxLength(50)
-                        .HasColumnType("character varying(50)")
-                        .HasColumnName("insurance_agent_phone");
-
-                    b.Property<string>("InsuranceCompany")
-                        .HasMaxLength(200)
-                        .HasColumnType("character varying(200)")
-                        .HasColumnName("insurance_company");
-
-                    b.Property<string>("InsurancePolicyNumber")
-                        .HasMaxLength(100)
-                        .HasColumnType("character varying(100)")
-                        .HasColumnName("insurance_policy_number");
-
-                    b.Property<string>("Name")
-                        .IsRequired()
-                        .HasMaxLength(200)
-                        .HasColumnType("character varying(200)")
-                        .HasColumnName("name");
-
-                    b.Property<string>("PhoneNumber")
-                        .HasMaxLength(50)
-                        .HasColumnType("character varying(50)")
-                        .HasColumnName("phone_number");
-
-                    b.Property<string>("VehicleColor")
-                        .HasMaxLength(50)
-                        .HasColumnType("character varying(50)")
-                        .HasColumnName("vehicle_color");
-
-                    b.Property<string>("VehicleLicensePlate")
-                        .HasMaxLength(20)
-                        .HasColumnType("character varying(20)")
-                        .HasColumnName("vehicle_license_plate");
-
-                    b.Property<string>("VehicleMake")
-                        .HasMaxLength(100)
-                        .HasColumnType("character varying(100)")
-                        .HasColumnName("vehicle_make");
-
-                    b.Property<string>("VehicleModel")
-                        .HasMaxLength(100)
-                        .HasColumnType("character varying(100)")
-                        .HasColumnName("vehicle_model");
-
-                    b.Property<string>("VehicleVin")
-                        .HasMaxLength(20)
-                        .HasColumnType("character varying(20)")
-                        .HasColumnName("vehicle_vin");
-
-                    b.Property<int?>("VehicleYear")
-                        .HasColumnType("integer")
-                        .HasColumnName("vehicle_year");
-
-                    b.HasKey("Id")
-                        .HasName("pk_accident_third_parties");
-
-                    b.HasIndex("AccidentReportId")
-                        .HasDatabaseName("ix_accident_third_parties_accident_report_id");
-
-                    b.ToTable("accident_third_parties", (string)null);
-                });
-
-            modelBuilder.Entity("Logistics.Domain.Entities.AccidentWitness", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uuid")
-                        .HasColumnName("id");
-
-                    b.Property<Guid>("AccidentReportId")
-                        .HasColumnType("uuid")
-                        .HasColumnName("accident_report_id");
-
-                    b.Property<string>("Address")
-                        .HasMaxLength(500)
-                        .HasColumnType("character varying(500)")
-                        .HasColumnName("address");
-
-                    b.Property<string>("Email")
-                        .HasMaxLength(200)
-                        .HasColumnType("character varying(200)")
-                        .HasColumnName("email");
-
-                    b.Property<string>("Name")
-                        .IsRequired()
-                        .HasMaxLength(200)
-                        .HasColumnType("character varying(200)")
-                        .HasColumnName("name");
-
-                    b.Property<string>("PhoneNumber")
-                        .HasMaxLength(50)
-                        .HasColumnType("character varying(50)")
-                        .HasColumnName("phone_number");
-
-                    b.Property<string>("Statement")
-                        .HasMaxLength(4000)
-                        .HasColumnType("character varying(4000)")
-                        .HasColumnName("statement");
-
-                    b.HasKey("Id")
-                        .HasName("pk_accident_witnesses");
-
-                    b.HasIndex("AccidentReportId")
-                        .HasDatabaseName("ix_accident_witnesses_accident_report_id");
-
-                    b.ToTable("accident_witnesses", (string)null);
-                });
-
-            modelBuilder.Entity("Logistics.Domain.Entities.DvirDefect", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uuid")
-                        .HasColumnName("id");
-
-                    b.Property<string>("Category")
-                        .IsRequired()
-                        .HasColumnType("text")
-                        .HasColumnName("category");
-
-                    b.Property<DateTime?>("CorrectedAt")
-                        .HasColumnType("timestamp with time zone")
-                        .HasColumnName("corrected_at");
-
-                    b.Property<Guid?>("CorrectedById")
-                        .HasColumnType("uuid")
-                        .HasColumnName("corrected_by_id");
-
-                    b.Property<string>("CorrectionNotes")
-                        .HasMaxLength(1000)
-                        .HasColumnType("character varying(1000)")
-                        .HasColumnName("correction_notes");
-
-                    b.Property<string>("Description")
-                        .IsRequired()
-                        .HasMaxLength(1000)
-                        .HasColumnType("character varying(1000)")
-                        .HasColumnName("description");
-
-                    b.Property<Guid>("DvirReportId")
-                        .HasColumnType("uuid")
-                        .HasColumnName("dvir_report_id");
-
-                    b.Property<bool>("IsCorrected")
-                        .HasColumnType("boolean")
-                        .HasColumnName("is_corrected");
-
-                    b.Property<string>("Severity")
-                        .IsRequired()
-                        .HasColumnType("text")
-                        .HasColumnName("severity");
-
-                    b.HasKey("Id")
-                        .HasName("pk_dvir_defects");
-
-                    b.HasIndex("CorrectedById")
-                        .HasDatabaseName("ix_dvir_defects_corrected_by_id");
-
-                    b.HasIndex("DvirReportId")
-                        .HasDatabaseName("ix_dvir_defects_dvir_report_id");
-
-                    b.HasIndex("Category", "Severity")
-                        .HasDatabaseName("ix_dvir_defects_category_severity");
-
-                    b.ToTable("dvir_defects", (string)null);
-                });
-
-            modelBuilder.Entity("Logistics.Domain.Entities.DvirReport", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uuid")
-                        .HasColumnName("id");
-
-                    b.Property<DateTime>("CreatedAt")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("timestamp with time zone")
-                        .HasColumnName("created_at")
-                        .HasDefaultValueSql("CURRENT_TIMESTAMP");
-
-                    b.Property<string>("CreatedBy")
-                        .HasMaxLength(50)
-                        .HasColumnType("character varying(50)")
-                        .HasColumnName("created_by");
-
-                    b.Property<bool?>("DefectsCorrected")
-                        .HasColumnType("boolean")
-                        .HasColumnName("defects_corrected");
-
-                    b.Property<Guid>("DriverId")
-                        .HasColumnType("uuid")
-                        .HasColumnName("driver_id");
-
-                    b.Property<string>("DriverNotes")
-                        .HasMaxLength(2000)
-                        .HasColumnType("character varying(2000)")
-                        .HasColumnName("driver_notes");
-
-                    b.Property<string>("DriverSignature")
-                        .HasColumnType("text")
-                        .HasColumnName("driver_signature");
-
-                    b.Property<bool>("HasDefects")
-                        .HasColumnType("boolean")
-                        .HasColumnName("has_defects");
-
-                    b.Property<DateTime>("InspectionDate")
-                        .HasColumnType("timestamp with time zone")
-                        .HasColumnName("inspection_date");
-
-                    b.Property<double?>("Latitude")
-                        .HasColumnType("double precision")
-                        .HasColumnName("latitude");
-
-                    b.Property<double?>("Longitude")
-                        .HasColumnType("double precision")
-                        .HasColumnName("longitude");
-
-                    b.Property<string>("MechanicNotes")
-                        .HasMaxLength(2000)
-                        .HasColumnType("character varying(2000)")
-                        .HasColumnName("mechanic_notes");
-
-                    b.Property<string>("MechanicSignature")
-                        .HasColumnType("text")
-                        .HasColumnName("mechanic_signature");
-
-                    b.Property<int?>("OdometerReading")
-                        .HasColumnType("integer")
-                        .HasColumnName("odometer_reading");
-
-                    b.Property<DateTime?>("ReviewedAt")
-                        .HasColumnType("timestamp with time zone")
-                        .HasColumnName("reviewed_at");
-
-                    b.Property<Guid?>("ReviewedById")
-                        .HasColumnType("uuid")
-                        .HasColumnName("reviewed_by_id");
-
-                    b.Property<string>("Status")
-                        .IsRequired()
-                        .HasColumnType("text")
-                        .HasColumnName("status");
-
-                    b.Property<Guid?>("TripId")
-                        .HasColumnType("uuid")
-                        .HasColumnName("trip_id");
-
-                    b.Property<Guid>("TruckId")
-                        .HasColumnType("uuid")
-                        .HasColumnName("truck_id");
-
-                    b.Property<string>("Type")
-                        .IsRequired()
-                        .HasColumnType("text")
-                        .HasColumnName("type");
-
-                    b.Property<DateTime?>("UpdatedAt")
-                        .HasColumnType("timestamp with time zone")
-                        .HasColumnName("updated_at");
-
-                    b.Property<string>("UpdatedBy")
-                        .HasMaxLength(50)
-                        .HasColumnType("character varying(50)")
-                        .HasColumnName("updated_by");
-
-                    b.HasKey("Id")
-                        .HasName("pk_dvir_reports");
-
-                    b.HasIndex("ReviewedById")
-                        .HasDatabaseName("ix_dvir_reports_reviewed_by_id");
-
-                    b.HasIndex("Status")
-                        .HasDatabaseName("ix_dvir_reports_status");
-
-                    b.HasIndex("TripId")
-                        .HasDatabaseName("ix_dvir_reports_trip_id");
-
-                    b.HasIndex("DriverId", "InspectionDate")
-                        .HasDatabaseName("ix_dvir_reports_driver_id_inspection_date");
-
-                    b.HasIndex("TruckId", "InspectionDate")
-                        .HasDatabaseName("ix_dvir_reports_truck_id_inspection_date");
-
-                    b.ToTable("dvir_reports", (string)null);
                 });
 
             modelBuilder.Entity("Logistics.Domain.Entities.TelegramChat", b =>
@@ -6832,6 +6702,67 @@ namespace Logistics.Infrastructure.Persistence.Migrations.Tenant
                     b.HasDiscriminator().HasValue("truck");
                 });
 
+            modelBuilder.Entity("Logistics.Domain.Entities.AccidentReport", b =>
+                {
+                    b.HasOne("Logistics.Domain.Entities.Employee", "Driver")
+                        .WithMany()
+                        .HasForeignKey("DriverId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired()
+                        .HasConstraintName("fk_accident_reports_employee_driver_id");
+
+                    b.HasOne("Logistics.Domain.Entities.Employee", "ReviewedBy")
+                        .WithMany()
+                        .HasForeignKey("ReviewedById")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .HasConstraintName("fk_accident_reports_employee_reviewed_by_id");
+
+                    b.HasOne("Logistics.Domain.Entities.Trip", "Trip")
+                        .WithMany()
+                        .HasForeignKey("TripId")
+                        .OnDelete(DeleteBehavior.SetNull)
+                        .HasConstraintName("fk_accident_reports_trip_trip_id");
+
+                    b.HasOne("Logistics.Domain.Entities.Truck", "Truck")
+                        .WithMany()
+                        .HasForeignKey("TruckId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired()
+                        .HasConstraintName("fk_accident_reports_truck_truck_id");
+
+                    b.Navigation("Driver");
+
+                    b.Navigation("ReviewedBy");
+
+                    b.Navigation("Trip");
+
+                    b.Navigation("Truck");
+                });
+
+            modelBuilder.Entity("Logistics.Domain.Entities.AccidentThirdParty", b =>
+                {
+                    b.HasOne("Logistics.Domain.Entities.AccidentReport", "AccidentReport")
+                        .WithMany("ThirdParties")
+                        .HasForeignKey("AccidentReportId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired()
+                        .HasConstraintName("fk_accident_third_parties_accident_reports_accident_report_id");
+
+                    b.Navigation("AccidentReport");
+                });
+
+            modelBuilder.Entity("Logistics.Domain.Entities.AccidentWitness", b =>
+                {
+                    b.HasOne("Logistics.Domain.Entities.AccidentReport", "AccidentReport")
+                        .WithMany("Witnesses")
+                        .HasForeignKey("AccidentReportId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired()
+                        .HasConstraintName("fk_accident_witnesses_accident_reports_accident_report_id");
+
+                    b.Navigation("AccidentReport");
+                });
+
             modelBuilder.Entity("Logistics.Domain.Entities.AgentDecision", b =>
                 {
                     b.HasOne("Logistics.Domain.Entities.AgentSession", "Session")
@@ -6929,6 +6860,38 @@ namespace Logistics.Infrastructure.Persistence.Migrations.Tenant
                     b.Navigation("EmptyReturnTerminal");
                 });
 
+            modelBuilder.Entity("Logistics.Domain.Entities.Conversation", b =>
+                {
+                    b.HasOne("Logistics.Domain.Entities.Load", "Load")
+                        .WithMany()
+                        .HasForeignKey("LoadId")
+                        .OnDelete(DeleteBehavior.SetNull)
+                        .HasConstraintName("fk_conversations_load_load_id");
+
+                    b.Navigation("Load");
+                });
+
+            modelBuilder.Entity("Logistics.Domain.Entities.ConversationParticipant", b =>
+                {
+                    b.HasOne("Logistics.Domain.Entities.Conversation", "Conversation")
+                        .WithMany("Participants")
+                        .HasForeignKey("ConversationId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired()
+                        .HasConstraintName("fk_conversation_participants_conversations_conversation_id");
+
+                    b.HasOne("Logistics.Domain.Entities.Employee", "Employee")
+                        .WithMany()
+                        .HasForeignKey("EmployeeId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired()
+                        .HasConstraintName("fk_conversation_participants_employee_employee_id");
+
+                    b.Navigation("Conversation");
+
+                    b.Navigation("Employee");
+                });
+
             modelBuilder.Entity("Logistics.Domain.Entities.Customer", b =>
                 {
                     b.HasOne("Logistics.Domain.Entities.FactoringCompany", "FactoringCompany")
@@ -6994,6 +6957,63 @@ namespace Logistics.Infrastructure.Persistence.Migrations.Tenant
                     b.Navigation("Document");
 
                     b.Navigation("Employee");
+                });
+
+            modelBuilder.Entity("Logistics.Domain.Entities.DvirDefect", b =>
+                {
+                    b.HasOne("Logistics.Domain.Entities.Employee", "CorrectedBy")
+                        .WithMany()
+                        .HasForeignKey("CorrectedById")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .HasConstraintName("fk_dvir_defects_employee_corrected_by_id");
+
+                    b.HasOne("Logistics.Domain.Entities.DvirReport", "DvirReport")
+                        .WithMany("Defects")
+                        .HasForeignKey("DvirReportId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired()
+                        .HasConstraintName("fk_dvir_defects_dvir_report_dvir_report_id");
+
+                    b.Navigation("CorrectedBy");
+
+                    b.Navigation("DvirReport");
+                });
+
+            modelBuilder.Entity("Logistics.Domain.Entities.DvirReport", b =>
+                {
+                    b.HasOne("Logistics.Domain.Entities.Employee", "Driver")
+                        .WithMany()
+                        .HasForeignKey("DriverId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired()
+                        .HasConstraintName("fk_dvir_reports_employee_driver_id");
+
+                    b.HasOne("Logistics.Domain.Entities.Employee", "ReviewedBy")
+                        .WithMany()
+                        .HasForeignKey("ReviewedById")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .HasConstraintName("fk_dvir_reports_employee_reviewed_by_id");
+
+                    b.HasOne("Logistics.Domain.Entities.Trip", "Trip")
+                        .WithMany()
+                        .HasForeignKey("TripId")
+                        .OnDelete(DeleteBehavior.SetNull)
+                        .HasConstraintName("fk_dvir_reports_trip_trip_id");
+
+                    b.HasOne("Logistics.Domain.Entities.Truck", "Truck")
+                        .WithMany()
+                        .HasForeignKey("TruckId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired()
+                        .HasConstraintName("fk_dvir_reports_truck_truck_id");
+
+                    b.Navigation("Driver");
+
+                    b.Navigation("ReviewedBy");
+
+                    b.Navigation("Trip");
+
+                    b.Navigation("Truck");
                 });
 
             modelBuilder.Entity("Logistics.Domain.Entities.EldDriverMapping", b =>
@@ -7299,38 +7319,6 @@ namespace Logistics.Infrastructure.Persistence.Migrations.Tenant
                     b.Navigation("Truck");
                 });
 
-            modelBuilder.Entity("Logistics.Domain.Entities.Conversation", b =>
-                {
-                    b.HasOne("Logistics.Domain.Entities.Load", "Load")
-                        .WithMany()
-                        .HasForeignKey("LoadId")
-                        .OnDelete(DeleteBehavior.SetNull)
-                        .HasConstraintName("fk_conversations_load_load_id");
-
-                    b.Navigation("Load");
-                });
-
-            modelBuilder.Entity("Logistics.Domain.Entities.ConversationParticipant", b =>
-                {
-                    b.HasOne("Logistics.Domain.Entities.Conversation", "Conversation")
-                        .WithMany("Participants")
-                        .HasForeignKey("ConversationId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired()
-                        .HasConstraintName("fk_conversation_participants_conversations_conversation_id");
-
-                    b.HasOne("Logistics.Domain.Entities.Employee", "Employee")
-                        .WithMany()
-                        .HasForeignKey("EmployeeId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired()
-                        .HasConstraintName("fk_conversation_participants_employee_employee_id");
-
-                    b.Navigation("Conversation");
-
-                    b.Navigation("Employee");
-                });
-
             modelBuilder.Entity("Logistics.Domain.Entities.Message", b =>
                 {
                     b.HasOne("Logistics.Domain.Entities.Conversation", "Conversation")
@@ -7471,124 +7459,6 @@ namespace Logistics.Infrastructure.Persistence.Migrations.Tenant
                         .HasConstraintName("fk_recurring_deductions_employees_employee_id");
 
                     b.Navigation("Employee");
-                });
-
-            modelBuilder.Entity("Logistics.Domain.Entities.AccidentReport", b =>
-                {
-                    b.HasOne("Logistics.Domain.Entities.Employee", "Driver")
-                        .WithMany()
-                        .HasForeignKey("DriverId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired()
-                        .HasConstraintName("fk_accident_reports_employee_driver_id");
-
-                    b.HasOne("Logistics.Domain.Entities.Employee", "ReviewedBy")
-                        .WithMany()
-                        .HasForeignKey("ReviewedById")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .HasConstraintName("fk_accident_reports_employee_reviewed_by_id");
-
-                    b.HasOne("Logistics.Domain.Entities.Trip", "Trip")
-                        .WithMany()
-                        .HasForeignKey("TripId")
-                        .OnDelete(DeleteBehavior.SetNull)
-                        .HasConstraintName("fk_accident_reports_trip_trip_id");
-
-                    b.HasOne("Logistics.Domain.Entities.Truck", "Truck")
-                        .WithMany()
-                        .HasForeignKey("TruckId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired()
-                        .HasConstraintName("fk_accident_reports_truck_truck_id");
-
-                    b.Navigation("Driver");
-
-                    b.Navigation("ReviewedBy");
-
-                    b.Navigation("Trip");
-
-                    b.Navigation("Truck");
-                });
-
-            modelBuilder.Entity("Logistics.Domain.Entities.AccidentThirdParty", b =>
-                {
-                    b.HasOne("Logistics.Domain.Entities.AccidentReport", "AccidentReport")
-                        .WithMany("ThirdParties")
-                        .HasForeignKey("AccidentReportId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired()
-                        .HasConstraintName("fk_accident_third_parties_accident_reports_accident_report_id");
-
-                    b.Navigation("AccidentReport");
-                });
-
-            modelBuilder.Entity("Logistics.Domain.Entities.AccidentWitness", b =>
-                {
-                    b.HasOne("Logistics.Domain.Entities.AccidentReport", "AccidentReport")
-                        .WithMany("Witnesses")
-                        .HasForeignKey("AccidentReportId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired()
-                        .HasConstraintName("fk_accident_witnesses_accident_reports_accident_report_id");
-
-                    b.Navigation("AccidentReport");
-                });
-
-            modelBuilder.Entity("Logistics.Domain.Entities.DvirDefect", b =>
-                {
-                    b.HasOne("Logistics.Domain.Entities.Employee", "CorrectedBy")
-                        .WithMany()
-                        .HasForeignKey("CorrectedById")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .HasConstraintName("fk_dvir_defects_employee_corrected_by_id");
-
-                    b.HasOne("Logistics.Domain.Entities.DvirReport", "DvirReport")
-                        .WithMany("Defects")
-                        .HasForeignKey("DvirReportId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired()
-                        .HasConstraintName("fk_dvir_defects_dvir_report_dvir_report_id");
-
-                    b.Navigation("CorrectedBy");
-
-                    b.Navigation("DvirReport");
-                });
-
-            modelBuilder.Entity("Logistics.Domain.Entities.DvirReport", b =>
-                {
-                    b.HasOne("Logistics.Domain.Entities.Employee", "Driver")
-                        .WithMany()
-                        .HasForeignKey("DriverId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired()
-                        .HasConstraintName("fk_dvir_reports_employee_driver_id");
-
-                    b.HasOne("Logistics.Domain.Entities.Employee", "ReviewedBy")
-                        .WithMany()
-                        .HasForeignKey("ReviewedById")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .HasConstraintName("fk_dvir_reports_employee_reviewed_by_id");
-
-                    b.HasOne("Logistics.Domain.Entities.Trip", "Trip")
-                        .WithMany()
-                        .HasForeignKey("TripId")
-                        .OnDelete(DeleteBehavior.SetNull)
-                        .HasConstraintName("fk_dvir_reports_trip_trip_id");
-
-                    b.HasOne("Logistics.Domain.Entities.Truck", "Truck")
-                        .WithMany()
-                        .HasForeignKey("TruckId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired()
-                        .HasConstraintName("fk_dvir_reports_truck_truck_id");
-
-                    b.Navigation("Driver");
-
-                    b.Navigation("ReviewedBy");
-
-                    b.Navigation("Trip");
-
-                    b.Navigation("Truck");
                 });
 
             modelBuilder.Entity("Logistics.Domain.Entities.TelegramChat", b =>
@@ -7843,6 +7713,13 @@ namespace Logistics.Infrastructure.Persistence.Migrations.Tenant
                     b.Navigation("TripStop");
                 });
 
+            modelBuilder.Entity("Logistics.Domain.Entities.AccidentReport", b =>
+                {
+                    b.Navigation("ThirdParties");
+
+                    b.Navigation("Witnesses");
+                });
+
             modelBuilder.Entity("Logistics.Domain.Entities.AgentConversation", b =>
                 {
                     b.Navigation("Messages");
@@ -7853,9 +7730,21 @@ namespace Logistics.Infrastructure.Persistence.Migrations.Tenant
                     b.Navigation("Decisions");
                 });
 
+            modelBuilder.Entity("Logistics.Domain.Entities.Conversation", b =>
+                {
+                    b.Navigation("Messages");
+
+                    b.Navigation("Participants");
+                });
+
             modelBuilder.Entity("Logistics.Domain.Entities.Customer", b =>
                 {
                     b.Navigation("Invoices");
+                });
+
+            modelBuilder.Entity("Logistics.Domain.Entities.DvirReport", b =>
+                {
+                    b.Navigation("Defects");
                 });
 
             modelBuilder.Entity("Logistics.Domain.Entities.Employee", b =>
@@ -7912,13 +7801,6 @@ namespace Logistics.Infrastructure.Persistence.Migrations.Tenant
                     b.Navigation("Parts");
                 });
 
-            modelBuilder.Entity("Logistics.Domain.Entities.Conversation", b =>
-                {
-                    b.Navigation("Messages");
-
-                    b.Navigation("Participants");
-                });
-
             modelBuilder.Entity("Logistics.Domain.Entities.Message", b =>
                 {
                     b.Navigation("ReadReceipts");
@@ -7927,18 +7809,6 @@ namespace Logistics.Infrastructure.Persistence.Migrations.Tenant
             modelBuilder.Entity("Logistics.Domain.Entities.RateNegotiation", b =>
                 {
                     b.Navigation("Messages");
-                });
-
-            modelBuilder.Entity("Logistics.Domain.Entities.AccidentReport", b =>
-                {
-                    b.Navigation("ThirdParties");
-
-                    b.Navigation("Witnesses");
-                });
-
-            modelBuilder.Entity("Logistics.Domain.Entities.DvirReport", b =>
-                {
-                    b.Navigation("Defects");
                 });
 
             modelBuilder.Entity("Logistics.Domain.Entities.TenantRole", b =>

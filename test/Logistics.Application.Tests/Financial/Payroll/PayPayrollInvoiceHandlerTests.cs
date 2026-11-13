@@ -45,12 +45,12 @@ public class PayPayrollInvoiceHandlerTests
 
     private static PayrollInvoice CreateApprovedPayrollInvoice(Guid employeeId, decimal amount = 1500m)
     {
-        var money = new Money { Amount = amount, Currency = "USD" };
+        var money = amount;
         return new PayrollInvoice
         {
             EmployeeId = employeeId,
             Subtotal = money,
-            TaxTotal = Money.Zero("USD"),
+            TaxTotal = 0m,
             Total = money,
             Status = InvoiceStatus.Approved,
             PeriodStart = DateOnly.FromDateTime(DateTime.UtcNow.AddDays(-14)),
@@ -62,7 +62,7 @@ public class PayPayrollInvoiceHandlerTests
     {
         return new Employee
         {
-            Salary = Money.Zero("USD"),
+            Salary = 0m,
             Email = "driver@test.com",
             FirstName = "John",
             LastName = "Doe",
@@ -88,7 +88,7 @@ public class PayPayrollInvoiceHandlerTests
         Assert.True(result.IsSuccess);
         await _paymentRepo.Received(1).AddAsync(
             Arg.Is<Payment>(p =>
-                p.Amount.Amount == 1500m &&
+                p.Amount == 1500m &&
                 p.Status == PaymentStatus.Paid &&
                 p.StripeTransferId == "tr_123" && p.StripePaymentIntentId == null),
             Arg.Any<CancellationToken>());
@@ -168,7 +168,7 @@ public class PayPayrollInvoiceHandlerTests
         // Add a payment that covers the full amount
         invoice.Payments.Add(new Payment
         {
-            Amount = new Money { Amount = 1500m, Currency = "USD" },
+            Amount = 1500m,
             Status = PaymentStatus.Paid,
             BillingAddress = new Address
             {

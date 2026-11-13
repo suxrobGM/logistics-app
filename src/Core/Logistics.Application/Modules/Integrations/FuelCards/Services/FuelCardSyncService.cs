@@ -71,6 +71,7 @@ internal sealed class FuelCardSyncService(
                 .GroupBy(t => t.Number.Trim().ToUpperInvariant())
                 .ToDictionary(g => g.Key, g => g.First());
             var trucksById = trucks.ToDictionary(t => t.Id);
+            var tenantCurrency = tenantUow.GetCurrentTenant().Currency;
 
             var cardsByExternalId = (await tenantUow.Repository<FuelCard>()
                     .GetListAsync(c => c.ProviderType == config.ProviderType, ct))
@@ -87,7 +88,14 @@ internal sealed class FuelCardSyncService(
                 var truck = await ResolveTruckAsync(
                     config.ProviderType, data, trucksByNumber, trucksById, cardsByExternalId, ct);
 
-                if (truck is not null)
+                if (truck is not null && !FuelCardExpenseFactory.CanCreateExpense(entity, tenantCurrency))
+                {
+                    logger.LogWarning(
+                        "Fuel transaction {TransactionId} is in {Currency}, not the company currency {TenantCurrency}; left unmatched",
+                        entity.ExternalTransactionId, entity.Amount.Currency, tenantCurrency);
+                    result.Pending++;
+                }
+                else if (truck is not null)
                 {
                     var expense = FuelCardExpenseFactory.CreateExpense(entity, truck.Id);
                     await tenantUow.Repository<Expense>().AddAsync(expense, ct);

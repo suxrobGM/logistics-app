@@ -38,7 +38,7 @@ public class MarkStopDepartedHandlerTests
             OriginLocation = new GeoPoint(0, 0),
             DestinationAddress = address,
             DestinationLocation = new GeoPoint(0, 0),
-            DeliveryCost = Money.Zero("USD")
+            DeliveryCost = 0m
         };
 
         _trip = Trip.Create("Trip 1", truck, [load]);

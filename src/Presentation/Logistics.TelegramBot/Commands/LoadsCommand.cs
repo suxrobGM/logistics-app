@@ -4,10 +4,11 @@ using Logistics.Mediator;
 using Telegram.Bot;
 using Telegram.Bot.Types;
 using Logistics.Application.Modules.Operations.Loads.Queries;
+using Logistics.Domain.Persistence;
 
 namespace Logistics.TelegramBot.Commands;
 
-internal sealed class LoadsCommand(IMediator mediator) : ITelegramCommand, ICallbackHandler
+internal sealed class LoadsCommand(IMediator mediator, ITenantUnitOfWork tenantUow) : ITelegramCommand, ICallbackHandler
 {
     private const int PageSize = 5;
 
@@ -39,7 +40,8 @@ internal sealed class LoadsCommand(IMediator mediator) : ITelegramCommand, ICall
         }, ct);
 
         var loads = result.Value?.ToList() ?? [];
-        var text = TelegramMessageFormatter.FormatLoads(loads, page, result.TotalPages);
+        var text = TelegramMessageFormatter.FormatLoads(
+            loads, tenantUow.GetCurrentTenant().Currency, page, result.TotalPages);
         var keyboard = TelegramMessageFormatter.BuildPaginationKeyboard(Name[1..], page, result.TotalPages);
 
         await bot.SendOrEditPageAsync(chatId, editMessageId, text, keyboard, ct);

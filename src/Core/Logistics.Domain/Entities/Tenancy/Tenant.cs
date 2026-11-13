@@ -62,6 +62,9 @@ public class Tenant : Entity, IMasterEntity
     /// </summary>
     public TenantSettings Settings { get; set; } = new();
 
+    /// <summary>ISO 4217 code every tenant-internal amount is in.</summary>
+    public string Currency => Settings.Currency.ToString();
+
     /// <summary>
     ///     Admin-set company type. Kept off <see cref="Settings"/> because tenant owners can save those.
     /// </summary>

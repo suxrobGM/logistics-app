@@ -41,7 +41,7 @@ internal sealed class GetRateFloorTool(IMediator mediator)
             has_floor = floor.HasFloor,
             floor_source = floor.Source.ToString(),
             min_rate_per_mile = floor.MinRatePerMile,
-            min_total_rate = floor.MinTotalRate?.Amount,
+            min_total_rate = floor.MinTotalRate,
             effective_floor_total = floor.EffectiveFloorTotal,
             below_floor = floor.ListingBelowFloor,
             gap_per_mile = floor.GapPerMile,

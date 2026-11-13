@@ -3,6 +3,7 @@ using Logistics.Application.Abstractions;
 using Logistics.Domain.Entities;
 using Logistics.Domain.Persistence;
 using Logistics.Domain.Primitives.Enums;
+using Logistics.Domain.Primitives.ValueObjects;
 using Logistics.Mediator;
 using Logistics.Shared.Models;
 using Microsoft.EntityFrameworkCore;
@@ -64,7 +65,7 @@ internal sealed class GetQuickBooksSyncIssuesHandler(ITenantUnitOfWork tenantUow
 
         foreach (var p in await tenantUow.Repository<Payment>().GetListAsync(p => paymentIds.Contains(p.Id), ct))
         {
-            labels[p.Id] = $"Payment {p.ReferenceNumber ?? $"{p.Amount.Amount.ToString(CultureInfo.InvariantCulture)} {p.Amount.Currency}"}";
+            labels[p.Id] = $"Payment {p.ReferenceNumber ?? Money.Format(p.Amount, tenantUow.GetCurrentTenant().Currency)}";
         }
 
         foreach (var e in await tenantUow.Repository<Expense>().GetListAsync(e => expenseIds.Contains(e.Id), ct))

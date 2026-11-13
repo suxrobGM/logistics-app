@@ -17,7 +17,7 @@ public abstract class Expense : AuditableEntity, ITenantEntity
     /// <summary>
     ///     Total expense amount.
     /// </summary>
-    public required Money Amount { get; set; }
+    public required decimal Amount { get; set; }
 
     /// <summary>
     ///     Vendor or payee name.

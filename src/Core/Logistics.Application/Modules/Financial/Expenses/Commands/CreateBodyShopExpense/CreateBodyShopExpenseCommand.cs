@@ -5,7 +5,6 @@ namespace Logistics.Application.Modules.Financial.Expenses.Commands;
 public class CreateBodyShopExpenseCommand : ICommand<Result<Guid>>, IExpenseFields
 {
     public decimal Amount { get; set; }
-    public string Currency { get; set; } = "USD";
     public string? VendorName { get; set; }
     public DateTime ExpenseDate { get; set; }
     public required string ReceiptBlobPath { get; set; }

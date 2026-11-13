@@ -28,7 +28,7 @@ public class AccountingPayloadsTests
 
         var (payload, _) = AccountingPayloads.Invoice(invoice,
             [Line(invoice, InvoiceLineItemType.BaseRate, 1000m, 0), Line(invoice, InvoiceLineItemType.FuelSurcharge, 120m, 1)],
-            "42", _config, mappings);
+            "42", _config, mappings, "USD");
 
         Assert.Equal(["1", "3"], payload.Lines.Select(l => l.ItemId));
         Assert.Equal(invoice.CreatedAt, payload.TxnDate);
@@ -39,10 +39,10 @@ public class AccountingPayloadsTests
     public void Invoice_DueDateChange_ChangesTheHash()
     {
         var invoice = NewInvoice();
-        var (_, before) = AccountingPayloads.Invoice(invoice, [], "42", _config, new AccountingMappings());
+        var (_, before) = AccountingPayloads.Invoice(invoice, [], "42", _config, new AccountingMappings(), "USD");
 
         invoice.DueDate = invoice.DueDate!.Value.AddDays(15);
-        var (_, after) = AccountingPayloads.Invoice(invoice, [], "42", _config, new AccountingMappings());
+        var (_, after) = AccountingPayloads.Invoice(invoice, [], "42", _config, new AccountingMappings(), "USD");
 
         Assert.NotEqual(before, after);
     }
@@ -51,10 +51,10 @@ public class AccountingPayloadsTests
     public void Invoice_TaxChange_ChangesTheHash()
     {
         var invoice = NewInvoice();
-        var (_, before) = AccountingPayloads.Invoice(invoice, [], "42", _config, new AccountingMappings());
+        var (_, before) = AccountingPayloads.Invoice(invoice, [], "42", _config, new AccountingMappings(), "USD");
 
-        invoice.TaxTotal = new Money { Amount = 19m, Currency = "USD" };
-        var (_, after) = AccountingPayloads.Invoice(invoice, [], "42", _config, new AccountingMappings());
+        invoice.TaxTotal = 19m;
+        var (_, after) = AccountingPayloads.Invoice(invoice, [], "42", _config, new AccountingMappings(), "USD");
 
         Assert.NotEqual(before, after);
     }
@@ -117,7 +117,7 @@ public class AccountingPayloadsTests
         var expense = new CompanyExpense
         {
             Category = CompanyExpenseCategory.Insurance,
-            Amount = new Money { Amount = 900m, Currency = "USD" },
+            Amount = 900m,
             ExpenseDate = DateTime.UtcNow
         };
 
@@ -137,12 +137,12 @@ public class AccountingPayloadsTests
             Number = 9,
             PeriodStart = new DateOnly(2026, 9, 24),
             PeriodEnd = new DateOnly(2026, 9, 30),
-            Subtotal = new Money { Amount = 1500m, Currency = "USD" },
-            TaxTotal = Money.Zero("USD"),
-            Total = new Money { Amount = 1500m, Currency = "USD" }
+            Subtotal = 1500m,
+            TaxTotal = 0m,
+            Total = 1500m
         };
 
-        var (bill, _) = AccountingPayloads.Bill(payroll, "56", "62");
+        var (bill, _) = AccountingPayloads.Bill(payroll, "56", "62", "USD");
 
         Assert.Equal("56", bill.VendorId);
         Assert.Equal("62", bill.ExpenseAccountId);
@@ -172,9 +172,9 @@ public class AccountingPayloadsTests
         Number = 1007,
         CreatedAt = new DateTime(2026, 7, 1, 0, 0, 0, DateTimeKind.Utc),
         DueDate = new DateTime(2026, 7, 31, 0, 0, 0, DateTimeKind.Utc),
-        Subtotal = Money.Zero("USD"),
-        TaxTotal = Money.Zero("USD"),
-        Total = Money.Zero("USD")
+        Subtotal = 0m,
+        TaxTotal = 0m,
+        Total = 0m
     };
 
     private static InvoiceLineItem Line(LoadInvoice invoice, InvoiceLineItemType type, decimal amount, int order) => new()
@@ -182,7 +182,7 @@ public class AccountingPayloadsTests
         InvoiceId = invoice.Id,
         Description = type.ToString(),
         Type = type,
-        Amount = new Money { Amount = amount, Currency = "USD" },
+        Amount = amount,
         Order = order
     };
 
@@ -190,7 +190,7 @@ public class AccountingPayloadsTests
     {
         TruckId = Guid.NewGuid(),
         Category = category,
-        Amount = new Money { Amount = 100m, Currency = "USD" },
+        Amount = 100m,
         ExpenseDate = DateTime.UtcNow
     };
 }

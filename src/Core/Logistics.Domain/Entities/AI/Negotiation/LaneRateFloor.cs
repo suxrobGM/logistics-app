@@ -21,7 +21,7 @@ public class LaneRateFloor : AuditableEntity, ITenantEntity
 
     public required decimal MinRatePerMile { get; set; }
 
-    public Money? MinTotalRate { get; set; }
+    public decimal? MinTotalRate { get; set; }
 
     public string? Notes { get; set; }
 }

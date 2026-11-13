@@ -92,7 +92,8 @@ internal sealed class AccountingReceivablesSyncService(
             }
 
             var (payload, hash) = AccountingPayloads.Invoice(
-                invoice, lineItems[invoice.Id], customerQboId, run.Config, run.Config.Mappings);
+                invoice, lineItems[invoice.Id], customerQboId, run.Config, run.Config.Mappings,
+                tenantUow.GetCurrentTenant().Currency);
             await mappingService.PushAsync(run, QboLocalEntityType.Invoice, invoice.Id, hash,
                 target => run.Provider.UpsertInvoiceAsync(payload, target, ct), ct);
         }
@@ -153,7 +154,8 @@ internal sealed class AccountingReceivablesSyncService(
             }
 
             var depositAccountId = factored ? run.Config.FactoringClearingAccountId : run.Config.DepositAccountId;
-            var (payload, hash) = AccountingPayloads.Payment(row.Payment, customerQboId, invoiceQboId, depositAccountId);
+            var (payload, hash) = AccountingPayloads.Payment(
+                row.Payment, customerQboId, invoiceQboId, depositAccountId, tenantUow.GetCurrentTenant().Currency);
             await mappingService.PushAsync(run, QboLocalEntityType.Payment, row.Payment.Id, hash,
                 target => run.Provider.UpsertPaymentAsync(payload, target, ct), ct);
         }

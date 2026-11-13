@@ -208,7 +208,7 @@ public class LoadVehicleTests
         OriginLocation = new GeoPoint(-96.8, 32.8),
         DestinationAddress = ValidCreateCommand(type).DestinationAddress,
         DestinationLocation = new GeoPoint(-97.7, 30.3),
-        DeliveryCost = Money.Zero("USD")
+        DeliveryCost = 0m
     };
 
     private static CreateLoadCommand ValidCreateCommand(LoadType type) => new()

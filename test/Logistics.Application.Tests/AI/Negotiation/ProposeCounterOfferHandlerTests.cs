@@ -330,7 +330,7 @@ public class ProposeCounterOfferHandlerTests
         {
             HasFloor = true,
             MinRatePerMile = 2.00m,
-            MinTotalRate = new Money { Amount = 1000m, Currency = "USD" },
+            MinTotalRate = 1000m,
             Source = RateFloorSource.LaneExact,
             EffectiveFloorTotal = 2000m
         });

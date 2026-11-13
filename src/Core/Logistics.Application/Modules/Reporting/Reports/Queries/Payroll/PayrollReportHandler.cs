@@ -28,7 +28,7 @@ internal sealed class PayrollReportHandler(ITenantUnitOfWork tenantUow)
 
         var payrolls = payrollsQuery.ToList();
 
-        var totalPayroll = payrolls.Sum(p => p.Total.Amount);
+        var totalPayroll = payrolls.Sum(p => p.Total);
         var totalPaid = payrolls.Sum(p => p.AmountPaid);
         var totalOutstanding = totalPayroll - totalPaid;
         var uniqueEmployees = payrolls.Select(p => p.EmployeeId).Distinct().Count();
@@ -113,7 +113,7 @@ internal sealed class PayrollReportHandler(ITenantUnitOfWork tenantUow)
             trends.Add(new PayrollTrendDto
             {
                 Period = monthStart.ToString("MMM yyyy"),
-                TotalAmount = monthPayrolls.Sum(p => p.Total.Amount),
+                TotalAmount = monthPayrolls.Sum(p => p.Total),
                 PaidAmount = monthPayrolls.Sum(p => p.AmountPaid),
                 PayrollCount = monthPayrolls.Count,
                 EmployeeCount = monthPayrolls.Select(p => p.EmployeeId).Distinct().Count()
@@ -133,9 +133,9 @@ internal sealed class PayrollReportHandler(ITenantUnitOfWork tenantUow)
             {
                 EmployeeId = g.Key.EmployeeId,
                 EmployeeName = g.Key.Employee?.GetFullName() ?? "Unknown",
-                TotalEarnings = g.Sum(p => p.Total.Amount),
+                TotalEarnings = g.Sum(p => p.Total),
                 PayrollCount = g.Count(),
-                AverageEarnings = g.Any() ? g.Sum(p => p.Total.Amount) / g.Count() : 0
+                AverageEarnings = g.Any() ? g.Sum(p => p.Total) / g.Count() : 0
             })
             .OrderByDescending(e => e.TotalEarnings)
             .Take(10)
@@ -150,8 +150,8 @@ internal sealed class PayrollReportHandler(ITenantUnitOfWork tenantUow)
             {
                 SalaryType = GetSalaryTypeLabel(g.Key),
                 EmployeeCount = g.Select(p => p.EmployeeId).Distinct().Count(),
-                TotalAmount = g.Sum(p => p.Total.Amount),
-                Percentage = totalPayroll > 0 ? (double)(g.Sum(p => p.Total.Amount) / totalPayroll) * 100 : 0
+                TotalAmount = g.Sum(p => p.Total),
+                Percentage = totalPayroll > 0 ? (double)(g.Sum(p => p.Total) / totalPayroll) * 100 : 0
             })
             .OrderByDescending(s => s.TotalAmount)
             .ToList();

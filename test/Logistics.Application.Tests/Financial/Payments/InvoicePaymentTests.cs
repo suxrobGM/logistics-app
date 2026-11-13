@@ -50,14 +50,13 @@ public class InvoicePaymentTests
     }
 
     [Fact]
-    public void AmountPaid_MixedPayments_CountsOnlyPaidInTheInvoiceCurrency()
+    public void AmountPaid_MixedStatuses_CountsOnlyPaid()
     {
         var invoice = Invoice(Customer(null));
         invoice.ApplyPayment(Payment(300m));
         invoice.ApplyPayment(Payment(200m, PaymentStatus.Refunded));
         invoice.ApplyPayment(Payment(500m, PaymentStatus.Pending));
-        invoice.ApplyPayment(Payment(100m, currency: "usd"));
-        invoice.ApplyPayment(Payment(900m, currency: "EUR"));
+        invoice.ApplyPayment(Payment(100m));
 
         Assert.Equal(400m, invoice.AmountPaid);
         Assert.Equal(600m, invoice.AmountDue);
@@ -67,12 +66,12 @@ public class InvoicePaymentTests
     [Fact]
     public void ApplyPaymentWithEvent_PayrollPaidInFull_RaisesFullyPaid()
     {
-        var total = new Money { Amount = 1000m, Currency = "USD" };
+        var total = 1000m;
         var payroll = new PayrollInvoice
         {
             EmployeeId = Guid.NewGuid(),
             Subtotal = total,
-            TaxTotal = Money.Zero("USD"),
+            TaxTotal = 0m,
             Total = total,
             Status = InvoiceStatus.Approved
         };
@@ -137,12 +136,12 @@ public class InvoicePaymentTests
     [Fact]
     public void RemovePayment_LastPaymentOnPayroll_BackToApproved()
     {
-        var total = new Money { Amount = 1000m, Currency = "USD" };
+        var total = 1000m;
         var payroll = new PayrollInvoice
         {
             EmployeeId = Guid.NewGuid(),
             Subtotal = total,
-            TaxTotal = Money.Zero("USD"),
+            TaxTotal = 0m,
             Total = total,
             Status = InvoiceStatus.Approved,
             DueDate = Now.AddDays(-1)
@@ -175,7 +174,7 @@ public class InvoicePaymentTests
         var result = await sut.Handle(new UpdatePaymentCommand { Id = payment.Id, Amount = 400m }, CancellationToken.None);
 
         Assert.True(result.IsSuccess);
-        Assert.Equal(400m, payment.Amount.Amount);
+        Assert.Equal(400m, payment.Amount);
         Assert.Equal(InvoiceStatus.PartiallyPaid, invoice.Status);
     }
 
@@ -228,9 +227,9 @@ public class InvoicePaymentTests
     #endregion
 
     private static Payment Payment(
-        decimal amount, PaymentStatus status = PaymentStatus.Paid, string currency = "USD") => new()
+        decimal amount, PaymentStatus status = PaymentStatus.Paid) => new()
         {
-            Amount = new Money { Amount = amount, Currency = currency },
+            Amount = amount,
             Status = status,
             BillingAddress = FactoringTestData.Address
         };

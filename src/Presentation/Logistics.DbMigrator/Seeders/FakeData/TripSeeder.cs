@@ -172,8 +172,7 @@ internal class TripSeeder(
             destLocation,
             customer,
             truck,
-            dispatcher,
-            currency: region.Currency.ToString());
+            dispatcher);
 
         load.Source = LoadSource.Manual;
         load.Dispatch(dispatchedAt);

@@ -48,9 +48,9 @@ public class UpdateLineItemHandlerTests
 
         Assert.True(result.IsSuccess);
         Assert.Equal(200m, line.TaxAmount);
-        Assert.Equal(2000m, invoice.Subtotal.Amount);
-        Assert.Equal(200m, invoice.TaxTotal.Amount);
-        Assert.Equal(2200m, invoice.Total.Amount);
+        Assert.Equal(2000m, invoice.Subtotal);
+        Assert.Equal(200m, invoice.TaxTotal);
+        Assert.Equal(2200m, invoice.Total);
     }
 
     [Fact]
@@ -59,7 +59,7 @@ public class UpdateLineItemHandlerTests
         var (invoice, line) = InvoiceWithLine(1000m);
         invoice.ApplyPayment(new Payment
         {
-            Amount = new Money { Amount = 550m, Currency = "USD" },
+            Amount = 550m,
             Status = PaymentStatus.Paid,
             BillingAddress = Factoring.FactoringTestData.Address
         });
@@ -68,7 +68,7 @@ public class UpdateLineItemHandlerTests
         var result = await _sut.Handle(Update(invoice, line, 500m), default);
 
         Assert.True(result.IsSuccess);
-        Assert.Equal(550m, invoice.Total.Amount);
+        Assert.Equal(550m, invoice.Total);
         Assert.Equal(InvoiceStatus.Paid, invoice.Status);
     }
 
@@ -91,7 +91,7 @@ public class UpdateLineItemHandlerTests
             InvoiceId = invoice.Id,
             Description = "Linehaul",
             Type = InvoiceLineItemType.BaseRate,
-            Amount = new Money { Amount = amount, Currency = "USD" }
+            Amount = amount
         };
         invoice.LineItems.Add(line);
         _invoiceRepo.GetByIdAsync(invoice.Id, Arg.Any<CancellationToken>()).Returns(invoice);

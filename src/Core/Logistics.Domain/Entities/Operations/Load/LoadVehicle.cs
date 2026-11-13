@@ -27,7 +27,7 @@ public class LoadVehicle
     public string? Notes { get; set; }
 
     /// <summary>
-    /// Optional per-vehicle rate, in the load's <see cref="Load.DeliveryCost"/> currency.
+    /// Optional per-vehicle rate, in the tenant currency.
     /// </summary>
     public decimal? Rate { get; set; }
 

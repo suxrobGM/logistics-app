@@ -59,7 +59,7 @@ public class CalculateAssignmentMetricsToolTests
             DestinationAddress = SomeAddress,
             DestinationLocation = new GeoPoint(-95.36, 29.76),
             Distance = distanceMeters,
-            DeliveryCost = new Money { Amount = deliveryCost, Currency = "USD" }
+            DeliveryCost = deliveryCost
         };
     }
 

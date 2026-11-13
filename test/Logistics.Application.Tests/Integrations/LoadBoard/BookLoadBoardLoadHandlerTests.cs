@@ -49,7 +49,7 @@ public class BookLoadBoardLoadHandlerTests
         _listing = CreateListing();
 
         var truck = new Truck { Number = "T-100", Type = TruckType.FreightTruck };
-        var dispatcher = new Employee { Email = "dispatcher@test.com", FirstName = "Dana", LastName = "Doe", Salary = Money.Zero("USD") };
+        var dispatcher = new Employee { Email = "dispatcher@test.com", FirstName = "Dana", LastName = "Doe", Salary = 0m };
 
         _command = new BookLoadBoardLoadCommand
         {
@@ -142,19 +142,6 @@ public class BookLoadBoardLoadHandlerTests
             Arg.Is<Load>(l => l.AssignedDispatcherId == dispatcherId), Arg.Any<CancellationToken>());
     }
 
-    [Fact]
-    public async Task Handle_Books_PricesTheLoadInTheTenantCurrency()
-    {
-        _tenant.Settings.Currency = CurrencyCode.EUR;
-
-        var result = await _sut.Handle(_command, CancellationToken.None);
-
-        Assert.True(result.IsSuccess);
-        await _loadRepo.Received(1).AddAsync(
-            Arg.Is<Load>(l => l.DeliveryCost.Currency == "EUR" && l.Invoice!.Total.Currency == "EUR"),
-            Arg.Any<CancellationToken>());
-    }
-
     #endregion
 
     #region Credit gate
@@ -242,7 +229,7 @@ public class BookLoadBoardLoadHandlerTests
         Assert.Equal(RateNegotiationStatus.Accepted, negotiation.Status);
         Assert.Equal(result.Value!.CreatedLoadId, negotiation.LoadId);
         await _loadRepo.Received(1).AddAsync(
-            Arg.Is<Load>(l => l.DeliveryCost.Amount == 2200m), Arg.Any<CancellationToken>());
+            Arg.Is<Load>(l => l.DeliveryCost == 2200m), Arg.Any<CancellationToken>());
     }
 
     [Fact]
@@ -282,7 +269,7 @@ public class BookLoadBoardLoadHandlerTests
 
         Assert.True(result.IsSuccess);
         await _loadRepo.Received(1).AddAsync(
-            Arg.Is<Load>(l => l.DeliveryCost.Amount == 2500m), Arg.Any<CancellationToken>());
+            Arg.Is<Load>(l => l.DeliveryCost == 2500m), Arg.Any<CancellationToken>());
     }
 
     [Fact]

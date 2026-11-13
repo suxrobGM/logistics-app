@@ -13,6 +13,5 @@ public record PayrollSubmittedEvent(
     string EmployeeName,
     string EmployeeEmail,
     decimal TotalAmount,
-    string Currency,
     DateOnly PeriodStart,
     DateOnly PeriodEnd) : IDomainEvent;

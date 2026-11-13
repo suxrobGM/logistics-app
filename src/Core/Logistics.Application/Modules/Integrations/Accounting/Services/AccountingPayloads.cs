@@ -43,14 +43,14 @@ internal static class AccountingPayloads
 
     public static (QboInvoicePayload Payload, string Hash) Invoice(
         LoadInvoice invoice, IEnumerable<InvoiceLineItem> lineItems, string qboCustomerId,
-        AccountingProviderConfiguration config, AccountingMappings mappings)
+        AccountingProviderConfiguration config, AccountingMappings mappings, string currency)
     {
         var lines = lineItems
             .OrderBy(li => li.Order)
             .Select(li => new QboInvoiceLinePayload
             {
                 Description = li.Description,
-                Amount = li.Amount.Amount,
+                Amount = li.Amount,
                 Quantity = li.Quantity,
                 ItemId = mappings.Items.FirstOrDefault(m => m.LineItemType == li.Type)?.QboId ?? config.DefaultItemId
             })
@@ -60,22 +60,22 @@ internal static class AccountingPayloads
         {
             QboCustomerId = qboCustomerId,
             DocNumber = invoice.Number.ToString(CultureInfo.InvariantCulture),
-            CurrencyCode = invoice.Total.Currency,
+            CurrencyCode = currency,
             TxnDate = invoice.CreatedAt,
             DueDate = invoice.DueDate,
-            TaxTotal = invoice.TaxTotal.Amount,
+            TaxTotal = invoice.TaxTotal,
             Lines = lines
         });
     }
 
     public static (QboPaymentPayload Payload, string Hash) Payment(
-        Payment payment, string qboCustomerId, string qboInvoiceId, string? depositAccountId) =>
+        Payment payment, string qboCustomerId, string qboInvoiceId, string? depositAccountId, string currency) =>
         WithHash(new QboPaymentPayload
         {
             QboCustomerId = qboCustomerId,
             QboInvoiceId = qboInvoiceId,
-            Amount = payment.Amount.Amount,
-            CurrencyCode = payment.Amount.Currency,
+            Amount = payment.Amount,
+            CurrencyCode = currency,
             TxnDate = payment.RecordedAt ?? payment.CreatedAt,
             ReferenceNumber = payment.ReferenceNumber ?? payment.StripePaymentIntentId,
             DepositAccountId = depositAccountId
@@ -95,14 +95,14 @@ internal static class AccountingPayloads
     }
 
     public static (QboExpensePayload Payload, string Hash) Expense(
-        Expense expense, string paymentAccountId, string? paymentAccountType, string expenseAccountId) =>
+        Expense expense, string paymentAccountId, string? paymentAccountType, string expenseAccountId, string currency) =>
         WithHash(new QboExpensePayload
         {
             PaymentAccountId = paymentAccountId,
             PaymentAccountType = paymentAccountType,
             ExpenseAccountId = expenseAccountId,
-            Amount = expense.Amount.Amount,
-            CurrencyCode = expense.Amount.Currency,
+            Amount = expense.Amount,
+            CurrencyCode = currency,
             TxnDate = expense.ExpenseDate,
             DocNumber = $"EXP-{expense.Number.ToString(CultureInfo.InvariantCulture)}",
             Description = ExpenseDescription(expense)
@@ -110,7 +110,8 @@ internal static class AccountingPayloads
 
     /// <summary>The fee a factor kept on an invoice, paid out of the (bank-type) factoring clearing account.</summary>
     public static (QboExpensePayload Payload, string Hash) FactoringFee(
-        FactoringBatchItem item, long batchNumber, long invoiceNumber, string clearingAccountId, string feeAccountId)
+        FactoringBatchItem item, long batchNumber, long invoiceNumber, string clearingAccountId, string feeAccountId,
+        string currency)
     {
         var batch = batchNumber.ToString(CultureInfo.InvariantCulture);
         var invoice = invoiceNumber.ToString(CultureInfo.InvariantCulture);
@@ -120,7 +121,7 @@ internal static class AccountingPayloads
             PaymentAccountType = "Bank",
             ExpenseAccountId = feeAccountId,
             Amount = item.FeeAmount ?? 0m,
-            CurrencyCode = item.Amount.Currency,
+            CurrencyCode = currency,
             TxnDate = item.FundedAt ?? item.CreatedAt,
             DocNumber = $"FCT-{batch}-{invoice}",
             Description = $"Factoring fee on invoice {invoice} (schedule {batch})"
@@ -138,13 +139,13 @@ internal static class AccountingPayloads
         });
 
     public static (QboBillPayload Payload, string Hash) Bill(
-        PayrollInvoice payroll, string vendorId, string expenseAccountId) =>
+        PayrollInvoice payroll, string vendorId, string expenseAccountId, string currency) =>
         WithHash(new QboBillPayload
         {
             VendorId = vendorId,
             ExpenseAccountId = expenseAccountId,
-            Amount = payroll.Total.Amount,
-            CurrencyCode = payroll.Total.Currency,
+            Amount = payroll.Total,
+            CurrencyCode = currency,
             TxnDate = payroll.PeriodEnd.ToDateTime(TimeOnly.MinValue, DateTimeKind.Utc),
             DueDate = payroll.DueDate,
             DocNumber = $"PAY-{payroll.Number.ToString(CultureInfo.InvariantCulture)}",

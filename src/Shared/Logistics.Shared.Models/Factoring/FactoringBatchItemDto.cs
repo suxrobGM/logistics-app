@@ -10,7 +10,7 @@ public record FactoringBatchItemDto
     public long InvoiceNumber { get; set; }
     public long LoadNumber { get; set; }
     public string? CustomerName { get; set; }
-    public Money Amount { get; set; } = null!;
+    public decimal Amount { get; set; }
     public FactoringStatus Status { get; set; }
     public decimal? AdvanceAmount { get; set; }
     public decimal? FeeAmount { get; set; }

@@ -50,9 +50,8 @@ internal class TripAlertDemoSeeder(ILogger<TripAlertDemoSeeder> logger) : Seeder
 
         var load = Load.Create(
             $"Trip alert demo - {lane.OriginAddress.City} to {lane.DestinationAddress.City}",
-            LoadType.GeneralFreight, lane.DeliveryCost.Amount, lane.OriginAddress, lane.OriginLocation,
-            lane.DestinationAddress, lane.DestinationLocation, lane.Customer, truck, lane.AssignedDispatcher!,
-            lane.DeliveryCost.Currency);
+            LoadType.GeneralFreight, lane.DeliveryCost, lane.OriginAddress, lane.OriginLocation,
+            lane.DestinationAddress, lane.DestinationLocation, lane.Customer, truck, lane.AssignedDispatcher!);
         await uow.Repository<Load>().AddAsync(load, cancellationToken);
 
         var trip = Trip.Create($"Trip alert demo #{truck.Number}", truck, [load]);

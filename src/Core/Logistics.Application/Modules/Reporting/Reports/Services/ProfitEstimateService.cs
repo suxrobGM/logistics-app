@@ -30,7 +30,7 @@ internal sealed class ProfitEstimateService(ITenantUnitOfWork tenantUow) : IProf
             {
                 l.Id,
                 Basis = new LoadPayBasis(
-                    l.DeliveryCost.Amount,
+                    l.DeliveryCost,
                     l.FuelSurcharge,
                     l.Accessorials.Sum(a => a.Rate * a.Quantity),
                     l.Distance,
@@ -81,7 +81,7 @@ internal sealed class ProfitEstimateService(ITenantUnitOfWork tenantUow) : IProf
             .OfType<TruckLinkedExpense>()
             .Where(e => ExpenseStatuses.Counted.Contains(e.Status) && e.ExpenseDate >= from)
             .GroupBy(e => e.TruckId)
-            .Select(g => new { TruckId = g.Key, Amount = g.Sum(e => e.Amount.Amount) })
+            .Select(g => new { TruckId = g.Key, Amount = g.Sum(e => e.Amount) })
             .ToDictionaryAsync(e => e.TruckId, e => e.Amount, ct);
         var miles = await tenantUow.SumLoggedMetersByTruckAsync(from, now.AddDays(1), ct);
         var loaded = await tenantUow.Repository<Load>().Query()

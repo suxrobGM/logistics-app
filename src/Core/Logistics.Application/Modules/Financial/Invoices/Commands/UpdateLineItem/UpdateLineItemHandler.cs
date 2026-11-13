@@ -44,15 +44,12 @@ internal sealed class UpdateLineItemHandler(
 
         if (req.Amount.HasValue)
         {
-            lineItem.Amount = lineItem.Amount with { Amount = req.Amount.Value };
+            lineItem.Amount = req.Amount.Value;
         }
 
         if (invoice is PayrollInvoice)
         {
-            lineItem.Amount = lineItem.Amount with
-            {
-                Amount = PayrollInvoice.SignedLineAmount(lineItem.Type, lineItem.Amount.Amount)
-            };
+            lineItem.Amount = PayrollInvoice.SignedLineAmount(lineItem.Type, lineItem.Amount);
         }
 
         if (req.Quantity.HasValue)

@@ -56,13 +56,13 @@ internal sealed class PayPayrollInvoiceHandler(
         {
             var transferId = await stripeConnectService.CreateTransferAsync(
                 amountDue,
-                payrollInvoice.Total.Currency,
+                tenant.Currency,
                 employee.StripeConnectedAccountId,
                 $"Payroll #{payrollInvoice.Number} for {employee.GetFullName()}");
 
             var payment = new Payment
             {
-                Amount = new Money { Amount = amountDue, Currency = payrollInvoice.Total.Currency },
+                Amount = amountDue,
                 Status = PaymentStatus.Paid,
                 StripePaymentMethodId = null,
                 StripeTransferId = transferId,

@@ -41,6 +41,7 @@ internal sealed class AIDispatchConversationBuilder(
         var systemPrompt = AIDispatchSystemPrompt.Build(new(companyName)
         {
             DistanceUnit = tenant.Settings.DistanceUnit,
+            Currency = tenant.Currency,
             IsSolo = tenant.IsSolo,
             HasLoadBoardIntegration = hasLoadBoard,
             HasIntermodal = hasIntermodal,

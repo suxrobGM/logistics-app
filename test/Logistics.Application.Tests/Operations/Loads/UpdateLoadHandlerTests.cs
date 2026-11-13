@@ -76,7 +76,7 @@ public class UpdateLoadHandlerTests
         {
             Id = load.Id,
             Notes = "Gate code 1234",
-            DeliveryCost = load.DeliveryCost.Amount,
+            DeliveryCost = load.DeliveryCost,
             Status = LoadStatus.Dispatched
         });
 

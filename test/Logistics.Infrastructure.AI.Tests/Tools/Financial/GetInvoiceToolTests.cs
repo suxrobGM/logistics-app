@@ -29,13 +29,13 @@ public class GetInvoiceToolTests
             Id = Guid.NewGuid(),
             Number = 12,
             Status = InvoiceStatus.PartiallyPaid,
-            Subtotal = CopilotToolTestData.Usd(1000m),
-            TaxTotal = CopilotToolTestData.Usd(0m),
-            Total = CopilotToolTestData.Usd(1000m),
+            Subtotal = 1000m,
+            TaxTotal = 0m,
+            Total = 1000m,
             Payments =
             [
-                new PaymentDto { Amount = CopilotToolTestData.Usd(300m) },
-                new PaymentDto { Amount = CopilotToolTestData.Usd(200m) }
+                new PaymentDto { Amount = 300m },
+                new PaymentDto { Amount = 200m }
             ]
         };
         _mediator.Send(Arg.Any<GetInvoiceByIdQuery>(), Arg.Any<CancellationToken>())
@@ -58,9 +58,9 @@ public class GetInvoiceToolTests
         {
             Id = Guid.NewGuid(),
             Status = InvoiceStatus.Paid,
-            Subtotal = CopilotToolTestData.Usd(1000m),
-            TaxTotal = CopilotToolTestData.Usd(0m),
-            Total = CopilotToolTestData.Usd(1000m),
+            Subtotal = 1000m,
+            TaxTotal = 0m,
+            Total = 1000m,
             Customer = new CustomerDto { Name = "Big Broker", FactoringCompanyId = Guid.NewGuid() },
             FactoringStatus = FactoringStatus.Funded
         };

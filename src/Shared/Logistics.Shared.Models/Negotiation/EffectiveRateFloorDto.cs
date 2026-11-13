@@ -11,7 +11,7 @@ public record EffectiveRateFloorDto
 {
     public bool HasFloor { get; set; }
     public decimal? MinRatePerMile { get; set; }
-    public Money? MinTotalRate { get; set; }
+    public decimal? MinTotalRate { get; set; }
     public RateFloorSource Source { get; set; } = RateFloorSource.None;
 
     /// <summary>

@@ -21,6 +21,13 @@ internal sealed class FuelCardTransactionEntityConfiguration : IEntityTypeConfig
             .HasMaxLength(100)
             .IsRequired();
 
+        // Card money can arrive in any currency, so it keeps one; plain names, not amount_amount.
+        builder.ComplexProperty(i => i.Amount, amount =>
+        {
+            amount.Property(m => m.Amount).HasColumnName("amount");
+            amount.Property(m => m.Currency).HasColumnName("currency");
+        });
+
         builder.Property(i => i.Quantity).HasPrecision(18, 3);
         builder.Property(i => i.PricePerUnit).HasPrecision(18, 4);
         builder.Property(i => i.ProductCategory).HasMaxLength(50);

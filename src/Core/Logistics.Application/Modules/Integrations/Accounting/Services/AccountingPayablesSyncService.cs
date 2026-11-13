@@ -46,7 +46,8 @@ internal sealed class AccountingPayablesSyncService(
         foreach (var fee in fees)
         {
             var (payload, hash) = AccountingPayloads.FactoringFee(
-                fee.Item, fee.BatchNumber, fee.InvoiceNumber, clearingAccountId, feeAccountId);
+                fee.Item, fee.BatchNumber, fee.InvoiceNumber, clearingAccountId, feeAccountId,
+                tenantUow.GetCurrentTenant().Currency);
             await mappingService.PushAsync(run, QboLocalEntityType.FactoringFee, fee.Item.Id, hash,
                 target => run.Provider.UpsertExpenseAsync(payload, target, ct), ct);
         }
@@ -75,7 +76,8 @@ internal sealed class AccountingPayablesSyncService(
         {
             var accountId = AccountingPayloads.ExpenseAccountId(expense, config, config.Mappings)!;
             var (payload, hash) = AccountingPayloads.Expense(
-                expense, config.DefaultPaymentAccountId, config.DefaultPaymentAccountType, accountId);
+                expense, config.DefaultPaymentAccountId, config.DefaultPaymentAccountType, accountId,
+                tenantUow.GetCurrentTenant().Currency);
             await mappingService.PushAsync(run, QboLocalEntityType.Expense, expense.Id, hash,
                 target => run.Provider.UpsertExpenseAsync(payload, target, ct), ct);
         }
@@ -132,7 +134,8 @@ internal sealed class AccountingPayablesSyncService(
                 continue;
             }
 
-            var (bill, hash) = AccountingPayloads.Bill(payroll, vendorQboId, accountId);
+            var (bill, hash) = AccountingPayloads.Bill(
+                payroll, vendorQboId, accountId, tenantUow.GetCurrentTenant().Currency);
             await mappingService.PushAsync(run, QboLocalEntityType.PayrollInvoice, payroll.Id, hash,
                 target => run.Provider.UpsertBillAsync(bill, target, ct), ct);
         }

@@ -16,11 +16,10 @@ internal sealed class IssueCashAdvanceHandler(ITenantUnitOfWork tenantUow)
             return Result<CashAdvanceDto>.Fail($"Could not find an employee with ID '{req.EmployeeId}'", ErrorCodes.NotFound);
         }
 
-        var currency = tenantUow.GetCurrentTenant().Settings.Currency.ToString();
         var advance = new CashAdvance
         {
             EmployeeId = employee.Id,
-            Amount = new() { Amount = req.Amount, Currency = currency },
+            Amount = req.Amount,
             Reason = req.Reason
         };
 

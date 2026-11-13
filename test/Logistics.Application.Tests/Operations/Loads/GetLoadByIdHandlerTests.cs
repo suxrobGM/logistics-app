@@ -39,7 +39,7 @@ public class GetLoadByIdHandlerTests
         OriginLocation = new GeoPoint(-74.0, 40.7),
         DestinationAddress = new Address { Line1 = "2 B St", City = "LA", State = "CA", ZipCode = "90001", Country = "US" },
         DestinationLocation = new GeoPoint(-118.2, 34.0),
-        DeliveryCost = new Money { Amount = 1000m, Currency = "USD" },
+        DeliveryCost = 1000m,
         Customer = new Customer { Name = "ACME" },
         AssignedTruck = assignedTruck,
         AssignedTruckId = assignedTruck?.Id

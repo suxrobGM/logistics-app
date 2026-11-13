@@ -1,11 +1,14 @@
 using Logistics.Domain.Entities;
 using Logistics.Domain.Primitives.Enums;
-using Logistics.Domain.Primitives.ValueObjects;
 
 namespace Logistics.Application.Modules.Integrations.FuelCards.Services;
 
 internal static class FuelCardExpenseFactory
 {
+    /// <summary>Expenses are in the tenant currency, so a transaction in any other stays unmatched.</summary>
+    public static bool CanCreateExpense(FuelCardTransaction transaction, string tenantCurrency) =>
+        string.Equals(transaction.Amount.Currency, tenantCurrency, StringComparison.OrdinalIgnoreCase);
+
     /// <summary>
     /// Materializes a TruckExpense from a matched fuel card transaction. Created as Paid -
     /// card transactions are already-settled funds, so routing them through the Pending
@@ -18,7 +21,7 @@ internal static class FuelCardExpenseFactory
             TruckId = truckId,
             Category = TruckExpenseCategory.Fuel,
             Status = ExpenseStatus.Paid,
-            Amount = new Money { Amount = transaction.Amount.Amount, Currency = transaction.Amount.Currency },
+            Amount = transaction.Amount.Amount,
             ExpenseDate = transaction.TransactionDate,
             VendorName = transaction.MerchantName,
             Quantity = transaction.Quantity,

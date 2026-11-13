@@ -59,7 +59,7 @@ public class FactoringFundingTests
         Assert.Equal(30m, item.FeeAmount);
         Assert.Equal(70m, item.ReserveAmount);
         Assert.Equal(70m, item.ReserveOutstanding);
-        Assert.Equal(1000m, payment.Amount.Amount);
+        Assert.Equal(1000m, payment.Amount);
         Assert.Equal(payment.Id, item.PaymentId);
         Assert.Equal(InvoiceStatus.Paid, invoice.Status);
         Assert.Equal(FactoringStatus.Funded, invoice.FactoringStatus);

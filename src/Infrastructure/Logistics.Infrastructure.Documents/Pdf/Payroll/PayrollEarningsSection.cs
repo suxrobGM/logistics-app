@@ -13,17 +13,16 @@ namespace Logistics.Infrastructure.Documents.Pdf.Payroll;
 /// </summary>
 internal static class PayrollEarningsSection
 {
-    public static void Render(IContainer container, PayrollInvoice payroll)
+    public static void Render(IContainer container, PayrollInvoice payroll, string currency)
     {
-        var currency = payroll.Total.Currency;
         var lineItems = payroll.LineItems.OrderBy(li => li.Order).ToList();
         var earnings = lineItems.Where(li => !li.Type.IsPayDeduction()).ToList();
         var deductions = lineItems.Where(li => li.Type.IsPayDeduction()).ToList();
 
-        var grossEarnings = earnings.Count > 0 ? earnings.Sum(e => e.Total) : payroll.Total.Amount;
+        var grossEarnings = earnings.Count > 0 ? earnings.Sum(e => e.Total) : payroll.Total;
         // Deduction lines are stored negative; an escrow release is a positive one.
         var totalDeductions = -deductions.Sum(d => d.Total);
-        var netPay = earnings.Count > 0 ? grossEarnings - totalDeductions : payroll.Total.Amount;
+        var netPay = earnings.Count > 0 ? grossEarnings - totalDeductions : payroll.Total;
 
         container.Column(column =>
         {
@@ -84,8 +83,8 @@ internal static class PayrollEarningsSection
                     table.Cell().Element(PdfStyles.Cell).Text("Base Pay");
                     table.Cell().Element(PdfStyles.Cell).Text(salaryLabel);
                     table.Cell().Element(PdfStyles.Cell).AlignCenter().Text("1");
-                    table.Cell().Element(PdfStyles.Cell).AlignRight().Text(PdfFormatting.Money(payroll.Total.Amount, currency));
-                    table.Cell().Element(PdfStyles.Cell).AlignRight().Text(PdfFormatting.Money(payroll.Total.Amount, currency));
+                    table.Cell().Element(PdfStyles.Cell).AlignRight().Text(PdfFormatting.Money(payroll.Total, currency));
+                    table.Cell().Element(PdfStyles.Cell).AlignRight().Text(PdfFormatting.Money(payroll.Total, currency));
                     return;
                 }
 
@@ -94,7 +93,7 @@ internal static class PayrollEarningsSection
                     table.Cell().Element(PdfStyles.Cell).Text(item.Description);
                     table.Cell().Element(PdfStyles.Cell).Text(PdfFormatting.Display(item.Type));
                     table.Cell().Element(PdfStyles.Cell).AlignCenter().Text(item.Quantity.ToString());
-                    table.Cell().Element(PdfStyles.Cell).AlignRight().Text(PdfFormatting.Money(item.Amount.Amount, currency));
+                    table.Cell().Element(PdfStyles.Cell).AlignRight().Text(PdfFormatting.Money(item.Amount, currency));
                     table.Cell().Element(PdfStyles.Cell).AlignRight().Text(PdfFormatting.Money(item.Total, currency));
                 }
             });

@@ -73,7 +73,7 @@ internal sealed class CreatePublicCheckoutSessionHandler(
                 new CheckoutSessionRequest
                 {
                     ConnectedAccountId = tenant.StripeConnectedAccountId,
-                    Amount = new Money { Amount = paymentAmount, Currency = invoice.Total.Currency },
+                    Amount = new Money { Amount = paymentAmount, Currency = tenant.Currency },
                     SuccessUrl = req.SuccessUrl,
                     CancelUrl = req.CancelUrl,
                     LineItemDescription = $"Invoice #{invoice.Number}",

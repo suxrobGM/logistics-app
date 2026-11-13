@@ -22,9 +22,6 @@ internal sealed class PreviewTaxCalculationTool(IMediator mediator)
         [AgentEntityId(AgentEntityKind.Customer)]
         public required Guid CustomerId { get; init; }
 
-        [Description("ISO-4217 currency code, e.g. 'USD' or 'EUR'")]
-        public required string Currency { get; init; }
-
         [Description("Line items to score")]
         public required LineItem[] LineItems { get; init; }
     }
@@ -74,7 +71,6 @@ internal sealed class PreviewTaxCalculationTool(IMediator mediator)
             Request = new PreviewInvoiceTaxRequest
             {
                 CustomerId = input.CustomerId,
-                Currency = input.Currency,
                 LineItems = lineItems
             }
         }, ct);
@@ -86,10 +82,9 @@ internal sealed class PreviewTaxCalculationTool(IMediator mediator)
         return ToolResult.Ok(new
         {
             tax_behavior = response.TaxBehavior.ToString(),
-            currency = input.Currency,
-            subtotal = response.Subtotal.Amount,
-            tax_total = response.TaxTotal.Amount,
-            total = response.Total.Amount,
+            subtotal = response.Subtotal,
+            tax_total = response.TaxTotal,
+            total = response.Total,
             warning = response.Warning,
             lines = response.Lines.Select(l => new
             {

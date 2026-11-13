@@ -14,7 +14,7 @@ public class InvoiceLineItem : Entity, ITenantEntity
 
     public required string Description { get; set; }
     public required InvoiceLineItemType Type { get; set; }
-    public required Money Amount { get; set; }
+    public required decimal Amount { get; set; }
     public int Quantity { get; set; } = 1;
 
     /// <summary>
@@ -54,5 +54,5 @@ public class InvoiceLineItem : Entity, ITenantEntity
     /// <summary>
     /// Net (pre-tax) total for this line: Amount * Quantity. Gross is Net + TaxAmount.
     /// </summary>
-    public decimal Total => Amount.Amount * Quantity;
+    public decimal Total => Amount * Quantity;
 }

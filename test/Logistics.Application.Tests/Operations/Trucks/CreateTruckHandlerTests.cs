@@ -24,7 +24,7 @@ public class CreateTruckHandlerTests
         Email = "driver@test.com",
         FirstName = "Jane",
         LastName = "Doe",
-        Salary = Money.Zero("USD")
+        Salary = 0m
     };
     private readonly CreateTruckHandler _sut;
 

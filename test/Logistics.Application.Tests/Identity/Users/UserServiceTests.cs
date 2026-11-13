@@ -51,7 +51,7 @@ public class UserServiceTests
             Email = "old@test.com",
             FirstName = "Jane",
             LastName = "Doe",
-            Salary = Money.Zero("USD")
+            Salary = 0m
         };
         _tenantRows[home.Id].Employees.Add(employee);
         var customerUser = new CustomerUser { UserId = user.Id, CustomerId = Guid.NewGuid(), Email = "old@test.com" };

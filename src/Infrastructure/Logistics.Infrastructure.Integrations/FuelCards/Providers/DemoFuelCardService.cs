@@ -5,6 +5,7 @@ using Logistics.Application.Abstractions.Integrations;
 using Logistics.Domain.Entities;
 using Logistics.Domain.Persistence;
 using Logistics.Domain.Primitives.Enums;
+using Logistics.Domain.Primitives.Geo;
 using Logistics.Domain.Primitives.ValueObjects;
 using Logistics.Shared.Models;
 using Microsoft.Extensions.Logging;
@@ -21,16 +22,29 @@ internal class DemoFuelCardService(
     ITenantUnitOfWork tenantUow,
     ILogger<DemoFuelCardService> logger) : IFuelCardProviderService
 {
-    private static readonly (string City, string State)[] Stops =
+    private static readonly FuelStop[] UsStops =
     [
-        ("Dallas", "TX"), ("Oklahoma City", "OK"), ("Little Rock", "AR"), ("Memphis", "TN"),
-        ("Nashville", "TN"), ("Atlanta", "GA"), ("Indianapolis", "IN"), ("Chicago", "IL"),
-        ("Kansas City", "MO"), ("Denver", "CO"), ("Albuquerque", "NM"), ("Phoenix", "AZ")
+        new("Dallas", "US", "TX"), new("Oklahoma City", "US", "OK"), new("Little Rock", "US", "AR"),
+        new("Memphis", "US", "TN"), new("Nashville", "US", "TN"), new("Atlanta", "US", "GA"),
+        new("Indianapolis", "US", "IN"), new("Chicago", "US", "IL"), new("Kansas City", "US", "MO"),
+        new("Denver", "US", "CO"), new("Albuquerque", "US", "NM"), new("Phoenix", "US", "AZ")
     ];
 
-    private static readonly string[] Merchants =
+    private static readonly FuelStop[] EuStops =
+    [
+        new("Hamburg", "DE", null), new("Munich", "DE", null), new("Rotterdam", "NL", null),
+        new("Antwerp", "BE", null), new("Lyon", "FR", null), new("Milan", "IT", null),
+        new("Barcelona", "ES", null), new("Poznan", "PL", null)
+    ];
+
+    private static readonly string[] UsMerchants =
     [
         "Pilot Flying J", "Love's Travel Stops", "TA Petro", "Speedway", "Casey's"
+    ];
+
+    private static readonly string[] EuMerchants =
+    [
+        "Shell", "Aral", "TotalEnergies", "Esso", "Orlen"
     ];
 
     public FuelCardProviderType ProviderType => FuelCardProviderType.Demo;
@@ -59,6 +73,7 @@ internal class DemoFuelCardService(
             return [];
         }
 
+        var tenant = tenantUow.GetCurrentTenant();
         var transactions = new List<FuelCardTransactionData>();
         var startDate = DateOnly.FromDateTime(sinceUtc.Date);
         var endDate = DateOnly.FromDateTime(DateTime.UtcNow.Date.AddDays(-1));
@@ -80,7 +95,7 @@ internal class DemoFuelCardService(
                 var unitNumber = isUnmatched ? $"POOL-{seed % 9 + 1}" : truck.Number;
                 // ID is keyed by the source truck (not the unit number) so two trucks hashing
                 // to the same POOL unit on the same day can't collide on the unique index.
-                transactions.Add(CreateTransaction($"DEMO-{truck.Number}-{date:yyyyMMdd}", unitNumber, date, seed));
+                transactions.Add(CreateTransaction($"DEMO-{truck.Number}-{date:yyyyMMdd}", unitNumber, date, seed, tenant));
             }
         }
 
@@ -88,26 +103,31 @@ internal class DemoFuelCardService(
         return transactions;
     }
 
-    private static FuelCardTransactionData CreateTransaction(string externalId, string unitNumber, DateOnly date, uint seed)
+    /// <summary>EU tenants buy in liters at EU stations; US tenants in gallons at US ones.</summary>
+    private static FuelCardTransactionData CreateTransaction(
+        string externalId, string unitNumber, DateOnly date, uint seed, Tenant tenant)
     {
-        var (city, state) = Stops[seed % (uint)Stops.Length];
-        var gallons = 60m + seed % 120;
-        var pricePerGallon = 3.20m + (seed % 140) / 100m;
+        var isEu = tenant.Settings.Region == Region.EU;
+        var stops = isEu ? EuStops : UsStops;
+        var merchants = isEu ? EuMerchants : UsMerchants;
+        var stop = stops[seed % (uint)stops.Length];
+        var quantity = isEu ? 250m + seed % 400 : 60m + seed % 120;
+        var pricePerUnit = isEu ? 1.55m + (seed % 40) / 100m : 3.20m + (seed % 140) / 100m;
         var timestamp = date.ToDateTime(new TimeOnly((int)(seed % 24), (int)(seed % 60)), DateTimeKind.Utc);
 
         return new FuelCardTransactionData
         {
             ExternalTransactionId = externalId,
             TransactionDate = timestamp,
-            Amount = Math.Round(gallons * pricePerGallon, 2),
-            Currency = "USD",
-            Quantity = gallons,
-            QuantityUnit = VolumeUnit.Gallons,
-            PricePerUnit = pricePerGallon,
+            Amount = Math.Round(quantity * pricePerUnit, 2),
+            Currency = tenant.Currency,
+            Quantity = quantity,
+            QuantityUnit = isEu ? VolumeUnit.Liters : VolumeUnit.Gallons,
+            PricePerUnit = pricePerUnit,
             ProductCategory = "Diesel",
-            MerchantName = Merchants[seed % (uint)Merchants.Length],
-            MerchantCity = city,
-            PurchaseJurisdiction = new TaxJurisdiction { CountryCode = "US", Region = state },
+            MerchantName = merchants[seed % (uint)merchants.Length],
+            MerchantCity = stop.City,
+            PurchaseJurisdiction = new TaxJurisdiction { CountryCode = stop.CountryCode, Region = stop.Region },
             CardNumberMasked = $"****{seed % 10000:D4}",
             ExternalCardId = $"DEMOCARD-{unitNumber}",
             UnitNumber = unitNumber,
@@ -115,6 +135,8 @@ internal class DemoFuelCardService(
             RawJson = JsonSerializer.Serialize(new { demo = true, unitNumber, date })
         };
     }
+
+    private sealed record FuelStop(string City, string CountryCode, string? Region);
 
     private static uint Seed(string key)
     {

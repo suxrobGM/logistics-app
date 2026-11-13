@@ -64,7 +64,7 @@ public class LoadChargeServiceTests
         Assert.Equal(2, lines.Count);
         Assert.Contains(lines, l => l.Total == 60m);   // 1 h past 2 h free
         Assert.Contains(lines, l => l.Total == 30m);   // 0.5 h
-        Assert.Equal(2000m + 90m, _invoice.Total.Amount);
+        Assert.Equal(2000m + 90m, _invoice.Total);
         await _accessorialRepo.Received(2).AddAsync(Arg.Any<LoadAccessorial>(), Arg.Any<CancellationToken>());
     }
 

@@ -73,7 +73,7 @@ internal sealed class DriverDashboardHandler(ITenantUnitOfWork tenantUow) : IReq
                     .Where(l =>
                         l.AssignedTruckId == x.TruckId &&
                         l.Status == LoadStatus.Delivered)
-                    .Select(l => l.DeliveryCost.Amount)
+                    .Select(l => l.DeliveryCost)
                     .Sum()
             })
             .ToList();
@@ -153,7 +153,7 @@ internal sealed class DriverDashboardHandler(ITenantUnitOfWork tenantUow) : IReq
                 Period = monthStart.ToString("MMM yyyy"),
                 ActiveDrivers = activeDriversCount,
                 LoadsDelivered = monthLoads.Count(l => l.Status == LoadStatus.Delivered),
-                TotalEarnings = monthLoads.Where(l => l.Status == LoadStatus.Delivered).Sum(l => l.DeliveryCost.Amount),
+                TotalEarnings = monthLoads.Where(l => l.Status == LoadStatus.Delivered).Sum(l => l.DeliveryCost),
                 TotalDistance = monthLoads.Where(l => l.Status == LoadStatus.Delivered).Sum(l => l.Distance)
             });
 

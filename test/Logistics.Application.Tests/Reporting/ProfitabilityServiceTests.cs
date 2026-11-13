@@ -70,14 +70,14 @@ public class ProfitabilityServiceTests
             TruckId = (truck ?? _truck).Id,
             Category = category,
             Status = status,
-            Amount = new Money { Amount = amount, Currency = "USD" },
+            Amount = amount,
             ExpenseDate = From.AddDays(3)
         });
 
     private void PayDriver(SalaryType type, decimal rate)
     {
         _driver.SalaryType = type;
-        _driver.Salary = new Money { Amount = rate, Currency = "USD" };
+        _driver.Salary = rate;
     }
 
     [Fact]
@@ -206,7 +206,7 @@ public class ProfitabilityServiceTests
 
         var idleDriver = TestData.Driver();
         idleDriver.SalaryType = SalaryType.Weekly;
-        idleDriver.Salary = new Money { Amount = 500m, Currency = "USD" };
+        idleDriver.Salary = 500m;
         _employees.Add(idleDriver);
         var idleTruck = TestData.Truck(idleDriver, number: "T-2");
         _trucks.Add(idleTruck);
@@ -215,7 +215,7 @@ public class ProfitabilityServiceTests
         {
             Category = CompanyExpenseCategory.Insurance,
             Status = ExpenseStatus.Approved,
-            Amount = new Money { Amount = 400m, Currency = "USD" },
+            Amount = 400m,
             ExpenseDate = From.AddDays(1)
         });
 
@@ -234,10 +234,10 @@ public class ProfitabilityServiceTests
         Delivered(1000m, 100 * Km);
         var dispatcher = TestData.Driver();
         dispatcher.SalaryType = SalaryType.Monthly;
-        dispatcher.Salary = new Money { Amount = 4000m, Currency = "USD" };
+        dispatcher.Salary = 4000m;
         var formerDispatcher = TestData.Driver();
         formerDispatcher.SalaryType = SalaryType.Monthly;
-        formerDispatcher.Salary = new Money { Amount = 9000m, Currency = "USD" };
+        formerDispatcher.Salary = 9000m;
         formerDispatcher.Status = EmployeeStatus.Terminated;
         _employees.AddRange([dispatcher, formerDispatcher]);
 

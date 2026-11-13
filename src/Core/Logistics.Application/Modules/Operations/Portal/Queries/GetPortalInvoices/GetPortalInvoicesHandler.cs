@@ -41,8 +41,8 @@ internal sealed class GetPortalInvoicesHandler(ITenantUnitOfWork tenantUow)
             "number" => baseQuery.OrderBy(i => i.Number),
             "number_desc" => baseQuery.OrderByDescending(i => i.Number),
             "status" => baseQuery.OrderBy(i => i.Status),
-            "total" => baseQuery.OrderBy(i => i.Total.Amount),
-            "total_desc" => baseQuery.OrderByDescending(i => i.Total.Amount),
+            "total" => baseQuery.OrderBy(i => i.Total),
+            "total_desc" => baseQuery.OrderByDescending(i => i.Total),
             "created" => baseQuery.OrderBy(i => i.CreatedAt),
             _ => baseQuery.OrderByDescending(i => i.CreatedAt)
         };

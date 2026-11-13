@@ -7,7 +7,6 @@ public class UpdateExpenseCommand : ICommand<Result>, IExpenseFields
 {
     public Guid Id { get; set; }
     public decimal Amount { get; set; }
-    public string Currency { get; set; } = "USD";
     public string? VendorName { get; set; }
     public DateTime ExpenseDate { get; set; }
     public string? ReceiptBlobPath { get; set; }

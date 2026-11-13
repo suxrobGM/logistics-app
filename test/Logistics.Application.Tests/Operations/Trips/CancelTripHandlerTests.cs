@@ -29,7 +29,7 @@ public class CancelTripHandlerTests
         var dispatcher = TestData.Driver();
         var address = TestData.Address();
         Load NewLoad() => Load.Create($"Load {Guid.NewGuid():N}", LoadType.GeneralFreight, 1000, address, new GeoPoint(0, 0), address,
-            new GeoPoint(1, 1), new Customer { Name = "Acme" }, truck, dispatcher, "USD");
+            new GeoPoint(1, 1), new Customer { Name = "Acme" }, truck, dispatcher);
 
         var delivered = NewLoad();
         var trip = Trip.Create("Trip", truck, [delivered, NewLoad()]);

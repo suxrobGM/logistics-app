@@ -66,7 +66,7 @@ public partial class PayrollInvoice
         {
             var reason = string.IsNullOrWhiteSpace(advance.Reason) ? "" : $" - {advance.Reason}";
             lines.Add(Line($"Cash advance {advance.CreatedAt:MM/dd}{reason}", InvoiceLineItemType.CashAdvance,
-                -advance.Amount.Amount, advance.Id));
+                -advance.Amount, advance.Id));
         }
 
         foreach (var fuel in inputs.FuelCharges.OrderBy(f => f.TransactionDate))
@@ -84,7 +84,7 @@ public partial class PayrollInvoice
             InvoiceId = Id,
             Description = description,
             Type = type,
-            Amount = new() { Amount = amount, Currency = Total.Currency },
+            Amount = amount,
             Quantity = 1,
             SourceId = sourceId
         };

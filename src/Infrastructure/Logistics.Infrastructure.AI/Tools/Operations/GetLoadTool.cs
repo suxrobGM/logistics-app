@@ -68,7 +68,7 @@ internal sealed class GetLoadTool(IMediator mediator, ITenantUnitOfWork tenantUo
             ["has_invoice"] = l.Invoice is not null,
             ["invoice_id"] = l.Invoice?.Id,
             ["invoice_status"] = l.Invoice?.Status.ToString(),
-            ["invoice_total"] = l.Invoice?.Total.Amount
+            ["invoice_total"] = l.Invoice?.Total
         });
     }
 

@@ -42,7 +42,7 @@ public class GetAvailableTrucksToolTests
     private static Employee Driver(Guid id) => new()
     {
         Id = id,
-        Salary = Money.Zero("USD"),
+        Salary = 0m,
         Email = "driver@test.com",
         FirstName = "Dana",
         LastName = "Reyes"

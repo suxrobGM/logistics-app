@@ -69,9 +69,9 @@ internal sealed class SendInvoiceHandler(
         var lineItems = invoice.LineItems.Select(li => new InvoiceLineItemEmailModel
         {
             Description = li.Description,
-            Amount = li.Amount.Format(),
+            Amount = Money.Format(li.Amount, tenant.Currency),
             Quantity = li.Quantity,
-            Total = Money.Format(li.Amount.Amount * li.Quantity, li.Amount.Currency)
+            Total = Money.Format(li.Total, tenant.Currency)
         }).ToList();
 
         // Get additional details based on invoice type
@@ -87,9 +87,9 @@ internal sealed class SendInvoiceHandler(
         {
             CompanyName = companyName,
             InvoiceNumber = invoice.Number,
-            Total = invoice.Total.Format(),
-            AmountDue = Money.Format(amountDue, invoice.Total.Currency),
-            Currency = invoice.Total.Currency,
+            Total = Money.Format(invoice.Total, tenant.Currency),
+            AmountDue = Money.Format(amountDue, tenant.Currency),
+            Currency = tenant.Currency,
             DueDate = invoice.DueDate?.ToString("MMMM dd, yyyy"),
             CustomerName = customerName,
             LoadNumber = loadNumber,

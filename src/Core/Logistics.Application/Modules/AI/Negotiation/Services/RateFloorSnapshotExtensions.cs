@@ -23,7 +23,7 @@ public static class RateFloorSnapshotExtensions
             }
 
             var total = floor.EffectiveFloorTotal is { } amount
-                ? new Money { Amount = amount, Currency = floor.MinTotalRate?.Currency ?? currency }
+                ? new Money { Amount = amount, Currency = currency }
                 : null;
 
             return new RateFloorSnapshot(floor.MinRatePerMile, total, floor.Source);
@@ -41,7 +41,7 @@ public static class RateFloorSnapshotExtensions
         {
             HasFloor = negotiation.FloorSource != RateFloorSource.None,
             MinRatePerMile = negotiation.FloorRatePerMile,
-            MinTotalRate = negotiation.FloorTotalRate,
+            MinTotalRate = negotiation.FloorTotalRate?.Amount,
             Source = negotiation.FloorSource,
             EffectiveFloorTotal = negotiation.FloorTotalRate?.Amount
         };

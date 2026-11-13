@@ -280,16 +280,23 @@ internal sealed class ProcessStripeEventHandler(
             _ => PaymentStatus.Pending
         };
 
-        var currency = (session.Currency ?? invoice.Total.Currency).ToUpperInvariant();
+        var tenant = (await masterUow.Repository<Tenant>().GetByIdAsync(tenantId, ct))!;
+        if (session.Currency is { } sessionCurrency
+            && !string.Equals(sessionCurrency, tenant.Currency, StringComparison.OrdinalIgnoreCase))
+        {
+            logger.LogWarning(
+                "Stripe session for invoice {InvoiceId} was paid in {SessionCurrency}, not the company currency {TenantCurrency}",
+                invoice.Id, sessionCurrency, tenant.Currency);
+        }
 
         var payment = new Payment
         {
-            Amount = new Money { Amount = session.AmountTotal, Currency = currency },
+            Amount = session.AmountTotal,
             Status = status,
             StripePaymentIntentId = paymentIntentId,
             // Stripe's billing details aren't expanded onto the session payload; reuse the
             // tenant's company address as a placeholder, matching ProcessPublicPaymentHandler.
-            BillingAddress = (await masterUow.Repository<Tenant>().GetByIdAsync(tenantId, ct))!.CompanyAddress,
+            BillingAddress = tenant.CompanyAddress,
             Description = $"Payment for Invoice #{invoice.Number}"
         };
 

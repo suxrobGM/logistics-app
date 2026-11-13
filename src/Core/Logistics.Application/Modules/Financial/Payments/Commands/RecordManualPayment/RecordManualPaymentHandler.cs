@@ -47,7 +47,7 @@ internal sealed class RecordManualPaymentHandler(
         // Create the payment entity
         var payment = new Payment
         {
-            Amount = new Money { Amount = req.Amount, Currency = invoice.Total.Currency },
+            Amount = req.Amount,
             Status = PaymentStatus.Paid, // Manual payments are immediately considered paid
             StripePaymentMethodId = null, // Manual payments don't use Stripe
             Description = req.Notes ?? $"Manual {req.Type} payment for Invoice #{invoice.Number}",

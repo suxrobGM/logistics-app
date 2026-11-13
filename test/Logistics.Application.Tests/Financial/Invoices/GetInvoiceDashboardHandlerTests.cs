@@ -79,7 +79,7 @@ public class GetInvoiceDashboardHandlerTests
         invoice.Payments.Add(new Payment
         {
             InvoiceId = invoice.Id,
-            Amount = new Money { Amount = 400m, Currency = "USD" },
+            Amount = 400m,
             Status = PaymentStatus.Paid,
             BillingAddress = FactoringTestData.Address
         });

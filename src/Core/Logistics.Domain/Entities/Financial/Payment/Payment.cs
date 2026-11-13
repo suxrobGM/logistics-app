@@ -6,7 +6,7 @@ namespace Logistics.Domain.Entities;
 
 public class Payment : AuditableEntity, ITenantEntity
 {
-    public required Money Amount { get; set; }
+    public required decimal Amount { get; set; }
     public PaymentStatus Status { get; set; }
     public string? StripePaymentMethodId { get; set; }
     public string? Description { get; set; }

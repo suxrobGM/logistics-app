@@ -1,5 +1,6 @@
 using Logistics.Application.Abstractions.Integrations;
 using Logistics.Application.Modules.Integrations.FuelCards.Services;
+using Logistics.Application.Tests.TestKit;
 using Logistics.Domain.Entities;
 using Logistics.Domain.Persistence;
 using Logistics.Domain.Primitives.Enums;
@@ -34,6 +35,7 @@ public class FuelCardSyncServiceTests
 
     public FuelCardSyncServiceTests()
     {
+        _tenantUow.GetCurrentTenant().Returns(TestTenant.Create());
         _config = new FuelCardProviderConfiguration
         {
             ProviderType = FuelCardProviderType.Demo,

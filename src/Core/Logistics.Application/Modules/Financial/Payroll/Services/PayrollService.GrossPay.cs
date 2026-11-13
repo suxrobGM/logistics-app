@@ -12,7 +12,7 @@ internal partial class PayrollService
     private async Task<GrossPay> CalculateGrossPayAsync(PayrollInvoice payroll, CancellationToken ct)
     {
         var employee = payroll.Employee;
-        var rate = employee.Salary.Amount;
+        var rate = employee.Salary;
         var (from, to) = payroll.PeriodUtcRange();
 
         switch (employee.SalaryType)
@@ -76,7 +76,7 @@ internal partial class PayrollService
                             : l.AssignedTruck != null &&
                               (l.AssignedTruck.MainDriverId == employeeId || l.AssignedTruck.SecondaryDriverId == employeeId)))
             .Select(l => new LoadPayBasis(
-                l.DeliveryCost.Amount,
+                l.DeliveryCost,
                 l.FuelSurcharge,
                 l.Accessorials.Sum(a => a.Rate * a.Quantity),
                 l.Distance))

@@ -12,7 +12,7 @@ public class LoadStatusChangedEventTests
     private static Load NewLoad()
     {
         var load = Load.Create("Load", LoadType.GeneralFreight, 1000, TestData.Address(), new GeoPoint(0, 0), TestData.Address(),
-            new GeoPoint(1, 1), new Customer { Name = "Acme" }, TestData.Truck(), TestData.Driver(), "USD");
+            new GeoPoint(1, 1), new Customer { Name = "Acme" }, TestData.Truck(), TestData.Driver());
         load.DomainEvents.Clear();
         return load;
     }

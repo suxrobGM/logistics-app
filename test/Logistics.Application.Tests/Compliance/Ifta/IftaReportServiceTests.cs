@@ -70,7 +70,7 @@ public class IftaReportServiceTests
     {
         TruckId = _truckId,
         Category = TruckExpenseCategory.Fuel,
-        Amount = new Money { Amount = quantity * 4, Currency = "USD" },
+        Amount = quantity * 4,
         ExpenseDate = new DateTime(2026, 5, 10, 0, 0, 0, DateTimeKind.Utc),
         Quantity = quantity,
         QuantityUnit = unit,

@@ -69,7 +69,7 @@ internal sealed class DriversReportHandler(ITenantUnitOfWork tenantUow) : IReque
                     .Where(l =>
                         l.AssignedTruckId == x.TruckId &&
                         l.Status == Domain.Primitives.Enums.LoadStatus.Delivered)
-                    .Select(l => l.DeliveryCost.Amount)
+                    .Select(l => l.DeliveryCost)
                     .Sum(),
                 TruckNumber = trucks.FirstOrDefault(t => t.Id == x.TruckId)!.Number,
                 IsMainDriver = trucks.FirstOrDefault(t => t.Id == x.TruckId && t.MainDriverId == x.DriverId) != null

@@ -23,7 +23,7 @@ public partial class Load : AuditableEntity, ITenantEntity
     public required Address DestinationAddress { get; set; }
     public required GeoPoint DestinationLocation { get; set; }
 
-    public required Money DeliveryCost { get; set; }
+    public required decimal DeliveryCost { get; set; }
 
     /// <summary>
     /// Total distance of the load in meters.

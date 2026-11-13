@@ -22,7 +22,7 @@ public class EmployeePayTests
             Email = "d@x.com",
             FirstName = "Ana",
             LastName = "Diaz",
-            Salary = Money.Zero("USD"),
+            Salary = 0m,
             PayExcludesFuelSurcharge = excludeFuel,
             PayExcludesAccessorials = excludeAccessorials
         };
@@ -50,7 +50,7 @@ public class EmployeePayTests
     {
         var driver = TestData.Driver();
         driver.SalaryType = type;
-        driver.Salary = new Money { Amount = 1m, Currency = "USD" };
+        driver.Salary = 1m;
 
         Assert.Equal(byLoads, driver.PayForLoads([Load], DistanceUnit.Miles));
         Assert.Equal(byPeriod, driver.PayForPeriod(weeks: 2, months: 3, hours: 4));

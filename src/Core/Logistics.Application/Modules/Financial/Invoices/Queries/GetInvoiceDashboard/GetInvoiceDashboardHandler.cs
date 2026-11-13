@@ -21,7 +21,7 @@ internal sealed class GetInvoiceDashboardHandler(ITenantUnitOfWork tenantUow)
             .GetListAsync(p => p.Invoice is LoadInvoice, ct);
         var paymentsByInvoice = payments.ToLookup(p => p.InvoiceId);
         decimal Outstanding(Invoice invoice) =>
-            invoice.Total.Amount - Invoice.SumPaid(paymentsByInvoice[invoice.Id], invoice.Total.Currency);
+            invoice.Total - Invoice.SumPaid(paymentsByInvoice[invoice.Id]);
 
         var now = DateTime.UtcNow;
         var firstOfMonth = new DateTime(now.Year, now.Month, 1, 0, 0, 0, DateTimeKind.Utc);
@@ -39,7 +39,7 @@ internal sealed class GetInvoiceDashboardHandler(ITenantUnitOfWork tenantUow)
 
         var paymentsThisMonth = payments
             .Where(p => p.Status == PaymentStatus.Paid && p.CreatedAt >= firstOfMonth)
-            .Sum(p => p.Amount.Amount);
+            .Sum(p => p.Amount);
 
         var recentInvoices = invoices
             .OrderByDescending(i => i.CreatedAt)
@@ -55,16 +55,16 @@ internal sealed class GetInvoiceDashboardHandler(ITenantUnitOfWork tenantUow)
         var dashboard = new InvoiceDashboardDto
         {
             DraftCount = draftInvoices.Count,
-            DraftAmount = draftInvoices.Sum(i => i.Total.Amount),
+            DraftAmount = draftInvoices.Sum(i => i.Total),
             PendingCount = pendingInvoices.Count,
-            PendingAmount = pendingInvoices.Sum(i => i.Total.Amount),
+            PendingAmount = pendingInvoices.Sum(i => i.Total),
             OverdueCount = overdueInvoices.Count,
             OverdueAmount = overdueRemaining,
             PartiallyPaidCount = partiallyPaidInvoices.Count,
             PartiallyPaidAmount = partiallyPaidRemaining,
             PaidCount = paidInvoices.Count,
-            PaidAmount = paidInvoices.Sum(i => i.Total.Amount),
-            TotalOutstanding = pendingInvoices.Sum(i => i.Total.Amount) + overdueRemaining + partiallyPaidRemaining,
+            PaidAmount = paidInvoices.Sum(i => i.Total),
+            TotalOutstanding = pendingInvoices.Sum(i => i.Total) + overdueRemaining + partiallyPaidRemaining,
             CollectedThisMonth = paymentsThisMonth,
             OwedByCustomers = openLoadInvoices.Where(i => i.FactoringStatus != FactoringStatus.Submitted).Sum(Outstanding),
             OwedByFactor = openLoadInvoices.Where(i => i.FactoringStatus == FactoringStatus.Submitted).Sum(Outstanding)

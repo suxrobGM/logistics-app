@@ -64,7 +64,7 @@ internal partial class PayrollService(
 
         logger.LogInformation(
             "Recalculated payroll {PayrollId} for employee {EmployeeId}: Net={Amount}, Distance={Distance}, Hours={Hours}",
-            payroll.Id, payroll.EmployeeId, payroll.Total.Amount, payroll.TotalDistanceDriven, payroll.TotalHoursWorked);
+            payroll.Id, payroll.EmployeeId, payroll.Total, payroll.TotalDistanceDriven, payroll.TotalHoursWorked);
     }
 
     public async Task LinkTimeEntriesToPayrollAsync(PayrollInvoice payroll, CancellationToken ct = default)
@@ -113,12 +113,11 @@ internal partial class PayrollService(
 
     private PayrollInvoice NewDraft(Employee employee, DateOnly startDate, DateOnly endDate)
     {
-        var currency = tenantUow.GetCurrentTenant().Settings.Currency.ToString();
         return new PayrollInvoice
         {
-            Subtotal = Money.Zero(currency),
-            TaxTotal = Money.Zero(currency),
-            Total = Money.Zero(currency),
+            Subtotal = 0m,
+            TaxTotal = 0m,
+            Total = 0m,
             PeriodStart = startDate,
             PeriodEnd = endDate,
             EmployeeId = employee.Id,

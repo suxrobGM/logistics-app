@@ -98,7 +98,7 @@ internal sealed class AgentTestContext
             .Select(e => new Employee
             {
                 Id = e.UserId,
-                Salary = Money.Zero("USD"),
+                Salary = 0m,
                 Email = $"{e.FirstName}.{e.LastName}@test.com".ToLowerInvariant(),
                 FirstName = e.FirstName,
                 LastName = e.LastName

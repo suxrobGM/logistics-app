@@ -19,7 +19,7 @@ public class FactoringBatchItem : AuditableEntity, ITenantEntity
     /// <summary>
     /// Invoice total when it was submitted.
     /// </summary>
-    public required Money Amount { get; set; }
+    public required decimal Amount { get; set; }
 
     public FactoringStatus Status { get; set; } = FactoringStatus.Submitted;
 
@@ -62,7 +62,7 @@ public class FactoringBatchItem : AuditableEntity, ITenantEntity
     public Payment Fund(decimal advance, decimal fee, DateTime fundedAt, Address billingAddress)
     {
         EnsureStatus(FactoringStatus.Submitted, "funded");
-        var amounts = FactoringAmounts.FromAdvanceAndFee(Amount.Amount, advance, fee);
+        var amounts = FactoringAmounts.FromAdvanceAndFee(Amount, advance, fee);
 
         var payment = new Payment
         {

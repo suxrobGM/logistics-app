@@ -11,7 +11,7 @@ internal static partial class TelegramMessageFormatter
 {
     private const int MaxMessageLength = 4096;
 
-    public static string FormatLoads(IReadOnlyList<LoadDto> loads, int page, int totalPages)
+    public static string FormatLoads(IReadOnlyList<LoadDto> loads, string currency, int page, int totalPages)
     {
         var sb = new StringBuilder();
         sb.AppendLine(Bold("Loads"));
@@ -33,7 +33,7 @@ internal static partial class TelegramMessageFormatter
             if (load.AssignedTruckNumber is not null)
                 sb.AppendLine(Escape($"  Truck: {load.AssignedTruckNumber}"));
 
-            sb.AppendLine(Escape($"  Cost: ${load.DeliveryCost:N2}"));
+            sb.AppendLine(Escape($"  Cost: {Money.Format(load.DeliveryCost, currency)}"));
             sb.AppendLine();
         }
 

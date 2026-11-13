@@ -35,7 +35,7 @@ public class SetupEmployeePayoutHandlerTests
     {
         return new Employee
         {
-            Salary = Money.Zero("USD"),
+            Salary = 0m,
             Email = "driver@test.com",
             FirstName = "John",
             LastName = "Doe",

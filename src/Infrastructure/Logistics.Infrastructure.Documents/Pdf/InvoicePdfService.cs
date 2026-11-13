@@ -30,19 +30,19 @@ public class InvoicePdfService : IInvoicePdfService
                 page.Content().PaddingVertical(20).Column(col =>
                 {
                     col.Spacing(15);
-                    col.Item().Element(c => InvoiceLineItemsSection.Render(c, invoice, taxLabel));
+                    col.Item().Element(c => InvoiceLineItemsSection.Render(c, invoice, taxLabel, tenant.Currency));
 
                     // A factored invoice is the factor's to collect: the carrier's own payment record (the
                     // factor's purchase included) would read to the customer as already paid.
                     if (invoice.AssignedFactor is { } factor)
                     {
-                        col.Item().Element(c => InvoiceTotalsSection.Render(c, invoice, taxLabel, showTax, showPayments: false));
+                        col.Item().Element(c => InvoiceTotalsSection.Render(c, invoice, tenant.Currency, taxLabel, showTax, showPayments: false));
                         col.Item().Element(c => InvoiceRemitToSection.Render(c, factor));
                     }
                     else
                     {
-                        col.Item().Element(c => InvoiceTotalsSection.Render(c, invoice, taxLabel, showTax, showPayments: true));
-                        col.Item().Element(c => PaymentHistoryTable.Render(c, invoice.Payments, invoice.Total.Currency));
+                        col.Item().Element(c => InvoiceTotalsSection.Render(c, invoice, tenant.Currency, taxLabel, showTax, showPayments: true));
+                        col.Item().Element(c => PaymentHistoryTable.Render(c, invoice.Payments, tenant.Currency));
                     }
 
                     if (!string.IsNullOrEmpty(invoice.Notes))
@@ -60,7 +60,7 @@ public class InvoicePdfService : IInvoicePdfService
 
     private static bool HasTax(LoadInvoice invoice) =>
         invoice.TaxBehavior != TaxBehavior.Exclusive
-        || invoice.TaxTotal.Amount > 0m
+        || invoice.TaxTotal > 0m
         || invoice.LineItems.Any(li => li.TaxAmount > 0m || li.TaxRatePercent > 0m);
 
     private static void RenderNotes(IContainer container, string notes)

@@ -11,7 +11,6 @@ public interface ILaneRateFloorFields
     string DestinationCountry { get; }
     string? DestinationState { get; }
     decimal MinRatePerMile { get; }
-    decimal? MinTotalRateAmount { get; }
-    string MinTotalRateCurrency { get; }
+    decimal? MinTotalRate { get; }
     string? Notes { get; }
 }

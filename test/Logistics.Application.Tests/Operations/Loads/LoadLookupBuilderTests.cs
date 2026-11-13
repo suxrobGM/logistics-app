@@ -38,8 +38,8 @@ public class LoadLookupBuilderTests
     public async Task ResolveAsync_MapsRelatedValuesWithoutTheNavigations()
     {
         var customer = new Customer { Name = "ACME" };
-        var dispatcher = new Employee { Email = "d@x.com", FirstName = "Dana", LastName = "Disp", Salary = Money.Zero("USD") };
-        var driver = new Employee { Email = "r@x.com", FirstName = "Rick", LastName = "Road", Salary = Money.Zero("USD") };
+        var dispatcher = new Employee { Email = "d@x.com", FirstName = "Dana", LastName = "Disp", Salary = 0m };
+        var driver = new Employee { Email = "r@x.com", FirstName = "Rick", LastName = "Road", Salary = 0m };
         var truck = new Truck { Number = "T-7", Type = TruckType.FreightTruck, MainDriverId = driver.Id };
         var load = new Load
         {
@@ -49,7 +49,7 @@ public class LoadLookupBuilderTests
             OriginLocation = new GeoPoint(0, 0),
             DestinationAddress = Somewhere,
             DestinationLocation = new GeoPoint(0, 0),
-            DeliveryCost = new Money { Amount = 1000m, Currency = "USD" },
+            DeliveryCost = 1000m,
             Customer = null!,
             CustomerId = customer.Id,
             AssignedTruckId = truck.Id,
@@ -59,7 +59,7 @@ public class LoadLookupBuilderTests
         var invoice = new LoadInvoice
         {
             Subtotal = load.DeliveryCost,
-            TaxTotal = Money.Zero("USD"),
+            TaxTotal = 0m,
             Total = load.DeliveryCost,
             LoadId = load.Id,
             CustomerId = customer.Id

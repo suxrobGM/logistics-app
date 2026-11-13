@@ -29,7 +29,7 @@ public class MapEldDriverHandlerTests
             Email = "gone@test.com",
             FirstName = "Gone",
             LastName = "Driver",
-            Salary = Money.Zero("USD"),
+            Salary = 0m,
             Status = EmployeeStatus.Terminated
         };
         _employeeRepo.GetByIdAsync(employee.Id, Arg.Any<CancellationToken>()).Returns(employee);

@@ -1,20 +1,22 @@
 using Logistics.Application.Abstractions.Communications.EmailModels;
 using Logistics.Application.Modules.Operations.Notifications.Services;
 using Logistics.Domain.Events;
+using Logistics.Domain.Persistence;
 using Logistics.Domain.Primitives.ValueObjects;
 using Logistics.Mediator;
 
 namespace Logistics.Application.Modules.Financial.Payroll.Events;
 
 /// <summary>Tells the employee a payroll payment landed: push, in-app and email.</summary>
-internal sealed class PayrollPaidNotificationHandler(IEventNotifier notifier)
+internal sealed class PayrollPaidNotificationHandler(IEventNotifier notifier, ITenantUnitOfWork tenantUow)
     : INotificationHandler<PayrollPaidEvent>
 {
     public async Task Handle(PayrollPaidEvent @event, CancellationToken cancellationToken)
     {
-        var payment = Money.Format(@event.PaymentAmount, @event.Currency);
-        var total = Money.Format(@event.TotalAmount, @event.Currency);
-        var outstanding = Money.Format(@event.OutstandingAmount, @event.Currency);
+        var currency = tenantUow.GetCurrentTenant().Currency;
+        var payment = Money.Format(@event.PaymentAmount, currency);
+        var total = Money.Format(@event.TotalAmount, currency);
+        var outstanding = Money.Format(@event.OutstandingAmount, currency);
         var data = new Dictionary<string, string>
         {
             ["payrollId"] = @event.PayrollId.ToString(),
@@ -35,7 +37,7 @@ internal sealed class PayrollPaidNotificationHandler(IEventNotifier notifier)
             PaymentAmount = payment,
             TotalAmount = total,
             OutstandingAmount = outstanding,
-            Currency = @event.Currency,
+            Currency = currency,
             IsFullyPaid = @event.IsFullyPaid,
             PeriodStart = @event.PeriodStart.ToString("MMMM d, yyyy"),
             PeriodEnd = @event.PeriodEnd.ToString("MMMM d, yyyy")

@@ -1,7 +1,6 @@
 using System.Text.Json;
 using Logistics.Domain.Events;
 using Logistics.Domain.Primitives.Enums;
-using Logistics.Domain.Primitives.ValueObjects;
 
 namespace Logistics.Domain.Entities;
 
@@ -43,7 +42,6 @@ public abstract partial class Invoice
     /// </summary>
     public void RecalculateTotals()
     {
-        var currency = Total.Currency;
         decimal subtotal;
         decimal taxTotal;
         decimal total;
@@ -80,9 +78,9 @@ public abstract partial class Invoice
                 break;
         }
 
-        Subtotal = new Money { Amount = decimal.Round(subtotal, 2), Currency = currency };
-        TaxTotal = new Money { Amount = decimal.Round(taxTotal, 2), Currency = currency };
-        Total = new Money { Amount = decimal.Round(total, 2), Currency = currency };
+        Subtotal = decimal.Round(subtotal, 2);
+        TaxTotal = decimal.Round(taxTotal, 2);
+        Total = decimal.Round(total, 2);
 
         if (Payments.Count > 0)
         {
@@ -91,10 +89,9 @@ public abstract partial class Invoice
 
         DomainEvents.Add(new InvoiceTotalsRecalculatedEvent(
             Id,
-            Subtotal.Amount,
-            TaxTotal.Amount,
-            Total.Amount,
-            currency,
+            Subtotal,
+            TaxTotal,
+            Total,
             TaxBehavior));
     }
 }

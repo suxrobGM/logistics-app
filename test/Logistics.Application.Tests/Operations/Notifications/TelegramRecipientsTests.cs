@@ -121,7 +121,7 @@ public class TelegramRecipientsTests
             Email = "e@example.com",
             FirstName = "E",
             LastName = "Mployee",
-            Salary = new Money { Amount = 0, Currency = "USD" },
+            Salary = 0,
             Status = status,
             Role = new TenantRole(roleName)
         };

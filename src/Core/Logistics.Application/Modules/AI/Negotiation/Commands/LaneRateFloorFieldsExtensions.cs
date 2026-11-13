@@ -1,5 +1,4 @@
 using Logistics.Domain.Entities;
-using Logistics.Domain.Primitives.ValueObjects;
 
 namespace Logistics.Application.Modules.AI.Negotiation.Commands;
 
@@ -22,9 +21,7 @@ internal static class LaneRateFloorFieldsExtensions
             floor.DestinationCountry = LaneKey.Country(fields.DestinationCountry);
             floor.DestinationState = LaneKey.State(fields.DestinationState);
             floor.MinRatePerMile = fields.MinRatePerMile;
-            floor.MinTotalRate = fields.MinTotalRateAmount.HasValue
-                ? new Money { Amount = fields.MinTotalRateAmount.Value, Currency = fields.MinTotalRateCurrency }
-                : null;
+            floor.MinTotalRate = fields.MinTotalRate;
             floor.Notes = fields.Notes;
         }
     }

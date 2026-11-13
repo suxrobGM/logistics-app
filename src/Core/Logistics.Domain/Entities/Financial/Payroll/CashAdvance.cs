@@ -12,7 +12,7 @@ public class CashAdvance : AuditableEntity, ITenantEntity
     public Guid EmployeeId { get; set; }
     public virtual Employee Employee { get; set; } = null!;
 
-    public required Money Amount { get; set; }
+    public required decimal Amount { get; set; }
     public string? Reason { get; set; }
 
     /// <summary>The settlement the advance was deducted from; null while it is still owed.</summary>

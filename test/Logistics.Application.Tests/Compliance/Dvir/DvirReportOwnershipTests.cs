@@ -76,7 +76,7 @@ public class DvirReportOwnershipTests
     private static Employee Employee(Guid id, TenantRole role) => new()
     {
         Id = id,
-        Salary = Money.Zero("USD"),
+        Salary = 0m,
         Email = $"{id}@test.com",
         FirstName = "Test",
         LastName = "Employee",

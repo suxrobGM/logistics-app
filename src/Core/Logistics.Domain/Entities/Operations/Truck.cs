@@ -177,12 +177,12 @@ public class Truck : Entity, ITenantEntity
 
         if (MainDriver?.SalaryType == SalaryType.ShareOfGross)
         {
-            ratio += (float)MainDriver.Salary.Amount;
+            ratio += (float)MainDriver.Salary;
         }
 
         if (SecondaryDriver?.SalaryType == SalaryType.ShareOfGross)
         {
-            ratio += (float)SecondaryDriver.Salary.Amount;
+            ratio += (float)SecondaryDriver.Salary;
         }
 
         return ratio;

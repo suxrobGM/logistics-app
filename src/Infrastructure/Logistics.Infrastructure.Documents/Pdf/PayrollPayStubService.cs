@@ -21,7 +21,7 @@ public class PayrollPayStubService : IPayrollPayStubService
                 page.DefaultTextStyle(x => x.FontSize(10));
 
                 page.Header().Element(c => PayrollHeaderSection.Render(c, payroll, tenant));
-                page.Content().PaddingVertical(20).Element(c => PayrollEarningsSection.Render(c, payroll));
+                page.Content().PaddingVertical(20).Element(c => PayrollEarningsSection.Render(c, payroll, tenant.Currency));
                 page.Footer().Element(c => PdfFooter.Render(c, tenant, "This is a pay stub for your records."));
             });
         });

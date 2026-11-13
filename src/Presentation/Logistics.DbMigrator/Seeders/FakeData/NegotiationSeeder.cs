@@ -93,7 +93,7 @@ internal class NegotiationSeeder(ILogger<NegotiationSeeder> logger) : SeederBase
                 DestinationCountry = LaneKey.Country(destinationAddress?.Country ?? originAddress.Country),
                 DestinationState = LaneKey.State(destinationAddress?.State),
                 MinRatePerMile = decimal.Round(baseFloor + premium, 2),
-                MinTotalRate = destinationAddress is null ? null : new Money { Amount = 950m, Currency = currency },
+                MinTotalRate = destinationAddress is null ? null : 950m,
                 Notes = notes
             };
 

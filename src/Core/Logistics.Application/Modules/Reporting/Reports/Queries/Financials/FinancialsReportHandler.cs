@@ -31,14 +31,14 @@ internal sealed class FinancialsReportHandler(ITenantUnitOfWork tenantUow)
         var invoices = await invoicesQuery.ToListAsync(ct);
 
         var totalCount = invoices.Count;
-        var totalInvoiced = invoices.Sum(i => i.Total.Amount);
+        var totalInvoiced = invoices.Sum(i => i.Total);
         var totalPaid = invoices.Sum(i => i.AmountPaid);
         var totalDue = totalInvoiced - totalPaid;
 
-        var fullyPaidInvoices = invoices.Count(i => i.AmountPaid >= i.Total.Amount);
+        var fullyPaidInvoices = invoices.Count(i => i.AmountPaid >= i.Total);
         var partiallyPaidInvoices = invoices.Count(i =>
             i.AmountPaid > 0 &&
-            i.AmountPaid < i.Total.Amount);
+            i.AmountPaid < i.Total);
         var unpaidInvoices = invoices.Count(i => i.AmountPaid == 0);
 
         var averageInvoiceValue = totalCount > 0 ? totalInvoiced / totalCount : 0;
@@ -107,7 +107,7 @@ internal sealed class FinancialsReportHandler(ITenantUnitOfWork tenantUow)
                 .Where(i => i.CreatedAt >= monthStart && i.CreatedAt < nextMonthStart)
                 .ToList();
 
-            var monthTotal = monthInvoices.Sum(i => i.Total.Amount);
+            var monthTotal = monthInvoices.Sum(i => i.Total);
             var monthPaid = monthInvoices.Sum(i => i.AmountPaid);
 
             trends.Add(new PaymentTrendDto
@@ -131,7 +131,7 @@ internal sealed class FinancialsReportHandler(ITenantUnitOfWork tenantUow)
             .Select(g => new TopCustomerDto
             {
                 CustomerName = g.Key.Name,
-                TotalInvoiced = g.Sum(i => i.Total.Amount),
+                TotalInvoiced = g.Sum(i => i.Total),
                 TotalPaid = g.Sum(i => i.AmountPaid),
                 InvoiceCount = g.Count()
             })
@@ -178,7 +178,7 @@ internal sealed class FinancialsReportHandler(ITenantUnitOfWork tenantUow)
                 .Where(i => i.CreatedAt >= monthStart && i.CreatedAt < nextMonthStart)
                 .ToList();
 
-            var revenue = monthInvoices.Sum(i => i.Total.Amount);
+            var revenue = monthInvoices.Sum(i => i.Total);
             var paid = monthInvoices.Sum(i => i.AmountPaid);
             var month = (monthStart.Year, monthStart.Month);
             var expenses = expensesByMonth.GetValueOrDefault(month)
@@ -208,7 +208,7 @@ internal sealed class FinancialsReportHandler(ITenantUnitOfWork tenantUow)
             .Where(e => ExpenseStatuses.Counted.Contains(e.Status))
             .Where(e => e.ExpenseDate >= from && e.ExpenseDate < to)
             .GroupBy(e => new { e.ExpenseDate.Year, e.ExpenseDate.Month })
-            .Select(g => new { g.Key.Year, g.Key.Month, Total = g.Sum(e => e.Amount.Amount) })
+            .Select(g => new { g.Key.Year, g.Key.Month, Total = g.Sum(e => e.Amount) })
             .ToListAsync(ct);
         return rows.ToDictionary(r => (r.Year, r.Month), r => r.Total);
     }
@@ -222,7 +222,7 @@ internal sealed class FinancialsReportHandler(ITenantUnitOfWork tenantUow)
             .Where(p => p.Status == InvoiceStatus.Approved || InvoiceStatuses.Receivable.Contains(p.Status))
             .Where(p => p.PeriodEnd >= fromDay && p.PeriodEnd < toDay)
             .GroupBy(p => new { p.PeriodEnd.Year, p.PeriodEnd.Month })
-            .Select(g => new { g.Key.Year, g.Key.Month, Total = g.Sum(p => p.Total.Amount) })
+            .Select(g => new { g.Key.Year, g.Key.Month, Total = g.Sum(p => p.Total) })
             .ToListAsync(ct);
         return rows.ToDictionary(r => (r.Year, r.Month), r => r.Total);
     }

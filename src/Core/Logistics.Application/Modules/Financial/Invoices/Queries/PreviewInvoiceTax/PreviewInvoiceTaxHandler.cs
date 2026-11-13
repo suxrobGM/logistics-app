@@ -31,7 +31,7 @@ internal sealed class PreviewInvoiceTaxHandler(
         }
 
         var tenant = tenantUow.GetCurrentTenant();
-        var currency = req.Request.Currency;
+        var currency = tenant.Currency;
 
         var calcRequest = new TaxCalculationRequest
         {
@@ -54,6 +54,6 @@ internal sealed class PreviewInvoiceTaxHandler(
         var total = result.TaxBehavior == TaxBehavior.ReverseCharge ? subtotal : subtotal + taxTotal;
 
         return Result<PreviewInvoiceTaxResponse>.Ok(
-            result.ToPreviewResponse(currency, subtotal, taxTotal, total));
+            result.ToPreviewResponse(subtotal, taxTotal, total));
     }
 }

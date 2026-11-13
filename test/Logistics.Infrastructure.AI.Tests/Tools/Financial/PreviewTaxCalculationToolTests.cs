@@ -28,7 +28,6 @@ public class PreviewTaxCalculationToolTests
         var input = new JsonObject
         {
             ["customer_id"] = Guid.NewGuid().ToString(),
-            ["currency"] = "USD",
             ["line_items"] = new JsonArray()
         };
 
@@ -45,7 +44,6 @@ public class PreviewTaxCalculationToolTests
         var input = new JsonObject
         {
             ["customer_id"] = customerId.ToString(),
-            ["currency"] = "EUR",
             ["line_items"] = new JsonArray(
                 new JsonObject
                 {
@@ -59,9 +57,9 @@ public class PreviewTaxCalculationToolTests
         var response = new PreviewInvoiceTaxResponse
         {
             TaxBehavior = TaxBehavior.Exclusive,
-            Subtotal = new Money { Amount = 200m, Currency = "EUR" },
-            TaxTotal = new Money { Amount = 38m, Currency = "EUR" },
-            Total = new Money { Amount = 238m, Currency = "EUR" },
+            Subtotal = 200m,
+            TaxTotal = 38m,
+            Total = 238m,
             Lines = [new PreviewLineItemTax
             {
                 LineItemId = lineItemId, RatePercent = 19m, TaxAmount = 38m, TaxCode = null
@@ -84,7 +82,6 @@ public class PreviewTaxCalculationToolTests
         var root = json.RootElement;
 
         Assert.Equal("Exclusive", root.GetProperty("tax_behavior").GetString());
-        Assert.Equal("EUR", root.GetProperty("currency").GetString());
         Assert.Equal(200m, root.GetProperty("subtotal").GetDecimal());
         Assert.Equal(38m, root.GetProperty("tax_total").GetDecimal());
         Assert.Equal(238m, root.GetProperty("total").GetDecimal());
@@ -101,7 +98,6 @@ public class PreviewTaxCalculationToolTests
         await _mediator.Received(1).Send(
             Arg.Is<PreviewInvoiceTaxQuery>(q =>
                 q.Request.CustomerId == customerId &&
-                q.Request.Currency == "EUR" &&
                 q.Request.LineItems.Count == 1 &&
                 q.Request.LineItems[0].Amount == 100m &&
                 q.Request.LineItems[0].Quantity == 2 &&
@@ -115,7 +111,6 @@ public class PreviewTaxCalculationToolTests
         var input = new JsonObject
         {
             ["customer_id"] = Guid.NewGuid().ToString(),
-            ["currency"] = "EUR",
             ["line_items"] = new JsonArray(new JsonObject
             {
                 ["description"] = "Freight",
@@ -126,9 +121,9 @@ public class PreviewTaxCalculationToolTests
         var response = new PreviewInvoiceTaxResponse
         {
             TaxBehavior = TaxBehavior.ReverseCharge,
-            Subtotal = new Money { Amount = 100m, Currency = "EUR" },
-            TaxTotal = new Money { Amount = 0m, Currency = "EUR" },
-            Total = new Money { Amount = 100m, Currency = "EUR" },
+            Subtotal = 100m,
+            TaxTotal = 0m,
+            Total = 100m,
             Lines = [],
             Breakdown = [new InvoiceTaxLineDto
             {
@@ -156,7 +151,6 @@ public class PreviewTaxCalculationToolTests
         var input = new JsonObject
         {
             ["customer_id"] = Guid.NewGuid().ToString(),
-            ["currency"] = "USD",
             ["line_items"] = new JsonArray(new JsonObject { ["description"] = "x", ["amount"] = 100 })
         };
 
@@ -175,7 +169,6 @@ public class PreviewTaxCalculationToolTests
         var input = new JsonObject
         {
             ["customer_id"] = Guid.NewGuid().ToString(),
-            ["currency"] = "USD",
             ["line_items"] = new JsonArray(new JsonObject
             {
                 ["description"] = "x",

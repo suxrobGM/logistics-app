@@ -13,7 +13,6 @@ public class UpdateLaneRateFloorCommand : ICommand<Result>, ILaneRateFloorFields
     public string DestinationCountry { get; set; } = "US";
     public string? DestinationState { get; set; }
     public decimal MinRatePerMile { get; set; }
-    public decimal? MinTotalRateAmount { get; set; }
-    public string MinTotalRateCurrency { get; set; } = "USD";
+    public decimal? MinTotalRate { get; set; }
     public string? Notes { get; set; }
 }

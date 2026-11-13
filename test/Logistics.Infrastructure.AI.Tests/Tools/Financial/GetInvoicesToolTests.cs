@@ -48,9 +48,9 @@ public class GetInvoicesToolTests
                     Id = Guid.NewGuid(),
                     Number = 12,
                     Status = InvoiceStatus.Sent,
-                    Subtotal = CopilotToolTestData.Usd(1000m),
-                    TaxTotal = CopilotToolTestData.Usd(80m),
-                    Total = CopilotToolTestData.Usd(1080m)
+                    Subtotal = 1000m,
+                    TaxTotal = 80m,
+                    Total = 1080m
                 }], 1, 20));
 
         var result = await _sut.ExecuteAsync(new JsonObject(), CancellationToken.None);

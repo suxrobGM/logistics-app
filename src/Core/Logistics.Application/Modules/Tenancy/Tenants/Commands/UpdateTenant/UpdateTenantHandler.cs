@@ -5,11 +5,13 @@ using Logistics.Domain.Entities;
 using Logistics.Domain.Persistence;
 using Logistics.Mediator;
 using Logistics.Shared.Models;
+using Microsoft.EntityFrameworkCore;
 
 namespace Logistics.Application.Modules.Tenancy.Tenants.Commands;
 
 internal sealed class UpdateTenantHandler(
     IMasterUnitOfWork masterUow,
+    ITenantUnitOfWork tenantUow,
     IStripeCustomerService stripeCustomerService) : IRequestHandler<UpdateTenantCommand, Result>
 {
     public async Task<Result> Handle(UpdateTenantCommand req, CancellationToken ct)
@@ -19,6 +21,12 @@ internal sealed class UpdateTenantHandler(
         if (tenant is null)
         {
             return Result.Fail($"Could not find a tenant with ID '{req.Id}'", ErrorCodes.NotFound);
+        }
+
+        var currencyChanged = req.Settings is not null && req.Settings.Currency != tenant.Settings.Currency;
+        if (currencyChanged && await HasFinancialRecordsAsync(tenant.Id, ct))
+        {
+            return Result.Fail("The currency can't change once the company has loads, invoices or expenses.");
         }
 
         tenant.CompanyName = PropertyUpdater.UpdateIfChanged(req.CompanyName, tenant.CompanyName);
@@ -45,5 +53,15 @@ internal sealed class UpdateTenantHandler(
 
         await masterUow.SaveChangesAsync(ct);
         return Result.Ok();
+    }
+
+    /// <summary>Amounts carry no currency of their own, so changing it would relabel every one.</summary>
+    private async Task<bool> HasFinancialRecordsAsync(Guid tenantId, CancellationToken ct)
+    {
+        await tenantUow.SetCurrentTenantByIdAsync(tenantId);
+        var hasLoads = await tenantUow.Repository<Load>().Query().AnyAsync(ct);
+        var hasInvoices = await tenantUow.Repository<Invoice>().Query().AnyAsync(ct);
+        var hasExpenses = await tenantUow.Repository<Expense>().Query().AnyAsync(ct);
+        return hasLoads || hasInvoices || hasExpenses;
     }
 }

@@ -54,9 +54,9 @@ internal sealed class UpdateLoadHandler(
                 load.RefreshTripStops();
             }
 
-            if (req.DeliveryCost is not null && req.DeliveryCost != load.DeliveryCost.Amount)
+            if (req.DeliveryCost is not null && req.DeliveryCost != load.DeliveryCost)
             {
-                load.DeliveryCost = new() { Amount = req.DeliveryCost.Value, Currency = load.DeliveryCost.Currency };
+                load.DeliveryCost = req.DeliveryCost.Value;
             }
 
             load.Type = PropertyUpdater.UpdateIfChanged(req.Type, load.Type);
@@ -122,8 +122,7 @@ internal sealed class UpdateLoadHandler(
     [
         load.CustomerId,
         load.Type,
-        load.DeliveryCost.Amount,
-        load.DeliveryCost.Currency,
+        load.DeliveryCost,
         load.FuelSurcharge,
         .. load.Accessorials.Select(a => (a.Id, a.Name, a.LineItemType, a.Rate, a.Quantity))
     ];

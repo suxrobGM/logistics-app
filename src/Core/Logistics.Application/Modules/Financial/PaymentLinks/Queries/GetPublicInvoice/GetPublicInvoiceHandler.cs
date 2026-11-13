@@ -65,6 +65,7 @@ internal sealed class GetPublicInvoiceHandler(
             Subtotal = invoice.Subtotal,
             TaxTotal = invoice.TaxTotal,
             Total = invoice.Total,
+            Currency = tenant.Currency,
             TaxBehavior = invoice.TaxBehavior,
             TaxBreakdown = invoice.GetTaxBreakdown().ToDto(),
             DueDate = invoice.DueDate,

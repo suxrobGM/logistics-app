@@ -1,5 +1,6 @@
 using System.Linq.Expressions;
 using Logistics.Application.Modules.Integrations.FuelCards.Commands;
+using Logistics.Application.Tests.TestKit;
 using Logistics.Domain.Entities;
 using Logistics.Domain.Persistence;
 using Logistics.Domain.Primitives.Enums;
@@ -30,6 +31,7 @@ public class AssignFuelCardTransactionTruckHandlerTests
 
     public AssignFuelCardTransactionTruckHandlerTests()
     {
+        _tenantUow.GetCurrentTenant().Returns(TestTenant.Create());
         _truck = new Truck { Number = "T-200", Type = TruckType.FreightTruck };
         _transaction = new FuelCardTransaction
         {

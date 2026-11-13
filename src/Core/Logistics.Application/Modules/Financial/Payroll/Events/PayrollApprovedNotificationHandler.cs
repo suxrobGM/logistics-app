@@ -1,18 +1,20 @@
 using Logistics.Application.Abstractions.Communications.EmailModels;
 using Logistics.Application.Modules.Operations.Notifications.Services;
 using Logistics.Domain.Events;
+using Logistics.Domain.Persistence;
 using Logistics.Domain.Primitives.ValueObjects;
 using Logistics.Mediator;
 
 namespace Logistics.Application.Modules.Financial.Payroll.Events;
 
 /// <summary>Tells the employee their payroll was approved: push, in-app and email.</summary>
-internal sealed class PayrollApprovedNotificationHandler(IEventNotifier notifier)
+internal sealed class PayrollApprovedNotificationHandler(IEventNotifier notifier, ITenantUnitOfWork tenantUow)
     : INotificationHandler<PayrollApprovedEvent>
 {
     public async Task Handle(PayrollApprovedEvent @event, CancellationToken cancellationToken)
     {
-        var total = Money.Format(@event.TotalAmount, @event.Currency);
+        var currency = tenantUow.GetCurrentTenant().Currency;
+        var total = Money.Format(@event.TotalAmount, currency);
         var data = new Dictionary<string, string>
         {
             ["payrollId"] = @event.PayrollId.ToString(),
@@ -29,7 +31,7 @@ internal sealed class PayrollApprovedNotificationHandler(IEventNotifier notifier
                 EmployeeName = @event.EmployeeName,
                 PayrollNumber = @event.PayrollNumber,
                 TotalAmount = total,
-                Currency = @event.Currency,
+                Currency = currency,
                 PeriodStart = @event.PeriodStart.ToString("MMMM d, yyyy"),
                 PeriodEnd = @event.PeriodEnd.ToString("MMMM d, yyyy")
             });

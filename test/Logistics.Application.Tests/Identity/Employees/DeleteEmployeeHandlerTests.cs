@@ -23,7 +23,7 @@ public class DeleteEmployeeHandlerTests
             Email = "d@example.com",
             FirstName = "D",
             LastName = "River",
-            Salary = new Money { Amount = 0, Currency = "USD" }
+            Salary = 0
         };
         var employeeRepo = Substitute.For<ITenantRepository<Employee, Guid>>();
         employeeRepo.GetByIdAsync(employee.Id, Arg.Any<CancellationToken>()).Returns(employee);

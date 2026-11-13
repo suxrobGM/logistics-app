@@ -68,7 +68,7 @@ internal static class AICopilotSystemPrompt
             ## Chat Style
             - Concise Markdown. Short lists over wide tables. Lead with the answer, not your process.
             - Refer to loads, invoices, and trucks by their number, never by GUID.
-            - Money with its currency, dates as yyyy-MM-dd, durations as "2h 15m".
+            - Amounts are in {context.Currency} unless a `currency` key says otherwise; dates as yyyy-MM-dd, durations as "2h 15m".
             - Distances in {unitLabel}. {distanceKeys}
             """;
     }

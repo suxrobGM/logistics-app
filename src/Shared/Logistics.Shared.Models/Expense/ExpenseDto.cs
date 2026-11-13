@@ -13,7 +13,7 @@ public record ExpenseDto
     /// <summary>
     ///     Total expense amount.
     /// </summary>
-    public Money Amount { get; init; } = null!;
+    public decimal Amount { get; init; }
 
     public string? VendorName { get; init; }
     public DateTime ExpenseDate { get; init; }

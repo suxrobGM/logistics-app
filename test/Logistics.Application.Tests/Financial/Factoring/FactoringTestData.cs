@@ -34,7 +34,7 @@ internal static class FactoringTestData
     public static LoadInvoice Invoice(
         Customer customer, long number = 1001, decimal total = 1000m, InvoiceStatus status = InvoiceStatus.Issued)
     {
-        var money = new Money { Amount = total, Currency = "USD" };
+        var money = total;
         var load = new Load
         {
             Name = $"Load for {number}",
@@ -52,7 +52,7 @@ internal static class FactoringTestData
             Number = number,
             Status = status,
             Subtotal = money,
-            TaxTotal = Money.Zero("USD"),
+            TaxTotal = 0m,
             Total = money,
             LoadId = load.Id,
             Load = load,

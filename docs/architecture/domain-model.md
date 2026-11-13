@@ -162,7 +162,7 @@ erDiagram
         LoadStatus Status
         Address OriginAddress
         Address DestinationAddress
-        Money DeliveryCost
+        decimal DeliveryCost
         double Distance
         LoadSource Source
         DateTime RequestedPickupDate "nullable"
@@ -195,7 +195,7 @@ erDiagram
         string Email
         string FirstName
         string LastName
-        Money Salary
+        decimal Salary
         SalaryType SalaryType
         EmployeeStatus Status
     }
@@ -340,7 +340,7 @@ classDiagram
         <<abstract>>
         +long Number
         +InvoiceStatus Status
-        +Money Total
+        +decimal Total
         +DateTime? DueDate
         +List~InvoiceLineItem~ LineItems
         +List~Payment~ Payments
@@ -374,10 +374,12 @@ Invoices and payments live in the **tenant DB** only. The tenant's own platform 
 | ---------------- | -------------------------------------------------- | --------------------------------------------------------------- |
 | `Address`        | Tenant, Customer, Load, Trip stop, Terminal, Truck | Line1/Line2, City, State, ZipCode, Country (ISO 3166-1 alpha-2) |
 | `GeoPoint`       | Load (origin/destination), TripStop, Truck         | `Latitude`, `Longitude`                                         |
-| `Money`          | Load, Invoice, Employee, SubscriptionPlan          | `Amount` + `Currency`. Mapped as a complex property             |
+| `Money`          | SubscriptionPlan, fuel card tx, load board listing | Foreign money only: `Amount` + `Currency`, complex property     |
 | `LoadRoute`      | Routing service                                    | Computed origin/destination + distance                          |
 | `Page` / `Sort`  | Repositories / queries                             | Pagination + sort spec                                          |
 | `TenantSettings` | Tenant                                             | Region, currency, units, AI provider/model, locale              |
+
+Tenant-internal amounts (loads, invoices, payments, expenses, salaries) are plain `decimal` in `Tenant.Currency`; a tenant has one currency.
 
 `Money` and `Address` are mapped as **complex properties** (EF Core 8+) - they have no primary key and are inlined in the owner's table.
 

@@ -52,7 +52,7 @@ public class CreateLoadInvoiceHandlerTests
         Assert.True(result.IsSuccess);
         Assert.NotNull(added);
         Assert.Equal(3, added.LineItems.Count);
-        Assert.Equal(2450m, added.Total.Amount);
+        Assert.Equal(2450m, added.Total);
         Assert.Empty(added.Payments);
     }
 
@@ -85,7 +85,7 @@ public class CreateLoadInvoiceHandlerTests
 
         Assert.True(result.IsSuccess);
         Assert.NotNull(added);
-        Assert.Equal(2200m, added.Total.Amount);
+        Assert.Equal(2200m, added.Total);
         Assert.Equal(PaymentStatus.Paid, Assert.Single(added.Payments).Status);
         Assert.Equal(InvoiceStatus.Paid, added.Status);
     }

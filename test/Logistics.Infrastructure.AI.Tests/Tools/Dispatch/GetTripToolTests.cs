@@ -44,7 +44,7 @@ public class GetTripToolTests
             OriginLocation = new GeoPoint(-96.8, 32.78),
             DestinationAddress = address,
             DestinationLocation = new GeoPoint(-95.36, 29.76),
-            DeliveryCost = new Money { Amount = 1000m, Currency = "USD" },
+            DeliveryCost = 1000m,
             DeliveryAppointmentTo = DateTime.UtcNow.AddHours(1)
         };
         var trip = Trip.Create("Trip", new Truck { Number = "T-1", Type = TruckType.FreightTruck }, [load]);

@@ -16,7 +16,7 @@ public class TripEtaTests
     private Trip NewTrip(DateTime? deliveryAppointmentEnd)
     {
         var load = Load.Create("Load", LoadType.GeneralFreight, 1000, TestData.Address(), new GeoPoint(0, 0), TestData.Address(),
-            new GeoPoint(1, 1), new Customer { Name = "Acme" }, _truck, TestData.Driver(), "USD");
+            new GeoPoint(1, 1), new Customer { Name = "Acme" }, _truck, TestData.Driver());
         load.DeliveryAppointmentTo = deliveryAppointmentEnd;
         var trip = Trip.Create("Trip", _truck, [load]);
         trip.DomainEvents.Clear();

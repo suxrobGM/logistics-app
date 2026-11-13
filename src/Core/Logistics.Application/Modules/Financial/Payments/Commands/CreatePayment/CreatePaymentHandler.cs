@@ -12,12 +12,9 @@ internal sealed class CreatePaymentHandler(ITenantUnitOfWork tenantUow)
     public async Task<Result> Handle(
         CreatePaymentCommand req, CancellationToken ct)
     {
-        var tenant = tenantUow.GetCurrentTenant();
-        var currency = tenant.Settings.Currency.ToString();
-
         var payment = new Payment
         {
-            Amount = new() { Amount = req.Amount, Currency = currency },
+            Amount = req.Amount,
             StripePaymentMethodId = req.StripePaymentMethodId,
             BillingAddress = req.BillingAddress!,
             Description = req.Description

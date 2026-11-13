@@ -27,7 +27,7 @@ internal sealed class UpdateExpenseHandler(ITenantUnitOfWork tenantUow)
         }
 
         // Update common fields
-        expense.Amount = new Money { Amount = req.Amount, Currency = req.Currency };
+        expense.Amount = req.Amount;
         expense.VendorName = req.VendorName;
         expense.ExpenseDate = req.ExpenseDate;
         expense.Notes = req.Notes;

@@ -24,14 +24,13 @@ public partial class Load
         Customer customer,
         Truck? assignedTruck,
         Employee assignedDispatcher,
-        string currency,
         Trip? trip = null)
     {
         var load = new Load
         {
             Name = name,
             Type = type,
-            DeliveryCost = new() { Amount = deliveryCost, Currency = currency },
+            DeliveryCost = deliveryCost,
             OriginAddress = originAddress,
             OriginLocation = originLocation,
             DestinationAddress = destinationAddress,

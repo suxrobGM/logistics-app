@@ -191,7 +191,7 @@ public class GetContainerStatusToolTests
                 Country = "US"
             },
             DestinationLocation = new GeoPoint(0, 0),
-            DeliveryCost = Money.Zero("USD")
+            DeliveryCost = 0m
         };
     }
 

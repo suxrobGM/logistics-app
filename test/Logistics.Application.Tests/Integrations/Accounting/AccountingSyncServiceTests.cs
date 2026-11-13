@@ -334,7 +334,7 @@ public class AccountingSyncServiceTests
         _mappings.Add(Synced(customer.Id, DateTime.UtcNow, "c1"));
         _mappings.Add(Synced(invoice.Id, DateTime.UtcNow, "i1", QboLocalEntityType.Invoice));
 
-        var money = new Money { Amount = 1000m, Currency = "USD" };
+        var money = 1000m;
         var payment = new Payment
         {
             Amount = money,
@@ -395,9 +395,9 @@ public class AccountingSyncServiceTests
         Number = 1007,
         CreatedAt = DateTime.UtcNow.AddDays(-2),
         UpdatedAt = DateTime.UtcNow.AddMinutes(-1),
-        Subtotal = Money.Zero("USD"),
-        TaxTotal = Money.Zero("USD"),
-        Total = Money.Zero("USD")
+        Subtotal = 0m,
+        TaxTotal = 0m,
+        Total = 0m
     };
 
     private static QboEntityMapping Synced(

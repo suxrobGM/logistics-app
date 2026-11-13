@@ -33,7 +33,7 @@ internal partial class PayrollService
                         p.Status != InvoiceStatus.Cancelled)
             .SelectMany(p => p.LineItems)
             .Where(li => li.Type == InvoiceLineItemType.Escrow)
-            .SumAsync(li => li.Amount.Amount * li.Quantity, ct);
+            .SumAsync(li => li.Amount * li.Quantity, ct);
 
         // Contributions are stored as negative lines.
         return -held;
@@ -59,10 +59,12 @@ internal partial class PayrollService
         var employeeId = payroll.Employee.Id;
         var (from, to) = payroll.PeriodUtcRange();
         var trucks = tenantUow.Repository<Truck>().Query();
+        var currency = tenantUow.GetCurrentTenant().Currency;
 
         return await tenantUow.Repository<FuelCardTransaction>().GetListAsync(t =>
             trucks.Any(truck => truck.Id == t.TruckId && truck.MainDriverId == employeeId) &&
             t.Status == FuelCardTransactionStatus.Matched &&
+            t.Amount.Currency == currency &&
             (t.PayrollInvoiceId == null || t.PayrollInvoiceId == payroll.Id) &&
             t.TransactionDate >= from && t.TransactionDate < to, ct);
     }

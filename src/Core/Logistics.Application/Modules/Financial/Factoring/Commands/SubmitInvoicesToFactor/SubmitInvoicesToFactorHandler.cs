@@ -7,6 +7,7 @@ using Logistics.Application.Modules.Financial.Factoring.Services;
 using Logistics.Domain.Entities;
 using Logistics.Domain.Persistence;
 using Logistics.Domain.Primitives.Enums;
+using Logistics.Domain.Primitives.ValueObjects;
 using Logistics.Mediator;
 using Logistics.Shared.Models;
 using Microsoft.Extensions.Logging;
@@ -153,7 +154,7 @@ internal sealed class SubmitInvoicesToFactorHandler(
             CompanyName = companyName,
             FactorName = company.Name,
             ScheduleNumber = batch.Number,
-            Total = $"{batch.Total.Amount:N2} {batch.Total.Currency}",
+            Total = Money.Format(batch.Total, tenant.Currency),
             Notes = batch.Notes,
             ReplyEmail = tenant.BillingEmail,
             Invoices = invoices.Select(i => new FactoringScheduleInvoiceEmailModel
@@ -161,7 +162,7 @@ internal sealed class SubmitInvoicesToFactorHandler(
                 InvoiceNumber = i.Number,
                 LoadNumber = i.Load.Number,
                 CustomerName = i.Customer.Name,
-                Amount = $"{i.Total.Amount:N2} {i.Total.Currency}"
+                Amount = Money.Format(i.Total, tenant.Currency)
             }).ToList()
         };
 

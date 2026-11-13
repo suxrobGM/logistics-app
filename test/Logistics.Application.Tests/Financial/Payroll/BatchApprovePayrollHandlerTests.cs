@@ -46,12 +46,12 @@ public class BatchApprovePayrollHandlerTests
 
     private static PayrollInvoice NewPayroll(InvoiceStatus status)
     {
-        var total = new Money { Amount = 1000m, Currency = "USD" };
+        var total = 1000m;
         return new PayrollInvoice
         {
             EmployeeId = Guid.NewGuid(),
             Subtotal = total,
-            TaxTotal = Money.Zero("USD"),
+            TaxTotal = 0m,
             Total = total,
             Status = status,
             DueDate = DateTime.UtcNow

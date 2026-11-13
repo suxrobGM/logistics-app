@@ -10,9 +10,9 @@ public class SettlementLinesTests
     private static PayrollInvoice Settlement() => new()
     {
         EmployeeId = Guid.NewGuid(),
-        Subtotal = Money.Zero("USD"),
-        TaxTotal = Money.Zero("USD"),
-        Total = Money.Zero("USD"),
+        Subtotal = 0m,
+        TaxTotal = 0m,
+        Total = 0m,
         PeriodStart = new DateOnly(2026, 10, 4),
         PeriodEnd = new DateOnly(2026, 10, 10)
     };
@@ -29,7 +29,7 @@ public class SettlementLinesTests
     public void ReplaceSettlementLines_GrossAndDeductions_TotalIsNet()
     {
         var payroll = Settlement();
-        var advance = new CashAdvance { Amount = new Money { Amount = 200m, Currency = "USD" }, Reason = "Tires" };
+        var advance = new CashAdvance { Amount = 200m, Reason = "Tires" };
         var fuel = new FuelCardTransaction
         {
             ProviderType = FuelCardProviderType.Wex,
@@ -45,7 +45,7 @@ public class SettlementLinesTests
             [Deduction(PayDeductionType.TruckLease, 600m), Deduction(PayDeductionType.Insurance, 250m)],
             0, [advance], [fuel]));
 
-        Assert.Equal(5000m - 600m - 250m - 200m - 450m, payroll.Total.Amount);
+        Assert.Equal(5000m - 600m - 250m - 200m - 450m, payroll.Total);
         Assert.Collection(payroll.LineItems.OrderBy(l => l.Order),
             l => Assert.Equal((InvoiceLineItemType.BasePay, 5000m), (l.Type, l.Total)),
             l => Assert.Equal((InvoiceLineItemType.Deduction, -600m), (l.Type, l.Total)),
@@ -85,7 +85,7 @@ public class SettlementLinesTests
         payroll.ReplaceSettlementLines(new SettlementInputs(
             1000m, "Gross", [Deduction(PayDeductionType.Escrow, 100m)], 10_000m, [], []));
 
-        Assert.Equal(900m, payroll.Total.Amount);
+        Assert.Equal(900m, payroll.Total);
     }
 
     [Fact]
@@ -99,7 +99,7 @@ public class SettlementLinesTests
             InvoiceId = payroll.Id,
             Description = "Lumper paid by driver",
             Type = InvoiceLineItemType.Reimbursement,
-            Amount = new Money { Amount = 120m, Currency = "USD" },
+            Amount = 120m,
             Order = 5
         });
         payroll.LineItems.Add(new InvoiceLineItem
@@ -107,7 +107,7 @@ public class SettlementLinesTests
             InvoiceId = payroll.Id,
             Description = "Damaged pallet",
             Type = InvoiceLineItemType.Deduction,
-            Amount = new Money { Amount = PayrollInvoice.SignedLineAmount(InvoiceLineItemType.Deduction, 80m), Currency = "USD" },
+            Amount = PayrollInvoice.SignedLineAmount(InvoiceLineItemType.Deduction, 80m),
             Order = 6
         });
 
@@ -115,7 +115,7 @@ public class SettlementLinesTests
 
         Assert.Equal(2, removed.Count);
         Assert.Single(added);
-        Assert.Equal(1500m + 120m - 80m, payroll.Total.Amount);
+        Assert.Equal(1500m + 120m - 80m, payroll.Total);
     }
 
     [Theory]

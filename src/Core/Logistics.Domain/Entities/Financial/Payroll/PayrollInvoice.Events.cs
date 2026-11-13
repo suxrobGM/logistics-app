@@ -45,7 +45,7 @@ public partial class PayrollInvoice
     public void ApplyPaymentWithEvent(Payment payment)
     {
         ApplyPayment(payment);
-        RaisePaidEvent(payment.Amount.Amount, Status == InvoiceStatus.Paid);
+        RaisePaidEvent(payment.Amount, Status == InvoiceStatus.Paid);
     }
 
     private void RaiseSubmittedEvent()
@@ -56,8 +56,7 @@ public partial class PayrollInvoice
             EmployeeId,
             Employee?.GetFullName() ?? "Unknown",
             Employee?.Email ?? string.Empty,
-            Total.Amount,
-            Total.Currency,
+            Total,
             PeriodStart,
             PeriodEnd));
     }
@@ -71,8 +70,7 @@ public partial class PayrollInvoice
             Employee?.GetFullName() ?? "Unknown",
             Employee?.Email ?? string.Empty,
             Employee?.DeviceToken,
-            Total.Amount,
-            Total.Currency,
+            Total,
             PeriodStart,
             PeriodEnd,
             approvedById));
@@ -103,9 +101,8 @@ public partial class PayrollInvoice
             Employee?.Email ?? string.Empty,
             Employee?.DeviceToken,
             paymentAmount,
-            Total.Amount,
+            Total,
             AmountDue,
-            Total.Currency,
             isFullyPaid,
             PeriodStart,
             PeriodEnd));

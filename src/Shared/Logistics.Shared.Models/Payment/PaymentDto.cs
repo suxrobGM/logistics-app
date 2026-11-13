@@ -8,7 +8,7 @@ public record PaymentDto
     public Guid Id { get; set; }
     public DateTime CreatedDate { get; set; }
 
-    public Money Amount { get; set; } = null!;
+    public decimal Amount { get; set; }
     public string? StripePaymentMethodId { get; set; }
     public PaymentStatus Status { get; set; }
     public Address? BillingAddress { get; set; }

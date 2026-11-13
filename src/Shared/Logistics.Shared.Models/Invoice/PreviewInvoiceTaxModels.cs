@@ -6,7 +6,6 @@ namespace Logistics.Shared.Models;
 public record PreviewInvoiceTaxRequest
 {
     public required Guid CustomerId { get; set; }
-    public required string Currency { get; set; }
     public required IReadOnlyList<PreviewInvoiceTaxLineItem> LineItems { get; set; }
 }
 
@@ -23,9 +22,9 @@ public record PreviewInvoiceTaxLineItem
 public record PreviewInvoiceTaxResponse
 {
     public TaxBehavior TaxBehavior { get; set; }
-    public Money Subtotal { get; set; } = null!;
-    public Money TaxTotal { get; set; } = null!;
-    public Money Total { get; set; } = null!;
+    public decimal Subtotal { get; set; }
+    public decimal TaxTotal { get; set; }
+    public decimal Total { get; set; }
     public IEnumerable<InvoiceTaxLineDto> Breakdown { get; set; } = [];
     public IEnumerable<PreviewLineItemTax> Lines { get; set; } = [];
     public string? Warning { get; set; }

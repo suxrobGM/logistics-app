@@ -23,7 +23,7 @@ internal sealed class UpdatePaymentHandler(ITenantUnitOfWork tenantUow) : IReque
         }
 
         var statusChanged = req.Status is not null && req.Status != payment.Status;
-        var amountChanged = req.Amount is not null && req.Amount != payment.Amount.Amount;
+        var amountChanged = req.Amount is not null && req.Amount != payment.Amount;
 
         payment.Status = PropertyUpdater.UpdateIfChanged(req.Status, payment.Status);
         payment.BillingAddress = PropertyUpdater.UpdateIfChanged(req.BillingAddress, payment.BillingAddress);
@@ -31,7 +31,7 @@ internal sealed class UpdatePaymentHandler(ITenantUnitOfWork tenantUow) : IReque
 
         if (amountChanged)
         {
-            payment.Amount = new() { Amount = req.Amount!.Value, Currency = payment.Amount.Currency };
+            payment.Amount = req.Amount!.Value;
         }
 
         if (statusChanged || amountChanged)

@@ -72,13 +72,13 @@ public static partial class InvoiceMapper
             CustomerDto? customer)
         {
             var paymentList = payments.ToList();
-            var amountPaid = Invoice.SumPaid(paymentList, loadInvoice.Total.Currency);
+            var amountPaid = Invoice.SumPaid(paymentList);
             return MapInvoice(loadInvoice) with
             {
                 Type = InvoiceType.Load,
                 Payments = paymentList.Select(i => i.ToDto()),
                 AmountPaid = amountPaid,
-                AmountDue = loadInvoice.Total.Amount - amountPaid,
+                AmountDue = loadInvoice.Total - amountPaid,
                 LineItems = lineItems.Select(i => i.ToDto()),
                 LoadId = loadInvoice.LoadId,
                 LoadNumber = loadNumber,

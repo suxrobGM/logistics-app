@@ -36,9 +36,9 @@ public class CreateLoadInvoiceToolTests
             {
                 Id = invoiceId,
                 Number = number,
-                Subtotal = CopilotToolTestData.Usd(1500m),
-                TaxTotal = CopilotToolTestData.Usd(0m),
-                Total = CopilotToolTestData.Usd(1500m)
+                Subtotal = 1500m,
+                TaxTotal = 0m,
+                Total = 1500m
             }));
         return invoiceId;
     }
@@ -65,9 +65,9 @@ public class CreateLoadInvoiceToolTests
         {
             Id = Guid.NewGuid(),
             Status = InvoiceStatus.Sent,
-            Subtotal = CopilotToolTestData.Usd(1500m),
-            TaxTotal = CopilotToolTestData.Usd(0m),
-            Total = CopilotToolTestData.Usd(1500m)
+            Subtotal = 1500m,
+            TaxTotal = 0m,
+            Total = 1500m
         };
         var load = CopilotToolTestData.CreateLoad(customer: SomeCustomer, invoice: invoice);
         _mediator.Send(Arg.Any<GetLoadByIdQuery>(), Arg.Any<CancellationToken>())

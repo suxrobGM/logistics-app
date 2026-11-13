@@ -30,6 +30,13 @@ internal sealed class AssignFuelCardTransactionTruckHandler(
             return Result.Fail("Truck not found", ErrorCodes.NotFound);
         }
 
+        var tenantCurrency = tenantUow.GetCurrentTenant().Currency;
+        if (transactions.FirstOrDefault(t => !FuelCardExpenseFactory.CanCreateExpense(t, tenantCurrency)) is { } foreign)
+        {
+            return Result.Fail(
+                $"Transaction {foreign.ExternalTransactionId} is in {foreign.Amount.Currency}; only {tenantCurrency} transactions can become expenses.");
+        }
+
         foreach (var transaction in transactions)
         {
             var expense = FuelCardExpenseFactory.CreateExpense(transaction, truck.Id);

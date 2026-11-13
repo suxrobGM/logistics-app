@@ -141,7 +141,7 @@ public class ImportImporterTests
     public async Task LoadImporter_UnknownCustomer_IsARowError()
     {
         var userId = Guid.NewGuid();
-        var dispatcher = new Employee { Id = userId, Email = "me@test.dev", FirstName = "Me", LastName = "Dispatcher", Salary = Money.Zero("USD") };
+        var dispatcher = new Employee { Id = userId, Email = "me@test.dev", FirstName = "Me", LastName = "Dispatcher", Salary = 0m };
         var currentUser = Substitute.For<ICurrentUserService>();
         currentUser.GetUserId().Returns(userId);
         var loadRepo = Substitute.For<ITenantRepository<Load, Guid>>();
@@ -194,5 +194,5 @@ public class ImportImporterTests
         new(rowNumber, cells.ToDictionary(c => c.Key, c => c.Value), new Dictionary<string, string>());
 
     private static ImportOptions Options(bool commit, bool updateExisting = false) =>
-        new(commit, updateExisting, false, Region.US, DateFormatType.US, "USD", "US");
+        new(commit, updateExisting, false, Region.US, DateFormatType.US, "US");
 }

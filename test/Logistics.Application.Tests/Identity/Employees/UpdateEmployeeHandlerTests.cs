@@ -134,7 +134,7 @@ public class UpdateEmployeeHandlerTests
     private static Employee Employee(TenantRole role) => new()
     {
         Id = Guid.NewGuid(),
-        Salary = Money.Zero("USD"),
+        Salary = 0m,
         Email = "employee@test.com",
         FirstName = "Test",
         LastName = "Employee",

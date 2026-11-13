@@ -51,11 +51,18 @@ internal sealed class ProposeCounterOfferHandler(
                 "This listing has no broker email address, so a counter-offer cannot be sent.");
         }
 
+        var tenant = tenantUow.GetCurrentTenant();
+        if (!ListingCurrency.IsTenantCurrency(listing, tenant))
+        {
+            return Result<RateNegotiationDto>.Fail(
+                $"This listing is priced in {ListingCurrency.Get(listing, tenant)}; counter-offers run only in {tenant.Currency}.");
+        }
+
         var negotiationRepo = tenantUow.Repository<RateNegotiation>();
         var negotiation = await negotiationRepo.GetAsync(RateNegotiation.OpenForListing(listing.Id), ct);
 
         var isNewThread = negotiation is null;
-        var currency = ListingCurrency.Get(listing);
+        var currency = tenant.Currency;
 
         // Floor first: it is a local read that rejects most bad offers, whereas the credit gate
         // costs a vendor API call and a write. Round 1 resolves the lane floor and freezes it on the
@@ -103,7 +110,6 @@ internal sealed class ProposeCounterOfferHandler(
 
         var replyToAddress = NegotiationReplyAddress.Format(negotiation.ReplyToken, emailSender.ReplyDomain);
         var messageId = NegotiationMessageId.Create(emailSender.ReplyDomain);
-        var tenant = tenantUow.GetCurrentTenant();
 
         var composed = await composer.ComposeAsync(ComposeNegotiationEmailRequest.For(
             listing, tenant, req.ProposedTotalRate, req.ProposedRatePerMile, req.Message, replyToAddress), ct);

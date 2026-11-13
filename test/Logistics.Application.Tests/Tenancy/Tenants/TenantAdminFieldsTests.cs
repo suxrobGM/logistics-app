@@ -25,7 +25,7 @@ public class TenantAdminFieldsTests
     public async Task UpdateTenant_SettingsWithAIEnabled_KeepsStoredAIEnabled()
     {
         _tenant.Settings = new TenantSettings { AIEnabled = false };
-        var sut = new UpdateTenantHandler(_masterUow, Substitute.For<IStripeCustomerService>());
+        var sut = new UpdateTenantHandler(_masterUow, Substitute.For<ITenantUnitOfWork>(), Substitute.For<IStripeCustomerService>());
 
         var result = await sut.Handle(new UpdateTenantCommand
         {

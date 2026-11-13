@@ -20,7 +20,7 @@ public class FactoringBatch : AuditableEntity, ITenantEntity
     /// <summary>
     /// Sum of the invoice totals on the schedule.
     /// </summary>
-    public required Money Total { get; set; }
+    public required decimal Total { get; set; }
 
     public DateTime SubmittedAt { get; set; }
 
@@ -81,17 +81,11 @@ public class FactoringBatch : AuditableEntity, ITenantEntity
             throw new InvalidOperationException("Select at least one invoice to submit.");
         }
 
-        var currency = invoices[0].Total.Currency;
-        if (invoices.Any(i => i.Total.Currency != currency))
-        {
-            throw new InvalidOperationException("All invoices on one schedule must be in the same currency.");
-        }
-
         var batch = new FactoringBatch
         {
             FactoringCompanyId = company.Id,
             FactoringCompany = company,
-            Total = new Money { Amount = invoices.Sum(i => i.Total.Amount), Currency = currency },
+            Total = invoices.Sum(i => i.Total),
             SubmittedAt = submittedAt,
             SubmittedToEmail = company.SubmissionEmail,
             Notes = notes

@@ -13,21 +13,20 @@ namespace Logistics.Infrastructure.Documents.Pdf.Invoice;
 internal static class InvoiceTotalsSection
 {
     public static void Render(
-        IContainer container, LoadInvoice invoice, string taxLabel, bool showTax, bool showPayments)
+        IContainer container, LoadInvoice invoice, string currency, string taxLabel, bool showTax, bool showPayments)
     {
-        var currency = invoice.Total.Currency;
 
         container.AlignRight().Width(220).Column(totals =>
         {
             totals.Item().BorderTop(1).BorderColor(Colors.Grey.Lighten2).PaddingTop(10);
 
-            Row(totals, "Subtotal:", PdfFormatting.Money(invoice.Subtotal.Amount, currency));
+            Row(totals, "Subtotal:", PdfFormatting.Money(invoice.Subtotal, currency));
 
             if (showTax)
             {
                 var taxValue = invoice.TaxBehavior == TaxBehavior.ReverseCharge
                     ? "0.00 (reverse charge)"
-                    : PdfFormatting.Money(invoice.TaxTotal.Amount, currency);
+                    : PdfFormatting.Money(invoice.TaxTotal, currency);
                 Row(totals, $"{taxLabel}:", taxValue, paddingTop: 3);
             }
 
@@ -35,7 +34,7 @@ internal static class InvoiceTotalsSection
             {
                 row.RelativeItem().Text("Total:").FontSize(14).Bold();
                 row.ConstantItem(100).AlignRight()
-                    .Text(PdfFormatting.Money(invoice.Total.Amount, currency))
+                    .Text(PdfFormatting.Money(invoice.Total, currency))
                     .FontSize(14).Bold().FontColor(Colors.Blue.Darken3);
             });
 

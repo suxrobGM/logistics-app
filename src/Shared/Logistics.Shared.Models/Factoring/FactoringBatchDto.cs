@@ -13,7 +13,7 @@ public record FactoringBatchDto
     public Guid FactoringCompanyId { get; set; }
     public string? FactoringCompanyName { get; set; }
     public FactoringBatchStatus Status { get; set; }
-    public Money Total { get; set; } = null!;
+    public decimal Total { get; set; }
     public DateTime SubmittedAt { get; set; }
     public required string SubmittedToEmail { get; set; }
     public string? Notes { get; set; }

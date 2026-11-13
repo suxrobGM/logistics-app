@@ -36,3 +36,8 @@ Both DbContexts set every `decimal` to `numeric(18,2)` and every `Money.Currency
 `ConfigureConventions`, so don't repeat `HasPrecision(18, 2)`. A column that needs another scale
 says so with `HasPrecision(p, s)`; one that must stay unbounded `numeric` (AI cost, fuel volume)
 uses `Property(x).Metadata.SetPrecision(null)`.
+
+Tenant-internal amounts are plain `decimal` in `Tenant.Currency`. `Money` is only for money that
+arrives in another currency (fuel card transactions, load board listings and negotiation offers,
+subscription plans); never add a `Money` property to an internal amount, and never sum `Money`
+across rows without checking the currency.

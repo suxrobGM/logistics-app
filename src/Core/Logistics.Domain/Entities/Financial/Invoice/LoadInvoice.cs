@@ -1,5 +1,4 @@
 using Logistics.Domain.Primitives.Enums;
-using Logistics.Domain.Primitives.ValueObjects;
 
 namespace Logistics.Domain.Entities;
 
@@ -11,7 +10,7 @@ public partial class LoadInvoice : Invoice
         var invoice = new LoadInvoice
         {
             Subtotal = load.DeliveryCost,
-            TaxTotal = Money.Zero(load.DeliveryCost.Currency),
+            TaxTotal = 0m,
             Total = load.DeliveryCost,
             Status = InvoiceStatus.Draft,
             CustomerId = load.CustomerId,

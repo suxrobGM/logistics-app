@@ -35,14 +35,14 @@ public class InvoicePdfServiceTests
 
     private static LoadInvoice Invoice(FactoringCompany? factor)
     {
-        var money = new Money { Amount = 1500m, Currency = "USD" };
+        var money = 1500m;
         var customer = new Customer { Name = "Big Broker", FactoringCompanyId = factor?.Id, FactoringCompany = factor };
         var invoice = new LoadInvoice
         {
             Number = 1001,
             Status = InvoiceStatus.Paid,
             Subtotal = money,
-            TaxTotal = Money.Zero("USD"),
+            TaxTotal = 0m,
             Total = money,
             LoadId = Guid.NewGuid(),
             Load = null!,

@@ -3,14 +3,15 @@ using Logistics.Application.Abstractions.ApplicationServices;
 using Logistics.Application.Abstractions.Integrations;
 using Logistics.Application.Modules.Integrations.LoadBoard.Commands;
 using Logistics.Application.Modules.Integrations.LoadBoard.Services;
+using Logistics.Application.Tests.TestKit;
 using Logistics.Domain.Entities;
 using Logistics.Domain.Persistence;
 using Logistics.Domain.Primitives.Enums;
 using Logistics.Domain.Primitives.ValueObjects;
 using Logistics.Shared.Models;
 using Microsoft.Extensions.Logging.Abstractions;
-using NSubstitute;
 using NSubstitute.ExceptionExtensions;
+using NSubstitute;
 using Xunit;
 
 namespace Logistics.Application.Tests.Integrations.LoadBoard;
@@ -50,6 +51,7 @@ public class SearchLoadBoardHandlerTests
 
     public SearchLoadBoardHandlerTests()
     {
+        _tenantUow.GetCurrentTenant().Returns(TestTenant.Create());
         _tenantUow.Repository<LoadBoardConfiguration>().Returns(_configRepo);
         _tenantUow.Repository<LoadBoardListing>().Returns(_listingRepo);
         _configRepo.GetListAsync(Arg.Any<System.Linq.Expressions.Expression<Func<LoadBoardConfiguration, bool>>>(),

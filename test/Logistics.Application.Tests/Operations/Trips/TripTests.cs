@@ -14,7 +14,7 @@ public class TripTests
 
     private Load NewLoad() => Load.Create(
         $"Load {Guid.NewGuid():N}", LoadType.GeneralFreight, 1000, TestData.Address(), new GeoPoint(0, 0), TestData.Address(), new GeoPoint(1, 1),
-        new Customer { Name = "Acme" }, _truck, _dispatcher, "USD");
+        new Customer { Name = "Acme" }, _truck, _dispatcher);
 
     #region Loads
 

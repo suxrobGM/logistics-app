@@ -64,7 +64,7 @@ public class GetPendingDecisionsHandlerTests
             OriginLocation = new GeoPoint(0, 0),
             DestinationAddress = new Address { Line1 = "1 Dest", City = "City", State = "ST", ZipCode = "00000", Country = "US" },
             DestinationLocation = new GeoPoint(0, 0),
-            DeliveryCost = Money.Zero("USD")
+            DeliveryCost = 0m
         };
         var truck = new Truck { Number = "T-100", Type = TruckType.FreightTruck };
         var decision = SuggestedDecision(AgentSessionType.Dispatch);

@@ -1,6 +1,6 @@
+using System.Globalization;
 using Logistics.Domain.Core;
 using Logistics.Domain.Primitives.Enums;
-using Logistics.Domain.Primitives.ValueObjects;
 
 namespace Logistics.Domain.Entities;
 
@@ -11,13 +11,13 @@ public abstract partial class Invoice : AuditableEntity, ITenantEntity, IAuditab
     public InvoiceStatus Status { get; set; }
 
     /// <summary>Pre-tax sum of the line nets; set by <see cref="RecalculateTotals"/>.</summary>
-    public required Money Subtotal { get; set; }
+    public required decimal Subtotal { get; set; }
 
     /// <summary>Always 0 under <see cref="TaxBehavior.ReverseCharge"/>.</summary>
-    public required Money TaxTotal { get; set; }
+    public required decimal TaxTotal { get; set; }
 
     /// <summary>Includes tax and discounts; Subtotal + TaxTotal under exclusive pricing.</summary>
-    public required Money Total { get; set; }
+    public required decimal Total { get; set; }
 
     public TaxBehavior TaxBehavior { get; set; } = TaxBehavior.Exclusive;
 
@@ -62,9 +62,9 @@ public abstract partial class Invoice : AuditableEntity, ITenantEntity, IAuditab
         return removed;
     }
 
-    public decimal AmountPaid => SumPaid(Payments, Total.Currency);
+    public decimal AmountPaid => SumPaid(Payments);
 
-    public decimal AmountDue => Total.Amount - AmountPaid;
+    public decimal AmountDue => Total - AmountPaid;
 
     /// <summary>Why the invoice's lines can't change - it is paid or cancelled - or null when they can.</summary>
     public string? GetEditBlockedReason() => Status switch
@@ -93,7 +93,7 @@ public abstract partial class Invoice : AuditableEntity, ITenantEntity, IAuditab
         }
 
         return amount > AmountDue
-            ? $"Payment amount cannot exceed amount due ({Money.Format(AmountDue, Total.Currency)})."
+            ? string.Create(CultureInfo.InvariantCulture, $"Payment amount cannot exceed amount due ({AmountDue:N2}).")
             : null;
     }
 
@@ -106,7 +106,7 @@ public abstract partial class Invoice : AuditableEntity, ITenantEntity, IAuditab
             InvoiceId = Id,
             Description = description,
             Type = type,
-            Amount = Total with { Amount = SignLineAmount(type, amount) },
+            Amount = SignLineAmount(type, amount),
             Quantity = quantity,
             Order = LineItems.Count > 0 ? LineItems.Max(li => li.Order) + 1 : 0,
             Notes = notes
@@ -118,11 +118,10 @@ public abstract partial class Invoice : AuditableEntity, ITenantEntity, IAuditab
 
     protected virtual decimal SignLineAmount(InvoiceLineItemType type, decimal amount) => amount;
 
-    /// <summary>Counts only <see cref="PaymentStatus.Paid"/> payments in <paramref name="currency"/>.</summary>
-    public static decimal SumPaid(IEnumerable<Payment> payments, string currency) => payments
-        .Where(p => p.Status == PaymentStatus.Paid
-                    && string.Equals(p.Amount.Currency, currency, StringComparison.OrdinalIgnoreCase))
-        .Sum(p => p.Amount.Amount);
+    /// <summary>Counts only <see cref="PaymentStatus.Paid"/> payments.</summary>
+    public static decimal SumPaid(IEnumerable<Payment> payments) => payments
+        .Where(p => p.Status == PaymentStatus.Paid)
+        .Sum(p => p.Amount);
 
     /// <summary>Links the payment whatever its status; a pending one pays only once it settles and the status is recalculated.</summary>
     public void ApplyPayment(Payment payment)
@@ -146,7 +145,7 @@ public abstract partial class Invoice : AuditableEntity, ITenantEntity, IAuditab
         var paid = AmountPaid;
         if (paid > 0m)
         {
-            Status = paid >= Total.Amount ? InvoiceStatus.Paid : InvoiceStatus.PartiallyPaid;
+            Status = paid >= Total ? InvoiceStatus.Paid : InvoiceStatus.PartiallyPaid;
         }
         else
         {

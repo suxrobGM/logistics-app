@@ -32,7 +32,7 @@ public class LoadInvoiceChargesTests
 
         var line = Assert.Single(invoice.LineItems);
         Assert.Equal(InvoiceLineItemType.BaseRate, line.Type);
-        Assert.Equal(2000m, invoice.Total.Amount);
+        Assert.Equal(2000m, invoice.Total);
     }
 
     [Fact]
@@ -55,11 +55,11 @@ public class LoadInvoiceChargesTests
             l =>
             {
                 Assert.Equal("Extra stop", l.Description);
-                Assert.Equal(75m, l.Amount.Amount);
+                Assert.Equal(75m, l.Amount);
                 Assert.Equal(2, l.Quantity);
             },
             l => Assert.Equal(InvoiceLineItemType.Lumper, l.Type));
-        Assert.Equal(2600m, invoice.Total.Amount);
+        Assert.Equal(2600m, invoice.Total);
     }
 
     [Fact]
@@ -73,7 +73,7 @@ public class LoadInvoiceChargesTests
 
         var detention = invoice.LineItems.Single(l => l.Type == InvoiceLineItemType.Detention);
         Assert.Equal(1, detention.Quantity);
-        Assert.Equal(112.50m, detention.Amount.Amount);
+        Assert.Equal(112.50m, detention.Amount);
         Assert.Contains("2.25 x 50.00", detention.Description);
     }
 
@@ -87,7 +87,7 @@ public class LoadInvoiceChargesTests
             InvoiceId = invoice.Id,
             Description = "Tarp",
             Type = InvoiceLineItemType.Other,
-            Amount = new Money { Amount = 40m, Currency = "USD" },
+            Amount = 40m,
             Order = 1
         };
         var storage = new InvoiceLineItem
@@ -95,12 +95,12 @@ public class LoadInvoiceChargesTests
             InvoiceId = invoice.Id,
             Description = "Storage",
             Type = InvoiceLineItemType.Storage,
-            Amount = new Money { Amount = 150m, Currency = "USD" },
+            Amount = 150m,
             Order = 2
         };
         invoice.LineItems.AddRange([manual, storage]);
 
-        load.DeliveryCost = new Money { Amount = 2100m, Currency = "USD" };
+        load.DeliveryCost = 2100m;
         load.FuelSurcharge = 200m;
         var (removed, added) = invoice.ReplaceLoadCharges(load);
         invoice.RecalculateTotals();
@@ -109,7 +109,7 @@ public class LoadInvoiceChargesTests
         Assert.Equal(2, added.Count);
         Assert.Contains(manual, invoice.LineItems);
         Assert.Contains(storage, invoice.LineItems);
-        Assert.Equal(2100m + 200m + 40m + 150m, invoice.Total.Amount);
+        Assert.Equal(2100m + 200m + 40m + 150m, invoice.Total);
         Assert.Equal([0, 1, 2, 3], invoice.LineItems.OrderBy(l => l.Order).Select(l => l.Order));
         Assert.Equal(InvoiceLineItemType.BaseRate, invoice.LineItems.OrderBy(l => l.Order).First().Type);
     }

@@ -34,20 +34,20 @@ internal sealed class GetExpenseStatsHandler(ITenantUnitOfWork tenantUow)
 
         var stats = new ExpenseStatsDto
         {
-            TotalAmount = expenses.Sum(e => e.Amount.Amount),
+            TotalAmount = expenses.Sum(e => e.Amount),
             TotalCount = expenses.Count,
-            PendingAmount = pending.Sum(e => e.Amount.Amount),
+            PendingAmount = pending.Sum(e => e.Amount),
             PendingCount = pending.Count,
-            ApprovedAmount = approved.Sum(e => e.Amount.Amount),
+            ApprovedAmount = approved.Sum(e => e.Amount),
             ApprovedCount = approved.Count,
-            PaidAmount = paid.Sum(e => e.Amount.Amount),
+            PaidAmount = paid.Sum(e => e.Amount),
             PaidCount = paid.Count,
             ByType = expenses
                 .GroupBy(e => e.Type)
                 .Select(g => new ExpenseTypeStatDto
                 {
                     Type = g.Key.ToString(),
-                    Amount = g.Sum(e => e.Amount.Amount),
+                    Amount = g.Sum(e => e.Amount),
                     Count = g.Count()
                 })
                 .OrderByDescending(t => t.Amount)
@@ -60,7 +60,7 @@ internal sealed class GetExpenseStatsHandler(ITenantUnitOfWork tenantUow)
                 {
                     Year = g.Key.Year,
                     Month = g.Key.Month,
-                    Amount = g.Sum(e => e.Amount.Amount),
+                    Amount = g.Sum(e => e.Amount),
                     Count = g.Count()
                 })
                 .OrderBy(m => m.Year)
@@ -80,7 +80,7 @@ internal sealed class GetExpenseStatsHandler(ITenantUnitOfWork tenantUow)
             .Select(g => new ExpenseCategoryStatDto
             {
                 Category = g.Key,
-                Amount = g.Sum(e => e.Amount.Amount),
+                Amount = g.Sum(e => e.Amount),
                 Count = g.Count()
             })
             .OrderByDescending(c => c.Amount)
@@ -93,7 +93,7 @@ internal sealed class GetExpenseStatsHandler(ITenantUnitOfWork tenantUow)
     {
         var totals = expenses
             .GroupBy(e => e.TruckId)
-            .Select(g => new { TruckId = g.Key, Amount = g.Sum(e => e.Amount.Amount), Count = g.Count() })
+            .Select(g => new { TruckId = g.Key, Amount = g.Sum(e => e.Amount), Count = g.Count() })
             .OrderByDescending(t => t.Amount)
             .Take(TopTruckCount)
             .ToList();

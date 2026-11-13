@@ -156,7 +156,7 @@ public class UpdateTruckHandlerTests
             Email = $"{Guid.NewGuid():N}@test.com",
             FirstName = "Jane",
             LastName = "Doe",
-            Salary = Money.Zero("USD"),
+            Salary = 0m,
             Status = status
         };
         _employeeRepo.GetByIdAsync(driver.Id, Arg.Any<CancellationToken>()).Returns(driver);

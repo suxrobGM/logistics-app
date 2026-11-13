@@ -68,8 +68,7 @@ internal sealed class CreateLoadInvoiceTool(IMediator mediator)
             success = true,
             invoice_id = result.Value,
             invoice_number = invoice?.Number,
-            total = invoice?.Total.Amount,
-            currency = invoice?.Total.Currency,
+            total = invoice?.Total,
             load_number = load.Number,
             customer = load.Customer.Name
         });

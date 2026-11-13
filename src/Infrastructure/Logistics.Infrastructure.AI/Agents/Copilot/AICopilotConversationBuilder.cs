@@ -34,6 +34,7 @@ internal sealed class AICopilotConversationBuilder(
         var systemPrompt = AICopilotSystemPrompt.Build(new(tenant.Name ?? "Fleet")
         {
             DistanceUnit = tenant.Settings.DistanceUnit,
+            Currency = tenant.Currency,
             IsSolo = tenant.IsSolo,
             // Read from metadata, so a new dispatch write tool brings the guardrails along.
             HasDispatchTools =

@@ -201,6 +201,7 @@ internal sealed class SearchLoadBoardHandler(
             return;
         }
 
+        var currency = tenantUow.GetCurrentTenant().Currency;
         var externalIds = listings.Select(l => l.ExternalListingId).ToList();
         var listingRepository = tenantUow.Repository<LoadBoardListing>();
         var existing = await listingRepository.GetListAsync(l => externalIds.Contains(l.ExternalListingId), ct);
@@ -218,7 +219,7 @@ internal sealed class SearchLoadBoardHandler(
             if (existingByKey.TryGetValue((dto.ProviderType, dto.ExternalListingId), out var entity))
             {
                 entity.RatePerMile = dto.RatePerMile;
-                entity.TotalRate = ToMoney(dto.TotalRate, dto.Currency);
+                entity.TotalRate = ToMoney(dto.TotalRate, dto.Currency, currency);
                 entity.ExpiresAt = expiresAt;
                 entity.BrokerCreditScore = dto.BrokerCreditScore ?? entity.BrokerCreditScore;
                 entity.BrokerDaysToPay = dto.BrokerDaysToPay ?? entity.BrokerDaysToPay;
@@ -243,7 +244,7 @@ internal sealed class SearchLoadBoardHandler(
                     DestinationAddress = dto.DestinationAddress,
                     DestinationLocation = dto.DestinationLocation,
                     RatePerMile = dto.RatePerMile,
-                    TotalRate = ToMoney(dto.TotalRate, dto.Currency),
+                    TotalRate = ToMoney(dto.TotalRate, dto.Currency, currency),
                     Distance = dto.Distance,
                     Weight = dto.Weight,
                     Length = dto.Length,
@@ -271,10 +272,10 @@ internal sealed class SearchLoadBoardHandler(
         await tenantUow.SaveChangesAsync(ct);
     }
 
-    private static Money? ToMoney(decimal? amount, string? currency)
+    private static Money? ToMoney(decimal? amount, string? currency, string tenantCurrency)
     {
         return amount.HasValue
-            ? new Money { Amount = amount.Value, Currency = currency ?? ListingCurrency.Default }
+            ? new Money { Amount = amount.Value, Currency = currency ?? tenantCurrency }
             : null;
     }
 }

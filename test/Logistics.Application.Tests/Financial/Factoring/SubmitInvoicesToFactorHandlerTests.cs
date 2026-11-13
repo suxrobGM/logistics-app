@@ -163,7 +163,7 @@ public class SubmitInvoicesToFactorHandlerTests
         Assert.Equal(FactoringStatus.Submitted, first.FactoringStatus);
         Assert.Equal(FactoringStatus.Submitted, second.FactoringStatus);
         await _batchRepo.Received(1).AddAsync(
-            Arg.Is<FactoringBatch>(b => b.Items.Count == 2 && b.Total.Amount == 2000m), Arg.Any<CancellationToken>());
+            Arg.Is<FactoringBatch>(b => b.Items.Count == 2 && b.Total == 2000m), Arg.Any<CancellationToken>());
         await _emailSender.Received(1).SendAsync(
             Arg.Is<ThreadedEmail>(e => e.To == "schedules@acme.test"
                                        && e.ReplyTo == "billing@carrier.test"

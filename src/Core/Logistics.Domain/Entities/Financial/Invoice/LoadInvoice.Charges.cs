@@ -26,10 +26,9 @@ public partial class LoadInvoice
 
     private List<InvoiceLineItem> BuildLoadCharges(Load load)
     {
-        var currency = load.DeliveryCost.Currency;
         var lines = new List<InvoiceLineItem>
         {
-            Line(BaseRateDescription(load), InvoiceLineItemType.BaseRate, load.DeliveryCost.Amount, 1, null)
+            Line(BaseRateDescription(load), InvoiceLineItemType.BaseRate, load.DeliveryCost, 1, null)
         };
 
         if (load.FuelSurcharge != 0)
@@ -49,7 +48,7 @@ public partial class LoadInvoice
             InvoiceId = Id,
             Description = description,
             Type = type,
-            Amount = new() { Amount = amount, Currency = currency },
+            Amount = amount,
             Quantity = quantity,
             SourceId = sourceId
         };

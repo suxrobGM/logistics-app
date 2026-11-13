@@ -215,8 +215,7 @@ internal class LoadSeeder(
             destLoc,
             customer,
             truck,
-            dispatcher,
-            currency: region.Currency.ToString());
+            dispatcher);
 
         load.Source = LoadSource.Manual;
         load.RequestedPickupDate = dispatchedAt.AddHours(-random.Next(2, 24));

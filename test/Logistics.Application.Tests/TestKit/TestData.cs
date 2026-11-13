@@ -36,7 +36,7 @@ internal static class TestData
         OriginLocation = new GeoPoint(0, 0),
         DestinationAddress = Address(destinationCountry),
         DestinationLocation = new GeoPoint(0, 0),
-        DeliveryCost = new Money { Amount = deliveryCost, Currency = "USD" }
+        DeliveryCost = deliveryCost
     };
 
     public static Truck Truck(Employee? driver = null, TruckType type = TruckType.FreightTruck, string number = "T-1") => new()
@@ -53,7 +53,7 @@ internal static class TestData
         Email = "driver@test.com",
         FirstName = "John",
         LastName = "Doe",
-        Salary = Money.Zero("USD"),
+        Salary = 0m,
         Licenses = [.. licenses]
     };
 

@@ -15,7 +15,7 @@ public static class TaxCalculationMappings
                 .Select(li => new TaxCalculationLineItem
                 {
                     LineItemId = li.Id,
-                    NetAmount = li.Amount.Amount * li.Quantity,
+                    NetAmount = li.Amount * li.Quantity,
                     TaxCode = li.TaxCode,
                     Description = li.Description
                 })
@@ -56,15 +56,14 @@ public static class TaxCalculationMappings
     extension(TaxCalculationResult result)
     {
         public PreviewInvoiceTaxResponse ToPreviewResponse(
-            string currency,
             decimal subtotal,
             decimal taxTotal,
             decimal total) => new()
             {
                 TaxBehavior = result.TaxBehavior,
-                Subtotal = new() { Amount = subtotal, Currency = currency },
-                TaxTotal = new() { Amount = taxTotal, Currency = currency },
-                Total = new() { Amount = total, Currency = currency },
+                Subtotal = subtotal,
+                TaxTotal = taxTotal,
+                Total = total,
                 Breakdown = result.Breakdown.ToDto(),
                 Lines = result.Lines.ToDto(),
                 Warning = result.Warning

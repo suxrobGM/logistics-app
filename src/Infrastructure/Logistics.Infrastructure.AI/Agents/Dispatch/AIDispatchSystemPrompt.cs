@@ -124,6 +124,7 @@ internal static class AIDispatchSystemPrompt
 
             ## Units & Formatting
             - Report distances in {{unitLabel}}. {{distanceKeys}}
+            - Amounts are in {{context.Currency}} unless a `currency` key says otherwise.
             - Quote durations as hours and minutes ("12h 45m"); turn any `_minutes` value into that form.
 
             ## Priority Order

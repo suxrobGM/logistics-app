@@ -14,7 +14,6 @@ public record PayrollApprovedEvent(
     string EmployeeEmail,
     string? EmployeeDeviceToken,
     decimal TotalAmount,
-    string Currency,
     DateOnly PeriodStart,
     DateOnly PeriodEnd,
     Guid ApprovedById) : IDomainEvent;

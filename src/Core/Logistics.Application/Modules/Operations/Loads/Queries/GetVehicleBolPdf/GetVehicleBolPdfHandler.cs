@@ -52,8 +52,9 @@ internal sealed class GetVehicleBolPdfHandler(
                 ToInspection(reports.FirstOrDefault(r => r.LoadVehicleId == v.Id && r.Type == InspectionType.Delivery))))
             .ToList();
 
+        var tenant = tenantUow.GetCurrentTenant();
         var document = new VehicleBolDocument(
-            tenantUow.GetCurrentTenant(),
+            tenant,
             load.Number,
             load.Name,
             load.Customer.Name,
@@ -61,7 +62,7 @@ internal sealed class GetVehicleBolPdfHandler(
             load.DestinationAddress,
             load.AssignedTruck?.Number,
             load.AssignedTruck?.MainDriver?.GetFullName(),
-            load.DeliveryCost.Currency,
+            tenant.Currency,
             vehicles,
             await GetSignatureAsync(load.Id, DocumentType.BillOfLading, ct),
             await GetSignatureAsync(load.Id, DocumentType.ProofOfDelivery, ct),

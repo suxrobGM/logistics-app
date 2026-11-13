@@ -18,7 +18,7 @@ public class Employee : Entity, ITenantEntity
     /// </summary>
     public Address? Address { get; set; }
 
-    public required Money Salary { get; set; }
+    public required decimal Salary { get; set; }
     public SalaryType SalaryType { get; set; } = SalaryType.None;
     public EmployeeStatus Status { get; set; } = EmployeeStatus.Active;
 
@@ -95,7 +95,7 @@ public class Employee : Entity, ITenantEntity
     /// <summary>Pay earned on the given loads by a per-load salary type; 0 for period-paid types.</summary>
     public decimal PayForLoads(IReadOnlyCollection<LoadPayBasis> loads, DistanceUnit unit)
     {
-        var rate = Salary.Amount;
+        var rate = Salary;
         return SalaryType switch
         {
             SalaryType.ShareOfGross =>
@@ -110,7 +110,7 @@ public class Employee : Entity, ITenantEntity
     /// <summary>Pay for a period by a Weekly, Monthly or Hourly type, or the base pay of an untyped salary; 0 for per-load types.</summary>
     public decimal PayForPeriod(decimal weeks, decimal months, decimal hours)
     {
-        var rate = Salary.Amount;
+        var rate = Salary;
         return SalaryType switch
         {
             SalaryType.Weekly => weeks * rate,
@@ -132,7 +132,6 @@ public class Employee : Entity, ITenantEntity
 
     public static Employee CreateEmployeeFromUser(
         User user,
-        string currency,
         decimal salary = 0,
         SalaryType salaryType = SalaryType.None)
     {
@@ -143,7 +142,7 @@ public class Employee : Entity, ITenantEntity
             FirstName = user.FirstName,
             LastName = user.LastName,
             PhoneNumber = user.PhoneNumber,
-            Salary = new() { Amount = salary, Currency = currency },
+            Salary = salary,
             SalaryType = salaryType
         };
 

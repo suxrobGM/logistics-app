@@ -13,7 +13,6 @@ internal sealed record ImportOptions(
     bool SendInvitations,
     Region Region,
     DateFormatType DateFormat,
-    string Currency,
     string DefaultCountry)
 {
     /// <summary>
@@ -33,7 +32,6 @@ internal sealed record ImportOptions(
             sendInvitations,
             settings.Region,
             settings.DateFormat,
-            settings.Currency.ToString(),
             defaultCountry);
     }
 }

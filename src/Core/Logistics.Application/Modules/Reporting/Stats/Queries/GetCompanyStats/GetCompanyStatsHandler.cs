@@ -66,36 +66,36 @@ internal sealed class GetCompanyStatsHandler(ITenantUnitOfWork tenantUow, IProfi
             {
                 // This week
                 ThisWeekGross = _.Where(l => l.DeliveredAt >= startOfWeek && l.DeliveredAt < now)
-                    .Sum(l => l.DeliveryCost.Amount),
+                    .Sum(l => l.DeliveryCost),
                 ThisWeekDistance = _.Where(l => l.DeliveredAt >= startOfWeek && l.DeliveredAt < now)
                     .Sum(l => l.Distance),
                 // Last week
                 LastWeekGross = _.Where(l => l.DeliveredAt >= lastWeekStart && l.DeliveredAt < startOfWeek)
-                    .Sum(l => l.DeliveryCost.Amount),
+                    .Sum(l => l.DeliveryCost),
                 LastWeekDistance = _.Where(l => l.DeliveredAt >= lastWeekStart && l.DeliveredAt < startOfWeek)
                     .Sum(l => l.Distance),
                 // This month
                 ThisMonthGross = _.Where(l => l.DeliveredAt >= startOfMonth && l.DeliveredAt < now)
-                    .Sum(l => l.DeliveryCost.Amount),
+                    .Sum(l => l.DeliveryCost),
                 ThisMonthDistance = _.Where(l => l.DeliveredAt >= startOfMonth && l.DeliveredAt < now)
                     .Sum(l => l.Distance),
                 // Last month
                 LastMonthGross = _.Where(l => l.DeliveredAt >= lastMonthStart && l.DeliveredAt < startOfMonth)
-                    .Sum(l => l.DeliveryCost.Amount),
+                    .Sum(l => l.DeliveryCost),
                 LastMonthDistance = _.Where(l => l.DeliveredAt >= lastMonthStart && l.DeliveredAt < startOfMonth)
                     .Sum(l => l.Distance),
                 // Last 3 months
                 LastThreeMonthsGross = _.Where(l => l.DeliveredAt >= threeMonthsAgo && l.DeliveredAt < now)
-                    .Sum(l => l.DeliveryCost.Amount),
+                    .Sum(l => l.DeliveryCost),
                 LastThreeMonthsDistance = _.Where(l => l.DeliveredAt >= threeMonthsAgo && l.DeliveredAt < now)
                     .Sum(l => l.Distance),
                 // Last year
                 LastYearGross = _.Where(l => l.DeliveredAt >= oneYearAgo && l.DeliveredAt < now)
-                    .Sum(l => l.DeliveryCost.Amount),
+                    .Sum(l => l.DeliveryCost),
                 LastYearDistance = _.Where(l => l.DeliveredAt >= oneYearAgo && l.DeliveredAt < now)
                     .Sum(l => l.Distance),
                 // Total
-                TotalGross = _.Sum(l => l.DeliveryCost.Amount),
+                TotalGross = _.Sum(l => l.DeliveryCost),
                 TotalDistance = _.Sum(l => l.Distance)
             })
             .FirstOrDefaultAsync(ct);
@@ -162,9 +162,9 @@ internal sealed class GetCompanyStatsHandler(ITenantUnitOfWork tenantUow, IProfi
             .GroupBy(_ => 1)
             .Select(_ => new
             {
-                OutstandingTotal = _.Sum(i => i.Total.Amount - i.Payments
-                    .Where(p => p.Status == PaymentStatus.Paid && p.Amount.Currency == i.Total.Currency)
-                    .Sum(p => p.Amount.Amount)),
+                OutstandingTotal = _.Sum(i => i.Total - i.Payments
+                    .Where(p => p.Status == PaymentStatus.Paid)
+                    .Sum(p => p.Amount)),
                 OverdueCount = _.Count(i => i.DueDate < now)
             })
             .FirstOrDefaultAsync(ct);
@@ -176,7 +176,7 @@ internal sealed class GetCompanyStatsHandler(ITenantUnitOfWork tenantUow, IProfi
         stats.PaymentsReceivedThisWeek = await invoiceRepository.Query()
             .SelectMany(i => i.Payments)
             .Where(p => p.Status == PaymentStatus.Paid && p.CreatedAt >= startOfWeek)
-            .SumAsync(p => p.Amount.Amount, ct);
+            .SumAsync(p => p.Amount, ct);
 
         stats.TopTrucks = await GetTopTrucksAsync(startOfMonth, now, ct);
     }

@@ -48,7 +48,7 @@ internal static class PaymentHistoryTable
                     table.Cell().Element(PdfStyles.SmallCell).Text(p.ReferenceNumber ?? "-");
                     table.Cell().Element(PdfStyles.SmallCell).Text("Payment");
                     table.Cell().Element(PdfStyles.SmallCell).AlignRight()
-                        .Text(PdfFormatting.Money(p.Amount.Amount, currency));
+                        .Text(PdfFormatting.Money(p.Amount, currency));
                 }
             });
         });
