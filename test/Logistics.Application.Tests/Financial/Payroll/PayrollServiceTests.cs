@@ -51,7 +51,7 @@ public class PayrollServiceTests
         Wire(new List<TimeEntry>());
         _tenantUow.Repository<InvoiceLineItem>().Returns(Substitute.For<ITenantRepository<InvoiceLineItem, Guid>>());
 
-        _sut = new PayrollService(_tenantUow, NullLogger<PayrollService>.Instance);
+        _sut = new PayrollService(_tenantUow, new DriverPayCalculator(), NullLogger<PayrollService>.Instance);
     }
 
     private void Wire<T>(List<T> items) where T : class, IEntity<Guid>, ITenantEntity

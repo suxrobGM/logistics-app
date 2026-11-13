@@ -54,7 +54,9 @@ public static class Registrar
         {
             services.Scan(scan => scan
                 .FromAssemblies(typeof(Registrar).Assembly)
-                .AddClasses(c => c.AssignableTo<Modules.Financial.Payroll.Services.IPayrollService>(), publicOnly: false)
+                .AddClasses(c => c.AssignableToAny(
+                    typeof(Modules.Financial.Payroll.Services.IPayrollService),
+                    typeof(Modules.Financial.Payroll.Services.IDriverPayCalculator)), publicOnly: false)
                 .AsImplementedInterfaces()
                 .WithScopedLifetime());
             return services;

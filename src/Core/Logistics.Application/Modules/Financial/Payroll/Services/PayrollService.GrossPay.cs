@@ -19,24 +19,22 @@ internal partial class PayrollService
             case SalaryType.ShareOfGross:
             {
                 var loads = await GetDeliveredLoadsAsync(employee.Id, from, to, ct);
-                var revenue = loads.Sum(l => employee.PayableRevenue(l.Linehaul, l.FuelSurcharge, l.Accessorials));
-                return new GrossPay(revenue * rate,
+                return new GrossPay(payCalculator.PayForLoads(employee, loads, Unit()),
                     $"{Percent(rate)} of {employee.PayableRevenueBasis()} on {loads.Count} load(s)");
             }
             case SalaryType.Weekly:
                 var weeks = payroll.PeriodWeeks();
-                return new GrossPay(weeks * rate, $"Weekly salary x {weeks}");
+                return new GrossPay(payCalculator.PayForPeriod(employee, weeks, 0, 0), $"Weekly salary x {weeks}");
             case SalaryType.Monthly:
                 var months = payroll.PeriodMonths();
-                return new GrossPay(months * rate, $"Monthly salary x {months}");
+                return new GrossPay(payCalculator.PayForPeriod(employee, 0, months, 0), $"Monthly salary x {months}");
             case SalaryType.RatePerDistance:
             {
-                // Load distances are meters; the rate is per the tenant's distance unit.
                 var loads = await GetDeliveredLoadsAsync(employee.Id, from, to, ct);
                 var meters = loads.Sum(l => l.Distance);
-                var unit = tenantUow.GetCurrentTenant().Settings.DistanceUnit;
+                var unit = Unit();
                 var distance = unit.FromMeters(meters);
-                return new GrossPay(distance.ToDecimal() * rate,
+                return new GrossPay(payCalculator.PayForLoads(employee, loads, unit),
                     $"{loads.Count} load(s), {distance:0} {unit.Abbreviation()} x {rate:0.00}",
                     Distance: meters);
             }
@@ -45,35 +43,39 @@ internal partial class PayrollService
                 var hours = await tenantUow.Repository<TimeEntry>().Query()
                     .Where(te => te.EmployeeId == employee.Id && te.Date >= from && te.Date < to)
                     .SumAsync(te => te.TotalHours, ct);
-                return new GrossPay(hours * rate, $"{hours:0.##} hour(s) x {rate:0.00}", Hours: hours);
+                return new GrossPay(payCalculator.PayForPeriod(employee, 0, 0, hours),
+                    $"{hours:0.##} hour(s) x {rate:0.00}", Hours: hours);
             }
             case SalaryType.PerLoad:
             {
                 var loads = await GetDeliveredLoadsAsync(employee.Id, from, to, ct);
-                return new GrossPay(loads.Count * rate, $"{loads.Count} load(s) x {rate:0.00}");
+                return new GrossPay(payCalculator.PayForLoads(employee, loads, Unit()),
+                    $"{loads.Count} load(s) x {rate:0.00}");
             }
             case SalaryType.PerStop:
             {
                 var stops = await CountDepartedStopsAsync(employee.Id, from, to, ct);
-                return new GrossPay(stops * rate, $"{stops} stop(s) x {rate:0.00}");
+                return new GrossPay(payCalculator.PayForStops(employee, stops), $"{stops} stop(s) x {rate:0.00}");
             }
             default:
-                return new GrossPay(rate, "Base pay");
+                return new GrossPay(payCalculator.PayForPeriod(employee, 0, 0, 0), "Base pay");
         }
     }
+
+    private DistanceUnit Unit() => tenantUow.GetCurrentTenant().Settings.DistanceUnit;
 
     /// <summary>
     /// Loads delivered in the period on a trip the employee drove, main or secondary. A load on no trip has
     /// no recorded driver, so it goes to whoever drives its truck now.
     /// </summary>
-    private Task<List<DeliveredLoad>> GetDeliveredLoadsAsync(Guid employeeId, DateTime from, DateTime to, CancellationToken ct) =>
+    private Task<List<LoadPayBasis>> GetDeliveredLoadsAsync(Guid employeeId, DateTime from, DateTime to, CancellationToken ct) =>
         tenantUow.Repository<Load>().Query()
             .Where(l => l.DeliveredAt >= from && l.DeliveredAt < to &&
                         (l.TripStops.Any()
                             ? l.TripStops.Any(s => s.Trip.DriverId == employeeId || s.Trip.SecondaryDriverId == employeeId)
                             : l.AssignedTruck != null &&
                               (l.AssignedTruck.MainDriverId == employeeId || l.AssignedTruck.SecondaryDriverId == employeeId)))
-            .Select(l => new DeliveredLoad(
+            .Select(l => new LoadPayBasis(
                 l.DeliveryCost.Amount,
                 l.FuelSurcharge,
                 l.Accessorials.Sum(a => a.Rate * a.Quantity),
@@ -91,6 +93,4 @@ internal partial class PayrollService
     private static string Percent(decimal ratio) => (ratio * 100).ToString("0.##", CultureInfo.InvariantCulture) + "%";
 
     private sealed record GrossPay(decimal Amount, string Description, double Distance = 0, decimal Hours = 0);
-
-    private sealed record DeliveredLoad(decimal Linehaul, decimal FuelSurcharge, decimal Accessorials, double Distance);
 }
