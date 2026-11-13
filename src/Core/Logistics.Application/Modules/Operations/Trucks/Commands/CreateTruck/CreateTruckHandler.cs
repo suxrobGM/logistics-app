@@ -11,7 +11,7 @@ namespace Logistics.Application.Modules.Operations.Trucks.Commands;
 
 internal sealed class CreateTruckHandler(
     ITenantUnitOfWork tenantUow,
-    IVehicleTransportCheck vehicleTransportCheck,
+    IVehicleTransportFeatureChecker vehicleTransportFeatureChecker,
     ITruckDriverFinder driverFinder) : IRequestHandler<CreateTruckCommand, Result>
 {
 
@@ -21,7 +21,7 @@ internal sealed class CreateTruckHandler(
         var limitResult = await CheckTruckLimitAsync(ct);
         if (!limitResult.IsSuccess) return limitResult;
 
-        var typeCheck = await vehicleTransportCheck.CheckTruckTypeAsync(req.TruckType);
+        var typeCheck = await vehicleTransportFeatureChecker.CheckTruckTypeAsync(req.TruckType);
         if (!typeCheck.IsSuccess) return typeCheck;
 
         var number = req.TruckNumber.Trim();

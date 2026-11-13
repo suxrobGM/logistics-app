@@ -7,7 +7,7 @@ namespace Logistics.Application.Modules.Operations.Loads.Services;
 /// Gates car-hauling load and truck types on <see cref="TenantFeature.VehicleTransport"/>. The type is a
 /// field value, so <c>[RequiresFeature]</c> cannot do it - every write path that accepts one calls this.
 /// </summary>
-public interface IVehicleTransportCheck : IApplicationService
+public interface IVehicleTransportFeatureChecker : IApplicationService
 {
     Task<Result> CheckLoadTypeAsync(LoadType? type);
     Task<Result> CheckLoadTypesAsync(IEnumerable<LoadType>? types);

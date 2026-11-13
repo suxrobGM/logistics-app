@@ -157,7 +157,7 @@ public class ImportImporterTests
         _tenantUow.Repository<Truck>().Returns(truckRepo);
         _tenantUow.Repository<Employee>().Returns(employeeRepo);
         var sut = new LoadImporter(_tenantUow, Substitute.For<IGeocodingService>(),
-            Substitute.For<IVehicleTransportCheck>(), currentUser);
+            Substitute.For<IVehicleTransportFeatureChecker>(), currentUser);
 
         var row = Row(2,
             (Keys.Reference, "PRO-1"), (Keys.Customer, "Nobody Inc"), (Keys.Rate, "$1,200"),

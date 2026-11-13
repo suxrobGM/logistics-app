@@ -36,9 +36,9 @@ public class CreateTruckHandlerTests
         _truckRepo.GetAsync(Arg.Any<Expression<Func<Truck, bool>>>(), Arg.Any<CancellationToken>())
             .Returns(ci => _trucks.AsQueryable().FirstOrDefault(ci.Arg<Expression<Func<Truck, bool>>>()));
         _employeeRepo.GetByIdAsync(_driver.Id, Arg.Any<CancellationToken>()).Returns(_driver);
-        var guard = Substitute.For<IVehicleTransportCheck>();
-        guard.CheckTruckTypeAsync(Arg.Any<TruckType?>()).Returns(Result.Ok());
-        _sut = new CreateTruckHandler(_tenantUow, guard, new TruckDriverFinder(_tenantUow));
+        var vehicleTransportFeatureChecker = Substitute.For<IVehicleTransportFeatureChecker>();
+        vehicleTransportFeatureChecker.CheckTruckTypeAsync(Arg.Any<TruckType?>()).Returns(Result.Ok());
+        _sut = new CreateTruckHandler(_tenantUow, vehicleTransportFeatureChecker, new TruckDriverFinder(_tenantUow));
     }
 
     [Fact]

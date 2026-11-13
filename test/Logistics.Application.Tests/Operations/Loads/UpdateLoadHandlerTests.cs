@@ -17,15 +17,15 @@ public class UpdateLoadHandlerTests
 
     private readonly ITenantUnitOfWork _tenantUow = Substitute.For<ITenantUnitOfWork>();
     private readonly ITenantRepository<Load, Guid> _loadRepo = Substitute.For<ITenantRepository<Load, Guid>>();
-    private readonly IVehicleTransportCheck _vehicleTransportCheck = Substitute.For<IVehicleTransportCheck>();
+    private readonly IVehicleTransportFeatureChecker _vehicleTransportFeatureChecker = Substitute.For<IVehicleTransportFeatureChecker>();
     private readonly ILoadChargeService _loadChargeService = Substitute.For<ILoadChargeService>();
     private readonly UpdateLoadHandler _sut;
 
     public UpdateLoadHandlerTests()
     {
         _tenantUow.Repository<Load>().Returns(_loadRepo);
-        _vehicleTransportCheck.CheckLoadTypeAsync(Arg.Any<LoadType?>()).Returns(Result.Ok());
-        _sut = new UpdateLoadHandler(_tenantUow, _vehicleTransportCheck, _loadChargeService);
+        _vehicleTransportFeatureChecker.CheckLoadTypeAsync(Arg.Any<LoadType?>()).Returns(Result.Ok());
+        _sut = new UpdateLoadHandler(_tenantUow, _vehicleTransportFeatureChecker, _loadChargeService);
     }
 
     #region Vehicles

@@ -172,12 +172,12 @@ Update `AssemblyAnchors`, the arch-tests csproj, `overview.md`, CLAUDE.md ("15 f
 
 **Inside Application:**
 - [x] ✅ Modules regrouped 6 → 9, done 2026-11-13: `IdentityAccess` split into `Identity` and `Tenancy`; AI features out of `Integrations` into `AI`; `Platform` dissolved into `Reporting`, `Website`, `Tenancy`, `AI` and `Operations` (Portal, Notifications, DataImport); Customers, Documents and Messaging into `Operations`; Accidents merged into `Compliance/Safety`. See `docs/architecture/module-layout.md`.
-- [ ] CustomerUser queries live in `Operations/Portal/Queries`; move them to `Identity/CustomerUsers/Queries`.
-- [ ] 10 payroll features live in `Financial/Invoices`; move them to `Financial/Payroll`.
+- [x] ✅ CustomerUser queries moved from Portal to `Identity/CustomerUsers/Queries` (`6cc972c59`).
+- [x] ✅ The 10 payroll features moved from `Financial/Invoices` to `Financial/Payroll` (`2391953c5`).
 - [ ] Put `GetAIQuotaStatusHandler` in `Agents/Queries`. The cross-tenant quota admin features move from AIDispatch to `AI/AISettings`.
-- [ ] `ProcessEldWebhook` lives in `Compliance/Eld`, but the docs say `Integrations/Webhooks`: move it or fix the doc.
+- [x] ✅ `ProcessEldWebhook` moved to `Integrations/Webhooks`, matching the docs (`3f0c81151`).
 - [x] ✅ Merge the two "Common" folders (`Modules/Common` and `Operations/Common`), done 2026-11-13: cross-module code now sits in `Application/Common/` (Pipeline, Handlers, Extensions, Security, Storage, Validation, Constants, Services); the vehicle checks moved to `Operations/Loads/Services/`.
-  - Still open: rename `VehicleTransportCheck` (jargon noun).
+  - ✅ `VehicleTransportCheck` renamed to `VehicleTransportFeatureChecker`, done 2026-11-13.
 - [ ] Optional: drop the per-command subfolder (158 folders, namespaces already flat). This only helps navigation.
 
 **Recommended against (and why):** Refit or Kiota clients (4-8 endpoints per vendor, with different error styles), `IChatClient` (hides Anthropic cache breakpoints, thinking signatures and PauseTurn), prompts as `.md` resources (loses compile checks and byte-identical cache prefixes), Minimal APIs, Bogus/AutoFixture, Stateless, replacing the UoW (it switches tenant databases), and Scrutor scanning for infrastructure.

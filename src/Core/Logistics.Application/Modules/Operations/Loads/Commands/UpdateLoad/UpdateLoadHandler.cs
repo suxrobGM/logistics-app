@@ -11,7 +11,7 @@ namespace Logistics.Application.Modules.Operations.Loads.Commands;
 
 internal sealed class UpdateLoadHandler(
     ITenantUnitOfWork tenantUow,
-    IVehicleTransportCheck vehicleTransportCheck,
+    IVehicleTransportFeatureChecker vehicleTransportFeatureChecker,
     ILoadChargeService loadChargeService)
     : IRequestHandler<UpdateLoadCommand, Result>
 {
@@ -25,7 +25,7 @@ internal sealed class UpdateLoadHandler(
         }
 
         // Only a change is checked, so existing vehicle loads stay editable after the feature is turned off.
-        var typeCheck = await vehicleTransportCheck.CheckLoadTypeAsync(req.Type == load.Type ? null : req.Type);
+        var typeCheck = await vehicleTransportFeatureChecker.CheckLoadTypeAsync(req.Type == load.Type ? null : req.Type);
         if (!typeCheck.IsSuccess)
         {
             return typeCheck;

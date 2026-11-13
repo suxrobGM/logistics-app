@@ -19,7 +19,7 @@ public class UpdateTruckHandlerTests
     private readonly ITenantUnitOfWork _tenantUow = Substitute.For<ITenantUnitOfWork>();
     private readonly ITenantRepository<Truck, Guid> _truckRepo = Substitute.For<ITenantRepository<Truck, Guid>>();
     private readonly ITenantRepository<Employee, Guid> _employeeRepo = Substitute.For<ITenantRepository<Employee, Guid>>();
-    private readonly IVehicleTransportCheck _guard = Substitute.For<IVehicleTransportCheck>();
+    private readonly IVehicleTransportFeatureChecker _vehicleTransportFeatureChecker = Substitute.For<IVehicleTransportFeatureChecker>();
     private readonly List<Truck> _trucks = [];
     private readonly UpdateTruckHandler _sut;
 
@@ -32,8 +32,8 @@ public class UpdateTruckHandlerTests
             .Returns(ci => _trucks.FirstOrDefault(t => t.Id == ci.Arg<Guid>()));
         _truckRepo.GetAsync(Arg.Any<Expression<Func<Truck, bool>>>(), Arg.Any<CancellationToken>())
             .Returns(ci => _trucks.AsQueryable().FirstOrDefault(ci.Arg<Expression<Func<Truck, bool>>>()));
-        _guard.CheckTruckTypeAsync(Arg.Any<TruckType?>()).Returns(Result.Ok());
-        _sut = new UpdateTruckHandler(_tenantUow, _guard, Substitute.For<ITrailerHookService>(), new TruckDriverFinder(_tenantUow));
+        _vehicleTransportFeatureChecker.CheckTruckTypeAsync(Arg.Any<TruckType?>()).Returns(Result.Ok());
+        _sut = new UpdateTruckHandler(_tenantUow, _vehicleTransportFeatureChecker, Substitute.For<ITrailerHookService>(), new TruckDriverFinder(_tenantUow));
     }
 
     [Theory]

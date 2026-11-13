@@ -5,8 +5,8 @@ using Logistics.Shared.Models;
 
 namespace Logistics.Application.Modules.Operations.Loads.Services;
 
-internal sealed class VehicleTransportCheck(ITenantUnitOfWork tenantUow, IFeatureService featureService)
-    : IVehicleTransportCheck
+internal sealed class VehicleTransportFeatureChecker(ITenantUnitOfWork tenantUow, IFeatureService featureService)
+    : IVehicleTransportFeatureChecker
 {
     public Task<Result> CheckLoadTypeAsync(LoadType? type) =>
         type is LoadType.Vehicle ? CheckFeatureAsync() : Task.FromResult(Result.Ok());

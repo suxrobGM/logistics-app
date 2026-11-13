@@ -12,7 +12,7 @@ namespace Logistics.Application.Tests.Operations.Loads;
 public class LoadServiceTests
 {
     private readonly ITenantUnitOfWork _tenantUow = Substitute.For<ITenantUnitOfWork>();
-    private readonly IVehicleTransportCheck _guard = Substitute.For<IVehicleTransportCheck>();
+    private readonly IVehicleTransportFeatureChecker _vehicleTransportFeatureChecker = Substitute.For<IVehicleTransportFeatureChecker>();
     private readonly Employee _dispatcher = TestData.Driver();
     private readonly Customer _customer = new() { Name = "Acme" };
     private readonly Truck _truck = TestData.Truck();
@@ -21,12 +21,12 @@ public class LoadServiceTests
     public LoadServiceTests()
     {
         _tenantUow.GetCurrentTenant().Returns(TestTenant.Create());
-        _guard.CheckLoadTypesAsync(Arg.Any<IEnumerable<LoadType>?>()).Returns(Result.Ok());
+        _vehicleTransportFeatureChecker.CheckLoadTypesAsync(Arg.Any<IEnumerable<LoadType>?>()).Returns(Result.Ok());
         _tenantUow.Stub(_dispatcher);
         _tenantUow.Stub(_customer);
         _tenantUow.Stub(_truck);
         _tenantUow.Stub<Trip>();
-        _sut = new LoadService(_tenantUow, _guard);
+        _sut = new LoadService(_tenantUow, _vehicleTransportFeatureChecker);
     }
 
     /// <summary>One place copies the load details onto the entity, so a new field can't be dropped silently.</summary>

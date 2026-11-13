@@ -4,7 +4,7 @@ using Logistics.Shared.Models;
 
 namespace Logistics.Application.Modules.Operations.Loads.Services;
 
-internal sealed class LoadService(ITenantUnitOfWork tenantUow, IVehicleTransportCheck vehicleTransportCheck)
+internal sealed class LoadService(ITenantUnitOfWork tenantUow, IVehicleTransportFeatureChecker vehicleTransportFeatureChecker)
     : ILoadService
 {
     public async Task<Result<Load>> CreateLoadAsync(NewLoad newLoad, bool saveChanges = true,
@@ -25,7 +25,7 @@ internal sealed class LoadService(ITenantUnitOfWork tenantUow, IVehicleTransport
             return Result<IReadOnlyList<Load>>.Ok([]);
         }
 
-        var typeCheck = await vehicleTransportCheck.CheckLoadTypesAsync(newLoadList.Select(p => p.Details.Type));
+        var typeCheck = await vehicleTransportFeatureChecker.CheckLoadTypesAsync(newLoadList.Select(p => p.Details.Type));
         if (!typeCheck.IsSuccess)
         {
             return Result<IReadOnlyList<Load>>.Fail(typeCheck);

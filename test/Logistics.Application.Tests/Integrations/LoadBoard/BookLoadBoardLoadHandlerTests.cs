@@ -72,11 +72,11 @@ public class BookLoadBoardLoadHandlerTests
         _customerRepo.GetAsync(Arg.Any<System.Linq.Expressions.Expression<Func<Customer, bool>>>(), Arg.Any<CancellationToken>())
             .Returns((Customer?)null);
 
-        var vehicleTransportCheck = Substitute.For<IVehicleTransportCheck>();
-        vehicleTransportCheck.CheckLoadTypeAsync(Arg.Any<LoadType?>()).Returns(Result.Ok());
+        var vehicleTransportFeatureChecker = Substitute.For<IVehicleTransportFeatureChecker>();
+        vehicleTransportFeatureChecker.CheckLoadTypeAsync(Arg.Any<LoadType?>()).Returns(Result.Ok());
 
         _sut = new BookLoadBoardLoadHandler(
-            _tenantUow, vehicleTransportCheck, _currentUser, new BrokerCreditChecker(_tenantUow, _brokerCreditService), _routeRegistry, _broadcastService,
+            _tenantUow, vehicleTransportFeatureChecker, _currentUser, new BrokerCreditChecker(_tenantUow, _brokerCreditService), _routeRegistry, _broadcastService,
             NullLogger<BookLoadBoardLoadHandler>.Instance);
     }
 
