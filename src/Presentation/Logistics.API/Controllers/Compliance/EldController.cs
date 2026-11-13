@@ -1,0 +1,206 @@
+using Logistics.API.Extensions;
+using Logistics.Shared.Identity.Policies;
+using Logistics.Shared.Models;
+using Logistics.Mediator;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
+using Logistics.Application.Modules.Compliance.Eld.Commands;
+using Logistics.Application.Modules.Compliance.Eld.Queries;
+
+namespace Logistics.API.Controllers.Compliance;
+
+[ApiController]
+[Route("eld")]
+[Produces("application/json")]
+public class EldController(IMediator mediator) : ControllerBase
+{
+    #region Provider Configuration
+
+    [HttpGet("providers", Name = "GetEldProviders")]
+    [ProducesResponseType(typeof(List<EldProviderConfigurationDto>), StatusCodes.Status200OK)]
+    [Authorize(Policy = Permission.Eld.View)]
+    public async Task<IActionResult> GetProviders()
+    {
+        var result = await mediator.Send(new GetEldProviderConfigurationsQuery());
+        return result.ToActionResult();
+    }
+
+    [HttpPost("providers", Name = "CreateEldProvider")]
+    [ProducesResponseType(StatusCodes.Status204NoContent)]
+    [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status400BadRequest)]
+    [Authorize(Policy = Permission.Eld.Manage)]
+    public async Task<IActionResult> CreateProvider([FromBody] CreateEldProviderConfigurationCommand request)
+    {
+        var result = await mediator.Send(request);
+        return result.ToActionResult();
+    }
+
+    [HttpDelete("providers/{providerId:guid}", Name = "DeleteEldProvider")]
+    [ProducesResponseType(StatusCodes.Status204NoContent)]
+    [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status400BadRequest)]
+    [Authorize(Policy = Permission.Eld.Manage)]
+    public async Task<IActionResult> DeleteProvider(Guid providerId)
+    {
+        var result = await mediator.Send(new DeleteEldProviderConfigurationCommand { ProviderId = providerId });
+        return result.ToActionResult();
+    }
+
+    [HttpGet("providers/{providerId:guid}/drivers", Name = "GetEldProviderDrivers")]
+    [ProducesResponseType(typeof(List<EldDriverDto>), StatusCodes.Status200OK)]
+    [Authorize(Policy = Permission.Eld.View)]
+    public async Task<IActionResult> GetProviderDrivers(Guid providerId)
+    {
+        var result = await mediator.Send(new GetEldProviderDriversQuery { ProviderId = providerId });
+        return result.ToActionResult();
+    }
+
+    #endregion
+
+    #region Driver Mappings
+
+    [HttpGet("providers/{providerId:guid}/mappings", Name = "GetEldDriverMappings")]
+    [ProducesResponseType(typeof(List<EldDriverMappingDto>), StatusCodes.Status200OK)]
+    [Authorize(Policy = Permission.Eld.View)]
+    public async Task<IActionResult> GetDriverMappings(Guid providerId)
+    {
+        var result = await mediator.Send(new GetEldDriverMappingsQuery { ProviderId = providerId });
+        return result.ToActionResult();
+    }
+
+    [HttpPost("drivers/mappings", Name = "MapEldDriver")]
+    [ProducesResponseType(StatusCodes.Status204NoContent)]
+    [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status400BadRequest)]
+    [Authorize(Policy = Permission.Eld.Manage)]
+    public async Task<IActionResult> MapDriver([FromBody] MapEldDriverCommand request)
+    {
+        var result = await mediator.Send(request);
+        return result.ToActionResult();
+    }
+
+    [HttpDelete("drivers/mappings/{mappingId:guid}", Name = "DeleteEldDriverMapping")]
+    [ProducesResponseType(StatusCodes.Status204NoContent)]
+    [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status400BadRequest)]
+    [Authorize(Policy = Permission.Eld.Manage)]
+    public async Task<IActionResult> DeleteDriverMapping(Guid mappingId)
+    {
+        var result = await mediator.Send(new DeleteEldDriverMappingCommand { MappingId = mappingId });
+        return result.ToActionResult();
+    }
+
+    #endregion
+
+    #region Vehicle Mappings
+
+    [HttpGet("providers/{providerId:guid}/vehicles", Name = "GetEldProviderVehicles")]
+    [ProducesResponseType(typeof(List<EldVehicleDto>), StatusCodes.Status200OK)]
+    [Authorize(Policy = Permission.Eld.View)]
+    public async Task<IActionResult> GetProviderVehicles(Guid providerId)
+    {
+        var result = await mediator.Send(new GetEldProviderVehiclesQuery { ProviderId = providerId });
+        return result.ToActionResult();
+    }
+
+    [HttpGet("providers/{providerId:guid}/vehicles/mappings", Name = "GetEldVehicleMappings")]
+    [ProducesResponseType(typeof(List<EldVehicleMappingDto>), StatusCodes.Status200OK)]
+    [Authorize(Policy = Permission.Eld.View)]
+    public async Task<IActionResult> GetVehicleMappings(Guid providerId)
+    {
+        var result = await mediator.Send(new GetEldVehicleMappingsQuery { ProviderId = providerId });
+        return result.ToActionResult();
+    }
+
+    [HttpPost("vehicles/mappings", Name = "MapEldVehicle")]
+    [ProducesResponseType(StatusCodes.Status204NoContent)]
+    [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status400BadRequest)]
+    [Authorize(Policy = Permission.Eld.Manage)]
+    public async Task<IActionResult> MapVehicle([FromBody] MapEldVehicleCommand request)
+    {
+        var result = await mediator.Send(request);
+        return result.ToActionResult();
+    }
+
+    [HttpDelete("vehicles/mappings/{mappingId:guid}", Name = "DeleteEldVehicleMapping")]
+    [ProducesResponseType(StatusCodes.Status204NoContent)]
+    [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status400BadRequest)]
+    [Authorize(Policy = Permission.Eld.Manage)]
+    public async Task<IActionResult> DeleteVehicleMapping(Guid mappingId)
+    {
+        var result = await mediator.Send(new DeleteEldVehicleMappingCommand { MappingId = mappingId });
+        return result.ToActionResult();
+    }
+
+    #endregion
+
+    #region Mapping Suggestions
+
+    [HttpGet("providers/{providerId:guid}/suggestions", Name = "GetEldMappingSuggestions")]
+    [ProducesResponseType(typeof(EldMappingSuggestionsDto), StatusCodes.Status200OK)]
+    [Authorize(Policy = Permission.Eld.Manage)]
+    public async Task<IActionResult> GetMappingSuggestions(Guid providerId)
+    {
+        var result = await mediator.Send(new GetEldMappingSuggestionsQuery { ProviderId = providerId });
+        return result.ToActionResult();
+    }
+
+    [HttpPost("providers/{providerId:guid}/suggestions/apply", Name = "ApplyEldMappingSuggestions")]
+    [ProducesResponseType(typeof(EldMappingSuggestionsDto), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status400BadRequest)]
+    [Authorize(Policy = Permission.Eld.Manage)]
+    public async Task<IActionResult> ApplyMappingSuggestions(Guid providerId)
+    {
+        var result = await mediator.Send(new ApplyEldMappingSuggestionsCommand { ProviderId = providerId });
+        return result.ToActionResult();
+    }
+
+    #endregion
+
+    #region HOS Data
+
+    [HttpGet("drivers/hos", Name = "GetAllDriversHos")]
+    [ProducesResponseType(typeof(List<DriverHosStatusDto>), StatusCodes.Status200OK)]
+    [Authorize(Policy = Permission.Eld.View)]
+    public async Task<IActionResult> GetAllDriversHos()
+    {
+        var result = await mediator.Send(new GetAllDriversHosStatusQuery());
+        return result.ToActionResult();
+    }
+
+    [HttpGet("drivers/{employeeId:guid}/logs", Name = "GetDriverHosLogs")]
+    [ProducesResponseType(typeof(PagedResponse<HosLogDto>), StatusCodes.Status200OK)]
+    [Authorize(Policy = Permission.Eld.View)]
+    public async Task<IActionResult> GetDriverHosLogs(Guid employeeId, [FromQuery] GetDriverHosLogsQuery query)
+    {
+        query.EmployeeId = employeeId;
+        var result = await mediator.Send(query);
+        return Ok(PagedResponse<HosLogDto>.FromPagedResult(result, query.Page, query.PageSize));
+    }
+
+    #endregion
+
+    #region Rules
+
+    [HttpGet("rules/limits", Name = "GetHosLimits")]
+    [ProducesResponseType(typeof(HosLimitsDto), StatusCodes.Status200OK)]
+    [Authorize(Policy = Permission.Eld.View)]
+    public async Task<IActionResult> GetHosLimits()
+    {
+        var result = await mediator.Send(new GetHosLimitsQuery());
+        return result.ToActionResult();
+    }
+
+    #endregion
+
+    #region Sync Operations
+
+    [HttpPost("sync/drivers/hos", Name = "SyncAllDriversHos")]
+    [ProducesResponseType(StatusCodes.Status204NoContent)]
+    [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status400BadRequest)]
+    [Authorize(Policy = Permission.Eld.Sync)]
+    public async Task<IActionResult> SyncAllDriversHos()
+    {
+        var result = await mediator.Send(new SyncAllDriversHosStatusCommand());
+        return result.ToActionResult();
+    }
+
+    #endregion
+}

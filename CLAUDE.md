@@ -54,7 +54,7 @@ cd private/src/Client/Logistics.DriverApp && ./gradlew assembleDebug
 - **Lazy loading**: EF Core lazy loading enabled - do NOT use `.Include()` for navigation properties. The flip side: reading a navigation property inside a mapper or a list loop is an N+1. Batch the lookup and pass the value in (see [mapperly.md](.claude/rules/backend/mapperly.md))
 - **Modular infrastructure**: 8 focused projects under `src/Infrastructure/` (see [overview.md](docs/architecture/overview.md)). Shared HTTP-JSON plumbing, webhook signature validation (`WebhookSignature`; Resend's Svix check is in `Infrastructure.Communications`), and the keyed-service provider registration (`AddKeyedProvider` / `GetRequiredProvider`) for the third-party providers live in `Infrastructure.Integrations/Common/` - do NOT hand-roll a fourth copy
 - **Outbound HTTP**: every `HttpClient` gets the standard resilience handler from `LogisticsHost` (`ConfigureHttpClientDefaults`), with retries disabled for unsafe methods - never stack a second retry handler. The `llm` client opts out (`RemoveAllResilienceHandlers` in `Infrastructure.AI/Registrar.cs`) because the handler's 30s total would cut agent turns
-- **Hangfire jobs bypass the request pipeline**, so `[RequiresFeature]` is inert there. A job must check `IFeatureService` itself, and should fan out via `TenantJobRunner.ForEachTenantAsync` (`src/Presentation/Logistics.API/Jobs/`)
+- **Hangfire jobs bypass the request pipeline**, so `[RequiresFeature]` is inert there. A job must check `IFeatureService` itself, and should fan out via `TenantJobRunner.ForEachTenantAsync` (`src/Presentation/Logistics.API/Jobs/Scheduling/`)
 
 ### Layer boundaries
 

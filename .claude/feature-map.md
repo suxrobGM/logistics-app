@@ -18,9 +18,9 @@ This file answers _where_. For _how it works_, follow the deep dive: **AI dispat
 - **Application constants**: feature-scoped under `Modules/{Module}/{Feature}/Constants/`; cross-module shared in `Common/Constants/`
 - **Service implementations**: `src/Infrastructure/Logistics.Infrastructure.{Module}/`
 - **Shared provider HTTP**: `Logistics.Infrastructure.Integrations/Common/HttpClientJsonExtensions.cs` - `TryGetFromJsonAsync` (never throws; logs, returns `default`), used by FuelCards/Eld (load boards throw instead: `Integrations/LoadBoard/LoadBoardHttp.cs`). Don't copy it into a new integration. `Integrations/Accounting/`'s QBO helpers deliberately **throw** so push errors surface - not duplicates, don't fold in
-- **REST controllers**: `src/Presentation/Logistics.API/Controllers/{Feature}Controller.cs`
+- **REST controllers**: `src/Presentation/Logistics.API/Controllers/{Module}/{Feature}Controller.cs` (same module names as Application)
 - **SignalR hubs**: `src/Infrastructure/Logistics.Infrastructure.Communications/SignalR/Hubs/`
-- **Hangfire jobs**: `src/Presentation/Logistics.API/Jobs/` - fan out with `TenantJobRunner.ForEachTenantAsync` and gate features inside the body (see CLAUDE.md for the canonical `[RequiresFeature]`-is-inert rule)
+- **Hangfire jobs**: `src/Presentation/Logistics.API/Jobs/` (shared plumbing - `TenantJobRunner`, `RecurringJobs`, the enqueuer - in `Jobs/Scheduling/`) - fan out with `TenantJobRunner.ForEachTenantAsync` and gate features inside the body (see CLAUDE.md for the canonical `[RequiresFeature]`-is-inert rule)
 - **Machine-readable API errors**: `Logistics.Shared.Models/ErrorCodes.cs`, mirrored in `projects/shared/src/lib/errors/upgrade-handler.ts` (see `.claude/rules/backend/api-design.md` for the contract)
 - **Webhooks**: `WebhookController.cs` + `Application/Modules/Integrations/Webhooks/Commands/`
 - **EF configurations**: `src/Infrastructure/Logistics.Infrastructure.Persistence/Configurations/{Feature}/`
@@ -256,7 +256,7 @@ registry, `AgentLoopRunner`, decisions, and quota. Gated by `TenantFeature.AICop
 - Domain: `ProductLicenseHeartbeat` (master), `Options/ProductLicenseOptions.cs` (`License__Key`, `License__HeartbeatUrl`, `License__HeartbeatEnabled`)
 - Application: `Modules/Tenancy/ProductLicense/` - `Services/ProductLicenseKeyValidator` (ES256 JWT against the embedded public key), `ProductLicenseService` (env var wins over `SystemSettings`, 5 min cache), `ProductLicenseHeartbeatService` (builds the report, sends it through `IProductLicenseHeartbeatSender`); commands `SetProductLicenseKey`, `RecordProductLicenseHeartbeat`; queries `GetProductLicenseStatus`, `GetProductLicenseDiscovery`
 - Infrastructure: `Infrastructure.Integrations/Licensing/` - `ProductLicenseHeartbeatSender` posts the daily report
-- API/UI: `ProductLicenseController.cs` (`/license`, `/license/key`, anonymous `/license/heartbeat` and `/.well-known/logisticsx.json`), `product-license-heartbeat` in `Jobs/RecurringJobs.cs`, `HostDefaults/ProductVersionHeaderExtensions.cs` (`X-LogisticsX-Version`), `shared/services/product-license.service.ts` + `ui-license-banner` (all three portals), `admin-portal/pages/license/`
+- API/UI: `ProductLicenseController.cs` (`/license`, `/license/key`, anonymous `/license/heartbeat` and `/.well-known/logisticsx.json`), `product-license-heartbeat` in `Jobs/Scheduling/RecurringJobs.cs`, `HostDefaults/ProductVersionHeaderExtensions.cs` (`X-LogisticsX-Version`), `shared/services/product-license.service.ts` + `ui-license-banner` (all three portals), `admin-portal/pages/license/`
 - Keys are issued with `tools/Logistics.LicenseIssuer` (`keygen`, `issue`, `inspect`); legal text in `COMMERCIAL-LICENSE.md`, `CLA.md`
 
 ### Background runner
@@ -321,7 +321,7 @@ registry, `AgentLoopRunner`, decisions, and quota. Gated by `TenantFeature.AICop
 - Domain: `Entities/Employee/DriverLicense.cs`
 - Application: `Modules/Identity/Employees/Commands/{Create,Update,Delete}DriverLicense/`, `Application.Abstractions/ApplicationServices/IDispatchEligibilityService`, `Modules/Compliance/Safety/Services/LicenseExpiryReminderService`
 - Infrastructure: `Infrastructure.AI/Tools/Dispatch/CheckDispatchEligibilityTool.cs`
-- API/UI: `EmployeeController` (extended), `tms-portal/pages/employees/components/driver-licenses-tab/`, mobile `feature/more/LicensesScreen.kt`, `ProcessLicenseExpiryReminders` in `Jobs/RecurringJobs.cs`
+- API/UI: `EmployeeController` (extended), `tms-portal/pages/employees/components/driver-licenses-tab/`, mobile `feature/more/LicensesScreen.kt`, `ProcessLicenseExpiryReminders` in `Jobs/Scheduling/RecurringJobs.cs`
 
 ### ADR / Hazmat
 
@@ -335,14 +335,14 @@ registry, `AgentLoopRunner`, decisions, and quota. Gated by `TenantFeature.AICop
 - Application: `Modules/Compliance/Ifta/` (`TruckLocationRecorder`, `IftaReportService`, quarter-close + filing-reminder services, `IftaQuarters`), `Modules/Compliance/Ifta/TaxRates/` (admin rate CRUD), `Modules/Reporting/Reports/Queries/Ifta/`
 - Infrastructure: `Infrastructure.Routing/Geospatial/JurisdictionResolver.cs` (NTS + embedded boundaries, built once at startup by `JurisdictionResolverWarmup`); `Infrastructure.Documents/Pdf/Ifta/`
 - **Traps**: closed quarters are served verbatim from `IftaQuarterSnapshot.ReportJson` (sole source of truth, deliberately not denormalized into columns). Tax-rate `(Year, Quarter, Jurisdiction)` and mileage `(Truck, Date, Jurisdiction)` uniqueness are raw-SQL unique indexes (NULLS NOT DISTINCT on region) created in migrations, not EF config - complex-type members can't be in an EF index, so a model rebuild won't recreate them. Write paths still probe `IftaTaxRateUniqueness.FindConflictAsync` for a readable error; `TruckLocationRecorder` upserts mileage with `ON CONFLICT`, which needs the index
-- API/UI: `ReportController` `/reports/ifta` + `/reports/ifta/pdf`, `IftaTaxRateController.cs` `/ifta/rates`, `Jobs/IftaQuarterCloseJob.cs`, `ifta-filing-reminders` in `Jobs/RecurringJobs.cs`, `tms-portal/pages/reports/ifta-report/`, `admin-portal/pages/ifta-rates/`
+- API/UI: `ReportController` `/reports/ifta` + `/reports/ifta/pdf`, `IftaTaxRateController.cs` `/ifta/rates`, `Jobs/IftaQuarterCloseJob.cs`, `ifta-filing-reminders` in `Jobs/Scheduling/RecurringJobs.cs`, `tms-portal/pages/reports/ifta-report/`, `admin-portal/pages/ifta-rates/`
 
 ### Privacy (GDPR)
 
 - Domain: `Entities/Privacy/`
 - Application: `Modules/Compliance/Privacy/` (Commands, Queries, Services)
 - Infrastructure: `Infrastructure.Documents/Privacy/`, `Infrastructure.Persistence/Services/Privacy/DataAnonymizer.cs`
-- API/UI: `PrivacyController.cs`, `privacy-*` entries in `Jobs/RecurringJobs.cs`, `<ui-cookie-banner>`, `admin-portal/pages/data-requests/`
+- API/UI: `PrivacyController.cs`, `privacy-*` entries in `Jobs/Scheduling/RecurringJobs.cs`, `<ui-cookie-banner>`, `admin-portal/pages/data-requests/`
 
 ## Financial
 
@@ -646,7 +646,7 @@ registry, `AgentLoopRunner`, decisions, and quota. Gated by `TenantFeature.AICop
 
 ### Observability & backups
 
-- API/UI: `Logistics.HostDefaults/` (`SentryExtensions.cs`, `SentryEventScrubber.cs`, `TenantSentryEventProcessor.cs`), `Logistics.API/Jobs/HangfireHealthCheck.cs` (`hangfire` health check, registered in `Setup.cs`), Angular `projects/shared/src/lib/errors/error-tracking.ts` (lazy Sentry SDK)
+- API/UI: `Logistics.HostDefaults/` (`SentryExtensions.cs`, `SentryEventScrubber.cs`, `TenantSentryEventProcessor.cs`), `Logistics.API/Jobs/Scheduling/HangfireHealthCheck.cs` (`hangfire` health check, registered in `Setup.cs`), Angular `projects/shared/src/lib/errors/error-tracking.ts` (lazy Sentry SDK)
 - Deploy: `deploy/db-backup/pg-backup.sh` / `pg-restore.sh`, `deploy/docker-compose.backup.yml`
 - Guide: [docs/deployment/observability-and-backups.md](../docs/deployment/observability-and-backups.md)
 

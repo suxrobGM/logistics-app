@@ -1,0 +1,111 @@
+using Logistics.API.Extensions;
+using Logistics.Shared.Identity.Policies;
+using Logistics.Shared.Models;
+using Logistics.Mediator;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
+using Logistics.Application.Modules.Operations.Containers.Commands;
+using Logistics.Application.Modules.Operations.Containers.Queries;
+
+namespace Logistics.API.Controllers.Operations;
+
+[ApiController]
+[Route("containers")]
+[Produces("application/json")]
+public class ContainerController(IMediator mediator) : ControllerBase
+{
+    [HttpGet("{id:guid}", Name = "GetContainerById")]
+    [ProducesResponseType(typeof(ContainerDto), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status404NotFound)]
+    [Authorize(Policy = Permission.Container.View)]
+    public async Task<IActionResult> GetById(Guid id)
+    {
+        var result = await mediator.Send(new GetContainerByIdQuery { Id = id });
+        return result.ToActionResult();
+    }
+
+    [HttpGet(Name = "GetContainers")]
+    [ProducesResponseType(typeof(PagedResponse<ContainerDto>), StatusCodes.Status200OK)]
+    [Authorize(Policy = Permission.Container.View)]
+    public async Task<IActionResult> GetList([FromQuery] GetContainersQuery query)
+    {
+        var result = await mediator.Send(query);
+        return Ok(PagedResponse<ContainerDto>.FromPagedResult(result, query.Page, query.PageSize));
+    }
+
+    [HttpPost(Name = "CreateContainer")]
+    [ProducesResponseType(typeof(ContainerDto), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status400BadRequest)]
+    [Authorize(Policy = Permission.Container.Manage)]
+    public async Task<IActionResult> Create([FromBody] CreateContainerCommand request)
+    {
+        var result = await mediator.Send(request);
+        return result.ToActionResult();
+    }
+
+    [HttpPut("{id:guid}", Name = "UpdateContainer")]
+    [ProducesResponseType(StatusCodes.Status204NoContent)]
+    [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status400BadRequest)]
+    [Authorize(Policy = Permission.Container.Manage)]
+    public async Task<IActionResult> Update(Guid id, [FromBody] UpdateContainerCommand request)
+    {
+        request.Id = id;
+        var result = await mediator.Send(request);
+        return result.ToActionResult();
+    }
+
+    [HttpPut("{id:guid}/drayage", Name = "UpdateContainerDrayage")]
+    [ProducesResponseType(StatusCodes.Status204NoContent)]
+    [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status400BadRequest)]
+    [Authorize(Policy = Permission.Container.Manage)]
+    public async Task<IActionResult> UpdateDrayage(Guid id, [FromBody] UpdateContainerDrayageCommand request)
+    {
+        request.Id = id;
+        var result = await mediator.Send(request);
+        return result.ToActionResult();
+    }
+
+    [HttpPost("{id:guid}/streetturn", Name = "StreetTurnContainer")]
+    [ProducesResponseType(StatusCodes.Status204NoContent)]
+    [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status400BadRequest)]
+    [Authorize(Policy = Permission.Container.Manage)]
+    public async Task<IActionResult> StreetTurn(Guid id, [FromBody] StreetTurnContainerCommand request)
+    {
+        request.Id = id;
+        var result = await mediator.Send(request);
+        return result.ToActionResult();
+    }
+
+    [HttpPut("{id:guid}/status", Name = "UpdateContainerStatus")]
+    [ProducesResponseType(StatusCodes.Status204NoContent)]
+    [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status400BadRequest)]
+    [Authorize(Policy = Permission.Container.Manage)]
+    public async Task<IActionResult> UpdateStatus(Guid id, [FromBody] UpdateContainerStatusCommand request)
+    {
+        request.Id = id;
+        var result = await mediator.Send(request);
+        return result.ToActionResult();
+    }
+
+    [HttpPut("{id:guid}/terminal", Name = "SetContainerTerminal")]
+    [ProducesResponseType(StatusCodes.Status204NoContent)]
+    [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status400BadRequest)]
+    [Authorize(Policy = Permission.Container.Manage)]
+    public async Task<IActionResult> SetTerminal(Guid id, [FromBody] MoveContainerToTerminalCommand request)
+    {
+        request.Id = id;
+        var result = await mediator.Send(request);
+        return result.ToActionResult();
+    }
+
+    [HttpDelete("{id:guid}", Name = "DeleteContainer")]
+    [ProducesResponseType(StatusCodes.Status204NoContent)]
+    [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status404NotFound)]
+    [Authorize(Policy = Permission.Container.Manage)]
+    public async Task<IActionResult> Delete(Guid id)
+    {
+        var result = await mediator.Send(new DeleteContainerCommand { Id = id });
+        return result.ToActionResult();
+    }
+}

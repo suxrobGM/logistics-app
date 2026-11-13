@@ -76,7 +76,7 @@ Triggered events carry no `tenant_id` metadata, so handlers will short-circuit. 
 
 ## Related Files
 
-- Controller: `src/Presentation/Logistics.API/Controllers/WebhookController.cs`
+- Controller: `src/Presentation/Logistics.API/Controllers/Integrations/WebhookController.cs`
 - Handler: `src/Core/Logistics.Application/Modules/Integrations/Webhooks/Commands/ProcessStripeEvent/ProcessStripeEventHandler.cs`
 - Parser (signature check, Stripe SDK to plain records): `src/Infrastructure/Logistics.Infrastructure.Payments/Stripe/StripeWebhookParser.cs`
 - Options: `src/Infrastructure/Logistics.Infrastructure.Payments/Stripe/StripeOptions.cs`

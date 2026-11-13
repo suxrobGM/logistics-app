@@ -156,5 +156,5 @@ CustomerPortal__BaseUrl=https://portal.example.com
 - Implementation: `src/Infrastructure/Logistics.Infrastructure.Payments/Stripe/StripeConnectService.cs`
 - Commands: `src/Core/Logistics.Application/Modules/Financial/StripeConnect/Commands/`
 - Queries: `src/Core/Logistics.Application/Modules/Financial/StripeConnect/Queries/`
-- API: `src/Presentation/Logistics.API/Controllers/StripeConnectController.cs`
+- API: `src/Presentation/Logistics.API/Controllers/Financial/StripeConnectController.cs`
 - Tenant fields: `StripeConnectedAccountId`, `ConnectStatus`, `ChargesEnabled`, `PayoutsEnabled`

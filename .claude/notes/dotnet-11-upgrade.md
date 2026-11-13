@@ -13,7 +13,7 @@ Started 2026-11-11. Phase 1 is done; phase 2 waits on third-party packages.
 - xUnit v3 on Microsoft.Testing.Platform (`global.json` `test.runner`), `coverlet.MTP`.
 - Built-in OpenAPI (`Microsoft.AspNetCore.OpenApi`) replaced Swashbuckle on 2026-11-12, with Scalar at
   `/scalar`. MVC and `Http.Json` share one `ConfigureJson`, with numbers kept strict. The document is pinned to
-  3.1 because ng-openapi-gen can't read 3.2. Three transformers in `Logistics.API/OpenApi/` fix generator gaps:
+  3.1 because ng-openapi-gen can't read 3.2. Three transformers in `Logistics.API/Serialization/` fix generator gaps:
   date-time types behind the custom converter, `null` leaking into shared enums, and enum query/route/form
   fields listed by C# name. Generic schemas use the default names (`PagedResponseOfLoadDto`). Clients
   regenerated with ng-openapi-gen 1.1 and openapi-generator 7.27.

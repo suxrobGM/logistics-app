@@ -1,0 +1,111 @@
+using Logistics.API.Extensions;
+using Logistics.Application.Modules.Identity.Users.Commands;
+using Logistics.Application.Modules.Identity.Users.Queries;
+using Logistics.Application.Modules.Identity.Users.Services;
+using Logistics.Mediator;
+using Logistics.Shared.Identity.Claims;
+using Logistics.Shared.Identity.Policies;
+using Logistics.Shared.Models;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
+
+namespace Logistics.API.Controllers.Identity;
+
+[ApiController]
+[Route("users")]
+[Produces("application/json")]
+public class UserController(IMediator mediator, IUserPermissionService userPermissions) : ControllerBase
+{
+    [HttpGet("me/permissions", Name = "GetCurrentUserPermissions")]
+    [ProducesResponseType(typeof(string[]), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status400BadRequest)]
+    [Authorize]
+    public async Task<IActionResult> GetCurrentUserPermissions()
+    {
+        var userId = User.GetUserId();
+
+        if (userId is null)
+        {
+            return BadRequest(new ErrorResponse("User not authenticated"));
+        }
+
+        var tenantClaim = User.FindFirst(CustomClaimTypes.Tenant)?.Value;
+        var tenantId = Guid.TryParse(tenantClaim, out var tid) ? tid : (Guid?)null;
+
+        var permissions = await userPermissions.GetPermissionsAsync(userId.Value, tenantId);
+
+        return Ok(permissions);
+    }
+
+    [HttpGet("me", Name = "GetCurrentUser")]
+    [ProducesResponseType(typeof(UserDto), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status404NotFound)]
+    [Authorize]
+    public async Task<IActionResult> GetCurrentUser()
+    {
+        if (User.GetUserId() is not { } userId)
+        {
+            return BadRequest(new ErrorResponse("User not authenticated"));
+        }
+
+        var result = await mediator.Send(new GetUserByIdQuery { UserId = userId.ToString() });
+        return result.ToActionResult();
+    }
+
+    [HttpGet("{id:guid}", Name = "GetUserById")]
+    [ProducesResponseType(typeof(UserDto), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status404NotFound)]
+    [Authorize(Policy = Permission.User.Manage)]
+    public async Task<IActionResult> GetById(string id)
+    {
+        var result = await mediator.Send(new GetUserByIdQuery { UserId = id });
+        return result.ToActionResult();
+    }
+
+    [HttpGet(Name = "GetUsers")]
+    [ProducesResponseType(typeof(PagedResponse<UserDto>), StatusCodes.Status200OK)]
+    [Authorize(Policy = Permission.User.View)]
+    public async Task<IActionResult> GetList([FromQuery] GetUsersQuery query)
+    {
+        var result = await mediator.Send(query);
+        return Ok(PagedResponse<UserDto>.FromPagedResult(result, query.Page, query.PageSize));
+    }
+
+    [HttpGet("{id:guid}/tenant", Name = "GetUserCurrentTenant")]
+    [ProducesResponseType(typeof(TenantDto), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status404NotFound)]
+    [Authorize(Policy = Permission.User.View)]
+    public async Task<IActionResult> GetUserCurrentTenant(Guid id)
+    {
+        var result = await mediator.Send(new GetUserCurrentTenantQuery { UserId = id });
+        return result.ToActionResult();
+    }
+
+    [HttpPut("me", Name = "UpdateCurrentUser")]
+    [ProducesResponseType(StatusCodes.Status204NoContent)]
+    [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status400BadRequest)]
+    [Authorize]
+    public async Task<IActionResult> UpdateCurrentUser([FromBody] UpdateUserCommand request)
+    {
+        if (User.GetUserId() is not { } userId)
+        {
+            return BadRequest(new ErrorResponse("User not authenticated"));
+        }
+
+        request.Id = userId;
+        var result = await mediator.Send(request);
+        return result.ToActionResult();
+    }
+
+    [HttpPut("{id:guid}", Name = "UpdateUser")]
+    [ProducesResponseType(StatusCodes.Status204NoContent)]
+    [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status400BadRequest)]
+    [Authorize(Policy = Permission.User.Manage)]
+    public async Task<IActionResult> Update(Guid id, [FromBody] UpdateUserCommand request)
+    {
+        request.Id = id;
+        var result = await mediator.Send(request);
+        return result.ToActionResult();
+    }
+}

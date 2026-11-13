@@ -420,7 +420,7 @@ Inbound third-party webhooks land on `WebhookController` (mounted at `/webhooks/
 
 - **Tenant from the URL.** The endpoints are anonymous, so ELD webhooks are registered per tenant at `/webhooks/eld/{provider}/{tenantId}` and the signature is checked against that tenant's stored secret.
 - **Signature first, fail closed.** The raw request body is verified before it is parsed - `WebhookSignature.VerifySamsara` (`v1:{timestamp}:{body}`, 5-minute replay window) for Samsara, `WebhookSignature.VerifyHmacSha256` for Motive and Geotab (both in `Integrations/Common/`), `SvixSignature.Verify` for Resend (in `Communications/Email/`), all constant-time, `EventUtility.ConstructEvent` for Stripe. A configured-but-missing or incorrect signature returns `400`. Stripe specifics live in [stripe-webhooks.md](../stripe-webhooks.md).
-- **Idempotency.** Providers retry, so each processed delivery is recorded in the master-DB `ProcessedWebhookEvent` ledger, unique on `(Provider, EventKey)`. `EventKey` is the provider's event id when present, else a SHA-256 hash of the raw body. A duplicate is a no-op returning `200`. The `webhook-event-cleanup` recurring job (`Jobs/RecurringJobs.cs`) prunes old rows daily.
+- **Idempotency.** Providers retry, so each processed delivery is recorded in the master-DB `ProcessedWebhookEvent` ledger, unique on `(Provider, EventKey)`. `EventKey` is the provider's event id when present, else a SHA-256 hash of the raw body. A duplicate is a no-op returning `200`. The `webhook-event-cleanup` recurring job (`Jobs/Scheduling/RecurringJobs.cs`) prunes old rows daily.
 
 ## Multi-Tenancy
 

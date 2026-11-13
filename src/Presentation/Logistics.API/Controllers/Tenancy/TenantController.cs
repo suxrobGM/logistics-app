@@ -1,0 +1,164 @@
+using Logistics.API.Extensions;
+using Logistics.Application.Modules.AI.AIDispatch.Commands;
+using Logistics.Application.Modules.AI.AIDispatch.Queries;
+using Logistics.Application.Modules.AI.AISettings.Commands;
+using Logistics.Application.Modules.AI.AISettings.Queries;
+using Logistics.Application.Modules.Tenancy.Tenants.Commands;
+using Logistics.Application.Modules.Tenancy.Tenants.Queries;
+using Logistics.Mediator;
+using Logistics.Shared.Identity.Policies;
+using Logistics.Shared.Identity.Roles;
+using Logistics.Shared.Models;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
+
+namespace Logistics.API.Controllers.Tenancy;
+
+[ApiController]
+[Route("tenants")]
+[Produces("application/json")]
+public class TenantController(IMediator mediator) : ControllerBase
+{
+    #region Tenants
+
+    [HttpGet("{identifier}", Name = "GetTenantById")]
+    [ProducesResponseType(typeof(TenantDto), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status404NotFound)]
+    [Authorize]
+    public async Task<IActionResult> GetTenantById(string identifier)
+    {
+        var result = await mediator.Send(new GetTenantQuery
+        {
+            Id = Guid.TryParse(identifier, out var id) ? id : null,
+            Name = identifier
+        });
+
+        return result.ToActionResult();
+    }
+
+    [HttpGet(Name = "GetTenants")]
+    [ProducesResponseType(typeof(PagedResponse<TenantDto>), StatusCodes.Status200OK)]
+    [Authorize(Roles = $"{AppRoles.SuperAdmin},{AppRoles.Admin}")]
+    public async Task<IActionResult> GetTenantList([FromQuery] GetTenantsQuery query)
+    {
+        var result = await mediator.Send(query);
+        return Ok(PagedResponse<TenantDto>.FromPagedResult(result, query.Page, query.PageSize));
+    }
+
+    [HttpPost(Name = "CreateTenant")]
+    [ProducesResponseType(StatusCodes.Status204NoContent)]
+    [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status400BadRequest)]
+    [Authorize(Roles = $"{AppRoles.SuperAdmin},{AppRoles.Admin}")]
+    public async Task<IActionResult> CreateTenant([FromBody] CreateTenantCommand request)
+    {
+        var result = await mediator.Send(request);
+        return result.ToActionResult();
+    }
+
+    [HttpPut("{id:guid}", Name = "UpdateTenant")]
+    [ProducesResponseType(StatusCodes.Status204NoContent)]
+    [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status400BadRequest)]
+    [Authorize(Policy = Permission.Tenant.Manage)]
+    public async Task<IActionResult> UpdateTenant(Guid id, [FromBody] UpdateTenantCommand request)
+    {
+        User.EnsureOwnsTenant(id);
+        request.Id = id;
+        var result = await mediator.Send(request);
+        return result.ToActionResult();
+    }
+
+    [HttpPut("{id:guid}/presets", Name = "UpdateTenantPresets")]
+    [ProducesResponseType(StatusCodes.Status204NoContent)]
+    [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status400BadRequest)]
+    [Authorize(Roles = $"{AppRoles.SuperAdmin},{AppRoles.Admin}")]
+    public async Task<IActionResult> UpdateTenantPresets(Guid id, [FromBody] UpdateTenantPresetsCommand request)
+    {
+        request.TenantId = id;
+        var result = await mediator.Send(request);
+        return result.ToActionResult();
+    }
+
+    [HttpPut("{id:guid}/admin", Name = "UpdateTenantAdminSettings")]
+    [ProducesResponseType(StatusCodes.Status204NoContent)]
+    [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status400BadRequest)]
+    [Authorize(Roles = $"{AppRoles.SuperAdmin},{AppRoles.Admin}")]
+    public async Task<IActionResult> UpdateTenantAdminSettings(
+        Guid id, [FromBody] UpdateTenantAdminSettingsCommand request)
+    {
+        request.TenantId = id;
+        var result = await mediator.Send(request);
+        return result.ToActionResult();
+    }
+
+    [HttpDelete("{id:guid}", Name = "DeleteTenant")]
+    [ProducesResponseType(StatusCodes.Status204NoContent)]
+    [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status404NotFound)]
+    [Authorize(Policy = Permission.Tenant.Manage)]
+    public async Task<IActionResult> DeleteTenant(Guid id)
+    {
+        User.EnsureOwnsTenant(id);
+        var result = await mediator.Send(new DeleteTenantCommand { Id = id });
+        return result.ToActionResult();
+    }
+
+    [HttpPost("{id:guid}/resend-welcome", Name = "ResendTenantWelcome")]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status400BadRequest)]
+    [Authorize(Policy = Permission.Tenant.Manage)]
+    public async Task<IActionResult> ResendWelcome(Guid id)
+    {
+        User.EnsureOwnsTenant(id);
+        var result = await mediator.Send(new ResendTenantWelcomeCommand(id));
+        return result.IsSuccess ? Ok() : BadRequest(ErrorResponse.FromResult(result));
+    }
+
+    [HttpPost("{id:guid}/logo", Name = "UploadTenantLogo")]
+    [ProducesResponseType(typeof(string), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status400BadRequest)]
+    [Authorize(Policy = Permission.Tenant.Manage)]
+    [RequestSizeLimit(5 * 1024 * 1024)] // 5 MB
+    public async Task<IActionResult> UploadTenantLogo(Guid id, IFormFile file)
+    {
+        User.EnsureOwnsTenant(id);
+
+        if (file.Length == 0)
+        {
+            return BadRequest(new ErrorResponse("No file provided"));
+        }
+
+        var result = await mediator.Send(new UploadTenantLogoCommand
+        {
+            TenantId = id,
+            FileContent = file.OpenReadStream(),
+            FileName = file.FileName,
+            ContentType = file.ContentType,
+            FileSizeBytes = file.Length
+        });
+
+        return result.ToActionResult();
+    }
+
+    #endregion
+
+    #region AI Quota Management
+
+    [HttpGet("quotas", Name = "GetTenantQuotaUsages")]
+    [ProducesResponseType(typeof(PagedResponse<TenantQuotaUsageDto>), StatusCodes.Status200OK)]
+    [Authorize(Roles = $"{AppRoles.SuperAdmin},{AppRoles.Admin}")]
+    public async Task<IActionResult> GetQuotaUsages([FromQuery] GetTenantQuotaUsagesQuery query)
+    {
+        var result = await mediator.Send(query);
+        return Ok(PagedResponse<TenantQuotaUsageDto>.FromPagedResult(result, query.Page, query.PageSize));
+    }
+
+    [HttpPost("quotas/reset", Name = "ResetTenantQuotas")]
+    [ProducesResponseType(StatusCodes.Status204NoContent)]
+    [Authorize(Roles = $"{AppRoles.SuperAdmin},{AppRoles.Admin}")]
+    public async Task<IActionResult> ResetQuotas([FromBody] ResetTenantQuotasCommand command)
+    {
+        var result = await mediator.Send(command);
+        return result.ToActionResult();
+    }
+
+    #endregion
+}

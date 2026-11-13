@@ -132,7 +132,7 @@ Never write manual mapping in handlers.
 
 ### 7. Controller
 
-`src/Presentation/Logistics.API/Controllers/{Entity}Controller.cs`
+`src/Presentation/Logistics.API/Controllers/{Module}/{Entity}Controller.cs`
 
 ```csharp
 [Route("subcontractors")]

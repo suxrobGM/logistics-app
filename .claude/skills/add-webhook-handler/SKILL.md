@@ -9,7 +9,7 @@ Inbound webhooks from external services (Stripe, Samsara, Motive, etc.) terminat
 
 ## Files that must change
 
-1. `src/Presentation/Logistics.API/Controllers/WebhookController.cs` - endpoint route (`[Route("webhooks")]`)
+1. `src/Presentation/Logistics.API/Controllers/Integrations/WebhookController.cs` - endpoint route (`[Route("webhooks")]`)
 2. `src/Core/Logistics.Application/Modules/{Module}/{Feature}/Commands/Process{Provider}Webhook/` - command + handler (Stripe lives in `Modules/Integrations/Webhooks/Commands/`, ELD in `Modules/Compliance/Eld/Commands/`)
 3. Signature validation with a `WebhookSignature.*` helper (or `SvixSignature` for Svix), in one of two existing shapes: a verifier port in `Application.Abstractions` implemented in infrastructure (`IInboundEmailWebhookVerifier` → `ResendWebhookVerifier`), or the family's provider service verifies its own webhooks (ELD `{Name}EldService`)
 4. Webhook secret - per-tenant integrations keep it on the `{Family}ProviderConfiguration` entity (`EldProviderConfiguration.WebhookSecret`); `appsettings.json` (env var, never committed) only for install-wide vendors (Stripe, Resend)
@@ -156,7 +156,7 @@ Order matters:
 3. **Dispatch** by event type; unknown event types should log and return 200, not crash.
 4. **Record the event key** after the work so a retry short-circuits. The unique `(Provider, EventKey)` index is the backstop if two deliveries race.
 
-The `webhook-event-cleanup` entry in `Jobs/RecurringJobs.cs` prunes old ledger rows daily, so the table doesn't grow unbounded.
+The `webhook-event-cleanup` entry in `Jobs/Scheduling/RecurringJobs.cs` prunes old ledger rows daily, so the table doesn't grow unbounded.
 
 ### 5. Config
 

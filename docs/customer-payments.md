@@ -205,7 +205,7 @@ const { error, paymentIntent } = await stripe.confirmPayment({
 
 ## Related Files
 
-- Public API: `src/Presentation/Logistics.API/Controllers/PublicPaymentController.cs`
+- Public API: `src/Presentation/Logistics.API/Controllers/Financial/PublicPaymentController.cs`
 - Commands: `src/Core/Logistics.Application/Commands/Payment/`
 - Queries: `src/Core/Logistics.Application/Queries/PaymentLink/`
 - DTOs: `src/Shared/Logistics.Shared.Models/Invoice/PublicInvoiceDto.cs`

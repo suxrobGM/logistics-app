@@ -1,10 +1,12 @@
 using System.Reflection;
-using Logistics.API.Controllers;
+using Logistics.API.Controllers.Identity;
+using Logistics.API.Controllers.Operations;
+using Logistics.API.Controllers.Tenancy;
 using Logistics.Shared.Identity.Policies;
 using Logistics.Shared.Identity.Roles;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Routing;
+using Microsoft.AspNetCore.Mvc;
 using Xunit;
 
 namespace Logistics.Architecture.Tests;

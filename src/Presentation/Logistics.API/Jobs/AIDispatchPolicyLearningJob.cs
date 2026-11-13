@@ -1,4 +1,5 @@
 using Hangfire;
+using Logistics.API.Jobs.Scheduling;
 using Logistics.Application.Abstractions.Context;
 using Logistics.Application.Modules.AI.AIDispatch.Services;
 using Logistics.Domain.Entities;
