@@ -168,7 +168,7 @@ Tenant-shared, not per-user: any user with `Permission.AIDispatch.View` can list
 `AgentTranscriptLoader`), scoped by `AgentConversationKind.Dispatch`; each turn is an `AgentSession`
 with `Type == Dispatch`.
 
-- Domain: `Entities/AI/AIDispatch/AgentSession.cs`, `AgentConversation.cs`, `AgentMessage.cs`
+- Domain: `Entities/AI/Agents/AgentSession.cs`, `AgentConversation.cs`, `AgentMessage.cs`
 - Application: `Modules/AI/AIDispatch/Commands/` (`Create`/`Rename`/`Delete`AIDispatchConversation, `SendAIDispatchMessage` - concurrency guard + quota gate, mirrors `SendAICopilotMessage`; `CancelAIDispatchTurn`), `Modules/AI/AIDispatch/Queries/` (`GetAIDispatchConversations` - no owner filter, `GetAIDispatchConversationById` - messages + decisions + per-turn `AgentSessionDto` stats)
 - Infrastructure: `Infrastructure.AI/Agents/Dispatch/AIDispatchService.cs` (thin adapter onto the shared `AgentTurnService`) + `DispatchAgentSurface.cs` (`IAgentSurface`: no per-caller tool scoping, tenant-wide broadcasts) + `AIDispatchConversationBuilder.cs` (system prompt, transcript replay via `AgentTranscriptLoader.LoadAsync`); planning runs on `Tools/Dispatch/GetDispatchCandidatesTool.cs` (type rule, HOS, deadhead, `EquipmentFit`, eligibility in one call); `Infrastructure.Communications/SignalR/Hubs/AIDispatchHub.cs` (tenant-wide `dispatch-board:{tenantId}` group, mounted at `/hubs/ai-dispatch`)
 - Jobs: `Logistics.API/Jobs/AIDispatchTurnJob.cs` (re-checks `AIDispatch` inside the job, mirrors `AICopilotTurnJob`)
@@ -176,7 +176,7 @@ with `Type == Dispatch`.
 
 ### Dispatch decisions
 
-- Domain: `Entities/AI/AIDispatch/AgentDecision.cs`
+- Domain: `Entities/AI/Agents/AgentDecision.cs`
 - Application: `Modules/AI/AIDispatch/Commands/Approve*`, `Reject*` - append a System note to the decision's conversation transcript and broadcast it tenant-wide, but only when the session has a `ConversationId` (old sessions may predate conversations)
 - Infrastructure: `Infrastructure.AI/Agents/AgentDecisionProcessor.cs`
 - Auto-approve: `AIDispatchPolicy.AutoApproveTypes`/`AutoApproveStreak` (eligible set `AutoApproveEligibleTypes`), `AIDispatch/Services/AgentTrustService.cs` (streak since the last rejection or revert), `Commands/RevertAIDispatchDecision/` (15 min, `AgentDecision.RevertWindow`), `Commands/UpdateAIDispatchAutonomy/`, `Queries/GetAIDispatchAutonomy/` (`ai/dispatch/autonomy`); UI `ai-dispatch/components/auto-approve-settings/` (policy page), `components/auto-approved-decisions/` (right panel)
@@ -230,7 +230,7 @@ registry, `AgentLoopRunner`, decisions, and quota. Gated by `TenantFeature.AICop
 
 ### Conversations & turns
 
-- Domain: `Entities/AI/AIDispatch/AgentConversation.cs`, `AgentMessage.cs` (transcript with tool_use ids; `Kind` distinguishes the per-user Copilot conversations here from the tenant-shared Dispatch ones above - every copilot query/list/get filters `Kind == Copilot`); `AgentSession.Type == Copilot` per turn
+- Domain: `Entities/AI/Agents/AgentConversation.cs`, `AgentMessage.cs` (transcript with tool_use ids; `Kind` distinguishes the per-user Copilot conversations here from the tenant-shared Dispatch ones above - every copilot query/list/get filters `Kind == Copilot`); each turn is an `AgentSession` under the conversation
 - Application: `Modules/AI/AICopilot/Commands/` (send returns the server-stamped `UserMessageCreatedAt` so the client's optimistic echo never sorts by a browser clock; rename via `RenameAICopilotConversation`), `Queries/` (incl. `GetAICopilotQuotaStatus` - the shared AI quota behind `Permission.AICopilot.View` for tenants without AIDispatch)
 - Infrastructure: `Infrastructure.AI/Agents/` (`AgentTurnService.cs` - the shared turn lifecycle every conversational agent runs through, parameterized by `IAgentSurface`; `AgentTranscriptCodec.cs`, `AgentTranscriptLoader.cs`) and `Agents/Copilot/` (`AICopilotService.cs` - thin adapter onto `AgentTurnService` + `CopilotAgentSurface.cs`, `AICopilotConversationBuilder.cs`, `AICopilotSystemPrompt.cs` - dispatch-action guardrails render only when the caller's tool catalogue includes the dispatch write tools); `Infrastructure.Communications/SignalR/Hubs/CopilotHub.cs` (`/hubs/copilot`, authorized, per-user groups)
 - Jobs: `Logistics.API/Jobs/AICopilotTurnJob.cs`
