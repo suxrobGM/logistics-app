@@ -5,6 +5,7 @@ using Logistics.Application.Abstractions.Communications;
 using Logistics.Application.Modules.AI.Negotiation.Services;
 using Logistics.Domain.Entities;
 using Logistics.Domain.Persistence;
+using Logistics.Domain.Primitives.Enums;
 using Logistics.Mediator;
 using Logistics.Shared.Models;
 
@@ -50,10 +51,12 @@ internal sealed class PreviewCounterOfferHandler(
 
         var tenant = tenantUow.GetCurrentTenant();
         var currency = ListingCurrency.Get(listing, tenant);
+        var proposedRatePerKm = input.ProposedRatePerDistance is { } rate
+            ? tenant.Settings.DistanceUnit.RateToPerKm(rate)
+            : (decimal?)null;
 
         var composed = await composer.ComposeAsync(ComposeNegotiationEmailRequest.For(
-            listing, tenant, input.ProposedTotalRate, input.ProposedRatePerMile,
-            input.Message, replyToAddress), ct);
+            listing, tenant, input.ProposedTotalRate, proposedRatePerKm, input.Message, replyToAddress), ct);
 
         return Result<CounterOfferPreviewDto>.Ok(new CounterOfferPreviewDto
         {
@@ -62,7 +65,7 @@ internal sealed class PreviewCounterOfferHandler(
             ToEmail = listing.BrokerEmail ?? "",
             ReplyToAddress = replyToAddress,
             ProposedTotalRate = input.ProposedTotalRate,
-            ProposedRatePerMile = input.ProposedRatePerMile,
+            ProposedRatePerKm = proposedRatePerKm,
             Currency = currency
         });
     }
@@ -96,7 +99,7 @@ internal sealed class PreviewCounterOfferHandler(
         input = new CounterOfferInput(
             listingId,
             totalRate,
-            root.GetDecimal("proposed_rate_per_mile"),
+            root.GetDecimal("proposed_rate_per_distance"),
             root.GetString("message") ?? "");
 
         return true;
@@ -105,6 +108,6 @@ internal sealed class PreviewCounterOfferHandler(
     private readonly record struct CounterOfferInput(
         Guid ListingId,
         decimal ProposedTotalRate,
-        decimal? ProposedRatePerMile,
+        decimal? ProposedRatePerDistance,
         string Message);
 }

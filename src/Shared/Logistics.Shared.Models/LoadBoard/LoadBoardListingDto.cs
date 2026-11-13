@@ -15,24 +15,24 @@ public record LoadBoardListingDto
     public required Address DestinationAddress { get; set; }
     public required GeoPoint DestinationLocation { get; set; }
 
-    public decimal? RatePerMile { get; set; }
+    public decimal? RatePerKm { get; set; }
 
     /// <summary>
-    /// The board's current market spot rate for this lane (DAT RateView), per mile, when the
+    /// The board's current market spot rate for this lane (DAT RateView), per km, when the
     /// tenant enabled market rates. Looked up per search, never stored.
     /// </summary>
-    public decimal? MarketRatePerMile { get; set; }
+    public decimal? MarketRatePerKm { get; set; }
 
-    public decimal? MarketRateLowPerMile { get; set; }
-    public decimal? MarketRateHighPerMile { get; set; }
+    public decimal? MarketRateLowPerKm { get; set; }
+    public decimal? MarketRateHighPerKm { get; set; }
 
-    /// <summary>Rate per mile minus fleet operating cost per mile, driver pay and deadhead excluded.</summary>
-    public decimal? EstimatedMarginPerMile { get; set; }
+    /// <summary>Rate per km minus fleet operating cost per km, driver pay and deadhead excluded.</summary>
+    public decimal? EstimatedMarginPerKm { get; set; }
     public decimal? TotalRate { get; set; }
     public string? Currency { get; set; }
     public double? Distance { get; set; }
-    public int? Weight { get; set; }
-    public int? Length { get; set; }
+    public decimal? WeightKg { get; set; }
+    public decimal? LengthMeters { get; set; }
 
     public DateTime? PickupDateStart { get; set; }
     public DateTime? PickupDateEnd { get; set; }

@@ -8,7 +8,7 @@ namespace Logistics.Domain.Primitives.ValueObjects;
 /// covered the lane, which every rate check must read as "cannot be checked" rather than "no limit".
 /// </summary>
 public record RateFloorSnapshot(
-    decimal? MinRatePerMile,
+    decimal? MinRatePerKm,
     Money? MinTotalRate,
     RateFloorSource Source)
 {

@@ -18,6 +18,7 @@ public class Employee : Entity, ITenantEntity
     /// </summary>
     public Address? Address { get; set; }
 
+    /// <summary>Rate for <see cref="SalaryType"/>; a <see cref="SalaryType.RatePerDistance"/> rate is per km.</summary>
     public required decimal Salary { get; set; }
     public SalaryType SalaryType { get; set; } = SalaryType.None;
     public EmployeeStatus Status { get; set; } = EmployeeStatus.Active;
@@ -93,14 +94,14 @@ public class Employee : Entity, ITenantEntity
         linehaul + (PayExcludesFuelSurcharge ? 0 : fuelSurcharge) + (PayExcludesAccessorials ? 0 : accessorials);
 
     /// <summary>Pay earned on the given loads by a per-load salary type; 0 for period-paid types.</summary>
-    public decimal PayForLoads(IReadOnlyCollection<LoadPayBasis> loads, DistanceUnit unit)
+    public decimal PayForLoads(IReadOnlyCollection<LoadPayBasis> loads)
     {
         var rate = Salary;
         return SalaryType switch
         {
             SalaryType.ShareOfGross =>
                 loads.Sum(l => PayableRevenue(l.Linehaul, l.FuelSurcharge, l.Accessorials)) * rate,
-            SalaryType.RatePerDistance => unit.FromMeters(loads.Sum(l => l.Distance)).ToDecimal() * rate,
+            SalaryType.RatePerDistance => (loads.Sum(l => l.Distance) / 1000).ToDecimal() * rate,
             SalaryType.PerLoad => loads.Count * rate,
             SalaryType.PerStop => loads.Sum(l => l.DepartedStops) * rate,
             _ => 0m

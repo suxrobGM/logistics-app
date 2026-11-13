@@ -1386,10 +1386,10 @@ namespace Logistics.Infrastructure.Persistence.Migrations.Master
                                 .HasColumnType("boolean")
                                 .HasColumnName("settings_block_ai_overage");
 
-                            b1.Property<decimal?>("CostPerMile")
-                                .HasPrecision(18, 2)
-                                .HasColumnType("numeric(18,2)")
-                                .HasColumnName("settings_cost_per_mile");
+                            b1.Property<decimal?>("CostPerKm")
+                                .HasPrecision(18, 4)
+                                .HasColumnType("numeric(18,4)")
+                                .HasColumnName("settings_cost_per_km");
 
                             b1.Property<string>("Currency")
                                 .IsRequired()
@@ -1401,10 +1401,10 @@ namespace Logistics.Infrastructure.Persistence.Migrations.Master
                                 .HasColumnType("text")
                                 .HasColumnName("settings_date_format");
 
-                            b1.Property<decimal?>("DefaultRateFloorPerMile")
-                                .HasPrecision(18, 2)
-                                .HasColumnType("numeric(18,2)")
-                                .HasColumnName("settings_default_rate_floor_per_mile");
+                            b1.Property<decimal?>("DefaultRateFloorPerKm")
+                                .HasPrecision(18, 4)
+                                .HasColumnType("numeric(18,4)")
+                                .HasColumnName("settings_default_rate_floor_per_km");
 
                             b1.Property<int?>("DetentionFreeMinutes")
                                 .HasColumnType("integer")

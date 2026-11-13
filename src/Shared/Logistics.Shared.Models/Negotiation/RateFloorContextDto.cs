@@ -17,7 +17,7 @@ public record RateFloorContextDto
     public int MaxRounds { get; set; }
 
     public decimal? ListingTotalRate { get; set; }
-    public decimal? ListingRatePerMile { get; set; }
-    public double? DistanceMiles { get; set; }
+    public decimal? ListingRatePerKm { get; set; }
+    public double? DistanceMeters { get; set; }
     public string Currency { get; set; } = "USD";
 }

@@ -56,9 +56,9 @@ public class PostedTruck : AuditableEntity, ITenantEntity
     public Address? DestinationPreference { get; set; }
 
     /// <summary>
-    /// Radius in miles willing to travel for pickup
+    /// Radius in meters willing to travel for pickup
     /// </summary>
-    public int? DestinationRadius { get; set; }
+    public int? DestinationRadiusMeters { get; set; }
 
     /// <summary>
     /// When the truck becomes available
@@ -76,14 +76,14 @@ public class PostedTruck : AuditableEntity, ITenantEntity
     public LoadBoardEquipmentType? EquipmentType { get; set; }
 
     /// <summary>
-    /// Maximum weight capacity in pounds
+    /// Maximum weight capacity in kilograms
     /// </summary>
-    public int? MaxWeight { get; set; }
+    public decimal? MaxWeightKg { get; set; }
 
     /// <summary>
-    /// Maximum length capacity in feet
+    /// Maximum length capacity in meters
     /// </summary>
-    public int? MaxLength { get; set; }
+    public decimal? MaxLengthMeters { get; set; }
 
     /// <summary>
     /// Current status of the posted truck (Available, Booked, Hidden, Expired)

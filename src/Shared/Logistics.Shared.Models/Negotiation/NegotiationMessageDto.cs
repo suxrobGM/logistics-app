@@ -15,7 +15,7 @@ public record NegotiationMessageDto
     public string? Subject { get; set; }
     public string TextBody { get; set; } = "";
     public Money? ProposedTotalRate { get; set; }
-    public decimal? ProposedRatePerMile { get; set; }
+    public decimal? ProposedRatePerKm { get; set; }
     public Guid? AgentDecisionId { get; set; }
     public bool Quarantined { get; set; }
     public DateTime OccurredAt { get; set; }

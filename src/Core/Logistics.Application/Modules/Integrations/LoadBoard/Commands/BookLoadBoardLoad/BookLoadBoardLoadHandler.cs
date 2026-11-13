@@ -176,10 +176,10 @@ internal sealed class BookLoadBoardLoadHandler(
 
         if (negotiation.FloorTotalRate is not { } floor)
         {
-            // The thread opened on a per-mile floor with no distance to convert it, so there is no
+            // The thread opened on a per-distance floor with no distance to convert it, so there is no
             // total to compare against. Refuse rather than book an unchecked rate.
             return Result.Fail(
-                "This negotiation opened against a per-mile floor on a listing with no distance, so " +
+                "This negotiation opened against a per-distance floor on a listing with no distance, so " +
                 "the booking rate cannot be checked. Set a minimum total rate on the lane floor.",
                 ErrorCodes.NegotiationFloorMissing);
         }

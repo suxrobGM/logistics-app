@@ -132,7 +132,7 @@ public class DatLoadBoardServiceTests
         var listings = await _sut.SearchLoadsAsync(new LoadBoardSearchCriteria
         {
             Origin = new LoadBoardPlace { City = "Victorville", State = "ca" },
-            OriginRadius = 100,
+            OriginRadiusMeters = 160_934,
             EquipmentTypes = [LoadBoardEquipmentType.Van, LoadBoardEquipmentType.Tanker],
             PickupDateStart = new DateTime(2021, 6, 27, 0, 0, 0, DateTimeKind.Utc),
             MaxResults = 50
@@ -172,10 +172,11 @@ public class DatLoadBoardServiceTests
         Assert.Equal("US", listing.OriginAddress.Country);
         Assert.Equal(45.14389, listing.DestinationLocation.Latitude);
         Assert.Equal(4600m, listing.TotalRate);
-        Assert.Equal(4.78m, listing.RatePerMile);
-        Assert.Equal(963, listing.Distance);
-        Assert.Equal(44600, listing.Weight);
-        Assert.Equal(53, listing.Length);
+        // DAT publishes miles, pounds and feet; listings store per km, meters and kilograms.
+        Assert.Equal(4.78m / 1.609344m, listing.RatePerKm);
+        Assert.Equal(963 * 1609.344, listing.Distance);
+        Assert.Equal(44600 * 0.45359237m, listing.WeightKg);
+        Assert.Equal(53 * 0.3048m, listing.LengthMeters);
         Assert.Equal(LoadBoardEquipmentType.Van, listing.EquipmentType);
         Assert.Equal("Example Brokerage Inc", listing.BrokerName);
         Assert.Equal("5135550100 x12", listing.BrokerPhone);
@@ -284,7 +285,7 @@ public class DatLoadBoardServiceTests
         Initialize();
         _handler.Respond(HttpMethod.Post, "/linehaulrates/v1/lookups", """
             {"rateResponses":[
-              {"response":{"rate":{"perMile":{"rateUsd":2.61,"lowUsd":2.2,"highUsd":3.0},"perTrip":{"rateUsd":2513},"mileage":963}}},
+              {"response":{"rate":{"perKm":{"rateUsd":2.61,"lowUsd":2.2,"highUsd":3.0},"perTrip":{"rateUsd":2513},"mileage":963}}},
               {"response":{}}
             ]}
             """);
@@ -295,7 +296,7 @@ public class DatLoadBoardServiceTests
             new MarketRateLane("Dallas", "TX", "Houston", "TX", LoadBoardEquipmentType.StepDeck)
         ]);
 
-        Assert.Equal(2.61m, rates[0]!.RatePerMile);
+        Assert.Equal(2.61m / 1.609344m, rates[0]!.RatePerKm);
         Assert.Null(rates[1]);
         Assert.Null(rates[2]);
 

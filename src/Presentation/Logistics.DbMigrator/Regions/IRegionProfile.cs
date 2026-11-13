@@ -16,7 +16,7 @@ public interface IRegionProfile
     CurrencyCode Currency { get; }
 
     /// <summary>Seeded onto a demo tenant, where it is the rate floor resolver's last fallback.</summary>
-    decimal DefaultRateFloorPerMile { get; }
+    decimal DefaultRateFloorPerKm { get; }
 
     DistanceUnit DistanceUnit { get; }
     WeightUnit WeightUnit { get; }

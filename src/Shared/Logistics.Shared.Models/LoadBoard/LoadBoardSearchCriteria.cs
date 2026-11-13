@@ -7,16 +7,16 @@ public record LoadBoardSearchCriteria
     public LoadBoardPlace? Origin { get; set; }
 
     /// <summary>
-    /// Deadhead radius in miles around the origin.
+    /// Deadhead radius in meters around the origin.
     /// </summary>
-    public int OriginRadius { get; set; } = 50;
+    public int OriginRadiusMeters { get; set; } = 80_000;
 
     public LoadBoardPlace? Destination { get; set; }
 
     /// <summary>
-    /// Radius in miles around the destination.
+    /// Radius in meters around the destination.
     /// </summary>
-    public int DestinationRadius { get; set; } = 50;
+    public int DestinationRadiusMeters { get; set; } = 80_000;
 
     public DateTime? PickupDateStart { get; set; }
     public DateTime? PickupDateEnd { get; set; }
@@ -26,18 +26,18 @@ public record LoadBoardSearchCriteria
     /// </summary>
     public LoadBoardEquipmentType[]? EquipmentTypes { get; set; }
 
-    public decimal? MinRatePerMile { get; set; }
+    public decimal? MinRatePerKm { get; set; }
     public decimal? MinTotalRate { get; set; }
 
     /// <summary>
-    /// Maximum load weight in pounds.
+    /// Maximum load weight in kilograms.
     /// </summary>
-    public int? MaxWeight { get; set; }
+    public decimal? MaxWeightKg { get; set; }
 
     /// <summary>
-    /// Maximum load length in feet.
+    /// Maximum load length in meters.
     /// </summary>
-    public int? MaxLength { get; set; }
+    public decimal? MaxLengthMeters { get; set; }
 
     public int MaxResults { get; set; } = 100;
 }

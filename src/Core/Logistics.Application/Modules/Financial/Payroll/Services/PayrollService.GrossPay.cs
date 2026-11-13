@@ -20,7 +20,7 @@ internal partial class PayrollService
             case SalaryType.ShareOfGross:
                 {
                     var loads = await GetDeliveredLoadsAsync(employee.Id, from, to, ct);
-                    return new GrossPay(employee.PayForLoads(loads, GetDistanceUnit()),
+                    return new GrossPay(employee.PayForLoads(loads),
                         $"{Percent(rate)} of {employee.PayableRevenueBasis()} on {loads.Count} load(s)");
                 }
             case SalaryType.Weekly:
@@ -35,8 +35,8 @@ internal partial class PayrollService
                     var meters = loads.Sum(l => l.Distance);
                     var unit = GetDistanceUnit();
                     var distance = unit.FromMeters(meters);
-                    return new GrossPay(employee.PayForLoads(loads, unit),
-                        $"{loads.Count} load(s), {distance:0} {unit.Abbreviation()} x {rate:0.00}",
+                    return new GrossPay(employee.PayForLoads(loads),
+                        $"{loads.Count} load(s), {distance:0} {unit.Abbreviation()} x {unit.RateFromPerKm(rate):0.00}",
                         Distance: meters);
                 }
             case SalaryType.Hourly:
@@ -49,7 +49,7 @@ internal partial class PayrollService
             case SalaryType.PerLoad:
                 {
                     var loads = await GetDeliveredLoadsAsync(employee.Id, from, to, ct);
-                    return new GrossPay(employee.PayForLoads(loads, GetDistanceUnit()),
+                    return new GrossPay(employee.PayForLoads(loads),
                         $"{loads.Count} load(s) x {rate:0.00}");
                 }
             case SalaryType.PerStop:

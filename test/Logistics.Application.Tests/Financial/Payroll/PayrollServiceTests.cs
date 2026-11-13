@@ -107,13 +107,13 @@ public class PayrollServiceTests
     /// <summary>Load distances are meters; paying the rate on them raw overpaid by ~1600x.</summary>
     public static TheoryData<DistanceUnit, double, decimal, decimal> RatePerDistanceCases => new()
     {
-        { DistanceUnit.Miles, 160_934.4, 0.65m, 65.00m },
+        { DistanceUnit.Miles, 100_000, 0.50m, 50.00m },
         { DistanceUnit.Kilometers, 100_000, 0.50m, 50.00m },
     };
 
     [Theory]
     [MemberData(nameof(RatePerDistanceCases))]
-    public async Task Build_RatePerDistance_PaysPerTenantUnit(
+    public async Task Build_RatePerDistance_PaysPerKmInAnyTenantUnit(
         DistanceUnit unit, double meters, decimal rate, decimal expected)
     {
         var tenant = TestTenant.Create();

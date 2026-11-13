@@ -1,5 +1,6 @@
 using Logistics.Application.Abstractions.Integrations;
 using Logistics.Domain.Entities;
+using Logistics.Domain.Primitives;
 using Logistics.Domain.Primitives.Enums;
 using Logistics.Domain.Primitives.ValueObjects;
 using Logistics.Infrastructure.Integrations.LoadBoard.Credit;
@@ -99,7 +100,11 @@ internal class DemoLoadBoardService(ILogger<DemoLoadBoardService> logger) : ILoa
             .Select(_ =>
             {
                 var perMile = Math.Round(2.0m + (decimal)(random.NextDouble() * 1.2), 2);
-                return (MarketRate?)new MarketRate(perMile, null, perMile - 0.35m, perMile + 0.40m);
+                return (MarketRate?)new MarketRate(
+                    perMile / ImperialUnits.KilometersPerMile,
+                    null,
+                    (perMile - 0.35m) / ImperialUnits.KilometersPerMile,
+                    (perMile + 0.40m) / ImperialUnits.KilometersPerMile);
             })
             .ToList();
         return Task.FromResult(rates);
@@ -115,9 +120,10 @@ internal class DemoLoadBoardService(ILogger<DemoLoadBoardService> logger) : ILoa
         var origin = cities[originIndex];
         var destination = cities[destinationIndex];
 
-        var distance = random.Next(200, 2000);
+        // US demo freight: posted in miles, pounds and feet like a real board, stored metric
+        var miles = random.Next(200, 2000);
         var ratePerMile = 2.0m + (decimal)(random.NextDouble() * 1.5);
-        var totalRate = Math.Round(ratePerMile * distance, 2);
+        var totalRate = Math.Round(ratePerMile * miles, 2);
 
         var pickupStart = DateTime.UtcNow.AddDays(random.Next(1, 5));
         var brokerMcNumber = $"MC{random.Next(100000, 999999)}";
@@ -148,12 +154,12 @@ internal class DemoLoadBoardService(ILogger<DemoLoadBoardService> logger) : ILoa
                     ZipCode = $"{random.Next(10000, 99999)}"
                 },
             DestinationLocation = GenerateGeoPoint(destinationIndex),
-            RatePerMile = ratePerMile,
+            RatePerKm = ratePerMile / ImperialUnits.KilometersPerMile,
             TotalRate = totalRate,
             Currency = "USD",
-            Distance = distance,
-            Weight = random.Next(10000, 45000),
-            Length = random.Next(20, 53),
+            Distance = miles * ImperialUnits.MetersPerMile,
+            WeightKg = Math.Round(random.Next(10000, 45000) * ImperialUnits.KilogramsPerPound),
+            LengthMeters = Math.Round(random.Next(20, 53) * ImperialUnits.MetersPerFoot, 2),
             PickupDateStart = pickupStart,
             PickupDateEnd = pickupStart.AddDays(1),
             DeliveryDateStart = pickupStart.AddDays(random.Next(1, 3)),

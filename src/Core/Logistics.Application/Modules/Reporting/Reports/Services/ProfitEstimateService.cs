@@ -12,7 +12,7 @@ namespace Logistics.Application.Modules.Reporting.Reports.Services;
 internal sealed class ProfitEstimateService(ITenantUnitOfWork tenantUow) : IProfitEstimateService
 {
     private const int TrailingDays = 90;
-    private static readonly decimal MetersPerMile = DistanceUnit.Miles.ToMeters(1).ToDecimal();
+    private const decimal MetersPerKm = 1000m;
 
     /// <summary>A load not on a trip yet has no stops; a pickup and a drop is the usual pair.</summary>
     private const int EstimatedStops = 2;
@@ -53,7 +53,7 @@ internal sealed class ProfitEstimateService(ITenantUnitOfWork tenantUow) : IProf
             }
 
             var driverPay = drivers.TryGetValue(request.TruckId, out var driver)
-                ? driver.PayForLoads([load], unit)
+                ? driver.PayForLoads([load])
                 : 0m;
             var revenue = load.Linehaul + load.FuelSurcharge + load.Accessorials;
             var operatingCost = Math.Round(costPerMetre.Value * request.TotalMeters.ToDecimal(), 2);
@@ -63,15 +63,15 @@ internal sealed class ProfitEstimateService(ITenantUnitOfWork tenantUow) : IProf
         return margins;
     }
 
-    public async Task<decimal?> GetFleetCostPerMileAsync(CancellationToken ct = default) =>
-        (await GetCostPerMetreAsync(ct)).Fleet * MetersPerMile;
+    public async Task<decimal?> GetFleetCostPerKmAsync(CancellationToken ct = default) =>
+        (await GetCostPerMetreAsync(ct)).Fleet * MetersPerKm;
 
-    /// <summary>The tenant's cost per mile when set, else each truck's trailing expenses over the distance it drove.</summary>
+    /// <summary>The tenant's cost per km when set, else each truck's trailing expenses over the distance it drove.</summary>
     private async Task<OperatingCosts> GetCostPerMetreAsync(CancellationToken ct)
     {
-        if (tenantUow.GetCurrentTenant().Settings.CostPerMile is { } costPerMile)
+        if (tenantUow.GetCurrentTenant().Settings.CostPerKm is { } costPerKm)
         {
-            return new OperatingCosts([], costPerMile / MetersPerMile);
+            return new OperatingCosts([], costPerKm / MetersPerKm);
         }
 
         var now = DateTime.UtcNow;

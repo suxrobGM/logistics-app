@@ -40,7 +40,7 @@ public class RateNegotiation : AuditableEntity, ITenantEntity
     public required string ReplyToken { get; set; }
 
     /// <summary>Floor in force when the thread opened - never recomputed mid-negotiation.</summary>
-    public decimal? FloorRatePerMile { get; set; }
+    public decimal? FloorRatePerKm { get; set; }
     public Money? FloorTotalRate { get; set; }
     public RateFloorSource FloorSource { get; set; } = RateFloorSource.None;
 
@@ -119,7 +119,7 @@ public class RateNegotiation : AuditableEntity, ITenantEntity
             BrokerMcNumber = brokerMcNumber,
             ConversationId = conversationId,
             ReplyToken = GenerateReplyToken(),
-            FloorRatePerMile = floor.MinRatePerMile,
+            FloorRatePerKm = floor.MinRatePerKm,
             FloorTotalRate = floor.MinTotalRate,
             FloorSource = floor.Source
         };
@@ -137,7 +137,7 @@ public class RateNegotiation : AuditableEntity, ITenantEntity
         string textBody,
         string? subject = null,
         Money? proposedTotalRate = null,
-        decimal? proposedRatePerMile = null,
+        decimal? proposedRatePerKm = null,
         Guid? agentDecisionId = null)
     {
         var message = new NegotiationMessage
@@ -148,7 +148,7 @@ public class RateNegotiation : AuditableEntity, ITenantEntity
             Subject = subject,
             TextBody = textBody,
             ProposedTotalRate = proposedTotalRate,
-            ProposedRatePerMile = proposedRatePerMile,
+            ProposedRatePerKm = proposedRatePerKm,
             AgentDecisionId = agentDecisionId
         };
 
@@ -172,7 +172,7 @@ public class RateNegotiation : AuditableEntity, ITenantEntity
         string? subject = null,
         string? rawBody = null,
         Money? proposedTotalRate = null,
-        decimal? proposedRatePerMile = null,
+        decimal? proposedRatePerKm = null,
         string? rfcMessageId = null,
         string? inReplyToMessageId = null,
         bool quarantined = false)
@@ -186,7 +186,7 @@ public class RateNegotiation : AuditableEntity, ITenantEntity
             TextBody = textBody,
             RawBody = rawBody,
             ProposedTotalRate = proposedTotalRate,
-            ProposedRatePerMile = proposedRatePerMile,
+            ProposedRatePerKm = proposedRatePerKm,
             RfcMessageId = rfcMessageId,
             InReplyToMessageId = inReplyToMessageId,
             Quarantined = quarantined

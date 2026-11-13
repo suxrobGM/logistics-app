@@ -33,8 +33,8 @@ internal sealed class GetRateFloorContextHandler(
             RoundCount = negotiation?.RoundCount ?? 0,
             MaxRounds = RateNegotiation.MaxRounds,
             ListingTotalRate = listing.TotalRate?.Amount,
-            ListingRatePerMile = listing.RatePerMile,
-            DistanceMiles = listing.Distance,
+            ListingRatePerKm = listing.RatePerKm,
+            DistanceMeters = listing.Distance,
             Currency = ListingCurrency.Get(listing, tenantUow.GetCurrentTenant())
         });
     }

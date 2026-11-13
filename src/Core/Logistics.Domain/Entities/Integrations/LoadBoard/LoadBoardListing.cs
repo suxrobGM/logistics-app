@@ -23,9 +23,9 @@ public class LoadBoardListing : AuditableEntity, ITenantEntity
     public required GeoPoint DestinationLocation { get; set; }
 
     /// <summary>
-    /// Rate per mile offered for this load
+    /// Rate per km offered for this load
     /// </summary>
-    public decimal? RatePerMile { get; set; }
+    public decimal? RatePerKm { get; set; }
 
     /// <summary>
     /// Total rate for the load
@@ -33,19 +33,19 @@ public class LoadBoardListing : AuditableEntity, ITenantEntity
     public Money? TotalRate { get; set; }
 
     /// <summary>
-    /// Total distance in miles
+    /// Total distance in meters
     /// </summary>
     public double? Distance { get; set; }
 
     /// <summary>
-    /// Load weight in pounds
+    /// Load weight in kilograms
     /// </summary>
-    public int? Weight { get; set; }
+    public decimal? WeightKg { get; set; }
 
     /// <summary>
-    /// Load length in feet
+    /// Load length in meters
     /// </summary>
-    public int? Length { get; set; }
+    public decimal? LengthMeters { get; set; }
 
     public DateTime? PickupDateStart { get; set; }
     public DateTime? PickupDateEnd { get; set; }

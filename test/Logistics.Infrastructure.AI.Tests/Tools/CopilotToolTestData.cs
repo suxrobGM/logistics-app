@@ -1,5 +1,8 @@
+using Logistics.Application.Tests.TestKit;
+using Logistics.Domain.Persistence;
 using Logistics.Domain.Primitives.ValueObjects;
 using Logistics.Shared.Models;
+using NSubstitute;
 
 namespace Logistics.Infrastructure.AI.Tests.Tools;
 
@@ -37,4 +40,12 @@ internal static class CopilotToolTestData
     }
 
     public static Money Usd(decimal amount) => new() { Amount = amount, Currency = "USD" };
+
+    /// <summary>A tenant unit of work whose tenant runs in miles, the default.</summary>
+    public static ITenantUnitOfWork MilesTenant()
+    {
+        var tenantUow = Substitute.For<ITenantUnitOfWork>();
+        tenantUow.GetCurrentTenant().Returns(TestTenant.Create());
+        return tenantUow;
+    }
 }

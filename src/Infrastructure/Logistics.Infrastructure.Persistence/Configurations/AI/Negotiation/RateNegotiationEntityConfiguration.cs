@@ -10,6 +10,8 @@ internal sealed class RateNegotiationEntityConfiguration : IEntityTypeConfigurat
     {
         builder.ToTable("rate_negotiations");
 
+        builder.Property(n => n.FloorRatePerKm).HasPrecision(18, 4);
+
         builder.HasIndex(n => n.ReplyToken)
             .IsUnique();
 

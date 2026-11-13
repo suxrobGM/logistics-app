@@ -2348,8 +2348,8 @@ namespace Logistics.Infrastructure.Persistence.Migrations.Tenant
                         .HasColumnName("role_id");
 
                     b.Property<decimal>("Salary")
-                        .HasPrecision(18, 2)
-                        .HasColumnType("numeric(18,2)")
+                        .HasPrecision(18, 4)
+                        .HasColumnType("numeric(18,4)")
                         .HasColumnName("salary");
 
                     b.Property<string>("SalaryType")
@@ -3461,10 +3461,10 @@ namespace Logistics.Infrastructure.Persistence.Migrations.Tenant
                         .HasColumnType("character varying(3)")
                         .HasColumnName("destination_state");
 
-                    b.Property<decimal>("MinRatePerMile")
-                        .HasPrecision(18, 2)
-                        .HasColumnType("numeric(18,2)")
-                        .HasColumnName("min_rate_per_mile");
+                    b.Property<decimal>("MinRatePerKm")
+                        .HasPrecision(18, 4)
+                        .HasColumnType("numeric(18,4)")
+                        .HasColumnName("min_rate_per_km");
 
                     b.Property<decimal?>("MinTotalRate")
                         .HasPrecision(18, 2)
@@ -4088,9 +4088,10 @@ namespace Logistics.Infrastructure.Persistence.Migrations.Tenant
                         .HasColumnType("character varying(100)")
                         .HasColumnName("external_listing_id");
 
-                    b.Property<int?>("Length")
-                        .HasColumnType("integer")
-                        .HasColumnName("length");
+                    b.Property<decimal?>("LengthMeters")
+                        .HasPrecision(18, 2)
+                        .HasColumnType("numeric(18,2)")
+                        .HasColumnName("length_meters");
 
                     b.Property<Guid?>("LoadId")
                         .HasColumnType("uuid")
@@ -4114,10 +4115,10 @@ namespace Logistics.Infrastructure.Persistence.Migrations.Tenant
                         .HasColumnType("text")
                         .HasColumnName("provider_type");
 
-                    b.Property<decimal?>("RatePerMile")
-                        .HasPrecision(18, 2)
-                        .HasColumnType("numeric(18,2)")
-                        .HasColumnName("rate_per_mile");
+                    b.Property<decimal?>("RatePerKm")
+                        .HasPrecision(18, 4)
+                        .HasColumnType("numeric(18,4)")
+                        .HasColumnName("rate_per_km");
 
                     b.Property<string>("Status")
                         .IsRequired()
@@ -4133,9 +4134,10 @@ namespace Logistics.Infrastructure.Persistence.Migrations.Tenant
                         .HasColumnType("character varying(50)")
                         .HasColumnName("updated_by");
 
-                    b.Property<int?>("Weight")
-                        .HasColumnType("integer")
-                        .HasColumnName("weight");
+                    b.Property<decimal?>("WeightKg")
+                        .HasPrecision(18, 2)
+                        .HasColumnType("numeric(18,2)")
+                        .HasColumnName("weight_kg");
 
                     b.ComplexProperty(typeof(Dictionary<string, object>), "DestinationAddress", "Logistics.Domain.Entities.LoadBoardListing.DestinationAddress#Address", b1 =>
                         {
@@ -4714,10 +4716,10 @@ namespace Logistics.Infrastructure.Persistence.Migrations.Tenant
                         .HasColumnType("timestamp with time zone")
                         .HasColumnName("occurred_at");
 
-                    b.Property<decimal?>("ProposedRatePerMile")
-                        .HasPrecision(18, 2)
-                        .HasColumnType("numeric(18,2)")
-                        .HasColumnName("proposed_rate_per_mile");
+                    b.Property<decimal?>("ProposedRatePerKm")
+                        .HasPrecision(18, 4)
+                        .HasColumnType("numeric(18,4)")
+                        .HasColumnName("proposed_rate_per_km");
 
                     b.Property<bool>("Quarantined")
                         .HasColumnType("boolean")
@@ -5051,9 +5053,9 @@ namespace Logistics.Infrastructure.Persistence.Migrations.Tenant
                         .HasColumnType("character varying(50)")
                         .HasColumnName("created_by");
 
-                    b.Property<int?>("DestinationRadius")
+                    b.Property<int?>("DestinationRadiusMeters")
                         .HasColumnType("integer")
-                        .HasColumnName("destination_radius");
+                        .HasColumnName("destination_radius_meters");
 
                     b.Property<string>("EquipmentType")
                         .HasColumnType("text")
@@ -5072,13 +5074,15 @@ namespace Logistics.Infrastructure.Persistence.Migrations.Tenant
                         .HasColumnType("timestamp with time zone")
                         .HasColumnName("last_refreshed_at");
 
-                    b.Property<int?>("MaxLength")
-                        .HasColumnType("integer")
-                        .HasColumnName("max_length");
+                    b.Property<decimal?>("MaxLengthMeters")
+                        .HasPrecision(18, 2)
+                        .HasColumnType("numeric(18,2)")
+                        .HasColumnName("max_length_meters");
 
-                    b.Property<int?>("MaxWeight")
-                        .HasColumnType("integer")
-                        .HasColumnName("max_weight");
+                    b.Property<decimal?>("MaxWeightKg")
+                        .HasPrecision(18, 2)
+                        .HasColumnType("numeric(18,2)")
+                        .HasColumnName("max_weight_kg");
 
                     b.Property<string>("ProviderType")
                         .IsRequired()
@@ -5327,10 +5331,10 @@ namespace Logistics.Infrastructure.Persistence.Migrations.Tenant
                         .HasColumnType("timestamp with time zone")
                         .HasColumnName("expires_at");
 
-                    b.Property<decimal?>("FloorRatePerMile")
-                        .HasPrecision(18, 2)
-                        .HasColumnType("numeric(18,2)")
-                        .HasColumnName("floor_rate_per_mile");
+                    b.Property<decimal?>("FloorRatePerKm")
+                        .HasPrecision(18, 4)
+                        .HasColumnType("numeric(18,4)")
+                        .HasColumnName("floor_rate_per_km");
 
                     b.Property<string>("FloorSource")
                         .IsRequired()

@@ -16,14 +16,14 @@ public record PostedTruckDto
     public required GeoPoint AvailableAtLocation { get; set; }
 
     public Address? DestinationPreference { get; set; }
-    public int? DestinationRadius { get; set; }
+    public int? DestinationRadiusMeters { get; set; }
 
     public DateTime AvailableFrom { get; set; }
     public DateTime? AvailableTo { get; set; }
 
     public LoadBoardEquipmentType? EquipmentType { get; set; }
-    public int? MaxWeight { get; set; }
-    public int? MaxLength { get; set; }
+    public decimal? MaxWeightKg { get; set; }
+    public decimal? MaxLengthMeters { get; set; }
 
     public PostedTruckStatus Status { get; set; }
     public DateTime? ExpiresAt { get; set; }
@@ -42,14 +42,14 @@ public record PostTruckRequest
     /// </summary>
     public LoadBoardPlace? Destination { get; set; }
 
-    public int? DestinationRadius { get; set; }
+    public int? DestinationRadiusMeters { get; set; }
 
     public DateTime AvailableFrom { get; set; }
     public DateTime? AvailableTo { get; set; }
 
     public required LoadBoardEquipmentType EquipmentType { get; set; }
-    public int? MaxWeight { get; set; }
-    public int? MaxLength { get; set; }
+    public decimal? MaxWeightKg { get; set; }
+    public decimal? MaxLengthMeters { get; set; }
 }
 
 public record PostTruckResultDto

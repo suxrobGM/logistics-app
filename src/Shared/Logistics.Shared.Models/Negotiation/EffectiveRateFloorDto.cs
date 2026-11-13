@@ -10,16 +10,16 @@ namespace Logistics.Shared.Models;
 public record EffectiveRateFloorDto
 {
     public bool HasFloor { get; set; }
-    public decimal? MinRatePerMile { get; set; }
+    public decimal? MinRatePerKm { get; set; }
     public decimal? MinTotalRate { get; set; }
     public RateFloorSource Source { get; set; } = RateFloorSource.None;
 
     /// <summary>
-    /// The per-mile and flat-total floor combined into one number for this listing's distance.
-    /// Null when the listing has no distance and only a per-mile floor applies.
+    /// The per-km and flat-total floor combined into one number for this listing's distance.
+    /// Null when the listing has no distance and only a per-km floor applies.
     /// </summary>
     public decimal? EffectiveFloorTotal { get; set; }
 
     public bool ListingBelowFloor { get; set; }
-    public decimal? GapPerMile { get; set; }
+    public decimal? GapPerKm { get; set; }
 }

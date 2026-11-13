@@ -8,7 +8,7 @@ internal static class LaneRateFloorFieldsExtensions
     {
         public LaneRateFloor ToEntity()
         {
-            var floor = new LaneRateFloor { MinRatePerMile = fields.MinRatePerMile };
+            var floor = new LaneRateFloor { MinRatePerKm = fields.MinRatePerKm };
             fields.ApplyTo(floor);
             return floor;
         }
@@ -20,7 +20,7 @@ internal static class LaneRateFloorFieldsExtensions
             floor.OriginState = LaneKey.State(fields.OriginState);
             floor.DestinationCountry = LaneKey.Country(fields.DestinationCountry);
             floor.DestinationState = LaneKey.State(fields.DestinationState);
-            floor.MinRatePerMile = fields.MinRatePerMile;
+            floor.MinRatePerKm = fields.MinRatePerKm;
             floor.MinTotalRate = fields.MinTotalRate;
             floor.Notes = fields.Notes;
         }

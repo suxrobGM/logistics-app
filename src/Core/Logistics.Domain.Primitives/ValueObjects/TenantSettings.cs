@@ -43,13 +43,13 @@ public record TenantSettings
     public bool BlockAIOverage { get; set; }
 
     /// <summary>
-    /// Fallback minimum rate per mile the rate-negotiation agent may accept when no lane rule matches.
+    /// Fallback minimum rate per km the rate-negotiation agent may accept when no lane rule matches.
     /// Null leaves the agent without a floor.
     /// </summary>
-    public decimal? DefaultRateFloorPerMile { get; set; }
+    public decimal? DefaultRateFloorPerKm { get; set; }
 
-    /// <summary>Operating cost per mile, driver pay excluded; null uses each truck's trailing 90-day cost.</summary>
-    public decimal? CostPerMile { get; set; }
+    /// <summary>Operating cost per km, driver pay excluded; null uses each truck's trailing 90-day cost.</summary>
+    public decimal? CostPerKm { get; set; }
 
     /// <summary>
     /// Minutes a truck may wait at a stop before detention starts. Null means the 2-hour industry default.

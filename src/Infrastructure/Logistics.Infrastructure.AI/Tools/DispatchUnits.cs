@@ -15,6 +15,10 @@ internal static class DispatchUnits
 
     public static double FromMeters(double meters, DistanceUnit unit) => Math.Round(unit.FromMeters(meters), 1);
 
+    /// <summary>A stored rate per km in the tenant's unit, to the cent.</summary>
+    public static decimal? RateFromPerKm(decimal? ratePerKm, DistanceUnit unit) =>
+        ratePerKm is { } rate ? Math.Round(unit.RateFromPerKm(rate), 2) : null;
+
     /// <summary>Linehaul per distance unit, compared across tools when ranking candidates.</summary>
     public static double RatePer(decimal linehaul, double distance) =>
         distance > 0 ? Math.Round((double)linehaul / distance, 2) : 0;

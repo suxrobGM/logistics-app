@@ -72,7 +72,7 @@ internal sealed class ProposeCounterOfferHandler(
             ? await floorResolver.ResolveAsync(listing, ct)
             : negotiation.ToEffectiveFloor();
 
-        if (FloorRejection(req, floor, listing) is { } rejection)
+        if (FloorRejection(req, floor, listing, tenant.Settings.DistanceUnit) is { } rejection)
         {
             return Result<RateNegotiationDto>.Fail(rejection.Error, rejection.Code);
         }
@@ -112,7 +112,7 @@ internal sealed class ProposeCounterOfferHandler(
         var messageId = NegotiationMessageId.Create(emailSender.ReplyDomain);
 
         var composed = await composer.ComposeAsync(ComposeNegotiationEmailRequest.For(
-            listing, tenant, req.ProposedTotalRate, req.ProposedRatePerMile, req.Message, replyToAddress), ct);
+            listing, tenant, req.ProposedTotalRate, req.ProposedRatePerKm, req.Message, replyToAddress), ct);
 
         // The broker can reply the moment the mail lands, so a new thread's route has to exist
         // before the send - opening it afterwards drops any reply that beats the save.
@@ -156,7 +156,7 @@ internal sealed class ProposeCounterOfferHandler(
             textBody: composed.SanitizedMessage,
             subject: composed.Subject,
             proposedTotalRate: new Money { Amount = req.ProposedTotalRate, Currency = currency },
-            proposedRatePerMile: req.ProposedRatePerMile,
+            proposedRatePerKm: req.ProposedRatePerKm,
             agentDecisionId: req.DecisionId);
 
         message.RfcMessageId = messageId;
@@ -196,7 +196,7 @@ internal sealed class ProposeCounterOfferHandler(
     /// Why this offer may not be sent, or <c>null</c> when it clears the floor.
     /// </summary>
     private static (string Error, string Code)? FloorRejection(
-        ProposeCounterOfferCommand req, EffectiveRateFloorDto floor, LoadBoardListing listing)
+        ProposeCounterOfferCommand req, EffectiveRateFloorDto floor, LoadBoardListing listing, DistanceUnit unit)
     {
         var lane = $"{listing.OriginAddress.State} to {listing.DestinationAddress.State}";
 
@@ -216,17 +216,18 @@ internal sealed class ProposeCounterOfferHandler(
                 : null;
         }
 
-        if (req.ProposedRatePerMile is { } perMile && floor.MinRatePerMile is { } minPerMile)
+        if (req.ProposedRatePerKm is { } perKm && floor.MinRatePerKm is { } minPerKm)
         {
-            return perMile < minPerMile
-                ? ($"The offer of {perMile:N2} per mile is below your floor of {minPerMile:N2} per mile for {lane}.",
+            return perKm < minPerKm
+                ? ($"The offer of {unit.RateFromPerKm(perKm):N2} per {unit.Abbreviation()} is below your floor of " +
+                   $"{unit.RateFromPerKm(minPerKm):N2} per {unit.Abbreviation()} for {lane}.",
                     ErrorCodes.NegotiationBelowFloor)
                 : null;
         }
 
         return (
-            $"The listing has no distance and your floor for {lane} is per-mile only, so this offer cannot be checked. " +
-            "Set a minimum total rate on the lane floor, or offer a per-mile rate.",
+            $"The listing has no distance and your floor for {lane} is per distance only, so this offer cannot be checked. " +
+            "Set a minimum total rate on the lane floor, or offer a rate per distance.",
             ErrorCodes.NegotiationFloorMissing);
     }
 }

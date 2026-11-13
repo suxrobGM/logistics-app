@@ -17,6 +17,6 @@ public record CounterOfferPreviewDto
     public string ToEmail { get; set; } = "";
     public string ReplyToAddress { get; set; } = "";
     public decimal ProposedTotalRate { get; set; }
-    public decimal? ProposedRatePerMile { get; set; }
+    public decimal? ProposedRatePerKm { get; set; }
     public string Currency { get; set; } = "USD";
 }

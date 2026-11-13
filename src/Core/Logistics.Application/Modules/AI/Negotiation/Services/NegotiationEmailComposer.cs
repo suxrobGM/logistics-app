@@ -41,9 +41,10 @@ internal sealed class NegotiationEmailComposer(IEmailTemplateService emailTempla
             PickupDate = request.PickupDate.ToString("MMMM dd, yyyy", CultureInfo.InvariantCulture),
             EquipmentType = request.EquipmentType,
             OfferTotal = Money.Format(request.OfferAmount, request.Currency),
-            OfferPerMile = request.OfferPerMile is { } perMile
-                ? Money.Format(perMile, request.Currency)
+            OfferPerDistance = request.OfferPerDistance is { } perDistance
+                ? Money.Format(perDistance, request.Currency)
                 : null,
+            DistanceUnit = request.DistanceUnit,
             Message = sanitizedMessage,
             CompanyName = request.CompanyName,
             CompanyMcNumber = request.CompanyMcNumber,

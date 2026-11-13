@@ -50,7 +50,7 @@ public class ProposeCounterOfferHandlerTests
         {
             ListingId = _listing.Id,
             ProposedTotalRate = 2200m,
-            ProposedRatePerMile = 2.20m,
+            ProposedRatePerKm = 2.20m,
             Message = "We can cover this at $2,200."
         };
 
@@ -72,7 +72,7 @@ public class ProposeCounterOfferHandlerTests
         SetupFloor(new EffectiveRateFloorDto
         {
             HasFloor = true,
-            MinRatePerMile = 2.00m,
+            MinRatePerKm = 2.00m,
             Source = RateFloorSource.LaneExact,
             EffectiveFloorTotal = 2000m,
             ListingBelowFloor = true
@@ -117,7 +117,7 @@ public class ProposeCounterOfferHandlerTests
         DestinationLocation = new GeoPoint(-87.6, 41.9),
         Distance = 1000,
         TotalRate = new Money { Amount = 1800m, Currency = "USD" },
-        RatePerMile = 1.80m,
+        RatePerKm = 1.80m,
         BrokerName = "Test Broker",
         BrokerEmail = "broker@example.com",
         BrokerMcNumber = "MC123456",
@@ -255,10 +255,10 @@ public class ProposeCounterOfferHandlerTests
 
     /// <summary>A per-mile floor needs a per-mile rate on the offer to compare against.</summary>
     [Fact]
-    public async Task Handle_PerMileOnlyFloorAndOfferWithoutRatePerMile_FailsAsFloorMissing()
+    public async Task Handle_PerKmOnlyFloorAndOfferWithoutRatePerKm_FailsAsFloorMissing()
     {
-        SetupPerMileOnlyFloor(2.00m);
-        _command.ProposedRatePerMile = null;
+        SetupPerKmOnlyFloor(2.00m);
+        _command.ProposedRatePerKm = null;
 
         var result = await _sut.Handle(_command, CancellationToken.None);
 
@@ -267,9 +267,9 @@ public class ProposeCounterOfferHandlerTests
     }
 
     [Fact]
-    public async Task Handle_PerMileOnlyFloorAboveOfferRate_FailsAsBelowFloor()
+    public async Task Handle_PerKmOnlyFloorAboveOfferRate_FailsAsBelowFloor()
     {
-        SetupPerMileOnlyFloor(2.50m);
+        SetupPerKmOnlyFloor(2.50m);
 
         var result = await _sut.Handle(_command, CancellationToken.None);
 
@@ -302,11 +302,11 @@ public class ProposeCounterOfferHandlerTests
         await AssertNothingSent();
     }
 
-    private void SetupPerMileOnlyFloor(decimal minRatePerMile) =>
+    private void SetupPerKmOnlyFloor(decimal minRatePerKm) =>
         SetupFloor(new EffectiveRateFloorDto
         {
             HasFloor = true,
-            MinRatePerMile = minRatePerMile,
+            MinRatePerKm = minRatePerKm,
             Source = RateFloorSource.TenantDefault
         });
 
@@ -316,7 +316,7 @@ public class ProposeCounterOfferHandlerTests
         SetupFloor(new EffectiveRateFloorDto
         {
             HasFloor = true,
-            MinRatePerMile = 3.00m,
+            MinRatePerKm = 3.00m,
             Source = RateFloorSource.LaneExact,
             EffectiveFloorTotal = 3000m
         });
@@ -329,7 +329,7 @@ public class ProposeCounterOfferHandlerTests
         SetupFloor(new EffectiveRateFloorDto
         {
             HasFloor = true,
-            MinRatePerMile = 2.00m,
+            MinRatePerKm = 2.00m,
             MinTotalRate = 1000m,
             Source = RateFloorSource.LaneExact,
             EffectiveFloorTotal = 2000m
@@ -339,7 +339,7 @@ public class ProposeCounterOfferHandlerTests
 
         Assert.True(result.IsSuccess);
         await _negotiationRepo.Received(1).AddAsync(
-            Arg.Is<RateNegotiation>(n => n.FloorTotalRate!.Amount == 2000m && n.FloorRatePerMile == 2.00m),
+            Arg.Is<RateNegotiation>(n => n.FloorTotalRate!.Amount == 2000m && n.FloorRatePerKm == 2.00m),
             Arg.Any<CancellationToken>());
     }
 

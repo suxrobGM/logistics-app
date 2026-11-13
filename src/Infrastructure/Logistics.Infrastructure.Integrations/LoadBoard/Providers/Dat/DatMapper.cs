@@ -19,8 +19,8 @@ internal static class DatMapper
             return null;
         }
 
-        var distance = match.TripLength?.DistanceMiles;
-        var (total, perMile) = ToRates(match.Rate, distance);
+        var miles = match.TripLength?.DistanceMiles;
+        var (total, perMile) = ToRates(match.Rate, miles);
 
         return new LoadBoardListingDto
         {
@@ -32,11 +32,11 @@ internal static class DatMapper
             DestinationAddress = ToAddress(match.Destination?.Point),
             DestinationLocation = ToGeoPoint(match.Destination?.Point),
             TotalRate = total,
-            RatePerMile = perMile,
+            RatePerKm = perMile / ImperialUnits.KilometersPerMile,
             Currency = match.Rate?.BaseRate?.Currency ?? "USD",
-            Distance = distance,
-            Weight = match.Specs?.WeightInPounds,
-            Length = match.Specs?.LengthInFeet,
+            Distance = miles * ImperialUnits.MetersPerMile,
+            WeightKg = match.Specs?.WeightInPounds * ImperialUnits.KilogramsPerPound,
+            LengthMeters = match.Specs?.LengthInFeet * ImperialUnits.MetersPerFoot,
             PickupDateStart = match.Availability?.Earliest,
             PickupDateEnd = match.Availability?.Latest,
             EquipmentType = DatEquipment.FromCode(match.Specs?.RequiredEquipmentType),

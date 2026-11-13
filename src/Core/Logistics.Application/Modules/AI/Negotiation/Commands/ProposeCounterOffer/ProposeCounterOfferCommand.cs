@@ -15,7 +15,7 @@ public class ProposeCounterOfferCommand : ICommand<Result<RateNegotiationDto>>
 
     public decimal ProposedTotalRate { get; set; }
 
-    public decimal? ProposedRatePerMile { get; set; }
+    public decimal? ProposedRatePerKm { get; set; }
 
     /// <summary>The broker-facing paragraph. Sanitized and length-clamped before it is rendered.</summary>
     public string Message { get; set; } = "";

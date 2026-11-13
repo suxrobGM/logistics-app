@@ -11,7 +11,7 @@ public static class RateFloorSnapshotExtensions
     {
         /// <summary>
         /// Reduces a resolved floor to what a negotiation stores. The total recorded is the one the
-        /// offer was actually checked against - the per-mile and flat components already combined for
+        /// offer was actually checked against - the per-km and flat components already combined for
         /// the listing's distance - so a booking checked against the snapshot meets the same bar the
         /// counter-offer did.
         /// </summary>
@@ -26,7 +26,7 @@ public static class RateFloorSnapshotExtensions
                 ? new Money { Amount = amount, Currency = currency }
                 : null;
 
-            return new RateFloorSnapshot(floor.MinRatePerMile, total, floor.Source);
+            return new RateFloorSnapshot(floor.MinRatePerKm, total, floor.Source);
         }
     }
 
@@ -40,7 +40,7 @@ public static class RateFloorSnapshotExtensions
         public EffectiveRateFloorDto ToEffectiveFloor() => new()
         {
             HasFloor = negotiation.FloorSource != RateFloorSource.None,
-            MinRatePerMile = negotiation.FloorRatePerMile,
+            MinRatePerKm = negotiation.FloorRatePerKm,
             MinTotalRate = negotiation.FloorTotalRate?.Amount,
             Source = negotiation.FloorSource,
             EffectiveFloorTotal = negotiation.FloorTotalRate?.Amount

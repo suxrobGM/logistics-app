@@ -11,7 +11,7 @@ internal sealed class EURegionProfile : IRegionProfile
     public Region Region => Region.EU;
     public string DisplayName => "EU Demo";
     public CurrencyCode Currency => CurrencyCode.EUR;
-    public decimal DefaultRateFloorPerMile => 1.35m;
+    public decimal DefaultRateFloorPerKm => 1.35m;
     public DistanceUnit DistanceUnit => DistanceUnit.Kilometers;
     public WeightUnit WeightUnit => WeightUnit.Kilograms;
     public VolumeUnit VolumeUnit => VolumeUnit.Liters;

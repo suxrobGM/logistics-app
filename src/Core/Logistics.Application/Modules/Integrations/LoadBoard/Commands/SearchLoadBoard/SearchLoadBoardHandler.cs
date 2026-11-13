@@ -53,16 +53,16 @@ internal sealed class SearchLoadBoardHandler(
         var criteria = new LoadBoardSearchCriteria
         {
             Origin = req.Origin,
-            OriginRadius = req.OriginRadius,
+            OriginRadiusMeters = req.OriginRadiusMeters,
             Destination = req.Destination,
-            DestinationRadius = req.DestinationRadius,
+            DestinationRadiusMeters = req.DestinationRadiusMeters,
             PickupDateStart = req.PickupDateStart,
             PickupDateEnd = req.PickupDateEnd,
             EquipmentTypes = req.EquipmentTypes,
-            MinRatePerMile = req.MinRatePerMile,
+            MinRatePerKm = req.MinRatePerKm,
             MinTotalRate = req.MinTotalRate,
-            MaxWeight = req.MaxWeight,
-            MaxLength = req.MaxLength,
+            MaxWeightKg = req.MaxWeightKg,
+            MaxLengthMeters = req.MaxLengthMeters,
             MaxResults = req.MaxResults
         };
 
@@ -84,7 +84,7 @@ internal sealed class SearchLoadBoardHandler(
 
         var sortedListings = allListings
             .Where(l => MeetsRateFloor(l, req))
-            .OrderByDescending(l => l.RatePerMile ?? 0)
+            .OrderByDescending(l => l.RatePerKm ?? 0)
             .Take(req.MaxResults)
             .ToList();
 
@@ -113,20 +113,20 @@ internal sealed class SearchLoadBoardHandler(
 
     private async Task AttachEstimatedMarginsAsync(IReadOnlyList<LoadBoardListingDto> listings, CancellationToken ct)
     {
-        if (listings.Count == 0 || await profitEstimate.GetFleetCostPerMileAsync(ct) is not { } costPerMile)
+        if (listings.Count == 0 || await profitEstimate.GetFleetCostPerKmAsync(ct) is not { } costPerKm)
         {
             return;
         }
 
         foreach (var listing in listings)
         {
-            var ratePerMile = listing.RatePerMile ?? CalculateRatePerMile(listing.TotalRate, listing.Distance);
-            listing.EstimatedMarginPerMile = ratePerMile is { } rate ? Math.Round(rate - costPerMile, 2) : null;
+            var ratePerKm = listing.RatePerKm ?? CalculateRatePerKm(listing.TotalRate, listing.Distance);
+            listing.EstimatedMarginPerKm = ratePerKm is { } rate ? Math.Round(rate - costPerKm, 4) : null;
         }
     }
 
-    private static decimal? CalculateRatePerMile(decimal? totalRate, double? miles) =>
-        totalRate is { } total && miles is > 0 ? total / miles.Value.ToDecimal() : null;
+    private static decimal? CalculateRatePerKm(decimal? totalRate, double? meters) =>
+        totalRate is { } total && meters is > 0 ? total / (meters.Value / 1000).ToDecimal() : null;
 
     /// <summary>
     /// Prices each distinct city-to-city lane once, in one batched lookup, and stamps the rate on
@@ -165,9 +165,9 @@ internal sealed class SearchLoadBoardHandler(
 
             foreach (var listing in byLane[i])
             {
-                listing.MarketRatePerMile = rate.RatePerMile;
-                listing.MarketRateLowPerMile = rate.LowPerMile;
-                listing.MarketRateHighPerMile = rate.HighPerMile;
+                listing.MarketRatePerKm = rate.RatePerKm;
+                listing.MarketRateLowPerKm = rate.LowPerKm;
+                listing.MarketRateHighPerKm = rate.HighPerKm;
             }
         }
 
@@ -180,13 +180,13 @@ internal sealed class SearchLoadBoardHandler(
     /// </summary>
     private static bool MeetsRateFloor(LoadBoardListingDto listing, SearchLoadBoardCommand req)
     {
-        var perMileOk = req.MinRatePerMile is not { } minPerMile ||
-                        listing.RatePerMile is not { } perMile ||
-                        perMile >= minPerMile;
+        var perKmOk = req.MinRatePerKm is not { } minPerKm ||
+                        listing.RatePerKm is not { } perKm ||
+                        perKm >= minPerKm;
         var totalOk = req.MinTotalRate is not { } minTotal ||
                       listing.TotalRate is not { } total ||
                       total >= minTotal;
-        return perMileOk && totalOk;
+        return perKmOk && totalOk;
     }
 
     /// <summary>
@@ -218,7 +218,7 @@ internal sealed class SearchLoadBoardHandler(
 
             if (existingByKey.TryGetValue((dto.ProviderType, dto.ExternalListingId), out var entity))
             {
-                entity.RatePerMile = dto.RatePerMile;
+                entity.RatePerKm = dto.RatePerKm;
                 entity.TotalRate = ToMoney(dto.TotalRate, dto.Currency, currency);
                 entity.ExpiresAt = expiresAt;
                 entity.BrokerCreditScore = dto.BrokerCreditScore ?? entity.BrokerCreditScore;
@@ -243,11 +243,11 @@ internal sealed class SearchLoadBoardHandler(
                     OriginLocation = dto.OriginLocation,
                     DestinationAddress = dto.DestinationAddress,
                     DestinationLocation = dto.DestinationLocation,
-                    RatePerMile = dto.RatePerMile,
+                    RatePerKm = dto.RatePerKm,
                     TotalRate = ToMoney(dto.TotalRate, dto.Currency, currency),
                     Distance = dto.Distance,
-                    Weight = dto.Weight,
-                    Length = dto.Length,
+                    WeightKg = dto.WeightKg,
+                    LengthMeters = dto.LengthMeters,
                     PickupDateStart = dto.PickupDateStart,
                     PickupDateEnd = dto.PickupDateEnd,
                     DeliveryDateStart = dto.DeliveryDateStart,

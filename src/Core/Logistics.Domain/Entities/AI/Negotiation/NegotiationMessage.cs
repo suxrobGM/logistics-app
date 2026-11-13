@@ -26,7 +26,7 @@ public class NegotiationMessage : Entity, ITenantEntity
 
     /// <summary>Rate parsed out of the body, or the rate the agent countered with.</summary>
     public Money? ProposedTotalRate { get; set; }
-    public decimal? ProposedRatePerMile { get; set; }
+    public decimal? ProposedRatePerKm { get; set; }
 
     /// <summary>
     /// RFC 5322 Message-ID of this email, angle brackets included: taken from the provider payload

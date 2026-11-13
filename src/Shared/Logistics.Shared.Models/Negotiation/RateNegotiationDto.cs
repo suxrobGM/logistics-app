@@ -20,7 +20,7 @@ public record RateNegotiationDto
     public string? BrokerName { get; set; }
     public string? BrokerMcNumber { get; set; }
 
-    public decimal? FloorRatePerMile { get; set; }
+    public decimal? FloorRatePerKm { get; set; }
     public Money? FloorTotalRate { get; set; }
     public RateFloorSource FloorSource { get; set; } = RateFloorSource.None;
 

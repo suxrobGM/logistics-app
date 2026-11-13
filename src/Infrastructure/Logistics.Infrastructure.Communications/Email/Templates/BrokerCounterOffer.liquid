@@ -22,7 +22,7 @@
         <tr>
           <td class="t-ink c-rule" style="padding: 12px 12px 0 0; border-top: 1px solid #e4e4e7; font-size: 15px; line-height: 1.5; font-weight: 600; color: #18181b; vertical-align: middle;">Our offer</td>
           <td class="t-ink c-rule" align="right" style="padding: 12px 0 0; border-top: 1px solid #e4e4e7; font-size: 20px; line-height: 1.3; font-weight: 700; color: #18181b; text-align: right; vertical-align: middle; white-space: nowrap;">
-            {{ OfferTotal }}{% if OfferPerMile %}<br><span class="t-muted" style="font-size: 13px; font-weight: 500; color: #71717a;">{{ OfferPerMile }}/mi</span>{% endif %}
+            {{ OfferTotal }}{% if OfferPerDistance %}<br><span class="t-muted" style="font-size: 13px; font-weight: 500; color: #71717a;">{{ OfferPerDistance }}/{{ DistanceUnit }}</span>{% endif %}
           </td>
         </tr>
       </table>

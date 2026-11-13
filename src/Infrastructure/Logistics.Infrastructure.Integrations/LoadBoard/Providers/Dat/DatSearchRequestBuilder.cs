@@ -1,4 +1,5 @@
 using Logistics.Application.Abstractions.Integrations;
+using Logistics.Domain.Primitives;
 using Logistics.Shared.Models;
 
 namespace Logistics.Infrastructure.Integrations.LoadBoard.Providers.Dat;
@@ -31,11 +32,11 @@ internal static class DatSearchRequestBuilder
                     Earliest = criteria.PickupDateStart?.ToUniversalTime(),
                     Latest = criteria.PickupDateEnd?.ToUniversalTime()
                 },
-            Origin = ToPlace(criteria.Origin, criteria.OriginRadius),
+            Origin = ToPlace(criteria.Origin, criteria.OriginRadiusMeters),
             // A destination point needs a city; a state-only destination is filtered locally.
             Destination = string.IsNullOrWhiteSpace(criteria.Destination?.City) || string.IsNullOrWhiteSpace(criteria.Destination.State)
                 ? null
-                : ToPlace(criteria.Destination, criteria.DestinationRadius)
+                : ToPlace(criteria.Destination, criteria.DestinationRadiusMeters)
         });
     }
 
@@ -45,12 +46,12 @@ internal static class DatSearchRequestBuilder
     /// </summary>
     public static bool MatchesLocalFilters(LoadBoardListingDto listing, LoadBoardSearchCriteria criteria)
     {
-        if (criteria.MaxWeight is { } maxWeight && listing.Weight > maxWeight)
+        if (criteria.MaxWeightKg is { } maxWeight && listing.WeightKg > maxWeight)
         {
             return false;
         }
 
-        if (criteria.MaxLength is { } maxLength && listing.Length > maxLength)
+        if (criteria.MaxLengthMeters is { } maxLength && listing.LengthMeters > maxLength)
         {
             return false;
         }
@@ -61,10 +62,11 @@ internal static class DatSearchRequestBuilder
                string.Equals(listing.DestinationAddress.State, destinationState.Trim(), StringComparison.OrdinalIgnoreCase);
     }
 
-    private static DatPlace ToPlace(LoadBoardPlace place, int radiusMiles) => new(new DatPoint
+    /// <summary>DAT takes the deadhead radius in whole miles.</summary>
+    private static DatPlace ToPlace(LoadBoardPlace place, int radiusMeters) => new(new DatPoint
     {
         City = place.City!.Trim(),
         State = place.State!.Trim().ToUpperInvariant(),
-        Deadhead = new DatMiles { Miles = radiusMiles }
+        Deadhead = new DatMiles { Miles = (int)Math.Round(radiusMeters / ImperialUnits.MetersPerMile) }
     });
 }

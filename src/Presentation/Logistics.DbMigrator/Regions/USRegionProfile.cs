@@ -11,7 +11,8 @@ internal sealed class USRegionProfile : IRegionProfile
     public Region Region => Region.US;
     public string DisplayName => "US Demo";
     public CurrencyCode Currency => CurrencyCode.USD;
-    public decimal DefaultRateFloorPerMile => 2.10m;
+    /// <summary>$2.10 per mile.</summary>
+    public decimal DefaultRateFloorPerKm => 1.30m;
     public DistanceUnit DistanceUnit => DistanceUnit.Miles;
     public WeightUnit WeightUnit => WeightUnit.Pounds;
     public VolumeUnit VolumeUnit => VolumeUnit.Gallons;

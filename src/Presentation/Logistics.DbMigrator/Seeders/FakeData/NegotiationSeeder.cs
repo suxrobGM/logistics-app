@@ -36,8 +36,8 @@ internal class NegotiationSeeder(ILogger<NegotiationSeeder> logger) : SeederBase
         var currency = region.Currency.ToString();
 
         // The same value the live resolver falls back to, so a TenantDefault thread shows its floor.
-        var baseFloor = tenant.Settings.DefaultRateFloorPerMile
-            ?? throw new InvalidOperationException("Tenant has no DefaultRateFloorPerMile");
+        var baseFloor = tenant.Settings.DefaultRateFloorPerKm
+            ?? throw new InvalidOperationException("Tenant has no DefaultRateFloorPerKm");
 
         var lanes = await SeedLaneFloorsAsync(context, region, currency, baseFloor, cancellationToken);
 
@@ -76,9 +76,9 @@ internal class NegotiationSeeder(ILogger<NegotiationSeeder> logger) : SeederBase
 
         var lanes = new (RoutePoint Origin, RoutePoint? Destination, decimal Premium, string Notes)[]
         {
-            (points[0], points[7], 0.35m, "Premium lane - the agent holds this floor even on a rebook."),
-            (points[6], points[9], 0.15m, "Steady volume, thinner margin."),
-            (points[2], null, 0.10m, "Anything leaving this origin.")
+            (points[0], points[7], 0.22m, "Premium lane - the agent holds this floor even on a rebook."),
+            (points[6], points[9], 0.09m, "Steady volume, thinner margin."),
+            (points[2], null, 0.06m, "Anything leaving this origin.")
         };
 
         foreach (var (origin, destination, premium, notes) in lanes)
@@ -92,14 +92,14 @@ internal class NegotiationSeeder(ILogger<NegotiationSeeder> logger) : SeederBase
                 OriginState = LaneKey.State(originAddress.State),
                 DestinationCountry = LaneKey.Country(destinationAddress?.Country ?? originAddress.Country),
                 DestinationState = LaneKey.State(destinationAddress?.State),
-                MinRatePerMile = decimal.Round(baseFloor + premium, 2),
+                MinRatePerKm = decimal.Round(baseFloor + premium, 2),
                 MinTotalRate = destinationAddress is null ? null : 950m,
                 Notes = notes
             };
 
             await repo.AddAsync(floor, cancellationToken);
             created.Add(new SeededLane(
-                origin, originAddress, destination, destinationAddress, floor.MinRatePerMile));
+                origin, originAddress, destination, destinationAddress, floor.MinRatePerKm));
         }
 
         return created;
@@ -119,14 +119,14 @@ internal class NegotiationSeeder(ILogger<NegotiationSeeder> logger) : SeederBase
 
         RoutePoint origin, destination;
         Address originAddress, destinationAddress;
-        decimal floorPerMile;
+        decimal floorPerKm;
         RateFloorSource source;
 
         if (seeded is not null)
         {
             origin = seeded.Origin;
             originAddress = seeded.OriginAddress;
-            floorPerMile = seeded.MinRatePerMile;
+            floorPerKm = seeded.MinRatePerKm;
 
             // A destination-any row still pins the destination country, so the fill-in has to stay in it.
             destination = seeded.Destination ?? random.Pick(region.RoutePoints
@@ -144,7 +144,7 @@ internal class NegotiationSeeder(ILogger<NegotiationSeeder> logger) : SeederBase
             destination = random.Pick(region.RoutePoints.Where(p => p != origin).ToList());
             originAddress = LaneAddress(origin);
             destinationAddress = LaneAddress(destination);
-            floorPerMile = baseFloor;
+            floorPerKm = baseFloor;
             source = RateFloorSource.TenantDefault;
         }
 
@@ -153,9 +153,9 @@ internal class NegotiationSeeder(ILogger<NegotiationSeeder> logger) : SeederBase
             new GeoPoint(origin.Longitude, origin.Latitude),
             destinationAddress,
             new GeoPoint(destination.Longitude, destination.Latitude),
-            floorPerMile,
+            floorPerKm,
             source,
-            random.Next(320, 1150));
+            random.Next(500, 1850));
     }
 
     /// <summary>Lane floor columns hold three characters, so they key off the subdivision code.</summary>
@@ -171,7 +171,7 @@ internal class NegotiationSeeder(ILogger<NegotiationSeeder> logger) : SeederBase
         CancellationToken cancellationToken)
     {
         // The posted rate sits below the floor - that gap is what the agent negotiates away.
-        var postedPerMile = decimal.Round(lane.FloorPerMile * 0.82m, 2);
+        var postedPerKm = decimal.Round(lane.FloorPerKm * 0.82m, 2);
         var brokers = region.BrokerNames;
         var brokerName = brokers[(int)scenario % brokers.Count];
 
@@ -183,11 +183,11 @@ internal class NegotiationSeeder(ILogger<NegotiationSeeder> logger) : SeederBase
             OriginLocation = lane.OriginLocation,
             DestinationAddress = lane.Destination,
             DestinationLocation = lane.DestinationLocation,
-            RatePerMile = postedPerMile,
-            TotalRate = new Money { Amount = decimal.Round(postedPerMile * lane.Miles, 0), Currency = currency },
-            Distance = lane.Miles,
-            Weight = random.Next(18000, 44000),
-            Length = 53,
+            RatePerKm = postedPerKm,
+            TotalRate = new Money { Amount = decimal.Round(postedPerKm * lane.Kilometers, 0), Currency = currency },
+            Distance = lane.Kilometers * 1000.0,
+            WeightKg = Math.Round(random.Next(8000, 20000) / 10m) * 10,
+            LengthMeters = 16.15m,
             PickupDateStart = DateTime.UtcNow.AddDays(random.Next(1, 4)),
             PickupDateEnd = DateTime.UtcNow.AddDays(random.Next(4, 7)),
             DeliveryDateStart = DateTime.UtcNow.AddDays(random.Next(7, 9)),
@@ -219,8 +219,8 @@ internal class NegotiationSeeder(ILogger<NegotiationSeeder> logger) : SeederBase
         Guid? bookedLoadId,
         CancellationToken cancellationToken)
     {
-        var floorTotal = new Money { Amount = decimal.Round(lane.FloorPerMile * lane.Miles, 0), Currency = currency };
-        var snapshot = new RateFloorSnapshot(lane.FloorPerMile, floorTotal, lane.FloorSource);
+        var floorTotal = new Money { Amount = decimal.Round(lane.FloorPerKm * lane.Kilometers, 0), Currency = currency };
+        var snapshot = new RateFloorSnapshot(lane.FloorPerKm, floorTotal, lane.FloorSource);
 
         var negotiation = RateNegotiation.Create(
             listing.Id,
@@ -242,7 +242,7 @@ internal class NegotiationSeeder(ILogger<NegotiationSeeder> logger) : SeederBase
             case NegotiationScenario.AwaitingBroker:
                 break;
             case NegotiationScenario.BrokerReplied:
-                await thread.AddBrokerReplyAsync(5, 0.06m);
+                await thread.AddBrokerReplyAsync(5, 0.04m);
                 break;
             case NegotiationScenario.Accepted:
                 await thread.AddAcceptedDealAsync(bookedLoadId);
@@ -267,13 +267,15 @@ internal class NegotiationSeeder(ILogger<NegotiationSeeder> logger) : SeederBase
             cancellationToken);
     }
 
-    private static string OutboundBody(LoadBoardListing listing, Lane lane, Money ask, decimal askPerMile)
+    /// <summary>Written the way the carrier sees distance: in the tenant's unit.</summary>
+    private static string OutboundBody(LoadBoardListing listing, Lane lane, Money ask, decimal askPerKm, DistanceUnit unit)
     {
+        var distance = unit.FromMeters(lane.Kilometers * 1000.0);
         return
             $"Hello {listing.BrokerName}, we can cover {listing.OriginAddress.City}, {listing.OriginAddress.State} " +
             $"to {listing.DestinationAddress.City}, {listing.DestinationAddress.State} " +
-            $"({lane.Miles:N0} miles, {listing.EquipmentType?.GetDescription()}) at {Format(ask)} all-in, " +
-            $"which is {askPerMile:0.00} {ask.Currency} per mile. " +
+            $"({distance:N0} {unit.Abbreviation()}, {listing.EquipmentType?.GetDescription()}) at {Format(ask)} all-in, " +
+            $"which is {unit.RateFromPerKm(askPerKm):0.00} {ask.Currency} per {unit.Abbreviation()}. " +
             "Equipment is available for the posted pickup window. Reply to this address to confirm.";
     }
 
@@ -292,19 +294,19 @@ internal class NegotiationSeeder(ILogger<NegotiationSeeder> logger) : SeederBase
         DateTime openedAt,
         CancellationToken cancellationToken)
     {
-        private readonly decimal _askPerMile = decimal.Round(lane.FloorPerMile + 0.18m, 2);
+        private readonly decimal _askPerKm = decimal.Round(lane.FloorPerKm + 0.11m, 2);
 
         public async Task AddOpeningOfferAsync()
         {
-            var ask = Total(_askPerMile);
+            var ask = Total(_askPerKm);
 
             await AddMessageAsync(
                 negotiation.AddOutboundMessage(
                     await NextSequenceAsync(),
-                    OutboundBody(listing, lane, ask, _askPerMile),
+                    OutboundBody(listing, lane, ask, _askPerKm, context.CurrentTenant!.Settings.DistanceUnit),
                     $"{negotiation.Reference} - {listing.OriginAddress.City} to {listing.DestinationAddress.City}",
                     ask,
-                    _askPerMile),
+                    _askPerKm),
                 0);
         }
 
@@ -314,10 +316,10 @@ internal class NegotiationSeeder(ILogger<NegotiationSeeder> logger) : SeederBase
         /// </summary>
         public async Task AddAcceptedDealAsync(Guid? bookedLoadId)
         {
-            await AddBrokerReplyAsync(3, 0.08m);
+            await AddBrokerReplyAsync(3, 0.05m);
 
-            var settledPerMile = decimal.Round(_askPerMile - 0.05m, 2);
-            var settled = Total(settledPerMile);
+            var settledPerKm = decimal.Round(_askPerKm - 0.03m, 2);
+            var settled = Total(settledPerKm);
 
             await AddMessageAsync(
                 negotiation.AddOutboundMessage(
@@ -325,7 +327,7 @@ internal class NegotiationSeeder(ILogger<NegotiationSeeder> logger) : SeederBase
                     $"Deal at {Format(settled)} all-in. Rate confirmation to follow, dispatch will call with the driver details.",
                     $"Re: {negotiation.Reference}",
                     settled,
-                    settledPerMile),
+                    settledPerKm),
                 4);
 
             await AddMessageAsync(
@@ -376,8 +378,8 @@ internal class NegotiationSeeder(ILogger<NegotiationSeeder> logger) : SeederBase
             negotiation.Close(RateNegotiationStatus.Expired, "No broker reply within 48 hours");
         }
 
-        private Money Total(decimal perMile) =>
-            new() { Amount = decimal.Round(perMile * lane.Miles, 0), Currency = currency };
+        private Money Total(decimal perKm) =>
+            new() { Amount = decimal.Round(perKm * lane.Kilometers, 0), Currency = currency };
 
         private Task<int> NextSequenceAsync() =>
             context.TenantUnitOfWork.ReserveSequenceAsync(negotiation, cancellationToken);
@@ -388,10 +390,10 @@ internal class NegotiationSeeder(ILogger<NegotiationSeeder> logger) : SeederBase
             await context.TenantUnitOfWork.Repository<NegotiationMessage>().AddAsync(message, cancellationToken);
         }
 
-        public async Task AddBrokerReplyAsync(double hoursIn, decimal bumpPerMile)
+        public async Task AddBrokerReplyAsync(double hoursIn, decimal bumpPerKm)
         {
-            var counterPerMile = decimal.Round(listing.RatePerMile!.Value + bumpPerMile, 2);
-            var counter = Total(counterPerMile);
+            var counterPerKm = decimal.Round(listing.RatePerKm!.Value + bumpPerKm, 2);
+            var counter = Total(counterPerKm);
 
             await AddMessageAsync(
                 negotiation.AddInboundMessage(
@@ -400,7 +402,7 @@ internal class NegotiationSeeder(ILogger<NegotiationSeeder> logger) : SeederBase
                     "let me know quickly if that works for you.",
                     $"Re: {negotiation.Reference}",
                     proposedTotalRate: counter,
-                    proposedRatePerMile: counterPerMile),
+                    proposedRatePerKm: counterPerKm),
                 hoursIn);
         }
     }
@@ -410,16 +412,16 @@ internal class NegotiationSeeder(ILogger<NegotiationSeeder> logger) : SeederBase
         Address OriginAddress,
         RoutePoint? Destination,
         Address? DestinationAddress,
-        decimal MinRatePerMile);
+        decimal MinRatePerKm);
 
     private record Lane(
         Address Origin,
         GeoPoint OriginLocation,
         Address Destination,
         GeoPoint DestinationLocation,
-        decimal FloorPerMile,
+        decimal FloorPerKm,
         RateFloorSource FloorSource,
-        int Miles);
+        int Kilometers);
 
     private enum NegotiationScenario
     {

@@ -77,7 +77,7 @@ public class SearchLoadBoardHandlerTests
         OriginLocation = new GeoPoint(-96.8, 32.8),
         DestinationAddress = new Address { Line1 = "", City = "Chicago", State = "IL", ZipCode = "", Country = "US" },
         DestinationLocation = new GeoPoint(-87.6, 41.9),
-        RatePerMile = 2.5m,
+        RatePerKm = 2.5m,
         EquipmentType = LoadBoardEquipmentType.Van,
         ExpiresAt = expiresAt
     };
@@ -99,16 +99,16 @@ public class SearchLoadBoardHandlerTests
     }
 
     [Fact]
-    public async Task Handle_FleetCostKnown_StampsRateMinusCostPerMile()
+    public async Task Handle_FleetCostKnown_StampsRateMinusCostPerKm()
     {
-        _profitEstimate.GetFleetCostPerMileAsync(Arg.Any<CancellationToken>()).Returns(1.5m);
+        _profitEstimate.GetFleetCostPerKmAsync(Arg.Any<CancellationToken>()).Returns(1.5m);
         _demo.SearchLoadsAsync(Arg.Any<LoadBoardSearchCriteria>(), Arg.Any<CancellationToken>())
             .Returns([CreateListing("EXT-1")]);
         _dat.SearchLoadsAsync(Arg.Any<LoadBoardSearchCriteria>(), Arg.Any<CancellationToken>()).Returns([]);
 
         var result = await _sut.Handle(new SearchLoadBoardCommand(), CancellationToken.None);
 
-        Assert.Equal(1.00m, Assert.Single(result.Value!.Listings).EstimatedMarginPerMile);
+        Assert.Equal(1.00m, Assert.Single(result.Value!.Listings).EstimatedMarginPerKm);
     }
 
     [Fact]
@@ -173,15 +173,15 @@ public class SearchLoadBoardHandlerTests
     }
 
     [Fact]
-    public async Task Handle_MinRatePerMile_DropsCheaperListingsButKeepsUnpriced()
+    public async Task Handle_MinRatePerKm_DropsCheaperListingsButKeepsUnpriced()
     {
-        var cheap = CreateListing("CHEAP") with { RatePerMile = 1.5m };
-        var unpriced = CreateListing("UNPRICED") with { RatePerMile = null };
+        var cheap = CreateListing("CHEAP") with { RatePerKm = 1.5m };
+        var unpriced = CreateListing("UNPRICED") with { RatePerKm = null };
         _demo.SearchLoadsAsync(Arg.Any<LoadBoardSearchCriteria>(), Arg.Any<CancellationToken>())
             .Returns([CreateListing("GOOD"), cheap, unpriced]);
         _dat.SearchLoadsAsync(Arg.Any<LoadBoardSearchCriteria>(), Arg.Any<CancellationToken>()).Returns([]);
 
-        var result = await _sut.Handle(new SearchLoadBoardCommand { MinRatePerMile = 2m }, CancellationToken.None);
+        var result = await _sut.Handle(new SearchLoadBoardCommand { MinRatePerKm = 2m }, CancellationToken.None);
 
         Assert.Equal(["GOOD", "UNPRICED"], result.Value!.Listings.Select(l => l.ExternalListingId).Order());
     }
@@ -199,7 +199,7 @@ public class SearchLoadBoardHandlerTests
         var result = await _sut.Handle(new SearchLoadBoardCommand(), CancellationToken.None);
 
         var listing = Assert.Single(result.Value!.Listings);
-        Assert.Equal(2.75m, listing.MarketRatePerMile);
+        Assert.Equal(2.75m, listing.MarketRatePerKm);
         Assert.Null(result.Value.Errors);
     }
 

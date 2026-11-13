@@ -20,7 +20,11 @@ public record ComposeNegotiationEmailRequest
     public required string EquipmentType { get; init; }
     public required decimal OfferAmount { get; init; }
     public required string Currency { get; init; }
-    public decimal? OfferPerMile { get; init; }
+    /// <summary>The offer per the tenant's distance unit, for the broker to read.</summary>
+    public decimal? OfferPerDistance { get; init; }
+
+    /// <summary>"mi" or "km".</summary>
+    public required string DistanceUnit { get; init; }
     public required string AgentMessage { get; init; }
     public required string CompanyName { get; init; }
     public string? CompanyMcNumber { get; init; }
@@ -37,7 +41,7 @@ public record ComposeNegotiationEmailRequest
         LoadBoardListing listing,
         Tenant tenant,
         decimal offerAmount,
-        decimal? offerPerMile,
+        decimal? offerPerKm,
         string agentMessage,
         string replyToAddress)
     {
@@ -51,7 +55,8 @@ public record ComposeNegotiationEmailRequest
             EquipmentType = listing.EquipmentType?.GetDescription() ?? "Not specified",
             OfferAmount = offerAmount,
             Currency = ListingCurrency.Get(listing, tenant),
-            OfferPerMile = offerPerMile,
+            OfferPerDistance = offerPerKm is { } perKm ? tenant.Settings.DistanceUnit.RateFromPerKm(perKm) : null,
+            DistanceUnit = tenant.Settings.DistanceUnit.Abbreviation(),
             AgentMessage = agentMessage,
             CompanyName = tenant.DisplayName,
             CompanyMcNumber = tenant.McNumber,

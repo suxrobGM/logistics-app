@@ -12,7 +12,7 @@ public class PostTruckToLoadBoardCommand : ICommand<Result<PostTruckResultDto>>
 
     public required LoadBoardPlace Origin { get; set; }
     public LoadBoardPlace? Destination { get; set; }
-    public int? DestinationRadius { get; set; }
+    public int? DestinationRadiusMeters { get; set; }
 
     public DateTime AvailableFrom { get; set; }
     public DateTime? AvailableTo { get; set; }
@@ -22,6 +22,6 @@ public class PostTruckToLoadBoardCommand : ICommand<Result<PostTruckResultDto>>
     /// </summary>
     public LoadBoardEquipmentType? EquipmentType { get; set; }
 
-    public int? MaxWeight { get; set; }
-    public int? MaxLength { get; set; }
+    public decimal? MaxWeightKg { get; set; }
+    public decimal? MaxLengthMeters { get; set; }
 }

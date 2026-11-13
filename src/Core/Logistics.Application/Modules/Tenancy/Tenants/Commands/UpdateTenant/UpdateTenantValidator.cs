@@ -44,15 +44,15 @@ internal sealed class UpdateTenantValidator : AbstractValidator<UpdateTenantComm
             .When(i => i.Settings?.MinBrokerCreditScore is not null)
             .WithMessage("Minimum broker credit score must be between 0 and 100.");
 
-        RuleFor(i => i.Settings!.DefaultRateFloorPerMile)
+        RuleFor(i => i.Settings!.DefaultRateFloorPerKm)
             .InclusiveBetween(0m, 100m)
-            .When(i => i.Settings?.DefaultRateFloorPerMile is not null)
-            .WithMessage("Default rate floor per mile must be between 0 and 100.");
+            .When(i => i.Settings?.DefaultRateFloorPerKm is not null)
+            .WithMessage("Default rate floor per km must be between 0 and 100.");
 
-        RuleFor(i => i.Settings!.CostPerMile)
+        RuleFor(i => i.Settings!.CostPerKm)
             .InclusiveBetween(0m, 100m)
-            .When(i => i.Settings?.CostPerMile is not null)
-            .WithMessage("Cost per mile must be between 0 and 100.");
+            .When(i => i.Settings?.CostPerKm is not null)
+            .WithMessage("Cost per km must be between 0 and 100.");
 
         RuleFor(i => i.Settings!.DetentionFreeMinutes)
             .InclusiveBetween(0, 24 * 60)

@@ -11,7 +11,7 @@ public class CreateLaneRateFloorCommand : ICommand<Result<Guid>>, ILaneRateFloor
     public string? OriginState { get; set; }
     public string DestinationCountry { get; set; } = "US";
     public string? DestinationState { get; set; }
-    public decimal MinRatePerMile { get; set; }
+    public decimal MinRatePerKm { get; set; }
     public decimal? MinTotalRate { get; set; }
     public string? Notes { get; set; }
 }

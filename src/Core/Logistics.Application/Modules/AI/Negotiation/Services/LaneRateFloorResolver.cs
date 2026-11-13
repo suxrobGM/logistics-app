@@ -55,13 +55,13 @@ internal sealed class LaneRateFloorResolver(ITenantUnitOfWork tenantUow) : ILane
                     ? RateFloorSource.LaneOriginAny
                     : RateFloorSource.LaneDestinationAny;
 
-            return Build(matched.MinRatePerMile, matched.MinTotalRate, source, listing);
+            return Build(matched.MinRatePerKm, matched.MinTotalRate, source, listing);
         }
 
-        var defaultRatePerMile = tenant.Settings.DefaultRateFloorPerMile;
-        if (defaultRatePerMile.HasValue)
+        var defaultRatePerKm = tenant.Settings.DefaultRateFloorPerKm;
+        if (defaultRatePerKm.HasValue)
         {
-            return Build(defaultRatePerMile.Value, null, RateFloorSource.TenantDefault, listing);
+            return Build(defaultRatePerKm.Value, null, RateFloorSource.TenantDefault, listing);
         }
 
         return new EffectiveRateFloorDto { HasFloor = false, Source = RateFloorSource.None };
@@ -71,56 +71,56 @@ internal sealed class LaneRateFloorResolver(ITenantUnitOfWork tenantUow) : ILane
         _cachedFloors ??= await tenantUow.Repository<LaneRateFloor>().GetListAsync(ct);
 
     private static EffectiveRateFloorDto Build(
-        decimal minRatePerMile,
+        decimal minRatePerKm,
         decimal? minTotalRate,
         RateFloorSource source,
         LoadBoardListing listing)
     {
-        var (floorTotal, belowFloor, gapPerMile) = Evaluate(minRatePerMile, minTotalRate, listing);
+        var (floorTotal, belowFloor, gapPerKm) = Evaluate(minRatePerKm, minTotalRate, listing);
 
         return new EffectiveRateFloorDto
         {
             HasFloor = true,
-            MinRatePerMile = minRatePerMile,
+            MinRatePerKm = minRatePerKm,
             MinTotalRate = minTotalRate,
             Source = source,
             EffectiveFloorTotal = floorTotal,
             ListingBelowFloor = belowFloor,
-            GapPerMile = gapPerMile
+            GapPerKm = gapPerKm
         };
     }
 
     /// <summary>
-    /// Combines the per-mile and flat-total floor into one comparison against the listing's own
-    /// rate. When the distance is known, both sides are compared as totals - the per-mile floor is
-    /// converted with distance and the higher of the two floor components wins - and the per-mile
+    /// Combines the per-km and flat-total floor into one comparison against the listing's own
+    /// rate. When the distance is known, both sides are compared as totals - the per-km floor is
+    /// converted with distance and the higher of the two floor components wins - and the per-km
     /// gap is the total gap spread back over the distance. Without a distance, a flat-total floor
-    /// stands alone (it needs no conversion) and a per-mile floor falls back to a direct per-mile
-    /// comparison against the listing's rate per mile.
+    /// stands alone (it needs no conversion) and a per-km floor falls back to a direct per-km
+    /// comparison against the listing's rate per km.
     /// </summary>
-    private static (decimal? floorTotal, bool belowFloor, decimal? gapPerMile) Evaluate(
-        decimal minRatePerMile, decimal? minTotalRate, LoadBoardListing listing)
+    private static (decimal? floorTotal, bool belowFloor, decimal? gapPerKm) Evaluate(
+        decimal minRatePerKm, decimal? minTotalRate, LoadBoardListing listing)
     {
-        var distanceMiles = listing.Distance;
-        decimal? floorTotal = distanceMiles is > 0
-            ? Math.Max(minRatePerMile * distanceMiles.Value.ToDecimal(), minTotalRate ?? 0M)
+        decimal? distanceKm = listing.Distance is > 0 ? (listing.Distance.Value / 1000).ToDecimal() : null;
+        decimal? floorTotal = distanceKm is { } km
+            ? Math.Max(minRatePerKm * km, minTotalRate ?? 0M)
             : minTotalRate;
 
         var listingTotal = listing.TotalRate?.Amount
-            ?? (listing.RatePerMile.HasValue && distanceMiles is > 0
-                ? listing.RatePerMile.Value * distanceMiles.Value.ToDecimal()
+            ?? (listing.RatePerKm.HasValue && distanceKm.HasValue
+                ? listing.RatePerKm.Value * distanceKm.Value
                 : null);
 
         if (floorTotal.HasValue && listingTotal.HasValue)
         {
             var gapTotal = floorTotal.Value - listingTotal.Value;
-            var gapPerMile = distanceMiles is > 0 ? gapTotal / distanceMiles.Value.ToDecimal() : (decimal?)null;
-            return (floorTotal, gapTotal > 0, gapPerMile);
+            var gapPerKm = distanceKm.HasValue ? gapTotal / distanceKm.Value : (decimal?)null;
+            return (floorTotal, gapTotal > 0, gapPerKm);
         }
 
-        if (listing.RatePerMile.HasValue)
+        if (listing.RatePerKm.HasValue)
         {
-            var gap = minRatePerMile - listing.RatePerMile.Value;
+            var gap = minRatePerKm - listing.RatePerKm.Value;
             return (floorTotal, gap > 0, gap);
         }
 

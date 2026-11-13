@@ -19,7 +19,7 @@ public class LaneRateFloor : AuditableEntity, ITenantEntity
     /// <summary>Null means any state in <see cref="DestinationCountry"/>.</summary>
     public string? DestinationState { get; set; }
 
-    public required decimal MinRatePerMile { get; set; }
+    public required decimal MinRatePerKm { get; set; }
 
     public decimal? MinTotalRate { get; set; }
 

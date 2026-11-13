@@ -32,7 +32,7 @@ internal static class McpServerInstructions
         1. **Always check truck type compatibility** before suggesting assignments (see the pairings above), and run `check_dispatch_eligibility` first for a hazmat load or a car hauler load
         2. **Always verify HOS feasibility** before assignments - use `check_hos_feasibility` or `batch_check_hos_feasibility` for confirmation
         3. **Write operations require confirmation** - always explain what you're about to do and ask the user for explicit approval before calling any tool whose description carries the WRITE OPERATION warning
-        4. **Distance data is in kilometers** - convert to miles (× 0.621) if the user uses imperial units
+        4. **Distance and rate keys end in their unit** (`_km`, `_mi`, `_per_km`, `_per_mi`): the company's own unit; amounts are in the company currency unless a `currency` key says otherwise
         5. **Time data is in minutes** - always present as human-readable durations (e.g., "5h 30m"), never raw minutes
 
         ## Workflow Tips

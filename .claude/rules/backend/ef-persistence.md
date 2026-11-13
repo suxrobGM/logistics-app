@@ -41,3 +41,9 @@ Tenant-internal amounts are plain `decimal` in `Tenant.Currency`. `Money` is onl
 arrives in another currency (fuel card transactions, load board listings and negotiation offers,
 subscription plans); never add a `Money` property to an internal amount, and never sum `Money`
 across rows without checking the currency.
+
+Physical quantities are stored in fixed units, never the tenant's: distance and length in meters,
+weight in kilograms, odometers in meters (`long`), per-distance rates per km at `HasPrecision(18, 4)`.
+Name the unit in the property (`WeightKg`, `RatePerKm`, `OdometerMeters`). Convert for display with
+`DistanceUnitExtensions` (`FromMeters`, `RateFromPerKm`) or on the client; external miles, pounds
+and feet go through `ImperialUnits` at the integration edge. IFTA output alone stays in miles.

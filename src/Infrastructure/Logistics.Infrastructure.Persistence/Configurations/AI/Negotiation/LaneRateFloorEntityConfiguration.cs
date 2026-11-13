@@ -10,6 +10,8 @@ internal sealed class LaneRateFloorEntityConfiguration : IEntityTypeConfiguratio
     {
         builder.ToTable("lane_rate_floors");
 
+        builder.Property(f => f.MinRatePerKm).HasPrecision(18, 4);
+
         // A null state is the "any state" wildcard and must collide with another wildcard row,
         // so the index has to treat NULLs as equal (PostgreSQL 15+).
         builder.HasIndex(f => new

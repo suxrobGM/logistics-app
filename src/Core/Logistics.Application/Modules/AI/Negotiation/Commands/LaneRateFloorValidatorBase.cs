@@ -22,7 +22,7 @@ internal abstract class LaneRateFloorValidatorBase<T> : AbstractValidator<T> whe
             .Length(2)
             .When(x => x.DestinationState is not null);
 
-        RuleFor(x => x.MinRatePerMile)
+        RuleFor(x => x.MinRatePerKm)
             .GreaterThan(0);
 
         RuleFor(x => x.MinTotalRate)

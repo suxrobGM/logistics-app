@@ -9,8 +9,8 @@ public interface IProfitEstimateService : IApplicationService
     Task<IReadOnlyDictionary<(Guid TruckId, Guid LoadId), decimal>> EstimateMarginsAsync(
         IReadOnlyCollection<MarginRequest> requests, CancellationToken ct = default);
 
-    /// <summary>Fleet operating cost per mile, driver pay excluded; null when nothing is known.</summary>
-    Task<decimal?> GetFleetCostPerMileAsync(CancellationToken ct = default);
+    /// <summary>Fleet operating cost per km, driver pay excluded; null when nothing is known.</summary>
+    Task<decimal?> GetFleetCostPerKmAsync(CancellationToken ct = default);
 }
 
 /// <param name="TotalMeters">Deadhead plus loaded distance.</param>

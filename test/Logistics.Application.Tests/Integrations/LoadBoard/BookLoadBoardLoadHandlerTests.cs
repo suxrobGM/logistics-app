@@ -287,7 +287,7 @@ public class BookLoadBoardLoadHandlerTests
     }
 
     [Fact]
-    public async Task Handle_ThreadWithPerMileOnlyFloor_RefusesUncheckedRate()
+    public async Task Handle_ThreadWithPerKmOnlyFloor_RefusesUncheckedRate()
     {
         SetupNegotiation(floorTotal: null);
         _command.NegotiatedTotalRate = 2200m;

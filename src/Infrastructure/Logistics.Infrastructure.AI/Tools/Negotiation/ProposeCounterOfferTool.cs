@@ -1,13 +1,15 @@
 using System.ComponentModel;
 using Logistics.Application.Abstractions.AI;
 using Logistics.Application.Modules.AI.Negotiation.Commands;
+using Logistics.Domain.Persistence;
 using Logistics.Domain.Primitives.Enums;
 using Logistics.Mediator;
 using Logistics.Shared.Identity.Policies;
 
 namespace Logistics.Infrastructure.AI.Tools.Negotiation;
 
-internal sealed class ProposeCounterOfferTool(IMediator mediator, IAgentRunContext runContext)
+internal sealed class ProposeCounterOfferTool(
+    IMediator mediator, IAgentRunContext runContext, ITenantUnitOfWork tenantUow)
     : AgentTool<ProposeCounterOfferTool.Input>, IAgentToolMetadata
 {
     internal sealed record Input
@@ -24,8 +26,8 @@ internal sealed class ProposeCounterOfferTool(IMediator mediator, IAgentRunConte
         [Description("Brief explanation for the dispatcher of why this offer makes sense. Never sent to the broker.")]
         public required string Reasoning { get; init; }
 
-        [Description("Optional per-mile equivalent of the offer")]
-        public decimal? ProposedRatePerMile { get; init; }
+        [Description("Optional rate per the company's distance unit (the _mi or _km of get_rate_floor)")]
+        public decimal? ProposedRatePerDistance { get; init; }
     }
 
     public static AgentToolDefinition Definition => new(
@@ -50,7 +52,9 @@ internal sealed class ProposeCounterOfferTool(IMediator mediator, IAgentRunConte
         {
             ListingId = input.ListingId,
             ProposedTotalRate = input.ProposedTotalRate,
-            ProposedRatePerMile = input.ProposedRatePerMile,
+            ProposedRatePerKm = input.ProposedRatePerDistance is { } rate
+                ? tenantUow.GetCurrentTenant().Settings.DistanceUnit.RateToPerKm(rate)
+                : null,
             Message = input.Message,
             ConversationId = runContext.ConversationId,
             DecisionId = runContext.DecisionId

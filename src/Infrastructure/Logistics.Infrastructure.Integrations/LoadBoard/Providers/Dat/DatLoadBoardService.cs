@@ -208,8 +208,8 @@ internal sealed class DatLoadBoardService(
         Freight = new DatPostingFreight
         {
             EquipmentType = DatEquipment.ToPostingCode(request.EquipmentType),
-            LengthFeet = request.MaxLength,
-            WeightPounds = request.MaxWeight
+            LengthFeet = request.MaxLengthMeters is { } meters ? (int)Math.Round(meters / ImperialUnits.MetersPerFoot) : null,
+            WeightPounds = request.MaxWeightKg is { } kg ? (int)Math.Round(kg / ImperialUnits.KilogramsPerPound) : null
         },
         Lane = new DatPostingLane
         {
@@ -241,7 +241,11 @@ internal sealed class DatLoadBoardService(
         }
 
         return perMile is { } value
-            ? new MarketRate(value, perTrip, rate?.PerMile?.LowUsd, rate?.PerMile?.HighUsd)
+            ? new MarketRate(
+                value / ImperialUnits.KilometersPerMile,
+                perTrip,
+                rate?.PerMile?.LowUsd / ImperialUnits.KilometersPerMile,
+                rate?.PerMile?.HighUsd / ImperialUnits.KilometersPerMile)
             : null;
     }
 }

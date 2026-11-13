@@ -32,7 +32,7 @@ public class LaneRateFloorResolverTests
         string originCountry = "US",
         string destinationCountry = "US",
         double? distance = 900,
-        decimal? ratePerMile = 2.00m,
+        decimal? ratePerKm = 2.00m,
         Money? totalRate = null) => new()
         {
             ExternalListingId = "EXT-1",
@@ -55,7 +55,7 @@ public class LaneRateFloorResolverTests
                 Country = destinationCountry
             },
             DestinationLocation = new GeoPoint(-87.6, 41.9),
-            RatePerMile = ratePerMile,
+            RatePerKm = ratePerKm,
             TotalRate = totalRate,
             Distance = distance,
             ExpiresAt = DateTime.UtcNow.AddDays(1)
@@ -68,23 +68,23 @@ public class LaneRateFloorResolverTests
     [Fact]
     public async Task ResolveAsync_ExactAndPartialLanesConfigured_ExactWins()
     {
-        var exact = new LaneRateFloor { OriginState = "TX", DestinationState = "IL", MinRatePerMile = 3.00m };
-        var originAny = new LaneRateFloor { OriginState = "TX", DestinationState = null, MinRatePerMile = 1.50m };
-        var destinationAny = new LaneRateFloor { OriginState = null, DestinationState = "IL", MinRatePerMile = 1.00m };
+        var exact = new LaneRateFloor { OriginState = "TX", DestinationState = "IL", MinRatePerKm = 3.00m };
+        var originAny = new LaneRateFloor { OriginState = "TX", DestinationState = null, MinRatePerKm = 1.50m };
+        var destinationAny = new LaneRateFloor { OriginState = null, DestinationState = "IL", MinRatePerKm = 1.00m };
         SetupLanes(exact, originAny, destinationAny);
 
         var result = await _sut.ResolveAsync(Listing(), CancellationToken.None);
 
         Assert.True(result.HasFloor);
         Assert.Equal(RateFloorSource.LaneExact, result.Source);
-        Assert.Equal(3.00m, result.MinRatePerMile);
+        Assert.Equal(3.00m, result.MinRatePerKm);
     }
 
     [Fact]
     public async Task ResolveAsync_OnlyOriginAnyAndDestinationAnyConfigured_OriginAnyWinsOverDestinationAny()
     {
-        var originAny = new LaneRateFloor { OriginState = "TX", DestinationState = null, MinRatePerMile = 1.50m };
-        var destinationAny = new LaneRateFloor { OriginState = null, DestinationState = "IL", MinRatePerMile = 1.00m };
+        var originAny = new LaneRateFloor { OriginState = "TX", DestinationState = null, MinRatePerKm = 1.50m };
+        var destinationAny = new LaneRateFloor { OriginState = null, DestinationState = "IL", MinRatePerKm = 1.00m };
         SetupLanes(originAny, destinationAny);
 
         var result = await _sut.ResolveAsync(Listing(), CancellationToken.None);
@@ -95,7 +95,7 @@ public class LaneRateFloorResolverTests
     [Fact]
     public async Task ResolveAsync_OnlyDestinationAnyConfigured_DestinationAnyMatches()
     {
-        var destinationAny = new LaneRateFloor { OriginState = null, DestinationState = "IL", MinRatePerMile = 1.00m };
+        var destinationAny = new LaneRateFloor { OriginState = null, DestinationState = "IL", MinRatePerKm = 1.00m };
         SetupLanes(destinationAny);
 
         var result = await _sut.ResolveAsync(Listing(), CancellationToken.None);
@@ -106,7 +106,7 @@ public class LaneRateFloorResolverTests
     [Fact]
     public async Task ResolveAsync_ListingStatesLowerCaseWithWhitespace_StillMatchesUpperCaseLane()
     {
-        var exact = new LaneRateFloor { OriginState = "TX", DestinationState = "IL", MinRatePerMile = 3.00m };
+        var exact = new LaneRateFloor { OriginState = "TX", DestinationState = "IL", MinRatePerKm = 3.00m };
         SetupLanes(exact);
 
         var result = await _sut.ResolveAsync(
@@ -119,13 +119,13 @@ public class LaneRateFloorResolverTests
     public async Task ResolveAsync_NoLaneMatch_FallsBackToTenantDefault()
     {
         SetupLanes();
-        _tenant.Settings.DefaultRateFloorPerMile = 1.75m;
+        _tenant.Settings.DefaultRateFloorPerKm = 1.75m;
 
         var result = await _sut.ResolveAsync(Listing(), CancellationToken.None);
 
         Assert.True(result.HasFloor);
         Assert.Equal(RateFloorSource.TenantDefault, result.Source);
-        Assert.Equal(1.75m, result.MinRatePerMile);
+        Assert.Equal(1.75m, result.MinRatePerKm);
         Assert.Null(result.MinTotalRate);
     }
 
@@ -138,64 +138,64 @@ public class LaneRateFloorResolverTests
 
         Assert.False(result.HasFloor);
         Assert.Equal(RateFloorSource.None, result.Source);
-        Assert.Null(result.MinRatePerMile);
+        Assert.Null(result.MinRatePerKm);
     }
 
     [Fact]
     public async Task ResolveAsync_ListingRateBelowFloor_FlagsBelowFloorWithPositiveGap()
     {
-        var lane = new LaneRateFloor { OriginState = "TX", DestinationState = "IL", MinRatePerMile = 3.00m };
+        var lane = new LaneRateFloor { OriginState = "TX", DestinationState = "IL", MinRatePerKm = 3.00m };
         SetupLanes(lane);
 
         var result = await _sut.ResolveAsync(
-            Listing(distance: 1000, ratePerMile: 2.00m), CancellationToken.None);
+            Listing(distance: 1000, ratePerKm: 2.00m), CancellationToken.None);
 
         Assert.True(result.ListingBelowFloor);
-        Assert.Equal(1.00m, result.GapPerMile);
+        Assert.Equal(1.00m, result.GapPerKm);
     }
 
     [Fact]
     public async Task ResolveAsync_ListingRateAtOrAboveFloor_NotBelowFloor()
     {
-        var lane = new LaneRateFloor { OriginState = "TX", DestinationState = "IL", MinRatePerMile = 2.00m };
+        var lane = new LaneRateFloor { OriginState = "TX", DestinationState = "IL", MinRatePerKm = 2.00m };
         SetupLanes(lane);
 
         var result = await _sut.ResolveAsync(
-            Listing(distance: 1000, ratePerMile: 2.50m), CancellationToken.None);
+            Listing(distance: 1000, ratePerKm: 2.50m), CancellationToken.None);
 
         Assert.False(result.ListingBelowFloor);
     }
 
     [Fact]
-    public async Task ResolveAsync_MissingDistanceWithOnlyPerMileFloor_ComparesPerMileDirectly()
+    public async Task ResolveAsync_MissingDistanceWithOnlyPerKmFloor_ComparesPerKmDirectly()
     {
-        var lane = new LaneRateFloor { OriginState = "TX", DestinationState = "IL", MinRatePerMile = 3.00m };
+        var lane = new LaneRateFloor { OriginState = "TX", DestinationState = "IL", MinRatePerKm = 3.00m };
         SetupLanes(lane);
 
         var result = await _sut.ResolveAsync(
-            Listing(distance: null, ratePerMile: 2.00m), CancellationToken.None);
+            Listing(distance: null, ratePerKm: 2.00m), CancellationToken.None);
 
         Assert.True(result.ListingBelowFloor);
-        Assert.Equal(1.00m, result.GapPerMile);
+        Assert.Equal(1.00m, result.GapPerKm);
     }
 
     [Fact]
-    public async Task ResolveAsync_MissingDistanceWithMinTotalRate_UsesMinTotalRateAloneAndNoGapPerMile()
+    public async Task ResolveAsync_MissingDistanceWithMinTotalRate_UsesMinTotalRateAloneAndNoGapPerKm()
     {
         var lane = new LaneRateFloor
         {
             OriginState = "TX",
             DestinationState = "IL",
-            MinRatePerMile = 3.00m,
+            MinRatePerKm = 3.00m,
             MinTotalRate = 1000m
         };
         SetupLanes(lane);
 
         var result = await _sut.ResolveAsync(
-            Listing(distance: null, ratePerMile: null, totalRate: new Money { Amount = 800m, Currency = "USD" }),
+            Listing(distance: null, ratePerKm: null, totalRate: new Money { Amount = 800m, Currency = "USD" }),
             CancellationToken.None);
 
         Assert.True(result.ListingBelowFloor);
-        Assert.Null(result.GapPerMile);
+        Assert.Null(result.GapPerKm);
     }
 }

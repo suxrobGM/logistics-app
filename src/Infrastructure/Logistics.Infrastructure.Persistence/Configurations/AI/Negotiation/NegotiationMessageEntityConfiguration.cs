@@ -10,6 +10,8 @@ internal sealed class NegotiationMessageEntityConfiguration : IEntityTypeConfigu
     {
         builder.ToTable("negotiation_messages");
 
+        builder.Property(m => m.ProposedRatePerKm).HasPrecision(18, 4);
+
         builder.HasIndex(m => new { m.NegotiationId, m.Sequence })
             .IsUnique();
 

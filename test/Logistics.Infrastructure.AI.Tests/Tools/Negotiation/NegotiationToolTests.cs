@@ -20,7 +20,7 @@ public class GetRateFloorToolTests
 
     public GetRateFloorToolTests()
     {
-        _sut = new GetRateFloorTool(_mediator);
+        _sut = new GetRateFloorTool(_mediator, CopilotToolTestData.MilesTenant());
     }
 
     [Fact]
@@ -36,18 +36,18 @@ public class GetRateFloorToolTests
                 Floor = new EffectiveRateFloorDto
                 {
                     HasFloor = true,
-                    MinRatePerMile = 2.20m,
+                    MinRatePerKm = 2.20m,
                     Source = RateFloorSource.LaneExact,
                     EffectiveFloorTotal = 2200m,
                     ListingBelowFloor = true,
-                    GapPerMile = 0.40m
+                    GapPerKm = 0.40m
                 },
                 BrokerEmailAvailable = true,
                 ActiveNegotiationId = negotiationId,
                 RoundCount = 1,
                 MaxRounds = 3,
                 ListingTotalRate = 1800m,
-                DistanceMiles = 1000
+                DistanceMeters = 1000
             }));
 
         var result = await _sut.ExecuteAsync(
@@ -89,7 +89,7 @@ public class GetNegotiationThreadToolTests
 
     public GetNegotiationThreadToolTests()
     {
-        _sut = new GetNegotiationThreadTool(_mediator);
+        _sut = new GetNegotiationThreadTool(_mediator, CopilotToolTestData.MilesTenant());
     }
 
     [Fact]
@@ -152,7 +152,7 @@ public class ProposeCounterOfferToolTests
 
     public ProposeCounterOfferToolTests()
     {
-        _sut = new ProposeCounterOfferTool(_mediator, _runContext);
+        _sut = new ProposeCounterOfferTool(_mediator, _runContext, CopilotToolTestData.MilesTenant());
     }
 
     [Fact]

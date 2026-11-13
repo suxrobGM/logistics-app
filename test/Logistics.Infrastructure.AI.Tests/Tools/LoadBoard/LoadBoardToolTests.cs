@@ -1,3 +1,4 @@
+using Logistics.Domain.Persistence;
 using Logistics.Infrastructure.AI.Tools.LoadBoard;
 using Logistics.Infrastructure.AI.Agents;
 using System.Text.Json;
@@ -16,6 +17,7 @@ namespace Logistics.Infrastructure.AI.Tests.Tools.LoadBoard;
 public class LoadBoardToolTests
 {
     private readonly IMediator _mediator = Substitute.For<IMediator>();
+    private readonly ITenantUnitOfWork _tenantUow = CopilotToolTestData.MilesTenant();
     private readonly AgentRunContext _runContext = new();
 
     private static JsonElement Parse(string json) => JsonDocument.Parse(json).RootElement;
@@ -38,7 +40,7 @@ public class LoadBoardToolTests
         OriginLocation = new GeoPoint(-96.8, 32.78),
         DestinationAddress = SomeAddress,
         DestinationLocation = new GeoPoint(-95.36, 29.76),
-        RatePerMile = 2.75m,
+        RatePerKm = 2.75m / 1.609344m,
         TotalRate = 1800m,
         Currency = "USD",
         BrokerName = "Acme Brokerage",
@@ -55,12 +57,12 @@ public class LoadBoardToolTests
         _mediator.Send(Arg.Any<SearchLoadBoardCommand>(), Arg.Any<CancellationToken>())
             .Returns(Result<LoadBoardSearchResultDto>.Ok(new LoadBoardSearchResultDto()));
 
-        await new SearchLoadBoardTool(_mediator).ExecuteAsync(
+        await new SearchLoadBoardTool(_mediator, _tenantUow).ExecuteAsync(
             new JsonObject
             {
                 ["origin_city"] = "Dallas",
                 ["origin_state"] = "TX",
-                ["radius_miles"] = 250,
+                ["radius"] = 250,
                 ["destination_state"] = "AZ"
             },
             CancellationToken.None);
@@ -69,7 +71,7 @@ public class LoadBoardToolTests
             Arg.Is<SearchLoadBoardCommand>(c =>
                 c.Origin!.City == "Dallas" &&
                 c.Origin.State == "TX" &&
-                c.OriginRadius == 250 &&
+                c.OriginRadiusMeters == 402_336 &&
                 c.Destination!.State == "AZ"),
             Arg.Any<CancellationToken>());
     }
@@ -80,12 +82,12 @@ public class LoadBoardToolTests
         _mediator.Send(Arg.Any<SearchLoadBoardCommand>(), Arg.Any<CancellationToken>())
             .Returns(Result<LoadBoardSearchResultDto>.Ok(new LoadBoardSearchResultDto()));
 
-        await new SearchLoadBoardTool(_mediator).ExecuteAsync(
+        await new SearchLoadBoardTool(_mediator, _tenantUow).ExecuteAsync(
             new JsonObject { ["origin_city"] = "Dallas", ["origin_state"] = "TX" },
             CancellationToken.None);
 
         await _mediator.Received(1).Send(
-            Arg.Is<SearchLoadBoardCommand>(c => c.OriginRadius == 100 && c.Destination == null),
+            Arg.Is<SearchLoadBoardCommand>(c => c.OriginRadiusMeters == 160_934 && c.Destination == null),
             Arg.Any<CancellationToken>());
     }
 
@@ -100,14 +102,14 @@ public class LoadBoardToolTests
                 TotalCount = 1
             }));
 
-        var root = Parse(await new SearchLoadBoardTool(_mediator).ExecuteAsync(
+        var root = Parse(await new SearchLoadBoardTool(_mediator, _tenantUow).ExecuteAsync(
             new JsonObject { ["origin_city"] = "Dallas", ["origin_state"] = "TX" },
             CancellationToken.None));
 
         var listing = root.GetProperty("listings")[0];
         Assert.Equal(listingId, listing.GetProperty("listing_id").GetGuid());
         Assert.Equal("Dat", listing.GetProperty("provider").GetString());
-        Assert.Equal(2.75m, listing.GetProperty("rate_per_mile").GetDecimal());
+        Assert.Equal(2.75m, listing.GetProperty("rate_per_mi").GetDecimal());
         Assert.Equal("MC123456", listing.GetProperty("broker_mc_number").GetString());
         Assert.Equal(1, root.GetProperty("count").GetInt32());
         Assert.False(root.GetProperty("truncated").GetBoolean());
@@ -126,7 +128,7 @@ public class LoadBoardToolTests
                 }
             }));
 
-        var root = Parse(await new SearchLoadBoardTool(_mediator).ExecuteAsync(
+        var root = Parse(await new SearchLoadBoardTool(_mediator, _tenantUow).ExecuteAsync(
             new JsonObject { ["origin_city"] = "Dallas", ["origin_state"] = "TX" },
             CancellationToken.None));
 
@@ -141,7 +143,7 @@ public class LoadBoardToolTests
         _mediator.Send(Arg.Any<SearchLoadBoardCommand>(), Arg.Any<CancellationToken>())
             .Returns(Result<LoadBoardSearchResultDto>.Fail("Load board is not enabled for this plan"));
 
-        var root = Parse(await new SearchLoadBoardTool(_mediator).ExecuteAsync(
+        var root = Parse(await new SearchLoadBoardTool(_mediator, _tenantUow).ExecuteAsync(
             new JsonObject { ["origin_city"] = "Dallas", ["origin_state"] = "TX" },
             CancellationToken.None));
 

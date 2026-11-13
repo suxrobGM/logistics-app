@@ -13,7 +13,8 @@ public record BrokerCounterOfferEmailModel
     public required string PickupDate { get; init; }
     public required string EquipmentType { get; init; }
     public required string OfferTotal { get; init; }
-    public string? OfferPerMile { get; init; }
+    public string? OfferPerDistance { get; init; }
+    public required string DistanceUnit { get; init; }
     public required string Message { get; init; }
     public required string CompanyName { get; init; }
     public string? CompanyMcNumber { get; init; }

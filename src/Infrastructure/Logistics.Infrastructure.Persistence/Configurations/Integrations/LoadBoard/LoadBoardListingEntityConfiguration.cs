@@ -10,6 +10,8 @@ internal sealed class LoadBoardListingEntityConfiguration : IEntityTypeConfigura
     {
         builder.ToTable("load_board_listings");
 
+        builder.Property(i => i.RatePerKm).HasPrecision(18, 4);
+
         builder.HasIndex(i => new { i.ExternalListingId, i.ProviderType })
             .IsUnique();
 

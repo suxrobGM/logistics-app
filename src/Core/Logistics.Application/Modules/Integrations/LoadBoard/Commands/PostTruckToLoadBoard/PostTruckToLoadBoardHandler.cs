@@ -56,12 +56,12 @@ internal sealed class PostTruckToLoadBoardHandler(
             TruckId = req.TruckId,
             Origin = req.Origin,
             Destination = req.Destination,
-            DestinationRadius = req.DestinationRadius,
+            DestinationRadiusMeters = req.DestinationRadiusMeters,
             AvailableFrom = req.AvailableFrom,
             AvailableTo = req.AvailableTo,
             EquipmentType = equipmentType.Value,
-            MaxWeight = req.MaxWeight,
-            MaxLength = req.MaxLength
+            MaxWeightKg = req.MaxWeightKg,
+            MaxLengthMeters = req.MaxLengthMeters
         };
 
         var postResult = await gateway.ExecuteAsync(providerConfig, p => p.PostTruckAsync(request, ct), ct);
@@ -84,12 +84,12 @@ internal sealed class PostTruckToLoadBoardHandler(
         postedTruck.ExternalPostId = posted.ExternalPostId;
         postedTruck.AvailableAtAddress = req.Origin.ToAddress();
         postedTruck.DestinationPreference = req.Destination?.ToAddress();
-        postedTruck.DestinationRadius = req.DestinationRadius;
+        postedTruck.DestinationRadiusMeters = req.DestinationRadiusMeters;
         postedTruck.AvailableFrom = req.AvailableFrom;
         postedTruck.AvailableTo = req.AvailableTo;
         postedTruck.EquipmentType = equipmentType;
-        postedTruck.MaxWeight = req.MaxWeight;
-        postedTruck.MaxLength = req.MaxLength;
+        postedTruck.MaxWeightKg = req.MaxWeightKg;
+        postedTruck.MaxLengthMeters = req.MaxLengthMeters;
         postedTruck.Status = PostedTruckStatus.Available;
         postedTruck.ExpiresAt = posted.ExpiresAt;
         postedTruck.LastRefreshedAt = DateTime.UtcNow;

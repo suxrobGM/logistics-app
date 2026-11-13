@@ -43,7 +43,9 @@ public class AgentToolResultDto
     [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     public decimal? EffectiveFloorTotal { get; set; }
     [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
-    public decimal? GapPerMile { get; set; }
+    public decimal? GapPerMi { get; set; }
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
+    public decimal? GapPerKm { get; set; }
     [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     public decimal? OfferedTotalRate { get; set; }
     [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]

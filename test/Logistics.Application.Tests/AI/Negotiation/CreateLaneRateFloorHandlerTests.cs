@@ -27,7 +27,7 @@ public class CreateLaneRateFloorHandlerTests
         OriginState = " tx ",
         DestinationCountry = "us",
         DestinationState = " il ",
-        MinRatePerMile = 2.25m
+        MinRatePerKm = 2.25m
     };
 
     private void SetupExisting(LaneRateFloor? existing) =>
@@ -46,7 +46,7 @@ public class CreateLaneRateFloorHandlerTests
             Arg.Is<LaneRateFloor>(f =>
                 f.OriginCountry == "US" && f.OriginState == "TX" &&
                 f.DestinationCountry == "US" && f.DestinationState == "IL" &&
-                f.MinRatePerMile == 2.25m),
+                f.MinRatePerKm == 2.25m),
             Arg.Any<CancellationToken>());
         await _tenantUow.Received(1).SaveChangesAsync(Arg.Any<CancellationToken>());
     }
@@ -54,7 +54,7 @@ public class CreateLaneRateFloorHandlerTests
     [Fact]
     public async Task Handle_DuplicateLane_ReturnsFailWithoutAdding()
     {
-        SetupExisting(new LaneRateFloor { OriginState = "TX", DestinationState = "IL", MinRatePerMile = 1.00m });
+        SetupExisting(new LaneRateFloor { OriginState = "TX", DestinationState = "IL", MinRatePerKm = 1.00m });
 
         var result = await _sut.Handle(Command(), CancellationToken.None);
 

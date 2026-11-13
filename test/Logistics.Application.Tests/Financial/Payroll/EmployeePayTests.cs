@@ -8,7 +8,7 @@ namespace Logistics.Application.Tests.Financial.Payroll;
 
 public class EmployeePayTests
 {
-    private static readonly LoadPayBasis Load = new(1000m, 100m, 50m, 160_934.4, DepartedStops: 2);
+    private static readonly LoadPayBasis Load = new(1000m, 100m, 50m, 100_000, DepartedStops: 2);
 
     [Theory]
     [InlineData(false, false, 2600, "gross revenue")]
@@ -52,7 +52,7 @@ public class EmployeePayTests
         driver.SalaryType = type;
         driver.Salary = 1m;
 
-        Assert.Equal(byLoads, driver.PayForLoads([Load], DistanceUnit.Miles));
+        Assert.Equal(byLoads, driver.PayForLoads([Load]));
         Assert.Equal(byPeriod, driver.PayForPeriod(weeks: 2, months: 3, hours: 4));
     }
 }

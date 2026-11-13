@@ -77,7 +77,7 @@ internal sealed class DemoTenantsSeeder(
                 ApplyRegionalSettings(tenant, profile);
                 ApplyDemoTaxIdentifiers(tenant, profile);
                 tenant.Settings.MinBrokerCreditScore = DemoMinBrokerCreditScore;
-                tenant.Settings.DefaultRateFloorPerMile = profile.DefaultRateFloorPerMile;
+                tenant.Settings.DefaultRateFloorPerKm = profile.DefaultRateFloorPerKm;
                 tenant.Presets = config.ResolvePresets();
 
                 await repo.AddAsync(tenant, cancellationToken);
@@ -106,9 +106,9 @@ internal sealed class DemoTenantsSeeder(
                     existing.Settings.MinBrokerCreditScore = DemoMinBrokerCreditScore;
                     updated = true;
                 }
-                if (existing.Settings.DefaultRateFloorPerMile is null)
+                if (existing.Settings.DefaultRateFloorPerKm is null)
                 {
-                    existing.Settings.DefaultRateFloorPerMile = profile.DefaultRateFloorPerMile;
+                    existing.Settings.DefaultRateFloorPerKm = profile.DefaultRateFloorPerKm;
                     updated = true;
                 }
                 var presets = config.ResolvePresets();

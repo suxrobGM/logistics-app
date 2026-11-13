@@ -122,7 +122,7 @@ internal sealed partial class ProfitabilityService(ITenantUnitOfWork tenantUow) 
                     .Where(t => t.DriverIds().Contains(driver.Id))
                     .Sum(t => t.DepartedStops);
                 var basis = new LoadPayBasis(load.Linehaul, load.FuelSurcharge, load.Accessorials, load.Distance, stops);
-                rows[load.Id].DriverPay += driver.PayForLoads([basis], unit);
+                rows[load.Id].DriverPay += driver.PayForLoads([basis]);
             }
 
             var periodPay = CalculatePeriodPay(driver, period, hours);
