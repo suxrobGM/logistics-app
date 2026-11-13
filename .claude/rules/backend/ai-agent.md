@@ -1,208 +1,87 @@
 ---
 paths:
   - "src/Infrastructure/Logistics.Infrastructure.AI/**/*.cs"
-  - "src/Core/Logistics.Application/Modules/AI/AIDispatch/**/*.cs"
-  - "src/Core/Logistics.Application/Modules/AI/AICopilot/**/*.cs"
-  - "src/Core/Logistics.Application/Modules/AI/Agents/**/*.cs"
-  - "src/Core/Logistics.Application/Modules/AI/AISettings/**/*.cs"
+  - "src/Core/Logistics.Application/Modules/AI/**/*.cs"
   - "src/Presentation/Logistics.McpServer/**/*.cs"
 ---
 
-# AI Dispatch Agent Conventions
+# AI Agents
 
-Traps only. Recipes are in the `add-dispatch-tool` and `add-llm-provider` skills; the end-to-end
-picture is [docs/ai-dispatch.md](../../../docs/ai-dispatch.md).
+Traps only. Recipes: `add-dispatch-tool`, `add-llm-provider`. Full picture: [docs/ai-dispatch.md](../../../docs/ai-dispatch.md).
 
-## Where things live
+## Layout
 
-`Logistics.Infrastructure.AI/` is grouped by capability, not layer. There is no `Services/`,
-`Models/` or `Prompts/` folder - if you are about to create one, you want one of these:
+`Logistics.Infrastructure.AI/` is grouped by capability. There is no `Services/`, `Models/` or `Prompts/`.
 
 | Folder | Holds |
 | --- | --- |
 | `Llm/` | `ILlmProvider`, factory, one-shot `LlmClient`, model resolution, sanitising |
-| `Llm/Contracts/` | The `Llm*` wire records the rest of the project sees |
-| `Llm/Providers/` | The only files allowed to touch a vendor SDK |
-| `Agents/` | Shared runtime: loop runner, decision processor, cancellation, tool-call context, `AgentTurnService` (the one turn lifecycle every conversational agent runs through, parameterized by `IAgentSurface`), transcript codec/replay |
-| `Agents/Dispatch/`, `Agents/Copilot/` | One folder per agent surface (each implements `IAgentSurface` for `AgentTurnService`) |
-| `Tools/` | Tool base class, schema/binding (`AgentToolJson`), `ToolResult`, `DispatchUnits`, the catalogue |
-| `Tools/{Dispatch,Financial,Operations,Compliance,LoadBoard,Intermodal,Negotiation}/` | Tools grouped by the Application module they dispatch into |
+| `Llm/Contracts/` | The `Llm*` records everything outside `Providers/` sees |
+| `Llm/Providers/` | The only files that may touch a vendor SDK |
+| `Agents/` | Shared runtime: loop runner, decision processor, `AgentTurnService` (one turn lifecycle, parameterized by `IAgentSurface`), transcripts |
+| `Agents/Dispatch/`, `Agents/Copilot/` | One folder per surface |
+| `Tools/{Domain}/` | Tools, grouped by the Application module they call |
 
-- **Config is not here.** `LlmOptions`, `LlmModelCatalog` and `AISettingsKeys` live in
-  `Application.Abstractions/AI/` (the application layer reads them); the agent ports
-  (`IAgentToolRegistry`, `IAgentToolExecutor`, `IAgentRunContext`, `AgentToolDefinition`) in
-  `Application.Abstractions/AI/`.
-- **A prompt lives beside the agent that owns it**, with the `*SystemPrompt.cs` suffix. One-shot
-  `ILlmClient` features are not agent code - prompt and workflow service live together, in
-  `Logistics.Application/Modules/{Module}/.../Services/` or the infrastructure project owning it.
-- **Shared machinery is `Agent*`, not `AIDispatch*`.** Registry, executor, tool contract, decision
-  processor, turn service and cancellation serve dispatch, copilot and MCP alike (`AgentSession`,
-  `AgentDecision`, `AgentConversation`, `AgentMessage`, `AgentTurnService`). `AIDispatch*` is what's
-  left dispatch-only: `AIDispatchPolicy` and the dispatch service/surface.
-
-`AIDispatchSystemPrompt.Build` varies by `Tenant.IsSolo` (the `SoloOperator` preset): solo swaps the
-fleet-framed lines and appends `## Fleet Profile: SOLO OWNER-OPERATOR`.
+- Config (`LlmOptions`, `LlmModelCatalog`, `AISettingsKeys`) and the agent ports live in `Application.Abstractions/AI/`.
+- A prompt sits beside its agent as `*SystemPrompt.cs`. One-shot `ILlmClient` features keep prompt and service together in their module.
+- Shared machinery is named `Agent*`. `AIDispatch*` is only what is dispatch-specific (`AIDispatchPolicy`, the dispatch surface).
+- `AIDispatchSystemPrompt.Build` varies on `Tenant.IsSolo`.
 
 ## Providers
 
-Three sit behind `ILlmProvider`, picked by `LlmProviderFactory` **on the `LlmProvider` enum, never
-on the model** - the wire protocol belongs to the endpoint, not the model's reasoning style.
-**SDK types must not leak past the provider class**; everything else sees `Llm/Contracts/`.
+`LlmProviderFactory` picks by the `LlmProvider` enum, never by model: the wire protocol belongs to the endpoint.
 
-| Provider                      | Surface                                 | Serves                        |
-| ----------------------------- | --------------------------------------- | ----------------------------- |
-| `AnthropicLlmProvider`        | official `Anthropic` SDK (caching, adaptive thinking) | `Anthropic` |
-| `OpenAIResponsesLlmProvider`  | `/v1/responses`                         | `OpenAI`                      |
-| `OpenAICompatibleLlmProvider` | `/v1/chat/completions` via `BaseUrl`    | the rest (DeepSeek, GLM, ...) |
+| Provider | Endpoint | Serves |
+| --- | --- | --- |
+| `AnthropicLlmProvider` | official SDK | Anthropic |
+| `OpenAIResponsesLlmProvider` | `/v1/responses` | OpenAI |
+| `OpenAICompatibleLlmProvider` | `/v1/chat/completions` at `BaseUrl` | the rest (DeepSeek, GLM) |
 
-- **Providers use the factory's named `llm` client.** It carries only `RequestTimeoutSeconds` and no
-  resilience handler (`RemoveAllResilienceHandlers` in `Registrar.cs`) - the host default's 30s
-  total would cut agent turns. **The vendor SDKs are the only retry layer** (both retry 429 and
-  5xx); `AgentLoopRunner` deliberately has none. Don't give a provider its own `HttpClient`; it
-  would pick the host handler back up.
-- **Providers translate their SDK's exceptions into `LlmProviderException`** (`LlmFailureKind`), and
-  `LlmErrorSanitizer` classifies by kind. Never classify by exception type: Anthropic's SDK throws the
-  same base type for a 401 and a 529, and an outage once read as "check the API key".
-- **Stop reasons are `LlmStopReason`, mapped per provider.** `MaxTokens` must not run the reply's tool
-  calls (they may be cut off); `PauseTurn` (Anthropic server tools) resends the conversation as it
-  stands. Both are handled in `AgentLoopRunner`.
-- **The official Anthropic SDK serializes an assigned `null`** as a JSON null rather than omitting
-  the field. Set optional request fields (`Thinking`, `OutputConfig`, `Temperature`,
-  `CacheControl`) only when they carry a value - see `BuildParameters`.
-- **Anthropic server-tool blocks (web search) round-trip as `LlmProviderBlock`** - raw JSON, echoed
-  back within the turn, never persisted. Dropping them breaks `pause_turn` and invalidates any later
-  thinking block, whose signature covers the prefix that contained them.
-- **Don't move OpenAI back onto chat completions.** Function tools plus any non-`none`
-  `reasoning_effort` is a hard 400 there; that was the outage this split fixed.
-- **Don't collapse the two OpenAI classes** without re-checking DeepSeek: as of Aug 2026 it serves
-  Responses for `deepseek-flash` but not `deepseek-v4-pro`, and its
-  Responses base URL drops the `/v1` the chat one carries.
-- Responses defaults to `store: true`, so `StoredOutputEnabled = false` is load-bearing - tool
-  outputs carry driver names, loads and HOS data.
-- Reasoning items are **not** replayed across tool turns. Responses tolerates their absence but
-  rejects one not immediately followed by its `function_call`. `LlmThinkingBlock` is Anthropic-only.
+- **Use the factory's `llm` client.** It has no resilience handler, because the host's 30s total would cut agent turns. The vendor SDKs are the only retry layer; `AgentLoopRunner` has none on purpose.
+- **Translate SDK exceptions to `LlmProviderException`** and classify by `LlmFailureKind`. Anthropic throws one type for a 401 and a 529; an outage once read as "check the API key".
+- **Stop reasons:** `MaxTokens` must not run the reply's tool calls (they may be truncated). `PauseTurn` resends the conversation as is.
+- **The Anthropic SDK serializes an assigned `null`.** Set `Thinking`, `OutputConfig`, `Temperature`, `CacheControl` only when they have a value.
+- **Server-tool blocks (web search) round-trip as `LlmProviderBlock`** within a turn and are never persisted. Dropping one breaks `pause_turn` and invalidates later thinking signatures.
+- **Keep OpenAI on Responses.** Function tools plus any reasoning effort is a 400 on chat completions. Don't merge the two OpenAI classes: DeepSeek serves Responses for some models only, at a base URL without `/v1`.
+- `StoredOutputEnabled = false` is load-bearing: tool outputs contain driver, load and HOS data.
+- Reasoning items are not replayed across tool turns. `LlmThinkingBlock` is Anthropic-only.
+- **Web search is always on** (OpenAI `CreateWebSearchTool()`, Anthropic `WebSearchFor(model)`, 3 uses). The user rejected an enable flag; don't add one. Compatible endpoints have none. Per-search fees are not in `LlmModelCatalog`, so searched turns undercount cost.
 
-**Anthropic caching.** `BuildParameters` breakpoints the system prompt explicitly and sets the
-request-level `CacheControl`, which the API applies to the last cacheable block. Don't swap that for
-a fixed per-block marker: a breakpoint searches back only 20 blocks (one parallel-tool turn can
-exceed that) and caches only up to itself, so it must sit on the newest block. Reads bill at a
-tenth of input, so hits lower `EstimatedCostUsd` and the budget with it. `CacheReadTokens` stuck at
-zero means an invalidated prefix (tools or model changed) or a prompt under the per-model minimum,
-which is silently skipped. OpenAI and DeepSeek cache server-side, hence provider-level and not in
-the loop.
+## Caching and determinism
 
-**Keep every request append-only and deterministic.** The cache, and Anthropic's preserved-thinking
-check, compare the prefix byte for byte. So: no date or per-request text in a system prompt (the
-time comes from `AgentTranscriptLoader.SentStamp`), no in-memory notes added to a replayed message,
-and the replay window moves in `WindowStep` jumps. History may only change at the start of a turn,
-when no thinking block exists yet - that is why earlier turns' large tool results can be stubbed.
-
-**The two vendors report cached tokens differently.** OpenAI's `input_tokens` **includes**
-`cached_tokens`; Anthropic's **excludes** cache reads. `LlmModelCatalog.CalculateCost` adds the input and
-cache-read buckets, so both OpenAI-shaped providers must subtract before filling `LlmTokenUsage` -
-that is what `OpenAIUsage.From` is for. Forward the raw counts and every cached token bills twice.
+- Anthropic: `BuildParameters` breakpoints the system prompt and sets request-level `CacheControl` (applies to the last block). Don't switch to per-block markers: a breakpoint looks back only 20 blocks and caches only up to itself.
+- `CacheReadTokens` stuck at zero means the prefix changed (tools or model) or the prompt is under the model's minimum.
+- **Requests are append-only and byte-stable.** No dates or per-request text in system prompts (time comes from `AgentTranscriptLoader.SentStamp`), no in-memory notes on replayed messages, replay window moves in `WindowStep` jumps. History may change only at the start of a turn.
+- OpenAI's `input_tokens` includes cached tokens; Anthropic's excludes them. OpenAI-shaped providers fill `LlmTokenUsage` through `OpenAIUsage.From`, or cache hits bill twice.
 
 ## Tools
 
-`internal sealed`, deriving from `AgentTool<TInput>` and implementing `IAgentToolMetadata`,
-**snake_case** name. Class name mirrors the tool name (`get_driver_hos_status` →
-`GetDriverHosStatusTool`) so a transcript leads to the file.
+`internal sealed`, `AgentTool<TInput>` + `IAgentToolMetadata`, snake_case name mirrored by the class name. One file per tool; `AgentToolCatalog` discovers it, so there is no list to update.
 
-**A tool is one file.** `AgentToolCatalog` scans the assembly at startup, reads each tool's static
-`Definition`, generates its schema and feeds both DI and `AgentToolRegistry` - there is no catalogue
-list and no registration to keep in step.
+- **The input type is the schema.** Never hand-write JSON Schema or read the raw `JsonNode`. `ToolInput` accessors are only for persisted `AgentDecision.ToolInput`.
+- Metadata on the static `Definition`: `RequiredPermission`, `DecisionType`, `RequiredFeature`, `Surfaces`, `Destructive`. A write is any `DecisionType` other than `Query`. Missing `RequiredPermission` leaks the tool to every copilot user.
+- **`Surfaces` defaults to `Copilot`.** `Dispatch` means unattended fleet runs; `Mcp` means an API key with no person and no approval. Both are deliberate; don't derive them from the permission.
+- On agent surfaces, writes become `Suggested` decisions. Exception: auto-approve for types in `AIDispatchPolicy.AutoApproveEligibleTypes` once the tenant opts in and the clean streak reaches `AutoApproveStreak` (revertable for `AgentDecision.RevertWindow`). Never make anything eligible that spends money, contacts someone outside the carrier or notifies a driver.
+- Over MCP writes execute immediately. `McpDenialReason` is the only MCP admission rule. Don't promise approval in a tool description; `AgentToolRegistry` appends the right sentence per surface.
+- `[AgentEntityId]` on an id input links the decision to the entity. Without it the link is silently missing.
+- `AgentLoopRunner` caps a session at 25 iterations.
 
-**The input type is the schema.** `AgentToolJson` exports `TInput` (snake_case names,
-`[Description]` as the description, `required` members, enum value lists) and binds the reply back.
-Never hand-write JSON Schema, and never read the raw `JsonNode` in a tool. Binding forgives quoted
-numbers, unquoted text and casing, but a wrong type or unknown enum name fails the call naming the
-property. `ToolInput`'s accessors are only for reading a **persisted** `AgentDecision.ToolInput`.
+## Models and cost
 
-- On the agent surfaces, read tools always execute immediately and write tools become `Suggested`
-  decisions awaiting dispatcher/user approval (`AgentDecisionProcessor`). The one exception is
-  **auto-approve** on dispatch sessions: `AgentTrustService` lets a decision type in
-  `AIDispatchPolicy.AutoApproveEligibleTypes` (assign load, draft trip, draft invoice) run unattended
-  once the tenant opted it in and its clean streak reaches `AutoApproveStreak`. It sets
-  `AutoApproved` with `ApprovedByUserId = null`, and `RevertAIDispatchDecision` can undo it for
-  `AgentDecision.RevertWindow`. Never widen the eligible set to anything that spends money, contacts
-  someone outside the carrier, or notifies a driver.
-- **Behaviour metadata lives on the tool's static `Definition`** as named init properties:
-  `RequiredPermission`, `DecisionType`, `RequiredFeature`, `Surfaces`, `Destructive`. `IsWrite` is
-  **derived** (`DecisionType != Query`), so there is no separate flag to forget. Miss
-  `RequiredPermission` and the tool leaks into every copilot conversation regardless of the caller's
-  role.
-- **`Surfaces` is opt-in and defaults to `Copilot` alone.** A tool nobody widened is under-exposed,
-  never over-exposed. Naming `Dispatch` puts it in fleet dispatch runs, which have no caller to scope
-  by; naming `Mcp` lets an API key run it with nobody to attribute it to and no approval step. Both
-  are deliberate acts. Do not re-derive either from `RequiredPermission` - a dispatch tool may
-  legitimately require `Permission.Trip.Manage`.
-- One registry method per surface: `GetDispatchAgentTools`, `GetCopilotTools` (permission set is a
-  required parameter, not a nullable flag - see `docs/ai-copilot.md`), `GetMcpTools`. Permissions do
-  not apply to MCP: an API key authenticates a tenant, not a person.
-- **`McpDenialReason` is the one MCP admission rule.** `GetMcpTools` is built from it rather than
-  repeating it, because a client can call a name the catalogue never showed it. Put a new rule there
-  and both paths get it.
-- **Only the agent surfaces turn a write into a suggestion.** Over MCP a write executes immediately.
-  Never write either promise into a tool's own description: `AgentToolRegistry` appends the approval
-  sentence for the agents and the immediate-execution warning for MCP, one per surface method.
-- **Mark an entity id with `[AgentEntityId]`** and `AgentDecisionProcessor` links the decision row to
-  it. The wire key comes from the property, so a rename carries the audit link along. Skip the
-  attribute and the link is simply never written - nothing fails.
-
-`AgentLoopRunner` (shared by both surfaces) caps at **25 iterations per session**.
-
-## Model selection and cost
-
-Model and reasoning effort are **global**, admin-set (`AI.Model` / `AI.ReasoningEffort` in
-SystemSettings), resolved once per session by `LlmSessionSetup`. Tenants never pick a model or see
-model names; plans differ by **weekly budget only** - there is no tier or multiplier system. Do not
-reintroduce one.
-
-- `LlmModelCatalog` owns the selectable models and each `ReasoningStyle`: `OpenAIEffort` models
-  **always get an explicit reasoning effort** (`None` → `"none"`) and are the reason OpenAI routes
-  to `/v1/responses` - the same combination on chat completions is a 400 once function tools are
-  present; `AnthropicAdaptive` models never get a temperature, always get adaptive thinking plus an explicit
-  effort (`None` rides on `low` - omitting `thinking` still runs adaptive at the model's default), and
-  replay thinking blocks via
-  `LlmThinkingBlock` (**including redacted ones** - drop one and the next turn is rejected);
-  `None` models get no reasoning parameter.
-- `LlmModelCatalog` also owns per-token prices (`LlmModelInfo.Prices`) - **read the numbers there**,
-  never copy them into docs.
-  Unknown models charge at Sonnet 5.5 rates.
-- Quota is **cost-based**: `AgentSession.EstimatedCostUsd` (written in `AgentLoopRunner`'s finally,
-  so failed and cancelled sessions count) summed weekly against
-  `SubscriptionPlan.WeeklyAIBudgetUsd`. The tenant API exposes a percentage and
-  `OverageChargesUsd` - never budget dollars.
-- **No tenant runs unmetered**: `WeeklyAIBudgetUsd` is required on every plan, and an unsubscribed
-  tenant falls back to the Enterprise budget through `AIWeeklyBudget`
-  (`Application.Abstractions/AI/`) - resolve a budget elsewhere and unsubscribed tenants
-  vanish from the admin report.
-- Overage: billed-not-blocked by default; `TenantSettings.BlockAIOverage` swaps billing for a hard
-  pause. `AIOverageBilling` (`Application.Abstractions/Payments/`) owns **both** halves of the
-  rule (which sessions bill, cost→units) - re-derive either half and the displayed number
-  contradicts the invoice. Details in [docs/ai-dispatch.md](../../../docs/ai-dispatch.md).
-
-Resolution is setting → appsettings default for both halves, each through one owner
-(`LlmModelResolver`, `AISettingsResolver`) so the admin screen cannot report a setting the agents
-are not using. The provider is derived from the model via the catalog, never stored.
-
-**Per-request override is for one-shot calls only.** `LlmCompletionRequest.ModelId` lets an
-`ILlmClient` call pin a cheap model (the nightly learning pass does). `LlmModelResolver` honours it
-only when the id is in the catalog **and** that provider has an API key - without that check, an
-install with a single configured provider fails every night. The agent loop has no override.
+- Model and reasoning effort are global, admin-set (`AI.Model`, `AI.ReasoningEffort`), resolved per session by `LlmSessionSetup`. Tenants never pick a model; plans differ only by weekly budget. No tiers or multipliers.
+- `LlmModelCatalog` owns models, prices and `ReasoningStyle`. Never copy prices into docs. Unknown models bill at Sonnet 5.5 rates. `AnthropicAdaptive` models get no temperature and must replay every thinking block, redacted ones included.
+- Quota is cost-based: `AgentSession.EstimatedCostUsd` (written in the runner's `finally`, so failures count) summed weekly against `SubscriptionPlan.WeeklyAIBudgetUsd`. Tenants see a percentage and `OverageChargesUsd`, never budget dollars.
+- Every plan has a budget; unsubscribed tenants use the Enterprise budget via `AIWeeklyBudget`. Resolve budgets anywhere else and they vanish from the admin report.
+- Overage bills by default; `TenantSettings.BlockAIOverage` pauses instead. `AIOverageBilling` owns both halves of the rule.
+- `LlmCompletionRequest.ModelId` overrides the model for one-shot calls only, and only when the model is in the catalog and its provider has a key.
 
 ## Learned dispatch policy
 
-`AIDispatchPolicy` (one row per tenant) holds a short markdown policy the nightly
-`AIDispatchPolicyLearningJob` derives from approve/reject history, injected into the system prompt
-between `## HOS Rules` and `## Workflow` as defaults ranking below the hard constraints. Traps:
+`AIDispatchPolicyLearningJob` writes a markdown policy per tenant from approve/reject history, injected between `## HOS Rules` and `## Workflow`.
 
-- The human-approved population is `Status == Executed && ApprovedByUserId != null`. `Approve()` is
-  immediately overwritten by `MarkExecuted()`, so **filtering on `Approved` finds nothing**. The
-  `ApprovedByUserId != null` half is what keeps auto-approved decisions out of learning.
-- `GeneratedContent` is job-owned, `ManualContent` is dispatcher-owned. Never merge them.
-- Policy text is **untrusted** (LLM output derived from dispatcher-typed rejection reasons).
-  `AIDispatchSystemPrompt` sanitises and truncates at the injection point, not in callers.
-- Truncation keeps **whole lines only** - a half-truncated rule reads as a different rule.
-- Learning creates no `AgentSession`, so it never consumes quota. Its cost is only logged by
-  `AIDispatchPolicyLearner` and is never exposed to the tenant.
+- Human-approved means `Status == Executed && ApprovedByUserId != null`. `Approve()` is immediately followed by `MarkExecuted()`, so filtering on `Approved` finds nothing.
+- `GeneratedContent` is the job's, `ManualContent` the dispatcher's. Never merge them.
+- Policy text is untrusted. `AIDispatchSystemPrompt` sanitises and truncates it at injection, keeping whole lines only.
+- Learning creates no `AgentSession` and uses no quota.
+
+The MCP server pins `Stateless = true` (`Logistics.McpServer/Registrar.cs`) although it is the SDK default, so an upgrade can't change it silently.

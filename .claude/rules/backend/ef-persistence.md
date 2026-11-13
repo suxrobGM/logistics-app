@@ -5,52 +5,34 @@ paths:
   - "src/Infrastructure/**/*.cs"
 ---
 
-# EF Persistence Traps
+# EF Persistence
 
-## New entities MUST be registered with `repository.AddAsync`
+## Add new entities explicitly
 
-Entity ids are pre-generated (`Guid.NewGuid()` in the `Entity` base), so EF treats a new entity
-that reaches the tracker only via a tracked parent's navigation collection as an existing row and
-saves an UPDATE affecting 0 rows - a misleading `DbUpdateConcurrencyException`.
+Ids are pre-generated, so a new entity reached only through a tracked parent's collection is saved as an UPDATE of 0 rows and throws a misleading `DbUpdateConcurrencyException`. Call `AddAsync`:
 
 ```csharp
-var sequence = await tenantUow.ReserveSequencesAsync(conversation, 1, ct);
 var message = conversation.AddTextMessage(sequence, role, text);
-await tenantUow.Repository<AgentMessage>().AddAsync(message, ct); // without this, save throws
+await tenantUow.Repository<AgentMessage>().AddAsync(message, ct);
 await tenantUow.SaveChangesAsync(ct);
 ```
 
-Exempt only when the parent itself is new and added as a graph (`Load.Create` / `Trip.Create` -
-the cascade marks everything Added). `NavigationDiscoveryGuard` (attached to both DbContexts)
-turns the mistake into an immediate, named error - fix the call site, don't remove the guard.
+Exempt only when the parent itself is new and added as a graph (`Load.Create`). `NavigationDiscoveryGuard` turns the mistake into a named error; fix the call site, don't remove the guard.
 
-## Concurrency-token asymmetry
+Tenant entities have no concurrency tokens, so a concurrency exception on tenant data means a missing row. Only master `User` / `AppRole` can genuinely conflict.
 
-Tenant entities have no concurrency tokens - a `DbUpdateConcurrencyException` on tenant data means
-a missing row (usually this trap), not a write conflict. Only master `User` / `AppRole` carry a
-`ConcurrencyStamp` and can conflict for real.
+## Cascade deletes are deliberate
 
-## Decimal and currency defaults
+Deleting a customer, load, employee, truck or conversation removes everything under it. Don't flag cascades as data loss or propose `Restrict`, soft delete or delete guards. A new optional reference gets a real FK (`SetNull`/`Cascade`), not a loose `Guid`.
 
-Both DbContexts set every `decimal` to `numeric(18,2)` and every `Money.Currency` to length 3 in
-`ConfigureConventions`, so don't repeat `HasPrecision(18, 2)`. A column that needs another scale
-says so with `HasPrecision(p, s)`: per-km rates `(18,4)`, fuel volume `(18,3)`, AI cost `(18,6)`.
-Never leave a column as unbounded `numeric`.
+## Lazy loading
 
-Tenant-internal amounts are plain `decimal` in `Tenant.Currency`. `Money` is only for money that
-arrives in another currency (fuel card transactions, load board listings and negotiation offers,
-subscription plans); never add a `Money` property to an internal amount, and never sum `Money`
-across rows without checking the currency.
+On. Never `.Include()`. Reading a navigation inside a mapper or loop is an N+1; batch it (see `mapperly.md`).
 
-Physical quantities are stored in fixed units, never the tenant's: distance and length in meters,
-weight in kilograms, odometers in meters (`long`), per-distance rates per km at `HasPrecision(18, 4)`.
-Name the unit in the property (`WeightKg`, `RatePerKm`, `OdometerMeters`). Convert for display with
-`DistanceUnitExtensions` (`FromMeters`, `RateFromPerKm`) or on the client; external miles, pounds
-and feet go through `ImperialUnits` at the integration edge. IFTA output alone stays in miles.
+## Units and types
 
-## Time and JSON columns
-
-Name an instant `XxxAt` (`DateTime`, UTC, `timestamptz`): `RecordedAt`, `OccurredAt`, `StartedAt`. A
-calendar day with no time is `DateOnly` (`date`), e.g. `ExpenseDate`, `DueDate`; the client sends it as
-`yyyy-MM-dd` through `DateUtils.toDateOnly`. Durations are integer minutes named `XxxMinutes`. A string
-property holding JSON maps to `jsonb` with `HasColumnType("jsonb")`, except a payload replayed verbatim.
+- Every `decimal` defaults to `numeric(18,2)` and `Money.Currency` to length 3. Declare `HasPrecision` only for other scales: per-km rates `(18,4)`, fuel volume `(18,3)`, AI cost `(18,6)`.
+- Internal amounts are plain `decimal` in `Tenant.Currency`. `Money` is only for amounts that arrive in another currency (fuel cards, load board, negotiation, plans). Never sum `Money` without checking currency.
+- Physical quantities use fixed units with the unit in the name: meters (`OdometerMeters` is `long`), kilograms (`WeightKg`), per-km rates (`RatePerKm`). Convert for display with `DistanceUnitExtensions`; imperial input goes through `ImperialUnits` at the integration edge. Only IFTA output stays in miles.
+- Instants are `XxxAt` (`DateTime`, UTC, `timestamptz`). Calendar days are `DateOnly`, sent as `yyyy-MM-dd` via `DateUtils.toDateOnly`. Durations are integer `XxxMinutes`.
+- A string holding JSON maps to `jsonb`, unless it is a payload replayed verbatim.

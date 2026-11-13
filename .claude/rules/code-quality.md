@@ -3,54 +3,46 @@ paths:
   - "**/*"
 ---
 
-# Code Quality (all source code)
+# Code Quality
 
-## Single Responsibility
+## Simple changes
 
-- Split a file when it has more than one clear responsibility - not just because it crossed a line count.
-- Line counts are a smell, not a verdict. Cohesive long files are fine; tangled short ones aren't.
+- Make the smallest direct change. Before adding a layer, interface, entity, job or generic mechanism, check whether editing the existing handler or component does it.
+- No idempotency keys, retry ledgers, outbox tables, marker interfaces or pipeline behaviours unless asked. Raise bigger designs instead of building them.
+- No fallbacks, shims or deprecated-but-kept code. Migrate call sites and delete the old code in the same change.
 
-## Lines of Code (soft targets / refactor thresholds)
+## Control flow
 
-This table is the **single source** for size thresholds - `refactor-and-split` and every other doc
-links here rather than restating numbers.
+- One ternary per expression. A second `?` becomes early returns, a `switch` expression or a lookup row.
+- If a condition needs line breaks or hides an `await` in a chain, name the parts: `if (numberChanged && await IsNumberTakenAsync(...))`. A multi-step check becomes a method returning the error or null.
 
-| File type                                | Aim     | Refactor at |
-| ---------------------------------------- | ------- | ----------- |
-| C# domain entity                         | 100–200 | 250         |
-| C# EF configuration                      | 50–100  | 200         |
-| C# command/query handler                 | 150–250 | 400         |
-| C# controller                            | 150–250 | 400         |
-| C# application service                   | 200–300 | 500         |
-| C# infrastructure service                | 250–400 | 600         |
-| C# static utility class                  | 150–250 | 400         |
-| Angular `.ts` component                  | 150–250 | 350         |
-| Angular `.html` template                 | 100–200 | 300         |
-| Angular services / `@ngrx/signals` store | 200–400 | 500         |
-| React component (`.tsx`)                 | 150–250 | 350         |
-| React hooks (`use*.ts`)                  | 50–150  | 200         |
-| Kotlin classes                           | 150–300 | 400         |
+## Names
 
-Generated files (`api.ts`, EF migrations, OpenAPI clients) - **ignore these rules**.
+- Types: a plain role noun saying what it does (`BrokerCreditChecker`, `LoadLookupBuilder`). No jargon (`Gate`, `Uniqueness`, `Sentinel`, `Dtos`).
+- Methods start with a verb (`GetChatRole`, `CheckAsync`). No `RoleOf(x)` / `Thing.Of(x)`; factories are `Create`.
 
 ## Comments
 
-**Default to none.** A comment earns its place by saying _why_, never _what_.
+Default to none. Write one only for why: code that looks wrong but is right, a load-bearing order or lifetime, an external contract, a formula's intent.
 
-Write one only for: code that looks wrong but is right (state the constraint); a load-bearing
-ordering or lifetime; an external contract (vendor quirk, spec units); a regex or formula's intent.
+- One short line; two only for a real constraint. Short but concrete: name the subject and the effect.
+- Doc syntax on declarations (`/** */`, `///`, KDoc) so it shows on hover; `//` inside bodies.
+- Never section labels, restated names, change history, ticket references or commented-out code. A comment explaining a name means rename.
 
-Never write section labels (`// Filter state`, `// Data inputs`), restatements of the identifier
-(`// Get user by id`), change narration (`// Added for X`, `// was previously a switch`), or
-commented-out code. A comment explaining a name means the name is wrong - rename instead.
+## File size
 
-C#: `///` on public members with a contract a caller must honour; skip them on `internal sealed`
-handlers and DTOs. TypeScript: TSDoc only on exported shared-library API.
+A smell, not a verdict: split by responsibility.
 
-## How to Split
+| File type | Aim | Refactor at |
+| --- | --- | --- |
+| C# entity | 100–200 | 250 |
+| C# EF configuration | 50–100 | 200 |
+| C# handler / controller | 150–250 | 400 |
+| C# application service | 200–300 | 500 |
+| C# infrastructure service | 250–400 | 600 |
+| Angular component `.ts` / React `.tsx` | 150–250 | 350 |
+| Angular template | 100–200 | 300 |
+| Angular service / signal store | 200–400 | 500 |
+| Kotlin class | 150–300 | 400 |
 
-- **Large Angular templates** are usually the bigger smell. Extract child components, repeated row/detail blocks, dialogs, or status panels.
-- **Large `.ts` files**: move workflow logic into services, computed view models, helper functions, or signal stores.
-- **Large React components**: extract custom hooks for state/effects, split JSX into subcomponents, push data fetching into a hook or query layer.
-- **Large C# handlers**: extract domain logic into the entity or a domain service; keep the handler thin.
-- **Large services**: split along workflow seams (e.g. `expense-actions` vs `expense-api`), not arbitrary line counts.
+Generated code is exempt. Entities split as `partial` by concern (`Load.Status.cs`); handlers push logic into the entity or a domain service; templates extract child components.

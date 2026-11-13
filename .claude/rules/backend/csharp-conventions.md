@@ -3,38 +3,30 @@ paths:
   - "**/*.cs"
 ---
 
-# C# Code Conventions
+# C# Conventions
 
-Style, naming casing, and nullability are enforced by `.editorconfig` and the analyzers - match the
-surrounding file and let the build tell you. What follows is the part no tool checks.
+`.editorconfig` and the analyzers enforce style, casing and nullability. This file is what they don't check.
 
-## Non-obvious defaults
-
-- Primary constructors for DI; one type per file matching the filename.
-- Extension members go in `extension(T receiver) { ... }` blocks (C# 14). Exception: Mapperly's `partial` mapping methods stay classic `this` methods - its generator can't implement partial members inside a block.
-- `Async` suffix on async methods (**except** request handlers). Always accept `CancellationToken`; never `.Result` / `.Wait()`.
-- Never cast `double`/`float` to `decimal` with `(decimal)x`. Since .NET 11 the cast keeps the exact binary value (`(decimal)0.3f` is 0.300000011920928955…), which leaks into money math and flips midpoint rounding. Use `x.ToDecimal()` from `Logistics.Domain.Primitives.FloatingPointExtensions`.
-
-## Domain Events
-
-- Raise events in entity methods, not handlers. Handlers in `Logistics.Application/Modules/{Module}/{Feature}/Events/`
+- Primary constructors for DI; one type per file.
+- Extension members go in C# 14 `extension(T receiver) { }` blocks, except Mapperly's `partial` mapping methods, which stay classic `this` methods.
+- `Async` suffix on async methods except request handlers. Always take a `CancellationToken`; never `.Result` / `.Wait()`.
+- **Never `(decimal)x` on a `double`/`float`.** Since .NET 11 it keeps the binary noise (`(decimal)0.3f` is 0.30000001192…). Use `x.ToDecimal()` (`FloatingPointExtensions`).
+- **No static helpers taking a unit of work.** Make an injected instance service. Extension methods that read as a UoW operation (`tenantUow.ReserveSequencesAsync`) are the exception.
+- Raise domain events in entity methods; event handlers live in `Modules/{Module}/{Feature}/Events/`.
 
 ## Naming
 
-- Commands: `{Action}{Entity}Command` → Handlers: `{Command}Handler` (internal sealed)
-- Queries: `Get{Entity}ByIdQuery`, `Get{Entities}Query`
-- DTOs: `{Entity}Dto`, Mappers: `{Entity}Mapper`
-- Private instance fields: `_camelCase` - enforced by `.editorconfig`
-- Constants and static readonly: `PascalCase`
+- `{Action}{Entity}Command` → `{Action}{Entity}Handler` (`internal sealed`). `Get{Entity}ByIdQuery`, `Get{Entities}Query`.
+- `{Entity}Dto`, `{Entity}Mapper`. Private fields `_camelCase`; constants and static readonly `PascalCase`.
 
 ## Validation
 
-- Don't write a validator whose only rule is `Id NotEmpty` - the handler's not-found path covers it. For Create/Update pairs sharing ≥3 rules, use the shared-fields base-validator pattern (see Ifta TaxRates).
+No validator whose only rule is `Id NotEmpty`; the not-found path covers it. A Create/Update pair sharing three or more rules uses a shared base validator (see Ifta `TaxRates`).
 
-## Enum Display Names
+## Enums
 
-Use `GetDescription()` from `Logistics.Domain.Primitives.Enums.EnumExtensions` for display strings - it auto-humanizes enum names (`PickedUp` → "Picked Up"). Only use `[Description]` when humanization isn't enough: acronyms (`Eld` → "ELD / HOS"), special formatting (`OnDutyNotDriving` → "On Duty (Not Driving)"), domain-specific (`Driving11Hour` → "11-Hour Driving Limit").
+`GetDescription()` humanizes names (`PickedUp` → "Picked Up"). Add `[Description]` only for acronyms or special wording (`Eld` → "ELD / HOS").
 
-## API Query Sort Syntax
+## Sorting
 
-Sort parameters use `-FieldName` for descending, plain `FieldName` for ascending. Do NOT use `"FieldName desc"` / `"FieldName asc"` - the API parser doesn't accept that form. Same syntax applies on every client (Angular, Kotlin driver app, MCP).
+Sort parameters are `-Field` (descending) or `Field`. The parser rejects `"Field desc"`. Every client uses this form.
