@@ -1,5 +1,5 @@
-using Logistics.Application.Utilities;
 using Logistics.Application.Abstractions;
+using Logistics.Application.Common.Extensions;
 using Logistics.Domain.Entities;
 using Logistics.Mediator;
 using Logistics.Shared.Identity.Roles;

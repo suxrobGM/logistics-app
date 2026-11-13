@@ -1,4 +1,4 @@
-using Logistics.Application.Modules.Common.Services;
+using Logistics.Application.Common.Services;
 using Logistics.Domain.Entities;
 using Logistics.Domain.Persistence;
 using Logistics.Mappings;

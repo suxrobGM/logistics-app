@@ -1,7 +1,7 @@
 using System.Linq.Expressions;
-using Logistics.Application.Modules.Operations.Common.Services;
-using Logistics.Application.Modules.Operations.Trucks.Services;
+using Logistics.Application.Modules.Operations.Loads.Services;
 using Logistics.Application.Modules.Operations.Trucks.Commands;
+using Logistics.Application.Modules.Operations.Trucks.Services;
 using Logistics.Application.Tests.TestKit;
 using Logistics.Domain.Entities;
 using Logistics.Domain.Persistence;

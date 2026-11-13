@@ -1,6 +1,6 @@
 using System.Text.Json;
 using System.Text.Json.Serialization;
-using Logistics.Application.Attributes;
+using Logistics.Application.Common.Pipeline;
 using Logistics.Domain.Primitives.Enums;
 using Logistics.Domain.Primitives.Enums.Safety;
 using Logistics.Shared.Models;

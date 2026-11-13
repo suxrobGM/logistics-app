@@ -1,13 +1,13 @@
-using Logistics.Application.Modules.Financial.StripeConnect.Services;
 using Logistics.Application.Abstractions.CurrentUser;
-using Logistics.Application.Utilities;
+using Logistics.Application.Abstractions.Payments.Stripe;
+using Logistics.Application.Common.Extensions;
+using Logistics.Application.Modules.Financial.StripeConnect.Services;
 using Logistics.Domain.Entities;
 using Logistics.Domain.Persistence;
 using Logistics.Domain.Primitives.Enums;
 using Logistics.Mediator;
 using Logistics.Shared.Models;
 using Microsoft.Extensions.Logging;
-using Logistics.Application.Abstractions.Payments.Stripe;
 
 namespace Logistics.Application.Modules.IdentityAccess.Subscriptions.Commands;
 

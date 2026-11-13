@@ -1,11 +1,11 @@
 using Logistics.Application.Abstractions;
-using Logistics.Application.Utilities;
+using Logistics.Application.Abstractions.Payments.Stripe;
+using Logistics.Application.Common;
 using Logistics.Domain.Entities;
 using Logistics.Domain.Persistence;
 using Logistics.Mediator;
 using Logistics.Shared.Models;
 using Microsoft.Extensions.Logging;
-using Logistics.Application.Abstractions.Payments.Stripe;
 
 namespace Logistics.Application.Modules.IdentityAccess.Subscriptions.Commands;
 

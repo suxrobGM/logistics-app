@@ -1,12 +1,12 @@
 using Logistics.Application.Abstractions;
-using Logistics.Application.Utilities;
+using Logistics.Application.Common.Extensions;
+using Logistics.Application.Common.Services;
 using Logistics.Domain.Entities.Safety;
 using Logistics.Domain.Persistence;
 using Logistics.Mappings;
 using Logistics.Mediator;
 using Logistics.Shared.Models;
 using Microsoft.EntityFrameworkCore;
-using Logistics.Application.Modules.Common.Services;
 
 namespace Logistics.Application.Modules.Compliance.Accidents.Queries;
 

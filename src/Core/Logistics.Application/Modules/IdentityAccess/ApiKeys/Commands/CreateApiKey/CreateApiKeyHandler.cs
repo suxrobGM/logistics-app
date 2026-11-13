@@ -1,8 +1,8 @@
-using Logistics.Mediator;
 using System.Security.Cryptography;
-using Logistics.Application.Utilities;
+using Logistics.Application.Common.Security;
 using Logistics.Domain.Entities;
 using Logistics.Domain.Persistence;
+using Logistics.Mediator;
 using Logistics.Shared.Models;
 
 namespace Logistics.Application.Modules.IdentityAccess.ApiKeys.Commands;

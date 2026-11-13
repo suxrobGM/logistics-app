@@ -170,7 +170,8 @@ Update `AssemblyAnchors`, the arch-tests csproj, `overview.md`, CLAUDE.md ("15 f
 - [ ] 10 payroll features live in `Financial/Invoices`; move them to `Financial/Payroll`.
 - [ ] Put `GetAIQuotaStatusHandler` in `Agents/Queries`. The cross-tenant quota admin features move from AIDispatch to `Platform/AISettings`.
 - [ ] `ProcessEldWebhook` lives in `Compliance/Eld`, but the docs say `Integrations/Webhooks`: move it or fix the doc.
-- [ ] Merge the two "Common" folders (`Modules/Common` and `Operations/Common`). `LoadLookupBuilder` goes into `Services/`. Rename `VehicleTransportCheck` (jargon noun).
+- [x] ✅ Merge the two "Common" folders (`Modules/Common` and `Operations/Common`), done 2026-11-13: cross-module code now sits in `Application/Common/` (Pipeline, Handlers, Extensions, Security, Storage, Validation, Constants, Services); the vehicle checks moved to `Operations/Loads/Services/`.
+  - Still open: rename `VehicleTransportCheck` (jargon noun).
 - [ ] Optional: drop the per-command subfolder (158 folders, namespaces already flat). This only helps navigation.
 
 **Recommended against (and why):** Refit or Kiota clients (4-8 endpoints per vendor, with different error styles), `IChatClient` (hides Anthropic cache breakpoints, thinking signatures and PauseTurn), prompts as `.md` resources (loses compile checks and byte-identical cache prefixes), Minimal APIs, Bogus/AutoFixture, Stateless, replacing the UoW (it switches tenant databases), and Scrutor scanning for infrastructure.

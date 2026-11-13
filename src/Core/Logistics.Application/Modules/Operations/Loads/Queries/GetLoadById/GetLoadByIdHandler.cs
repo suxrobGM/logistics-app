@@ -1,14 +1,13 @@
 using Logistics.Application.Abstractions;
 using Logistics.Application.Abstractions.CurrentUser;
-using Logistics.Application.Modules.Operations.Common.Services;
-using Logistics.Application.Utilities;
+using Logistics.Application.Common.Extensions;
+using Logistics.Application.Modules.Operations.Loads.Services;
 using Logistics.Domain.Entities;
 using Logistics.Domain.Persistence;
 using Logistics.Domain.Primitives.Enums;
 using Logistics.Mappings;
 using Logistics.Mediator;
 using Logistics.Shared.Models;
-using Logistics.Application.Modules.Operations.Loads.Services;
 
 namespace Logistics.Application.Modules.Operations.Loads.Queries;
 

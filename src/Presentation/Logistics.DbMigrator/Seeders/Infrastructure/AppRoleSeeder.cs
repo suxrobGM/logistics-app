@@ -1,5 +1,5 @@
 using System.Security.Claims;
-using Logistics.Application.Utilities;
+using Logistics.Application.Common.Extensions;
 using Logistics.DbMigrator.Abstractions;
 using Logistics.DbMigrator.Models;
 using Logistics.Domain.Entities;

@@ -1,6 +1,5 @@
 using Logistics.Application.Abstractions.Storage;
-using Logistics.Application.Modules.Common.Constants;
-using Logistics.Application.Utilities;
+using Logistics.Application.Common.Storage;
 using Logistics.Domain.Entities;
 using Logistics.Domain.Persistence;
 using Logistics.Domain.Primitives.Enums;

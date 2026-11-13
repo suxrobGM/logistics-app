@@ -1,6 +1,6 @@
-using Logistics.Application.Utilities;
-using Logistics.Domain.Entities;
 using Logistics.Application.Abstractions.Options;
+using Logistics.Application.Common.Security;
+using Logistics.Domain.Entities;
 using Logistics.Domain.Persistence;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;

@@ -1,7 +1,7 @@
-using Logistics.Application.Modules.Common.Services;
 using Logistics.Application.Abstractions.CurrentUser;
-using Logistics.Application.Modules.Operations.Common.Services;
+using Logistics.Application.Common.Services;
 using Logistics.Application.Modules.Operations.Loads.Queries;
+using Logistics.Application.Modules.Operations.Loads.Services;
 using Logistics.Application.Tests.TestKit;
 using Logistics.Domain.Entities;
 using Logistics.Domain.Persistence;
@@ -11,7 +11,6 @@ using Logistics.Shared.Identity.Roles;
 using MockQueryable;
 using NSubstitute;
 using Xunit;
-using Logistics.Application.Modules.Operations.Loads.Services;
 
 namespace Logistics.Application.Tests.Operations.Loads;
 

@@ -1,6 +1,6 @@
 using Logistics.Application.Abstractions;
+using Logistics.Application.Common.Extensions;
 using Logistics.Application.Modules.Operations.Trucks.Services;
-using Logistics.Application.Utilities;
 using Logistics.Domain.Entities;
 using Logistics.Domain.Persistence;
 using Logistics.Mappings;

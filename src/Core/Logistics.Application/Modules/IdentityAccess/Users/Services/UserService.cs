@@ -1,5 +1,5 @@
 using Logistics.Application.Abstractions.Tenancy;
-using Logistics.Application.Utilities;
+using Logistics.Application.Common;
 using Logistics.Domain.Entities;
 using Logistics.Domain.Persistence;
 using Microsoft.Extensions.DependencyInjection;

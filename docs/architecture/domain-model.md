@@ -418,7 +418,7 @@ Handlers live in `src/Core/Logistics.Application/Events/` and produce side effec
 Reads filter with plain `.Query().Where(...)` chains inside the handler. When the same condition is reused
 across handlers, put it in an `IQueryable<T>` extension next to the feature - for example
 `LoadQueryableExtensions.FilterDeliveredBetween` in `Modules/Operations/Loads/`. Paged lists finish with
-`ToPagedResultAsync` (`Logistics.Application/Utilities/PagedQueryableExtensions.cs`), which always breaks
+`ToPagedResultAsync` (`Logistics.Application/Common/Extensions/PagedQueryableExtensions.cs`), which always breaks
 sort ties by id so pages never repeat or skip rows.
 
 ```csharp

@@ -1,7 +1,9 @@
 using Logistics.Application.Abstractions;
-using Logistics.Application.Modules.Common.Constants;
+using Logistics.Application.Common.Constants;
+using Logistics.Application.Common.Extensions;
+using Logistics.Application.Common.Security;
 using Logistics.Application.Modules.IdentityAccess.CustomerUsers.Services;
-using Logistics.Application.Utilities;
+using Logistics.Application.Modules.Platform.Notifications.Services;
 using Logistics.Domain.Entities;
 using Logistics.Domain.Persistence;
 using Logistics.Domain.Primitives.Enums;
@@ -10,7 +12,6 @@ using Logistics.Mediator;
 using Logistics.Shared.Identity.Roles;
 using Logistics.Shared.Models;
 using Microsoft.AspNetCore.Identity;
-using Logistics.Application.Modules.Platform.Notifications.Services;
 
 namespace Logistics.Application.Modules.IdentityAccess.Invitations.Commands;
 

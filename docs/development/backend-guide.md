@@ -17,9 +17,11 @@ src/Core/Logistics.Application/
 │   ├── IdentityAccess/ # Users, Tenants, Roles, Subscriptions
 │   ├── Integrations/   # AIDispatch, LoadBoard, FuelCards, Accounting, Webhooks, Messaging, Documents
 │   └── Platform/       # Stats, Reports, BlogPosts, Notifications
-├── Handlers/           # Generic base handlers (Delete/GetById/Update) that trivial slices subclass
-├── Behaviours/         # request pipeline
-└── Validators/         # Shared FluentValidation base validators (e.g. AddressValidator)
+└── Common/             # Cross-module code; not a module
+    ├── Handlers/       # Generic base handlers (Delete/GetById/Update) that trivial slices subclass
+    ├── Pipeline/       # request pipeline behaviours and [RequiresFeature]
+    ├── Validation/     # Shared FluentValidation validators (e.g. AddressValidator)
+    └── Extensions/     # Queryable, paging and identity helpers
 
 src/Core/Logistics.Application.Abstractions/
 └── (Infrastructure ports grouped by domain: AIDispatch, Storage, Geocoding, Eld, Payments, …)
@@ -100,7 +102,7 @@ internal sealed class CreateLoadHandler(ITenantUnitOfWork unitOfWork)
 ```
 
 Trivial `Delete`/`GetById`/`Update` slices don't need a hand-written handler - subclass the generic base
-handlers in `Logistics.Application/Handlers/` (`DeleteTenantEntityHandler`, `GetTenantEntityByIdHandler`,
+handlers in `Logistics.Application/Common/Handlers/` (`DeleteTenantEntityHandler`, `GetTenantEntityByIdHandler`,
 `UpdateTenantEntityHandler`; master variants exist too). A command targets the master or tenant DB purely
 by which unit of work its handler injects (`IMasterUnitOfWork` vs `ITenantUnitOfWork`) - there is no
 separate marker interface.
@@ -227,7 +229,7 @@ public class Load : AggregateRoot
 Reads filter with plain `.Query().Where(...)` chains inside the handler. When the same condition is reused
 across handlers, put it in an `IQueryable<T>` extension next to the feature - for example
 `LoadQueryableExtensions.FilterDeliveredBetween` in `Modules/Operations/Loads/`. Paged lists finish with
-`ToPagedResultAsync` (`Logistics.Application/Utilities/PagedQueryableExtensions.cs`), which always breaks
+`ToPagedResultAsync` (`Logistics.Application/Common/Extensions/PagedQueryableExtensions.cs`), which always breaks
 sort ties by id so pages never repeat or skip rows.
 
 ```csharp

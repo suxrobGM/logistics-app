@@ -1,5 +1,5 @@
 using Logistics.Application.Abstractions.Common;
-using Logistics.Application.Attributes;
+using Logistics.Application.Common.Pipeline;
 using Logistics.Domain.Primitives.Enums;
 using Logistics.Domain.Primitives.ValueObjects;
 

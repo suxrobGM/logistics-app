@@ -1,5 +1,5 @@
 using FluentValidation;
-using Logistics.Application.Validators;
+using Logistics.Application.Common.Validation;
 
 namespace Logistics.Application.Modules.Financial.Factoring.Commands;
 

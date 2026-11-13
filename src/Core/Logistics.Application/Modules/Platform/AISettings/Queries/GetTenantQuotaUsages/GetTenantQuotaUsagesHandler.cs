@@ -1,6 +1,8 @@
 using Logistics.Application.Abstractions;
 using Logistics.Application.Abstractions.AIDispatch;
+using Logistics.Application.Common.Extensions;
 using Logistics.Domain.Entities;
+using Logistics.Domain.Extensions;
 using Logistics.Domain.Persistence;
 using Logistics.Domain.Primitives;
 using Logistics.Domain.Primitives.Enums;
@@ -8,8 +10,6 @@ using Logistics.Mediator;
 using Logistics.Shared.Models;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
-using Logistics.Application.Utilities;
-using Logistics.Domain.Extensions;
 
 namespace Logistics.Application.Modules.Platform.AISettings.Queries;
 

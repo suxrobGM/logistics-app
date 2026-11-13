@@ -1,6 +1,6 @@
 using FluentValidation;
+using Logistics.Application.Modules.Operations.Loads;
 using Logistics.Application.Modules.Operations.Loads.Commands;
-using Logistics.Application.Validators;
 using Logistics.Domain.Primitives.Enums;
 
 namespace Logistics.Application.Modules.Operations.Trips.Commands;

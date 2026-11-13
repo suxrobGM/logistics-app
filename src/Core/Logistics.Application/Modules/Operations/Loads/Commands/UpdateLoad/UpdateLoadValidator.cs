@@ -1,6 +1,6 @@
 using FluentValidation;
+using Logistics.Application.Common.Validation;
 using Logistics.Application.Modules.Operations.Loads.Constants;
-using Logistics.Application.Validators;
 
 namespace Logistics.Application.Modules.Operations.Loads.Commands;
 

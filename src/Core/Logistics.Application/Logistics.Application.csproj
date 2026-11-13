@@ -2,7 +2,7 @@
 
   <ItemGroup>
     <Using Include="Logistics.Application.Abstractions.Common" />
-    <Using Include="Logistics.Application.Handlers" />
+    <Using Include="Logistics.Application.Common.Handlers" />
   </ItemGroup>
 
   <ItemGroup>

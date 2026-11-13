@@ -1,8 +1,8 @@
 using Logistics.Application.Abstractions.Email;
 using Logistics.Application.Abstractions.Email.Models;
-using Logistics.Application.Modules.Common.Constants;
-using Logistics.Domain.Entities;
 using Logistics.Application.Abstractions.Options;
+using Logistics.Application.Common.Constants;
+using Logistics.Domain.Entities;
 using Logistics.Domain.Primitives.Enums;
 using Logistics.Mappings;
 using Microsoft.Extensions.Options;

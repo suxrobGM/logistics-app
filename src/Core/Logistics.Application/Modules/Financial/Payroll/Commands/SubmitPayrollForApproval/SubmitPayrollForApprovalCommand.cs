@@ -1,4 +1,4 @@
-using Logistics.Application.Attributes;
+using Logistics.Application.Common.Pipeline;
 using Logistics.Domain.Primitives.Enums;
 
 namespace Logistics.Application.Modules.Financial.Payroll.Commands;

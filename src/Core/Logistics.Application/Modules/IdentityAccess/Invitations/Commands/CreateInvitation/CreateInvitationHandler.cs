@@ -1,6 +1,7 @@
 using Logistics.Application.Abstractions;
+using Logistics.Application.Abstractions.CurrentUser;
+using Logistics.Application.Common.Security;
 using Logistics.Application.Modules.IdentityAccess.Invitations.Services;
-using Logistics.Application.Utilities;
 using Logistics.Domain.Entities;
 using Logistics.Domain.Persistence;
 using Logistics.Domain.Primitives.Enums;
@@ -9,7 +10,6 @@ using Logistics.Mediator;
 using Logistics.Shared.Identity.Roles;
 using Logistics.Shared.Models;
 using Microsoft.AspNetCore.Identity;
-using Logistics.Application.Abstractions.CurrentUser;
 
 namespace Logistics.Application.Modules.IdentityAccess.Invitations.Commands;
 

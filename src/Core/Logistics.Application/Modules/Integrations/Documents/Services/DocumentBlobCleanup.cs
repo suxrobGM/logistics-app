@@ -1,5 +1,5 @@
 using Logistics.Application.Abstractions.Storage;
-using Logistics.Application.Modules.Common.Constants;
+using Logistics.Application.Common.Storage;
 using Microsoft.Extensions.Logging;
 
 namespace Logistics.Application.Modules.Integrations.Documents.Services;

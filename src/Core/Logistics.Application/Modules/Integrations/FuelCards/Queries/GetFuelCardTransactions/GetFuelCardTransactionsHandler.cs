@@ -1,11 +1,11 @@
 using Logistics.Application.Abstractions;
-using Logistics.Application.Modules.Common.Services;
+using Logistics.Application.Common.Extensions;
+using Logistics.Application.Common.Services;
 using Logistics.Domain.Entities;
 using Logistics.Domain.Persistence;
 using Logistics.Mappings;
 using Logistics.Mediator;
 using Logistics.Shared.Models;
-using Logistics.Application.Utilities;
 
 namespace Logistics.Application.Modules.Integrations.FuelCards.Queries;
 

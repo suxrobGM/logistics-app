@@ -1,4 +1,4 @@
-using Logistics.Application.Utilities;
+using Logistics.Application.Common.Extensions;
 using Logistics.Application.Modules.IdentityAccess.Invitations.Commands;
 using Logistics.Application.Modules.IdentityAccess.Users.Services;
 using Logistics.Application.Modules.Platform.DataImport.Constants;

@@ -1,5 +1,5 @@
 using Logistics.Application.Abstractions.Storage;
-using Logistics.Application.Modules.Common.Constants;
+using Logistics.Application.Common.Storage;
 using Logistics.Application.Modules.Integrations.Documents.Services;
 using Logistics.Domain.Entities;
 using Logistics.Domain.Persistence;

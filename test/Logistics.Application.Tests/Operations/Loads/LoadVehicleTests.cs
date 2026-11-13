@@ -1,9 +1,8 @@
 using FluentValidation.TestHelper;
-using Logistics.Application.Modules.Operations.Common.Services;
+using Logistics.Application.Modules.Operations.Loads;
 using Logistics.Application.Modules.Operations.Loads.Commands;
 using Logistics.Application.Modules.Operations.Loads.Services;
 using Logistics.Application.Modules.Operations.Trips.Commands;
-using Logistics.Application.Validators;
 using Logistics.Domain.Entities;
 using Logistics.Domain.Primitives.Enums;
 using Logistics.Domain.Primitives.ValueObjects;

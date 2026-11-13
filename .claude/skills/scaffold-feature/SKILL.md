@@ -97,7 +97,7 @@ no `*Dto` wrapper. Add a dedicated `*Request` record only when the wire shape mu
 - Same pattern for `Update{Entity}/`, `Delete{Entity}/`
 
 **Don't hand-write trivial handlers.** `Delete`/`GetById`/`Update` slices subclass the generic base handlers in
-`src/Core/Logistics.Application/Handlers/` - `DeleteTenantEntityHandler`, `DeleteMasterEntityHandler`,
+`src/Core/Logistics.Application/Common/Handlers/` - `DeleteTenantEntityHandler`, `DeleteMasterEntityHandler`,
 `GetTenantEntityByIdHandler`, `UpdateTenantEntityHandler`. Only write a bespoke handler when there's real logic.
 
 **Validators.** Skip the validator entirely when its only rule would be `Id NotEmpty` (the handler's not-found

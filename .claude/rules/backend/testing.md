@@ -23,8 +23,8 @@ converters, AI quota), `Integrations/` (QBO, ELD, DAT, FMCSA, fuel cards, VIN, w
 
 `Application.Tests` folders mirror `src/Core/Logistics.Application/Modules/`
 (`Operations/Loads/`, `Integrations/AIDispatch/`, ...) and the namespace follows the folder. Tests
-of code outside `Modules/` sit in `Behaviours/`, `Validators/`, `Utilities/` and `Primitives/`
-(domain value types and extensions).
+of code outside `Modules/` mirror `Common/` (`Common/Pipeline/`, `Common/Validation/`, ...), and
+`Primitives/` holds domain value types and extensions.
 
 ## Test kit
 

@@ -1,7 +1,7 @@
 using FluentValidation;
-
-using Logistics.Application.Validators;
+using Logistics.Application.Modules.Platform.AISettings;
 using Logistics.Domain.Primitives.Enums;
+
 
 namespace Logistics.Application.Modules.IdentityAccess.Subscriptions.Commands;
 

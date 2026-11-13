@@ -1,5 +1,5 @@
 using FluentValidation;
-using Logistics.Application.Modules.Common.Constants;
+using Logistics.Application.Common.Constants;
 using Logistics.Application.Modules.IdentityAccess.Tenants.Constants;
 
 namespace Logistics.Application.Modules.IdentityAccess.Tenants.Commands;

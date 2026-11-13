@@ -47,7 +47,7 @@ These are interfaces **implemented inside Application itself**. They orchestrate
 
 If Application implements it, the interface stays in Application.
 
-Trivial CRUD handlers don't get bespoke classes: `Delete`/`GetById`/`Update` slices subclass the shared generic base handlers in `src/Core/Logistics.Application/Handlers/` (`DeleteTenantEntityHandler`, `DeleteMasterEntityHandler`, `GetTenantEntityByIdHandler`, `UpdateTenantEntityHandler`).
+Trivial CRUD handlers don't get bespoke classes: `Delete`/`GetById`/`Update` slices subclass the shared generic base handlers in `src/Core/Logistics.Application/Common/Handlers/` (`DeleteTenantEntityHandler`, `DeleteMasterEntityHandler`, `GetTenantEntityByIdHandler`, `UpdateTenantEntityHandler`).
 
 ### Quick decision
 

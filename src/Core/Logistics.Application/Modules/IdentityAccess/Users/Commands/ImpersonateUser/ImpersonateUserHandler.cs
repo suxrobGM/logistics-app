@@ -1,7 +1,8 @@
 using Logistics.Application.Abstractions;
-using Logistics.Application.Utilities;
-using Logistics.Domain.Entities;
+using Logistics.Application.Abstractions.CurrentUser;
 using Logistics.Application.Abstractions.Options;
+using Logistics.Application.Common.Security;
+using Logistics.Domain.Entities;
 using Logistics.Domain.Persistence;
 using Logistics.Mediator;
 using Logistics.Shared.Identity.Roles;
@@ -9,7 +10,6 @@ using Logistics.Shared.Models;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
-using Logistics.Application.Abstractions.CurrentUser;
 
 namespace Logistics.Application.Modules.IdentityAccess.Users.Commands;
 

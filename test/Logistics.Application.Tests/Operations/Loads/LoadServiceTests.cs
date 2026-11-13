@@ -1,4 +1,3 @@
-using Logistics.Application.Modules.Operations.Common.Services;
 using Logistics.Application.Modules.Operations.Loads.Services;
 using Logistics.Application.Tests.TestKit;
 using Logistics.Domain.Entities;
