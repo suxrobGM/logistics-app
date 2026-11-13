@@ -6,10 +6,7 @@ using Logistics.Shared.Identity.Roles;
 
 namespace Logistics.DbMigrator.Seeders.FakeData;
 
-/// <summary>
-/// Seeds realistic HOS (Hours of Service) status records for all drivers.
-/// Required for the AI dispatch agent to check feasibility and make assignments.
-/// </summary>
+/// <summary>Seeds driver HOS status records, which the AI dispatch agent needs to check whether a driver can legally take a load.</summary>
 internal class DriverHosStatusSeeder(ILogger<DriverHosStatusSeeder> logger) : SeederBase(logger)
 {
     public override string Name => nameof(DriverHosStatusSeeder);

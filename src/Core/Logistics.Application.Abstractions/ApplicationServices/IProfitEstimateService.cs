@@ -9,7 +9,7 @@ public interface IProfitEstimateService : IApplicationService
     Task<IReadOnlyDictionary<(Guid TruckId, Guid LoadId), decimal>> EstimateMarginsAsync(
         IReadOnlyCollection<MarginRequest> requests, CancellationToken ct = default);
 
-    /// <summary>Fleet operating cost per km, driver pay excluded; null when nothing is known.</summary>
+    /// <summary>Fleet-wide operating cost per km in tenant currency, excluding driver pay; null when there is neither a tenant setting nor truck expense history.</summary>
     Task<decimal?> GetFleetCostPerKmAsync(CancellationToken ct = default);
 }
 

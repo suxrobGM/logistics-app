@@ -2,20 +2,14 @@ using Logistics.Domain.Primitives.Enums;
 
 namespace Logistics.Infrastructure.AI.Tools;
 
-/// <summary>
-/// Metres (<c>GeoPoint.DistanceTo</c>, <c>Load.Distance</c>) to what the model is shown. Every tool
-/// converts here so their numbers agree, and a distance key always ends in its unit
-/// (<see cref="DistanceUnitExtensions.Abbreviation"/>) - the one unit rule the prompts state.
-/// </summary>
+/// <summary>Unit conversions for agent tool output, shared so every tool reports the same numbers. Distance keys in tool output end in their unit.</summary>
 internal static class DispatchUnits
 {
-    private const double MetersPerKm = 1000.0;
-
-    public static double MetersToKm(double meters) => meters / MetersPerKm;
+    public static double MetersToKm(double meters) => meters / DistanceUnitExtensions.MetersPerKilometer;
 
     public static double FromMeters(double meters, DistanceUnit unit) => Math.Round(unit.FromMeters(meters), 1);
 
-    /// <summary>A stored rate per km in the tenant's unit, to the cent.</summary>
+    /// <summary>Converts a stored rate per km to a rate per <paramref name="unit"/>, rounded to the cent; null stays null.</summary>
     public static decimal? RateFromPerKm(decimal? ratePerKm, DistanceUnit unit) =>
         ratePerKm is { } rate ? Math.Round(unit.RateFromPerKm(rate), 2) : null;
 

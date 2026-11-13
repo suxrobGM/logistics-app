@@ -4,10 +4,6 @@ using Logistics.Domain.Primitives.ValueObjects;
 
 namespace Logistics.DbMigrator.Regions;
 
-/// <summary>
-/// Region-specific data and generators used by the seeders to produce realistic
-/// fake data for either US or EU demo tenants.
-/// </summary>
 public interface IRegionProfile
 {
     Region Region { get; }

@@ -5,10 +5,7 @@ using Xunit;
 
 namespace Logistics.Application.Tests.Operations;
 
-/// <summary>
-/// Both keys carry a case-sensitive unique index, so the setter canonicalises them: no writer can
-/// store a second casing of the same key.
-/// </summary>
+/// <summary>Container numbers and terminal codes are normalized in their setters, because the unique indexes are case-sensitive.</summary>
 public class NaturalKeyNormalizationTests
 {
     private static Container NewContainer(string number) =>
@@ -82,10 +79,7 @@ public class NaturalKeyNormalizationTests
         Assert.Equal(NewTerminal("uslax").Code, NewTerminal("USLAX").Code);
     }
 
-    /// <summary>
-    /// Search terms go through the same helper - the only reason the tools can drop `upper()` from
-    /// the WHERE clause and still match.
-    /// </summary>
+    /// <summary>The Normalize helpers produce what the setters store, so a search term normalized with them matches without SQL <c>upper()</c>.</summary>
     [Fact]
     public void NormalizeHelpers_MatchWhatTheSetterStores()
     {

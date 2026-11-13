@@ -9,10 +9,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace Logistics.API.Controllers.AI;
 
-/// <summary>
-/// Read and close broker rate negotiations. Sending a counter-offer is deliberately absent:
-/// offers only leave through an approved agent decision.
-/// </summary>
+/// <summary>Rate negotiation threads with brokers. There is no endpoint to send a counter-offer: offers are sent only by executing an approved agent decision.</summary>
 [ApiController]
 [Route("negotiations")]
 [Produces("application/json")]

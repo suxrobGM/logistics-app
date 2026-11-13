@@ -7,10 +7,6 @@ using QuestPDF.Infrastructure;
 
 namespace Logistics.Infrastructure.Documents.Pdf.Payroll;
 
-/// <summary>
-/// Body of the pay stub: earnings table → gross row → optional deductions table →
-/// total deductions row → NET PAY callout → optional approval block.
-/// </summary>
 internal static class PayrollEarningsSection
 {
     public static void Render(IContainer container, PayrollInvoice payroll, string currency)

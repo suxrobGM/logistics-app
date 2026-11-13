@@ -43,10 +43,7 @@ public class Truck : Entity, ITenantEntity
     /// </summary>
     public int? Year { get; set; }
 
-    /// <summary>
-    ///     Vehicle Identification Number (17-character unique identifier), canonicalised on write by
-    ///     <see cref="VinFormat.Normalize" />.
-    /// </summary>
+    /// <summary>Vehicle identification number, normalized on write by <see cref="VinFormat.Normalize" />.</summary>
     public string? Vin
     {
         get => _vin;
@@ -63,10 +60,6 @@ public class Truck : Entity, ITenantEntity
     /// </summary>
     public string? LicensePlateState { get; set; }
 
-    /// <summary>
-    ///     ADR (Accord Dangereux Routier) equipment configuration. Tracks whether this
-    ///     truck is certified to carry hazardous goods and which classes it is approved for.
-    /// </summary>
     public AdrEquipment AdrEquipment { get; set; } = AdrEquipment.None;
 
     /// <summary>
@@ -122,11 +115,7 @@ public class Truck : Entity, ITenantEntity
         };
     }
 
-    /// <summary>
-    ///     Hooks <paramref name="trailer" /> to this truck, or unhooks the current one when null. A trailer
-    ///     can be hooked to one truck at a time, so the caller unhooks it from any other truck first.
-    /// </summary>
-    /// <exception cref="InvalidOperationException">The trailer is not Active.</exception>
+    /// <summary>Hooks <paramref name="trailer"/> to this truck, or unhooks the current trailer when null. The caller unhooks the trailer from any other truck first.</summary>
     public void HookTrailer(Trailer? trailer)
     {
         trailer?.EnsureCanBeHooked();

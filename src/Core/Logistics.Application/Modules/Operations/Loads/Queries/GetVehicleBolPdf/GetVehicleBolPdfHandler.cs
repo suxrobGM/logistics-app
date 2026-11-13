@@ -62,7 +62,6 @@ internal sealed class GetVehicleBolPdfHandler(
             load.DestinationAddress,
             load.AssignedTruck?.Number,
             load.AssignedTruck?.MainDriver?.GetFullName(),
-            tenant.Currency,
             vehicles,
             await GetSignatureAsync(load.Id, DocumentType.BillOfLading, ct),
             await GetSignatureAsync(load.Id, DocumentType.ProofOfDelivery, ct),
@@ -83,10 +82,7 @@ internal sealed class GetVehicleBolPdfHandler(
                 report.Notes,
                 report.Defects);
 
-    /// <summary>
-    /// The latest BOL (shipper, at pickup) or POD (receiver, at delivery) capture that carries a
-    /// signer, a signature or a reason nobody signed.
-    /// </summary>
+    /// <summary>Latest delivery document of the given type with a recipient name, signature, or unable-to-sign reason; null when there is none.</summary>
     private async Task<VehicleBolSignature?> GetSignatureAsync(Guid loadId, DocumentType type, CancellationToken ct)
     {
         var capture = await tenantUow.Repository<DeliveryDocument>().Query()

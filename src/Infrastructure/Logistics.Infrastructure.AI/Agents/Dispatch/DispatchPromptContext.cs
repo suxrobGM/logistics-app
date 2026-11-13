@@ -2,15 +2,12 @@ using Logistics.Domain.Primitives.Enums;
 
 namespace Logistics.Infrastructure.AI.Agents.Dispatch;
 
-/// <summary>
-/// Everything <see cref="AIDispatchSystemPrompt.Build"/> varies on. Flags are named init properties
-/// so two swapped <c>bool</c>s cannot compile into a different prompt.
-/// </summary>
+/// <summary>Tenant facts for the dispatch system prompt. The feature flags are named init properties, so two <c>bool</c> arguments cannot be swapped by mistake.</summary>
 internal sealed record DispatchPromptContext(string CompanyName)
 {
     public DistanceUnit DistanceUnit { get; init; } = DistanceUnit.Miles;
 
-    /// <summary>ISO 4217 code every tenant amount is in.</summary>
+    /// <summary>ISO 4217 code of the tenant currency, which all amounts are in.</summary>
     public string Currency { get; init; } = "USD";
 
     /// <summary>Swaps the fleet-wide framing for one-truck framing.</summary>
@@ -24,7 +21,7 @@ internal sealed record DispatchPromptContext(string CompanyName)
     /// <summary><c>TenantFeature.VehicleTransport</c>; adds the car hauler rules.</summary>
     public bool HasVehicleTransport { get; init; }
 
-    /// <summary><c>TenantFeature.AINegotiation</c> and a load board - the tools need both.</summary>
+    /// <summary>True when the tenant has <c>TenantFeature.AINegotiation</c> and a connected load board; the negotiation tools need both.</summary>
     public bool HasRateNegotiation { get; init; }
 
     /// <summary>Null omits the section.</summary>

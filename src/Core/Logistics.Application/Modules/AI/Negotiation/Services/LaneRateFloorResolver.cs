@@ -8,10 +8,7 @@ using Logistics.Shared.Models;
 
 namespace Logistics.Application.Modules.AI.Negotiation.Services;
 
-/// <summary>
-/// Resolves the rate floor that applies to a load board listing's lane, falling back from the
-/// most specific configured <see cref="LaneRateFloor"/> row down to the tenant-wide default.
-/// </summary>
+/// <summary>Resolves the rate floor for a listing: the most specific matching <see cref="LaneRateFloor"/>, else the tenant's default floor.</summary>
 public interface ILaneRateFloorResolver : IApplicationService
 {
     Task<EffectiveRateFloorDto> ResolveAsync(LoadBoardListing listing, CancellationToken ct = default);
@@ -19,10 +16,7 @@ public interface ILaneRateFloorResolver : IApplicationService
 
 internal sealed class LaneRateFloorResolver(ITenantUnitOfWork tenantUow) : ILaneRateFloorResolver
 {
-    /// <summary>
-    /// A dispatch turn resolves a floor per candidate listing within one scope, and the table is
-    /// small enough to filter in memory - so read it once instead of once per listing.
-    /// </summary>
+    /// <summary>Lane floors loaded once per request scope, since a dispatch turn resolves a floor for every candidate listing.</summary>
     private IReadOnlyList<LaneRateFloor>? _cachedFloors;
 
     public async Task<EffectiveRateFloorDto> ResolveAsync(LoadBoardListing listing, CancellationToken ct = default)
@@ -90,18 +84,13 @@ internal sealed class LaneRateFloorResolver(ITenantUnitOfWork tenantUow) : ILane
         };
     }
 
-    /// <summary>
-    /// Combines the per-km and flat-total floor into one comparison against the listing's own
-    /// rate. When the distance is known, both sides are compared as totals - the per-km floor is
-    /// converted with distance and the higher of the two floor components wins - and the per-km
-    /// gap is the total gap spread back over the distance. Without a distance, a flat-total floor
-    /// stands alone (it needs no conversion) and a per-km floor falls back to a direct per-km
-    /// comparison against the listing's rate per km.
-    /// </summary>
+    /// <summary>Checks a listing's rate against the floor: as total amounts when the listing's distance is known, otherwise as rates per km.</summary>
     private static (decimal? floorTotal, bool belowFloor, decimal? gapPerKm) Evaluate(
         decimal minRatePerKm, decimal? minTotalRate, LoadBoardListing listing)
     {
-        decimal? distanceKm = listing.Distance is > 0 ? (listing.Distance.Value / 1000).ToDecimal() : null;
+        decimal? distanceKm = listing.Distance is > 0
+            ? DistanceUnit.Kilometers.FromMeters(listing.Distance.Value).ToDecimal()
+            : null;
         decimal? floorTotal = distanceKm is { } km
             ? Math.Max(minRatePerKm * km, minTotalRate ?? 0M)
             : minTotalRate;

@@ -35,10 +35,7 @@ public record InvoiceDto
 
     public IEnumerable<PaymentDto> Payments { get; set; } = [];
 
-    /// <summary>
-    /// Sum of the settled (Paid) payments in the invoice currency. Pending, failed and refunded payments
-    /// are listed in <see cref="Payments"/> but count for nothing here.
-    /// </summary>
+    /// <summary>Sum of payments with status Paid; pending, failed and refunded payments are excluded.</summary>
     public decimal AmountPaid { get; set; }
 
     public decimal AmountDue { get; set; }

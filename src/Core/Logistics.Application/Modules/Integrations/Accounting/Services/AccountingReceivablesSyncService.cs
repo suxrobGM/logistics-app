@@ -99,10 +99,7 @@ internal sealed class AccountingReceivablesSyncService(
         }
     }
 
-    /// <summary>
-    /// A factored invoice's payment goes in full to the factoring clearing account. Payments on invoices
-    /// before the sync-from date are skipped, since those invoices are never pushed.
-    /// </summary>
+    /// <summary>Pushes invoice payments, skipping those before the sync-from date because their invoices are never pushed.</summary>
     private async Task PushPaymentsAsync(SyncRun run, CancellationToken ct)
     {
         var mappings = mappingService.Mappings;

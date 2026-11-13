@@ -6,10 +6,7 @@ using Logistics.Domain.Primitives.Enums;
 
 namespace Logistics.API.Jobs;
 
-/// <summary>
-/// Retries waking the dispatch agent for a negotiation whose conversation was mid-turn when the
-/// broker replied. The message is already in the transcript; this only asks for a turn.
-/// </summary>
+/// <summary>Starts a dispatch agent turn after a broker reply. The reply is already saved in the transcript; this job only requests the turn.</summary>
 public class NegotiationWakeJob(
     IServiceScopeFactory scopeFactory,
     ILogger<NegotiationWakeJob> logger)

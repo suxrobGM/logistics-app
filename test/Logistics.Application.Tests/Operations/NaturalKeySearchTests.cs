@@ -10,10 +10,7 @@ using Xunit;
 
 namespace Logistics.Application.Tests.Operations;
 
-/// <summary>
-/// Container.Number and Terminal.Code are stored canonical, so a raw lowercase search term used to
-/// match nothing. The list handlers normalise the term through the same helper the setter uses.
-/// </summary>
+/// <summary>List handlers must normalize the search term, since container numbers and terminal codes are stored normalized.</summary>
 public class NaturalKeySearchTests
 {
     private readonly ITenantRepository<Container, Guid> _containerRepo =

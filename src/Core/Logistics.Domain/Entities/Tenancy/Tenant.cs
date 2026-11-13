@@ -49,10 +49,7 @@ public class Tenant : Entity, IMasterEntity
     /// </summary>
     public string? CompanyRegistrationNumber { get; set; }
 
-    /// <summary>
-    /// ISO-2 country code where the tenant is tax-resident.
-    /// Defaults to <see cref="CompanyAddress"/>.<c>Country</c> when null.
-    /// </summary>
+    /// <summary>Country of tax residency; null means the company address country.</summary>
     public string? TaxResidencyCountry { get; set; }
 
     #endregion
@@ -62,7 +59,7 @@ public class Tenant : Entity, IMasterEntity
     /// </summary>
     public TenantSettings Settings { get; set; } = new();
 
-    /// <summary>ISO 4217 code every tenant-internal amount is in.</summary>
+    /// <summary>ISO 4217 code of the tenant currency; every tenant-internal amount is in it.</summary>
     public string Currency => Settings.Currency.ToString();
 
     /// <summary>
@@ -72,16 +69,10 @@ public class Tenant : Entity, IMasterEntity
 
     public bool IsSolo => Presets.Contains(TenantPreset.SoloOperator);
 
-    /// <summary>
-    ///     Whether this tenant requires an active subscription to access the platform.
-    ///     Set to false for internal/test tenants.
-    /// </summary>
+    /// <summary>Whether the tenant needs an active subscription; false for internal and test tenants and for tenants created by an admin.</summary>
     public bool IsSubscriptionRequired { get; set; } = true;
 
-    /// <summary>
-    ///     When set, AI quota counting starts from this date instead of the ISO week start.
-    ///     Used by admins to reset a tenant's weekly AI session quota mid-week.
-    /// </summary>
+    /// <summary>When an admin last reset the tenant's weekly AI quota; usage is counted from the later of this and the start of the week.</summary>
     public DateTime? QuotaResetAt { get; set; }
 
     public virtual Subscription? Subscription { get; set; }

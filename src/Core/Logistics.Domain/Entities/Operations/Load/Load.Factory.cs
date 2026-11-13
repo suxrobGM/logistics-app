@@ -9,10 +9,7 @@ namespace Logistics.Domain.Entities;
 /// </summary>
 public partial class Load
 {
-    /// <summary>
-    /// Creates a new Load with a draft invoice, and its pickup and drop-off stops when it starts on
-    /// <paramref name="trip" />. Raises NewLoadCreatedEvent, and LoadAssignedToTruckEvent when a truck is set.
-    /// </summary>
+    /// <summary>Creates a load; raises NewLoadCreatedEvent, plus LoadAssignedToTruckEvent when a truck is given.</summary>
     public static Load Create(
         string name,
         LoadType type,

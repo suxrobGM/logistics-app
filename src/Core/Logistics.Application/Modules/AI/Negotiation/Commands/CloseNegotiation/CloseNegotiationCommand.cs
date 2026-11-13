@@ -4,10 +4,7 @@ using Logistics.Shared.Models;
 
 namespace Logistics.Application.Modules.AI.Negotiation.Commands;
 
-/// <summary>
-/// Ends a negotiation thread and revokes its reply address, so later broker mail to that address
-/// is dropped instead of reopening the conversation.
-/// </summary>
+/// <summary>Closes a rate negotiation and revokes its reply-to address, so later broker emails are no longer routed to the thread.</summary>
 [RequiresFeature(TenantFeature.AINegotiation)]
 public class CloseNegotiationCommand : ICommand<Result>
 {

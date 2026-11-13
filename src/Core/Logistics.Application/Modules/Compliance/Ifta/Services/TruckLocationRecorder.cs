@@ -17,13 +17,13 @@ internal sealed class TruckLocationRecorder(
     ITripAlertReporter tripAlertReporter,
     ILogger<TruckLocationRecorder> logger) : ITruckLocationRecorder
 {
-    /// <summary>Segments implying more than this speed (about 90 mph) are GPS teleports and are discarded.</summary>
+    /// <summary>Implied speed (about 90 mph) above which a GPS segment is treated as a position glitch and discarded.</summary>
     private const double MaxPlausibleMetersPerHour = 145_000;
 
     /// <summary>Segments shorter than this are stationary jitter and accrue nothing.</summary>
     private const decimal MinSegmentMeters = 80m;
 
-    /// <summary>Slack over twice the chord before an odometer delta is distrusted (about 5 mi).</summary>
+    /// <summary>Allowed excess (about 5 mi) over twice the straight-line distance before an odometer delta is rejected as implausible.</summary>
     private const double OdometerToleranceMeters = 8_000;
 
     /// <summary>Moves shorter than this keep the current address; parked trucks jitter by a few metres.</summary>
@@ -101,7 +101,7 @@ internal sealed class TruckLocationRecorder(
         {
             logger.LogWarning(
                 "Discarding GPS segment for truck {TruckNumber}: {Kilometers:F1} km in {Hours:F2} h is implausible",
-                truck.Number, meters / 1000m, hours);
+                truck.Number, meters / DistanceUnitExtensions.MetersPerKilometer, hours);
             return;
         }
 
@@ -128,10 +128,7 @@ internal sealed class TruckLocationRecorder(
             """, ct);
     }
 
-    /// <summary>
-    /// Odometer delta wins when both pings carry a plausible reading (within 2× haversine plus
-    /// <see cref="OdometerToleranceMeters"/>, covering road-vs-chord distance); otherwise the chord.
-    /// </summary>
+    /// <summary>Segment distance in meters: the odometer delta when it is within twice the straight-line distance plus tolerance, otherwise the straight-line (haversine) distance.</summary>
     private static decimal ResolveSegmentMeters(long? previousOdometer, long? currentOdometer, double haversineMeters)
     {
         if (previousOdometer.HasValue && currentOdometer.HasValue)

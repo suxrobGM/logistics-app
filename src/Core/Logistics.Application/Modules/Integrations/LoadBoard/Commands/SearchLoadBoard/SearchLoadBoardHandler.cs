@@ -20,10 +20,7 @@ internal sealed class SearchLoadBoardHandler(
     ILogger<SearchLoadBoardHandler> logger)
     : IRequestHandler<SearchLoadBoardCommand, Result<LoadBoardSearchResultDto>>
 {
-    /// <summary>
-    /// How long a listing the board gave no expiry for stays bookable. Board postings are
-    /// short-lived; one not seen again by a search within this window is treated as gone.
-    /// </summary>
+    /// <summary>Expiry given to listings the board publishes without one. Postings are short-lived, so a listing not seen again within this window is treated as gone.</summary>
     private static readonly TimeSpan UnknownExpiryShelfLife = TimeSpan.FromHours(24);
 
     /// <summary>
@@ -126,12 +123,9 @@ internal sealed class SearchLoadBoardHandler(
     }
 
     private static decimal? CalculateRatePerKm(decimal? totalRate, double? meters) =>
-        totalRate is { } total && meters is > 0 ? total / (meters.Value / 1000).ToDecimal() : null;
+        totalRate is { } total && meters is > 0 ? total / DistanceUnit.Kilometers.FromMeters(meters.Value).ToDecimal() : null;
 
-    /// <summary>
-    /// Prices each distinct city-to-city lane once, in one batched lookup, and stamps the rate on
-    /// every listing on that lane. Returns the provider's error when the lookup failed.
-    /// </summary>
+    /// <summary>Attaches market rates to the listings; returns the provider's error message, or null on success.</summary>
     private async Task<string?> AttachMarketRatesAsync(
         LoadBoardConfiguration config, IReadOnlyList<LoadBoardListingDto> listings, CancellationToken ct)
     {
@@ -174,10 +168,7 @@ internal sealed class SearchLoadBoardHandler(
         return null;
     }
 
-    /// <summary>
-    /// Boards filter by lane and equipment, not by rate, so the rate floors apply here. A listing
-    /// with no posted rate passes: most board freight is "call for rate".
-    /// </summary>
+    /// <summary>True when the listing meets the requested minimum rates. Boards cannot filter by rate, so this runs locally; listings with no posted rate pass, since most freight is "call for rate".</summary>
     private static bool MeetsRateFloor(LoadBoardListingDto listing, SearchLoadBoardCommand req)
     {
         var perKmOk = req.MinRatePerKm is not { } minPerKm ||
@@ -189,11 +180,7 @@ internal sealed class SearchLoadBoardHandler(
         return perKmOk && totalOk;
     }
 
-    /// <summary>
-    /// Upserts search results as LoadBoardListing entities so they can be booked later -
-    /// booking resolves the listing by entity Id. Stamps each DTO with the entity Id and
-    /// reflects any already-booked state back onto the DTO.
-    /// </summary>
+    /// <summary>Saves the listings to the database, because booking later loads the listing by its entity id.</summary>
     private async Task PersistListingsAsync(List<LoadBoardListingDto> listings, CancellationToken ct)
     {
         if (listings.Count == 0)

@@ -170,11 +170,7 @@ internal sealed class EldSyncService(
         mapping.LastSyncedAt = now;
     }
 
-    /// <summary>
-    /// Replaces the driver's stored logs inside the window with what the provider returns now, so edits
-    /// and deletions made in the ELD show up. An empty answer is treated as "could not read" and keeps
-    /// what is stored rather than wiping the driver's history.
-    /// </summary>
+    /// <summary>Syncs a driver's HOS logs for the history window. An empty response from the provider leaves the stored logs untouched instead of deleting them.</summary>
     private async Task SyncDriverLogsAsync(IEldProviderService provider, EldDriverMapping mapping, CancellationToken ct)
     {
         var now = DateTime.UtcNow;
@@ -335,10 +331,7 @@ internal sealed class EldSyncService(
         return updates;
     }
 
-    /// <summary>
-    /// Maps the Demo provider's drivers onto the tenant's first employees so the demo works without
-    /// any setup.
-    /// </summary>
+    /// <summary>Maps the demo provider's drivers onto the tenant's first employees, so the demo ELD works without manual driver mapping.</summary>
     private async Task<List<EldDriverMapping>> CreateDemoMappingsAsync(EldProviderConfiguration config, CancellationToken ct)
     {
         var demoDrivers = (await eldProviderFactory.GetProvider(config).GetAllDriversAsync()).ToList();

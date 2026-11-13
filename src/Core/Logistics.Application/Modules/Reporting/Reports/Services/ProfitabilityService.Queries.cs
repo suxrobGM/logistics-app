@@ -134,7 +134,7 @@ internal sealed partial class ProfitabilityService
         return staff.Sum(e => CalculatePeriodPay(e, period, hours));
     }
 
-    /// <summary>Card money in another currency can't be summed with the tenant's, so it is left out.</summary>
+    /// <summary>Sums fuel card spend not assigned to a truck, in tenant currency only; transactions in other currencies cannot be added to it and are left out.</summary>
     private Task<decimal> SumUnassignedFuelAsync(DateTime from, DateTime to, CancellationToken ct)
     {
         var currency = tenantUow.GetCurrentTenant().Currency;

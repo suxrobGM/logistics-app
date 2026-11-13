@@ -3,12 +3,7 @@ using Logistics.Domain.Primitives.Enums;
 
 namespace Logistics.Application.Modules.AI.AIDispatch;
 
-/// <summary>
-/// The dispatch board and the TMS copilot share <see cref="AgentSession"/>, so every
-/// dispatch-side read has to exclude copilot turns. Route them through here rather than repeating
-/// the predicate: a copilot session reached from a dispatch handler skips the conversation-owner
-/// and per-tool permission checks that <c>ApproveAICopilotDecisionHandler</c> exists to enforce.
-/// </summary>
+/// <summary>Filters to dispatch sessions only. Copilot sessions must be read through the copilot handlers, which check conversation ownership and per-tool permissions.</summary>
 public static class AgentSessionQueryExtensions
 {
     extension(IQueryable<AgentSession> query)

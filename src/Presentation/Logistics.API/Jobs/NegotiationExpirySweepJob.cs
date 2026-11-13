@@ -9,10 +9,7 @@ using Logistics.Domain.Primitives.Enums;
 
 namespace Logistics.API.Jobs;
 
-/// <summary>
-/// Closes negotiations the broker never answered and revokes their reply addresses. No agent turn:
-/// silence is not news, and a dispatcher can reopen the conversation by countering again.
-/// </summary>
+/// <summary>Closes negotiations past their expiry without starting an agent turn: an expired thread needs no action, and a dispatcher can reopen it by sending a new counter-offer.</summary>
 public class NegotiationExpirySweepJob(
     ILogger<NegotiationExpirySweepJob> logger,
     IServiceScopeFactory scopeFactory)

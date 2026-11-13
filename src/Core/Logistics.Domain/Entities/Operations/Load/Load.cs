@@ -30,11 +30,7 @@ public partial class Load : AuditableEntity, ITenantEntity
     /// </summary>
     public double Distance { get; set; }
 
-    /// <summary>
-    /// True when the assigned truck is inside the geofence of the next confirmation
-    /// checkpoint (pickup if <see cref="Status"/> is <see cref="LoadStatus.Dispatched"/>,
-    /// delivery if <see cref="LoadStatus.PickedUp"/>). Toggled by the proximity tracker.
-    /// </summary>
+    /// <summary>True while the assigned truck is inside the geofence of the load's next checkpoint; set by the proximity tracker.</summary>
     public bool IsInProximity { get; set; }
 
     /// <summary>
@@ -109,10 +105,7 @@ public partial class Load : AuditableEntity, ITenantEntity
     /// </summary>
     public string? Notes { get; set; }
 
-    /// <summary>
-    /// UN/ADR hazardous material class (1–9); set exactly when the load carries hazardous materials.
-    /// Drives hazmat dispatch eligibility.
-    /// </summary>
+    /// <summary>Hazmat class; set exactly when the load carries hazardous materials.</summary>
     public HazmatClass? HazmatClass { get; set; }
 
     /// <summary>
@@ -127,10 +120,7 @@ public partial class Load : AuditableEntity, ITenantEntity
 
     public virtual Container? Container { get; set; }
 
-    /// <summary>
-    /// Optional origin terminal (port / rail / depot) - when set, the truck picks up here.
-    /// <see cref="OriginAddress"/> is still populated as a denormalized snapshot.
-    /// </summary>
+    /// <summary>Terminal where the truck picks up the load; null for a street pickup. <see cref="OriginAddress"/> still holds a copy of the address.</summary>
     public Guid? OriginTerminalId { get; set; }
 
     public virtual Terminal? OriginTerminal { get; set; }
@@ -142,24 +132,15 @@ public partial class Load : AuditableEntity, ITenantEntity
 
     public virtual Terminal? DestinationTerminal { get; set; }
 
-    /// <summary>
-    /// The listing ID of a booked load-board load, or the source system's reference of an imported one;
-    /// unique per <see cref="Source"/>.
-    /// </summary>
+    /// <summary>Id of the load in the external system it came from; unique per <see cref="Source"/>.</summary>
     public string? ExternalSourceId { get; set; }
 
-    /// <summary>
-    /// Why this load's truck can't be changed directly - a trip sets the truck of its loads - or null when the
-    /// load is on no trip.
-    /// </summary>
+    /// <summary>Why the load's truck cannot be changed directly: a load on a trip takes its truck from the trip. Null when the load is on no trip.</summary>
     public string? TruckChangeBlockedReason() => TripStops.FirstOrDefault() is { } stop
         ? $"Load #{Number} is on trip #{stop.Trip.Number}, which sets its truck. Change the trip's truck instead."
         : null;
 
-    /// <summary>
-    /// Copies the origin onto this load's pickup stops and the destination onto its drop-off stops, and re-sums
-    /// each trip's distance from its loads. Call it after the load's addresses, locations or distance change.
-    /// </summary>
+    /// <summary>Copies the load's current addresses, locations and distance onto its trip stops. Call after any of them change.</summary>
     public void RefreshTripStops()
     {
         foreach (var stop in TripStops)

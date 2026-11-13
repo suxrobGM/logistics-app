@@ -9,16 +9,7 @@ using Microsoft.Extensions.Options;
 
 namespace Logistics.Infrastructure.Integrations.LoadBoard.Providers.Dat;
 
-/// <summary>
-/// DAT (DAT One) through DAT's public freight APIs.
-/// <para>
-/// Auth is two-step: the carrier's service account (email + password) gets an organization
-/// token, and that token mints a user token for one DAT One seat (<see cref="LoadBoardConfiguration.UserEmail"/>).
-/// Every freight call uses the user token. The organization token is kept as the refresh
-/// credential, so renewing a user token skips the service-account login.
-/// </para>
-/// <para>DAT has no webhooks and no booking API: searches and post reconciliation are pulled.</para>
-/// </summary>
+/// <summary>DAT load board client. The organization token is cached to renew user tokens; DAT offers no webhooks or booking API.</summary>
 internal sealed class DatLoadBoardService(
     HttpClient httpClient,
     IOptions<LoadBoardOptions> options,
@@ -27,10 +18,7 @@ internal sealed class DatLoadBoardService(
 {
     private const string Vendor = "DAT";
 
-    /// <summary>
-    /// Used when DAT omits <c>expiresWhen</c>; short enough that a token is renewed early rather
-    /// than late.
-    /// </summary>
+    /// <summary>Token lifetime assumed when DAT omits <c>expiresWhen</c>; kept short so the token is renewed before it actually expires.</summary>
     private static readonly TimeSpan FallbackTokenLifetime = TimeSpan.FromMinutes(30);
 
     private readonly DatOptions _options = options.Value.Dat;

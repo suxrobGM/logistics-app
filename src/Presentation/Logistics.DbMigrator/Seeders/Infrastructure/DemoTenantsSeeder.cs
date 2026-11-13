@@ -9,11 +9,6 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Logistics.DbMigrator.Seeders.Infrastructure;
 
-/// <summary>
-/// Reads <c>Tenants[]</c> from configuration and upserts each demo tenant in the master DB,
-/// provisioning its tenant database if missing. Replaces the legacy single-tenant
-/// <c>DefaultTenantSeeder</c>.
-/// </summary>
 internal sealed class DemoTenantsSeeder(
     ILogger<DemoTenantsSeeder> logger,
     IRegionProfileFactory regionProfileFactory) : SeederBase(logger)
@@ -22,10 +17,7 @@ internal sealed class DemoTenantsSeeder(
     public override SeederType Type => SeederType.Infrastructure;
     public override int Order => 40;
 
-    /// <summary>
-    /// Demo threshold for the broker credit booking gate - the Demo load-board provider
-    /// generates scores 30-100, so ~half its brokers trip the gate for demo purposes.
-    /// </summary>
+    /// <summary>Minimum broker credit score set on demo tenants. Demo brokers score 30-100, so about half fail the check.</summary>
     private const int DemoMinBrokerCreditScore = 70;
 
     public override async Task SeedAsync(SeederContext context, CancellationToken cancellationToken = default)

@@ -79,11 +79,7 @@ public record AccountingSyncIssueDto
     public DateTime UpdatedAt { get; set; }
 }
 
-/// <summary>
-/// Where a push writes in the provider. Without <see cref="QboId"/> the push creates the record;
-/// <see cref="RequestId"/> makes that create idempotent, so a retry after a lost response does not
-/// create a duplicate.
-/// </summary>
+/// <summary>Target of a QuickBooks write. <see cref="RequestId"/> makes a create idempotent, so a retry adds no duplicate.</summary>
 public record QboWriteTarget(string? QboId, string? SyncToken, string RequestId);
 
 /// <summary>

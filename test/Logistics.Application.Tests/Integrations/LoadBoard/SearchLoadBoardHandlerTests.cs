@@ -16,10 +16,7 @@ using Xunit;
 
 namespace Logistics.Application.Tests.Integrations.LoadBoard;
 
-/// <summary>
-/// Runs through the real gateway so a provider's vendor error is checked all the way to the
-/// per-provider error the dispatcher sees.
-/// </summary>
+/// <summary>Uses the real load board gateway, so the tests cover how vendor errors become per-provider errors in the result.</summary>
 public class SearchLoadBoardHandlerTests
 {
     private readonly ITenantUnitOfWork _tenantUow = Substitute.For<ITenantUnitOfWork>();

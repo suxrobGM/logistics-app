@@ -17,16 +17,13 @@ public record LoadBoardListingDto
 
     public decimal? RatePerKm { get; set; }
 
-    /// <summary>
-    /// The board's current market spot rate for this lane (DAT RateView), per km, when the
-    /// tenant enabled market rates. Looked up per search, never stored.
-    /// </summary>
+    /// <summary>Market rate per km for the listing's lane, looked up on each search when market rates are enabled and never stored.</summary>
     public decimal? MarketRatePerKm { get; set; }
 
     public decimal? MarketRateLowPerKm { get; set; }
     public decimal? MarketRateHighPerKm { get; set; }
 
-    /// <summary>Rate per km minus fleet operating cost per km, driver pay and deadhead excluded.</summary>
+    /// <summary>Listing rate per km minus the fleet operating cost per km, excluding driver pay and deadhead.</summary>
     public decimal? EstimatedMarginPerKm { get; set; }
     public decimal? TotalRate { get; set; }
     public string? Currency { get; set; }
@@ -61,10 +58,7 @@ public record LoadBoardListingDto
 
     public LoadBoardListingStatus Status { get; set; }
     public DateTime? BookedAt { get; set; }
-    /// <summary>
-    /// When the posting expires. Providers leave it null when the board does not say; the search
-    /// handler then stamps a short shelf life so stale listings still get cleaned up.
-    /// </summary>
+    /// <summary>When the posting expires. Boards that give no expiry leave it null, and the search handler then sets a default shelf life.</summary>
     public DateTime? ExpiresAt { get; set; }
 
     public bool IsBookable => Status == LoadBoardListingStatus.Available &&

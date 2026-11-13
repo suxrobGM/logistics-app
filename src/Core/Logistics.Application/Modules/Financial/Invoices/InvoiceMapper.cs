@@ -28,7 +28,6 @@ public static partial class InvoiceMapper
     [MapperIgnoreTarget(nameof(InvoiceDto.Employee))]
     [MapperIgnoreTarget(nameof(InvoiceDto.PeriodStart))]
     [MapperIgnoreTarget(nameof(InvoiceDto.PeriodEnd))]
-    [MapProperty(nameof(Invoice.CreatedAt), nameof(InvoiceDto.CreatedAt))]
     [MapPropertyFromSource(nameof(InvoiceDto.TaxBreakdown), Use = nameof(MapTaxBreakdown))]
     private static partial InvoiceDto MapInvoice(Invoice entity);
 

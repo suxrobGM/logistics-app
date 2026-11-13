@@ -7,11 +7,7 @@ using QuestPDF.Infrastructure;
 
 namespace Logistics.Infrastructure.Documents.Pdf.Invoice;
 
-/// <summary>
-/// Line-items table + (when applicable) reverse-charge notice and per-jurisdiction
-/// tax breakdown panel. The Net | Rate | Tax | Gross columns only render when the
-/// invoice actually has tax.
-/// </summary>
+/// <summary>Renders the invoice line items table; tax columns appear only when the invoice has tax.</summary>
 internal static class InvoiceLineItemsSection
 {
     private const string ReverseChargeNotice =

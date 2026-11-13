@@ -100,10 +100,6 @@ internal sealed class UpdateLoadHandler(
                 await loadChargeService.SyncInvoiceAsync(load, ct);
             }
 
-            // SaveChanges dispatches domain events:
-            // - LoadAssignedToTruckEvent (if truck assigned)
-            // - LoadRemovedFromTruckEvent (if truck changed, for old truck)
-            // - LoadUpdatedEvent (if truck not changed but details updated)
             await tenantUow.SaveChangesAsync(ct);
 
             return Result.Ok();
@@ -114,10 +110,7 @@ internal sealed class UpdateLoadHandler(
         }
     }
 
-    /// <summary>
-    ///     Every load value the invoice is built from: its customer (who it is billed to, and the tax) and
-    ///     what <see cref="LoadInvoice.ReplaceLoadCharges" /> reads to build the lines.
-    /// </summary>
+    /// <summary>Load fields the invoice is built from. The handler compares them before and after the update to decide whether to rebuild the invoice lines.</summary>
     private static List<object> ChargeInputs(Load load) =>
     [
         load.CustomerId,

@@ -18,10 +18,7 @@ internal sealed class AccountingPayablesSyncService(
         await PushPayrollAsync(run, ct);
     }
 
-    /// <summary>
-    /// The factor's fee is a purchase paid from the clearing account; the bookkeeper records the advance
-    /// and reserve transfers. Fees on invoices before the sync-from date are skipped, as their deposit is never pushed.
-    /// </summary>
+    /// <summary>Pushes factoring fees to the accounting system, skipping fees before the sync-from date because their deposits are never pushed.</summary>
     private async Task PushFactoringFeesAsync(SyncRun run, CancellationToken ct)
     {
         var clearingAccountId = run.Config.FactoringClearingAccountId;

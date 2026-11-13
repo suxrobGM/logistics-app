@@ -15,7 +15,7 @@ public class InvoiceLineItem : Entity, ITenantEntity
     public required string Description { get; set; }
     public required InvoiceLineItemType Type { get; set; }
     public required decimal Amount { get; set; }
-    /// <summary>Hours, distance or units; fractional for metered accessorials.</summary>
+    /// <summary>Number of units billed (hours, distance or count); fractional for metered accessorials.</summary>
     public decimal Quantity { get; set; } = 1;
 
     /// <summary>
@@ -25,31 +25,16 @@ public class InvoiceLineItem : Entity, ITenantEntity
 
     public string? Notes { get; set; }
 
-    /// <summary>
-    /// The record a generated line was built from (a load accessorial, recurring deduction, cash
-    /// advance or fuel card transaction). Regenerating an invoice replaces lines that carry one and
-    /// leaves hand-added lines, which never do, alone. Not a foreign key - the sources live in
-    /// different tables.
-    /// </summary>
+    /// <summary>Id of the record a generated line came from; null for hand-added lines, which rebuilds leave in place. Not a foreign key, since sources span several tables.</summary>
     public Guid? SourceId { get; set; }
 
-    /// <summary>
-    /// Effective tax rate for this line, populated by <c>ITaxCalculator</c>. 0 when no tax applies
-    /// (e.g. reverse-charge B2B export, exempt customer, US tenant without Stripe Tax in
-    /// non-registered jurisdiction).
-    /// </summary>
+    /// <summary>Tax rate in percent; 0 when no tax applies (reverse charge, exempt customer, or a jurisdiction where the tenant is not registered).</summary>
     public decimal TaxRatePercent { get; set; }
 
-    /// <summary>
-    /// Tax amount in the invoice currency. For inclusive pricing this is the embedded tax;
-    /// for exclusive pricing it's the tax added on top.
-    /// </summary>
+    /// <summary>Tax on this line: the tax included in the amount for tax-inclusive pricing, or added on top for tax-exclusive pricing.</summary>
     public decimal TaxAmount { get; set; }
 
-    /// <summary>
-    /// Stripe Tax product code (txcd_*) or local tax-code identifier. Null falls back to the
-    /// tenant's Stripe Tax default.
-    /// </summary>
+    /// <summary>Stripe Tax product code; null uses the tenant's default tax code.</summary>
     public string? TaxCode { get; set; }
 
     /// <summary>

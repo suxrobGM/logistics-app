@@ -151,7 +151,6 @@ public class VehicleBolPdfServiceTests
         Address(),
         "T-7",
         "Driver Dan",
-        "USD",
         vehicles,
         pickup,
         delivery,

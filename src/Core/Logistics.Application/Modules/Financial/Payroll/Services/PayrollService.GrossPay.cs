@@ -64,10 +64,7 @@ internal partial class PayrollService
 
     private DistanceUnit GetDistanceUnit() => tenantUow.GetCurrentTenant().Settings.DistanceUnit;
 
-    /// <summary>
-    /// Loads delivered in the period on a trip the employee drove, main or secondary. A load on no trip has
-    /// no recorded driver, so it goes to whoever drives its truck now.
-    /// </summary>
+    /// <summary>Loads the employee delivered in the period. A load on no trip has no recorded driver, so it is credited to whoever currently drives its truck.</summary>
     private Task<List<LoadPayBasis>> GetDeliveredLoadsAsync(Guid employeeId, DateTime from, DateTime to, CancellationToken ct) =>
         tenantUow.Repository<Load>().Query()
             .Where(l => l.DeliveredAt >= from && l.DeliveredAt < to &&

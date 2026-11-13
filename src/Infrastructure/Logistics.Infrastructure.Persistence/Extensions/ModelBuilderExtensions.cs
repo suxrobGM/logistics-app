@@ -4,18 +4,10 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Logistics.Infrastructure.Persistence.Extensions;
 
-/// <summary>
-///     Extension methods for applying entity configurations to the EF Core model
-///     based on marker interfaces (IMasterEntity, ITenantEntity).
-/// </summary>
 internal static class ModelBuilderExtensions
 {
     extension(ModelBuilder modelBuilder)
     {
-        /// <summary>
-        ///     Apply all <see cref="IEntityTypeConfiguration{TEntity}" /> from the assembly defining <typeparamref name="T" />
-        ///     where <c>TEntity</c> implements <see cref="ITenantEntity" />.
-        /// </summary>
         public void ApplyTenantConfigurationsFromAssembly<T>()
         {
             modelBuilder.ApplyConfigurationsFromAssembly(
@@ -25,10 +17,6 @@ internal static class ModelBuilderExtensions
             modelBuilder.ApplyAuditableConventions();
         }
 
-        /// <summary>
-        ///     Apply all <see cref="IEntityTypeConfiguration{TEntity}" /> from the assembly defining <typeparamref name="T" />
-        ///     where <c>TEntity</c> implements <see cref="IMasterEntity" />.
-        /// </summary>
         public void ApplyMasterConfigurationsFromAssembly<T>()
         {
             modelBuilder.ApplyConfigurationsFromAssembly(
@@ -50,10 +38,6 @@ internal static class ModelBuilderExtensions
         }
     }
 
-    /// <summary>
-    ///     Returns true if <paramref name="type" /> is a non-abstract configuration class implementing
-    ///     <see cref="IEntityTypeConfiguration{TEntity}" /> where <c>TEntity</c> implements <typeparamref name="TMarker" />.
-    /// </summary>
     private static bool IsConfigurationFor<TMarker>(Type type)
     {
         if (!type.IsClass || type.IsAbstract)

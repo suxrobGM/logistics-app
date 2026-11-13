@@ -8,6 +8,5 @@ namespace Logistics.Application.Modules.Financial.Payments;
 public static partial class PaymentMapper
 {
     [MapperIgnoreSource(nameof(Payment.Invoice))]
-    [MapProperty(nameof(Payment.CreatedAt), nameof(PaymentDto.CreatedAt))]
     public static partial PaymentDto ToDto(this Payment entity);
 }

@@ -8,11 +8,7 @@ using Logistics.Shared.Models;
 
 namespace Logistics.Infrastructure.AI.Tools.Financial;
 
-/// <summary>
-/// Computes per-line tax + breakdown for a hypothetical set of line items without persisting.
-/// Read tool: safe to call in any mode. Backed by <c>PreviewInvoiceTaxQuery</c>, which routes
-/// through the configured <c>ITaxCalculator</c> (Stripe Tax in production, Manual fallback).
-/// </summary>
+/// <summary>Agent read tool that computes tax for hypothetical invoice lines without saving anything.</summary>
 internal sealed class PreviewTaxCalculationTool(IMediator mediator)
     : AgentTool<PreviewTaxCalculationTool.Input>, IAgentToolMetadata
 {

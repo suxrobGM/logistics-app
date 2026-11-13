@@ -71,11 +71,7 @@ internal sealed class GetNegotiationThreadTool(IMediator mediator, ITenantUnitOf
         });
     }
 
-    /// <summary>
-    /// One message as the model sees it. A record rather than an anonymous type so the shape the
-    /// agent reads is declared - the keys stay snake_case because the prompt names them, hence the
-    /// explicit attributes.
-    /// </summary>
+    /// <summary>Message entry in the tool output. Property names are explicit snake_case because the system prompt refers to these keys.</summary>
     private sealed record MessageSummary(
         [property: JsonPropertyName("sequence")] int Sequence,
         [property: JsonPropertyName("direction")] string Direction,
@@ -84,10 +80,7 @@ internal sealed class GetNegotiationThreadTool(IMediator mediator, ITenantUnitOf
         [property: JsonPropertyName("quarantined")] bool Quarantined,
         [property: JsonPropertyName("text")] string Text);
 
-    /// <summary>
-    /// Quarantined mail failed the sender check, so its body never reaches the model - only the fact
-    /// that something arrived and was rejected.
-    /// </summary>
+    /// <summary>Converts a negotiation message for the tool output. Quarantined mail failed the sender check, so its body is withheld from the model.</summary>
     private static MessageSummary Summarize(NegotiationMessageDto message) => new(
         Sequence: message.Sequence,
         Direction: message.Direction == NegotiationMessageDirection.Inbound ? "inbound" : "outbound",

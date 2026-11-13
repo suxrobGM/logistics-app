@@ -9,12 +9,7 @@ public static class RateFloorSnapshotExtensions
 {
     extension(EffectiveRateFloorDto floor)
     {
-        /// <summary>
-        /// Reduces a resolved floor to what a negotiation stores. The total recorded is the one the
-        /// offer was actually checked against - the per-km and flat components already combined for
-        /// the listing's distance - so a booking checked against the snapshot meets the same bar the
-        /// counter-offer did.
-        /// </summary>
+        /// <summary>Converts the floor to the snapshot stored on a negotiation, including the total the offer was checked against, so booking later checks the same amount.</summary>
         public RateFloorSnapshot ToSnapshot(string currency)
         {
             if (!floor.HasFloor)
@@ -32,11 +27,7 @@ public static class RateFloorSnapshotExtensions
 
     extension(RateNegotiation negotiation)
     {
-        /// <summary>
-        /// The floor frozen on an open thread, in the shape the floor check reads. Every round after the
-        /// first is checked against this rather than a fresh resolve, so an edit to the lane floor
-        /// cannot move the bar under a negotiation that is already running.
-        /// </summary>
+        /// <summary>Rebuilds the floor from the snapshot stored on the negotiation. Later rounds and booking use it, so editing a lane floor does not change the floor of an open thread.</summary>
         public EffectiveRateFloorDto ToEffectiveFloor() => new()
         {
             HasFloor = negotiation.FloorSource != RateFloorSource.None,

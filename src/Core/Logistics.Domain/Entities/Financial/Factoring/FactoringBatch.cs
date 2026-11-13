@@ -4,10 +4,7 @@ using Logistics.Domain.Primitives.ValueObjects;
 
 namespace Logistics.Domain.Entities;
 
-/// <summary>
-/// A schedule of accounts: the invoices sent to a factoring company in one submission, with what the
-/// factor reported back for each of them.
-/// </summary>
+/// <summary>A schedule of accounts sent to a factoring company in one submission.</summary>
 public class FactoringBatch : AuditableEntity, ITenantEntity
 {
     public long Number { get; set; }
@@ -33,10 +30,7 @@ public class FactoringBatch : AuditableEntity, ITenantEntity
 
     public virtual List<FactoringBatchItem> Items { get; set; } = [];
 
-    /// <summary>
-    /// Why an invoice cannot go on a schedule for this factoring company, or null when it can. Paperwork
-    /// (POD/BOL) is checked by the caller, which owns the document lookup.
-    /// </summary>
+    /// <summary>Why the invoice cannot be submitted to this factoring company, or null when it can. POD and BOL documents are not checked here; the caller checks them.</summary>
     public static string? IneligibilityReason(LoadInvoice invoice, Guid factoringCompanyId)
     {
         if (invoice.FactoringStatus is FactoringStatus.Submitted or FactoringStatus.Funded)
@@ -69,10 +63,7 @@ public class FactoringBatch : AuditableEntity, ITenantEntity
             : null;
     }
 
-    /// <summary>
-    /// Put eligible invoices on a new schedule and mark them submitted. Add the returned batch with the
-    /// repository; its items are saved with it.
-    /// </summary>
+    /// <summary>Creates a submitted batch for the invoices. The caller adds the returned batch with the repository, which saves its items too.</summary>
     public static FactoringBatch Submit(
         FactoringCompany company, IReadOnlyList<LoadInvoice> invoices, DateTime submittedAt, string? notes)
     {
@@ -107,11 +98,6 @@ public class FactoringBatch : AuditableEntity, ITenantEntity
         return batch;
     }
 
-    /// <summary>
-    /// Derive the schedule's state from its invoices: submitted while the factor has funded nothing and
-    /// some invoices await an answer, rejected when it turned them all down, funded when it bought them
-    /// all, and partially funded for anything in between.
-    /// </summary>
     public void RefreshStatus()
     {
         var funded = Items.Count(i => i.Status is FactoringStatus.Funded or FactoringStatus.ChargedBack);

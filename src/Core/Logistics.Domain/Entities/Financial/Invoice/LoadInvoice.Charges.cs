@@ -2,21 +2,14 @@ using Logistics.Domain.Primitives.Enums;
 
 namespace Logistics.Domain.Entities;
 
-/// <summary>
-/// The lines a load invoice derives from its load: the linehaul, the fuel surcharge and one line per
-/// accessorial. Hand-added lines are left alone.
-/// </summary>
+/// <summary>Load-derived invoice lines (base rate, fuel surcharge, accessorials), rebuilt from the load; hand-added lines are kept.</summary>
 public partial class LoadInvoice
 {
     /// <summary>True for a line <see cref="ReplaceLoadCharges"/> owns and rebuilds.</summary>
     public static bool IsLoadCharge(InvoiceLineItem line) =>
         line.Type is InvoiceLineItemType.BaseRate or InvoiceLineItemType.FuelSurcharge || line.SourceId is not null;
 
-    /// <summary>
-    /// Swaps the load-derived lines for fresh ones built from <paramref name="load"/>, first in the
-    /// line order. The caller registers the removed and added lines with the repository and
-    /// recalculates totals (tax applies per line).
-    /// </summary>
+    /// <summary>Rebuilds the load-derived lines from <paramref name="load"/> and returns the removed and added lines. The caller adds and removes them with the repository and recalculates totals.</summary>
     public (IReadOnlyList<InvoiceLineItem> Removed, IReadOnlyList<InvoiceLineItem> Added) ReplaceLoadCharges(Load load)
     {
         var added = BuildLoadCharges(load);

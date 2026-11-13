@@ -108,10 +108,7 @@ internal sealed class PostTruckToLoadBoardHandler(
         return Result<PostTruckResultDto>.Ok(posted with { PostedTruckId = postedTruck.Id });
     }
 
-    /// <summary>
-    /// The board equipment a truck of this type is usually posted as; null when there is none
-    /// (a tow truck) and the dispatcher has to choose.
-    /// </summary>
+    /// <summary>Default load board equipment type for a truck type; null when there is no usual match (e.g. a tow truck) and the dispatcher must pick one.</summary>
     private static LoadBoardEquipmentType? DefaultEquipmentFor(TruckType truckType) => truckType switch
     {
         TruckType.Flatbed => LoadBoardEquipmentType.Flatbed,

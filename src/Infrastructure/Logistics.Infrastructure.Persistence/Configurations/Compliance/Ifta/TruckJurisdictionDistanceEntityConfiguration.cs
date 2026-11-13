@@ -23,10 +23,7 @@ internal sealed class TruckJurisdictionDistanceEntityConfiguration : IEntityType
 
         builder.Property(i => i.Meters).HasPrecision(14, 2);
 
-        // Row identity (truck, date, jurisdiction) is the raw-SQL unique index
-        // ux_truck_jurisdiction_distances_truck_date_jurisdiction (NULLS NOT DISTINCT on region), created in
-        // the migration because complex-type members can't be in an EF index. TruckLocationRecorder's
-        // ON CONFLICT upsert depends on it.
+        // The unique index for the daily upsert is created with raw SQL in the migration, since EF cannot index complex-type members.
         builder.HasIndex(i => new { i.TruckId, i.Date });
         builder.HasIndex(i => i.Date);
     }

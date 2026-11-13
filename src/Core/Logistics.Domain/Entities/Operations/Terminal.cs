@@ -4,32 +4,20 @@ using Logistics.Domain.Primitives.ValueObjects;
 
 namespace Logistics.Domain.Entities;
 
-/// <summary>
-/// Represents an intermodal terminal - sea port, rail terminal, inland depot,
-/// air cargo facility, or border crossing - used as a pickup / drop-off point.
-/// </summary>
 public class Terminal : AuditableEntity, ITenantEntity
 {
     public required string Name { get; set; }
 
     private string _code = "";
 
-    /// <summary>
-    /// UN/LOCODE identifier (e.g. "BEANR" Antwerp, "USLAX" Los Angeles, "DEHAM" Hamburg).
-    /// <para>
-    /// Canonicalised on write by <see cref="NormalizeCode"/> - see <c>Container.Number</c> for why.
-    /// </para>
-    /// </summary>
+    /// <summary>Terminal code, stored trimmed and upper-case by <see cref="NormalizeCode"/>.</summary>
     public required string Code
     {
         get => _code;
         set => _code = NormalizeCode(value);
     }
 
-    /// <summary>
-    /// The canonical form of a UN/LOCODE. Callers that query by code must normalise the search term
-    /// through this, since the stored value is always canonical.
-    /// </summary>
+    /// <summary>Trims and upper-cases a terminal code. Queries by code apply it to the search term, since stored codes are normalized.</summary>
     public static string NormalizeCode(string? value) =>
         value?.Trim().ToUpperInvariant() ?? "";
 

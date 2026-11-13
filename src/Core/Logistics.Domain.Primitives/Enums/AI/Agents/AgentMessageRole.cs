@@ -1,9 +1,6 @@
 namespace Logistics.Domain.Primitives.Enums;
 
-/// <summary>
-/// Who authored an agent transcript message. System rows are app-generated notes
-/// (approval/rejection outcomes) the next turn replays as context.
-/// </summary>
+/// <summary>Author of an agent message. System messages are app-generated notes (e.g. approval outcomes) included as context in the next turn.</summary>
 public enum AgentMessageRole
 {
     User,

@@ -41,7 +41,7 @@ internal static class CopilotToolTestData
 
     public static Money Usd(decimal amount) => new() { Amount = amount, Currency = "USD" };
 
-    /// <summary>A tenant unit of work whose tenant runs in miles, the default.</summary>
+    /// <summary>A tenant unit of work returning a test tenant that uses miles, the default distance unit.</summary>
     public static ITenantUnitOfWork MilesTenant()
     {
         var tenantUow = Substitute.For<ITenantUnitOfWork>();

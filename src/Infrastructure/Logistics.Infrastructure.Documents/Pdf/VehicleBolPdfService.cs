@@ -35,7 +35,7 @@ public sealed class VehicleBolPdfService : IVehicleBolPdfService
 
                     foreach (var vehicle in document.Vehicles)
                     {
-                        col.Item().ShowEntire().Element(c => RenderVehicle(c, vehicle, document.Currency));
+                        col.Item().ShowEntire().Element(c => RenderVehicle(c, vehicle, document.Carrier.Currency));
                     }
 
                     col.Item().Element(RenderLegend);

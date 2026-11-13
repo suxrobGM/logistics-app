@@ -11,11 +11,7 @@ using Microsoft.Extensions.Logging;
 
 namespace Logistics.Infrastructure.Documents.Privacy;
 
-/// <summary>
-/// Builds a single ZIP archive containing every category of personal data we hold
-/// for a given user. Cross-tenant: walks UserTenantAccess and switches the tenant
-/// UoW to each tenant the user belongs to.
-/// </summary>
+/// <summary>Exports a user's personal data from every tenant they belong to, switching the tenant unit of work to each in turn.</summary>
 internal sealed class DataExportService(
     IMasterUnitOfWork masterUow,
     ITenantUnitOfWork tenantUow,

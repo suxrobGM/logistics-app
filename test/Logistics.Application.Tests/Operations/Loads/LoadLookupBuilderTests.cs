@@ -13,10 +13,7 @@ using Xunit;
 
 namespace Logistics.Application.Tests.Operations.Loads;
 
-/// <summary>
-/// The loads here have every navigation unset, so each value the DTO shows can only have come from
-/// the batched lookup - a mapper that went back to the navigations would leave it blank.
-/// </summary>
+/// <summary>Navigation properties are left unset, so every DTO value must come from the batched lookup.</summary>
 public class LoadLookupBuilderTests
 {
     private static readonly Address Somewhere =

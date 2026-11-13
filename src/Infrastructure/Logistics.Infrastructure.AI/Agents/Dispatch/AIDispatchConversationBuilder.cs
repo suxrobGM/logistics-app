@@ -10,10 +10,6 @@ using Microsoft.Extensions.Logging;
 
 namespace Logistics.Infrastructure.AI.Agents.Dispatch;
 
-/// <summary>
-/// Builds the LLM conversation for one dispatch turn: system prompt (with learned policy), dispatch
-/// tool catalogue, and the replayed transcript.
-/// </summary>
 internal sealed class AIDispatchConversationBuilder(
     IAgentToolRegistry toolRegistry,
     LlmSessionSetup sessionSetup,
@@ -65,10 +61,7 @@ internal sealed class AIDispatchConversationBuilder(
             setup.Provider, systemPrompt, messages, tools, model, config.MaxTokens, setup.Effort);
     }
 
-    /// <summary>
-    /// Loads the tenant's learned dispatch policy. Filtering <c>IsEnabled</c> in SQL means a disabled
-    /// policy is simply absent, so the prompt section omits itself.
-    /// </summary>
+    /// <summary>The tenant's enabled learned dispatch policy, or null when there is none; null leaves the policy section out of the prompt.</summary>
     private async Task<LearnedDispatchPolicy?> GetLearnedPolicyAsync(CancellationToken ct)
     {
         return await tenantUow.Repository<AIDispatchPolicy>().Query()

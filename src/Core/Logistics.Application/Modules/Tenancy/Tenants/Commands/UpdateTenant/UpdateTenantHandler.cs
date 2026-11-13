@@ -55,13 +55,20 @@ internal sealed class UpdateTenantHandler(
         return Result.Ok();
     }
 
-    /// <summary>Amounts carry no currency of their own, so changing it would relabel every one.</summary>
+    /// <summary>True when the tenant has loads or other financial records. Stored amounts carry no currency of their own, so changing the tenant currency after that would relabel them all.</summary>
     private async Task<bool> HasFinancialRecordsAsync(Guid tenantId, CancellationToken ct)
     {
         await tenantUow.SetCurrentTenantByIdAsync(tenantId);
-        var hasLoads = await tenantUow.Repository<Load>().Query().AnyAsync(ct);
-        var hasInvoices = await tenantUow.Repository<Invoice>().Query().AnyAsync(ct);
-        var hasExpenses = await tenantUow.Repository<Expense>().Query().AnyAsync(ct);
-        return hasLoads || hasInvoices || hasExpenses;
+        if (await tenantUow.Repository<Load>().Query().AnyAsync(ct))
+        {
+            return true;
+        }
+
+        if (await tenantUow.Repository<Invoice>().Query().AnyAsync(ct))
+        {
+            return true;
+        }
+
+        return await tenantUow.Repository<Expense>().Query().AnyAsync(ct);
     }
 }

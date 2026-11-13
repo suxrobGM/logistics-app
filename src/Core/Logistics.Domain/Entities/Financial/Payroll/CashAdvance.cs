@@ -3,10 +3,7 @@ using Logistics.Domain.Primitives.ValueObjects;
 
 namespace Logistics.Domain.Entities;
 
-/// <summary>
-/// Money a dispatcher pays a driver ahead of settlement. It is deducted, once, from the next
-/// settlement created for the driver.
-/// </summary>
+/// <summary>Money advanced to a driver, deducted once from the next settlement created for that driver.</summary>
 public class CashAdvance : AuditableEntity, ITenantEntity
 {
     public Guid EmployeeId { get; set; }

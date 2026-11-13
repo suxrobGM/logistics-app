@@ -13,10 +13,7 @@ using Xunit;
 
 namespace Logistics.Application.Tests.Compliance.Dvir;
 
-/// <summary>
-/// The other half of the Driver role's <c>Dvir.Manage</c> grant: filing your own is fine, signing
-/// as a colleague is not. <c>Dvir.Review</c> is what buys acting on someone else's report.
-/// </summary>
+/// <summary>A driver can act only on their own DVIR reports; acting on another driver's report requires <c>Dvir.Review</c>.</summary>
 public class DvirReportOwnershipTests
 {
     private static readonly Guid DriverId = Guid.NewGuid();

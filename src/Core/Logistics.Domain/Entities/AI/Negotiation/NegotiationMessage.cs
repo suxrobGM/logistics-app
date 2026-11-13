@@ -4,10 +4,7 @@ using Logistics.Domain.Primitives.ValueObjects;
 
 namespace Logistics.Domain.Entities;
 
-/// <summary>
-/// One email in a <see cref="RateNegotiation"/> thread. <see cref="TextBody"/> is what the agent
-/// reads and the UI renders; <see cref="RawBody"/> keeps the provider payload for audit.
-/// </summary>
+/// <summary>An email in a rate negotiation thread. <see cref="TextBody"/> is the text the agent reads; <see cref="RawBody"/> keeps the original payload for audit.</summary>
 public class NegotiationMessage : Entity, ITenantEntity
 {
     public Guid NegotiationId { get; set; }
@@ -28,11 +25,7 @@ public class NegotiationMessage : Entity, ITenantEntity
     public Money? ProposedTotalRate { get; set; }
     public decimal? ProposedRatePerKm { get; set; }
 
-    /// <summary>
-    /// RFC 5322 Message-ID of this email, angle brackets included: taken from the provider payload
-    /// inbound, generated before the send outbound. Quoted as In-Reply-To/References by later
-    /// rounds, so it must be the header value a mail server saw, never the provider's own id.
-    /// </summary>
+    /// <summary>RFC 5322 Message-ID header value, angle brackets included, used for reply threading; not the email provider's internal id.</summary>
     public string? RfcMessageId { get; set; }
     public string? InReplyToMessageId { get; set; }
 

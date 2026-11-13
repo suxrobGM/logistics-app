@@ -7,11 +7,7 @@ using Logistics.Domain.Primitives.ValueObjects;
 
 namespace Logistics.DbMigrator.Seeders.FakeData;
 
-/// <summary>
-/// Seeds deterministic per-truck jurisdiction mileage rollups (current + previous quarter)
-/// plus a thin sample of GPS breadcrumbs, so the IFTA report and quarter-close job demo with
-/// realistic data. US-region corridors only - IFTA is a US/CA program.
-/// </summary>
+/// <summary>Seeds daily IFTA jurisdiction distances for US-region tenants only, since IFTA covers the US and Canada.</summary>
 internal class IftaMileageSeeder(ILogger<IftaMileageSeeder> logger) : SeederBase(logger)
 {
     public override string Name => nameof(IftaMileageSeeder);

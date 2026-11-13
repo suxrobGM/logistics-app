@@ -5,10 +5,7 @@ using Logistics.Domain.Primitives.ValueObjects;
 
 namespace Logistics.Application.Tests.TestKit;
 
-/// <summary>
-/// Valid entities with only the fields tests vary as parameters; set anything else on the result.
-/// Also compiled into the AI tests through a linked file.
-/// </summary>
+/// <summary>Shared test data builders; the AI test project also compiles this file through a linked file.</summary>
 internal static class TestData
 {
     public static Address Address(string country = "US") => new()

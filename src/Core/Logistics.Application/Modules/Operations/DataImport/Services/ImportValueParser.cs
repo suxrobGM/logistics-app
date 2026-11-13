@@ -1,4 +1,5 @@
 using System.Globalization;
+using Logistics.Domain.Primitives;
 using Logistics.Domain.Primitives.Enums;
 using Logistics.Domain.Primitives.Geo;
 
@@ -10,8 +11,6 @@ namespace Logistics.Application.Modules.Operations.DataImport.Services;
 /// </summary>
 internal static class ImportValueParser
 {
-    private const decimal MetersPerFoot = 0.3048m;
-
     private static readonly string[] IsoDateFormats =
         ["yyyy-MM-dd", "yyyy-MM-ddTHH:mm:ss", "yyyy-MM-dd HH:mm", "yyyy-MM-dd HH:mm:ss", "yyyy/MM/dd"];
 
@@ -136,6 +135,6 @@ internal static class ImportValueParser
                                    unit.Contains("metre"));
 
         var feet = isFeet || (!isMeters && region == Region.US);
-        return feet ? Math.Round(length * MetersPerFoot, 2) : length;
+        return feet ? Math.Round(length * ImperialUnits.MetersPerFoot, 2) : length;
     }
 }

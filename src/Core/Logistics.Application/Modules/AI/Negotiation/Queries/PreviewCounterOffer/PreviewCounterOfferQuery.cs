@@ -4,10 +4,7 @@ using Logistics.Shared.Models;
 
 namespace Logistics.Application.Modules.AI.Negotiation.Queries;
 
-/// <summary>
-/// Renders the email a pending counter-offer decision would send, so approving it is a decision
-/// about the real message rather than about a summary of it.
-/// </summary>
+/// <summary>Renders the email that a pending counter-offer decision would send, for the approver to review.</summary>
 [RequiresFeature(TenantFeature.AINegotiation)]
 public class PreviewCounterOfferQuery : IQuery<Result<CounterOfferPreviewDto>>
 {

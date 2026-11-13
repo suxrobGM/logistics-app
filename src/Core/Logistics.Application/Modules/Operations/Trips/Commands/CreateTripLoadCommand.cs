@@ -5,10 +5,7 @@ using Logistics.Shared.Models;
 
 namespace Logistics.Application.Modules.Operations.Trips.Commands;
 
-/// <summary>
-///     Nested load payload for trip create/update; not a dispatched command. Carries the same fields as
-///     <see cref="CreateLoadCommand"/> except the truck, which the trip sets.
-/// </summary>
+/// <summary>A load created inside a CreateTripCommand, not sent through the mediator on its own. Its truck comes from the trip.</summary>
 public record CreateTripLoadCommand : ILoadDetails, ILoadChargeFields
 {
     /// <summary>Client-side id that optimized stops use to reference this load before it exists.</summary>

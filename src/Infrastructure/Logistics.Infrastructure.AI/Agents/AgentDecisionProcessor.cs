@@ -14,12 +14,7 @@ using Microsoft.Extensions.Logging;
 
 namespace Logistics.Infrastructure.AI.Agents;
 
-/// <summary>
-/// Processes LLM tool calls into AgentDecision entities.
-/// Write tools become Suggested decisions awaiting dispatcher approval unless auto-approve applies; read tools execute
-/// immediately. Write/permission/decision-type behavior comes from the tool's
-/// <see cref="AgentToolDefinition"/> metadata - there is no tool-name list here.
-/// </summary>
+/// <summary>Executes or records the agent's tool calls as decisions. Whether a tool writes data or needs a permission comes from its metadata, not from a list of tool names.</summary>
 internal sealed class AgentDecisionProcessor(
     IAgentToolExecutor toolExecutor,
     IAgentToolRegistry toolRegistry,
@@ -159,10 +154,7 @@ internal sealed class AgentDecisionProcessor(
         }
     }
 
-    /// <summary>
-    /// Sanitized: the error lands on a tenant-visible decision row AND goes back into the model's
-    /// context, so a raw exception could leak connection strings or vendor credentials.
-    /// </summary>
+    /// <summary>Marks the decision failed and returns the error JSON. The exception text is sanitized, since it is stored on a tenant-visible row and sent back to the model.</summary>
     private string Fail(AgentSession session, AgentDecision decision, string toolName, Exception ex)
     {
         logger.LogWarning(ex, "Session {SessionId}: tool {ToolName} failed", session.Id, toolName);
@@ -187,10 +179,7 @@ internal sealed class AgentDecisionProcessor(
         };
     }
 
-    /// <summary>
-    /// The keys come from the tool's own input type, so renaming a property moves the audit link
-    /// with it rather than dropping it here without a word.
-    /// </summary>
+    /// <summary>Copies entity ids (load, truck, trip, ...) from the tool input onto the decision for audit links. The input keys come from the tool's input type, so renaming a property keeps the link.</summary>
     private static void ExtractEntityIds(AgentDecision decision, JsonNode? input)
     {
         if (input is null)

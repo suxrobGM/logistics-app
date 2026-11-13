@@ -3,10 +3,7 @@ using Logistics.Domain.Primitives.ValueObjects;
 
 namespace Logistics.Shared.Models;
 
-/// <summary>
-/// A broker rate negotiation thread. <c>Messages</c> is populated by the detail query only.
-/// The reply token is never exposed - it is the address secret that routes inbound mail.
-/// </summary>
+/// <summary>A rate negotiation for clients. The reply token is left out because it is what routes inbound mail to the thread.</summary>
 public record RateNegotiationDto
 {
     public Guid Id { get; set; }

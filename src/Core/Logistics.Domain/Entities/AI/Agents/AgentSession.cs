@@ -3,10 +3,6 @@ using Logistics.Domain.Primitives.Enums;
 
 namespace Logistics.Domain.Entities;
 
-/// <summary>
-/// Represents a single AI dispatch agent run.
-/// Tracks the agent's status, token usage, and all decisions made.
-/// </summary>
 public class AgentSession : AuditableEntity, ITenantEntity
 {
     public AgentSessionStatus Status { get; private set; } = AgentSessionStatus.Running;
@@ -69,10 +65,7 @@ public class AgentSession : AuditableEntity, ITenantEntity
     /// </summary>
     public string? ErrorMessage { get; set; }
 
-    /// <summary>
-    /// Whether this session exceeded the tenant's weekly AI request quota.
-    /// Overage sessions are billed at the plan's overage rate.
-    /// </summary>
+    /// <summary>True when the session ran past the plan's AI quota and is billed at the plan's overage rate.</summary>
     public bool IsOverage { get; set; }
 
     public virtual List<AgentDecision> Decisions { get; } = [];

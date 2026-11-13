@@ -13,10 +13,7 @@ using Microsoft.Extensions.Options;
 
 namespace Logistics.Infrastructure.AI.Agents;
 
-/// <summary>
-/// The one turn lifecycle every conversational agent runs through - gates, session, agent loop,
-/// transcript persistence, broadcasts. Per-agent behavior comes from <see cref="IAgentSurface"/>.
-/// </summary>
+/// <summary>Runs one agent turn for any agent; copilot- and dispatch-specific behavior comes from <see cref="IAgentSurface"/>.</summary>
 internal sealed class AgentTurnService(
     IOptions<LlmOptions> options,
     AgentLoopRunner loopRunner,
@@ -154,11 +151,7 @@ internal sealed class AgentTurnService(
         return newMessages;
     }
 
-    /// <summary>
-    /// The user rows this turn answers were saved before its session existed: the dispatcher's
-    /// message, plus any broker reply that landed while the previous turn ran. Stamped now, because a
-    /// broker reply arriving mid-turn belongs to the turn its wake-up starts, not this one.
-    /// </summary>
+    /// <summary>Assigns this session to the conversation's user messages not yet claimed by a turn. Done at turn start, so a broker reply saved mid-turn is left for the next turn.</summary>
     private async Task StampTriggerMessagesAsync(
         AgentConversation conversation, AgentSession session, CancellationToken ct)
     {
@@ -174,10 +167,7 @@ internal sealed class AgentTurnService(
         }
     }
 
-    /// <summary>
-    /// Maps the turn's appended LLM messages onto transcript rows. Tool-result rows get a null
-    /// DisplayText - replayed to the provider, never rendered.
-    /// </summary>
+    /// <summary>Saves the messages the turn appended. Tool-result messages get a null DisplayText: they are replayed to the LLM but never shown in the UI.</summary>
     private async Task<List<AgentMessage>> PersistTurnMessagesAsync(
         AgentConversation conversation,
         AgentSession session,

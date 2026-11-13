@@ -4,10 +4,7 @@ using Logistics.Domain.Primitives.Enums;
 
 namespace Logistics.Domain.Entities;
 
-/// <summary>
-/// One transcript row of an agent conversation. <see cref="ContentJson"/> is replayed to the
-/// provider; <see cref="DisplayText"/> is what the UI renders.
-/// </summary>
+/// <summary>A message in an agent conversation. <see cref="ContentJson"/> is the provider-format content replayed to the LLM; <see cref="DisplayText"/> is what the UI shows.</summary>
 public class AgentMessage : Entity, ITenantEntity
 {
     public Guid ConversationId { get; set; }
@@ -27,19 +24,12 @@ public class AgentMessage : Entity, ITenantEntity
     /// <summary>Null only for a user message created before its turn's session exists.</summary>
     public Guid? SessionId { get; set; }
 
-    /// <summary>
-    /// The person this row is attributable to - the dispatcher who typed it, or who approved or
-    /// rejected the decision a system note reports. Null for the agent's own messages, for notices
-    /// no person caused, and for the broker-reply envelope, which comes from outside the tenant.
-    /// </summary>
+    /// <summary>User who sent the message; null for agent messages, app-generated notices no user triggered, and inbound broker replies.</summary>
     public Guid? SentByUserId { get; set; }
 
     public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
 
-    /// <summary>
-    /// A plain text row in the transcript block format (<c>[{"type":"text","text":...}]</c>).
-    /// The only place that shape is written outside the AI infrastructure's codec - keep both in sync.
-    /// </summary>
+    /// <summary>Builds a plain-text message. AgentTranscriptCodec writes the same ContentJson shape, so the two must match.</summary>
     public static AgentMessage TextMessage(
         Guid conversationId, int sequence, AgentMessageRole role, string text, Guid? sentByUserId = null)
     {

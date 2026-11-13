@@ -5,10 +5,7 @@ using Microsoft.EntityFrameworkCore.Metadata.Conventions;
 
 namespace Logistics.Infrastructure.Persistence.Conventions;
 
-/// <summary>
-/// Sizes the ISO code columns inside value objects, nested ones included: <see cref="Money.Currency"/> to 3
-/// characters (ISO 4217) and <see cref="Address.Country"/> to 2 (ISO 3166-1 alpha-2).
-/// </summary>
+/// <summary>Sets the max length of ISO code columns in value objects: 3 for currency codes, 2 for country codes.</summary>
 public class IsoCodeLengthConvention : IModelFinalizingConvention
 {
     public void ProcessModelFinalizing(

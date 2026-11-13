@@ -7,14 +7,7 @@ using Logistics.Domain.Primitives.Enums;
 
 namespace Logistics.API.Jobs;
 
-/// <summary>
-///     Nightly job that turns each tenant's AI dispatch approve/reject history into a short
-///     dispatch policy injected into the agent's system prompt.
-///     <para>
-///     Daily rather than weekly: the learner's watermark makes a quiet night cost one query and no
-///     tokens, so a new preference can reach the agent within 24h of the rejection that taught it.
-///     </para>
-/// </summary>
+/// <summary>Daily job that updates each tenant's learned dispatch policy. A tenant with no new decisions since the learner's watermark costs one query and no LLM tokens.</summary>
 public class AIDispatchPolicyLearningJob(
     ILogger<AIDispatchPolicyLearningJob> logger,
     IServiceScopeFactory scopeFactory)
@@ -27,10 +20,7 @@ public class AIDispatchPolicyLearningJob(
             Cron.Daily(4));
     }
 
-    /// <summary>
-    ///     Retries are safe: tenants the failed attempt already processed have an advanced watermark
-    ///     and skip without calling the LLM again.
-    /// </summary>
+    /// <summary>Runs the learner for every tenant. Retrying is safe: tenants already processed have an advanced watermark and skip the LLM call.</summary>
     [AutomaticRetry(Attempts = 2)]
     public Task ProcessAllTenantsAsync(CancellationToken ct) =>
         TenantJobRunner.ForEachTenantAsync(

@@ -7,10 +7,7 @@ namespace Logistics.Infrastructure.Integrations.LoadBoard.Providers.Dat;
 
 internal static class DatMapper
 {
-    /// <summary>
-    /// A search match as a listing. DAT gives a city, state and coordinates but no street or ZIP,
-    /// so those stay empty; a match carries no posting expiry, so neither does the listing.
-    /// </summary>
+    /// <summary>Maps a DAT match to a listing; null when it has no id. DAT provides no street, ZIP or posting expiry, so those stay empty.</summary>
     public static LoadBoardListingDto? ToListingDto(DatMatch match)
     {
         var id = match.PostingId ?? match.MatchId;
@@ -49,10 +46,7 @@ internal static class DatMapper
         };
     }
 
-    /// <summary>
-    /// DAT posts either a trip total (FLAT) or a per-mile rate; the other is derived from the trip
-    /// length when there is one.
-    /// </summary>
+    /// <summary>Total and per-mile rate of a DAT posting. DAT posts one of the two and the other is derived from the trip length; both null when no rate is posted.</summary>
     private static (decimal? Total, decimal? PerMile) ToRates(DatRate? rate, double? distance)
     {
         if (rate?.BaseRate?.Amount is not { } amount || amount <= 0)

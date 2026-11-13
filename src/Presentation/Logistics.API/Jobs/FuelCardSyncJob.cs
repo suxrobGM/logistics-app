@@ -10,10 +10,6 @@ using Logistics.Shared.Models;
 
 namespace Logistics.API.Jobs;
 
-/// <summary>
-///     Hangfire job that pulls fuel card transactions nightly for all tenants with an
-///     active provider configuration, materializing matched transactions as fuel expenses.
-/// </summary>
 public class FuelCardSyncJob(
     ILogger<FuelCardSyncJob> logger,
     IServiceScopeFactory scopeFactory)

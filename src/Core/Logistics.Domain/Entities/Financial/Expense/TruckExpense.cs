@@ -20,10 +20,7 @@ public class TruckExpense : TruckLinkedExpense
     /// </summary>
     public long? OdometerMeters { get; set; }
 
-    /// <summary>
-    ///     Quantity purchased (typically fuel volume). Captured in <see cref="QuantityUnit"/>;
-    ///     never auto-converted between units.
-    /// </summary>
+    /// <summary>Fuel volume purchased, in <see cref="QuantityUnit"/>; stored as entered and never converted between units.</summary>
     public decimal? Quantity { get; set; }
 
     /// <summary>
@@ -31,10 +28,7 @@ public class TruckExpense : TruckLinkedExpense
     /// </summary>
     public VolumeUnit? QuantityUnit { get; set; }
 
-    /// <summary>
-    ///     Jurisdiction (country + state/province) where the purchase happened.
-    ///     Set by fuel-card sync or manual entry; feeds IFTA per-jurisdiction gallons.
-    /// </summary>
+    /// <summary>Jurisdiction where the fuel was bought; IFTA reports sum fuel volume per jurisdiction from it.</summary>
     public TaxJurisdiction? PurchaseJurisdiction { get; set; }
 
     /// <summary>

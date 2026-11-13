@@ -13,10 +13,7 @@ internal static class AIDispatchSystemPrompt
         - Give each suggestion one or two lines of reasoning the dispatcher can act on.
         """;
 
-    /// <summary>
-    /// Static per tenant - no date, no per-request text - so it stays cached across turns; the time
-    /// comes from each message's <c>[Sent: ...]</c> stamp.
-    /// </summary>
+    /// <summary>Builds the dispatch system prompt. It holds no per-turn data (the current time comes from each message's timestamp), so it stays identical per tenant and the provider can cache it.</summary>
     public static string Build(DispatchPromptContext context)
     {
         var isKm = context.DistanceUnit == DistanceUnit.Kilometers;
@@ -177,10 +174,7 @@ internal static class AIDispatchSystemPrompt
             """;
     }
 
-    /// <summary>
-    /// The ranking language is load-bearing: policy text is untrusted, on a prompt-injection path,
-    /// and must never promote itself to a hard rule.
-    /// </summary>
+    /// <summary>Prompt section for the learned dispatch policy. It is worded as ranking preferences because the policy is LLM-generated text, which must never act as a hard rule.</summary>
     private static string BuildPolicySection(LearnedDispatchPolicy? policy)
     {
         if (policy is null)
@@ -216,10 +210,7 @@ internal static class AIDispatchSystemPrompt
     private static string Subsection(string heading, string? content) =>
         content is null ? "" : $"### {heading}\n{content}\n\n";
 
-    /// <summary>
-    /// Strips control characters (newlines and tabs survive) and keeps whole lines only - the last
-    /// point before untrusted policy text reaches the model, so both steps live here.
-    /// </summary>
+    /// <summary>Strips control characters and cuts the policy text to whole lines within <paramref name="maxChars"/>; null when blank. The last sanitization before the untrusted text reaches the model.</summary>
     private static string? ClampPolicyText(string? text, int maxChars)
     {
         if (string.IsNullOrWhiteSpace(text))

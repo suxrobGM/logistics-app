@@ -4,10 +4,7 @@ using Logistics.Domain.Primitives.ValueObjects;
 
 namespace Logistics.Domain.Entities;
 
-/// <summary>
-/// One invoice on a schedule of accounts and what the factor did with it. Rejected and charged-back
-/// invoices keep their row, so a schedule's history survives a resubmission.
-/// </summary>
+/// <summary>One invoice in a factoring batch. Rejected and charged-back items keep their row, so an invoice's factoring history survives resubmission in a later batch.</summary>
 public class FactoringBatchItem : AuditableEntity, ITenantEntity
 {
     public required Guid BatchId { get; set; }
@@ -54,11 +51,7 @@ public class FactoringBatchItem : AuditableEntity, ITenantEntity
     public decimal ReserveOutstanding =>
         Status == FactoringStatus.Funded ? (ReserveAmount ?? 0m) - ReserveReleasedAmount : 0m;
 
-    /// <summary>
-    /// Record the factor buying the invoice. The sale settles the customer's balance with the carrier, so
-    /// the invoice is paid in full by a payment for its total; the factor's advance, fee and reserve are
-    /// kept here. Add the returned payment with the repository.
-    /// </summary>
+    /// <summary>Marks the item funded and returns a payment settling the invoice in full, since the factor has bought it. The caller adds the payment with the repository.</summary>
     public Payment Fund(decimal advance, decimal fee, DateTime fundedAt, Address billingAddress)
     {
         EnsureStatus(FactoringStatus.Submitted, "funded");
@@ -109,10 +102,7 @@ public class FactoringBatchItem : AuditableEntity, ITenantEntity
         ReserveReleasedAt = releasedAt;
     }
 
-    /// <summary>
-    /// The factor sold the invoice back because the customer did not pay it (recourse). The sale payment
-    /// is reversed, so the customer owes the carrier again. Returns that payment for the caller to delete.
-    /// </summary>
+    /// <summary>Marks the item charged back (recourse) and removes the funding payment from the invoice. Returns that payment for the caller to delete, or null when there is none.</summary>
     public Payment? ChargeBack(DateTime chargedBackAt)
     {
         EnsureStatus(FactoringStatus.Funded, "charged back");

@@ -3,10 +3,7 @@ using Logistics.Domain.Primitives.Enums;
 
 namespace Logistics.Domain.Events;
 
-/// <summary>
-/// Raised whenever an invoice's <c>Subtotal</c>, <c>TaxTotal</c>, or <c>Total</c> changes
-/// as a result of <see cref="Entities.Invoice.RecalculateTotals"/>.
-/// </summary>
+/// <summary>Raised by <see cref="Entities.Invoice.RecalculateTotals"/> when the totals change.</summary>
 public record InvoiceTotalsRecalculatedEvent(
     Guid InvoiceId,
     decimal Subtotal,

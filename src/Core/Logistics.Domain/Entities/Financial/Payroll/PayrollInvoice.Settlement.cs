@@ -2,30 +2,21 @@ using Logistics.Domain.Primitives.Enums;
 
 namespace Logistics.Domain.Entities;
 
-/// <summary>
-/// Settlement lines: gross pay first, then one negative line per deduction, so <see cref="Invoice.Total"/>
-/// is the net. Hand-added lines (one-off deductions, reimbursements, bonuses) are kept on a rebuild.
-/// </summary>
+/// <summary>Settlement lines of a driver payroll invoice. Deductions are stored as negative lines, so <see cref="Invoice.Total"/> is net pay.</summary>
 public partial class PayrollInvoice
 {
     /// <summary>True for a line <see cref="ReplaceSettlementLines"/> owns and rebuilds.</summary>
     public static bool IsGeneratedLine(InvoiceLineItem line) =>
         line.Type == InvoiceLineItemType.BasePay || line.SourceId is not null;
 
-    /// <summary>
-    /// The stored amount for a hand-entered settlement line: deductions are always negative whatever
-    /// sign was typed. Escrow keeps its sign - negative holds money back, positive releases it.
-    /// </summary>
+    /// <summary>Applies the sign convention for settlement lines: deductions are always negative, while escrow keeps its sign (negative withholds, positive releases).</summary>
     public static decimal SignedLineAmount(InvoiceLineItemType type, decimal amount) =>
         type.IsPayDeduction() && type != InvoiceLineItemType.Escrow ? -Math.Abs(amount) : amount;
 
     protected override decimal SignLineAmount(InvoiceLineItemType type, decimal amount) =>
         SignedLineAmount(type, amount);
 
-    /// <summary>
-    /// Swaps the generated lines for ones built from <paramref name="inputs"/> and recalculates the
-    /// totals. The caller registers the removed and added lines with the repository.
-    /// </summary>
+    /// <summary>Rebuilds the generated settlement lines from <paramref name="inputs"/> and returns the removed and added lines. The caller removes and adds them with the repository.</summary>
     public (IReadOnlyList<InvoiceLineItem> Removed, IReadOnlyList<InvoiceLineItem> Added) ReplaceSettlementLines(
         SettlementInputs inputs)
     {

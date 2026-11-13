@@ -43,10 +43,7 @@ public class AIDispatchController(IMediator mediator) : ControllerBase
         return result.ToActionResult();
     }
 
-    /// <summary>
-    ///     Send a message to a tenant-shared dispatch conversation. The turn runs in the background;
-    ///     progress and the reply arrive over the dispatch SignalR hub for every connected client.
-    /// </summary>
+    /// <summary>Posts a message to a dispatch conversation and starts a turn in the background (202 Accepted); the reply is pushed to every client over the dispatch SignalR hub.</summary>
     [HttpPost("conversations/{conversationId:guid}/messages", Name = "SendAIDispatchMessage")]
     [ProducesResponseType(typeof(SendAgentMessageResultDto), StatusCodes.Status202Accepted)]
     [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status400BadRequest)]

@@ -65,10 +65,7 @@ internal sealed class UpdateEmployeeHandler(
         return Result.Ok();
     }
 
-    /// <summary>
-    /// Only Active employees drive, so one leaving Active gives up their truck seats; readers of a truck's
-    /// drivers then never see an inactive one.
-    /// </summary>
+    /// <summary>Removes the employee as main or secondary driver from every truck. Called when the employee leaves Active status, since only Active employees drive.</summary>
     private async Task ReleaseTruckSeatsAsync(Guid employeeId, CancellationToken ct)
     {
         var trucks = await tenantUow.Repository<Truck>()

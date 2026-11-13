@@ -15,10 +15,7 @@ internal sealed record ImportOptions(
     DateFormatType DateFormat,
     string DefaultCountry)
 {
-    /// <summary>
-    ///     Reads dates, money and countries the way the tenant's own forms do. A blank country falls
-    ///     back to the company's own country.
-    /// </summary>
+    /// <summary>Builds the import options from tenant settings. Rows with a blank country get the default country: US for US-region tenants, else the company address country (DE when unknown).</summary>
     public static ImportOptions For(Tenant tenant, bool commit, bool updateExisting, bool sendInvitations)
     {
         var settings = tenant.Settings;

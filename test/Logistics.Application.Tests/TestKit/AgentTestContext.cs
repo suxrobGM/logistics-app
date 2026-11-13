@@ -18,10 +18,6 @@ using NSubstitute;
 
 namespace Logistics.Application.Tests.TestKit;
 
-/// <summary>
-/// Shared substitute rig for the AI dispatch/copilot handler tests: the unit of work, current user
-/// and Agent* repositories, the real shared services built over them, and fixture builders.
-/// </summary>
 internal sealed class AgentTestContext
 {
     public ITenantUnitOfWork TenantUow { get; } = Substitute.For<ITenantUnitOfWork>();
@@ -167,10 +163,7 @@ internal sealed class AgentTestContext
         return decision;
     }
 
-    /// <summary>
-    /// Linked both ways: the notes service reaches the conversation by projecting off the session
-    /// query, not through the decision's navigation.
-    /// </summary>
+    /// <summary>Links the session and decision in both directions, because the notes service reads decisions through the session rather than the decision's navigation.</summary>
     private AgentDecision SuggestedDecision(
         AgentConversation conversation, string toolName, string toolInput)
     {

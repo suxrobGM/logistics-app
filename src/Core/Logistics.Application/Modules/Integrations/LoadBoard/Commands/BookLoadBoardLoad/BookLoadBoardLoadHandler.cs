@@ -156,13 +156,7 @@ internal sealed class BookLoadBoardLoadHandler(
         });
     }
 
-    /// <summary>
-    /// A negotiated rate is only meaningful against the thread that produced it, and the rate the
-    /// load is actually booked at may never undercut the floor that thread opened at - the floor
-    /// snapshot, not a fresh lookup, since the lane floor may have moved since the offer went out.
-    /// Omitting <paramref name="negotiatedRate"/> books at the listing's own rate, which is checked
-    /// the same way rather than skipping the floor.
-    /// </summary>
+    /// <summary>Checks the booking rate against the floor snapshot stored on the negotiation, not a fresh lane lookup, since the lane floor may have been edited after the thread opened.</summary>
     private static Result CheckBookingRate(
         decimal? negotiatedRate, decimal bookedRate, RateNegotiation? negotiation)
     {

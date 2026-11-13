@@ -80,10 +80,7 @@ public class LoadDto
     /// <summary>Oldest first.</summary>
     public List<CustomerUpdateDto> CustomerUpdates { get; set; } = [];
 
-    /// <summary>
-    ///     Set on a single-load read when the assigned truck's open loads carry more vehicles than
-    ///     its <c>VehicleCapacity</c>. A warning, not a block.
-    /// </summary>
+    /// <summary>Set when the load's vehicles exceed the assigned truck's capacity; null otherwise. A warning only: it does not block the assignment.</summary>
     public string? VehicleCapacityWarning { get; set; }
 
     public IEnumerable<string>? AssignedTruckDriversName { get; set; }

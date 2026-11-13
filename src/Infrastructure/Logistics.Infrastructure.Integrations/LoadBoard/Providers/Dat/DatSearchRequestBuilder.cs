@@ -4,10 +4,6 @@ using Logistics.Shared.Models;
 
 namespace Logistics.Infrastructure.Integrations.LoadBoard.Providers.Dat;
 
-/// <summary>
-/// Turns our search criteria into a DAT freight-matching query, and applies the criteria DAT's
-/// query has no field for to the matches it returns.
-/// </summary>
 internal static class DatSearchRequestBuilder
 {
     public static DatSearchRequest Build(LoadBoardSearchCriteria criteria, int maxAgeMinutes)
@@ -40,10 +36,7 @@ internal static class DatSearchRequestBuilder
         });
     }
 
-    /// <summary>
-    /// DAT's query takes no weight, length or state-only destination, so those are checked here.
-    /// A listing that does not state its weight or length passes.
-    /// </summary>
+    /// <summary>Applies the weight and length filters DAT's query cannot express; listings that post no weight or length pass.</summary>
     public static bool MatchesLocalFilters(LoadBoardListingDto listing, LoadBoardSearchCriteria criteria)
     {
         if (criteria.MaxWeightKg is { } maxWeight && listing.WeightKg > maxWeight)
@@ -62,7 +55,7 @@ internal static class DatSearchRequestBuilder
                string.Equals(listing.DestinationAddress.State, destinationState.Trim(), StringComparison.OrdinalIgnoreCase);
     }
 
-    /// <summary>DAT takes the deadhead radius in whole miles.</summary>
+    /// <summary>Converts a place to a DAT search point. DAT takes the deadhead radius in whole miles, so <paramref name="radiusMeters"/> is converted.</summary>
     private static DatPlace ToPlace(LoadBoardPlace place, int radiusMeters) => new(new DatPoint
     {
         City = place.City!.Trim(),

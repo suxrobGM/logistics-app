@@ -29,10 +29,7 @@ internal static class SamsaraMapper
         };
     }
 
-    /// <summary>
-    /// Samsara log entries carry no id, so the driver id plus start time stands in for one: an edit
-    /// that moves the start time becomes a new entry and the sync drops the old one.
-    /// </summary>
+    /// <summary>Maps a Samsara HOS log entry; null for unmapped duty statuses. Samsara entries have no id, so driver id plus start time serves as one, and an entry whose start time changes is stored as new.</summary>
     public static EldHosLogEntryDto? MapToLogDto(string driverId, SamsaraHosLogEntry entry)
     {
         var status = MapDutyStatus(entry.HosStatusType);
@@ -123,10 +120,7 @@ internal static class SamsaraMapper
         };
     }
 
-    /// <summary>
-    /// Only events Samsara actually publishes: the 2.0 driver/vehicle events and an <c>AlertIncident</c> whose
-    /// condition is an HOS violation. <c>Ping</c>, 1.0 <c>Alert</c> and every other alert map to Unknown.
-    /// </summary>
+    /// <summary>Maps a Samsara webhook. Only events Samsara publishes are handled; Ping, legacy 1.0 Alert and other alert types map to Unknown.</summary>
     public static EldWebhookResultDto MapToWebhookResult(SamsaraWebhookPayload webhook)
     {
         var hosViolationDriver = webhook.Data?.Conditions?
@@ -184,10 +178,7 @@ internal static class SamsaraMapper
         };
     }
 
-    /// <summary>
-    /// Samsara reports no severity. Ours follows the FMCSA CSA weighting: hours-limit breaches outrank
-    /// a missed break, which outranks paperwork (unsubmitted logs, off-duty deferral rules).
-    /// </summary>
+    /// <summary>Severity of an HOS violation type. Samsara reports none, so this follows the FMCSA CSA severity weights.</summary>
     private static int MapSeverity(HosViolationType type)
     {
         return type switch

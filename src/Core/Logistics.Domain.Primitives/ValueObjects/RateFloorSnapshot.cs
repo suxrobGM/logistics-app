@@ -2,11 +2,7 @@ using Logistics.Domain.Primitives.Enums;
 
 namespace Logistics.Domain.Primitives.ValueObjects;
 
-/// <summary>
-/// The rate floor in force when a negotiation opened, frozen so later edits to the lane floor never
-/// move the bar mid-thread. <see cref="Source"/> is <see cref="RateFloorSource.None"/> when nothing
-/// covered the lane, which every rate check must read as "cannot be checked" rather than "no limit".
-/// </summary>
+/// <summary>The rate floor copied onto a negotiation when it opens, so later lane floor edits do not change it. Source None means no floor applied and offers cannot be checked.</summary>
 public record RateFloorSnapshot(
     decimal? MinRatePerKm,
     Money? MinTotalRate,

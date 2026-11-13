@@ -5,15 +5,11 @@ namespace Logistics.Application.Modules.Integrations.FuelCards.Services;
 
 internal static class FuelCardExpenseFactory
 {
-    /// <summary>Expenses are in the tenant currency, so a transaction in any other stays unmatched.</summary>
+    /// <summary>True when the transaction is in the tenant currency. Expenses are stored in tenant currency, so transactions in other currencies get no expense.</summary>
     public static bool CanCreateExpense(FuelCardTransaction transaction, string tenantCurrency) =>
         string.Equals(transaction.Amount.Currency, tenantCurrency, StringComparison.OrdinalIgnoreCase);
 
-    /// <summary>
-    /// Materializes a TruckExpense from a matched fuel card transaction. Created as Paid -
-    /// card transactions are already-settled funds, so routing them through the Pending
-    /// approval flow would only create busywork.
-    /// </summary>
+    /// <summary>Creates a Paid fuel expense for the truck, since card transactions are already settled.</summary>
     public static TruckExpense CreateExpense(FuelCardTransaction transaction, Guid truckId)
     {
         return new TruckExpense

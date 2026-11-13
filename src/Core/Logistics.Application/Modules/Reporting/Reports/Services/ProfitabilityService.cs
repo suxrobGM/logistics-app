@@ -33,7 +33,7 @@ internal sealed partial class ProfitabilityService(ITenantUnitOfWork tenantUow) 
 
         var period = new PayPeriod(from, to);
         var rows = loads.ToDictionary(l => l.Id, l => CreateRow(l, trucks, funded, factors));
-        var unallocatedDriverPay = AddDriverPay(rows, loadsByDriver, tripDrivers, drivers, hours, unit, period);
+        var unallocatedDriverPay = AddDriverPay(rows, loadsByDriver, tripDrivers, drivers, hours, period);
         var unallocatedTruckCosts = AddTruckCosts(loads, rows, truckCosts);
 
         foreach (var row in rows.Values)
@@ -108,7 +108,6 @@ internal sealed partial class ProfitabilityService(ITenantUnitOfWork tenantUow) 
         ILookup<Guid, TripDriverRow> tripDrivers,
         Dictionary<Guid, Employee> drivers,
         Dictionary<Guid, decimal> hours,
-        DistanceUnit unit,
         PayPeriod period)
     {
         var unallocated = 0m;

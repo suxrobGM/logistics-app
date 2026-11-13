@@ -6,11 +6,7 @@ using Logistics.Shared.Models;
 
 namespace Logistics.Infrastructure.AI.Agents.Copilot;
 
-/// <summary>
-/// Today's copilot behavior as an <see cref="IAgentSurface"/>: a permission-scoped tool catalogue
-/// built from the triggering user's own permissions, and broadcasts routed to the conversation
-/// owner's private copilot hub group.
-/// </summary>
+/// <summary>Copilot turn setup: tools are limited to the requesting user's permissions, and updates go only to that user's SignalR group.</summary>
 internal sealed class CopilotAgentSurface(
     AICopilotConversationBuilder conversationBuilder,
     IAICopilotBroadcastService broadcastService,

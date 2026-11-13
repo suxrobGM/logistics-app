@@ -7,10 +7,7 @@ using NSubstitute;
 
 namespace Logistics.Infrastructure.Tests.Persistence.Services;
 
-/// <summary>
-/// The memo is what keeps a request that gates on several features from paying 3-5 master-DB round
-/// trips per check. It is invisible in behaviour, so these assert the round-trip counts directly.
-/// </summary>
+/// <summary>FeatureService's in-memory cache does not change results, so these tests assert repository round-trip counts directly.</summary>
 public class FeatureServiceCachingTests
 {
     private readonly IMasterRepository<TenantFeatureConfig, Guid> _configRepo =

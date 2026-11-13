@@ -3,11 +3,7 @@ using System.Text.Json.Serialization;
 
 namespace Logistics.Shared.Models;
 
-/// <summary>
-/// The one declaration of what the UI-rendered tools return: snake_case for the model, generated
-/// camelCase for the UI on <see cref="AgentDecisionDto.ToolResult"/>. A union - each tool sets only
-/// its own keys.
-/// </summary>
+/// <summary>Tool output fields the UI renders, merged into one type; each rendered tool sets only its own fields.</summary>
 public class AgentToolResultDto
 {
     [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
@@ -158,11 +154,7 @@ public class AgentToolHosCheckDto
     public string? Reason { get; set; }
 }
 
-/// <summary>
-/// The model-facing wire format: snake_case, because the system prompts name the keys verbatim.
-/// Nested records still write their nulls - an explicit <c>"main_driver": null</c> tells the model
-/// the truck has no driver, where an absent key leaves it to infer one.
-/// </summary>
+/// <summary>JSON settings for tool results. Keys are snake_case because the prompts name them, and nested nulls are written so the model does not guess at missing fields.</summary>
 public static class AgentToolResultJson
 {
     public static readonly JsonSerializerOptions Options = new()
@@ -173,17 +165,11 @@ public static class AgentToolResultJson
     public static string Serialize(AgentToolResultDto result) =>
         JsonSerializer.Serialize(result, Options);
 
-    /// <summary>
-    /// Keys worth projecting. Without this gate every unrelated tool payload deserializes into an
-    /// all-null object, since unknown properties are simply skipped.
-    /// </summary>
+    /// <summary>Top-level keys of the tool outputs this type models. Without this check, unrelated payloads would deserialize into all-null objects.</summary>
     private static readonly string[] RenderedKeys =
         ["error", "success", "feasible", "loads", "trucks", "results", "fleet_summary", "has_floor"];
 
-    /// <summary>
-    /// A persisted tool output as the typed shape, or null when this union does not model it -
-    /// the normal case, since most tools' output the UI never renders.
-    /// </summary>
+    /// <summary>Parses tool output JSON; null when the output is not one this type models, which is the common case.</summary>
     public static AgentToolResultDto? Deserialize(string? json)
     {
         if (string.IsNullOrWhiteSpace(json))

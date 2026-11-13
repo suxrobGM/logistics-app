@@ -10,10 +10,6 @@ using Logistics.Domain.Primitives.ValueObjects;
 
 namespace Logistics.DbMigrator.Seeders.FakeData;
 
-/// <summary>
-/// Seeds car-hauler trips made of multi-leg Vehicle loads, using region-specific corridor names
-/// and route points.
-/// </summary>
 internal class TripSeeder(
     ILogger<TripSeeder> logger,
     IInvoiceTaxApplier taxApplier) : SeederBase(logger)

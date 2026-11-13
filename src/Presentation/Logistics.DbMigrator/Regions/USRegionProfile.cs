@@ -11,7 +11,7 @@ internal sealed class USRegionProfile : IRegionProfile
     public Region Region => Region.US;
     public string DisplayName => "US Demo";
     public CurrencyCode Currency => CurrencyCode.USD;
-    /// <summary>$2.10 per mile.</summary>
+    /// <summary>Default rate floor per km in USD, equal to about $2.10 per mile.</summary>
     public decimal DefaultRateFloorPerKm => 1.30m;
     public DistanceUnit DistanceUnit => DistanceUnit.Miles;
     public WeightUnit WeightUnit => WeightUnit.Pounds;

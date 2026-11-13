@@ -8,10 +8,6 @@ using Microsoft.Extensions.Logging;
 
 namespace Logistics.Infrastructure.AI.Agents.Copilot;
 
-/// <summary>
-/// Builds the LLM conversation for one copilot turn: system prompt, the caller-scoped tool
-/// catalogue, and the message sequence rebuilt from the persisted transcript.
-/// </summary>
 internal sealed class AICopilotConversationBuilder(
     IAgentToolRegistry toolRegistry,
     LlmSessionSetup sessionSetup,

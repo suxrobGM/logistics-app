@@ -9,11 +9,7 @@ using Logistics.Shared.Models;
 
 namespace Logistics.Application.Modules.AI.AIDispatch.Commands;
 
-/// <summary>
-/// Dispatch conversations are tenant-shared: no ownership check, only the endpoint's
-/// <c>Permission.AIDispatch.Manage</c> policy gates who may send. <c>CreatedById</c> stays whoever
-/// created the conversation, for audit only.
-/// </summary>
+/// <summary>Saves the user's message to a dispatch conversation and queues the agent turn as a background job. Dispatch conversations are shared by the whole tenant, so there is no per-user ownership check.</summary>
 internal sealed class SendAIDispatchMessageHandler(
     IAgentConversationCommands commands,
     ICurrentUserService currentUser,

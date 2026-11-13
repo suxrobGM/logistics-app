@@ -10,10 +10,7 @@ internal static class ModelBuilderAuditExtensions
 {
     extension(ModelBuilder modelBuilder)
     {
-        /// <summary>
-        ///     Apply audit-field conventions to all entities implementing <see cref="IAuditableEntity" />.
-        ///     Call from <c>OnModelCreating</c> after your entity configurations.
-        /// </summary>
+        /// <summary>Applies the auditable-entity conventions to every entity type. Call it in <c>OnModelCreating</c> after the entity configurations, so it sees all of them.</summary>
         public void ApplyAuditableConventions()
         {
             foreach (var entityType in modelBuilder.Model.GetEntityTypes())

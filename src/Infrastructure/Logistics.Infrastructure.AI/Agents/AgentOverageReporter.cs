@@ -5,18 +5,12 @@ using Microsoft.Extensions.Logging;
 
 namespace Logistics.Infrastructure.AI.Agents;
 
-/// <summary>
-/// Meters an over-budget session to Stripe. Shared by both agent surfaces so they cannot drift on
-/// which sessions bill.
-/// </summary>
+/// <summary>Reports AI overage usage to Stripe. Copilot and dispatch both use it, so they bill the same sessions.</summary>
 internal sealed class AgentOverageReporter(
     IStripeUsageService stripeUsageService,
     ILogger<AgentOverageReporter> logger)
 {
-    /// <summary>
-    /// Eligibility is <see cref="AIOverageBilling.Billable"/>, shared with the tenant-visible
-    /// accrued figure so the meter and the displayed number cannot drift apart.
-    /// </summary>
+    /// <summary>Reports the session's overage to Stripe when it is billable, using <see cref="AIOverageBilling.Billable"/> so the metered amount matches the figure shown to the tenant.</summary>
     public async Task ReportIfOverBudgetAsync(AgentSession session, Guid tenantId)
     {
         if (!AIOverageBilling.IsBillable(session))

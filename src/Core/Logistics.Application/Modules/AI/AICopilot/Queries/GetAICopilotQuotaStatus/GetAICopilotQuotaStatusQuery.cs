@@ -4,9 +4,6 @@ using Logistics.Shared.Models;
 
 namespace Logistics.Application.Modules.AI.AICopilot.Queries;
 
-/// <summary>
-/// Same payload as <see cref="AIDispatch.Queries.GetAIQuotaStatusQuery"/>, but gated on AICopilot
-/// so a tenant with AIDispatch disabled can still read the drawer's quota widget.
-/// </summary>
+/// <summary>Returns the tenant's weekly AI quota usage. Gated on AICopilot rather than AIDispatch so copilot-only tenants can show the quota widget.</summary>
 [RequiresFeature(TenantFeature.AICopilot)]
 public sealed class GetAICopilotQuotaStatusQuery : IQuery<Result<AIQuotaStatusDto>>;

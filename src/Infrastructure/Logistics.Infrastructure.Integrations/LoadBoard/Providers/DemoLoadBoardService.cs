@@ -9,10 +9,6 @@ using Microsoft.Extensions.Logging;
 
 namespace Logistics.Infrastructure.Integrations.LoadBoard.Providers;
 
-/// <summary>
-///     Demo load board provider implementation for testing without real load board APIs.
-///     Returns simulated load listings for development and demonstration purposes.
-/// </summary>
 internal class DemoLoadBoardService(ILogger<DemoLoadBoardService> logger) : ILoadBoardProviderService
 {
     private static readonly Random random = new();
@@ -120,7 +116,7 @@ internal class DemoLoadBoardService(ILogger<DemoLoadBoardService> logger) : ILoa
         var origin = cities[originIndex];
         var destination = cities[destinationIndex];
 
-        // US demo freight: posted in miles, pounds and feet like a real board, stored metric
+        // US demo freight is generated in miles, pounds and feet as a real board posts it, then stored in metric units
         var miles = random.Next(200, 2000);
         var ratePerMile = 2.0m + (decimal)(random.NextDouble() * 1.5);
         var totalRate = Math.Round(ratePerMile * miles, 2);

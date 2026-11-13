@@ -9,10 +9,7 @@ using Xunit;
 
 namespace Logistics.Infrastructure.AI.Tests.Agents;
 
-/// <summary>
-/// Both agent surfaces meter through this, so the rules here are what keeps dispatch and the
-/// copilot billing the same way.
-/// </summary>
+/// <summary>Copilot and dispatch both report overage through AgentOverageReporter, so these tests cover billing for both agents.</summary>
 public class AgentOverageReporterTests
 {
     private readonly IStripeUsageService _stripeUsageService = Substitute.For<IStripeUsageService>();

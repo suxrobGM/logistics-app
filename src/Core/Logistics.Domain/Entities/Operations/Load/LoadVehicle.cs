@@ -1,10 +1,6 @@
 namespace Logistics.Domain.Entities;
 
-/// <summary>
-/// One vehicle carried by a <see cref="Primitives.Enums.LoadType.Vehicle"/> load. Stored as JSON on
-/// the load row, so reading a load's vehicles costs no extra query. <see cref="Id"/> is stable across
-/// edits and is what a <see cref="LoadConditionReport"/> points at.
-/// </summary>
+/// <summary>A vehicle carried on a vehicle transport load, stored as JSON on the load row. <see cref="Id"/> stays stable so condition reports can reference the vehicle.</summary>
 public class LoadVehicle
 {
     public Guid Id { get; set; } = Guid.CreateVersion7();

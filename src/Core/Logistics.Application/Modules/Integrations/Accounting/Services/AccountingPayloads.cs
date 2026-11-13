@@ -9,16 +9,10 @@ using Logistics.Shared.Models;
 
 namespace Logistics.Application.Modules.Integrations.Accounting.Services;
 
-/// <summary>
-/// Builds the provider-neutral push payloads from domain entities, each with a content hash of
-/// exactly the fields that payload sends - an edit to anything else does not trigger a push.
-/// </summary>
+/// <summary>Builds QuickBooks payloads and their content hashes. Each hash covers only the fields its payload sends, so edits to other fields do not trigger a re-push.</summary>
 internal static class AccountingPayloads
 {
-    /// <summary>
-    /// Pinned rather than shared with the API's options, so a change to those never reshapes the JSON
-    /// and re-pushes every record.
-    /// </summary>
+    /// <summary>Fixed serializer options for hashing, so changing the API's JSON settings does not alter every hash and re-push every record.</summary>
     private static readonly JsonSerializerOptions HashJsonOptions = new(JsonSerializerDefaults.General);
 
     public static (QboCustomerPayload Payload, string Hash) Customer(Customer customer)
@@ -152,10 +146,7 @@ internal static class AccountingPayloads
             Description = $"Driver pay {Date(payroll.PeriodStart)} to {Date(payroll.PeriodEnd)}"
         });
 
-    /// <summary>
-    /// Provider request id for a create: stable for the same record and content, so a retry after a crash
-    /// between the provider's create and our save returns the record already created. 48 chars (QBO allows 50).
-    /// </summary>
+    /// <summary>QuickBooks request id for a create, stable per record and content, so a retry after a crash returns the record already created instead of a duplicate. QuickBooks allows at most 50 characters.</summary>
     public static string RequestId(Guid localId, string hash) => $"{localId:N}{Hash(hash)[..16]}";
 
     private static (T Payload, string Hash) WithHash<T>(T payload) =>

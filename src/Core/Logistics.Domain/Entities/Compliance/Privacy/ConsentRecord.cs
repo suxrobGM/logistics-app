@@ -3,10 +3,6 @@ using Logistics.Domain.Primitives.Enums;
 
 namespace Logistics.Domain.Entities;
 
-/// <summary>
-/// An individual cookie / processing consent decision, captured per ePrivacy directive
-/// for the authenticated user who made it.
-/// </summary>
 public class ConsentRecord : Entity, IMasterEntity
 {
     public Guid UserId { get; set; }

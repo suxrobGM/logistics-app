@@ -10,10 +10,6 @@ using Logistics.Domain.Primitives.ValueObjects;
 
 namespace Logistics.DbMigrator.Seeders.FakeData;
 
-/// <summary>
-/// Seeds freight loads with a realistic type mix (general / reefer / hazmat / intermodal / tank)
-/// using region-specific route points, customer names, and container / terminal links.
-/// </summary>
 internal class LoadSeeder(
     ILogger<LoadSeeder> logger,
     IInvoiceTaxApplier taxApplier) : SeederBase(logger)

@@ -52,10 +52,7 @@ public class UserPermissionServiceTests
             Arg.Any<GetCurrentUserPermissionsQuery>(), Arg.Any<CancellationToken>());
     }
 
-    /// <summary>
-    /// A transient failure must not be cached, or one bad lookup locks the user out of every
-    /// permission-gated action until the entry expires.
-    /// </summary>
+    /// <summary>A failed permission lookup is not cached; caching it would lock the user out until the entry expires.</summary>
     [Fact]
     public async Task GetPermissionsAsync_LookupFails_NotCachedAndRetriedNextTime()
     {

@@ -140,7 +140,7 @@ internal class ExpenseSeeder(ILogger<ExpenseSeeder> logger) : SeederBase(logger)
             Notes = $"Truck expense for {truck.Number}",
             TruckId = truck.Id,
             Category = category,
-            OdometerMeters = category == TruckExpenseCategory.Fuel ? random.Next(100000, 500000) * 1609L : null,
+            OdometerMeters = category == TruckExpenseCategory.Fuel ? (long)DistanceUnit.Miles.ToMeters(random.Next(100000, 500000)) : null,
             Status = GetRandomStatus()
         };
 

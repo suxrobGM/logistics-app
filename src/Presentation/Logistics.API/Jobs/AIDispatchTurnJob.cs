@@ -7,10 +7,7 @@ using Logistics.Domain.Primitives.Enums;
 
 namespace Logistics.API.Jobs;
 
-/// <summary>
-///     Runs a single dispatch turn. Enqueued from the send-message handler, which has already
-///     created the user message and marked the conversation Running.
-/// </summary>
+/// <summary>Background job that runs one dispatch agent turn. The enqueuing handler has already saved the user message and marked the conversation Running.</summary>
 public class AIDispatchTurnJob(
     IServiceScopeFactory scopeFactory,
     ILogger<AIDispatchTurnJob> logger)

@@ -4,10 +4,6 @@ using Logistics.Domain.Primitives.Enums;
 
 namespace Logistics.Domain.Entities;
 
-/// <summary>
-/// Tax-related behavior for <see cref="Invoice"/>: totals math, breakdown JSON helpers,
-/// and the <c>InvoiceTotalsRecalculatedEvent</c>.
-/// </summary>
 public abstract partial class Invoice
 {
     private static readonly JsonSerializerOptions BreakdownJsonOptions = new(JsonSerializerDefaults.Web);
@@ -35,11 +31,7 @@ public abstract partial class Invoice
         TaxBreakdownJson = list.Count == 0 ? null : JsonSerializer.Serialize(list, BreakdownJsonOptions);
     }
 
-    /// <summary>
-    /// Recomputes <see cref="Subtotal"/>, <see cref="TaxTotal"/>, and <see cref="Total"/>
-    /// from current line items per the active <see cref="TaxBehavior"/>, then the payment status when the
-    /// invoice has payments. Idempotent. Raises <see cref="InvoiceTotalsRecalculatedEvent"/>.
-    /// </summary>
+    /// <summary>Recomputes subtotal, tax and total from the line items and raises <see cref="InvoiceTotalsRecalculatedEvent"/> when they change. Safe to call repeatedly.</summary>
     public void RecalculateTotals()
     {
         decimal subtotal;

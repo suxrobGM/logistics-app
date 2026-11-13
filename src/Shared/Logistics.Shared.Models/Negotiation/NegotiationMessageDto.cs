@@ -3,10 +3,7 @@ using Logistics.Domain.Primitives.ValueObjects;
 
 namespace Logistics.Shared.Models;
 
-/// <summary>
-/// One email in a negotiation thread. Carries only the stripped text body - the raw provider
-/// payload stays server-side.
-/// </summary>
+/// <summary>A negotiation email for clients: the text body only, without the raw provider payload.</summary>
 public record NegotiationMessageDto
 {
     public Guid Id { get; set; }

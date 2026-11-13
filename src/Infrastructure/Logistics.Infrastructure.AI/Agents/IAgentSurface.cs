@@ -5,19 +5,11 @@ using Logistics.Shared.Models;
 
 namespace Logistics.Infrastructure.AI.Agents;
 
-/// <summary>
-/// What distinguishes one conversational agent from another inside
-/// <see cref="AgentTurnService"/>: prompt/tool setup and where broadcasts go.
-/// </summary>
 internal interface IAgentSurface
 {
-    /// <summary>The conversation kind this surface serves.</summary>
     AgentConversationKind Kind { get; }
 
-    /// <summary>
-    /// Resolves the LLM conversation and tool-call context for one turn. Called once, before the
-    /// agent loop runs.
-    /// </summary>
+    /// <summary>Builds the <see cref="AgentTurnSetup"/> for a turn; called once, before the agent loop runs.</summary>
     Task<AgentTurnSetup> PrepareAsync(
         AgentSession session,
         AgentConversation conversation,

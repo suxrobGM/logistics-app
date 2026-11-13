@@ -12,11 +12,7 @@ public class AgentDecisionDto
     public string? ToolName { get; set; }
     public string? ToolInput { get; set; }
 
-    /// <summary>
-    /// The tool's result as a typed shape. Null when the tool ran but returned something outside
-    /// <see cref="AgentToolResultDto"/>, which is most of them - the raw output stays on the entity
-    /// for the model and the audit trail, and is deliberately not sent to the client.
-    /// </summary>
+    /// <summary>Parsed tool result for tools the UI renders; null for other tools. The raw tool output is not sent to clients.</summary>
     public AgentToolResultDto? ToolResult { get; set; }
     public Guid? LoadId { get; set; }
     public string? LoadName { get; set; }

@@ -8,11 +8,7 @@ using Logistics.Shared.Identity.Policies;
 
 namespace Logistics.Infrastructure.AI.Tools.Intermodal;
 
-/// <summary>
-/// Looks up an intermodal terminal by UN/LOCODE (or id) for pickup / drop-off context.
-/// Terminals carry no coordinates, so this cannot feed <c>calculate_distance</c> - the deadhead
-/// anchor stays the load's origin latitude / longitude.
-/// </summary>
+/// <summary>Agent tool returning terminal details. Terminals have no coordinates, so its output cannot be passed to <c>calculate_distance</c>.</summary>
 internal sealed class GetTerminalInfoTool(ITenantUnitOfWork tenantUow)
     : AgentTool<GetTerminalInfoTool.Input>, IAgentToolMetadata
 {
@@ -73,10 +69,7 @@ internal sealed class GetTerminalInfoTool(ITenantUnitOfWork tenantUow)
         });
     }
 
-    /// <summary>
-    /// Single-line address. <see cref="Address"/> is a record, and its default <c>ToString</c> emits
-    /// property syntax - too many tokens for what it says.
-    /// </summary>
+    /// <summary>Formats an address on one line; the record's default <c>ToString</c> includes property names and costs too many tokens.</summary>
     internal static string FormatAddress(Address address)
     {
         string[] parts =

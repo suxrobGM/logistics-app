@@ -2,10 +2,7 @@ using Logistics.Domain.Core;
 
 namespace Logistics.Domain.Events;
 
-/// <summary>
-/// Raised when a payment is recorded against a payroll invoice.
-/// Contains all data needed for notifications to avoid additional queries.
-/// </summary>
+/// <summary>Raised when a payroll invoice is paid. Carries the fields notifications need, so handlers make no extra queries.</summary>
 public record PayrollPaidEvent(
     Guid PayrollId,
     long PayrollNumber,

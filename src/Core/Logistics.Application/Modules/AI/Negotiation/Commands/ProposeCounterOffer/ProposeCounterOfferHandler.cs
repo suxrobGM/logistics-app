@@ -64,10 +64,7 @@ internal sealed class ProposeCounterOfferHandler(
         var isNewThread = negotiation is null;
         var currency = tenant.Currency;
 
-        // Floor first: it is a local read that rejects most bad offers, whereas the credit gate
-        // costs a vendor API call and a write. Round 1 resolves the lane floor and freezes it on the
-        // thread; every later round is checked against that snapshot, so an edit to the lane floor
-        // cannot move the bar mid-negotiation - and the booking check reads the same number.
+        // Check the rate floor before the broker credit check: the floor is a local read that rejects most bad offers, while the credit check is a paid API call.
         var floor = negotiation is null
             ? await floorResolver.ResolveAsync(listing, ct)
             : negotiation.ToEffectiveFloor();

@@ -10,10 +10,7 @@ using Logistics.Shared.Models;
 
 namespace Logistics.Infrastructure.AI.Tools.Dispatch;
 
-/// <summary>
-/// Ranks the Available trucks for each unassigned load. The type rule, HOS, deadhead, trailer fit
-/// and rate run here, on the rules the write tools enforce, so the model does no arithmetic.
-/// </summary>
+/// <summary>Agent tool that ranks trucks for a load using the same rules as the dispatch write tools, so the model does no arithmetic.</summary>
 internal sealed class GetDispatchCandidatesTool(
     IMediator mediator,
     ITenantUnitOfWork tenantUow,

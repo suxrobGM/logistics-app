@@ -5,10 +5,7 @@ using Logistics.Shared.Models;
 
 namespace Logistics.Infrastructure.AI.Agents.Dispatch;
 
-/// <summary>
-/// The dispatch agent's <see cref="IAgentSurface"/>: tenant-shared conversations, so broadcasts go
-/// to the whole dispatch board and tools are gated by the endpoint policy, not per caller.
-/// </summary>
+/// <summary>Dispatch turn setup: the conversation is shared by the tenant, updates go to every dispatch board client, and tool access is enforced by the endpoint's authorization policy.</summary>
 internal sealed class DispatchAgentSurface(
     AIDispatchConversationBuilder conversationBuilder,
     IAIDispatchBroadcastService broadcastService) : IAgentSurface

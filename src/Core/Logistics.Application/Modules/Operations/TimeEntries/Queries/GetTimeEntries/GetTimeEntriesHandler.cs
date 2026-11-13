@@ -31,7 +31,7 @@ internal sealed class GetTimeEntriesHandler(ITenantUnitOfWork tenantUow, IDispla
         }
         if (req.EndDate.HasValue)
         {
-            // EndDate is a day and inclusive.
+            // EndDate is a date and inclusive, so keep entries that start before the following midnight.
             query = query.Where(t => t.StartedAt < req.EndDate.Value.AddDays(1));
         }
 

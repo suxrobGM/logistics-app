@@ -7,11 +7,7 @@ using Logistics.Domain.Primitives.ValueObjects;
 
 namespace Logistics.Domain.Entities;
 
-/// <summary>
-/// An email thread with a broker haggling over the rate of a load board listing. The agent counters,
-/// the broker replies to the <see cref="ReplyToken"/> address, and the thread closes on acceptance,
-/// decline, expiry, or when the round budget runs out.
-/// </summary>
+/// <summary>An email negotiation with a broker over a load board listing's rate. It closes on acceptance, decline, expiry, or after <see cref="MaxRounds"/> counter-offers.</summary>
 public class RateNegotiation : AuditableEntity, ITenantEntity
 {
     /// <summary>Outbound counters allowed before the thread must be closed.</summary>
@@ -33,10 +29,7 @@ public class RateNegotiation : AuditableEntity, ITenantEntity
     public string? BrokerName { get; set; }
     public string? BrokerMcNumber { get; set; }
 
-    /// <summary>
-    /// Opaque token embedded in the reply-to address; the only link from inbound mail back to this
-    /// thread, so it must stay unguessable.
-    /// </summary>
+    /// <summary>Random token in the thread's reply-to address. Inbound broker mail is matched to the thread only by this token, so it must be unguessable.</summary>
     public required string ReplyToken { get; set; }
 
     /// <summary>Floor in force when the thread opened - never recomputed mid-negotiation.</summary>
@@ -57,10 +50,7 @@ public class RateNegotiation : AuditableEntity, ITenantEntity
 
     public virtual List<NegotiationMessage> Messages { get; } = [];
 
-    /// <summary>
-    /// Reference quoted in the email subject. Derived from the listing rather than the thread so a
-    /// preview rendered before the thread exists carries the same reference the sent mail will.
-    /// </summary>
+    /// <summary>Thread reference (NEG-xxxxxxxx), derived from the listing id so a preview built before the thread exists shows the same reference.</summary>
     [NotMapped]
     public string Reference => ReferenceFor(LoadBoardListingId);
 
@@ -76,10 +66,7 @@ public class RateNegotiation : AuditableEntity, ITenantEntity
     public static string ReferenceFor(Guid loadBoardListingId) =>
         "NEG-" + loadBoardListingId.ToString("N")[..8].ToUpperInvariant();
 
-    /// <summary>
-    /// Matches the single open thread on a listing. Kept here rather than inlined at each call site
-    /// so a new open status cannot be added without every query picking it up.
-    /// </summary>
+    /// <summary>Matches the open (AwaitingBroker or BrokerReplied) negotiation for a listing; the single definition of which statuses count as open.</summary>
     public static Expression<Func<RateNegotiation, bool>> OpenForListing(Guid loadBoardListingId) =>
         n => n.LoadBoardListingId == loadBoardListingId &&
              (n.Status == RateNegotiationStatus.AwaitingBroker ||
@@ -90,19 +77,13 @@ public class RateNegotiation : AuditableEntity, ITenantEntity
         n => n.Status == RateNegotiationStatus.AwaitingBroker ||
              n.Status == RateNegotiationStatus.BrokerReplied;
 
-    /// <summary>
-    /// Matches every open thread whose reply window has already lapsed. A thread the broker replied
-    /// to is still open and still lapses, so the sweep must see it too.
-    /// </summary>
+    /// <summary>Matches open negotiations past their expiry, including ones the broker has replied to.</summary>
     public static Expression<Func<RateNegotiation, bool>> LapsedAt(DateTime utcNow) =>
         n => (n.Status == RateNegotiationStatus.AwaitingBroker ||
               n.Status == RateNegotiationStatus.BrokerReplied) &&
              n.ExpiresAt != null && n.ExpiresAt < utcNow;
 
-    /// <param name="floor">
-    /// Snapshotted onto the thread here rather than assigned by the caller: every downstream check
-    /// reads a missing floor as "no limit", so a floorless thread must be unrepresentable.
-    /// </param>
+    /// <param name="floor">Floor in force when the thread opens. It is stored on the thread because later checks treat a missing floor as no limit.</param>
     public static RateNegotiation Create(
         Guid loadBoardListingId,
         string brokerEmail,
@@ -125,13 +106,7 @@ public class RateNegotiation : AuditableEntity, ITenantEntity
         };
     }
 
-    /// <summary>
-    /// Records a counter sent to the broker: consumes a round and restarts the reply window. The
-    /// returned row is not added to <see cref="Messages"/> - touching that navigation lazy-loads
-    /// every stored RawBody. Callers MUST register it via repository AddAsync instead (pre-generated
-    /// ids make a collection-only add save as an UPDATE and fail anyway). <paramref name="sequence"/> must be
-    /// reserved in the database first: a counter and a broker reply can land on one thread at once.
-    /// </summary>
+    /// <summary>Creates an outbound message for the thread. It is not added to <see cref="Messages"/>, since that would lazy-load every RawBody; the caller reserves the sequence and adds the message with the repository.</summary>
     public NegotiationMessage AddOutboundMessage(
         int sequence,
         string textBody,
@@ -159,13 +134,7 @@ public class RateNegotiation : AuditableEntity, ITenantEntity
         return message;
     }
 
-    /// <summary>
-    /// Records a broker reply. A quarantined message is stored for audit but moves nothing. The
-    /// returned row is not added to <see cref="Messages"/> - touching that navigation lazy-loads
-    /// every stored RawBody. Callers MUST register it via repository AddAsync instead (pre-generated
-    /// ids make a collection-only add save as an UPDATE and fail anyway). Same sequence rule as
-    /// <see cref="AddOutboundMessage"/>.
-    /// </summary>
+    /// <summary>Creates an inbound broker message and marks the thread BrokerReplied. Quarantined mail is stored without changing the thread; the caller adds the message with the repository.</summary>
     public NegotiationMessage AddInboundMessage(
         int sequence,
         string textBody,
@@ -215,10 +184,7 @@ public class RateNegotiation : AuditableEntity, ITenantEntity
         ClosedAt = DateTime.UtcNow;
     }
 
-    /// <summary>
-    /// 128 bits of entropy as 32 lowercase hex characters. Lowercase hex rather than base64url
-    /// because the token goes in an email local-part, which is case-insensitive in practice.
-    /// </summary>
+    /// <summary>Random 128-bit reply token as lowercase hex rather than base64url, because mail systems may change the case of an address's local part.</summary>
     private static string GenerateReplyToken() =>
         Convert.ToHexStringLower(RandomNumberGenerator.GetBytes(16));
 }

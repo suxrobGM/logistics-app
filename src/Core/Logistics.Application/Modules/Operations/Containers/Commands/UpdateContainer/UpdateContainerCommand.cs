@@ -4,10 +4,7 @@ using Logistics.Shared.Models;
 
 namespace Logistics.Application.Modules.Operations.Containers.Commands;
 
-/// <summary>
-/// Updates non-status fields of a Container. Status transitions go through
-/// the dedicated MarkContainer* commands; location-only moves use MoveContainerToTerminal.
-/// </summary>
+/// <summary>Edits a container's descriptive fields. Status changes use the MarkContainer* commands and terminal moves use MoveContainerToTerminal.</summary>
 [RequiresFeature(TenantFeature.IntermodalContainers)]
 public class UpdateContainerCommand : ICommand<Result>
 {

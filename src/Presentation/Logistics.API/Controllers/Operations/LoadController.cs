@@ -139,11 +139,7 @@ public class LoadController(IMediator mediator) : ControllerBase
         return result.ToActionResult();
     }
 
-    /// <summary>
-    /// Preview the dispatch eligibility for this load against a candidate truck/driver.
-    /// Used by the UI to surface warnings before the dispatcher commits via POST .../dispatch.
-    /// Read-only - does not mutate state.
-    /// </summary>
+    /// <summary>Read-only check of whether the load can be dispatched, so the UI can warn before the dispatcher assigns it.</summary>
     [HttpGet("{id:guid}/eligibility", Name = "CheckLoadDispatchEligibility")]
     [ProducesResponseType(typeof(EligibilityResultDto), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status400BadRequest)]

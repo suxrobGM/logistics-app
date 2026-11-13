@@ -10,7 +10,7 @@ internal sealed class EmployeeEntityConfiguration : IEntityTypeConfiguration<Emp
     {
         builder.ToTable("employees");
 
-        // A per-distance rate is per km, which needs more than cents.
+        // Precision 4: a RatePerDistance salary is stored per km and needs more than cents.
         builder.Property(e => e.Salary).HasPrecision(18, 4);
 
         // Email is unique case-insensitively through the raw-SQL index ux_employees_email_lower, created in the

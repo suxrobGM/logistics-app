@@ -70,11 +70,7 @@ internal sealed class PreviewCounterOfferHandler(
         });
     }
 
-    /// <summary>
-    /// <c>ToolInput</c> is the model's own JSON, not what the tool bound, so it is read leniently.
-    /// A strict reader rejects the numbers-as-strings the models actually emit, and the preview
-    /// would then fail on offers the tool itself accepted.
-    /// </summary>
+    /// <summary>Parses the counter-offer tool input. Numbers written as strings are accepted, since models often emit them that way.</summary>
     private static bool TryReadInput(string toolInput, out CounterOfferInput input)
     {
         input = default;

@@ -8,11 +8,7 @@ namespace Logistics.Domain.Entities;
 /// </summary>
 public partial class Trip
 {
-    /// <summary>
-    /// Creates a new Trip with stops for the provided loads, or with <paramref name="optimizedStops" /> when the
-    /// route optimizer already ordered them. Raises NewTripCreatedEvent, and TripAssignedToTruckEvent when a truck
-    /// is set.
-    /// </summary>
+    /// <summary>Creates a trip; raises NewTripCreatedEvent, plus TripAssignedToTruckEvent when a truck is given.</summary>
     public static Trip Create(
         string name,
         Truck? truck,

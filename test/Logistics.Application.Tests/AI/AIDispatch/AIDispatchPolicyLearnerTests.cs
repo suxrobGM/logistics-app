@@ -56,10 +56,7 @@ public class AIDispatchPolicyLearnerTests
         await _llmClient.DidNotReceiveWithAnyArgs().CompleteAsync(default!, default);
     }
 
-    /// <summary>
-    /// A couple of rejections give the model nothing to generalise from, so the rejection floor is
-    /// enforced separately from the total count.
-    /// </summary>
+    /// <summary>Too few rejections give the learner nothing to generalise from, so rejections have their own minimum count.</summary>
     [Fact]
     public async Task Learn_EnoughDecisionsButTooFewRejections_SkipsWithoutCallingLlm()
     {
@@ -87,10 +84,7 @@ public class AIDispatchPolicyLearnerTests
 
     #region Which decisions count
 
-    /// <summary>
-    /// Executions with no approver would train the agent on its own output; Query decisions are read
-    /// tool calls carrying no verdict at all.
-    /// </summary>
+    /// <summary>Executions without human approval are excluded, since learning from them would train the agent on its own choices; read-only queries have no approve or reject verdict.</summary>
     [Fact]
     public async Task Learn_ExcludesUnapprovedExecutionsAndQueries()
     {
@@ -243,10 +237,7 @@ public class AIDispatchPolicyLearnerTests
         Assert.Contains("Prefer short hauls", policy.GeneratedContent);
     }
 
-    /// <summary>
-    /// Storage clamping is the entity's invariant (the wider column budget); the injection cap belongs
-    /// to the prompt builder. Either way a stored bullet is whole.
-    /// </summary>
+    /// <summary>Overlong LLM output is clamped to the entity's storage limit at a line boundary; the prompt's injection cap is tested with the prompt builder.</summary>
     [Fact]
     public async Task Learn_OverlongOutput_ClampsToStorageBudgetAtLineBoundary()
     {
@@ -402,7 +393,7 @@ public class AIDispatchPolicyLearnerTests
             RejectionReason = rejectionReason,
             ApprovedByUserId = approvedBy,
             CreatedAt = DateTime.UtcNow.AddMinutes(-minutesAgo),
-            // The learner filters on the conversation kind - a null nav would NRE the mocked queryable.
+            // The learner filters on Session.Conversation.Kind; a null navigation would throw in the mocked queryable.
             Session = new AgentSession { Conversation = new AgentConversation { Kind = AgentConversationKind.Dispatch } }
         };
     }

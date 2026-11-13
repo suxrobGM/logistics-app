@@ -4,12 +4,7 @@ using Logistics.Domain.Primitives.ValueObjects;
 
 namespace Logistics.Domain.Entities;
 
-/// <summary>
-/// Raw GPS breadcrumb for a truck. Kept 4 years (the IFTA audit window) as the evidence
-/// trail behind <see cref="TruckJurisdictionDistance"/> rollups; deliberately lean (not
-/// auditable) - ~288 rows/truck/day at a 5-minute ping rate. Consider monthly partitioning
-/// if a tenant exceeds ~500 trucks.
-/// </summary>
+/// <summary>A recorded truck GPS position, kept 4 years (the IFTA audit window). Not an auditable entity, to keep rows small at about 288 per truck per day.</summary>
 public class TruckLocationHistory : Entity, ITenantEntity
 {
     public required Guid TruckId { get; set; }

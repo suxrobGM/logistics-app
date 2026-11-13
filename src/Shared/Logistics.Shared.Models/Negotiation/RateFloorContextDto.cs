@@ -1,9 +1,5 @@
 namespace Logistics.Shared.Models;
 
-/// <summary>
-/// Everything needed to decide whether a listing is worth negotiating: the floor in force, how the
-/// listing compares to it, and whether a thread is already running.
-/// </summary>
 public record RateFloorContextDto
 {
     public Guid ListingId { get; set; }

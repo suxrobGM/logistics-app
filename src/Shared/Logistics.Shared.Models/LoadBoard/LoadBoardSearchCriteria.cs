@@ -48,9 +48,6 @@ public record LoadBoardSearchResultDto
     public int TotalCount { get; set; }
     public Dictionary<LoadBoardProviderType, int> CountByProvider { get; set; } = [];
 
-    /// <summary>
-    /// Why a provider returned nothing, keyed by provider. A failed provider never fails the
-    /// whole search, so the caller must show these or it reads as "no freight".
-    /// </summary>
+    /// <summary>Error message per load board that failed. A failed board does not fail the search, so the UI shows these to avoid an empty result reading as no freight.</summary>
     public Dictionary<LoadBoardProviderType, string>? Errors { get; set; }
 }

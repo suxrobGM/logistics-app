@@ -12,11 +12,7 @@ using static Logistics.Application.Modules.Operations.DataImport.Constants.Impor
 
 namespace Logistics.Application.Modules.Operations.DataImport.Importers;
 
-/// <summary>
-///     Loads match on the source system's reference, kept in <see cref="Load.ExternalSourceId"/> with
-///     <see cref="LoadSource.Import"/>. Customers and trucks must already exist. Addresses are geocoded
-///     only when the import commits, so a validation run makes no geocoding calls.
-/// </summary>
+/// <summary>Imports loads. Addresses are geocoded only when the import is committed, so a validation-only run makes no geocoding calls.</summary>
 internal sealed class LoadImporter(
     ITenantUnitOfWork tenantUow,
     IGeocodingService geocodingService,

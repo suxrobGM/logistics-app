@@ -43,10 +43,7 @@ public class AICopilotController(IMediator mediator) : ControllerBase
         return result.ToActionResult();
     }
 
-    /// <summary>
-    ///     Send a user message. The turn runs in the background; progress and the reply arrive
-    ///     over the copilot SignalR hub.
-    /// </summary>
+    /// <summary>Posts a user message and starts a copilot turn in the background (202 Accepted); the reply is pushed over the copilot SignalR hub.</summary>
     [HttpPost("conversations/{conversationId:guid}/messages", Name = "SendCopilotMessage")]
     [ProducesResponseType(typeof(SendAgentMessageResultDto), StatusCodes.Status202Accepted)]
     [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status400BadRequest)]

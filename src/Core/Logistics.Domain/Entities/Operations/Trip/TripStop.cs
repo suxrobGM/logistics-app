@@ -4,11 +4,6 @@ using Logistics.Domain.Primitives.ValueObjects;
 
 namespace Logistics.Domain.Entities;
 
-/// <summary>
-///     Represents a stop on a trip.
-///     A stop can be a pickup or a drop-off location.
-///     A trip can have multiple stops.
-/// </summary>
 public class TripStop : Entity, ITenantEntity
 {
     public TripStopType Type { get; set; }
@@ -43,10 +38,7 @@ public class TripStop : Entity, ITenantEntity
     /// </summary>
     public virtual required Load Load { get; set; }
 
-    /// <summary>
-    ///     Get demand for this stop.
-    ///     +1 for pickup, -1 for drop-off.
-    /// </summary>
+    /// <summary>Change in loads on board at this stop: +1 for a pickup, -1 for a drop-off.</summary>
     public int GetDemand()
     {
         return Type is TripStopType.PickUp ? 1 : -1;

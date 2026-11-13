@@ -21,11 +21,7 @@ using MsOptions = Microsoft.Extensions.Options;
 
 namespace Logistics.Infrastructure.AI.Tests.Agents.Dispatch;
 
-/// <summary>
-/// Covers <see cref="AIDispatchService"/> and <see cref="DispatchAgentSurface"/> together - the
-/// adapter only has meaning wired to its surface. Prompt content (snapshot, replay, catalogue)
-/// belongs to <see cref="AIDispatchConversationBuilderTests"/>; this file is the turn lifecycle.
-/// </summary>
+/// <summary>Tests the agent turn lifecycle; prompt content is covered by <see cref="AIDispatchConversationBuilderTests"/>.</summary>
 public class AIDispatchServiceTests
 {
     private readonly ITenantRepository<AgentSession, Guid> _sessionRepo =
@@ -132,11 +128,7 @@ public class AIDispatchServiceTests
 
     #region Turn adapter wiring (no network - the LLM-disabled early exit)
 
-    /// <summary>
-    /// Proves the adapter threads TenantId/ConversationId through to AgentTurnService and that
-    /// DispatchAgentSurface broadcasts tenant-wide, without needing a real LLM call: the
-    /// AI-disabled path short-circuits before the agent loop runs.
-    /// </summary>
+    /// <summary>With AI disabled the turn exits before the agent loop, so this test needs no LLM call.</summary>
     [Fact]
     public async Task RunTurnAsync_AIDisabled_AppendsNoticeToTheRightConversationAndBroadcastsTenantWide()
     {
@@ -305,10 +297,7 @@ public class AIDispatchServiceTests
         Assert.Equal(42, Assert.Single(AddedMessages()).Sequence);
     }
 
-    /// <summary>
-    /// A broker reply saved mid-turn is the trigger of the turn its wake-up starts. Stamping at the
-    /// end of the turn used to claim it for the turn that never saw it.
-    /// </summary>
+    /// <summary>A broker reply saved mid-turn is not claimed by the running turn; it belongs to the turn its own wake-up job starts.</summary>
     [Fact]
     public async Task RunTurnAsync_StampsOnlyTheUserRowsWaitingAtTurnStart()
     {

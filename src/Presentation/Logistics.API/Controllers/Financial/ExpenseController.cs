@@ -36,12 +36,10 @@ public class ExpenseController(IMediator mediator) : ControllerBase
     [Authorize(Policy = Permission.Expense.View)]
     public async Task<IActionResult> DownloadReceipt(Guid id)
     {
-        var requestedById = UserId;
-
         var result = await mediator.Send(new DownloadExpenseReceiptQuery
         {
             ExpenseId = id,
-            RequestedById = requestedById
+            RequestedById = UserId
         });
 
         return result.ToFileResult(x => File(x.FileContent, x.ContentType, x.OriginalFileName));

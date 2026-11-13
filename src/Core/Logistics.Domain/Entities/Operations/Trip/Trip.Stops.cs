@@ -17,11 +17,7 @@ public partial class Trip
             .ToArray();
     }
 
-    /// <summary>
-    /// Adds new loads to the trip, creating corresponding pick-up and drop-off stops.
-    /// </summary>
-    /// <param name="loads">The collection of loads to be added.</param>
-    /// <exception cref="InvalidOperationException">Thrown if the trip status is not Draft.</exception>
+    /// <exception cref="InvalidOperationException">The trip is not Draft.</exception>
     public void AddLoads(IEnumerable<Load> loads)
     {
         if (!CanModify)
@@ -33,11 +29,7 @@ public partial class Trip
         RecalculateDistance();
     }
 
-    /// <summary>
-    /// Removes a load from the trip.
-    /// </summary>
-    /// <param name="loadId">The ID of the load to be removed.</param>
-    /// <exception cref="InvalidOperationException">Thrown if the trip status is not Draft.</exception>
+    /// <exception cref="InvalidOperationException">The trip is not Draft.</exception>
     public void RemoveLoad(Guid loadId)
     {
         if (!CanModify)

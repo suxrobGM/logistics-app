@@ -3,7 +3,7 @@ using System.Globalization;
 
 namespace Logistics.Domain.Primitives.ValueObjects;
 
-/// <summary>An amount in a foreign currency. Tenant-internal amounts are plain decimals in <c>Tenant.Currency</c>.</summary>
+/// <summary>An amount with its currency, for money that can arrive in a currency other than the tenant's. Amounts in the tenant currency are stored as plain decimals in <c>Tenant.Currency</c>.</summary>
 [ComplexType]
 public record Money
 {

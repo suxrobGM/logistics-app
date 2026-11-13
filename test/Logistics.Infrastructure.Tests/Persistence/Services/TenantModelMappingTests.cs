@@ -9,10 +9,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 namespace Logistics.Infrastructure.Tests.Persistence.Services;
 
-/// <summary>
-/// Pins tenant model details a migration diff would not flag as wrong: columns, indexes, foreign
-/// keys and converters. Everything is read from the design-time model, so no database is needed.
-/// </summary>
+/// <summary>Checks EF mapping details a migration diff would not reveal, using the design-time model only.</summary>
 public class TenantModelMappingTests
 {
     private static ITable Table(string name)
@@ -35,10 +32,6 @@ public class TenantModelMappingTests
         Assert.Equal(ReferentialAction.SetNull, fk.OnDeleteAction);
     }
 
-    /// <summary>
-    /// The quota sum filters on the audit start time now that the duplicate started_at is gone, so
-    /// the covering index has to move with it.
-    /// </summary>
     [Fact]
     public void AgentSessions_QuotaIndexCoversCostOnCreatedAt()
     {
@@ -114,11 +107,7 @@ public class TenantModelMappingTests
 
     #region Load vehicles
 
-    /// <summary>
-    /// Vehicles are a JSON complex collection on the loads row. Building the query proves EF and
-    /// Npgsql accept the mapping, and that reading a load selects the vehicles column with it - no
-    /// second query per load.
-    /// </summary>
+    /// <summary>Load vehicles map as a JSON complex collection read with the load row, with no second query.</summary>
     [Fact]
     public void LoadVehicles_MapAsAComplexCollectionReadWithTheLoad()
     {

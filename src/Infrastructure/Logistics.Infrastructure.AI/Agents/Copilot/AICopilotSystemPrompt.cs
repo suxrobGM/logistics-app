@@ -2,15 +2,7 @@ using Logistics.Domain.Primitives.Enums;
 
 namespace Logistics.Infrastructure.AI.Agents.Copilot;
 
-/// <summary>
-/// System prompt for the TMS-wide copilot. Deliberately separate from
-/// <see cref="Dispatch.AIDispatchSystemPrompt"/>: it is conversational, covers the whole TMS, and
-/// never receives the learned dispatch policy or fleet-run workflow.
-/// </summary>
-/// <remarks>
-/// Guidance about one tool belongs in that tool's description, which the caller only receives when
-/// they hold its permission - not here, where every caller pays for it.
-/// </remarks>
+/// <summary>System prompt for the copilot agent, separate from the dispatch prompt. Guidance for a specific tool comes from that tool's description.</summary>
 internal static class AICopilotSystemPrompt
 {
     public static string Build(CopilotPromptContext context)

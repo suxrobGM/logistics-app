@@ -35,10 +35,7 @@ public abstract partial class Invoice : AuditableEntity, ITenantEntity, IAuditab
 
     public string? SentToEmail { get; set; }
 
-    /// <summary>
-    /// Puts <paramref name="fresh"/> first in line order and returns the removed lines. The caller registers
-    /// both with the repository.
-    /// </summary>
+    /// <summary>Replaces the lines matched by <paramref name="owns"/> with <paramref name="fresh"/> and returns the removed lines. The caller adds and removes those lines with the repository.</summary>
     public IReadOnlyList<InvoiceLineItem> ReplaceLines(Func<InvoiceLineItem, bool> owns, IReadOnlyList<InvoiceLineItem> fresh)
     {
         var removed = LineItems.Where(owns).ToList();
@@ -118,7 +115,7 @@ public abstract partial class Invoice : AuditableEntity, ITenantEntity, IAuditab
 
     protected virtual decimal SignLineAmount(InvoiceLineItemType type, decimal amount) => amount;
 
-    /// <summary>Counts only <see cref="PaymentStatus.Paid"/> payments.</summary>
+    /// <summary>Sums payments with status <see cref="PaymentStatus.Paid"/>; pending, failed and refunded payments are ignored.</summary>
     public static decimal SumPaid(IEnumerable<Payment> payments) => payments
         .Where(p => p.Status == PaymentStatus.Paid)
         .Sum(p => p.Amount);

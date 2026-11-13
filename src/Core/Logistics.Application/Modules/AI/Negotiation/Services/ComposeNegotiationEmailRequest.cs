@@ -4,12 +4,7 @@ using Logistics.Domain.Primitives.Enums;
 
 namespace Logistics.Application.Modules.AI.Negotiation.Services;
 
-/// <summary>
-/// The listing, offer, and thread data needed to compose an outbound counter-offer email.
-/// <see cref="ReplyToAddress"/> is built by the caller (e.g. from
-/// <see cref="IThreadedEmailSender.ReplyDomain"/> plus the negotiation's reply token) - the
-/// composer only formats and renders, it never resolves sender configuration itself.
-/// </summary>
+/// <summary>Inputs for a broker-facing negotiation email. The caller supplies <see cref="ReplyToAddress"/>; the composer only formats the message.</summary>
 public record ComposeNegotiationEmailRequest
 {
     public required string OriginCity { get; init; }
@@ -20,10 +15,10 @@ public record ComposeNegotiationEmailRequest
     public required string EquipmentType { get; init; }
     public required decimal OfferAmount { get; init; }
     public required string Currency { get; init; }
-    /// <summary>The offer per the tenant's distance unit, for the broker to read.</summary>
+    /// <summary>Offer rate per <see cref="DistanceUnit"/>, shown to the broker; null when no per-km offer was made.</summary>
     public decimal? OfferPerDistance { get; init; }
 
-    /// <summary>"mi" or "km".</summary>
+    /// <summary>Unit of <see cref="OfferPerDistance"/>: "mi" or "km".</summary>
     public required string DistanceUnit { get; init; }
     public required string AgentMessage { get; init; }
     public required string CompanyName { get; init; }
@@ -32,11 +27,7 @@ public record ComposeNegotiationEmailRequest
     public required string ReplyToAddress { get; init; }
     public string? BrokerName { get; init; }
 
-    /// <summary>
-    /// Builds the request from the listing and tenant. The preview and the real send both go through
-    /// here: the preview's whole promise is that approving it approves the mail that actually goes
-    /// out, which two hand-maintained copies of this mapping cannot keep.
-    /// </summary>
+    /// <summary>Builds the request from a listing and tenant. Both the preview and the send use it, so the email the approver sees is the one that goes out.</summary>
     public static ComposeNegotiationEmailRequest For(
         LoadBoardListing listing,
         Tenant tenant,

@@ -8,10 +8,7 @@ using Logistics.Domain.Primitives.ValueObjects;
 
 namespace Logistics.Application.Modules.AI.Negotiation.Services;
 
-/// <summary>
-/// Sole owner of broker-facing negotiation email formatting: sanitizes the agent's free-text
-/// paragraph, formats currency/dates, and renders the <c>BrokerCounterOffer</c> template.
-/// </summary>
+/// <summary>Builds the subject and body of every negotiation email sent to a broker.</summary>
 public interface INegotiationEmailComposer : IApplicationService
 {
     Task<ComposedNegotiationEmail> ComposeAsync(ComposeNegotiationEmailRequest request, CancellationToken ct = default);

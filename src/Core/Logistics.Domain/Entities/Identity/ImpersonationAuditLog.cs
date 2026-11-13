@@ -2,10 +2,6 @@ using Logistics.Domain.Core;
 
 namespace Logistics.Domain.Entities;
 
-/// <summary>
-/// Audit log for impersonation events.
-/// Tracks who impersonated whom, when, and from where.
-/// </summary>
 public class ImpersonationAuditLog : Entity, IMasterEntity
 {
     /// <summary>

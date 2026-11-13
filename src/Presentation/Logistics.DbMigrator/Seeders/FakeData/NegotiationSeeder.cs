@@ -11,10 +11,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Logistics.DbMigrator.Seeders.FakeData;
 
-/// <summary>
-/// Seeds the AI rate negotiation demo: lane rate floors, the load board listings the threads hang
-/// off, and one thread per status so every state of the Negotiations page has a row.
-/// </summary>
+/// <summary>Seeds demo rate negotiations, one thread per status, so every state on the Negotiations page has a row.</summary>
 internal class NegotiationSeeder(ILogger<NegotiationSeeder> logger) : SeederBase(logger)
 {
     public override string Name => nameof(NegotiationSeeder);
@@ -59,10 +56,7 @@ internal class NegotiationSeeder(ILogger<NegotiationSeeder> logger) : SeederBase
         LogCompleted(scenarios.Length);
     }
 
-    /// <summary>
-    /// Two exact lanes and one destination-wide row, so the rate floor page shows the resolver
-    /// falling back from the most specific match down to the tenant default.
-    /// </summary>
+    /// <summary>Seeds lane floors at several levels of specificity, so the demo shows the resolver falling back from the most specific lane to the tenant default.</summary>
     private async Task<List<SeededLane>> SeedLaneFloorsAsync(
         SeederContext context,
         IRegionProfile region,
@@ -105,10 +99,7 @@ internal class NegotiationSeeder(ILogger<NegotiationSeeder> logger) : SeederBase
         return created;
     }
 
-    /// <summary>
-    /// The first scenarios reuse a seeded lane, so its own row is the floor <c>LaneRateFloorResolver</c>
-    /// would resolve. The rest draw an origin no lane row covers, which lands them on the tenant default.
-    /// </summary>
+    /// <summary>Picks the lane for a scenario. Later scenarios get an origin no seeded lane covers, so their floor comes from the tenant default.</summary>
     private Lane PickLane(
         IRegionProfile region,
         List<SeededLane> seededLanes,
@@ -185,7 +176,7 @@ internal class NegotiationSeeder(ILogger<NegotiationSeeder> logger) : SeederBase
             DestinationLocation = lane.DestinationLocation,
             RatePerKm = postedPerKm,
             TotalRate = new Money { Amount = decimal.Round(postedPerKm * lane.Kilometers, 0), Currency = currency },
-            Distance = lane.Kilometers * 1000.0,
+            Distance = DistanceUnit.Kilometers.ToMeters(lane.Kilometers),
             WeightKg = Math.Round(random.Next(8000, 20000) / 10m) * 10,
             LengthMeters = 16.15m,
             PickupDateStart = DateTime.UtcNow.AddDays(random.Next(1, 4)),
@@ -267,10 +258,10 @@ internal class NegotiationSeeder(ILogger<NegotiationSeeder> logger) : SeederBase
             cancellationToken);
     }
 
-    /// <summary>Written the way the carrier sees distance: in the tenant's unit.</summary>
+    /// <summary>Body of the seeded outbound offer email, with distances in the tenant's unit as the carrier would write them.</summary>
     private static string OutboundBody(LoadBoardListing listing, Lane lane, Money ask, decimal askPerKm, DistanceUnit unit)
     {
-        var distance = unit.FromMeters(lane.Kilometers * 1000.0);
+        var distance = unit.FromMeters(DistanceUnit.Kilometers.ToMeters(lane.Kilometers));
         return
             $"Hello {listing.BrokerName}, we can cover {listing.OriginAddress.City}, {listing.OriginAddress.State} " +
             $"to {listing.DestinationAddress.City}, {listing.DestinationAddress.State} " +
@@ -310,10 +301,7 @@ internal class NegotiationSeeder(ILogger<NegotiationSeeder> logger) : SeederBase
                 0);
         }
 
-        /// <summary>
-        /// The broker counters, we settle a little under our ask, and the broker accepts. Linked to the
-        /// newest load when one exists, otherwise closed as accepted with no load.
-        /// </summary>
+        /// <summary>Adds a broker reply and accepts the deal, linked to <paramref name="bookedLoadId"/> when given, otherwise with no load.</summary>
         public async Task AddAcceptedDealAsync(Guid? bookedLoadId)
         {
             await AddBrokerReplyAsync(3, 0.05m);

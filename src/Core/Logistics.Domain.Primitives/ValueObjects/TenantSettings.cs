@@ -24,17 +24,10 @@ public record TenantSettings
     /// </summary>
     public string Language { get; set; } = "en";
 
-    /// <summary>
-    /// Whether AI (LLM API calls) is enabled for this tenant. Null/true = enabled, false = blocked.
-    /// Used to prevent LLM usage on demo/test tenants in production.
-    /// Bypassed in development environments.
-    /// </summary>
+    /// <summary>Whether AI features may call the LLM; null or true means enabled. False blocks calls on demo or test tenants, except in development.</summary>
     public bool? AIEnabled { get; set; }
 
-    /// <summary>
-    /// Minimum broker credit score (0-100) required to book a load-board load.
-    /// Null disables the gate. A missing score never blocks; inactive FMCSA authority always does.
-    /// </summary>
+    /// <summary>Minimum broker credit score to negotiate or book with a broker; null disables the check. A broker with no score is never blocked; one with inactive FMCSA authority always is.</summary>
     public int? MinBrokerCreditScore { get; set; }
 
     /// <summary>
@@ -42,25 +35,16 @@ public record TenantSettings
     /// </summary>
     public bool BlockAIOverage { get; set; }
 
-    /// <summary>
-    /// Fallback minimum rate per km the rate-negotiation agent may accept when no lane rule matches.
-    /// Null leaves the agent without a floor.
-    /// </summary>
+    /// <summary>Rate floor per km in tenant currency, used when no lane floor matches a listing; null means the agent negotiates without a floor.</summary>
     public decimal? DefaultRateFloorPerKm { get; set; }
 
-    /// <summary>Operating cost per km, driver pay excluded; null uses each truck's trailing 90-day cost.</summary>
+    /// <summary>Fleet operating cost per km in tenant currency, excluding driver pay; null estimates it from each truck's trailing 90-day expenses.</summary>
     public decimal? CostPerKm { get; set; }
 
-    /// <summary>
-    /// Minutes a truck may wait at a stop before detention starts. Null means the 2-hour industry default.
-    /// A customer's own terms override it.
-    /// </summary>
+    /// <summary>Free time per stop before detention accrues, in minutes; null means the 2-hour industry default. A customer's own terms override it.</summary>
     public int? DetentionFreeMinutes { get; set; }
 
-    /// <summary>
-    /// Hourly detention rate billed past the free time. Null turns detention billing off (the dwell
-    /// alert still fires).
-    /// </summary>
+    /// <summary>Detention charge per hour in tenant currency; null disables detention billing, though the dwell alert still fires.</summary>
     public decimal? DetentionRatePerHour { get; set; }
 
     /// <summary>Loading or unloading time the ETA allows per stop. Null means 60.</summary>

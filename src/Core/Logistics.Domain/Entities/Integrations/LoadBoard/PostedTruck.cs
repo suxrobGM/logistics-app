@@ -4,24 +4,7 @@ using Logistics.Domain.Primitives.ValueObjects;
 
 namespace Logistics.Domain.Entities;
 
-/// <summary>
-/// Represents a truck that has been posted to an external load board (DAT, or Demo for testing)
-/// to advertise available capacity to shippers and brokers.
-/// </summary>
-/// <remarks>
-/// When a trucking company has an available truck, they can "post" it to load boards
-/// to let brokers know the truck is looking for freight. This is the carrier-side equivalent
-/// of load listings - instead of searching for loads, carriers advertise their available trucks.
-/// <para>
-/// Key concepts:
-/// <list type="bullet">
-/// <item><description>A posted truck advertises where the truck is available and when</description></item>
-/// <item><description>Carriers can specify destination preferences to find loads going a certain direction</description></item>
-/// <item><description>Posts typically expire after a set period and need periodic refresh</description></item>
-/// <item><description>Brokers see posted trucks and can contact the carrier with load opportunities</description></item>
-/// </list>
-/// </para>
-/// </remarks>
+/// <summary>A truck advertised on an external load board so brokers can offer it freight.</summary>
 public class PostedTruck : AuditableEntity, ITenantEntity
 {
     /// <summary>

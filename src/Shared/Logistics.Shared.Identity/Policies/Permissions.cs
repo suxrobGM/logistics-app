@@ -84,10 +84,7 @@ public static class Permission
         public const string Manage = $"{nameof(Permission)}.{nameof(Trailer)}.Manage";
     }
 
-    /// <summary>
-    /// Bulk CSV/XLSX import of customers, drivers, trucks, trailers and loads. Manage only: an
-    /// import has nothing to view, and it writes every entity it touches.
-    /// </summary>
+    /// <summary>Data import permission. Only Manage exists, since an import has nothing to view.</summary>
     public static class Import
     {
         public const string Manage = $"{nameof(Permission)}.{nameof(Import)}.Manage";
@@ -202,10 +199,7 @@ public static class Permission
         public const string View = $"{nameof(Permission)}.{nameof(Document)}.View";
         public const string Manage = $"{nameof(Permission)}.{nameof(Document)}.Manage";
 
-        /// <summary>
-        /// Buys reaching documents that are not your own. Without it a holder of
-        /// <see cref="View" /> sees only their own record, their trucks and the loads they drive.
-        /// </summary>
+        /// <summary>Grants access to every document. Without it, a <see cref="View" /> holder sees only the documents of their own records, trucks and loads.</summary>
         public const string Review = $"{nameof(Permission)}.{nameof(Document)}.Review";
     }
 

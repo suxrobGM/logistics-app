@@ -12,11 +12,7 @@ using Xunit;
 
 namespace Logistics.Infrastructure.AI.Tests.Tools.Dispatch;
 
-/// <summary>
-/// Pins the payload of the tool the system prompt tells the agent to call first on every run.
-/// The driver lookup is being moved off the lazy-loaded <c>Truck.MainDriver</c> navigation onto a
-/// batched query, so the emitted shape - including the null arms - has to be nailed down first.
-/// </summary>
+/// <summary>The dispatch prompt tells the agent to call this tool first, so these tests pin its payload shape.</summary>
 public class GetAvailableTrucksToolTests
 {
     private readonly ITenantUnitOfWork _tenantUow = Substitute.For<ITenantUnitOfWork>();

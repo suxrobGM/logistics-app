@@ -2,27 +2,17 @@ using Logistics.Domain.Primitives.Enums;
 
 namespace Logistics.Infrastructure.AI.Agents.Copilot;
 
-/// <summary>
-/// Everything <see cref="AICopilotSystemPrompt.Build"/> varies on.
-/// </summary>
-/// <remarks>
-/// Only the company name is positional; the rest are named init properties. Deliberately separate
-/// from <see cref="Dispatch.DispatchPromptContext"/> even where the fields coincide - the two
-/// prompts are independent by design and must stay free to diverge.
-/// </remarks>
+/// <summary>Tenant facts for the copilot system prompt. A separate type from DispatchPromptContext so the two prompts can change independently.</summary>
 internal sealed record CopilotPromptContext(string CompanyName)
 {
     public DistanceUnit DistanceUnit { get; init; } = DistanceUnit.Miles;
 
-    /// <summary>ISO 4217 code every tenant amount is in.</summary>
+    /// <summary>ISO 4217 code of the tenant currency, which all amounts are in.</summary>
     public string Currency { get; init; } = "USD";
 
     /// <summary>Drops the fleet-wide framing.</summary>
     public bool IsSolo { get; init; }
 
-    /// <summary>
-    /// Whether the caller's tool set includes the dispatch write tools. The guardrails section
-    /// travels with them, so callers without them never pay those tokens.
-    /// </summary>
+    /// <summary>Whether dispatch tools are available. Only then does the prompt include the dispatch guardrails section, which would otherwise waste tokens.</summary>
     public bool HasDispatchTools { get; init; }
 }

@@ -12,12 +12,7 @@ using Microsoft.Extensions.Logging;
 
 namespace Logistics.Infrastructure.Integrations.FuelCards.Providers;
 
-/// <summary>
-/// Demo fuel card provider for development and demos. Generates deterministic transactions
-/// keyed by (truck, day) - external IDs are stable so re-syncs are no-ops, ~80% of
-/// transactions carry a real tenant truck number (auto-match), the rest an unknown unit
-/// number so the review queue demos non-empty.
-/// </summary>
+/// <summary>Fake fuel card provider for demos. Transactions are deterministic per truck and day so re-syncs create no duplicates, and some use unknown unit numbers so the unmatched review queue has entries.</summary>
 internal class DemoFuelCardService(
     ITenantUnitOfWork tenantUow,
     ILogger<DemoFuelCardService> logger) : IFuelCardProviderService
@@ -103,7 +98,7 @@ internal class DemoFuelCardService(
         return transactions;
     }
 
-    /// <summary>EU tenants buy in liters at EU stations; US tenants in gallons at US ones.</summary>
+    /// <summary>Builds one fake transaction: EU-region tenants buy liters at EU stations, US tenants buy gallons at US stations.</summary>
     private static FuelCardTransactionData CreateTransaction(
         string externalId, string unitNumber, DateOnly date, uint seed, Tenant tenant)
     {

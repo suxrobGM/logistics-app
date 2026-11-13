@@ -7,10 +7,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Logistics.DbMigrator.Seeders.FakeData;
 
-/// <summary>
-/// An in-transit trip whose driver is short on hours and which will miss its delivery window. The first truck
-/// position after seeding fires the shortfall and late alerts.
-/// </summary>
+/// <summary>Seeds a trip set up so the first truck position after seeding raises the HOS shortfall and late-arrival alerts.</summary>
 internal class TripAlertDemoSeeder(ILogger<TripAlertDemoSeeder> logger) : SeederBase(logger)
 {
     /// <summary>Straight-line metres to drive minutes, roughly matching the ETA fallback.</summary>

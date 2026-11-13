@@ -88,14 +88,18 @@ internal sealed class FuelCardSyncService(
                 var truck = await ResolveTruckAsync(
                     config.ProviderType, data, trucksByNumber, trucksById, cardsByExternalId, ct);
 
-                if (truck is not null && !FuelCardExpenseFactory.CanCreateExpense(entity, tenantCurrency))
+                if (truck is null)
+                {
+                    result.Pending++;
+                }
+                else if (!FuelCardExpenseFactory.CanCreateExpense(entity, tenantCurrency))
                 {
                     logger.LogWarning(
                         "Fuel transaction {TransactionId} is in {Currency}, not the company currency {TenantCurrency}; left unmatched",
                         entity.ExternalTransactionId, entity.Amount.Currency, tenantCurrency);
                     result.Pending++;
                 }
-                else if (truck is not null)
+                else
                 {
                     var expense = FuelCardExpenseFactory.CreateExpense(entity, truck.Id);
                     await tenantUow.Repository<Expense>().AddAsync(expense, ct);
@@ -103,10 +107,6 @@ internal sealed class FuelCardSyncService(
                     entity.ExpenseId = expense.Id;
                     entity.Status = FuelCardTransactionStatus.Matched;
                     result.Matched++;
-                }
-                else
-                {
-                    result.Pending++;
                 }
 
                 await transactionRepo.AddAsync(entity, ct);
@@ -122,10 +122,7 @@ internal sealed class FuelCardSyncService(
             config.ProviderType, result.Imported, result.Matched, result.Pending);
     }
 
-    /// <summary>
-    /// Matching order: explicit FuelCard mapping → exact unit-number match against a truck
-    /// number (auto-creates the mapping) → unmatched (review queue).
-    /// </summary>
+    /// <summary>Finds the truck for a transaction: the card's mapped truck first, then an exact unit-number match (which also saves the card-to-truck mapping); null when neither matches.</summary>
     private async Task<Truck?> ResolveTruckAsync(
         FuelCardProviderType providerType,
         FuelCardTransactionData data,

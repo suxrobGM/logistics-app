@@ -25,7 +25,6 @@ public sealed record VehicleBolDocument(
     Address Destination,
     string? TruckNumber,
     string? DriverName,
-    string Currency,
     IReadOnlyList<VehicleBolVehicle> Vehicles,
     VehicleBolSignature? Pickup,
     VehicleBolSignature? Delivery,

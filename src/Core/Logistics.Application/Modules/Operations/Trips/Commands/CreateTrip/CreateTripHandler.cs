@@ -119,10 +119,7 @@ internal sealed class CreateTripHandler(
         return Result<(IReadOnlyList<Load>, Dictionary<string, Guid>)>.Ok((loads, tempIdToLoadId));
     }
 
-    /// <summary>
-    ///     Retrieves existing loads based on the provided command and assigns them to the specified truck.
-    ///     Clears the trip stop to avoid conflicts with the new trip.
-    /// </summary>
+    /// <summary>Loads the existing loads to attach to the trip and assigns them to the trip's truck when one is set.</summary>
     private async Task<List<Load>> GetExistingLoadsAsync(CreateTripCommand command, Truck? truck)
     {
         if (command.AttachedLoadIds is null || !command.AttachedLoadIds.Any())

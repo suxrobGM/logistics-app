@@ -21,7 +21,7 @@ internal sealed class FuelCardTransactionEntityConfiguration : IEntityTypeConfig
             .HasMaxLength(100)
             .IsRequired();
 
-        // Card money can arrive in any currency, so it keeps one; plain names, not amount_amount.
+        // Card amounts can be in any currency, so the currency is stored with them; columns are named amount/currency instead of EF's amount_amount.
         builder.ComplexProperty(i => i.Amount, amount =>
         {
             amount.Property(m => m.Amount).HasColumnName("amount");

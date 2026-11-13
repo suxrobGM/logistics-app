@@ -78,10 +78,7 @@ public record EldVehicleDto
     public int? Year { get; set; }
 }
 
-/// <summary>
-/// An inbound ELD webhook as received: the raw body (signatures cover the exact bytes) plus the
-/// signature header and, for providers that sign a timestamp (Samsara), the timestamp header.
-/// </summary>
+/// <summary>Inbound ELD webhook. <c>Body</c> is the raw request body, since the signature covers the exact bytes.</summary>
 public record EldWebhookRequestDto(string Body, string? Signature, string? Timestamp = null);
 
 /// <summary>
@@ -96,10 +93,7 @@ public record EldWebhookResultDto
     public bool IsValid { get; set; }
     public string? ErrorMessage { get; set; }
 
-    /// <summary>
-    /// Provider-supplied unique event id, when the webhook payload carries one. Used by the
-    /// webhook handler for idempotency; when null the handler falls back to a hash of the body.
-    /// </summary>
+    /// <summary>Provider's event id, used to skip duplicate deliveries; null falls back to a hash of the body.</summary>
     public string? ExternalEventId { get; set; }
 
     /// <summary>A rejected webhook: unknown event, not valid, with the reason.</summary>

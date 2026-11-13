@@ -12,13 +12,10 @@ public class Employee : Entity, ITenantEntity
     public required string LastName { get; set; }
     public string? PhoneNumber { get; set; }
 
-    /// <summary>
-    /// Personal address. Required for Stripe Connect onboarding when the employee's country differs
-    /// from the tenant's; otherwise the tenant's company address is used as a fallback.
-    /// </summary>
+    /// <summary>Home address; required for Stripe Connect payouts when the employee's country differs from the tenant's.</summary>
     public Address? Address { get; set; }
 
-    /// <summary>Rate for <see cref="SalaryType"/>; a <see cref="SalaryType.RatePerDistance"/> rate is per km.</summary>
+    /// <summary>Pay rate for <see cref="SalaryType"/> in tenant currency; a <see cref="SalaryType.RatePerDistance"/> rate is per km.</summary>
     public required decimal Salary { get; set; }
     public SalaryType SalaryType { get; set; } = SalaryType.None;
     public EmployeeStatus Status { get; set; } = EmployeeStatus.Active;
@@ -55,10 +52,6 @@ public class Employee : Entity, ITenantEntity
 
     public virtual List<EmployeeDocument> Documents { get; set; } = [];
 
-    /// <summary>
-    ///     Driver licenses (history). A driver can hold multiple licenses across jurisdictions
-    ///     or accumulated renewals.
-    /// </summary>
     public virtual List<DriverLicense> Licenses { get; set; } = [];
 
     /// <summary>
@@ -101,7 +94,7 @@ public class Employee : Entity, ITenantEntity
         {
             SalaryType.ShareOfGross =>
                 loads.Sum(l => PayableRevenue(l.Linehaul, l.FuelSurcharge, l.Accessorials)) * rate,
-            SalaryType.RatePerDistance => (loads.Sum(l => l.Distance) / 1000).ToDecimal() * rate,
+            SalaryType.RatePerDistance => DistanceUnit.Kilometers.FromMeters(loads.Sum(l => l.Distance)).ToDecimal() * rate,
             SalaryType.PerLoad => loads.Count * rate,
             SalaryType.PerStop => loads.Sum(l => l.DepartedStops) * rate,
             _ => 0m

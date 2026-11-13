@@ -3,11 +3,7 @@ using Logistics.Domain.Primitives.Enums;
 
 namespace Logistics.Domain.Entities;
 
-/// <summary>
-/// Represents an individual decision made by the AI dispatch agent within a session.
-/// Write-tool decisions start as Suggested and await dispatcher approval; read-tool decisions
-/// execute immediately and are recorded for the audit trail.
-/// </summary>
+/// <summary>A tool call the agent made in a session. Write-tool calls wait for human approval; read-tool calls run immediately and are recorded.</summary>
 public class AgentDecision : Entity, ITenantEntity
 {
     public Guid SessionId { get; set; }

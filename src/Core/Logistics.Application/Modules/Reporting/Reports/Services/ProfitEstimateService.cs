@@ -12,7 +12,6 @@ namespace Logistics.Application.Modules.Reporting.Reports.Services;
 internal sealed class ProfitEstimateService(ITenantUnitOfWork tenantUow) : IProfitEstimateService
 {
     private const int TrailingDays = 90;
-    private const decimal MetersPerKm = 1000m;
 
     /// <summary>A load not on a trip yet has no stops; a pickup and a drop is the usual pair.</summary>
     private const int EstimatedStops = 2;
@@ -41,7 +40,6 @@ internal sealed class ProfitEstimateService(ITenantUnitOfWork tenantUow) : IProf
             .Where(t => truckIds.Contains(t.Id) && t.MainDriver != null)
             .Select(t => new { t.Id, Driver = t.MainDriver! })
             .ToDictionaryAsync(t => t.Id, t => t.Driver, ct);
-        var unit = tenantUow.GetCurrentTenant().Settings.DistanceUnit;
 
         var margins = new Dictionary<(Guid, Guid), decimal>();
         foreach (var request in requests)
@@ -64,14 +62,14 @@ internal sealed class ProfitEstimateService(ITenantUnitOfWork tenantUow) : IProf
     }
 
     public async Task<decimal?> GetFleetCostPerKmAsync(CancellationToken ct = default) =>
-        (await GetCostPerMetreAsync(ct)).Fleet * MetersPerKm;
+        (await GetCostPerMetreAsync(ct)).Fleet * DistanceUnitExtensions.MetersPerKilometer;
 
-    /// <summary>The tenant's cost per km when set, else each truck's trailing expenses over the distance it drove.</summary>
+    /// <summary>Operating cost per meter: the tenant's CostPerKm setting when set, else each truck's trailing expenses divided by the distance it drove.</summary>
     private async Task<OperatingCosts> GetCostPerMetreAsync(CancellationToken ct)
     {
         if (tenantUow.GetCurrentTenant().Settings.CostPerKm is { } costPerKm)
         {
-            return new OperatingCosts([], costPerKm / MetersPerKm);
+            return new OperatingCosts([], costPerKm / DistanceUnitExtensions.MetersPerKilometer);
         }
 
         var now = DateTime.UtcNow;
@@ -83,7 +81,7 @@ internal sealed class ProfitEstimateService(ITenantUnitOfWork tenantUow) : IProf
             .GroupBy(e => e.TruckId)
             .Select(g => new { TruckId = g.Key, Amount = g.Sum(e => e.Amount) })
             .ToDictionaryAsync(e => e.TruckId, e => e.Amount, ct);
-        var miles = await tenantUow.SumLoggedMetersByTruckAsync(from, now.AddDays(1), ct);
+        var loggedMeters = await tenantUow.SumLoggedMetersByTruckAsync(from, now.AddDays(1), ct);
         var loaded = await tenantUow.Repository<Load>().Query()
             .Where(l => l.DeliveredAt >= from && l.AssignedTruckId != null)
             .GroupBy(l => l.AssignedTruckId!.Value)
@@ -96,7 +94,7 @@ internal sealed class ProfitEstimateService(ITenantUnitOfWork tenantUow) : IProf
         foreach (var (truckId, amount) in expenses)
         {
             // A log shorter than the loaded distance is missing days; the longer figure is the truer one.
-            var meters = Math.Max(miles.GetValueOrDefault(truckId), loaded.GetValueOrDefault(truckId));
+            var meters = Math.Max(loggedMeters.GetValueOrDefault(truckId), loaded.GetValueOrDefault(truckId));
 
             if (meters <= 0)
             {

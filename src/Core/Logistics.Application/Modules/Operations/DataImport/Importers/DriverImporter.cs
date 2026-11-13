@@ -15,11 +15,7 @@ using static Logistics.Application.Modules.Operations.DataImport.Constants.Impor
 
 namespace Logistics.Application.Modules.Operations.DataImport.Importers;
 
-/// <summary>
-///     Drivers match on email. Each new driver gets a password-less master user (an employee's id is
-///     its user's id) and a Driver-role employee, so they can be dispatched before anyone signs in.
-///     An invitation, sent now or later, lets them set a password on that same user.
-/// </summary>
+/// <summary>Imports drivers as employees with password-less user accounts, so they can be dispatched before they ever sign in.</summary>
 internal sealed class DriverImporter(
     IMasterUnitOfWork masterUow,
     ITenantUnitOfWork tenantUow,

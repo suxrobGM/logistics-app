@@ -3,11 +3,7 @@ using Logistics.Domain.Primitives.ValueObjects;
 
 namespace Logistics.Domain.Entities;
 
-/// <summary>
-/// Compact per-truck / per-jurisdiction / per-day distance rollup, upserted incrementally as
-/// GPS pings arrive. Quarterly IFTA reports aggregate these rows; the raw evidence lives in
-/// <see cref="TruckLocationHistory"/>.
-/// </summary>
+/// <summary>Distance a truck drove in one tax jurisdiction on one UTC date. Upserted as GPS positions arrive; quarterly IFTA reports sum these rows.</summary>
 public class TruckJurisdictionDistance : Entity, ITenantEntity
 {
     public required Guid TruckId { get; set; }

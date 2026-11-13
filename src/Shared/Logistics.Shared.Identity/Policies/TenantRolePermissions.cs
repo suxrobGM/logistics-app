@@ -19,10 +19,7 @@ public static class TenantRolePermissions
     public static IEnumerable<string> Driver => GetDriverPermissions();
     public static IEnumerable<string> Customer => GetCustomerPermissions();
 
-    /// <summary>
-    /// Gets permissions for a specific role by name.
-    /// Returns empty if role is not found.
-    /// </summary>
+    /// <summary>Permissions granted to the named role; empty when the role is unknown.</summary>
     public static IEnumerable<string> GetPermissionsForRole(string roleName)
     {
         return RolePermissions.TryGetValue(roleName, out var permissionsFunc)

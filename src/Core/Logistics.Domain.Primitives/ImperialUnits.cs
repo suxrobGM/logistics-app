@@ -1,6 +1,6 @@
 namespace Logistics.Domain.Primitives;
 
-/// <summary>Exact US customary factors, for sources that publish miles, pounds and feet.</summary>
+/// <summary>Exact US customary conversion factors, for data sources that publish miles, pounds and feet.</summary>
 public static class ImperialUnits
 {
     public const double MetersPerMile = 1609.344;

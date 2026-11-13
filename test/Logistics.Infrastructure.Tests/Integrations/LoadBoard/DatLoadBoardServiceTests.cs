@@ -14,10 +14,7 @@ namespace Logistics.Infrastructure.Tests.Integrations.LoadBoard;
 
 public class DatLoadBoardServiceTests
 {
-    /// <summary>
-    /// One match in the shape DAT's v1 search returned in a captured production response, with
-    /// the broker's identity replaced.
-    /// </summary>
+    /// <summary>Captured from a DAT v1 production response, broker identity replaced.</summary>
     private const string MatchesJson = """
         [{
           "matchId": "LS41mA3x", "postingId": "LS41mA3x", "status": "ACTIVE", "version": "V1",

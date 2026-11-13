@@ -50,10 +50,7 @@ internal partial class PayrollService
             (a.PayrollInvoiceId == null || a.PayrollInvoiceId == payroll.Id), ct);
     }
 
-    /// <summary>
-    /// Matched fuel card purchases in the period on trucks the employee is the main driver of. The
-    /// co-driver is never charged, so a team truck's fuel is not deducted twice.
-    /// </summary>
+    /// <summary>Fuel card charges in the payroll period for trucks where the employee is main driver, so a team truck's fuel is not deducted from both drivers.</summary>
     private async Task<List<FuelCardTransaction>> GetFuelChargesAsync(PayrollInvoice payroll, CancellationToken ct)
     {
         var employeeId = payroll.Employee.Id;
