@@ -99,9 +99,9 @@ public class GetAIDispatchConversationByIdHandlerTests
     public async Task Handle_Success_IncludesSessionsAndDecisionsForTheConversation()
     {
         var conversation = _ctx.SetConversation(kind: AgentConversationKind.Dispatch);
-        var session = new AgentSession { ConversationId = conversation.Id, Type = AgentSessionType.Dispatch };
+        var session = new AgentSession { ConversationId = conversation.Id, Conversation = conversation };
         var decision = new AgentDecision { SessionId = session.Id, Session = session, ToolName = "assign_load_to_truck" };
-        var otherSession = new AgentSession { ConversationId = Guid.NewGuid(), Type = AgentSessionType.Dispatch };
+        var otherSession = new AgentSession { ConversationId = Guid.NewGuid(), Conversation = new AgentConversation { Kind = AgentConversationKind.Dispatch } };
         _ctx.SessionRepo.Query().Returns(new List<AgentSession> { session, otherSession }.BuildMock());
         _ctx.DecisionRepo.Query().Returns(new List<AgentDecision> { decision }.BuildMock());
 

@@ -144,10 +144,10 @@ internal sealed class AgentTestContext
     public (AgentDecision Decision, AgentConversation Conversation) SetCopilotSuggestedDecision(
         string toolName = "send_invoice",
         string toolInput = """{"invoice_id":"x"}""",
-        AgentSessionType sessionType = AgentSessionType.Copilot)
+        AgentConversationKind kind = AgentConversationKind.Copilot)
     {
-        var conversation = new AgentConversation { CreatedById = UserId };
-        var decision = SuggestedDecision(conversation, sessionType, toolName, toolInput);
+        var conversation = new AgentConversation { CreatedById = UserId, Kind = kind };
+        var decision = SuggestedDecision(conversation, toolName, toolInput);
 
         DecisionRepo.GetByIdAsync(decision.Id, Arg.Any<CancellationToken>()).Returns(decision);
         ConversationRepo.GetByIdAsync(conversation.Id, Arg.Any<CancellationToken>()).Returns(conversation);
@@ -161,7 +161,7 @@ internal sealed class AgentTestContext
         string toolInput = """{"load_id":"x"}""")
     {
         conversation ??= new AgentConversation { CreatedById = UserId, Kind = AgentConversationKind.Dispatch };
-        var decision = SuggestedDecision(conversation, AgentSessionType.Dispatch, toolName, toolInput);
+        var decision = SuggestedDecision(conversation, toolName, toolInput);
 
         DecisionRepo.Query().Returns(_ => new List<AgentDecision> { decision }.BuildMock());
         return decision;
@@ -172,11 +172,10 @@ internal sealed class AgentTestContext
     /// query, not through the decision's navigation.
     /// </summary>
     private AgentDecision SuggestedDecision(
-        AgentConversation conversation, AgentSessionType sessionType, string toolName, string toolInput)
+        AgentConversation conversation, string toolName, string toolInput)
     {
         var session = new AgentSession
         {
-            Type = sessionType,
             ConversationId = conversation.Id,
             Conversation = conversation
         };

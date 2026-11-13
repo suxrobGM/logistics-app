@@ -17,7 +17,7 @@ public static class AgentSessionQueryExtensions
         /// Filters <see cref="AgentSession"/> to only those that are dispatch-board sessions, not copilot conversations.
         /// </summary>
         public IQueryable<AgentSession> DispatchOnly() =>
-            query.Where(s => s.Type == AgentSessionType.Dispatch);
+            query.Where(s => s.Conversation.Kind == AgentConversationKind.Dispatch);
     }
 
     extension(IQueryable<AgentDecision> query)
@@ -26,6 +26,6 @@ public static class AgentSessionQueryExtensions
         /// Filters <see cref="AgentDecision"/> to only those that are dispatch-board decisions, not copilot suggestions.
         /// </summary>
         public IQueryable<AgentDecision> DispatchOnly() =>
-            query.Where(d => d.Session.Type == AgentSessionType.Dispatch);
+            query.Where(d => d.Session.Conversation.Kind == AgentConversationKind.Dispatch);
     }
 }

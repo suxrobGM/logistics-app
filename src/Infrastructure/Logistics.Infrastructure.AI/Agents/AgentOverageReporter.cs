@@ -28,8 +28,8 @@ internal sealed class AgentOverageReporter(
         {
             await stripeUsageService.ReportAISessionOverageAsync(tenantId, session.EstimatedCostUsd);
             logger.LogInformation(
-                "Reported AI session overage for {SessionType} session {SessionId} (${CostUsd} model cost)",
-                session.Type, session.Id, session.EstimatedCostUsd);
+                "Reported AI session overage for {ConversationKind} session {SessionId} (${CostUsd} model cost)",
+                session.Conversation.Kind, session.Id, session.EstimatedCostUsd);
         }
         catch (Exception ex)
         {

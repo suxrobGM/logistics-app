@@ -50,7 +50,7 @@ public class CancelAIDispatchTurnHandlerTests
         var session = new AgentSession
         {
             ConversationId = conversation.Id,
-            Type = AgentSessionType.Dispatch
+            Conversation = conversation
         };
         _ctx.SessionRepo.Query().Returns(new List<AgentSession> { session }.BuildMock());
 
@@ -86,7 +86,7 @@ public class CancelAIDispatchTurnHandlerTests
     {
         var conversation = _ctx.SetConversation(kind: AgentConversationKind.Dispatch);
         conversation.BeginTurn();
-        var session = new AgentSession { ConversationId = conversation.Id, Type = AgentSessionType.Dispatch };
+        var session = new AgentSession { ConversationId = conversation.Id, Conversation = conversation };
         session.Complete();
         _ctx.SessionRepo.Query().Returns(new List<AgentSession> { session }.BuildMock());
 

@@ -69,7 +69,7 @@ public class GetAICopilotConversationByIdHandlerTests
     public async Task Handle_Success_IncludesDecisionsForTheConversation()
     {
         var conversation = _ctx.SetConversation(kind: AgentConversationKind.Copilot);
-        var session = new AgentSession { ConversationId = conversation.Id, Type = AgentSessionType.Copilot };
+        var session = new AgentSession { ConversationId = conversation.Id, Conversation = conversation };
         var decision = new AgentDecision { SessionId = session.Id, Session = session, ToolName = "send_invoice" };
         _ctx.DecisionRepo.Query().Returns(new List<AgentDecision> { decision }.BuildMock());
 

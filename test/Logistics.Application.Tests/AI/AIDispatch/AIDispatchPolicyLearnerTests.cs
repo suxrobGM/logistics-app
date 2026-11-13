@@ -402,8 +402,8 @@ public class AIDispatchPolicyLearnerTests
             RejectionReason = rejectionReason,
             ApprovedByUserId = approvedBy,
             CreatedAt = DateTime.UtcNow.AddMinutes(-minutesAgo),
-            // The learner filters on Session.Type - a null nav would NRE the mocked queryable.
-            Session = new AgentSession()
+            // The learner filters on the conversation kind - a null nav would NRE the mocked queryable.
+            Session = new AgentSession { Conversation = new AgentConversation { Kind = AgentConversationKind.Dispatch } }
         };
     }
 

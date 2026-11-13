@@ -24,7 +24,7 @@ internal sealed class AICopilotDecisionGuard(
             return Result<CopilotDecisionContext>.Fail("User is not authenticated");
 
         var decision = await tenantUow.Repository<AgentDecision>().GetByIdAsync(decisionId, ct);
-        if (decision is null || decision.Session.Type != AgentSessionType.Copilot)
+        if (decision is null || decision.Session.Conversation.Kind != AgentConversationKind.Copilot)
             return Result<CopilotDecisionContext>.Fail("Decision not found");
 
         var conversation = await access.LoadAsync(

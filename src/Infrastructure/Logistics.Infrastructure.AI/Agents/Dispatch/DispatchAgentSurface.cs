@@ -13,7 +13,7 @@ internal sealed class DispatchAgentSurface(
     AIDispatchConversationBuilder conversationBuilder,
     IAIDispatchBroadcastService broadcastService) : IAgentSurface
 {
-    public AgentSessionType SessionType => AgentSessionType.Dispatch;
+    public AgentConversationKind Kind => AgentConversationKind.Dispatch;
 
     public async Task<AgentTurnSetup> PrepareAsync(
         AgentSession session,

@@ -16,7 +16,7 @@ internal sealed class CopilotAgentSurface(
     IAICopilotBroadcastService broadcastService,
     IUserPermissionService userPermissions) : IAgentSurface
 {
-    public AgentSessionType SessionType => AgentSessionType.Copilot;
+    public AgentConversationKind Kind => AgentConversationKind.Copilot;
 
     public async Task<AgentTurnSetup> PrepareAsync(
         AgentSession session,

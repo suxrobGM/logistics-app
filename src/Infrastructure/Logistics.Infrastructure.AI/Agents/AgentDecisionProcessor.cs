@@ -93,7 +93,7 @@ internal sealed class AgentDecisionProcessor(
         var isWriteTool = definition?.IsWrite == true;
 
         var canAutoExecute = isWriteTool
-            && session.Type == AgentSessionType.Dispatch
+            && session.Conversation.Kind == AgentConversationKind.Dispatch
             && await trustService.CanAutoExecuteAsync(definition!, ct);
 
         if (canAutoExecute)

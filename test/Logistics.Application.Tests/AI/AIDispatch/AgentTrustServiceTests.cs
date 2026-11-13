@@ -18,7 +18,7 @@ public class AgentTrustServiceTests
     private readonly List<AgentDecision> _decisions = [];
     private readonly AIDispatchPolicy _policy = new();
     private readonly List<AIDispatchPolicy> _policies = [];
-    private readonly AgentSession _dispatchSession = new() { Type = AgentSessionType.Dispatch };
+    private readonly AgentSession _dispatchSession = new() { Conversation = new AgentConversation { Kind = AgentConversationKind.Dispatch } };
     private readonly AgentTrustService _sut;
 
     private static readonly AgentToolDefinition CreateTrip = new("create_trip", "")

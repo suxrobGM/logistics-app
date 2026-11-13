@@ -11,8 +11,8 @@ namespace Logistics.Infrastructure.AI.Agents;
 /// </summary>
 internal interface IAgentSurface
 {
-    /// <summary>Stamped on the <see cref="AgentSession"/> the turn service creates.</summary>
-    AgentSessionType SessionType { get; }
+    /// <summary>The conversation kind this surface serves.</summary>
+    AgentConversationKind Kind { get; }
 
     /// <summary>
     /// Resolves the LLM conversation and tool-call context for one turn. Called once, before the

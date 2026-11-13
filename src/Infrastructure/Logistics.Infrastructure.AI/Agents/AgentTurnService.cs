@@ -49,7 +49,7 @@ internal sealed class AgentTurnService(
 
         var session = new AgentSession
         {
-            Type = surface.SessionType,
+            Conversation = conversation,
             ConversationId = conversation.Id,
             TriggeredByUserId = request.TriggeredByUserId,
             IsOverage = quota.IsOverQuota && quota.OverageBillable
@@ -64,8 +64,8 @@ internal sealed class AgentTurnService(
         await BroadcastTurnUpdateSafeAsync(request, surface, conversation, session);
 
         logger.LogInformation(
-            "Starting {SessionType} turn {SessionId} for conversation {ConversationId} (user {UserId})",
-            surface.SessionType, session.Id, conversation.Id, request.TriggeredByUserId);
+            "Starting {ConversationKind} turn {SessionId} for conversation {ConversationId} (user {UserId})",
+            surface.Kind, session.Id, conversation.Id, request.TriggeredByUserId);
 
         LlmConversation? state = null;
         var priorMessageCount = 0;
@@ -85,11 +85,11 @@ internal sealed class AgentTurnService(
         catch (OperationCanceledException)
         {
             session.Cancel();
-            logger.LogInformation("{SessionType} turn {SessionId} was cancelled", surface.SessionType, session.Id);
+            logger.LogInformation("{ConversationKind} turn {SessionId} was cancelled", surface.Kind, session.Id);
         }
         catch (Exception ex)
         {
-            logger.LogError(ex, "{SessionType} turn {SessionId} failed", surface.SessionType, session.Id);
+            logger.LogError(ex, "{ConversationKind} turn {SessionId} failed", surface.Kind, session.Id);
             session.Fail(LlmErrorSanitizer.ForSession(ex));
         }
         finally
@@ -116,8 +116,8 @@ internal sealed class AgentTurnService(
         if (!options.Value.BypassAIGate && tenantUow.GetCurrentTenant().Settings.AIEnabled == false)
         {
             logger.LogInformation(
-                "LLM is disabled for tenant {TenantId}, skipping {SessionType} turn",
-                request.TenantId, surface.SessionType);
+                "LLM is disabled for tenant {TenantId}, skipping {ConversationKind} turn",
+                request.TenantId, surface.Kind);
             await AppendSystemNoticeAsync(
                 request, surface, conversation,
                 "AI is disabled for this company. Contact your administrator to enable it.", ct);
@@ -130,8 +130,8 @@ internal sealed class AgentTurnService(
         if (quota.OverageBlocked)
         {
             logger.LogInformation(
-                "Weekly AI budget reached and overage is blocked for tenant {TenantId}, skipping {SessionType} turn",
-                request.TenantId, surface.SessionType);
+                "Weekly AI budget reached and overage is blocked for tenant {TenantId}, skipping {ConversationKind} turn",
+                request.TenantId, surface.Kind);
             await AppendSystemNoticeAsync(request, surface, conversation, ErrorCodes.AIBudgetReachedMessage, ct);
             return null;
         }
@@ -250,7 +250,7 @@ internal sealed class AgentTurnService(
         }
         catch (Exception ex)
         {
-            logger.LogWarning(ex, "Failed to broadcast {SessionType} message {MessageId}", surface.SessionType, message.Id);
+            logger.LogWarning(ex, "Failed to broadcast {ConversationKind} message {MessageId}", surface.Kind, message.Id);
         }
     }
 
@@ -263,7 +263,7 @@ internal sealed class AgentTurnService(
         }
         catch (Exception ex)
         {
-            logger.LogWarning(ex, "Failed to broadcast {SessionType} turn update for session {SessionId}", surface.SessionType, session.Id);
+            logger.LogWarning(ex, "Failed to broadcast {ConversationKind} turn update for session {SessionId}", surface.Kind, session.Id);
         }
     }
 }

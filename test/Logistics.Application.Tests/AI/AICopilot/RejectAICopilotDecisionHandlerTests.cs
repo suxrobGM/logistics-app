@@ -23,7 +23,7 @@ public class RejectAICopilotDecisionHandlerTests
     [Fact]
     public async Task Handle_DispatchDecision_IsNotRejectableViaCopilot()
     {
-        var (decision, _) = _ctx.SetCopilotSuggestedDecision(sessionType: AgentSessionType.Dispatch);
+        var (decision, _) = _ctx.SetCopilotSuggestedDecision(kind: AgentConversationKind.Dispatch);
 
         var result = await _sut.Handle(
             new RejectAICopilotDecisionCommand { DecisionId = decision.Id }, CancellationToken.None);

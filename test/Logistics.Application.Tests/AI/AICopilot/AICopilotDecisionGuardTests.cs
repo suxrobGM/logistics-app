@@ -46,7 +46,7 @@ public class AICopilotDecisionGuardTests
     [Fact]
     public async Task LoadAsync_DispatchDecisionId_Fails()
     {
-        var dispatchSession = new AgentSession { Type = AgentSessionType.Dispatch };
+        var dispatchSession = new AgentSession { Conversation = new AgentConversation { Kind = AgentConversationKind.Dispatch } };
         var dispatchDecision = new AgentDecision
         {
             SessionId = dispatchSession.Id,

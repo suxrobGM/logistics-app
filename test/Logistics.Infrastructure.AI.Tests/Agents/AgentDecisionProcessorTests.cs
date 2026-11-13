@@ -47,7 +47,7 @@ public class AgentDecisionProcessorTests
 
     private static AgentSession CreateSession()
     {
-        return new AgentSession { CreatedAt = DateTime.UtcNow };
+        return new AgentSession { CreatedAt = DateTime.UtcNow, Conversation = new AgentConversation { Kind = AgentConversationKind.Dispatch } };
     }
 
     private static LlmToolUseBlock CreateToolUse(string name, JsonObject? input = null)
@@ -420,7 +420,7 @@ public class AgentDecisionProcessorTests
     public async Task ProcessToolCalls_CopilotSession_NeverAutoExecutes()
     {
         _trust.CanAutoExecuteAsync(Arg.Any<AgentToolDefinition>(), Arg.Any<CancellationToken>()).Returns(true);
-        var session = new AgentSession { CreatedAt = DateTime.UtcNow, Type = AgentSessionType.Copilot };
+        var session = new AgentSession { CreatedAt = DateTime.UtcNow, Conversation = new AgentConversation { Kind = AgentConversationKind.Copilot } };
 
         await _sut.ProcessToolCallsAsync(
             session, new ToolCallContext(), [CreateToolUse("create_trip")], null, CancellationToken.None);

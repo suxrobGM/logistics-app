@@ -27,9 +27,9 @@ public class GetPendingDecisionsHandlerTests
         _sut = new GetPendingDecisionsHandler(_ctx.TenantUow, _ctx.DecisionDtoMapper);
     }
 
-    private static AgentDecision SuggestedDecision(AgentSessionType sessionType) => new()
+    private static AgentDecision SuggestedDecision(AgentConversationKind sessionType) => new()
     {
-        Session = new AgentSession { Type = sessionType },
+        Session = new AgentSession { Conversation = new AgentConversation { Kind = sessionType } },
         Status = AgentDecisionStatus.Suggested,
         ToolName = "assign_load_to_truck"
     };
@@ -38,9 +38,9 @@ public class GetPendingDecisionsHandlerTests
     [Fact]
     public async Task Handle_MixOfSurfacesAndStatuses_OnlyDispatchSuggestedReturned()
     {
-        var dispatchSuggested = SuggestedDecision(AgentSessionType.Dispatch);
-        var copilotSuggested = SuggestedDecision(AgentSessionType.Copilot);
-        var dispatchApproved = SuggestedDecision(AgentSessionType.Dispatch);
+        var dispatchSuggested = SuggestedDecision(AgentConversationKind.Dispatch);
+        var copilotSuggested = SuggestedDecision(AgentConversationKind.Copilot);
+        var dispatchApproved = SuggestedDecision(AgentConversationKind.Dispatch);
         dispatchApproved.Approve(_ctx.UserId);
         _ctx.DecisionRepo.Query().Returns(
             new List<AgentDecision> { dispatchSuggested, copilotSuggested, dispatchApproved }.BuildMock());
@@ -67,7 +67,7 @@ public class GetPendingDecisionsHandlerTests
             DeliveryCost = 0m
         };
         var truck = new Truck { Number = "T-100", Type = TruckType.FreightTruck };
-        var decision = SuggestedDecision(AgentSessionType.Dispatch);
+        var decision = SuggestedDecision(AgentConversationKind.Dispatch);
         decision.LoadId = load.Id;
         decision.TruckId = truck.Id;
         _ctx.DecisionRepo.Query().Returns(new List<AgentDecision> { decision }.BuildMock());
@@ -85,7 +85,7 @@ public class GetPendingDecisionsHandlerTests
     [Fact]
     public async Task Handle_DecisionWithoutLoadOrTruck_LeavesNamesNull()
     {
-        var decision = SuggestedDecision(AgentSessionType.Dispatch);
+        var decision = SuggestedDecision(AgentConversationKind.Dispatch);
         _ctx.DecisionRepo.Query().Returns(new List<AgentDecision> { decision }.BuildMock());
 
         var result = await _sut.Handle(new GetPendingDecisionsQuery(), CancellationToken.None);

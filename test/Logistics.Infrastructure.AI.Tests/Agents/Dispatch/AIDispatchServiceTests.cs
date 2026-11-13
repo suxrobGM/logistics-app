@@ -204,7 +204,7 @@ public class AIDispatchServiceTests
         }
 
         Assert.NotNull(capturedSession);
-        Assert.Equal(AgentSessionType.Dispatch, capturedSession!.Type);
+        Assert.Equal(AgentConversationKind.Dispatch, capturedSession!.Conversation.Kind);
         Assert.Equal(conversation.Id, capturedSession.ConversationId);
         Assert.True(capturedSession.IsOverage);
     }

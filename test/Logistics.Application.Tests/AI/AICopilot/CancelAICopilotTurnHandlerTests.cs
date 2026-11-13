@@ -59,7 +59,7 @@ public class CancelAICopilotTurnHandlerTests
     {
         var conversation = _ctx.SetConversation(kind: AgentConversationKind.Copilot);
         conversation.BeginTurn();
-        var session = new AgentSession { ConversationId = conversation.Id, Type = AgentSessionType.Copilot };
+        var session = new AgentSession { ConversationId = conversation.Id, Conversation = conversation };
         _ctx.SessionRepo.Query().Returns(new List<AgentSession> { session }.BuildMock());
 
         var result = await _sut.Handle(

@@ -24,11 +24,11 @@ public class AgentOverageReporterTests
         _sut = new AgentOverageReporter(_stripeUsageService, NullLogger<AgentOverageReporter>.Instance);
     }
 
-    private static AgentSession Session(AgentSessionType type, bool isOverage, decimal cost = 0.25m)
+    private static AgentSession Session(AgentConversationKind type, bool isOverage, decimal cost = 0.25m)
     {
         var session = new AgentSession
         {
-            Type = type,
+            Conversation = new AgentConversation { Kind = type },
             CreatedAt = DateTime.UtcNow,
             IsOverage = isOverage,
             EstimatedCostUsd = cost
@@ -37,9 +37,9 @@ public class AgentOverageReporterTests
     }
 
     [Theory]
-    [InlineData(AgentSessionType.Dispatch)]
-    [InlineData(AgentSessionType.Copilot)]
-    public async Task ReportIfOverBudget_CompletedOverBudgetSession_ReportsRawCost(AgentSessionType type)
+    [InlineData(AgentConversationKind.Dispatch)]
+    [InlineData(AgentConversationKind.Copilot)]
+    public async Task ReportIfOverBudget_CompletedOverBudgetSession_ReportsRawCost(AgentConversationKind type)
     {
         var session = Session(type, isOverage: true);
         session.Complete();
@@ -53,7 +53,7 @@ public class AgentOverageReporterTests
     [Fact]
     public async Task ReportIfOverBudget_WithinBudget_ReportsNothing()
     {
-        var session = Session(AgentSessionType.Copilot, isOverage: false);
+        var session = Session(AgentConversationKind.Copilot, isOverage: false);
         session.Complete();
 
         await _sut.ReportIfOverBudgetAsync(session, _tenantId);
@@ -66,7 +66,7 @@ public class AgentOverageReporterTests
     public async Task ReportIfOverBudget_FailedSession_ReportsNothing()
     {
         // The budget still absorbed the cost; charging for an answer nobody got would not be.
-        var session = Session(AgentSessionType.Copilot, isOverage: true);
+        var session = Session(AgentConversationKind.Copilot, isOverage: true);
         session.Fail("boom");
 
         await _sut.ReportIfOverBudgetAsync(session, _tenantId);
@@ -78,7 +78,7 @@ public class AgentOverageReporterTests
     [Fact]
     public async Task ReportIfOverBudget_CancelledSession_ReportsNothing()
     {
-        var session = Session(AgentSessionType.Copilot, isOverage: true);
+        var session = Session(AgentConversationKind.Copilot, isOverage: true);
         session.Cancel();
 
         await _sut.ReportIfOverBudgetAsync(session, _tenantId);
@@ -96,7 +96,7 @@ public class AgentOverageReporterTests
             .ReportAISessionOverageAsync(Arg.Any<Guid>(), Arg.Any<decimal>(), Arg.Any<CancellationToken>())
             .ThrowsAsync(new InvalidOperationException("stripe down"));
 
-        var session = Session(AgentSessionType.Copilot, isOverage: true);
+        var session = Session(AgentConversationKind.Copilot, isOverage: true);
         session.Complete();
 
         await _sut.ReportIfOverBudgetAsync(session, _tenantId);

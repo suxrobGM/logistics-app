@@ -9,7 +9,6 @@ namespace Logistics.Domain.Entities;
 /// </summary>
 public class AgentSession : AuditableEntity, ITenantEntity
 {
-    public AgentSessionType Type { get; init; } = AgentSessionType.Dispatch;
     public AgentSessionStatus Status { get; private set; } = AgentSessionStatus.Running;
 
     /// <summary>
