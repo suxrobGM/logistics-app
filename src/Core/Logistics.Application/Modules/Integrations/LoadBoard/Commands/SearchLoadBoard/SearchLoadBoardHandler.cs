@@ -113,20 +113,19 @@ internal sealed class SearchLoadBoardHandler(
 
     private async Task AttachEstimatedMarginsAsync(IReadOnlyList<LoadBoardListingDto> listings, CancellationToken ct)
     {
-        if (listings.Count == 0 || await profitEstimate.GetFleetCostPerMetreAsync(ct) is not { } costPerMetre)
+        if (listings.Count == 0 || await profitEstimate.GetFleetCostPerMileAsync(ct) is not { } costPerMile)
         {
             return;
         }
 
-        var costPerMile = costPerMetre * DistanceUnit.Miles.ToMeters(1).ToDecimal();
         foreach (var listing in listings)
         {
-            var ratePerMile = listing.RatePerMile ?? RatePerMile(listing.TotalRate, listing.Distance);
+            var ratePerMile = listing.RatePerMile ?? CalculateRatePerMile(listing.TotalRate, listing.Distance);
             listing.EstimatedMarginPerMile = ratePerMile is { } rate ? Math.Round(rate - costPerMile, 2) : null;
         }
     }
 
-    private static decimal? RatePerMile(decimal? totalRate, double? miles) =>
+    private static decimal? CalculateRatePerMile(decimal? totalRate, double? miles) =>
         totalRate is { } total && miles is > 0 ? total / miles.Value.ToDecimal() : null;
 
     /// <summary>

@@ -61,7 +61,7 @@ internal static class AIDispatchSystemPrompt
         var summaryPlanSection = isSolo
             ? $"""
               ### Plan
-              One short line per load: what to run, when to leave, and and its `est_margin`. No table - there is only one truck to plan for.
+              One short line per load: what to run, when to leave, and its `est_margin`. No table - there is only one truck to plan for.
               """
             : """
               ### Assignments

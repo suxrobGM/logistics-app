@@ -39,7 +39,7 @@ public class GetDispatchCandidatesToolTests
         _tenantUow.Repository<Employee>().Returns(_employeeRepo);
         _tenantUow.GetCurrentTenant().Returns(TestTenant.Create());
         _profitEstimate.EstimateMarginsAsync(Arg.Any<IReadOnlyCollection<MarginRequest>>(), Arg.Any<CancellationToken>())
-            .Returns(new Dictionary<(Guid TruckId, Guid LoadId), MarginEstimate>());
+            .Returns(new Dictionary<(Guid TruckId, Guid LoadId), decimal>());
         _sut = new GetDispatchCandidatesTool(
             _mediator, _tenantUow, _eligibility, _profitEstimate, new AvailableTruckLoader(_tenantUow));
     }

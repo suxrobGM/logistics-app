@@ -80,7 +80,7 @@ internal sealed class CalculateAssignmentMetricsTool(ITenantUnitOfWork tenantUow
             pairs.Add((candidate, load, truck, deadheadMeters));
         }
 
-        var estimates = await profitEstimate.EstimateMarginsAsync(
+        var margins = await profitEstimate.EstimateMarginsAsync(
             pairs.Select(p => new MarginRequest(p.Truck.Id, p.Load.Id, p.DeadheadMeters + p.Load.Distance)).ToList(), ct);
 
         foreach (var (candidate, load, truck, deadheadMeters) in pairs)
@@ -104,9 +104,9 @@ internal sealed class CalculateAssignmentMetricsTool(ITenantUnitOfWork tenantUow
                 [$"revenue_per_{suffix}"] = rate,
                 ["deadhead_ratio"] = Math.Round(total > 0 ? deadhead / total : 0, 3)
             };
-            var estimate = estimates.GetValueOrDefault((truck.Id, load.Id));
-            DispatchUnits.AddMargin(row, estimate, total, unit);
-            scored.Add((estimate is null ? null : DispatchUnits.RatePer(estimate.Margin, total), rate, row));
+            decimal? margin = margins.TryGetValue((truck.Id, load.Id), out var m) ? m : null;
+            DispatchUnits.AddMargin(row, margin, total, unit);
+            scored.Add((DispatchUnits.MarginPer(margin, total), rate, row));
         }
 
         // Best pairings first; unscoreable candidates last.

@@ -13,13 +13,12 @@ internal sealed class ProfitEstimateService(
     IDriverPayCalculator payCalculator) : IProfitEstimateService
 {
     private const int TrailingDays = 90;
+    private static readonly decimal MetersPerMile = DistanceUnit.Miles.ToMeters(1).ToDecimal();
 
     /// <summary>A load not on a trip yet has no stops; a pickup and a drop is the usual pair.</summary>
     private const int EstimatedStops = 2;
 
-    private static readonly ExpenseStatus[] CountedStatuses = [ExpenseStatus.Approved, ExpenseStatus.Paid];
-
-    public async Task<IReadOnlyDictionary<(Guid TruckId, Guid LoadId), MarginEstimate>> EstimateMarginsAsync(
+    public async Task<IReadOnlyDictionary<(Guid TruckId, Guid LoadId), decimal>> EstimateMarginsAsync(
         IReadOnlyCollection<MarginRequest> requests, CancellationToken ct = default)
     {
         var truckIds = requests.Select(r => r.TruckId).Distinct().ToList();
@@ -45,10 +44,10 @@ internal sealed class ProfitEstimateService(
             .ToDictionaryAsync(t => t.Id, t => t.Driver, ct);
         var unit = tenantUow.GetCurrentTenant().Settings.DistanceUnit;
 
-        var estimates = new Dictionary<(Guid, Guid), MarginEstimate>();
+        var margins = new Dictionary<(Guid, Guid), decimal>();
         foreach (var request in requests)
         {
-            var costPerMetre = costs.ByTruck.TryGetValue(request.TruckId, out var truckCost) ? truckCost : costs.Fleet;
+            decimal? costPerMetre = costs.ByTruck.TryGetValue(request.TruckId, out var truckCost) ? truckCost : costs.Fleet;
             if (costPerMetre is null || !loads.TryGetValue(request.LoadId, out var load))
             {
                 continue;
@@ -59,24 +58,21 @@ internal sealed class ProfitEstimateService(
                 : 0m;
             var revenue = load.Linehaul + load.FuelSurcharge + load.Accessorials;
             var operatingCost = Math.Round(costPerMetre.Value * request.TotalMeters.ToDecimal(), 2);
-            estimates[(request.TruckId, request.LoadId)] = new MarginEstimate(revenue, operatingCost, driverPay);
+            margins[(request.TruckId, request.LoadId)] = revenue - operatingCost - driverPay;
         }
 
-        return estimates;
+        return margins;
     }
 
-    public async Task<decimal?> GetFleetCostPerMetreAsync(CancellationToken ct = default) =>
-        (await GetCostPerMetreAsync(ct)).Fleet;
+    public async Task<decimal?> GetFleetCostPerMileAsync(CancellationToken ct = default) =>
+        (await GetCostPerMetreAsync(ct)).Fleet * MetersPerMile;
 
-    /// <summary>
-    /// The tenant's cost per mile when set. Otherwise each truck's trailing expenses over the distance it
-    /// drove (IFTA mileage or loaded distance, whichever is longer), with the fleet's average for trucks with no history.
-    /// </summary>
+    /// <summary>The tenant's cost per mile when set, else each truck's trailing expenses over the distance it drove.</summary>
     private async Task<OperatingCosts> GetCostPerMetreAsync(CancellationToken ct)
     {
         if (tenantUow.GetCurrentTenant().Settings.CostPerMile is { } costPerMile)
         {
-            return new OperatingCosts([], costPerMile / DistanceUnit.Miles.ToMeters(1).ToDecimal());
+            return new OperatingCosts([], costPerMile / MetersPerMile);
         }
 
         var from = DateTime.UtcNow.AddDays(-TrailingDays);
@@ -84,7 +80,7 @@ internal sealed class ProfitEstimateService(
 
         var expenses = await tenantUow.Repository<Expense>().Query()
             .OfType<TruckLinkedExpense>()
-            .Where(e => CountedStatuses.Contains(e.Status) && e.ExpenseDate >= from)
+            .Where(e => ExpenseStatuses.Counted.Contains(e.Status) && e.ExpenseDate >= from)
             .GroupBy(e => e.TruckId)
             .Select(g => new { TruckId = g.Key, Amount = g.Sum(e => e.Amount.Amount) })
             .ToDictionaryAsync(e => e.TruckId, e => e.Amount, ct);
@@ -99,7 +95,7 @@ internal sealed class ProfitEstimateService(
             .Select(g => new { TruckId = g.Key, Meters = g.Sum(l => l.Distance) })
             .ToDictionaryAsync(l => l.TruckId, l => l.Meters, ct);
 
-        var byTruck = new Dictionary<Guid, decimal?>();
+        var byTruck = new Dictionary<Guid, decimal>();
         var fleetCost = 0m;
         var fleetMeters = 0d;
         foreach (var (truckId, amount) in expenses)
@@ -120,5 +116,5 @@ internal sealed class ProfitEstimateService(
         return new OperatingCosts(byTruck, fleetMeters > 0 ? fleetCost / fleetMeters.ToDecimal() : null);
     }
 
-    private sealed record OperatingCosts(Dictionary<Guid, decimal?> ByTruck, decimal? Fleet);
+    private sealed record OperatingCosts(Dictionary<Guid, decimal> ByTruck, decimal? Fleet);
 }

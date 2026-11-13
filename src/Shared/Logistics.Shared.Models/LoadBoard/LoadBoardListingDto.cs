@@ -26,10 +26,7 @@ public record LoadBoardListingDto
     public decimal? MarketRateLowPerMile { get; set; }
     public decimal? MarketRateHighPerMile { get; set; }
 
-    /// <summary>
-    /// Rate per mile minus the fleet's operating cost per mile, driver pay and deadhead excluded.
-    /// Null when the listing has no rate or the fleet has no cost history.
-    /// </summary>
+    /// <summary>Rate per mile minus fleet operating cost per mile, driver pay and deadhead excluded.</summary>
     public decimal? EstimatedMarginPerMile { get; set; }
     public decimal? TotalRate { get; set; }
     public string? Currency { get; set; }

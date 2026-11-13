@@ -48,10 +48,7 @@ public record TenantSettings
     /// </summary>
     public decimal? DefaultRateFloorPerMile { get; set; }
 
-    /// <summary>
-    /// Truck operating cost per mile, driver pay excluded, that AI dispatch prices loads with.
-    /// Null uses each truck's trailing 90-day cost.
-    /// </summary>
+    /// <summary>Operating cost per mile, driver pay excluded; null uses each truck's trailing 90-day cost.</summary>
     public decimal? CostPerMile { get; set; }
 
     /// <summary>

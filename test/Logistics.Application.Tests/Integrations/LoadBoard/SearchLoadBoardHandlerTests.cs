@@ -99,7 +99,7 @@ public class SearchLoadBoardHandlerTests
     [Fact]
     public async Task Handle_FleetCostKnown_StampsRateMinusCostPerMile()
     {
-        _profitEstimate.GetFleetCostPerMetreAsync(Arg.Any<CancellationToken>()).Returns(1.5m / 1609.344m);
+        _profitEstimate.GetFleetCostPerMileAsync(Arg.Any<CancellationToken>()).Returns(1.5m);
         _demo.SearchLoadsAsync(Arg.Any<LoadBoardSearchCriteria>(), Arg.Any<CancellationToken>())
             .Returns([CreateListing("EXT-1")]);
         _dat.SearchLoadsAsync(Arg.Any<LoadBoardSearchCriteria>(), Arg.Any<CancellationToken>()).Returns([]);

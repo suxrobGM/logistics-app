@@ -59,12 +59,12 @@ internal sealed class GetDispatchCandidatesTool(
         var requests = scoring
             .SelectMany(s => s.Scored.Select(c => new MarginRequest(c.Entry.Truck.Id, s.Load.Id, c.TripMeters)))
             .ToList();
-        var estimates = await profitEstimate.EstimateMarginsAsync(requests, ct);
+        var margins = await profitEstimate.EstimateMarginsAsync(requests, ct);
 
         var planned = new List<object>(loads.Count);
         foreach (var loadScoring in scoring)
         {
-            planned.Add(await PlanAsync(loadScoring, estimates, unit, limit, ct));
+            planned.Add(await PlanAsync(loadScoring, margins, unit, limit, ct));
         }
 
         return ToolResult.Ok(new
@@ -127,18 +127,19 @@ internal sealed class GetDispatchCandidatesTool(
 
     private async Task<Dictionary<string, object?>> PlanAsync(
         LoadScoring scoring,
-        IReadOnlyDictionary<(Guid TruckId, Guid LoadId), MarginEstimate> estimates,
+        IReadOnlyDictionary<(Guid TruckId, Guid LoadId), decimal> margins,
         DistanceUnit unit,
         int limit,
         CancellationToken ct)
     {
         var load = scoring.Load;
-        MarginEstimate? EstimateOf(Scored s) => estimates.GetValueOrDefault((s.Entry.Truck.Id, load.Id));
+        decimal? GetMargin(Scored s) => margins.TryGetValue((s.Entry.Truck.Id, load.Id), out var m) ? m : null;
+        double GetTripDistance(Scored s) => DispatchUnits.FromMeters(s.TripMeters, unit);
 
         var best = scoring.Scored
             .OrderBy(s => s.Equipment)
             .ThenBy(s => s.Hos)
-            .ThenByDescending(s => EstimateOf(s) is { } e ? (double)e.Margin / Math.Max(s.TripMeters, 1) : double.MinValue)
+            .ThenByDescending(s => DispatchUnits.MarginPer(GetMargin(s), GetTripDistance(s)) ?? double.MinValue)
             .ThenBy(s => s.DeadheadMeters ?? double.MaxValue)
             .Take(limit)
             .ToList();
@@ -148,7 +149,7 @@ internal sealed class GetDispatchCandidatesTool(
         foreach (var candidate in best)
         {
             var row = Describe(candidate, load, unit);
-            DispatchUnits.AddMargin(row, EstimateOf(candidate), DispatchUnits.FromMeters(candidate.TripMeters, unit), unit);
+            DispatchUnits.AddMargin(row, GetMargin(candidate), GetTripDistance(candidate), unit);
             var blocked = false;
 
             if (needsEligibility)

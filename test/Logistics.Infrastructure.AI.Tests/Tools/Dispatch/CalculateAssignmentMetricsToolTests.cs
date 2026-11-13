@@ -22,7 +22,7 @@ public class CalculateAssignmentMetricsToolTests
     private readonly ITenantRepository<Truck, Guid> _truckRepo =
         Substitute.For<ITenantRepository<Truck, Guid>>();
     private readonly IProfitEstimateService _profitEstimate = Substitute.For<IProfitEstimateService>();
-    private readonly Dictionary<(Guid TruckId, Guid LoadId), MarginEstimate> _estimates = [];
+    private readonly Dictionary<(Guid TruckId, Guid LoadId), decimal> _estimates = [];
     private readonly CalculateAssignmentMetricsTool _sut;
 
     public CalculateAssignmentMetricsToolTests()
@@ -149,8 +149,8 @@ public class CalculateAssignmentMetricsToolTests
         Setup(
             [CreateLoad(richLoad, "Pays more", 100_000, 2000m), CreateLoad(leanLoad, "Costs less", 100_000, 1500m)],
             [CreateTruck(truckId, "T-1")]);
-        _estimates[(truckId, richLoad)] = new MarginEstimate(2000m, 1500m, 600m);
-        _estimates[(truckId, leanLoad)] = new MarginEstimate(1500m, 500m, 200m);
+        _estimates[(truckId, richLoad)] = -100m;
+        _estimates[(truckId, leanLoad)] = 800m;
 
         var candidates = (await Run(Candidate(richLoad, truckId), Candidate(leanLoad, truckId)))
             .GetProperty("candidates");
