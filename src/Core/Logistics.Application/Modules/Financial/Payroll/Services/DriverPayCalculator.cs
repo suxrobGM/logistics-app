@@ -15,12 +15,10 @@ internal sealed class DriverPayCalculator : IDriverPayCalculator
                 loads.Sum(l => employee.PayableRevenue(l.Linehaul, l.FuelSurcharge, l.Accessorials)) * rate,
             SalaryType.RatePerDistance => unit.FromMeters(loads.Sum(l => l.Distance)).ToDecimal() * rate,
             SalaryType.PerLoad => loads.Count * rate,
-            SalaryType.PerStop => PayForStops(employee, loads.Sum(l => l.DepartedStops)),
+            SalaryType.PerStop => loads.Sum(l => l.DepartedStops) * rate,
             _ => 0m
         };
     }
-
-    public decimal PayForStops(Employee employee, int stops) => stops * employee.Salary.Amount;
 
     public decimal PayForPeriod(Employee employee, decimal weeks, decimal months, decimal hours)
     {

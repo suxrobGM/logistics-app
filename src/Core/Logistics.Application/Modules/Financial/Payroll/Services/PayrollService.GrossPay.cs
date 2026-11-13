@@ -17,52 +17,51 @@ internal partial class PayrollService
         switch (employee.SalaryType)
         {
             case SalaryType.ShareOfGross:
-            {
-                var loads = await GetDeliveredLoadsAsync(employee.Id, from, to, ct);
-                return new GrossPay(payCalculator.PayForLoads(employee, loads, Unit()),
-                    $"{Percent(rate)} of {employee.PayableRevenueBasis()} on {loads.Count} load(s)");
-            }
+                {
+                    var loads = await GetDeliveredLoadsAsync(employee.Id, from, to, ct);
+                    return new GrossPay(payCalculator.PayForLoads(employee, loads, GetDistanceUnit()),
+                        $"{Percent(rate)} of {employee.PayableRevenueBasis()} on {loads.Count} load(s)");
+                }
             case SalaryType.Weekly:
                 var weeks = payroll.PeriodWeeks();
-                return new GrossPay(payCalculator.PayForPeriod(employee, weeks, 0, 0), $"Weekly salary x {weeks}");
+                return new GrossPay(weeks * rate, $"Weekly salary x {weeks}");
             case SalaryType.Monthly:
                 var months = payroll.PeriodMonths();
-                return new GrossPay(payCalculator.PayForPeriod(employee, 0, months, 0), $"Monthly salary x {months}");
+                return new GrossPay(months * rate, $"Monthly salary x {months}");
             case SalaryType.RatePerDistance:
-            {
-                var loads = await GetDeliveredLoadsAsync(employee.Id, from, to, ct);
-                var meters = loads.Sum(l => l.Distance);
-                var unit = Unit();
-                var distance = unit.FromMeters(meters);
-                return new GrossPay(payCalculator.PayForLoads(employee, loads, unit),
-                    $"{loads.Count} load(s), {distance:0} {unit.Abbreviation()} x {rate:0.00}",
-                    Distance: meters);
-            }
+                {
+                    var loads = await GetDeliveredLoadsAsync(employee.Id, from, to, ct);
+                    var meters = loads.Sum(l => l.Distance);
+                    var unit = GetDistanceUnit();
+                    var distance = unit.FromMeters(meters);
+                    return new GrossPay(payCalculator.PayForLoads(employee, loads, unit),
+                        $"{loads.Count} load(s), {distance:0} {unit.Abbreviation()} x {rate:0.00}",
+                        Distance: meters);
+                }
             case SalaryType.Hourly:
-            {
-                var hours = await tenantUow.Repository<TimeEntry>().Query()
-                    .Where(te => te.EmployeeId == employee.Id && te.Date >= from && te.Date < to)
-                    .SumAsync(te => te.TotalHours, ct);
-                return new GrossPay(payCalculator.PayForPeriod(employee, 0, 0, hours),
-                    $"{hours:0.##} hour(s) x {rate:0.00}", Hours: hours);
-            }
+                {
+                    var hours = await tenantUow.Repository<TimeEntry>().Query()
+                        .Where(te => te.EmployeeId == employee.Id && te.Date >= from && te.Date < to)
+                        .SumAsync(te => te.TotalHours, ct);
+                    return new GrossPay(hours * rate, $"{hours:0.##} hour(s) x {rate:0.00}", Hours: hours);
+                }
             case SalaryType.PerLoad:
-            {
-                var loads = await GetDeliveredLoadsAsync(employee.Id, from, to, ct);
-                return new GrossPay(payCalculator.PayForLoads(employee, loads, Unit()),
-                    $"{loads.Count} load(s) x {rate:0.00}");
-            }
+                {
+                    var loads = await GetDeliveredLoadsAsync(employee.Id, from, to, ct);
+                    return new GrossPay(payCalculator.PayForLoads(employee, loads, GetDistanceUnit()),
+                        $"{loads.Count} load(s) x {rate:0.00}");
+                }
             case SalaryType.PerStop:
-            {
-                var stops = await CountDepartedStopsAsync(employee.Id, from, to, ct);
-                return new GrossPay(payCalculator.PayForStops(employee, stops), $"{stops} stop(s) x {rate:0.00}");
-            }
+                {
+                    var stops = await CountDepartedStopsAsync(employee.Id, from, to, ct);
+                    return new GrossPay(stops * rate, $"{stops} stop(s) x {rate:0.00}");
+                }
             default:
-                return new GrossPay(payCalculator.PayForPeriod(employee, 0, 0, 0), "Base pay");
+                return new GrossPay(rate, "Base pay");
         }
     }
 
-    private DistanceUnit Unit() => tenantUow.GetCurrentTenant().Settings.DistanceUnit;
+    private DistanceUnit GetDistanceUnit() => tenantUow.GetCurrentTenant().Settings.DistanceUnit;
 
     /// <summary>
     /// Loads delivered in the period on a trip the employee drove, main or secondary. A load on no trip has
@@ -82,9 +81,7 @@ internal partial class PayrollService
                 l.Distance))
             .ToListAsync(ct);
 
-    /// <summary>
-    /// Stops the driver app marked departed in the period, on trips the employee drove.
-    /// </summary>
+    /// <summary>Stops the driver app marked departed in the period, on trips the employee drove.</summary>
     private Task<int> CountDepartedStopsAsync(Guid employeeId, DateTime from, DateTime to, CancellationToken ct) =>
         tenantUow.Repository<TripStop>().Query()
             .CountAsync(s => s.DepartedAt >= from && s.DepartedAt < to &&
