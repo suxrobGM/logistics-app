@@ -22,7 +22,7 @@ public class ApproveAICopilotDecisionHandlerTests
         _ctx.SetToolDefinition("send_invoice", "Permission.Invoice.Manage", AgentDecisionType.SendInvoice);
 
         _sut = new ApproveAICopilotDecisionHandler(
-            _ctx.TenantUow, _ctx.CopilotGuard, _ctx.Approver, _ctx.CurrentUser, _broadcastService,
+            _ctx.TenantUow, _ctx.CopilotGuard(), _ctx.Approver, _ctx.CurrentUser, _broadcastService,
             _ctx.DecisionDtoMapper);
     }
 

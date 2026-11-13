@@ -1,8 +1,7 @@
 using Logistics.Infrastructure.Integrations.Accounting.Providers.QuickBooks;
 using Logistics.Shared.Models;
-using Xunit;
 
-namespace Logistics.Infrastructure.Integrations.Tests.Accounting;
+namespace Logistics.Infrastructure.Tests.Integrations.Accounting;
 
 public class QboMapperTests
 {

@@ -1,5 +1,6 @@
 using Logistics.Application.Abstractions.CurrentUser;
 using Logistics.Application.Modules.Compliance.Dvir.Commands;
+using Logistics.Application.Tests.TestKit;
 using Logistics.Domain.Entities.Safety;
 using Logistics.Domain.Persistence;
 using Logistics.Domain.Primitives.Enums.Safety;
@@ -11,13 +12,11 @@ namespace Logistics.Application.Tests.Compliance.Dvir;
 public class DismissDvirReportHandlerTests
 {
     private readonly ITenantUnitOfWork _tenantUow = Substitute.For<ITenantUnitOfWork>();
-    private readonly ITenantRepository<DvirReport, Guid> _reportRepo = Substitute.For<ITenantRepository<DvirReport, Guid>>();
     private readonly ICurrentUserService _currentUser = Substitute.For<ICurrentUserService>();
     private readonly DismissDvirReportHandler _sut;
 
     public DismissDvirReportHandlerTests()
     {
-        _tenantUow.Repository<DvirReport>().Returns(_reportRepo);
         _sut = new DismissDvirReportHandler(_tenantUow, _currentUser);
     }
 
@@ -34,7 +33,7 @@ public class DismissDvirReportHandlerTests
             Status = DvirStatus.Submitted,
             InspectionDate = DateTime.UtcNow
         };
-        _reportRepo.GetByIdAsync(report.Id, Arg.Any<CancellationToken>()).Returns(report);
+        _tenantUow.Stub(report);
 
         var result = await _sut.Handle(new DismissDvirReportCommand { ReportId = report.Id }, CancellationToken.None);
 
@@ -54,7 +53,7 @@ public class DismissDvirReportHandlerTests
             Status = DvirStatus.Submitted,
             InspectionDate = DateTime.UtcNow
         };
-        _reportRepo.GetByIdAsync(report.Id, Arg.Any<CancellationToken>()).Returns(report);
+        _tenantUow.Stub(report);
 
         var result = await _sut.Handle(new DismissDvirReportCommand { ReportId = report.Id }, CancellationToken.None);
 

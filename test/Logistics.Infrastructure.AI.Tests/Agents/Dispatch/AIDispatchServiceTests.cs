@@ -1,3 +1,4 @@
+using Logistics.Application.Modules.Common.Services;
 using Logistics.Application.Tests.TestKit;
 using Logistics.Application.Modules.Integrations.AIDispatch.Services;
 using Logistics.Application.Abstractions.Agents;
@@ -34,8 +35,7 @@ public class AIDispatchServiceTests
         Substitute.For<ITenantRepository<AgentSession, Guid>>();
     private readonly ITenantRepository<AgentConversation, Guid> _conversationRepo =
         Substitute.For<ITenantRepository<AgentConversation, Guid>>();
-    private readonly ITenantRepository<AgentMessage, Guid> _messageRepo =
-        Substitute.For<ITenantRepository<AgentMessage, Guid>>();
+    private readonly ITenantRepository<AgentMessage, Guid> _messageRepo;
 
     private readonly IStripeUsageService _stripeUsageService = Substitute.For<IStripeUsageService>();
     private readonly IAIQuotaService _quotaService = Substitute.For<IAIQuotaService>();
@@ -51,8 +51,7 @@ public class AIDispatchServiceTests
 
         _tenantUow.Repository<AgentSession>().Returns(_sessionRepo);
         _tenantUow.Repository<AgentConversation>().Returns(_conversationRepo);
-        _tenantUow.Repository<AgentMessage>().Returns(_messageRepo);
-        _messageRepo.Query().Returns(_ => new List<AgentMessage>().BuildMock());
+        _messageRepo = _tenantUow.Stub<AgentMessage>();
         _tenantUow.GetCurrentTenant().Returns(_tenant);
         _tenantUow.SqlQueryAsync<int>(Arg.Any<FormattableString>(), Arg.Any<CancellationToken>()).Returns([1]);
 
@@ -79,9 +78,7 @@ public class AIDispatchServiceTests
         var sessionSetup = new LlmSessionSetup(
             featureService, providerFactory, modelResolver, systemSettings, _tenantUow);
 
-        var policyRepo = Substitute.For<ITenantRepository<AIDispatchPolicy, Guid>>();
-        policyRepo.Query().Returns(new List<AIDispatchPolicy>().BuildMock());
-        _tenantUow.Repository<AIDispatchPolicy>().Returns(policyRepo);
+        _tenantUow.Stub<AIDispatchPolicy>();
 
         var conversationBuilder = new AIDispatchConversationBuilder(
             toolRegistry, sessionSetup, _tenantUow, new AgentTranscriptLoader(_tenantUow),
@@ -89,7 +86,7 @@ public class AIDispatchServiceTests
 
         var toolExecutor = Substitute.For<IAgentToolExecutor>();
         var decisionProcessor = new AgentDecisionProcessor(
-            toolExecutor, toolRegistry, _tenantUow, _broadcastService, new AgentDecisionDtoMapper(_tenantUow),
+            toolExecutor, toolRegistry, _tenantUow, _broadcastService, new AgentDecisionDtoMapper(_tenantUow, new DisplayNameLookup(_tenantUow)),
             Substitute.For<IAgentTrustService>(), Substitute.For<IAgentRunContext>(),
             NullLogger<AgentDecisionProcessor>.Instance);
         var loopRunner = new AgentLoopRunner(decisionProcessor, _tenantUow, NullLogger<AgentLoopRunner>.Instance);

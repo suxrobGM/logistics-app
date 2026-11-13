@@ -4,9 +4,8 @@ using Logistics.Domain.Persistence;
 using Logistics.Domain.Primitives.Enums;
 using Logistics.Infrastructure.Persistence.Services.Feature;
 using NSubstitute;
-using Xunit;
 
-namespace Logistics.Infrastructure.Persistence.Tests.Services;
+namespace Logistics.Infrastructure.Tests.Persistence.Services;
 
 /// <summary>
 /// The memo is what keeps a request that gates on several features from paying 3-5 master-DB round

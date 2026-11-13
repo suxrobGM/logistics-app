@@ -8,9 +8,8 @@ using Logistics.Infrastructure.Integrations.Accounting.Providers.QuickBooks;
 using Logistics.Shared.Models;
 using Microsoft.Extensions.Logging.Abstractions;
 using Microsoft.Extensions.Options;
-using Xunit;
 
-namespace Logistics.Infrastructure.Integrations.Tests.Accounting;
+namespace Logistics.Infrastructure.Tests.Integrations.Accounting;
 
 public class QuickBooksOnlineServiceTests
 {

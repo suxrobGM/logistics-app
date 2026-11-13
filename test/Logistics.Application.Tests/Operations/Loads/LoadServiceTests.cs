@@ -1,13 +1,9 @@
-using System.Linq.Expressions;
 using Logistics.Application.Modules.Operations.Common.Services;
 using Logistics.Application.Modules.Operations.Loads.Services;
-using Logistics.Application.Tests.Operations.Trips;
 using Logistics.Application.Tests.TestKit;
-using Logistics.Domain.Core;
 using Logistics.Domain.Entities;
 using Logistics.Domain.Persistence;
 using Logistics.Domain.Primitives.Enums;
-using Logistics.Domain.Primitives.ValueObjects;
 using Logistics.Shared.Models;
 using NSubstitute;
 using Xunit;
@@ -18,22 +14,19 @@ public class LoadServiceTests
 {
     private readonly ITenantUnitOfWork _tenantUow = Substitute.For<ITenantUnitOfWork>();
     private readonly IVehicleTransportCheck _guard = Substitute.For<IVehicleTransportCheck>();
-    private readonly Employee _dispatcher = new()
-    {
-        Email = "d@x.com", FirstName = "Dana", LastName = "Disp", Salary = Money.Zero("USD")
-    };
+    private readonly Employee _dispatcher = TestData.Driver();
     private readonly Customer _customer = new() { Name = "Acme" };
-    private readonly Truck _truck = new() { Number = "T-1", Type = TruckType.FreightTruck };
+    private readonly Truck _truck = TestData.Truck();
     private readonly LoadService _sut;
 
     public LoadServiceTests()
     {
         _tenantUow.GetCurrentTenant().Returns(TestTenant.Create());
         _guard.CheckLoadTypesAsync(Arg.Any<IEnumerable<LoadType>?>()).Returns(Result.Ok());
-        Stub(_dispatcher);
-        Stub(_customer);
-        Stub(_truck);
-        Stub<Trip>();
+        _tenantUow.Stub(_dispatcher);
+        _tenantUow.Stub(_customer);
+        _tenantUow.Stub(_truck);
+        _tenantUow.Stub<Trip>();
         _sut = new LoadService(_tenantUow, _guard);
     }
 
@@ -41,7 +34,7 @@ public class LoadServiceTests
     [Fact]
     public async Task CreateLoadAsync_FullDetails_CopiesEveryFieldOntoTheLoad()
     {
-        var details = TripNewLoadTests.ValidLoad() with
+        var details = TestData.TripLoadCommand() with
         {
             AssignedDispatcherId = _dispatcher.Id,
             CustomerId = _customer.Id,
@@ -94,12 +87,5 @@ public class LoadServiceTests
         Assert.Equal(8000, load.Weight);
         Assert.Equal("48x40x60", load.Dimensions);
         Assert.True(load.IsStackable);
-    }
-
-    private void Stub<T>(params T[] rows) where T : class, ITenantEntity, IEntity<Guid>
-    {
-        var repo = Substitute.For<ITenantRepository<T, Guid>>();
-        repo.GetListAsync(Arg.Any<Expression<Func<T, bool>>>(), Arg.Any<CancellationToken>()).Returns(rows.ToList());
-        _tenantUow.Repository<T>().Returns(repo);
     }
 }

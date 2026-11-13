@@ -13,12 +13,10 @@ public class LoadAssignedToTruckNotificationHandlerTests
 {
     private readonly IEventNotifier _notifier = Substitute.For<IEventNotifier>();
     private readonly ITenantUnitOfWork _tenantUow = Substitute.For<ITenantUnitOfWork>();
-    private readonly ITenantRepository<Load, Guid> _loadRepo = Substitute.For<ITenantRepository<Load, Guid>>();
     private readonly LoadAssignedToTruckNotificationHandler _sut;
 
     public LoadAssignedToTruckNotificationHandlerTests()
     {
-        _tenantUow.Repository<Load>().Returns(_loadRepo);
         _tenantUow.GetCurrentTenant().Returns(TestTenant.Create());
         _sut = new LoadAssignedToTruckNotificationHandler(_notifier, _tenantUow);
     }
@@ -27,9 +25,9 @@ public class LoadAssignedToTruckNotificationHandlerTests
     [Fact]
     public async Task Handle_UsesNumberFromTrackedLoad()
     {
-        var load = LoadInvoiceChargesTests.NewLoad();
+        var load = TestData.Load();
         typeof(Load).GetProperty(nameof(Load.Number))!.SetValue(load, 1234L);
-        _loadRepo.GetByIdAsync(load.Id, Arg.Any<CancellationToken>()).Returns(load);
+        _tenantUow.Stub(load);
 
         await _sut.Handle(
             new LoadAssignedToTruckEvent(load.Id, Guid.NewGuid(), "T-1", "token", null, "Driver"),

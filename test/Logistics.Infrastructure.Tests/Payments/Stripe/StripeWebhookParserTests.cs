@@ -5,7 +5,7 @@ using Logistics.Infrastructure.Payments.Stripe;
 using Microsoft.Extensions.Logging.Abstractions;
 using Microsoft.Extensions.Options;
 
-namespace Logistics.Infrastructure.Payments.Tests.Stripe;
+namespace Logistics.Infrastructure.Tests.Payments.Stripe;
 
 public class StripeWebhookParserTests
 {

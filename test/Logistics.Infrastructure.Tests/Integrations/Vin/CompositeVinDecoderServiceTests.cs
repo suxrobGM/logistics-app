@@ -1,6 +1,8 @@
+using Logistics.Infrastructure.Integrations.Vin;
+using Logistics.Infrastructure.Tests.TestKit;
 using Microsoft.Extensions.Logging.Abstractions;
 
-namespace Logistics.Infrastructure.Vin.Tests;
+namespace Logistics.Infrastructure.Tests.Integrations.Vin;
 
 public class CompositeVinDecoderServiceTests
 {
@@ -114,15 +116,7 @@ public class CompositeVinDecoderServiceTests
     [Fact]
     public async Task DecodeVinAsync_InvalidVinLength_ReturnsNullWithoutCallingDecoders()
     {
-        var calls = 0;
-        var counting = new StubHttpMessageHandler(_ =>
-        {
-            calls++;
-            return new HttpResponseMessage(System.Net.HttpStatusCode.OK)
-            {
-                Content = new StringContent(ManWmiResponse, System.Text.Encoding.UTF8, "application/json")
-            };
-        });
+        var counting = StubHttpMessageHandler.Json(ManWmiResponse);
 
         var wmi = new WmiPrefixDecoder(new HttpClient(counting), NullLogger<WmiPrefixDecoder>.Instance);
         var nhtsa = new NhtsaVinDecoderService(new HttpClient(counting), NullLogger<NhtsaVinDecoderService>.Instance);
@@ -131,6 +125,6 @@ public class CompositeVinDecoderServiceTests
         var result = await sut.DecodeVinAsync("TOOSHORT");
 
         Assert.Null(result);
-        Assert.Equal(0, calls);
+        Assert.Empty(counting.Requests);
     }
 }

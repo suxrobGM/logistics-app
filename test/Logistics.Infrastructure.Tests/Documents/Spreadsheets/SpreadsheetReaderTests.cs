@@ -1,9 +1,8 @@
 using System.IO.Compression;
 using System.Text;
 using Logistics.Infrastructure.Documents.Spreadsheets;
-using Xunit;
 
-namespace Logistics.Infrastructure.Documents.Tests.Spreadsheets;
+namespace Logistics.Infrastructure.Tests.Documents.Spreadsheets;
 
 public class SpreadsheetReaderTests
 {

@@ -231,67 +231,86 @@ public class ProposeCounterOfferHandlerTests
         await AssertNothingSent();
     }
 
-    public static TheoryData<decimal, bool> OfferAgainstFloorCases => new()
+    [Fact]
+    public async Task Handle_OfferBelowFloor_FailsWithoutSending()
     {
-        { 1900m, false },
-        { 2000m, true },
-    };
-
-    [Theory]
-    [MemberData(nameof(OfferAgainstFloorCases))]
-    public async Task Handle_OfferAgainstFloor_SendsOnlyAtOrAboveIt(decimal proposedTotal, bool sends)
-    {
-        _command.ProposedTotalRate = proposedTotal;
+        _command.ProposedTotalRate = 1900m;
 
         var result = await _sut.Handle(_command, CancellationToken.None);
 
-        Assert.Equal(sends, result.IsSuccess);
-        if (!sends)
-        {
-            Assert.Equal(ErrorCodes.NegotiationBelowFloor, result.ErrorCode);
-            await AssertNothingSent();
-        }
+        Assert.False(result.IsSuccess);
+        Assert.Equal(ErrorCodes.NegotiationBelowFloor, result.ErrorCode);
+        await AssertNothingSent();
+    }
+
+    [Fact]
+    public async Task Handle_OfferAtFloor_Sends()
+    {
+        _command.ProposedTotalRate = 2000m;
+
+        var result = await _sut.Handle(_command, CancellationToken.None);
+
+        Assert.True(result.IsSuccess);
     }
 
     /// <summary>A per-mile floor needs a per-mile rate on the offer to compare against.</summary>
-    public static TheoryData<decimal, bool, string> PerMileOnlyFloorCases => new()
+    [Fact]
+    public async Task Handle_PerMileOnlyFloorAndOfferWithoutRatePerMile_FailsAsFloorMissing()
     {
-        { 2.00m, false, ErrorCodes.NegotiationFloorMissing },
-        { 2.50m, true, ErrorCodes.NegotiationBelowFloor },
-    };
+        SetupPerMileOnlyFloor(2.00m);
+        _command.ProposedRatePerMile = null;
 
-    [Theory]
-    [MemberData(nameof(PerMileOnlyFloorCases))]
-    public async Task Handle_PerMileOnlyFloor_FailsWithTheMatchingCode(
-        decimal minRatePerMile, bool offerHasRatePerMile, string errorCode)
+        var result = await _sut.Handle(_command, CancellationToken.None);
+
+        Assert.False(result.IsSuccess);
+        Assert.Equal(ErrorCodes.NegotiationFloorMissing, result.ErrorCode);
+    }
+
+    [Fact]
+    public async Task Handle_PerMileOnlyFloorAboveOfferRate_FailsAsBelowFloor()
     {
+        SetupPerMileOnlyFloor(2.50m);
+
+        var result = await _sut.Handle(_command, CancellationToken.None);
+
+        Assert.False(result.IsSuccess);
+        Assert.Equal(ErrorCodes.NegotiationBelowFloor, result.ErrorCode);
+    }
+
+    /// <summary>A fresh floor of 3000 would block the offer, so passing at 2000 proves the snapshot was used.</summary>
+    [Fact]
+    public async Task Handle_LaterRoundOfferAtSnapshotFloor_SendsWithoutResolvingAFreshFloor()
+    {
+        SetupLaterRound(snapshotFloorTotal: 2000m);
+
+        var result = await _sut.Handle(_command, CancellationToken.None);
+
+        Assert.True(result.IsSuccess);
+        await _floorResolver.DidNotReceiveWithAnyArgs().ResolveAsync(default!, default);
+    }
+
+    [Fact]
+    public async Task Handle_LaterRoundOfferBelowSnapshotFloor_FailsWithoutSending()
+    {
+        SetupLaterRound(snapshotFloorTotal: 2500m);
+
+        var result = await _sut.Handle(_command, CancellationToken.None);
+
+        Assert.False(result.IsSuccess);
+        Assert.Equal(ErrorCodes.NegotiationBelowFloor, result.ErrorCode);
+        await _floorResolver.DidNotReceiveWithAnyArgs().ResolveAsync(default!, default);
+        await AssertNothingSent();
+    }
+
+    private void SetupPerMileOnlyFloor(decimal minRatePerMile) =>
         SetupFloor(new EffectiveRateFloorDto
         {
             HasFloor = true,
             MinRatePerMile = minRatePerMile,
             Source = RateFloorSource.TenantDefault
         });
-        if (!offerHasRatePerMile)
-        {
-            _command.ProposedRatePerMile = null;
-        }
 
-        var result = await _sut.Handle(_command, CancellationToken.None);
-
-        Assert.False(result.IsSuccess);
-        Assert.Equal(errorCode, result.ErrorCode);
-    }
-
-    public static TheoryData<decimal, bool> LaterRoundCases => new()
-    {
-        { 2000m, true },
-        { 2500m, false },
-    };
-
-    /// <summary>A fresh floor of 3000 would block every case, so passing at 2000 proves the snapshot was used.</summary>
-    [Theory]
-    [MemberData(nameof(LaterRoundCases))]
-    public async Task Handle_LaterRound_ChecksTheThreadSnapshotNotAFreshFloor(decimal snapshotFloorTotal, bool sends)
+    private void SetupLaterRound(decimal snapshotFloorTotal)
     {
         ExistingThread(floorTotal: snapshotFloorTotal);
         SetupFloor(new EffectiveRateFloorDto
@@ -301,16 +320,6 @@ public class ProposeCounterOfferHandlerTests
             Source = RateFloorSource.LaneExact,
             EffectiveFloorTotal = 3000m
         });
-
-        var result = await _sut.Handle(_command, CancellationToken.None);
-
-        Assert.Equal(sends, result.IsSuccess);
-        await _floorResolver.DidNotReceiveWithAnyArgs().ResolveAsync(default!, default);
-        if (!sends)
-        {
-            Assert.Equal(ErrorCodes.NegotiationBelowFloor, result.ErrorCode);
-            await AssertNothingSent();
-        }
     }
 
     [Fact]

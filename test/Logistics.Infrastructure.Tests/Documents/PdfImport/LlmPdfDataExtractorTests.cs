@@ -7,9 +7,8 @@ using NSubstitute;
 using QuestPDF.Fluent;
 using QuestPDF.Helpers;
 using QuestPDF.Infrastructure;
-using Xunit;
 
-namespace Logistics.Infrastructure.Documents.Tests.PdfImport;
+namespace Logistics.Infrastructure.Tests.Documents.PdfImport;
 
 public class LlmPdfDataExtractorTests
 {

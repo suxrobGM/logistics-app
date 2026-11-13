@@ -1,3 +1,4 @@
+using Logistics.Application.Modules.Common.Services;
 using Logistics.Application.Tests.TestKit;
 using Logistics.Application.Modules.Integrations.AIDispatch.Services;
 using Logistics.Application.Abstractions.Agents;
@@ -13,7 +14,6 @@ using Logistics.Infrastructure.AI.Llm.Contracts;
 using Logistics.Infrastructure.AI.Llm;
 using Logistics.Shared.Models;
 using Microsoft.Extensions.Logging;
-using MockQueryable;
 using Microsoft.Extensions.Logging.Abstractions;
 using NSubstitute;
 using NSubstitute.ExceptionExtensions;
@@ -26,9 +26,6 @@ public class AgentDecisionProcessorTests
 {
     private readonly ITenantRepository<AgentDecision, Guid> _decisionRepo =
         Substitute.For<ITenantRepository<AgentDecision, Guid>>();
-
-    private readonly ITenantRepository<Load, Guid> _loadRepo = Substitute.For<ITenantRepository<Load, Guid>>();
-    private readonly ITenantRepository<Truck, Guid> _truckRepo = Substitute.For<ITenantRepository<Truck, Guid>>();
 
     private readonly ILogger<AgentDecisionProcessor> _logger = NullLogger<AgentDecisionProcessor>.Instance;
 
@@ -43,12 +40,10 @@ public class AgentDecisionProcessorTests
     public AgentDecisionProcessorTests()
     {
         _tenantUow.Repository<AgentDecision>().Returns(_decisionRepo);
-        _tenantUow.Repository<Load>().Returns(_loadRepo);
-        _tenantUow.Repository<Truck>().Returns(_truckRepo);
-        _loadRepo.Query().Returns(new List<Load>().BuildMock());
-        _truckRepo.Query().Returns(new List<Truck>().BuildMock());
+        _tenantUow.Stub<Load>();
+        _tenantUow.Stub<Truck>();
         _tenantUow.GetCurrentTenant().Returns(TestTenant.Create());
-        _sut = new AgentDecisionProcessor(_toolExecutor, _toolRegistry, _tenantUow, _broadcastService, new AgentDecisionDtoMapper(_tenantUow), _trust, _runContext, _logger);
+        _sut = new AgentDecisionProcessor(_toolExecutor, _toolRegistry, _tenantUow, _broadcastService, new AgentDecisionDtoMapper(_tenantUow, new DisplayNameLookup(_tenantUow)), _trust, _runContext, _logger);
     }
 
     private static AgentSession CreateSession()
@@ -248,18 +243,20 @@ public class AgentDecisionProcessorTests
     [InlineData("create_trip")]
     public async Task ProcessToolCalls_UntrustedWriteTool_CreatesSuggestionWithoutExecuting(string toolName)
     {
+        AgentDecision? added = null;
+        await _decisionRepo.AddAsync(Arg.Do<AgentDecision>(d => added = d), Arg.Any<CancellationToken>());
+
         var results = await _sut.ProcessToolCallsAsync(
             CreateSession(), new ToolCallContext(), [CreateToolUse(toolName)], "reasoning", CancellationToken.None);
 
         Assert.Single(results);
         await _toolExecutor.DidNotReceive().ExecuteToolAsync(
             Arg.Any<string>(), Arg.Any<string>(), Arg.Any<CancellationToken>());
-        await _decisionRepo.Received(1).AddAsync(
-            Arg.Is<AgentDecision>(d =>
-                d.Status == AgentDecisionStatus.Suggested &&
-                d.ToolName == toolName &&
-                d.ExecutedAt == null),
-            Arg.Any<CancellationToken>());
+        await _decisionRepo.Received(1).AddAsync(Arg.Any<AgentDecision>(), Arg.Any<CancellationToken>());
+        Assert.NotNull(added);
+        Assert.Equal(AgentDecisionStatus.Suggested, added.Status);
+        Assert.Equal(toolName, added.ToolName);
+        Assert.Null(added.ExecutedAt);
         await _broadcastService.Received(1).BroadcastDecisionAsync(Arg.Any<Guid>(), Arg.Any<AgentDecisionDto>());
     }
 
@@ -367,8 +364,8 @@ public class AgentDecisionProcessorTests
         var load = TestData.Load();
         load.Name = "Load 42";
         var truck = TestData.Truck(number: "T-100");
-        _loadRepo.Query().Returns(new List<Load> { load }.BuildMock());
-        _truckRepo.Query().Returns(new List<Truck> { truck }.BuildMock());
+        _tenantUow.Stub(load);
+        _tenantUow.Stub(truck);
         var toolUse = CreateToolUse("assign_load_to_truck", new JsonObject
         {
             ["load_id"] = load.Id.ToString(),

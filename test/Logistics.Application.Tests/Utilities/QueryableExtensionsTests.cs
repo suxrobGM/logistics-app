@@ -19,7 +19,7 @@ public class QueryableExtensionsTests
     /// <summary>
     /// Field names match case-insensitively, and list screens sort by a related entity's column
     /// ("Customer.Name") as often as by a scalar. An unknown field - the DTO says CreatedDate where
-    /// the entity has CreatedAt - leaves the order untouched instead of throwing a parse error.
+    /// the entity has CreatedAt - falls back to the tie-breaker instead of throwing a parse error.
     /// </summary>
     [Theory]
     [InlineData("-CreatedAt", true)]
@@ -33,9 +33,9 @@ public class QueryableExtensionsTests
     [InlineData("NotAProperty.Name", false)]
     [InlineData(null, false)]
     [InlineData("", false)]
-    public void OrderBy_SortField_OrdersOrLeavesUntouched(string? orderBy, bool newestFirst)
+    public void OrderBy_SortField_OrdersOrFallsBackToTieBreaker(string? orderBy, bool newestFirst)
     {
-        var ordered = Source().OrderBy(orderBy).ToList();
+        var ordered = Source().OrderBy(orderBy, r => r.CreatedAt).ToList();
 
         Row[] expected = newestFirst ? [Newest, Oldest] : [Oldest, Newest];
         Assert.Equal(expected, ordered);

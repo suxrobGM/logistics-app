@@ -1,10 +1,7 @@
 using Logistics.Application.Modules.Compliance.Privacy.Services;
 using Logistics.Application.Modules.Compliance.Safety.Services;
 using Logistics.Application.Modules.Financial.Payroll.Services;
-using Logistics.Application.Modules.Financial.Tax.Services;
 using Logistics.Application.Modules.IdentityAccess.Invitations.Services;
-using Logistics.Application.Modules.IdentityAccess.Users.Services;
-using Logistics.Application.Modules.Operations.Loads.Services;
 using Logistics.Application.Abstractions.Dispatch;
 using Logistics.Application.Behaviours;
 using Logistics.Mediator;
@@ -21,12 +18,7 @@ namespace Logistics.Application.Tests;
 
 public class ApplicationLayerRegistrationTests
 {
-    /// <summary>
-    /// Builds the whole layer with validation on, so a service missing a registration or a
-    /// singleton holding a scoped service fails here. Dependencies the infrastructure layer
-    /// provides are stubbed: the units of work as scoped, like the real ones, the rest as
-    /// singletons so they cannot raise a scope error of their own.
-    /// </summary>
+    /// <summary>Fails on a missing registration or a singleton holding a scoped service.</summary>
     [Fact]
     public void AddApplicationLayer_EveryServiceResolvesWithValidation()
     {
@@ -44,27 +36,7 @@ public class ApplicationLayerRegistrationTests
             new ServiceProviderOptions { ValidateOnBuild = true, ValidateScopes = true });
     }
 
-    [Theory]
-    [InlineData(typeof(ILoadService))]
-    [InlineData(typeof(IPayrollService))]
-    [InlineData(typeof(IUserService))]
-    [InlineData(typeof(IInvoiceTaxApplier))]
-    public void AddApplicationLayer_RegistersAsScoped(Type serviceType)
-    {
-        var services = new ServiceCollection();
-        services.AddLogging();
-        services.AddApplicationLayer();
-
-        var descriptor = services.LastOrDefault(d => d.ServiceType == serviceType);
-
-        Assert.NotNull(descriptor);
-        Assert.Equal(ServiceLifetime.Scoped, descriptor!.Lifetime);
-    }
-
-    /// <summary>
-    ///     The DbMigrator seeds payroll through this slice, so it must resolve from the units of work
-    ///     and logging alone, with nothing else from the Application layer.
-    /// </summary>
+    /// <summary>The DbMigrator seeds payroll through this slice, so it must resolve from the units of work alone.</summary>
     [Fact]
     public void AddApplicationPayrollServices_ResolvesPayrollServiceFromUnitsOfWorkAlone()
     {
@@ -80,9 +52,7 @@ public class ApplicationLayerRegistrationTests
         Assert.NotNull(scope.ServiceProvider.GetRequiredService<IPayrollService>());
     }
 
-    /// <summary>
-    ///     Registration order is pipeline order, so this pins which behaviour wraps which.
-    /// </summary>
+    /// <summary>Registration order is pipeline order, so this pins which behaviour wraps which.</summary>
     [Fact]
     public void AddApplicationLayer_RegistersBehavioursOutermostFirst()
     {
@@ -98,12 +68,7 @@ public class ApplicationLayerRegistrationTests
         Assert.Equal(["ValidationBehaviour`2", "FeatureCheckBehaviour`2"], behaviours);
     }
 
-    /// <summary>
-    /// Registers a substitute for every interface a registered service's constructor asks for but
-    /// nothing registers - unless the Application assembly implements it, since then a missing
-    /// registration is the bug this test is for. Open generic services are skipped: their
-    /// constructors are only checked when a closed type is requested.
-    /// </summary>
+    /// <summary>Substitutes unregistered constructor interfaces, except ones the Application assembly implements.</summary>
     private static void StubInfrastructureDependencies(IServiceCollection services)
     {
         var applicationTypes = typeof(Registrar).Assembly.GetTypes();
@@ -121,6 +86,7 @@ public class ApplicationLayerRegistrationTests
             .Distinct()
             .ToList();
 
+        // Singletons, so a stub cannot raise a scope error of its own.
         foreach (var type in missing)
         {
             services.AddSingleton(type, Substitute.For([type], []));

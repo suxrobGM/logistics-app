@@ -1,13 +1,13 @@
 using Logistics.Domain.Primitives.Enums;
-using Logistics.Infrastructure.Tax.Stripe;
+using Logistics.Infrastructure.Payments.Tax.Stripe;
 using Microsoft.Extensions.Logging.Abstractions;
 using NSubstitute;
 using Stripe;
 using Stripe.Tax;
 using Logistics.Application.Abstractions.Tax;
-using static Logistics.Infrastructure.Tax.Tests.TaxTestBuilders;
+using static Logistics.Infrastructure.Tests.Payments.Tax.TaxTestBuilders;
 
-namespace Logistics.Infrastructure.Tax.Tests.Stripe;
+namespace Logistics.Infrastructure.Tests.Payments.Tax.Stripe;
 
 public class StripeTaxCalculatorTests
 {

@@ -6,9 +6,8 @@ using Logistics.Infrastructure.Integrations.Eld;
 using Logistics.Infrastructure.Integrations.Eld.Providers.Samsara;
 using Microsoft.Extensions.Logging.Abstractions;
 using Microsoft.Extensions.Options;
-using Xunit;
 
-namespace Logistics.Infrastructure.Integrations.Tests.Eld;
+namespace Logistics.Infrastructure.Tests.Integrations.Eld;
 
 public class SamsaraEldServiceTests
 {

@@ -1,11 +1,11 @@
 using System.Security.Cryptography;
 using System.Text;
 using Logistics.Infrastructure.Communications.Email;
-using Xunit;
+using Microsoft.Extensions.Options;
 
-namespace Logistics.Infrastructure.Communications.Tests.Email;
+namespace Logistics.Infrastructure.Tests.Communications.Email;
 
-public class SvixSignatureTests
+public class ResendWebhookVerifierTests
 {
     private const string Secret = "whsec_MfKQ9r8GKYqrTwjUPD8ILPZIo2LaLaSw";
     private const string Payload = """{"type":"email.received","data":{"email_id":"abc"}}""";
@@ -17,7 +17,7 @@ public class SvixSignatureTests
         var timestamp = Now();
         var header = Sign(MessageId, timestamp, Payload, Secret);
 
-        Assert.True(SvixSignature.Verify(Payload, MessageId, timestamp, header, Secret));
+        Assert.True(Verify(Payload, MessageId, timestamp, header, Secret));
     }
 
     [Fact]
@@ -26,8 +26,7 @@ public class SvixSignatureTests
         var timestamp = Now();
         var header = Sign(MessageId, timestamp, Payload, Secret);
 
-        Assert.True(SvixSignature.Verify(
-            Payload, MessageId, timestamp, header, Secret["whsec_".Length..]));
+        Assert.True(Verify(Payload, MessageId, timestamp, header, Secret["whsec_".Length..]));
     }
 
     [Fact]
@@ -36,7 +35,7 @@ public class SvixSignatureTests
         var timestamp = Now();
         var header = "v1,bm90LXRoZS1yaWdodC1vbmU= " + Sign(MessageId, timestamp, Payload, Secret);
 
-        Assert.True(SvixSignature.Verify(Payload, MessageId, timestamp, header, Secret));
+        Assert.True(Verify(Payload, MessageId, timestamp, header, Secret));
     }
 
     [Fact]
@@ -45,7 +44,7 @@ public class SvixSignatureTests
         var timestamp = Now();
         var header = Sign(MessageId, timestamp, Payload, Secret);
 
-        Assert.False(SvixSignature.Verify(Payload + " ", MessageId, timestamp, header, Secret));
+        Assert.False(Verify(Payload + " ", MessageId, timestamp, header, Secret));
     }
 
     [Fact]
@@ -54,25 +53,18 @@ public class SvixSignatureTests
         var timestamp = Now();
         var header = Sign(MessageId, timestamp, Payload, Secret);
 
-        Assert.False(SvixSignature.Verify(Payload, "msg_other", timestamp, header, Secret));
+        Assert.False(Verify(Payload, "msg_other", timestamp, header, Secret));
     }
 
-    [Fact]
-    public void Verify_StaleTimestamp_ReturnsFalse()
+    [Theory]
+    [InlineData(-10)]
+    [InlineData(10)]
+    public void Verify_TimestampOutsideTolerance_ReturnsFalse(int minutesFromNow)
     {
-        var timestamp = DateTimeOffset.UtcNow.AddMinutes(-10).ToUnixTimeSeconds().ToString();
+        var timestamp = DateTimeOffset.UtcNow.AddMinutes(minutesFromNow).ToUnixTimeSeconds().ToString();
         var header = Sign(MessageId, timestamp, Payload, Secret);
 
-        Assert.False(SvixSignature.Verify(Payload, MessageId, timestamp, header, Secret));
-    }
-
-    [Fact]
-    public void Verify_FutureTimestampBeyondTolerance_ReturnsFalse()
-    {
-        var timestamp = DateTimeOffset.UtcNow.AddMinutes(10).ToUnixTimeSeconds().ToString();
-        var header = Sign(MessageId, timestamp, Payload, Secret);
-
-        Assert.False(SvixSignature.Verify(Payload, MessageId, timestamp, header, Secret));
+        Assert.False(Verify(Payload, MessageId, timestamp, header, Secret));
     }
 
     [Fact]
@@ -81,7 +73,7 @@ public class SvixSignatureTests
         var timestamp = Now();
         var header = Sign(MessageId, timestamp, Payload, Secret).Replace("v1,", "v2,");
 
-        Assert.False(SvixSignature.Verify(Payload, MessageId, timestamp, header, Secret));
+        Assert.False(Verify(Payload, MessageId, timestamp, header, Secret));
     }
 
     [Theory]
@@ -93,8 +85,12 @@ public class SvixSignatureTests
     public void Verify_MissingOrMalformedInputs_ReturnsFalse(
         string? id, string? timestamp, string? signature, string? secret)
     {
-        Assert.False(SvixSignature.Verify(Payload, id, timestamp, signature, secret));
+        Assert.False(Verify(Payload, id, timestamp, signature, secret));
     }
+
+    private static bool Verify(string payload, string? id, string? timestamp, string? signature, string? secret) =>
+        new ResendWebhookVerifier(Options.Create(new ResendOptions { WebhookSecret = secret! }))
+            .Verify(payload, id, timestamp, signature);
 
     private static string Now() => DateTimeOffset.UtcNow.ToUnixTimeSeconds().ToString();
 

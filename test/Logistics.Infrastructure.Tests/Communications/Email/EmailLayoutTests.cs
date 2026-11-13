@@ -1,10 +1,10 @@
 using Logistics.Application.Abstractions.Email;
 using Logistics.Application.Abstractions.Email.Models;
+using Logistics.Infrastructure.Communications;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using Xunit;
 
-namespace Logistics.Infrastructure.Communications.Tests.Email;
+namespace Logistics.Infrastructure.Tests.Communications.Email;
 
 public class EmailLayoutTests
 {

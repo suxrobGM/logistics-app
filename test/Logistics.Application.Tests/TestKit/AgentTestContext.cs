@@ -1,3 +1,4 @@
+using Logistics.Application.Modules.Common.Services;
 using Logistics.Application.Abstractions.AI;
 using Logistics.Application.Abstractions.AIDispatch;
 using Logistics.Application.Abstractions.Agents;
@@ -47,10 +48,8 @@ internal sealed class AgentTestContext
         [.. MessageRepo.ReceivedCalls()
             .Where(c => c.GetMethodInfo().Name == nameof(MessageRepo.AddAsync))
             .Select(c => (AgentMessage)c.GetArguments()[0]!)];
-    public ITenantRepository<AgentSession, Guid> SessionRepo { get; } =
-        Substitute.For<ITenantRepository<AgentSession, Guid>>();
-    public ITenantRepository<Employee, Guid> EmployeeRepo { get; } =
-        Substitute.For<ITenantRepository<Employee, Guid>>();
+    public ITenantRepository<AgentSession, Guid> SessionRepo { get; }
+    public ITenantRepository<Employee, Guid> EmployeeRepo { get; }
 
     public IAgentConversationAccess Access { get; }
     public IAgentConversationCommands Commands { get; }
@@ -58,7 +57,6 @@ internal sealed class AgentTestContext
     public IAgentSenderDirectory SenderDirectory { get; }
     public IAgentDecisionNotes Notes { get; }
     public IAgentDecisionApprover Approver { get; }
-    public IAICopilotDecisionGuard CopilotGuard { get; }
     public IAgentDecisionDtoMapper DecisionDtoMapper { get; }
 
     public Guid UserId { get; } = Guid.NewGuid();
@@ -70,29 +68,30 @@ internal sealed class AgentTestContext
         TenantUow.Repository<AgentDecision>().Returns(DecisionRepo);
         TenantUow.Repository<AgentConversation>().Returns(ConversationRepo);
         TenantUow.Repository<AgentMessage>().Returns(MessageRepo);
-        TenantUow.Repository<AgentSession>().Returns(SessionRepo);
-        TenantUow.Repository<Employee>().Returns(EmployeeRepo);
+        SessionRepo = TenantUow.Stub<AgentSession>();
+        EmployeeRepo = TenantUow.Stub<Employee>();
         TenantUow.GetCurrentTenant().Returns(Tenant);
         TenantUow.SqlQueryAsync<int>(Arg.Any<FormattableString>(), Arg.Any<CancellationToken>()).Returns([1]);
         CurrentUser.GetUserId().Returns(UserId);
-        SessionRepo.Query().Returns(_ => new List<AgentSession>().BuildMock());
-        EmployeeRepo.Query().Returns(_ => new List<Employee>().BuildMock());
 
         Access = new AgentConversationAccess(TenantUow);
         SenderDirectory = new AgentSenderDirectory(TenantUow);
         Commands = new AgentConversationCommands(
             TenantUow, Access, QuotaService, DispatchService, SenderDirectory, new FakeTurnClaim(),
             NullLogger<AgentConversationCommands>.Instance);
-        DecisionDtoMapper = new AgentDecisionDtoMapper(TenantUow);
+        DecisionDtoMapper = new AgentDecisionDtoMapper(TenantUow, new DisplayNameLookup(TenantUow));
         Queries = new AgentConversationQueries(TenantUow, Access, SenderDirectory, DecisionDtoMapper);
         Notes = new AgentDecisionNotes(TenantUow, SenderDirectory);
         Approver = new AgentDecisionApprover(ToolRegistry, UserPermissions, ToolExecutor, Notes, RunContext);
-        CopilotGuard = new AICopilotDecisionGuard(TenantUow, Access, Options.Create(new LlmOptions { BypassAIGate = true }));
     }
 
     /// <summary><paramref name="bypassAIGate"/> is the knob the AI-disabled tests turn.</summary>
     public IAIDispatchDecisionGuard DispatchGuard(bool bypassAIGate = true) =>
         new AIDispatchDecisionGuard(TenantUow, Options.Create(new LlmOptions { BypassAIGate = bypassAIGate }));
+
+    /// <summary><paramref name="bypassAIGate"/> is the knob the AI-disabled tests turn.</summary>
+    public IAICopilotDecisionGuard CopilotGuard(bool bypassAIGate = true) =>
+        new AICopilotDecisionGuard(TenantUow, Access, Options.Create(new LlmOptions { BypassAIGate = bypassAIGate }));
 
     /// <summary>An employee row per sender, which is how the sender directory resolves names.</summary>
     public void SetEmployees(params (Guid UserId, string FirstName, string LastName)[] employees)

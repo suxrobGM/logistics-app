@@ -66,31 +66,19 @@ public class HosFeasibilityToolTests
 
     #region Shared verdict logic
 
-    /// <summary>
-    /// 400km at the assumed 80km/h is 300 minutes of driving. A null <paramref name="drivingMinutes"/>
-    /// means the driver has no HOS row, and then the multi-day verdict is not checked.
-    /// </summary>
+    /// <summary>400km at the assumed 80km/h is 300 minutes of driving.</summary>
     [Theory]
     [InlineData(600, 660, false, true, false, "Driver has sufficient hours to complete in one stretch")]
     [InlineData(600, 660, true, false, false, "Driver is currently in HOS violation")]
     [InlineData(200, 300, false, false, true, "multi-day trip with rest stops")]
     [InlineData(90, 90, false, false, false, "too low to make meaningful progress")]
-    [InlineData(null, 0, false, false, null, "No HOS data available for this driver")]
     public async Task BothTools_SameHos_AgreeOnTheVerdict(
-        int? drivingMinutes, int onDutyMinutes, bool inViolation,
-        bool feasible, bool? feasibleMultiDay, string reason)
+        int drivingMinutes, int onDutyMinutes, bool inViolation,
+        bool feasible, bool feasibleMultiDay, string reason)
     {
         var driverId = Guid.NewGuid();
-        if (drivingMinutes is { } driving)
-        {
-            SingleReturns(Hos(driverId, driving, onDutyMinutes, inViolation));
-            BatchReturns(Hos(driverId, driving, onDutyMinutes, inViolation));
-        }
-        else
-        {
-            SingleReturns(null);
-            BatchReturns();
-        }
+        SingleReturns(Hos(driverId, drivingMinutes, onDutyMinutes, inViolation));
+        BatchReturns(Hos(driverId, drivingMinutes, onDutyMinutes, inViolation));
 
         var single = JsonDocument.Parse(await RunSingle(driverId, 400)).RootElement;
         var batch = JsonDocument.Parse(await RunBatch((driverId, 400))).RootElement
@@ -99,12 +87,28 @@ public class HosFeasibilityToolTests
         foreach (var verdict in new[] { single, batch })
         {
             Assert.Equal(feasible, verdict.GetProperty("feasible").GetBoolean());
-            if (feasibleMultiDay is { } multiDay)
-            {
-                Assert.Equal(multiDay, verdict.GetProperty("feasible_multi_day").GetBoolean());
-            }
-
+            Assert.Equal(feasibleMultiDay, verdict.GetProperty("feasible_multi_day").GetBoolean());
             Assert.Contains(reason, verdict.GetProperty("reason").GetString());
+        }
+
+        Assert.Equal(single.GetProperty("reason").GetString(), batch.GetProperty("reason").GetString());
+    }
+
+    [Fact]
+    public async Task BothTools_NoHosRow_AgreeTheTripIsNotFeasible()
+    {
+        var driverId = Guid.NewGuid();
+        SingleReturns(null);
+        BatchReturns();
+
+        var single = JsonDocument.Parse(await RunSingle(driverId, 400)).RootElement;
+        var batch = JsonDocument.Parse(await RunBatch((driverId, 400))).RootElement
+            .GetProperty("results")[0];
+
+        foreach (var verdict in new[] { single, batch })
+        {
+            Assert.False(verdict.GetProperty("feasible").GetBoolean());
+            Assert.Contains("No HOS data available for this driver", verdict.GetProperty("reason").GetString());
         }
 
         Assert.Equal(single.GetProperty("reason").GetString(), batch.GetProperty("reason").GetString());

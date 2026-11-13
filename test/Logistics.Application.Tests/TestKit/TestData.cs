@@ -1,3 +1,4 @@
+using Logistics.Application.Modules.Operations.Trips.Commands;
 using Logistics.Domain.Entities;
 using Logistics.Domain.Primitives.Enums;
 using Logistics.Domain.Primitives.ValueObjects;
@@ -54,5 +55,19 @@ internal static class TestData
         LastName = "Doe",
         Salary = Money.Zero("USD"),
         Licenses = [.. licenses]
+    };
+
+    public static CreateTripLoadCommand TripLoadCommand() => new()
+    {
+        Name = "Freight",
+        Type = LoadType.GeneralFreight,
+        OriginAddress = new Address { Line1 = "1 Main", City = "Dallas", State = "TX", ZipCode = "75201", Country = "US" },
+        OriginLocation = new GeoPoint(-96.8, 32.8),
+        DestinationAddress = new Address { Line1 = "2 Main", City = "Austin", State = "TX", ZipCode = "73301", Country = "US" },
+        DestinationLocation = new GeoPoint(-97.7, 30.3),
+        DeliveryCost = 1500,
+        Distance = 300_000,
+        AssignedDispatcherId = Guid.NewGuid(),
+        CustomerId = Guid.NewGuid()
     };
 }

@@ -1,6 +1,6 @@
 using Logistics.Application.Tests.TestKit;
 using Logistics.Application.Modules.Compliance.Dvir.Services;
-using Logistics.Application.Modules.Operations.Common.Services;
+using Logistics.Application.Modules.Common.Services;
 using Logistics.Domain.Entities.Safety;
 using Logistics.Domain.Persistence;
 using Logistics.Domain.Primitives.Enums.Safety;

@@ -4,9 +4,8 @@ using Logistics.Domain.Primitives.Enums;
 using Logistics.Infrastructure.Persistence.Services.AIDispatch;
 using MockQueryable;
 using NSubstitute;
-using Xunit;
 
-namespace Logistics.Infrastructure.Persistence.Tests.Services;
+namespace Logistics.Infrastructure.Tests.Persistence.Services;
 
 public class AIQuotaServiceTests
 {

@@ -3,7 +3,7 @@ using Logistics.Shared.Identity.Claims;
 using Microsoft.AspNetCore.SignalR;
 using NSubstitute;
 
-namespace Logistics.Infrastructure.Communications.Tests.SignalR;
+namespace Logistics.Infrastructure.Tests.Communications.SignalR;
 
 internal static class HubTestContext
 {

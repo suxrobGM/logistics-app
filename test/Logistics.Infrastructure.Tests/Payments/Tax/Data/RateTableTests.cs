@@ -1,6 +1,6 @@
-using Logistics.Infrastructure.Tax.Data;
+using Logistics.Infrastructure.Payments.Tax.Data;
 
-namespace Logistics.Infrastructure.Tax.Tests.Data;
+namespace Logistics.Infrastructure.Tests.Payments.Tax.Data;
 
 public class RateTableTests
 {

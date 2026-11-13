@@ -1,17 +1,18 @@
 using System.Net;
-using System.Text;
 using Logistics.Infrastructure.Integrations.LoadBoard.Credit;
+using Logistics.Infrastructure.Tests.TestKit;
 using Microsoft.Extensions.Logging.Abstractions;
 using Microsoft.Extensions.Options;
-using Xunit;
 
-namespace Logistics.Infrastructure.Integrations.Tests.LoadBoard;
+namespace Logistics.Infrastructure.Tests.Integrations.LoadBoard;
 
 public class FmcsaClientTests
 {
     private static FmcsaClient CreateClient(string? responseBody, HttpStatusCode statusCode = HttpStatusCode.OK, string? webKey = "test-key")
     {
-        var handler = new StubHttpMessageHandler(responseBody, statusCode);
+        var handler = responseBody is null
+            ? new StubHttpMessageHandler(_ => new HttpResponseMessage(statusCode))
+            : StubHttpMessageHandler.Json(responseBody, statusCode);
         return new FmcsaClient(
             new HttpClient(handler),
             Options.Create(new FmcsaOptions { WebKey = webKey }),
@@ -65,7 +66,7 @@ public class FmcsaClientTests
     [Fact]
     public async Task GetAuthorityActive_NoWebKeyConfigured_ReturnsNullWithoutCalling()
     {
-        var handler = new StubHttpMessageHandler("{}", HttpStatusCode.OK);
+        var handler = StubHttpMessageHandler.Json("{}");
         var client = new FmcsaClient(
             new HttpClient(handler),
             Options.Create(new FmcsaOptions { WebKey = null }),
@@ -74,23 +75,6 @@ public class FmcsaClientTests
         var result = await client.GetAuthorityActiveAsync("123456");
 
         Assert.Null(result);
-        Assert.Equal(0, handler.CallCount);
-    }
-
-    private sealed class StubHttpMessageHandler(string? responseBody, HttpStatusCode statusCode) : HttpMessageHandler
-    {
-        public int CallCount { get; private set; }
-
-        protected override Task<HttpResponseMessage> SendAsync(HttpRequestMessage request, CancellationToken cancellationToken)
-        {
-            CallCount++;
-            var response = new HttpResponseMessage(statusCode);
-            if (responseBody is not null)
-            {
-                response.Content = new StringContent(responseBody, Encoding.UTF8, "application/json");
-            }
-
-            return Task.FromResult(response);
-        }
+        Assert.Empty(handler.Requests);
     }
 }

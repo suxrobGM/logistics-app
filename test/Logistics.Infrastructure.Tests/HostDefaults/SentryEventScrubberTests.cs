@@ -1,7 +1,7 @@
+using Logistics.HostDefaults;
 using Sentry;
-using Xunit;
 
-namespace Logistics.HostDefaults.Tests;
+namespace Logistics.Infrastructure.Tests.HostDefaults;
 
 public class SentryEventScrubberTests
 {

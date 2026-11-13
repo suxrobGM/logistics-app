@@ -1,6 +1,8 @@
+using Logistics.Infrastructure.Integrations.Vin;
+using Logistics.Infrastructure.Tests.TestKit;
 using Microsoft.Extensions.Logging.Abstractions;
 
-namespace Logistics.Infrastructure.Vin.Tests;
+namespace Logistics.Infrastructure.Tests.Integrations.Vin;
 
 public class WmiPrefixDecoderTests
 {

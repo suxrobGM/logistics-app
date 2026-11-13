@@ -1,3 +1,4 @@
+using Logistics.Application.Tests.TestKit;
 using Logistics.Domain.Entities;
 using Logistics.Domain.Events;
 using Logistics.Domain.Primitives.Enums;
@@ -8,30 +9,14 @@ namespace Logistics.Application.Tests.Operations.Trips;
 
 public class TripEtaTests
 {
-    private static readonly Address Address = new()
-    {
-        Line1 = "1 Main",
-        City = "City",
-        State = "ST",
-        ZipCode = "00000",
-        Country = "US"
-    };
-
     private static readonly DateTime Now = new(2026, 11, 12, 12, 0, 0, DateTimeKind.Utc);
 
-    private readonly Truck _truck = new() { Number = "TRK-001", Type = TruckType.FreightTruck };
+    private readonly Truck _truck = TestData.Truck();
 
     private Trip NewTrip(DateTime? deliveryAppointmentEnd)
     {
-        var dispatcher = new Employee
-        {
-            Email = "d@x.com",
-            FirstName = "Dana",
-            LastName = "Disp",
-            Salary = Money.Zero("USD")
-        };
-        var load = Load.Create("Load", LoadType.GeneralFreight, 1000, Address, new GeoPoint(0, 0), Address,
-            new GeoPoint(1, 1), new Customer { Name = "Acme" }, _truck, dispatcher, "USD");
+        var load = Load.Create("Load", LoadType.GeneralFreight, 1000, TestData.Address(), new GeoPoint(0, 0), TestData.Address(),
+            new GeoPoint(1, 1), new Customer { Name = "Acme" }, _truck, TestData.Driver(), "USD");
         load.DeliveryAppointmentTo = deliveryAppointmentEnd;
         var trip = Trip.Create("Trip", _truck, [load]);
         trip.DomainEvents.Clear();

@@ -12,21 +12,16 @@ namespace Logistics.Application.Tests.Compliance.Accidents;
 public class CreateAccidentReportHandlerTests
 {
     private readonly ITenantUnitOfWork _tenantUow = Substitute.For<ITenantUnitOfWork>();
-    private readonly ITenantRepository<AccidentReport, Guid> _reportRepo = Substitute.For<ITenantRepository<AccidentReport, Guid>>();
+    private readonly ITenantRepository<AccidentReport, Guid> _reportRepo;
     private readonly Truck _truck = TestData.Truck();
     private readonly Employee _driver = TestData.Driver();
     private readonly CreateAccidentReportHandler _sut;
 
     public CreateAccidentReportHandlerTests()
     {
-        var truckRepo = Substitute.For<ITenantRepository<Truck, Guid>>();
-        truckRepo.GetByIdAsync(_truck.Id, Arg.Any<CancellationToken>()).Returns(_truck);
-        var employeeRepo = Substitute.For<ITenantRepository<Employee, Guid>>();
-        employeeRepo.GetByIdAsync(_driver.Id, Arg.Any<CancellationToken>()).Returns(_driver);
-
-        _tenantUow.Repository<Truck>().Returns(truckRepo);
-        _tenantUow.Repository<Employee>().Returns(employeeRepo);
-        _tenantUow.Repository<AccidentReport>().Returns(_reportRepo);
+        _tenantUow.Stub(_truck);
+        _tenantUow.Stub(_driver);
+        _reportRepo = _tenantUow.Stub<AccidentReport>();
         _sut = new CreateAccidentReportHandler(_tenantUow);
     }
 
@@ -40,19 +35,20 @@ public class CreateAccidentReportHandlerTests
         command.TowCompany = "Ace Towing";
         command.HazmatInvolved = true;
         command.HazmatDescription = "Diesel spill";
+        AccidentReport? added = null;
+        await _reportRepo.AddAsync(Arg.Do<AccidentReport>(r => added = r), Arg.Any<CancellationToken>());
 
         var result = await _sut.Handle(command, CancellationToken.None);
 
         Assert.True(result.IsSuccess);
-        await _reportRepo.Received(1).AddAsync(
-            Arg.Is<AccidentReport>(r =>
-                r.FatalitiesReported
-                && r.NumberOfFatalities == 2
-                && r.VehicleTowed
-                && r.TowCompany == "Ace Towing"
-                && r.HazmatInvolved
-                && r.HazmatDescription == "Diesel spill"),
-            Arg.Any<CancellationToken>());
+        await _reportRepo.Received(1).AddAsync(Arg.Any<AccidentReport>(), Arg.Any<CancellationToken>());
+        Assert.NotNull(added);
+        Assert.True(added.FatalitiesReported);
+        Assert.Equal(2, added.NumberOfFatalities);
+        Assert.True(added.VehicleTowed);
+        Assert.Equal("Ace Towing", added.TowCompany);
+        Assert.True(added.HazmatInvolved);
+        Assert.Equal("Diesel spill", added.HazmatDescription);
         await _tenantUow.Received(1).SaveChangesAsync(Arg.Any<CancellationToken>());
 
         var dto = result.Value!;

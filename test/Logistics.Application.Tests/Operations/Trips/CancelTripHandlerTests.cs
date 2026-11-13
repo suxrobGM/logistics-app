@@ -1,4 +1,5 @@
 using Logistics.Application.Modules.Operations.Trips.Commands;
+using Logistics.Application.Tests.TestKit;
 using Logistics.Domain.Entities;
 using Logistics.Domain.Persistence;
 using Logistics.Domain.Primitives.Enums;
@@ -24,15 +25,9 @@ public class CancelTripHandlerTests
     [Fact]
     public async Task Handle_TripWithDeliveredLoad_FailsWithClearMessageAndSavesNothing()
     {
-        var truck = new Truck { Number = "TRK-001", Type = TruckType.FreightTruck };
-        var dispatcher = new Employee
-        {
-            Email = "d@x.com",
-            FirstName = "Dana",
-            LastName = "Disp",
-            Salary = Money.Zero("USD")
-        };
-        var address = new Address { Line1 = "1 Main", City = "City", State = "ST", ZipCode = "00000", Country = "US" };
+        var truck = TestData.Truck();
+        var dispatcher = TestData.Driver();
+        var address = TestData.Address();
         Load NewLoad() => Load.Create($"Load {Guid.NewGuid():N}", LoadType.GeneralFreight, 1000, address, new GeoPoint(0, 0), address,
             new GeoPoint(1, 1), new Customer { Name = "Acme" }, truck, dispatcher, "USD");
 

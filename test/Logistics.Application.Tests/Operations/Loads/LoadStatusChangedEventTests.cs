@@ -1,3 +1,4 @@
+using Logistics.Application.Tests.TestKit;
 using Logistics.Domain.Entities;
 using Logistics.Domain.Events;
 using Logistics.Domain.Primitives.Enums;
@@ -8,27 +9,10 @@ namespace Logistics.Application.Tests.Operations.Loads;
 
 public class LoadStatusChangedEventTests
 {
-    private static readonly Address Address = new()
-    {
-        Line1 = "1 Main",
-        City = "City",
-        State = "ST",
-        ZipCode = "00000",
-        Country = "US"
-    };
-
     private static Load NewLoad()
     {
-        var truck = new Truck { Number = "TRK-001", Type = TruckType.FreightTruck };
-        var dispatcher = new Employee
-        {
-            Email = "d@x.com",
-            FirstName = "Dana",
-            LastName = "Disp",
-            Salary = Money.Zero("USD")
-        };
-        var load = Load.Create("Load", LoadType.GeneralFreight, 1000, Address, new GeoPoint(0, 0), Address,
-            new GeoPoint(1, 1), new Customer { Name = "Acme" }, truck, dispatcher, "USD");
+        var load = Load.Create("Load", LoadType.GeneralFreight, 1000, TestData.Address(), new GeoPoint(0, 0), TestData.Address(),
+            new GeoPoint(1, 1), new Customer { Name = "Acme" }, TestData.Truck(), TestData.Driver(), "USD");
         load.DomainEvents.Clear();
         return load;
     }

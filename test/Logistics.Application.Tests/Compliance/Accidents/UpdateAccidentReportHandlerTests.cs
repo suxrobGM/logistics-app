@@ -35,16 +35,9 @@ public class UpdateAccidentReportHandlerTests
             NumberOfFatalities = 1
         };
 
-        var reportRepo = Substitute.For<ITenantRepository<AccidentReport, Guid>>();
-        reportRepo.GetByIdAsync(_report.Id, Arg.Any<CancellationToken>()).Returns(_report);
-        var truckRepo = Substitute.For<ITenantRepository<Truck, Guid>>();
-        truckRepo.GetByIdAsync(_truck.Id, Arg.Any<CancellationToken>()).Returns(_truck);
-        var employeeRepo = Substitute.For<ITenantRepository<Employee, Guid>>();
-        employeeRepo.GetByIdAsync(_driver.Id, Arg.Any<CancellationToken>()).Returns(_driver);
-
-        _tenantUow.Repository<AccidentReport>().Returns(reportRepo);
-        _tenantUow.Repository<Truck>().Returns(truckRepo);
-        _tenantUow.Repository<Employee>().Returns(employeeRepo);
+        _tenantUow.Stub(_report);
+        _tenantUow.Stub(_truck);
+        _tenantUow.Stub(_driver);
         _sut = new UpdateAccidentReportHandler(_tenantUow);
     }
 

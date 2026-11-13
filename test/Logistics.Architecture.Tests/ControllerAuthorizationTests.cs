@@ -31,6 +31,13 @@ public class ControllerAuthorizationTests
         return attribute?.Roles?.Split(',', StringSplitOptions.TrimEntries) ?? [];
     }
 
+    private static bool IsAnonymous(Type controller, MethodInfo action)
+    {
+        var actionIsAnonymous = action.GetCustomAttribute<AllowAnonymousAttribute>() is not null;
+        var controllerIsAnonymous = controller.GetCustomAttribute<AllowAnonymousAttribute>() is not null;
+        return actionIsAnonymous || controllerIsAnonymous;
+    }
+
     /// <summary>Still authenticated by the global AuthorizeFilter. The list must shrink, never grow.</summary>
     private static readonly string[] AuthenticatedOnlyActions = ["RoleController.GetPermissions"];
 
@@ -83,9 +90,7 @@ public class ControllerAuthorizationTests
     {
         var anonymous = Controllers
             .SelectMany(c => ActionsOf(c).Select(a => (Controller: c, Action: a)))
-            .Where(x =>
-                x.Action.GetCustomAttribute<AllowAnonymousAttribute>() is not null ||
-                x.Controller.GetCustomAttribute<AllowAnonymousAttribute>() is not null)
+            .Where(x => IsAnonymous(x.Controller, x.Action))
             .Select(x => $"{x.Controller.Name}.{x.Action.Name}")
             .OrderBy(name => name, StringComparer.Ordinal)
             .ToArray();

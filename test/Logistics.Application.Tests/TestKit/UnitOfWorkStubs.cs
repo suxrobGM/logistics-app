@@ -1,3 +1,4 @@
+using System.Linq.Expressions;
 using Logistics.Domain.Core;
 using Logistics.Domain.Entities;
 using Logistics.Domain.Persistence;
@@ -11,15 +12,22 @@ internal static class UnitOfWorkStubs
     extension(ITenantUnitOfWork uow)
     {
         /// <summary>
-        /// Wires <c>Repository&lt;T&gt;()</c> to a substitute whose <c>Query()</c> reads
-        /// <paramref name="rows"/> on every call, so rows added to a list later are seen. Returns the
-        /// repository for further setup or <c>Received</c> checks.
+        /// Wires <c>Repository&lt;T&gt;()</c> to a substitute whose reads (<c>Query</c>, <c>GetByIdAsync</c>,
+        /// <c>GetAsync</c>, <c>GetListAsync</c>) see <paramref name="rows"/> on every call, so rows added to
+        /// a list later are seen. Returns the repository for further setup or <c>Received</c> checks.
         /// </summary>
         public ITenantRepository<T, Guid> Stub<T>(params ICollection<T> rows)
             where T : class, IEntity<Guid>, ITenantEntity
         {
             var repo = Substitute.For<ITenantRepository<T, Guid>>();
             repo.Query().Returns(_ => rows.BuildMock());
+            repo.GetByIdAsync(Arg.Any<Guid>(), Arg.Any<CancellationToken>())
+                .Returns(call => rows.FirstOrDefault(r => r.Id == call.ArgAt<Guid>(0)));
+            repo.GetAsync(Arg.Any<Expression<Func<T, bool>>>(), Arg.Any<CancellationToken>())
+                .Returns(call => rows.FirstOrDefault(call.ArgAt<Expression<Func<T, bool>>>(0).Compile()));
+            repo.GetListAsync(Arg.Any<Expression<Func<T, bool>>>(), Arg.Any<CancellationToken>())
+                .Returns(call => rows.Where(call.ArgAt<Expression<Func<T, bool>>>(0).Compile()).ToList());
+            repo.GetListAsync(Arg.Any<CancellationToken>()).Returns(_ => rows.ToList());
             uow.Repository<T>().Returns(repo);
             return repo;
         }

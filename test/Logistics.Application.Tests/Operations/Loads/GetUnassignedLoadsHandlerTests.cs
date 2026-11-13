@@ -1,3 +1,4 @@
+using Logistics.Application.Modules.Common.Services;
 using System.Linq.Expressions;
 using Logistics.Application.Modules.Operations.Loads.Queries;
 using Logistics.Application.Tests.TestKit;
@@ -24,7 +25,7 @@ public class GetUnassignedLoadsHandlerTests
     {
         _tenantUow.Repository<Load>().Returns(_loadRepo);
         _tenantUow.StubLoadLookups();
-        _sut = new GetUnassignedLoadsHandler(_tenantUow, new LoadLookupBuilder(_tenantUow));
+        _sut = new GetUnassignedLoadsHandler(_tenantUow, new LoadLookupBuilder(_tenantUow, new DisplayNameLookup(_tenantUow)));
     }
 
     private static Load CreateDraftLoad(string name, DateTime createdAt) => new()

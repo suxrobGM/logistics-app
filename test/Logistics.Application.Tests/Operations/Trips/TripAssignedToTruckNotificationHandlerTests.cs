@@ -1,5 +1,4 @@
 using Logistics.Application.Modules.Operations.Trips.Events;
-using Logistics.Application.Tests.Operations.Loads;
 using Logistics.Application.Modules.Platform.Notifications.Services;
 using Logistics.Application.Tests.TestKit;
 using Logistics.Domain.Entities;
@@ -14,12 +13,10 @@ public class TripAssignedToTruckNotificationHandlerTests
 {
     private readonly IEventNotifier _notifier = Substitute.For<IEventNotifier>();
     private readonly ITenantUnitOfWork _tenantUow = Substitute.For<ITenantUnitOfWork>();
-    private readonly ITenantRepository<Trip, Guid> _tripRepo = Substitute.For<ITenantRepository<Trip, Guid>>();
     private readonly TripAssignedToTruckNotificationHandler _sut;
 
     public TripAssignedToTruckNotificationHandlerTests()
     {
-        _tenantUow.Repository<Trip>().Returns(_tripRepo);
         _tenantUow.GetCurrentTenant().Returns(TestTenant.Create());
         _sut = new TripAssignedToTruckNotificationHandler(_notifier, _tenantUow);
     }
@@ -28,9 +25,9 @@ public class TripAssignedToTruckNotificationHandlerTests
     [Fact]
     public async Task Handle_UsesNumberFromTrackedTrip()
     {
-        var trip = Trip.Create("Trip", null, [LoadInvoiceChargesTests.NewLoad()]);
+        var trip = Trip.Create("Trip", null, [TestData.Load()]);
         typeof(Trip).GetProperty(nameof(Trip.Number))!.SetValue(trip, 5678L);
-        _tripRepo.GetByIdAsync(trip.Id, Arg.Any<CancellationToken>()).Returns(trip);
+        _tenantUow.Stub(trip);
 
         await _sut.Handle(
             new TripAssignedToTruckEvent(trip.Id, "Trip", Guid.NewGuid(), "T-1", "token", "Driver", null, null),

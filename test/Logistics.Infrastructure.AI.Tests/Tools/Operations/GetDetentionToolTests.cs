@@ -9,7 +9,6 @@ using Logistics.Domain.Primitives.ValueObjects;
 using Logistics.Infrastructure.AI.Tools.Operations;
 using Logistics.Mediator;
 using Logistics.Shared.Models;
-using MockQueryable;
 using NSubstitute;
 using Xunit;
 
@@ -19,12 +18,11 @@ public class GetDetentionToolTests
 {
     private readonly IMediator _mediator = Substitute.For<IMediator>();
     private readonly ITenantUnitOfWork _tenantUow = Substitute.For<ITenantUnitOfWork>();
-    private readonly ITenantRepository<TripStop, Guid> _stopRepo = Substitute.For<ITenantRepository<TripStop, Guid>>();
     private readonly GetDetentionTool _sut;
 
     public GetDetentionToolTests()
     {
-        _tenantUow.Repository<TripStop>().Returns(_stopRepo);
+        _tenantUow.Stub<TripStop>();
         _tenantUow.GetCurrentTenant().Returns(TestTenant.Create());
         _sut = new GetDetentionTool(_mediator, _tenantUow);
     }
@@ -63,7 +61,7 @@ public class GetDetentionToolTests
     {
         var shortWait = Stop("T-1", arrivedHoursAgo: 1);
         var longWait = Stop("T-2", arrivedHoursAgo: 5);
-        _stopRepo.Query().Returns(new List<TripStop> { shortWait, longWait }.BuildMock());
+        _tenantUow.Stub(shortWait, longWait);
 
         var result = await _sut.ExecuteAsync(new JsonObject(), CancellationToken.None);
 

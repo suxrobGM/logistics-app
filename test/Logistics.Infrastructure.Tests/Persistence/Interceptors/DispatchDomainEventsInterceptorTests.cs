@@ -5,9 +5,8 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging.Abstractions;
 using NSubstitute;
 using NSubstitute.ExceptionExtensions;
-using Xunit;
 
-namespace Logistics.Infrastructure.Persistence.Tests.Interceptors;
+namespace Logistics.Infrastructure.Tests.Persistence.Interceptors;
 
 public class DispatchDomainEventsInterceptorTests
 {
@@ -34,9 +33,7 @@ public class DispatchDomainEventsInterceptorTests
     public async Task SavedChangesAsync_EntityWithEvent_PublishesAndClearsIt()
     {
         await using var context = NewContext(Guid.NewGuid().ToString());
-        var thing = new Thing();
-        thing.DomainEvents.Add(new ThingSaved());
-        context.Add(thing);
+        var thing = AddThing(context, new ThingSaved());
 
         await context.SaveChangesAsync(CancellationToken.None);
 
@@ -50,9 +47,7 @@ public class DispatchDomainEventsInterceptorTests
     {
         var database = Guid.NewGuid().ToString();
         await using var context = NewContext(database);
-        var thing = new Thing();
-        thing.DomainEvents.Add(new ThingSaved());
-        context.Add(thing);
+        var thing = AddThing(context, new ThingSaved());
 
         var persistedWhenPublished = false;
         _mediator.Publish(Arg.Any<ThingSaved>(), Arg.Any<CancellationToken>())
@@ -80,9 +75,7 @@ public class DispatchDomainEventsInterceptorTests
                 return Task.CompletedTask;
             });
 
-        var thing = new Thing();
-        thing.DomainEvents.Add(new ThingSaved());
-        context.Add(thing);
+        AddThing(context, new ThingSaved());
 
         await context.SaveChangesAsync(CancellationToken.None);
 
@@ -97,15 +90,11 @@ public class DispatchDomainEventsInterceptorTests
         _mediator.Publish(Arg.Any<ThingSaved>(), Arg.Any<CancellationToken>())
             .Returns(_ =>
             {
-                var follower = new Thing();
-                follower.DomainEvents.Add(new OuterSaved());
-                context.Add(follower);
+                AddThing(context, new OuterSaved());
                 return Task.CompletedTask;
             });
 
-        var thing = new Thing();
-        thing.DomainEvents.Add(new ThingSaved());
-        context.Add(thing);
+        AddThing(context, new ThingSaved());
 
         await context.SaveChangesAsync(CancellationToken.None);
 
@@ -142,10 +131,7 @@ public class DispatchDomainEventsInterceptorTests
         _mediator.Publish(Arg.Any<ThingSaved>(), Arg.Any<CancellationToken>())
             .ThrowsAsync(new InvalidOperationException("push failed"));
 
-        var thing = new Thing();
-        thing.DomainEvents.Add(new ThingSaved());
-        thing.DomainEvents.Add(new OuterSaved());
-        context.Add(thing);
+        AddThing(context, new ThingSaved(), new OuterSaved());
 
         var written = await context.SaveChangesAsync(CancellationToken.None);
 
@@ -163,18 +149,14 @@ public class DispatchDomainEventsInterceptorTests
         await using var outer = NewContext(Guid.NewGuid().ToString());
         await using var inner = NewContext(Guid.NewGuid().ToString());
 
-        var innerThing = new Thing();
-        innerThing.DomainEvents.Add(new ThingSaved());
-        inner.Add(innerThing);
+        var innerThing = AddThing(inner, new ThingSaved());
 
         // Stand in for a handler that writes through the other DbContext while the first save is
         // still dispatching.
         _mediator.Publish(Arg.Any<OuterSaved>(), Arg.Any<CancellationToken>())
             .Returns(_ => inner.SaveChangesAsync(CancellationToken.None));
 
-        var outerThing = new Thing();
-        outerThing.DomainEvents.Add(new OuterSaved());
-        outer.Add(outerThing);
+        AddThing(outer, new OuterSaved());
 
         await outer.SaveChangesAsync(CancellationToken.None);
 
@@ -190,13 +172,19 @@ public class DispatchDomainEventsInterceptorTests
         _mediator.Publish(Arg.Any<ThingSaved>(), Arg.Any<CancellationToken>())
             .Returns(_ => context.SaveChangesAsync(CancellationToken.None));
 
-        var thing = new Thing();
-        thing.DomainEvents.Add(new ThingSaved());
-        context.Add(thing);
+        AddThing(context, new ThingSaved());
 
         await context.SaveChangesAsync(CancellationToken.None);
 
         await _mediator.Received(1).Publish(Arg.Any<ThingSaved>(), Arg.Any<CancellationToken>());
+    }
+
+    private static Thing AddThing(DbContext context, params IDomainEvent[] events)
+    {
+        var thing = new Thing();
+        thing.DomainEvents.AddRange(events);
+        context.Add(thing);
+        return thing;
     }
 
     private sealed record ThingSaved : IDomainEvent;

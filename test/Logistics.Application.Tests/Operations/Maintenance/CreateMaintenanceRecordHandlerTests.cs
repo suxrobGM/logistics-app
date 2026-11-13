@@ -1,8 +1,8 @@
 using Logistics.Application.Modules.Operations.Maintenance.Commands;
+using Logistics.Application.Tests.TestKit;
 using Logistics.Domain.Entities;
 using Logistics.Domain.Entities.Maintenance;
 using Logistics.Domain.Persistence;
-using Logistics.Domain.Primitives.Enums;
 using Logistics.Domain.Primitives.Enums.Maintenance;
 using Logistics.Shared.Models;
 using NSubstitute;
@@ -13,19 +13,14 @@ namespace Logistics.Application.Tests.Operations.Maintenance;
 public class CreateMaintenanceRecordHandlerTests
 {
     private readonly ITenantUnitOfWork _tenantUow = Substitute.For<ITenantUnitOfWork>();
-    private readonly ITenantRepository<Truck, Guid> _truckRepo = Substitute.For<ITenantRepository<Truck, Guid>>();
-    private readonly ITenantRepository<Employee, Guid> _employeeRepo = Substitute.For<ITenantRepository<Employee, Guid>>();
-    private readonly ITenantRepository<MaintenanceRecord, Guid> _recordRepo =
-        Substitute.For<ITenantRepository<MaintenanceRecord, Guid>>();
-    private readonly Truck _truck = new() { Number = "T-1", Type = TruckType.FreightTruck };
+    private readonly Truck _truck = TestData.Truck();
     private readonly CreateMaintenanceRecordHandler _sut;
 
     public CreateMaintenanceRecordHandlerTests()
     {
-        _tenantUow.Repository<Truck>().Returns(_truckRepo);
-        _tenantUow.Repository<Employee>().Returns(_employeeRepo);
-        _tenantUow.Repository<MaintenanceRecord>().Returns(_recordRepo);
-        _truckRepo.GetByIdAsync(_truck.Id, Arg.Any<CancellationToken>()).Returns(_truck);
+        _tenantUow.Stub(_truck);
+        _tenantUow.Stub<Employee>();
+        _tenantUow.Stub<MaintenanceRecord>();
         _sut = new CreateMaintenanceRecordHandler(_tenantUow);
     }
 

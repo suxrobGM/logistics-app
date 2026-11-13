@@ -6,9 +6,8 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
 using Microsoft.EntityFrameworkCore.Migrations;
-using Xunit;
 
-namespace Logistics.Infrastructure.Persistence.Tests.Services;
+namespace Logistics.Infrastructure.Tests.Persistence.Services;
 
 /// <summary>
 /// Pins tenant model details a migration diff would not flag as wrong: columns, indexes, foreign

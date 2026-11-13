@@ -1,3 +1,4 @@
+using Logistics.Application.Modules.Common.Services;
 using Logistics.Application.Tests.TestKit;
 using Logistics.Application.Modules.Integrations.AIDispatch.Services;
 using Logistics.Application.Abstractions.Agents;
@@ -13,7 +14,6 @@ using Logistics.Infrastructure.AI.Llm;
 using Logistics.Application.Abstractions.AI;
 using Logistics.Application.Abstractions.AIDispatch;
 using Microsoft.Extensions.Logging.Abstractions;
-using MockQueryable;
 using NSubstitute;
 using Xunit;
 
@@ -24,8 +24,6 @@ public class AgentLoopRunnerTests
     private readonly ILlmProvider _provider = Substitute.For<ILlmProvider>();
     private readonly IAgentToolExecutor _toolExecutor = Substitute.For<IAgentToolExecutor>();
     private readonly ITenantUnitOfWork _tenantUow = Substitute.For<ITenantUnitOfWork>();
-    private readonly ITenantRepository<AgentSession, Guid> _sessionRepo =
-        Substitute.For<ITenantRepository<AgentSession, Guid>>();
     private readonly AgentLoopRunner _sut;
 
     /// <summary>
@@ -33,19 +31,17 @@ public class AgentLoopRunnerTests
     /// issued on another instance. Point that query at <paramref name="rows"/>.
     /// </summary>
     private void SessionInDatabase(params AgentSession[] rows) =>
-        _sessionRepo.Query().Returns(rows.ToList().BuildMock());
+        _tenantUow.Stub(rows);
 
     public AgentLoopRunnerTests()
     {
-        _tenantUow.Repository<AgentDecision>()
-            .Returns(Substitute.For<ITenantRepository<AgentDecision, Guid>>());
-        _tenantUow.Repository<AgentSession>().Returns(_sessionRepo);
+        _tenantUow.Stub<AgentDecision>();
         SessionInDatabase();
         _tenantUow.GetCurrentTenant().Returns(TestTenant.Create());
 
         var processor = new AgentDecisionProcessor(
             _toolExecutor, new AgentToolRegistry(), _tenantUow,
-            Substitute.For<IAIDispatchBroadcastService>(), new AgentDecisionDtoMapper(_tenantUow),
+            Substitute.For<IAIDispatchBroadcastService>(), new AgentDecisionDtoMapper(_tenantUow, new DisplayNameLookup(_tenantUow)),
             Substitute.For<IAgentTrustService>(), Substitute.For<IAgentRunContext>(),
             NullLogger<AgentDecisionProcessor>.Instance);
         _sut = new AgentLoopRunner(processor, _tenantUow, NullLogger<AgentLoopRunner>.Instance);

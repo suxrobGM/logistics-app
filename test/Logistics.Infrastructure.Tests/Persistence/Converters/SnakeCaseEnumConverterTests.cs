@@ -1,9 +1,8 @@
 using Logistics.Domain.Primitives.Enums;
 using Logistics.Infrastructure.Persistence.Converters;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
-using Xunit;
 
-namespace Logistics.Infrastructure.Persistence.Tests.Converters;
+namespace Logistics.Infrastructure.Tests.Persistence.Converters;
 
 public class SnakeCaseEnumConverterTests
 {

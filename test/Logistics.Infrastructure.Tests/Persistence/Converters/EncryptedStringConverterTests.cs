@@ -1,8 +1,7 @@
 using Logistics.Infrastructure.Persistence.Converters;
 using Microsoft.AspNetCore.DataProtection;
-using Xunit;
 
-namespace Logistics.Infrastructure.Persistence.Tests.Converters;
+namespace Logistics.Infrastructure.Tests.Persistence.Converters;
 
 public class EncryptedStringConverterTests
 {

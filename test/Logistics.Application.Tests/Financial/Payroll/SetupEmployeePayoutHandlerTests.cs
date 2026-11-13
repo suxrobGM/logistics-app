@@ -1,3 +1,4 @@
+using Logistics.Application.Tests.TestKit;
 using Logistics.Domain.Entities;
 using Logistics.Domain.Persistence;
 using Logistics.Domain.Primitives.ValueObjects;
@@ -26,7 +27,7 @@ public class SetupEmployeePayoutHandlerTests
     public SetupEmployeePayoutHandlerTests()
     {
         _tenantUow.Repository<Employee>().Returns(_employeeRepo);
-        _tenantUow.GetCurrentTenant().Returns(CreateTenant());
+        _tenantUow.GetCurrentTenant().Returns(TestTenant.Create());
         _sut = new SetupEmployeePayoutHandler(_tenantUow, _stripeConnectService, _logger);
     }
 
@@ -41,21 +42,6 @@ public class SetupEmployeePayoutHandlerTests
             StripeConnectedAccountId = stripeAccountId
         };
     }
-
-    private static Tenant CreateTenant() => new()
-    {
-        Name = "test",
-        DatabaseName = "test",
-        BillingEmail = "billing@test.com",
-        CompanyAddress = new Address
-        {
-            Line1 = "1 Test St",
-            City = "Test",
-            ZipCode = "00000",
-            State = "NA",
-            Country = "US"
-        }
-    };
 
     [Fact]
     public async Task Handle_NewEmployee_CreatesStripeAccount()

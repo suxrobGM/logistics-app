@@ -1,9 +1,8 @@
 using Logistics.Domain.Entities;
 using Logistics.Infrastructure.Persistence.Data;
 using Microsoft.EntityFrameworkCore;
-using Xunit;
 
-namespace Logistics.Infrastructure.Persistence.Tests.Services;
+namespace Logistics.Infrastructure.Tests.Persistence.Services;
 
 /// <summary>
 /// Forces translation of the list-search predicates via <c>ToQueryString</c>, the same way

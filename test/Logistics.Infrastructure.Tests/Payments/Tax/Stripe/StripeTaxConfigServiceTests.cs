@@ -1,9 +1,10 @@
-using Logistics.Infrastructure.Tax.Stripe;
+using Logistics.Infrastructure.Payments.Tax;
+using Logistics.Infrastructure.Payments.Tax.Stripe;
 using Microsoft.Extensions.Caching.Memory;
 using Microsoft.Extensions.Logging.Abstractions;
 using Microsoft.Extensions.Options;
 
-namespace Logistics.Infrastructure.Tax.Tests.Stripe;
+namespace Logistics.Infrastructure.Tests.Payments.Tax.Stripe;
 
 public class StripeTaxConfigServiceTests
 {

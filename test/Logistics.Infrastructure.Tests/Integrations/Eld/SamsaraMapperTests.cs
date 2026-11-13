@@ -3,9 +3,8 @@ using Logistics.Domain.Primitives.Enums;
 using Logistics.Infrastructure.Integrations.Common;
 using Logistics.Infrastructure.Integrations.Eld.Providers.Samsara;
 using Logistics.Shared.Models;
-using Xunit;
 
-namespace Logistics.Infrastructure.Integrations.Tests.Eld;
+namespace Logistics.Infrastructure.Tests.Integrations.Eld;
 
 /// <summary>Payloads are the documented examples from developers.samsara.com, trimmed to the fields we read.</summary>
 public class SamsaraMapperTests

@@ -9,9 +9,8 @@ using Logistics.Infrastructure.Integrations.LoadBoard.Providers.Dat;
 using Logistics.Shared.Models;
 using Microsoft.Extensions.Logging.Abstractions;
 using Microsoft.Extensions.Options;
-using Xunit;
 
-namespace Logistics.Infrastructure.Integrations.Tests.LoadBoard;
+namespace Logistics.Infrastructure.Tests.Integrations.LoadBoard;
 
 public class DatLoadBoardServiceTests
 {

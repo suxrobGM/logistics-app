@@ -11,7 +11,6 @@ using Logistics.Infrastructure.AI.Llm;
 using Logistics.Infrastructure.AI.Llm.Contracts;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Logging.Abstractions;
-using MockQueryable;
 using NSubstitute;
 using Xunit;
 using Logistics.Application.Abstractions.Features;
@@ -30,10 +29,6 @@ public class AIDispatchConversationBuilderTests
     private readonly IFeatureService _featureService = Substitute.For<IFeatureService>();
     private readonly ITenantUnitOfWork _tenantUow = Substitute.For<ITenantUnitOfWork>();
     private readonly ISystemSettingsService _systemSettings = Substitute.For<ISystemSettingsService>();
-    private readonly ITenantRepository<AIDispatchPolicy, Guid> _policyRepo =
-        Substitute.For<ITenantRepository<AIDispatchPolicy, Guid>>();
-    private readonly ITenantRepository<AgentMessage, Guid> _messageRepo =
-        Substitute.For<ITenantRepository<AgentMessage, Guid>>();
     private readonly List<AgentMessage> _rows = [];
 
     public AIDispatchConversationBuilderTests()
@@ -43,10 +38,8 @@ public class AIDispatchConversationBuilderTests
 
         SetTenant();
 
-        _tenantUow.Repository<AIDispatchPolicy>().Returns(_policyRepo);
-        _tenantUow.Repository<AgentMessage>().Returns(_messageRepo);
-        _messageRepo.Query().Returns(_ => _rows.BuildMock());
-        SetPolicies();
+        _tenantUow.Stub(_rows);
+        _tenantUow.Stub<AIDispatchPolicy>();
 
         var llmOptions = MsOptions.Options.Create(ValidConfig);
         var httpClientFactory = Substitute.For<IHttpClientFactory>();
@@ -95,11 +88,6 @@ public class AIDispatchConversationBuilderTests
         _tenantUow.GetCurrentTenant().Returns(tenant);
     }
 
-    private void SetPolicies(params AIDispatchPolicy[] policies)
-    {
-        _policyRepo.Query().Returns(policies.ToList().BuildMock());
-    }
-
     private static AIDispatchPolicy CreatePolicy(
         string? learned = null,
         string? directives = null,
@@ -113,17 +101,22 @@ public class AIDispatchConversationBuilderTests
 
     #region Learned policy injection
 
-    /// <summary>A disabled policy is filtered out in SQL, so it never reaches the prompt.</summary>
-    [Theory]
-    [InlineData(false)]
-    [InlineData(true)]
-    public async Task BuildAsync_NoEnabledPolicy_OmitsPolicySection(bool hasDisabledPolicy)
+    [Fact]
+    public async Task BuildAsync_NoPolicy_OmitsPolicySection()
     {
-        if (hasDisabledPolicy)
-        {
-            SetPolicies(CreatePolicy(learned: "## Learned preferences\n- Prefer short hauls (5 rejections)", isEnabled: false));
-        }
+        var session = new AgentSession { CreatedAt = DateTime.UtcNow };
 
+        var conversation = await _sut.BuildAsync(session, CreateConversation(), ValidConfig, CancellationToken.None);
+
+        Assert.DoesNotContain("Dispatcher Preferences", conversation.SystemPrompt);
+        Assert.DoesNotContain("Prefer short hauls", conversation.SystemPrompt);
+    }
+
+    /// <summary>A disabled policy is filtered out in SQL, so it never reaches the prompt.</summary>
+    [Fact]
+    public async Task BuildAsync_DisabledPolicy_OmitsPolicySection()
+    {
+        _tenantUow.Stub(CreatePolicy(learned: "## Learned preferences\n- Prefer short hauls (5 rejections)", isEnabled: false));
         var session = new AgentSession { CreatedAt = DateTime.UtcNow };
 
         var conversation = await _sut.BuildAsync(session, CreateConversation(), ValidConfig, CancellationToken.None);
@@ -135,7 +128,7 @@ public class AIDispatchConversationBuilderTests
     [Fact]
     public async Task BuildAsync_EnabledPolicy_InjectsBothSections()
     {
-        SetPolicies(CreatePolicy(
+        _tenantUow.Stub(CreatePolicy(
             learned: "## Learned preferences\n- Prefer short hauls (5 rejections)",
             directives: "- Never assign Truck 42 to hazmat"));
         var session = new AgentSession { CreatedAt = DateTime.UtcNow };
@@ -155,7 +148,7 @@ public class AIDispatchConversationBuilderTests
     [Fact]
     public async Task BuildAsync_PolicyWithOnlyDirectives_OmitsLearnedHeading()
     {
-        SetPolicies(CreatePolicy(directives: "- Prefer flatbeds out of Dallas"));
+        _tenantUow.Stub(CreatePolicy(directives: "- Prefer flatbeds out of Dallas"));
         var session = new AgentSession { CreatedAt = DateTime.UtcNow };
 
         var conversation = await _sut.BuildAsync(session, CreateConversation(), ValidConfig, CancellationToken.None);
@@ -168,22 +161,27 @@ public class AIDispatchConversationBuilderTests
 
     #region Fleet vs solo owner-operator
 
-    [Theory]
-    [InlineData(true)]
-    [InlineData(false)]
-    public async Task BuildAsync_SoloOperatorPreset_PicksTheSoloOrFleetPrompt(bool isSolo)
+    [Fact]
+    public async Task BuildAsync_SoloOperatorPreset_UsesTheSoloPrompt()
     {
-        if (isSolo)
-        {
-            SetTenant(TenantPreset.GeneralFreight, TenantPreset.SoloOperator);
-        }
-
+        SetTenant(TenantPreset.GeneralFreight, TenantPreset.SoloOperator);
         var session = new AgentSession { CreatedAt = DateTime.UtcNow };
 
         var conversation = await _sut.BuildAsync(session, CreateConversation(), ValidConfig, CancellationToken.None);
 
-        Assert.Equal(isSolo, conversation.SystemPrompt.Contains("## Fleet Profile: SOLO OWNER-OPERATOR"));
-        Assert.Equal(!isSolo, conversation.SystemPrompt.Contains("Maximize fleet utilization"));
+        Assert.Contains("## Fleet Profile: SOLO OWNER-OPERATOR", conversation.SystemPrompt);
+        Assert.DoesNotContain("Maximize fleet utilization", conversation.SystemPrompt);
+    }
+
+    [Fact]
+    public async Task BuildAsync_NoSoloPreset_UsesTheFleetPrompt()
+    {
+        var session = new AgentSession { CreatedAt = DateTime.UtcNow };
+
+        var conversation = await _sut.BuildAsync(session, CreateConversation(), ValidConfig, CancellationToken.None);
+
+        Assert.DoesNotContain("## Fleet Profile: SOLO OWNER-OPERATOR", conversation.SystemPrompt);
+        Assert.Contains("Maximize fleet utilization", conversation.SystemPrompt);
     }
 
     #endregion

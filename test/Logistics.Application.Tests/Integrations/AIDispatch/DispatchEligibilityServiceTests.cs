@@ -15,9 +15,6 @@ namespace Logistics.Application.Tests.Integrations.AIDispatch;
 public class DispatchEligibilityServiceTests
 {
     private readonly ITenantUnitOfWork _tenantUow = Substitute.For<ITenantUnitOfWork>();
-    private readonly ITenantRepository<Truck, Guid> _truckRepo = Substitute.For<ITenantRepository<Truck, Guid>>();
-    private readonly ITenantRepository<Load, Guid> _loadRepo = Substitute.For<ITenantRepository<Load, Guid>>();
-    private readonly ITenantRepository<Employee, Guid> _employeeRepo = Substitute.For<ITenantRepository<Employee, Guid>>();
 
     private readonly IVehicleCapacityChecker _capacityChecker = Substitute.For<IVehicleCapacityChecker>();
 
@@ -28,9 +25,6 @@ public class DispatchEligibilityServiceTests
 
     public DispatchEligibilityServiceTests()
     {
-        _tenantUow.Repository<Truck>().Returns(_truckRepo);
-        _tenantUow.Repository<Load>().Returns(_loadRepo);
-        _tenantUow.Repository<Employee>().Returns(_employeeRepo);
         _sut = new DispatchEligibilityService(
             _tenantUow, _capacityChecker, NullLogger<DispatchEligibilityService>.Instance);
     }
@@ -142,7 +136,9 @@ public class DispatchEligibilityServiceTests
 
         var load = TestData.Load(originCountry: scenario.Origin, destinationCountry: scenario.Destination);
         load.HazmatClass = scenario.Hazmat;
-        Wire(truck, load, driver);
+        _tenantUow.Stub(truck);
+        _tenantUow.Stub(load);
+        _tenantUow.Stub(driver);
 
         var result = scenario.PassDriverId
             ? await _sut.CheckAsync(truck.Id, load.Id, DriverId)
@@ -169,7 +165,7 @@ public class DispatchEligibilityServiceTests
     [Fact]
     public async Task CheckAsync_TruckNotFound_BlockedWithReason()
     {
-        _truckRepo.GetByIdAsync(Arg.Any<Guid>(), Arg.Any<CancellationToken>()).Returns((Truck?)null);
+        _tenantUow.Stub<Truck>();
 
         var result = await _sut.CheckAsync(Guid.NewGuid(), Guid.NewGuid());
 
@@ -183,7 +179,9 @@ public class DispatchEligibilityServiceTests
         var driver = TestData.Driver(DriverId, License("US", LicenseClass.USClassA));
         var truck = TestData.Truck(driver, TruckType.CarHauler);
         var load = TestData.Load(LoadType.Vehicle);
-        Wire(truck, load, driver);
+        _tenantUow.Stub(truck);
+        _tenantUow.Stub(load);
+        _tenantUow.Stub(driver);
         _capacityChecker.GetWarningAsync(truck, load, Arg.Any<CancellationToken>())
             .Returns("Truck T-1 carries up to 7 vehicles, but its open loads have 9.");
 
@@ -201,7 +199,9 @@ public class DispatchEligibilityServiceTests
         var driver = TestData.Driver(DriverId, License("US", LicenseClass.USClassA));
         var truck = TestData.Truck(driver);
         var load = TestData.Load(LoadType.IntermodalContainer);
-        Wire(truck, load, driver);
+        _tenantUow.Stub(truck);
+        _tenantUow.Stub(load);
+        _tenantUow.Stub(driver);
 
         var result = await _sut.CheckAsync(truck.Id, load.Id);
 
@@ -209,13 +209,6 @@ public class DispatchEligibilityServiceTests
         var issue = Assert.Single(result.Issues);
         Assert.Equal(EligibilityIssueCode.TruckTypeIncompatible, issue.Code);
         Assert.Equal(EligibilitySeverity.Error, issue.Severity);
-    }
-
-    private void Wire(Truck truck, Load load, Employee driver)
-    {
-        _truckRepo.GetByIdAsync(truck.Id, Arg.Any<CancellationToken>()).Returns(truck);
-        _loadRepo.GetByIdAsync(load.Id, Arg.Any<CancellationToken>()).Returns(load);
-        _employeeRepo.GetByIdAsync(driver.Id, Arg.Any<CancellationToken>()).Returns(driver);
     }
 
     private static DriverLicense License(

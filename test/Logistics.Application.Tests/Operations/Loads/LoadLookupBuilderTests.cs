@@ -1,3 +1,4 @@
+using Logistics.Application.Modules.Common.Services;
 using Logistics.Application.Tests.TestKit;
 using Logistics.Domain.Core;
 using Logistics.Domain.Entities;
@@ -85,7 +86,7 @@ public class LoadLookupBuilderTests
         });
         Returns(invoice);
 
-        var lookup = await new LoadLookupBuilder(_tenantUow).BuildAsync([load]);
+        var lookup = await new LoadLookupBuilder(_tenantUow, new DisplayNameLookup(_tenantUow)).BuildAsync([load]);
         var dto = load.ToDto(lookup);
 
         Assert.Equal("ACME", dto.Customer?.Name);
@@ -101,32 +102,20 @@ public class LoadLookupBuilderTests
     [Fact]
     public async Task BuildAsync_LoadsWithAccessorials_MapsThemFromOneQuery()
     {
-        var first = CreateLoad();
-        var second = CreateLoad();
+        var first = TestData.Load();
+        var second = TestData.Load();
         var repo = _tenantUow.Stub<LoadAccessorial>(
             CreateAccessorial(first, "Lumper", 150m),
             CreateAccessorial(first, "Tarp", 75m),
             CreateAccessorial(second, "Detention", 60m));
 
-        var lookup = await new LoadLookupBuilder(_tenantUow).BuildAsync([first, second]);
+        var lookup = await new LoadLookupBuilder(_tenantUow, new DisplayNameLookup(_tenantUow)).BuildAsync([first, second]);
 
         Assert.Equal(["Lumper", "Tarp"], first.ToDto(lookup).Accessorials.Select(a => a.Name).Order());
         var detention = Assert.Single(second.ToDto(lookup).Accessorials);
         Assert.Equal(60m, detention.Total);
         repo.Received(1).Query();
     }
-
-    private static Load CreateLoad() => new()
-    {
-        Name = "Load",
-        Type = LoadType.GeneralFreight,
-        OriginAddress = Somewhere,
-        OriginLocation = new GeoPoint(0, 0),
-        DestinationAddress = Somewhere,
-        DestinationLocation = new GeoPoint(0, 0),
-        DeliveryCost = new Money { Amount = 1000m, Currency = "USD" },
-        Customer = null!
-    };
 
     private static LoadAccessorial CreateAccessorial(Load load, string name, decimal rate) => new()
     {

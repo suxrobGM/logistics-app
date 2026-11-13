@@ -7,9 +7,8 @@ using Logistics.Shared.Identity.Claims;
 using Logistics.Shared.Models;
 using Microsoft.AspNetCore.SignalR;
 using NSubstitute;
-using Xunit;
 
-namespace Logistics.Infrastructure.Communications.Tests.SignalR;
+namespace Logistics.Infrastructure.Tests.Communications.SignalR;
 
 public class TrackingHubTests
 {

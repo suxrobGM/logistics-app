@@ -2,9 +2,8 @@ using Logistics.Application.Abstractions.Accounting;
 using Logistics.Infrastructure.Persistence.Services.Accounting;
 using Microsoft.AspNetCore.DataProtection;
 using NSubstitute;
-using Xunit;
 
-namespace Logistics.Infrastructure.Persistence.Tests.Services.Accounting;
+namespace Logistics.Infrastructure.Tests.Persistence.Services.Accounting;
 
 public class OAuthStateProtectorTests
 {

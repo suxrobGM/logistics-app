@@ -2,9 +2,8 @@ using Logistics.Domain.Entities;
 using Logistics.Domain.Primitives.Enums;
 using Logistics.Infrastructure.Persistence.Data;
 using Microsoft.EntityFrameworkCore;
-using Xunit;
 
-namespace Logistics.Infrastructure.Persistence.Tests.Services;
+namespace Logistics.Infrastructure.Tests.Persistence.Services;
 
 /// <summary>
 /// The admin quota report aggregates 30 days of agent sessions in the database rather than in

@@ -1,9 +1,9 @@
 using Logistics.Domain.Primitives.Enums;
-using Logistics.Infrastructure.Tax.Manual;
+using Logistics.Infrastructure.Payments.Tax.Manual;
 using Microsoft.Extensions.Logging.Abstractions;
-using static Logistics.Infrastructure.Tax.Tests.TaxTestBuilders;
+using static Logistics.Infrastructure.Tests.Payments.Tax.TaxTestBuilders;
 
-namespace Logistics.Infrastructure.Tax.Tests.Manual;
+namespace Logistics.Infrastructure.Tests.Payments.Tax.Manual;
 
 public class ManualTaxCalculatorTests
 {

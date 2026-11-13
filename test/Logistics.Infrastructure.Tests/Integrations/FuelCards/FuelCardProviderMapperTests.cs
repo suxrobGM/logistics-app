@@ -2,9 +2,8 @@ using Logistics.Domain.Primitives.Enums;
 using Logistics.Infrastructure.Integrations.FuelCards.Common;
 using Logistics.Infrastructure.Integrations.FuelCards.Providers.Efs;
 using Logistics.Infrastructure.Integrations.FuelCards.Providers.Wex;
-using Xunit;
 
-namespace Logistics.Infrastructure.Integrations.Tests.FuelCards;
+namespace Logistics.Infrastructure.Tests.Integrations.FuelCards;
 
 public class FuelCardProviderMapperTests
 {

@@ -2,13 +2,13 @@ using Logistics.Application.Abstractions.Tenancy;
 using Logistics.Domain.Entities;
 using Logistics.Domain.Exceptions;
 using Logistics.Domain.Primitives.ValueObjects;
+using Logistics.HostDefaults;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.DependencyInjection;
 using NSubstitute;
 using Sentry;
-using Xunit;
 
-namespace Logistics.HostDefaults.Tests;
+namespace Logistics.Infrastructure.Tests.HostDefaults;
 
 public class TenantSentryEventProcessorTests
 {

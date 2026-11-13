@@ -4,13 +4,14 @@ using Logistics.Domain.Entities;
 using Logistics.Domain.Primitives.Enums;
 using Logistics.Domain.Primitives.ValueObjects;
 using Logistics.Infrastructure.Routing.Geocoding;
+using Logistics.Infrastructure.Tests.TestKit;
 using Logistics.Shared.Models;
 using Microsoft.Extensions.Logging.Abstractions;
 using NSubstitute;
 using MapboxOptions = Logistics.Infrastructure.Routing.Geocoding.MapboxOptions;
 using MsOptions = Microsoft.Extensions.Options.Options;
 
-namespace Logistics.Infrastructure.Routing.Tests.Geocoding;
+namespace Logistics.Infrastructure.Tests.Routing.Geocoding;
 
 public class MapboxGeocodingServiceTests
 {
@@ -26,7 +27,7 @@ public class MapboxGeocodingServiceTests
 
     private readonly ICurrentTenantAccessor _tenantAccessor = Substitute.For<ICurrentTenantAccessor>();
 
-    private MapboxGeocodingService Build(CapturingHttpMessageHandler handler) =>
+    private MapboxGeocodingService Build(StubHttpMessageHandler handler) =>
         new(
             new HttpClient(handler),
             MsOptions.Create(new MapboxOptions { AccessToken = "test-token" }),
@@ -54,13 +55,13 @@ public class MapboxGeocodingServiceTests
     {
         _tenantAccessor.GetCurrentTenant().Returns(TenantWith(
             new TenantSettings { Region = Region.US, Language = "en" }));
-        var handler = new CapturingHttpMessageHandler(MapboxResponse);
+        var handler = StubHttpMessageHandler.Json(MapboxResponse);
         var sut = Build(handler);
 
         var result = await sut.GeocodeAddressAsync("1 Main St", "Springfield", "IL", "62701");
 
         Assert.True(result.IsSuccess);
-        var query = HttpUtility.ParseQueryString(handler.LastRequestUri!.Query);
+        var query = HttpUtility.ParseQueryString(Assert.Single(handler.Requests).RequestUri!.Query);
         Assert.Equal("us", query["country"]);
         Assert.Equal("en", query["language"]);
     }
@@ -70,13 +71,13 @@ public class MapboxGeocodingServiceTests
     {
         _tenantAccessor.GetCurrentTenant().Returns(TenantWith(
             new TenantSettings { Region = Region.EU, Language = "de" }));
-        var handler = new CapturingHttpMessageHandler(MapboxResponse);
+        var handler = StubHttpMessageHandler.Json(MapboxResponse);
         var sut = Build(handler);
 
         var result = await sut.GeocodeAddressAsync("Unter den Linden 1", "Berlin", "BE", "10117");
 
         Assert.True(result.IsSuccess);
-        var query = HttpUtility.ParseQueryString(handler.LastRequestUri!.Query);
+        var query = HttpUtility.ParseQueryString(Assert.Single(handler.Requests).RequestUri!.Query);
         var countries = query["country"]!.Split(',');
         Assert.Equal(5, countries.Length);
         Assert.All(countries, c => Assert.Equal(c, c.ToLowerInvariant()));
@@ -87,13 +88,13 @@ public class MapboxGeocodingServiceTests
     public async Task GeocodeAddressAsync_NoTenantContext_OmitsBiasButStillSucceeds()
     {
         _tenantAccessor.GetCurrentTenant().Returns(_ => throw new InvalidOperationException("no tenant"));
-        var handler = new CapturingHttpMessageHandler(MapboxResponse);
+        var handler = StubHttpMessageHandler.Json(MapboxResponse);
         var sut = Build(handler);
 
         var result = await sut.GeocodeAddressAsync("1 Main St", "Anywhere", "XX");
 
         Assert.True(result.IsSuccess);
-        var query = HttpUtility.ParseQueryString(handler.LastRequestUri!.Query);
+        var query = HttpUtility.ParseQueryString(Assert.Single(handler.Requests).RequestUri!.Query);
         Assert.Null(query["country"]);
         Assert.Null(query["language"]);
     }

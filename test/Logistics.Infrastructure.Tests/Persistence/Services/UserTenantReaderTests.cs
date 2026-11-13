@@ -4,9 +4,8 @@ using Logistics.Domain.Persistence;
 using Logistics.Domain.Primitives.ValueObjects;
 using Logistics.Infrastructure.Persistence.Reads;
 using NSubstitute;
-using Xunit;
 
-namespace Logistics.Infrastructure.Persistence.Tests.Services;
+namespace Logistics.Infrastructure.Tests.Persistence.Services;
 
 public class UserTenantReaderTests
 {

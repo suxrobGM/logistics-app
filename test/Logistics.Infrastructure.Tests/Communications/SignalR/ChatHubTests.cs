@@ -4,9 +4,8 @@ using Logistics.Infrastructure.Communications.SignalR.Hubs;
 using Logistics.Shared.Models.Messaging;
 using Microsoft.AspNetCore.SignalR;
 using NSubstitute;
-using Xunit;
 
-namespace Logistics.Infrastructure.Communications.Tests.SignalR;
+namespace Logistics.Infrastructure.Tests.Communications.SignalR;
 
 public class ChatHubTests
 {

@@ -1,9 +1,6 @@
-using Logistics.Application.Abstractions.AI;
-using Logistics.Application.Modules.Integrations.AICopilot.Services;
 using Logistics.Application.Tests.TestKit;
 using Logistics.Domain.Entities;
 using Logistics.Domain.Primitives.Enums;
-using Microsoft.Extensions.Options;
 using NSubstitute;
 using Xunit;
 
@@ -18,10 +15,9 @@ public class AICopilotDecisionGuardTests
     public async Task LoadAsync_AIDisabledForTenant_Fails()
     {
         _ctx.Tenant.Settings.AIEnabled = false;
-        var guard = new AICopilotDecisionGuard(
-            _ctx.TenantUow, _ctx.Access, Options.Create(new LlmOptions { BypassAIGate = false }));
 
-        var result = await guard.LoadAsync(Guid.NewGuid(), _ctx.UserId, CancellationToken.None);
+        var result = await _ctx.CopilotGuard(bypassAIGate: false)
+            .LoadAsync(Guid.NewGuid(), _ctx.UserId, CancellationToken.None);
 
         Assert.False(result.IsSuccess);
         Assert.Equal("AI is disabled for this tenant", result.Error);
@@ -30,7 +26,7 @@ public class AICopilotDecisionGuardTests
     [Fact]
     public async Task LoadAsync_UserNotAuthenticated_Fails()
     {
-        var result = await _ctx.CopilotGuard.LoadAsync(
+        var result = await _ctx.CopilotGuard().LoadAsync(
             Guid.NewGuid(), userId: null, CancellationToken.None);
 
         Assert.False(result.IsSuccess);
@@ -39,7 +35,7 @@ public class AICopilotDecisionGuardTests
     [Fact]
     public async Task LoadAsync_DecisionNotFound_Fails()
     {
-        var result = await _ctx.CopilotGuard.LoadAsync(
+        var result = await _ctx.CopilotGuard().LoadAsync(
             Guid.NewGuid(), _ctx.UserId, CancellationToken.None);
 
         Assert.False(result.IsSuccess);
@@ -59,7 +55,7 @@ public class AICopilotDecisionGuardTests
         };
         _ctx.DecisionRepo.GetByIdAsync(dispatchDecision.Id, Arg.Any<CancellationToken>()).Returns(dispatchDecision);
 
-        var result = await _ctx.CopilotGuard.LoadAsync(
+        var result = await _ctx.CopilotGuard().LoadAsync(
             dispatchDecision.Id, _ctx.UserId, CancellationToken.None);
 
         Assert.False(result.IsSuccess);
@@ -73,7 +69,7 @@ public class AICopilotDecisionGuardTests
         _ctx.ConversationRepo.GetByIdAsync(Arg.Any<Guid>(), Arg.Any<CancellationToken>())
             .Returns(new AgentConversation { CreatedById = Guid.NewGuid(), Kind = AgentConversationKind.Copilot });
 
-        var result = await _ctx.CopilotGuard.LoadAsync(
+        var result = await _ctx.CopilotGuard().LoadAsync(
             decision.Id, _ctx.UserId, CancellationToken.None);
 
         Assert.False(result.IsSuccess);
@@ -86,7 +82,7 @@ public class AICopilotDecisionGuardTests
         var (decision, _) = _ctx.SetCopilotSuggestedDecision();
         decision.Approve(_ctx.UserId);
 
-        var result = await _ctx.CopilotGuard.LoadAsync(
+        var result = await _ctx.CopilotGuard().LoadAsync(
             decision.Id, _ctx.UserId, CancellationToken.None);
 
         Assert.False(result.IsSuccess);
@@ -98,7 +94,7 @@ public class AICopilotDecisionGuardTests
     {
         var (decision, conversation) = _ctx.SetCopilotSuggestedDecision();
 
-        var result = await _ctx.CopilotGuard.LoadAsync(
+        var result = await _ctx.CopilotGuard().LoadAsync(
             decision.Id, _ctx.UserId, CancellationToken.None);
 
         Assert.True(result.IsSuccess);

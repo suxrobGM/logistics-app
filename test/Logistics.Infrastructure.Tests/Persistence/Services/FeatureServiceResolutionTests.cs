@@ -4,9 +4,8 @@ using Logistics.Domain.Persistence;
 using Logistics.Domain.Primitives.Enums;
 using Logistics.Infrastructure.Persistence.Services.Feature;
 using NSubstitute;
-using Xunit;
 
-namespace Logistics.Infrastructure.Persistence.Tests.Services;
+namespace Logistics.Infrastructure.Tests.Persistence.Services;
 
 /// <summary>
 /// Pins the resolution chain: admin lock, then plan gate, then the tenant's config row, and for a

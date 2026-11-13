@@ -1,9 +1,8 @@
 using Logistics.Domain.Primitives.ValueObjects;
 using Logistics.Infrastructure.Routing.Geospatial;
 using Microsoft.Extensions.Logging.Abstractions;
-using Xunit;
 
-namespace Logistics.Infrastructure.Routing.Tests;
+namespace Logistics.Infrastructure.Tests.Routing;
 
 public class JurisdictionResolverTests
 {

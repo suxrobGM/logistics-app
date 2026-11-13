@@ -3,9 +3,8 @@ using Logistics.Domain.Primitives.Enums;
 using Logistics.Domain.Primitives.ValueObjects;
 using Logistics.Infrastructure.Documents.Pdf;
 using UglyToad.PdfPig;
-using Xunit;
 
-namespace Logistics.Infrastructure.Documents.Tests.Pdf;
+namespace Logistics.Infrastructure.Tests.Documents.Pdf;
 
 public class InvoicePdfServiceTests
 {

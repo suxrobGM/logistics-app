@@ -1,3 +1,4 @@
+using Logistics.Application.Tests.TestKit;
 using Logistics.Domain.Entities;
 using Logistics.Domain.Primitives.Enums;
 using Logistics.Domain.Primitives.ValueObjects;
@@ -7,27 +8,12 @@ namespace Logistics.Application.Tests.Operations.Trips;
 
 public class TripTests
 {
-    private static readonly Address Address = new()
-    {
-        Line1 = "1 Main",
-        City = "City",
-        State = "ST",
-        ZipCode = "00000",
-        Country = "US"
-    };
+    private readonly Truck _truck = TestData.Truck();
 
-    private readonly Truck _truck = new() { Number = "TRK-001", Type = TruckType.FreightTruck };
-
-    private readonly Employee _dispatcher = new()
-    {
-        Email = "d@x.com",
-        FirstName = "Dana",
-        LastName = "Disp",
-        Salary = Money.Zero("USD")
-    };
+    private readonly Employee _dispatcher = TestData.Driver();
 
     private Load NewLoad() => Load.Create(
-        $"Load {Guid.NewGuid():N}", LoadType.GeneralFreight, 1000, Address, new GeoPoint(0, 0), Address, new GeoPoint(1, 1),
+        $"Load {Guid.NewGuid():N}", LoadType.GeneralFreight, 1000, TestData.Address(), new GeoPoint(0, 0), TestData.Address(), new GeoPoint(1, 1),
         new Customer { Name = "Acme" }, _truck, _dispatcher, "USD");
 
     #region Loads
@@ -54,7 +40,7 @@ public class TripTests
     public void AssignToTruck_MovesEveryLoadToTheNewTruck()
     {
         var trip = Trip.Create("Trip", _truck, [NewLoad(), NewLoad()]);
-        var newTruck = new Truck { Number = "TRK-002", Type = TruckType.FreightTruck };
+        var newTruck = TestData.Truck(number: "TRK-002");
 
         trip.AssignToTruck(newTruck);
 
