@@ -1,4 +1,4 @@
-using Logistics.Application.Abstractions.AIDispatch;
+using Logistics.Application.Abstractions.AI;
 using Logistics.Domain.Entities;
 using Logistics.Domain.Persistence;
 using Logistics.Domain.Primitives.Enums;

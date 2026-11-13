@@ -1,4 +1,4 @@
-using Logistics.Application.Abstractions.Agents;
+using Logistics.Application.Abstractions.AI;
 using Logistics.Domain.Entities;
 using Logistics.Domain.Persistence;
 using Logistics.Domain.Primitives.Enums;

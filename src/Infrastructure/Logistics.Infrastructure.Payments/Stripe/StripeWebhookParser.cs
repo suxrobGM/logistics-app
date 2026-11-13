@@ -1,4 +1,4 @@
-using Logistics.Application.Abstractions.Payments.Stripe;
+using Logistics.Application.Abstractions.Payments;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using Stripe;

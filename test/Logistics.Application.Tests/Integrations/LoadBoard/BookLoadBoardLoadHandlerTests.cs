@@ -1,6 +1,6 @@
-using Logistics.Application.Abstractions.AIDispatch;
-using Logistics.Application.Abstractions.CurrentUser;
-using Logistics.Application.Abstractions.LoadBoard;
+using Logistics.Application.Abstractions.AI;
+using Logistics.Application.Abstractions.Context;
+using Logistics.Application.Abstractions.Integrations;
 using Logistics.Application.Modules.AI.Negotiation.Services;
 using Logistics.Application.Modules.Integrations.LoadBoard.Commands;
 using Logistics.Application.Modules.Integrations.LoadBoard.Services;

@@ -1,5 +1,5 @@
 using Logistics.Application.Abstractions;
-using Logistics.Application.Abstractions.AIDispatch;
+using Logistics.Application.Abstractions.AI;
 using Logistics.Application.Modules.AI.AICopilot.Queries;
 using Logistics.Application.Modules.AI.AIDispatch.Queries;
 using Logistics.Domain.Persistence;

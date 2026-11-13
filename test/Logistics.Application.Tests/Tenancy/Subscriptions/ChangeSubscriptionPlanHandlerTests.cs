@@ -1,5 +1,5 @@
-using Logistics.Application.Abstractions.CurrentUser;
-using Logistics.Application.Abstractions.Payments.Stripe;
+using Logistics.Application.Abstractions.Context;
+using Logistics.Application.Abstractions.Payments;
 using Logistics.Application.Modules.Tenancy.Subscriptions.Commands;
 using Logistics.Application.Tests.TestKit;
 using Logistics.Domain.Entities;

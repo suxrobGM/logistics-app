@@ -1,5 +1,5 @@
 using System.ComponentModel;
-using Logistics.Application.Abstractions.Agents;
+using Logistics.Application.Abstractions.AI;
 using Logistics.Domain.Persistence;
 using Logistics.Domain.Primitives.Enums;
 using Logistics.Domain.Primitives.ValueObjects;

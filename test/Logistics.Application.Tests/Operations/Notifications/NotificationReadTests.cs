@@ -1,4 +1,4 @@
-using Logistics.Application.Abstractions.CurrentUser;
+using Logistics.Application.Abstractions.Context;
 using Logistics.Application.Modules.Operations.Notifications.Commands;
 using Logistics.Application.Modules.Operations.Notifications.Queries;
 using Logistics.Application.Tests.TestKit;

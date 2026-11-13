@@ -1,4 +1,4 @@
-using Logistics.Application.Abstractions.Email;
+using Logistics.Application.Abstractions.Communications;
 using Logistics.Domain.Entities;
 using Logistics.Domain.Primitives.Enums;
 

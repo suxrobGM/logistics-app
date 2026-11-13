@@ -1,5 +1,5 @@
 using System.Linq.Expressions;
-using Logistics.Application.Abstractions.Accounting;
+using Logistics.Application.Abstractions.Integrations;
 using Logistics.Application.Modules.Integrations.Accounting.Commands;
 using Logistics.Application.Tests.TestKit;
 using Logistics.Domain.Entities;

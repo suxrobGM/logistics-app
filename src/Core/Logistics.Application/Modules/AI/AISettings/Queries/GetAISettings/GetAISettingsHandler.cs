@@ -1,10 +1,10 @@
 using Logistics.Application.Abstractions;
-using Logistics.Application.Abstractions.SystemSettings;
+using Logistics.Application.Abstractions.AI;
+using Logistics.Application.Abstractions.Context;
 using Logistics.Domain.Entities;
 using Logistics.Domain.Persistence;
 using Logistics.Mediator;
 using Logistics.Shared.Models;
-using Logistics.Application.Abstractions.AI;
 using Microsoft.Extensions.Options;
 
 namespace Logistics.Application.Modules.AI.AISettings.Queries;

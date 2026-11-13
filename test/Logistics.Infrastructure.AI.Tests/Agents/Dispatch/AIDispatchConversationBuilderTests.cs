@@ -1,21 +1,18 @@
-using Logistics.Application.Abstractions.Agents;
-using Logistics.Application.Tests.TestKit;
-using Logistics.Infrastructure.AI.Agents;
-using Logistics.Infrastructure.AI.Agents.Dispatch;
 using System.Text.Json.Nodes;
+using Logistics.Application.Abstractions.AI;
+using Logistics.Application.Abstractions.Context;
+using Logistics.Application.Tests.TestKit;
 using Logistics.Domain.Entities;
 using Logistics.Domain.Persistence;
 using Logistics.Domain.Primitives.Enums;
-using Logistics.Application.Abstractions.AI;
+using Logistics.Infrastructure.AI.Agents;
+using Logistics.Infrastructure.AI.Agents.Dispatch;
 using Logistics.Infrastructure.AI.Llm;
 using Logistics.Infrastructure.AI.Llm.Contracts;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Logging.Abstractions;
 using NSubstitute;
 using Xunit;
-using Logistics.Application.Abstractions.Features;
-using Logistics.Application.Abstractions.AIDispatch;
-using Logistics.Application.Abstractions.SystemSettings;
 using MsOptions = Microsoft.Extensions.Options;
 
 namespace Logistics.Infrastructure.AI.Tests.Agents.Dispatch;

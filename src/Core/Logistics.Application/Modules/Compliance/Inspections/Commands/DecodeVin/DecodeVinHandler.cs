@@ -1,7 +1,7 @@
 using Logistics.Application.Abstractions;
+using Logistics.Application.Abstractions.Integrations;
 using Logistics.Mediator;
 using Logistics.Shared.Models;
-using Logistics.Application.Abstractions.Vin;
 
 namespace Logistics.Application.Modules.Compliance.Inspections.Commands;
 

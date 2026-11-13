@@ -1,4 +1,4 @@
-using Logistics.Application.Abstractions.CurrentUser;
+using Logistics.Application.Abstractions.Context;
 using Logistics.Application.Modules.Financial.Payroll.Commands;
 using Logistics.Application.Tests.TestKit;
 using Logistics.Domain.Entities;

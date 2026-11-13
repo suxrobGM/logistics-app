@@ -1,4 +1,4 @@
-using Logistics.Application.Abstractions.AIDispatch;
+using Logistics.Application.Abstractions.AI;
 using Logistics.DbMigrator.Abstractions;
 using Logistics.DbMigrator.Models;
 using Logistics.Domain.Entities;

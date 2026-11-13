@@ -1,5 +1,4 @@
 using Logistics.Application.Abstractions.AI;
-using Logistics.Application.Abstractions.AIDispatch;
 using Logistics.Domain.Entities;
 using Logistics.Domain.Primitives.Enums;
 using Logistics.Shared.Models;

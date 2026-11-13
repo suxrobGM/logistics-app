@@ -1,5 +1,4 @@
-using Logistics.Application.Abstractions.Email;
-using Logistics.Application.Abstractions.Notifications;
+using Logistics.Application.Abstractions.Communications;
 using Logistics.Application.Modules.Operations.Notifications.Services;
 using Logistics.Domain.Persistence;
 using Microsoft.Extensions.Logging.Abstractions;

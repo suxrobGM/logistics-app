@@ -18,8 +18,8 @@ You can switch LLM providers without code changes:
 Quota is **cost-based**: every session's `AgentSession.EstimatedCostUsd` (failed and cancelled runs
 too) counts against the plan's `WeeklyAIBudgetUsd` - required on every plan, and falling back to the
 Enterprise one for tenants with no subscription (`AIWeeklyBudget` in
-`Application.Abstractions/AIDispatch/`). Nothing runs unmetered. Past the budget, sessions
-bill Stripe metered units (`AIOverageBilling` in `Application.Abstractions/Payments/Stripe/`:
+`Application.Abstractions/AI/`). Nothing runs unmetered. Past the budget, sessions
+bill Stripe metered units (`AIOverageBilling` in `Application.Abstractions/Payments/`:
 $0.10/unit, 3× markup, min one unit); the accrued amount is tenant-visible as
 `AIQuotaStatusDto.OverageChargesUsd`. `TenantSettings.BlockAIOverage` swaps billing for a hard
 pause until the weekly reset (copilot sends fail with `AI_BUDGET_REACHED`; dispatch records a

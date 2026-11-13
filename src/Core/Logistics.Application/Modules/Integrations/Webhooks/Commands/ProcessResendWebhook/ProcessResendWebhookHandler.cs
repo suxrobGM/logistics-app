@@ -1,5 +1,5 @@
 using System.Text.Json;
-using Logistics.Application.Abstractions.Email;
+using Logistics.Application.Abstractions.Communications;
 using Logistics.Application.Modules.AI.Negotiation;
 using Logistics.Application.Modules.AI.Negotiation.Commands;
 using Logistics.Application.Modules.Integrations.Webhooks.Services;

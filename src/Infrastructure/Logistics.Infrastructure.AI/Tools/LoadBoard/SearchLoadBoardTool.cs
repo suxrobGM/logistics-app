@@ -1,10 +1,10 @@
 using System.ComponentModel;
-using Logistics.Application.Abstractions.Agents;
+using Logistics.Application.Abstractions.AI;
 using Logistics.Application.Modules.Integrations.LoadBoard.Commands;
 using Logistics.Domain.Primitives.Enums;
-using Logistics.Shared.Models;
-using Logistics.Shared.Identity.Policies;
 using Logistics.Mediator;
+using Logistics.Shared.Identity.Policies;
+using Logistics.Shared.Models;
 
 namespace Logistics.Infrastructure.AI.Tools.LoadBoard;
 

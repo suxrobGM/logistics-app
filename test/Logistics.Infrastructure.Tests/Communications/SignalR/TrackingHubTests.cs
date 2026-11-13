@@ -1,5 +1,5 @@
 using System.Security.Claims;
-using Logistics.Application.Abstractions.Realtime;
+using Logistics.Application.Abstractions.ApplicationServices;
 using Logistics.Domain.Primitives.ValueObjects;
 using Logistics.Infrastructure.Communications.SignalR.Clients;
 using Logistics.Infrastructure.Communications.SignalR.Hubs;

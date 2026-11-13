@@ -1,5 +1,5 @@
 using System.Net;
-using Logistics.Application.Abstractions.LoadBoard;
+using Logistics.Application.Abstractions.Integrations;
 using Logistics.Application.Modules.Integrations.LoadBoard.Services;
 using Logistics.Domain.Entities;
 using Logistics.Domain.Persistence;

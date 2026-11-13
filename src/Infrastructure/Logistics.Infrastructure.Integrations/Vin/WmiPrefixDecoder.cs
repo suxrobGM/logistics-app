@@ -1,8 +1,8 @@
 using System.Globalization;
 using System.Net.Http.Json;
+using Logistics.Application.Abstractions.Integrations;
 using Logistics.Shared.Models;
 using Microsoft.Extensions.Logging;
-using Logistics.Application.Abstractions.Vin;
 
 namespace Logistics.Infrastructure.Integrations.Vin;
 

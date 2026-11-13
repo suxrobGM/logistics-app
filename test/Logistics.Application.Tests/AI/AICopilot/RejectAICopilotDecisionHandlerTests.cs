@@ -1,4 +1,4 @@
-using Logistics.Application.Abstractions.AICopilot;
+using Logistics.Application.Abstractions.AI;
 using Logistics.Application.Modules.AI.AICopilot.Commands;
 using Logistics.Application.Tests.TestKit;
 using Logistics.Domain.Primitives.Enums;

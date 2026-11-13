@@ -31,7 +31,7 @@ picture is [docs/ai-dispatch.md](../../../docs/ai-dispatch.md).
 - **Config is not here.** `LlmOptions`, `LlmModelCatalog` and `AISettingsKeys` live in
   `Application.Abstractions/AI/` (the application layer reads them); the agent ports
   (`IAgentToolRegistry`, `IAgentToolExecutor`, `IAgentRunContext`, `AgentToolDefinition`) in
-  `Application.Abstractions/Agents/`.
+  `Application.Abstractions/AI/`.
 - **A prompt lives beside the agent that owns it**, with the `*SystemPrompt.cs` suffix. One-shot
   `ILlmClient` features are not agent code - prompt and workflow service live together, in
   `Logistics.Application/Modules/{Module}/.../Services/` or the infrastructure project owning it.
@@ -175,10 +175,10 @@ reintroduce one.
   `OverageChargesUsd` - never budget dollars.
 - **No tenant runs unmetered**: `WeeklyAIBudgetUsd` is required on every plan, and an unsubscribed
   tenant falls back to the Enterprise budget through `AIWeeklyBudget`
-  (`Application.Abstractions/AIDispatch/`) - resolve a budget elsewhere and unsubscribed tenants
+  (`Application.Abstractions/AI/`) - resolve a budget elsewhere and unsubscribed tenants
   vanish from the admin report.
 - Overage: billed-not-blocked by default; `TenantSettings.BlockAIOverage` swaps billing for a hard
-  pause. `AIOverageBilling` (`Application.Abstractions/Payments/Stripe/`) owns **both** halves of the
+  pause. `AIOverageBilling` (`Application.Abstractions/Payments/`) owns **both** halves of the
   rule (which sessions bill, cost→units) - re-derive either half and the displayed number
   contradicts the invoice. Details in [docs/ai-dispatch.md](../../../docs/ai-dispatch.md).
 

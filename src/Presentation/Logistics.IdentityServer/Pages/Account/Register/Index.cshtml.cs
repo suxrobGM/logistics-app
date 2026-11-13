@@ -1,15 +1,14 @@
 using System.Text;
-using Logistics.Application.Abstractions.Email.Models;
-using Logistics.Application.Abstractions.Email;
+using Logistics.Application.Abstractions.Communications;
+using Logistics.Application.Abstractions.Communications.EmailModels;
 using Logistics.Domain.Entities;
-
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.AspNetCore.WebUtilities;
-using Logistics.Application.Abstractions.Captcha;
+
 
 namespace Logistics.IdentityServer.Pages.Account.Register;
 

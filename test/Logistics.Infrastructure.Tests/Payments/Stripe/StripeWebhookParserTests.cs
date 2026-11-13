@@ -1,6 +1,6 @@
 using System.Security.Cryptography;
 using System.Text;
-using Logistics.Application.Abstractions.Payments.Stripe;
+using Logistics.Application.Abstractions.Payments;
 using Logistics.Infrastructure.Payments.Stripe;
 using Microsoft.Extensions.Logging.Abstractions;
 using Microsoft.Extensions.Options;

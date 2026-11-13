@@ -1,4 +1,5 @@
 using Logistics.Application.Abstractions;
+using Logistics.Application.Abstractions.Context;
 using Logistics.Domain.Entities;
 using Logistics.Domain.Persistence;
 using Logistics.Domain.Primitives.Enums;
@@ -6,7 +7,6 @@ using Logistics.Domain.Primitives.ValueObjects;
 using Logistics.Mediator;
 using Logistics.Shared.Models;
 using Microsoft.Extensions.Logging;
-using Logistics.Application.Abstractions.CurrentUser;
 
 namespace Logistics.Application.Modules.Financial.Payments.Commands;
 

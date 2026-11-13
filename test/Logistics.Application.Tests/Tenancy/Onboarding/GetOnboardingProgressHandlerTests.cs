@@ -1,4 +1,4 @@
-using Logistics.Application.Abstractions.Features;
+using Logistics.Application.Abstractions.Context;
 using Logistics.Application.Modules.Tenancy.Onboarding.Queries;
 using Logistics.Domain.Entities;
 using Logistics.Domain.Persistence;

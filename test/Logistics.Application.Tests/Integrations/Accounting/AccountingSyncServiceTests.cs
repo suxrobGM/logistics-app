@@ -1,6 +1,6 @@
 using System.Linq.Expressions;
-using Logistics.Application.Abstractions.Accounting;
-using Logistics.Application.Abstractions.Features;
+using Logistics.Application.Abstractions.Context;
+using Logistics.Application.Abstractions.Integrations;
 using Logistics.Application.Modules.Integrations.Accounting.Services;
 using Logistics.Application.Tests.TestKit;
 using Logistics.Domain.Entities;

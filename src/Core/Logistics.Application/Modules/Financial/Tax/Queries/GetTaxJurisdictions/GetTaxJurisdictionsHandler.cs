@@ -1,7 +1,7 @@
 using Logistics.Application.Abstractions;
+using Logistics.Application.Abstractions.Payments;
 using Logistics.Mediator;
 using Logistics.Shared.Models;
-using Logistics.Application.Abstractions.Tax;
 
 namespace Logistics.Application.Modules.Financial.Tax.Queries;
 

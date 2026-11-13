@@ -1,6 +1,5 @@
 using Logistics.Application.Abstractions;
-using Logistics.Application.Abstractions.Notifications;
-using Logistics.Application.Abstractions.Realtime;
+using Logistics.Application.Abstractions.Communications;
 using Logistics.Domain.Entities;
 using Logistics.Domain.Entities.Messaging;
 using Logistics.Domain.Persistence;

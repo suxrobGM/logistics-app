@@ -1,3 +1,4 @@
+using Logistics.Application.Abstractions.Context;
 using Logistics.Domain.Entities;
 using Logistics.Domain.Persistence;
 using Logistics.Domain.Primitives.Enums;
@@ -5,7 +6,6 @@ using Logistics.TelegramBot.Authentication;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
-using Logistics.Application.Abstractions.Features;
 
 namespace Logistics.TelegramBot.Services;
 

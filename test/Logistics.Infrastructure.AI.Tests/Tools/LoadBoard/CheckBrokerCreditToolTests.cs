@@ -1,9 +1,9 @@
-using Logistics.Infrastructure.AI.Tools.LoadBoard;
 using System.Text.Json;
 using System.Text.Json.Nodes;
-using Logistics.Application.Abstractions.LoadBoard;
+using Logistics.Application.Abstractions.Integrations;
 using Logistics.Domain.Primitives.Enums;
 using Logistics.Infrastructure.AI.Tools;
+using Logistics.Infrastructure.AI.Tools.LoadBoard;
 using Logistics.Shared.Models;
 using NSubstitute;
 using Xunit;

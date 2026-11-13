@@ -28,7 +28,10 @@ src/Core/Logistics.Application/
     └── Extensions/     # Queryable, paging and identity helpers
 
 src/Core/Logistics.Application.Abstractions/
-└── (Infrastructure ports grouped by domain: AIDispatch, Storage, Geocoding, Eld, Payments, …)
+├── Common/               # ICommand, IQuery, IApplicationService
+├── ApplicationServices/  # implemented by Application, called by hosts and infrastructure
+└── AI/, Communications/, Context/, Documents/, Integrations/, Payments/, Persistence/, Routing/, Storage/, …
+                          # infrastructure ports, grouped by capability
 
 src/Core/Logistics.Domain/
 ├── Entities/           # Domain entities

@@ -2,7 +2,7 @@ using System.Net.Http.Headers;
 using System.Net.Http.Json;
 using System.Text;
 using System.Text.Json;
-using Logistics.Application.Abstractions.Accounting;
+using Logistics.Application.Abstractions.Integrations;
 using Logistics.Infrastructure.Integrations.Accounting.Common;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;

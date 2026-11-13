@@ -1,7 +1,7 @@
 using System.Net;
 using System.Net.Http.Headers;
 using System.Net.Http.Json;
-using Logistics.Application.Abstractions.Accounting;
+using Logistics.Application.Abstractions.Integrations;
 
 namespace Logistics.Infrastructure.Integrations.Accounting.Common;
 

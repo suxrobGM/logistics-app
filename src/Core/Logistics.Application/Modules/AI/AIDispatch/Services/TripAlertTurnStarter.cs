@@ -1,7 +1,6 @@
-using Logistics.Application.Abstractions.AIDispatch;
-using Logistics.Application.Abstractions.Agents;
+using Logistics.Application.Abstractions.AI;
 using Logistics.Application.Abstractions.BackgroundJobs;
-using Logistics.Application.Abstractions.Notifications;
+using Logistics.Application.Abstractions.Communications;
 using Logistics.Application.Modules.AI.Agents.Services;
 using Logistics.Application.Modules.Operations.Notifications.Services;
 using Logistics.Domain.Entities;

@@ -1,4 +1,4 @@
-using Logistics.Application.Abstractions.Tenancy;
+using Logistics.Application.Abstractions.Context;
 using Logistics.Application.Common;
 using Logistics.Domain.Entities;
 using Logistics.Domain.Persistence;

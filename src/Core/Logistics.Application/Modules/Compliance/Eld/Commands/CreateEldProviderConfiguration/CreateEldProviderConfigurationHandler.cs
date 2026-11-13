@@ -1,4 +1,4 @@
-using Logistics.Application.Abstractions.Eld;
+using Logistics.Application.Abstractions.Integrations;
 using Logistics.Domain.Entities;
 using Logistics.Domain.Persistence;
 using Logistics.Domain.Primitives.Enums;

@@ -1,10 +1,10 @@
+using Logistics.Application.Abstractions.Context;
+using Logistics.Application.Abstractions.Payments;
 using Logistics.Domain.Entities;
 using Logistics.Domain.Persistence;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using Stripe.Billing;
-using Logistics.Application.Abstractions.SystemSettings;
-using Logistics.Application.Abstractions.Payments.Stripe;
 
 namespace Logistics.Infrastructure.Payments.Stripe;
 

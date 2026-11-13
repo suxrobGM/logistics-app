@@ -1,7 +1,7 @@
 using System.Text.Json;
 using System.Text.Json.Nodes;
-using Logistics.Application.Abstractions.Agents;
-using Logistics.Application.Abstractions.Email;
+using Logistics.Application.Abstractions.AI;
+using Logistics.Application.Abstractions.Communications;
 using Logistics.Application.Modules.AI.Negotiation.Services;
 using Logistics.Domain.Entities;
 using Logistics.Domain.Persistence;

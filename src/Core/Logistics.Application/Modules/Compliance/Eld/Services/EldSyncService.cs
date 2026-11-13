@@ -1,7 +1,7 @@
-using Logistics.Application.Modules.Operations.Trips.Services;
-using Logistics.Application.Abstractions.Eld;
-using Logistics.Application.Abstractions.Realtime;
+using Logistics.Application.Abstractions.Communications;
+using Logistics.Application.Abstractions.Integrations;
 using Logistics.Application.Modules.Compliance.Ifta.Services;
+using Logistics.Application.Modules.Operations.Trips.Services;
 using Logistics.Domain.Entities;
 using Logistics.Domain.Persistence;
 using Logistics.Domain.Primitives.Enums;

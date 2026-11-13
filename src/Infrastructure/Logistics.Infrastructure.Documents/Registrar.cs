@@ -1,10 +1,9 @@
-using Logistics.Application.Abstractions.Privacy;
-using Logistics.Infrastructure.Documents.Privacy;
+using Logistics.Application.Abstractions.Documents;
 using Logistics.Infrastructure.Documents.Pdf;
 using Logistics.Infrastructure.Documents.PdfImport;
+using Logistics.Infrastructure.Documents.Privacy;
 using Logistics.Infrastructure.Documents.Spreadsheets;
 using Microsoft.Extensions.DependencyInjection;
-using Logistics.Application.Abstractions.Documents;
 using QuestPDF;
 using QuestPDF.Infrastructure;
 

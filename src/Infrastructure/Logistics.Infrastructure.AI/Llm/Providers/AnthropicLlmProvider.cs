@@ -4,7 +4,6 @@ using Anthropic;
 using Anthropic.Core;
 using Anthropic.Exceptions;
 using Anthropic.Models.Messages;
-using Logistics.Application.Abstractions.Agents;
 using Logistics.Application.Abstractions.AI;
 using Logistics.Domain.Primitives.Enums;
 using Logistics.Infrastructure.AI.Llm.Contracts;

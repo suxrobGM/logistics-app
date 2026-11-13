@@ -1,5 +1,5 @@
 using Logistics.Application.Abstractions.Common;
-using Logistics.Application.Abstractions.LoadBoard;
+using Logistics.Application.Abstractions.Integrations;
 using Logistics.Domain.Entities;
 using Logistics.Shared.Models;
 

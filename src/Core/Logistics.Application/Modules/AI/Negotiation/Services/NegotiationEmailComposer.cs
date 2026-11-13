@@ -2,9 +2,9 @@ using System.Globalization;
 using System.Text;
 using System.Text.RegularExpressions;
 using Logistics.Application.Abstractions.Common;
+using Logistics.Application.Abstractions.Communications;
+using Logistics.Application.Abstractions.Communications.EmailModels;
 using Logistics.Domain.Primitives.ValueObjects;
-using Logistics.Application.Abstractions.Email;
-using Logistics.Application.Abstractions.Email.Models;
 
 namespace Logistics.Application.Modules.AI.Negotiation.Services;
 

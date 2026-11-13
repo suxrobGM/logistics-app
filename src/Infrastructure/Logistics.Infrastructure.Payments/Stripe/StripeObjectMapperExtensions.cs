@@ -1,4 +1,4 @@
-using Logistics.Application.Abstractions.Payments.Stripe;
+using Logistics.Application.Abstractions.Payments;
 using Stripe;
 using Stripe.Checkout;
 

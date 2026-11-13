@@ -1,4 +1,4 @@
-using Logistics.Application.Abstractions.AIDispatch;
+using Logistics.Application.Abstractions.AI;
 using Logistics.Application.Modules.AI.AIDispatch.Commands;
 using Logistics.Application.Tests.TestKit;
 using Logistics.Domain.Entities;

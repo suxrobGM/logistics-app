@@ -1,4 +1,4 @@
-using Logistics.Application.Abstractions.Agents;
+using Logistics.Application.Abstractions.AI;
 using Logistics.Application.Modules.Identity.Users.Services;
 using Logistics.Domain.Entities;
 using Logistics.Shared.Models;

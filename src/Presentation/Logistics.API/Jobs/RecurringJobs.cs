@@ -1,4 +1,5 @@
 using Hangfire;
+using Logistics.Application.Abstractions.ApplicationServices;
 using Logistics.Application.Abstractions.ProductLicense;
 using Logistics.Application.Modules.Compliance.Ifta.Services;
 using Logistics.Application.Modules.Compliance.Privacy.Services;

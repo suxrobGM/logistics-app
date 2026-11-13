@@ -1,4 +1,4 @@
-using Logistics.Application.Abstractions.AICopilot;
+using Logistics.Application.Abstractions.AI;
 using Logistics.Infrastructure.Communications.SignalR.Clients;
 using Logistics.Infrastructure.Communications.SignalR.Hubs;
 using Logistics.Shared.Models;

@@ -1,9 +1,8 @@
-using Logistics.Application.Abstractions.Agents;
-using Logistics.Domain.Entities;
-using Logistics.Infrastructure.AI.Llm.Contracts;
 using Logistics.Application.Abstractions.AI;
-using Logistics.Application.Abstractions.Features;
+using Logistics.Application.Abstractions.Context;
+using Logistics.Domain.Entities;
 using Logistics.Infrastructure.AI.Llm;
+using Logistics.Infrastructure.AI.Llm.Contracts;
 using Logistics.Shared.Identity.Policies;
 using Microsoft.Extensions.Logging;
 

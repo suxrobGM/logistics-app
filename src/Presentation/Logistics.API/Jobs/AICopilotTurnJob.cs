@@ -1,7 +1,7 @@
 using Hangfire;
-using Logistics.Application.Abstractions.AICopilot;
+using Logistics.Application.Abstractions.AI;
 using Logistics.Application.Abstractions.BackgroundJobs;
-using Logistics.Application.Abstractions.Features;
+using Logistics.Application.Abstractions.Context;
 using Logistics.Domain.Persistence;
 using Logistics.Domain.Primitives.Enums;
 

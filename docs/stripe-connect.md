@@ -152,7 +152,7 @@ CustomerPortal__BaseUrl=https://portal.example.com
 
 ## Related Files
 
-- Interface: `src/Core/Logistics.Application.Abstractions/Payments/Stripe/IStripeConnectService.cs`
+- Interface: `src/Core/Logistics.Application.Abstractions/Payments/IStripeConnectService.cs`
 - Implementation: `src/Infrastructure/Logistics.Infrastructure.Payments/Stripe/StripeConnectService.cs`
 - Commands: `src/Core/Logistics.Application/Modules/Financial/StripeConnect/Commands/`
 - Queries: `src/Core/Logistics.Application/Modules/Financial/StripeConnect/Queries/`

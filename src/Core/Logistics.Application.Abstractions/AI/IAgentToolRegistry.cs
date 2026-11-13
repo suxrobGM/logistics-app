@@ -1,0 +1,47 @@
+using Logistics.Domain.Primitives.Enums;
+
+namespace Logistics.Application.Abstractions.AI;
+
+/// <summary>
+/// Registry of all tools available to the AI agents (dispatch and copilot).
+/// Tool definitions are declared once, next to the tool, and reused by every surface.
+/// </summary>
+/// <remarks>
+/// One member per surface rather than one filtered query with flags: the permission set is then
+/// required exactly where it applies, so a copilot catalogue cannot be built unscoped by accident.
+/// </remarks>
+public interface IAgentToolRegistry
+{
+    /// <summary>
+    /// The catalogue for a fleet dispatch run: only tools that opt in via
+    /// <see cref="AgentToolDefinition.DispatchAgent"/>. Tools whose feature is off are dropped -
+    /// their schemas cost tokens on every request.
+    /// </summary>
+    IReadOnlyList<AgentToolDefinition> GetDispatchAgentTools(IReadOnlySet<TenantFeature> enabledFeatures);
+
+    /// <summary>
+    /// The catalogue for one copilot turn, scoped to the calling user: any tool whose
+    /// <see cref="AgentToolDefinition.RequiredPermission"/> the caller lacks is dropped, so the model
+    /// never sees a tool it cannot use.
+    /// </summary>
+    IReadOnlyList<AgentToolDefinition> GetCopilotTools(
+        IReadOnlySet<TenantFeature> enabledFeatures,
+        IReadOnlySet<string> callerPermissions);
+
+    /// <summary>
+    /// The catalogue an MCP client is shown: the tools that name <see cref="AgentSurfaces.Mcp"/>,
+    /// filtered on features. Permissions do not apply - an API key authenticates a tenant, not a
+    /// person.
+    /// </summary>
+    IReadOnlyList<AgentToolDefinition> GetMcpTools(IReadOnlySet<TenantFeature> enabledFeatures);
+
+    /// <summary>
+    /// Why MCP must refuse to run <paramref name="toolName"/>, or null if it may. The catalogue
+    /// already hides a denied tool, but a client can call any name it likes, so both paths ask this
+    /// one question rather than each applying the rules itself.
+    /// </summary>
+    string? McpDenialReason(string toolName, IReadOnlySet<TenantFeature> enabledFeatures);
+
+    /// <summary>Null for unknown (e.g. hallucinated) tool names.</summary>
+    AgentToolDefinition? TryGetDefinition(string name);
+}

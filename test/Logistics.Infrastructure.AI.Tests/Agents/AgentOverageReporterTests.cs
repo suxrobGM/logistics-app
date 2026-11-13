@@ -1,4 +1,4 @@
-using Logistics.Application.Abstractions.Payments.Stripe;
+using Logistics.Application.Abstractions.Payments;
 using Logistics.Domain.Entities;
 using Logistics.Domain.Primitives.Enums;
 using Logistics.Infrastructure.AI.Agents;

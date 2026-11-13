@@ -1,7 +1,7 @@
 using System.Security.Claims;
-using Microsoft.AspNetCore.Http;
-using Logistics.Application.Abstractions.CurrentUser;
+using Logistics.Application.Abstractions.Context;
 using Logistics.Shared.Identity.Claims;
+using Microsoft.AspNetCore.Http;
 
 namespace Logistics.Infrastructure.Persistence.Services;
 

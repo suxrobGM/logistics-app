@@ -1,4 +1,4 @@
-using Logistics.Application.Abstractions.Reports;
+using Logistics.Application.Abstractions.Persistence;
 using Logistics.Domain.Entities;
 using Logistics.Domain.Entities.Safety;
 using Logistics.Domain.Persistence;

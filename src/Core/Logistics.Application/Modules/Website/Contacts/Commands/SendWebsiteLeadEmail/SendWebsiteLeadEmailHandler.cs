@@ -1,5 +1,5 @@
 using Logistics.Application.Abstractions;
-using Logistics.Application.Abstractions.Email;
+using Logistics.Application.Abstractions.Communications;
 using Logistics.Application.Abstractions.Options;
 using Logistics.Mediator;
 using Logistics.Shared.Models;

@@ -1,4 +1,4 @@
-using Logistics.Application.Abstractions.Realtime;
+using Logistics.Application.Abstractions.Communications;
 using Logistics.Domain.Entities;
 using Logistics.Domain.Persistence;
 

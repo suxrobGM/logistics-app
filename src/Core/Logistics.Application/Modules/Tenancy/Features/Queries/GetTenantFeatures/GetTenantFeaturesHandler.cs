@@ -1,8 +1,7 @@
 using Logistics.Application.Abstractions;
+using Logistics.Application.Abstractions.Context;
 using Logistics.Mediator;
 using Logistics.Shared.Models;
-using Logistics.Application.Abstractions.Features;
-using Logistics.Application.Abstractions.Tenancy;
 
 namespace Logistics.Application.Modules.Tenancy.Features.Queries;
 

@@ -1,3 +1,4 @@
+using Logistics.Application.Abstractions.Context;
 using Logistics.Application.Modules.Compliance.Dvir;
 using Logistics.Application.Modules.Compliance.Dvir.Commands;
 using Logistics.Domain.Entities;
@@ -7,7 +8,6 @@ using Logistics.Domain.Primitives.Enums.Safety;
 using Logistics.Domain.Primitives.ValueObjects;
 using Logistics.Shared.Identity.Claims;
 using Logistics.Shared.Identity.Policies;
-using Logistics.Application.Abstractions.CurrentUser;
 using MockQueryable;
 using NSubstitute;
 using Xunit;

@@ -1,4 +1,4 @@
-using Logistics.Application.Abstractions.CurrentUser;
+using Logistics.Application.Abstractions.Context;
 
 namespace Logistics.Infrastructure.Persistence.Services;
 

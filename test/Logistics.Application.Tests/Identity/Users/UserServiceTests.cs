@@ -1,5 +1,5 @@
 using System.Linq.Expressions;
-using Logistics.Application.Abstractions.Tenancy;
+using Logistics.Application.Abstractions.Context;
 using Logistics.Application.Modules.Identity.Users.Services;
 using Logistics.Application.Tests.TestKit;
 using Logistics.Domain.Entities;

@@ -1,5 +1,5 @@
 using Logistics.Application.Abstractions;
-using Logistics.Application.Abstractions.Payments.Stripe;
+using Logistics.Application.Abstractions.Payments;
 using Logistics.Application.Common;
 using Logistics.Domain.Entities;
 using Logistics.Domain.Persistence;

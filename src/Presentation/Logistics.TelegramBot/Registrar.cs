@@ -1,3 +1,4 @@
+using Logistics.Application.Abstractions.Communications;
 using Logistics.TelegramBot.Authentication;
 using Logistics.TelegramBot.Commands;
 using Logistics.TelegramBot.Handlers;
@@ -11,7 +12,6 @@ using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using Telegram.Bot;
-using Logistics.Application.Abstractions.Notifications;
 
 namespace Logistics.TelegramBot;
 

@@ -1,4 +1,4 @@
-using Logistics.Application.Abstractions.CurrentUser;
+using Logistics.Application.Abstractions.Context;
 using Logistics.Application.Modules.AI.AIDispatch;
 using Logistics.Application.Modules.AI.AIDispatch.Commands;
 using Logistics.Application.Modules.AI.AIDispatch.Queries;

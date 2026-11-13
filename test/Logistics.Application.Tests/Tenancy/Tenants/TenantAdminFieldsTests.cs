@@ -1,4 +1,4 @@
-using Logistics.Application.Abstractions.Payments.Stripe;
+using Logistics.Application.Abstractions.Payments;
 using Logistics.Application.Modules.Tenancy.Tenants.Commands;
 using Logistics.Application.Tests.TestKit;
 using Logistics.Domain.Entities;

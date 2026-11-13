@@ -1,6 +1,8 @@
 using System.Text.Json;
 using System.Text.Json.Serialization;
-using Logistics.Application.Abstractions.Email;
+using Logistics.Application.Abstractions.AI;
+using Logistics.Application.Abstractions.Communications;
+using Logistics.Application.Abstractions.Routing;
 using Logistics.Infrastructure.Communications.Captcha;
 using Logistics.Infrastructure.Communications.Email;
 using Logistics.Infrastructure.Communications.Services;
@@ -9,12 +11,6 @@ using Logistics.Infrastructure.Communications.SignalR.Services;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Resend;
-using Logistics.Application.Abstractions.Captcha;
-using Logistics.Application.Abstractions.Notifications;
-using Logistics.Application.Abstractions.Realtime;
-using Logistics.Application.Abstractions.Routing;
-using Logistics.Application.Abstractions.AICopilot;
-using Logistics.Application.Abstractions.AIDispatch;
 
 namespace Logistics.Infrastructure.Communications;
 

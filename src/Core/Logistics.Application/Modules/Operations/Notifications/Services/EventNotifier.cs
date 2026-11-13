@@ -1,5 +1,4 @@
-using Logistics.Application.Abstractions.Email;
-using Logistics.Application.Abstractions.Notifications;
+using Logistics.Application.Abstractions.Communications;
 using Logistics.Domain.Persistence;
 using Logistics.Domain.Primitives.Enums;
 using Microsoft.Extensions.Logging;

@@ -1,6 +1,6 @@
 using System.Globalization;
 using System.Security.Cryptography;
-using Logistics.Application.Abstractions.Accounting;
+using Logistics.Application.Abstractions.Integrations;
 using Microsoft.AspNetCore.DataProtection;
 
 namespace Logistics.Infrastructure.Persistence.Services.Accounting;

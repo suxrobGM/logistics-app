@@ -1,16 +1,16 @@
-using Logistics.Application.Abstractions.Email.Models;
-using Logistics.Application.Abstractions.Email;
-using Logistics.Domain.Entities;
+using Logistics.Application.Abstractions.Communications;
+using Logistics.Application.Abstractions.Communications.EmailModels;
+using Logistics.Application.Abstractions.Documents;
 using Logistics.Application.Abstractions.Options;
+using Logistics.Application.Abstractions.Storage;
+using Logistics.Application.Modules.Compliance.Privacy.Constants;
+using Logistics.Domain.Entities;
 using Logistics.Domain.Persistence;
 using Logistics.Domain.Primitives;
 using Logistics.Domain.Primitives.Enums;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
-using Logistics.Application.Abstractions.Storage;
-using Logistics.Application.Abstractions.Privacy;
-using Logistics.Application.Modules.Compliance.Privacy.Constants;
 
 namespace Logistics.Application.Modules.Compliance.Privacy.Services;
 

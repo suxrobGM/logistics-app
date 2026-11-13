@@ -1,4 +1,4 @@
-using Logistics.Application.Abstractions.SystemSettings;
+using Logistics.Application.Abstractions.Context;
 using Logistics.Domain.Primitives.Enums;
 
 namespace Logistics.Application.Abstractions.AI;

@@ -1,4 +1,4 @@
-using Logistics.Application.Abstractions.Email;
+using Logistics.Application.Abstractions.Communications;
 
 namespace Logistics.Infrastructure.Communications.Email;
 

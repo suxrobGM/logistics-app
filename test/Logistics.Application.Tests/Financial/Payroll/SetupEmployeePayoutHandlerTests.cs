@@ -1,3 +1,5 @@
+using Logistics.Application.Abstractions.Payments;
+using Logistics.Application.Modules.Financial.Payroll.Commands;
 using Logistics.Application.Tests.TestKit;
 using Logistics.Domain.Entities;
 using Logistics.Domain.Persistence;
@@ -7,9 +9,7 @@ using Microsoft.Extensions.Logging.Abstractions;
 using NSubstitute;
 using NSubstitute.ExceptionExtensions;
 using Xunit;
-using Logistics.Application.Abstractions.Payments.Stripe;
 using Address = Logistics.Domain.Primitives.ValueObjects.Address;
-using Logistics.Application.Modules.Financial.Payroll.Commands;
 
 namespace Logistics.Application.Tests.Financial.Payroll;
 

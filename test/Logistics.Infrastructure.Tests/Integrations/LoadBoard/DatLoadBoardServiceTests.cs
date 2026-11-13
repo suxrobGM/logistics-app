@@ -1,7 +1,7 @@
 using System.Net;
 using System.Text;
 using System.Text.Json;
-using Logistics.Application.Abstractions.LoadBoard;
+using Logistics.Application.Abstractions.Integrations;
 using Logistics.Domain.Entities;
 using Logistics.Domain.Primitives.Enums;
 using Logistics.Infrastructure.Integrations.LoadBoard;

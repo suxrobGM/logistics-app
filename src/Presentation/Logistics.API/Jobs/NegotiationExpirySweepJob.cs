@@ -1,6 +1,6 @@
 using Hangfire;
-using Logistics.Application.Abstractions.AIDispatch;
-using Logistics.Application.Abstractions.Features;
+using Logistics.Application.Abstractions.AI;
+using Logistics.Application.Abstractions.Context;
 using Logistics.Application.Modules.AI.Negotiation.Services;
 using Logistics.Domain.Entities;
 using Logistics.Domain.Persistence;

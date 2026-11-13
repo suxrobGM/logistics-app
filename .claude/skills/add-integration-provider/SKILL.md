@@ -152,7 +152,7 @@ Roadmap items like EDI will need this. On top of the above:
    `Logistics.Infrastructure.Integrations.{X}`) with its own `Registrar`, called from the project's
    root `Registrar.AddIntegrationsInfrastructure`. No new project.
 2. Port interfaces (`I{X}ProviderService`, `I{X}ProviderFactory`) in
-   `src/Core/Logistics.Application.Abstractions/{X}/` - **not** in the infrastructure project.
+   `src/Core/Logistics.Application.Abstractions/Integrations/` - **not** in the infrastructure project.
 3. Factory resolving through `GetRequiredProvider` / `HasProvider`; registrar using `AddProviderIntegration` and `AddKeyedProvider`.
 4. **Architecture tests:** nothing to add - the family lives in an assembly that is already
    anchored. Only a brand-new infrastructure project needs the anchor + `ProjectReference` (CLAUDE.md).

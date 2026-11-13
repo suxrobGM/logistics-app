@@ -1,6 +1,6 @@
 using Logistics.Application.Abstractions;
-using Logistics.Application.Abstractions.Email.Models;
 using Logistics.Application.Abstractions.BackgroundJobs;
+using Logistics.Application.Abstractions.Communications.EmailModels;
 using Logistics.Domain.Entities;
 using Logistics.Domain.Persistence;
 using Logistics.Domain.Primitives.Enums;

@@ -1,6 +1,6 @@
 using System.Text;
-using Logistics.Application.Abstractions.Email.Models;
-using Logistics.Application.Abstractions.Email;
+using Logistics.Application.Abstractions.Communications;
+using Logistics.Application.Abstractions.Communications.EmailModels;
 using Logistics.Domain.Entities;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;

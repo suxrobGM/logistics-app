@@ -41,7 +41,7 @@ name (a test enforces both) so a transcript leads to the file.
 
 ```csharp
 using System.ComponentModel;
-using Logistics.Application.Abstractions.Agents;
+using Logistics.Application.Abstractions.AI;
 using Logistics.Domain.Primitives.Enums;
 using Logistics.Shared.Identity.Policies;
 using Logistics.Mediator;

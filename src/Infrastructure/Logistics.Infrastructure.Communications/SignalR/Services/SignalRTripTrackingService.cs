@@ -1,8 +1,9 @@
+using Logistics.Application.Abstractions.Communications;
+using Logistics.Application.Abstractions.Routing;
 using Logistics.Infrastructure.Communications.SignalR.Clients;
 using Logistics.Infrastructure.Communications.SignalR.Hubs;
 using Logistics.Shared.Models;
 using Microsoft.AspNetCore.SignalR;
-using Logistics.Application.Abstractions.Routing;
 
 namespace Logistics.Infrastructure.Communications.SignalR.Services;
 

@@ -1,4 +1,4 @@
-using Logistics.Application.Abstractions.AICopilot;
+using Logistics.Application.Abstractions.AI;
 
 namespace Logistics.Infrastructure.AI.Agents.Copilot;
 

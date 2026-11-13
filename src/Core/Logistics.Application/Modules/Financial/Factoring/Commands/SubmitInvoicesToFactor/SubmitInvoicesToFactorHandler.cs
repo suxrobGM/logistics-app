@@ -1,7 +1,7 @@
 using Logistics.Application.Abstractions;
+using Logistics.Application.Abstractions.Communications;
+using Logistics.Application.Abstractions.Communications.EmailModels;
 using Logistics.Application.Abstractions.Documents;
-using Logistics.Application.Abstractions.Email;
-using Logistics.Application.Abstractions.Email.Models;
 using Logistics.Application.Abstractions.Storage;
 using Logistics.Application.Modules.Financial.Factoring.Services;
 using Logistics.Domain.Entities;

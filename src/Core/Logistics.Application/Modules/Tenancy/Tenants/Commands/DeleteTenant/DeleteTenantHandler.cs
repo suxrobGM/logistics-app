@@ -1,10 +1,10 @@
 using Logistics.Application.Abstractions;
+using Logistics.Application.Abstractions.Context;
+using Logistics.Application.Abstractions.Payments;
 using Logistics.Domain.Entities;
 using Logistics.Domain.Persistence;
 using Logistics.Mediator;
 using Logistics.Shared.Models;
-using Logistics.Application.Abstractions.Tenancy;
-using Logistics.Application.Abstractions.Payments.Stripe;
 
 namespace Logistics.Application.Modules.Tenancy.Tenants.Commands;
 

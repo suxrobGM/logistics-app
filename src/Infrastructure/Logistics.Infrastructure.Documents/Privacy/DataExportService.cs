@@ -1,8 +1,8 @@
 using System.IO.Compression;
 using System.Text;
 using System.Text.Json;
-using Logistics.Application.Abstractions.Privacy;
-using Logistics.Application.Abstractions.Tenancy;
+using Logistics.Application.Abstractions.Context;
+using Logistics.Application.Abstractions.Documents;
 using Logistics.Domain.Entities;
 using Logistics.Domain.Persistence;
 using Logistics.Domain.Primitives.Enums;

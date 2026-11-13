@@ -1,6 +1,6 @@
 using Logistics.Application.Abstractions;
-using Logistics.Application.Abstractions.AIDispatch;
-using Logistics.Application.Abstractions.CurrentUser;
+using Logistics.Application.Abstractions.AI;
+using Logistics.Application.Abstractions.Context;
 using Logistics.Application.Modules.AI.AIDispatch.Services;
 using Logistics.Application.Modules.AI.Agents.Services;
 using Logistics.Domain.Persistence;

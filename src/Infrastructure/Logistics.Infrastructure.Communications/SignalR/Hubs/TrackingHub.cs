@@ -1,4 +1,4 @@
-using Logistics.Application.Abstractions.Realtime;
+using Logistics.Application.Abstractions.ApplicationServices;
 using Logistics.Infrastructure.Communications.SignalR.Clients;
 using Logistics.Shared.Identity.Roles;
 using Logistics.Shared.Models;

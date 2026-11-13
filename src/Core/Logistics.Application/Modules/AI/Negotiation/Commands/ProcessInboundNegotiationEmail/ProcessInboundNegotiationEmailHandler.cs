@@ -1,6 +1,6 @@
 using Logistics.Application.Abstractions;
-using Logistics.Application.Abstractions.Email;
-using Logistics.Application.Abstractions.Features;
+using Logistics.Application.Abstractions.Communications;
+using Logistics.Application.Abstractions.Context;
 using Logistics.Application.Modules.AI.Negotiation.Services;
 using Logistics.Domain.Entities;
 using Logistics.Domain.Persistence;

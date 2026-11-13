@@ -13,7 +13,7 @@ This file answers _where_. For _how it works_, follow the deep dive: **AI dispat
 - **Queries**: `src/Core/Logistics.Application/Modules/{Module}/{Feature}/Queries/Get{Entity}/`
 - **Domain events**: `src/Core/Logistics.Domain/Events/`; handlers in `src/Core/Logistics.Application/Modules/{Module}/{Feature}/Events/`
 - **Reused query filters**: `IQueryable<T>` extensions next to the feature (e.g. `Modules/Operations/Loads/LoadQueryableExtensions.cs`); paged lists end with `Common/Extensions/PagedQueryableExtensions.ToPagedResultAsync`
-- **Infrastructure-port interfaces** (implemented by Infrastructure): `src/Core/Logistics.Application.Abstractions/{Domain}/`
+- **Infrastructure-port interfaces** (implemented by Infrastructure): `src/Core/Logistics.Application.Abstractions/{Group}/`, one flat folder per capability that mostly matches the implementing project (`AI`, `Communications`, `Context`, `Documents`, `Integrations`, `Payments`, `Persistence`, `Routing`, `Storage`, ...). Interfaces that `Logistics.Application` implements for hosts and infrastructure to call sit in `ApplicationServices/`
 - **Application workflow services** (stay in Application): `src/Core/Logistics.Application/Modules/{Module}/{Feature}/Services/`
 - **Application constants**: feature-scoped under `Modules/{Module}/{Feature}/Constants/`; cross-module shared in `Common/Constants/`
 - **Service implementations**: `src/Infrastructure/Logistics.Infrastructure.{Module}/`
@@ -239,15 +239,15 @@ registry, `AgentLoopRunner`, decisions, and quota. Gated by `TenantFeature.AICop
 
 ### Quota / pricing
 
-- Domain: `Entities/Subscription/SubscriptionPlan.cs` (`WeeklyAIBudgetUsd`, required; unsubscribed tenants fall back to the Enterprise budget via `Application.Abstractions/AIDispatch/AIWeeklyBudget.cs`)
-- Application: `Application.Abstractions/AIDispatch/IAIQuotaService.cs` (port)
-- Infrastructure: `Infrastructure.Persistence/Services/AIDispatch/AIQuotaService.cs` (cost-based quota tracking), `Application.Abstractions/AI/LlmModelCatalog.cs` (per-token prices on each model, `CalculateCost`), `Application.Abstractions/Payments/Stripe/AIOverageBilling.cs` (cost → Stripe metered units; shared by Stripe metering and the tenant-visible accrued-charges figure)
+- Domain: `Entities/Subscription/SubscriptionPlan.cs` (`WeeklyAIBudgetUsd`, required; unsubscribed tenants fall back to the Enterprise budget via `Application.Abstractions/AI/AIWeeklyBudget.cs`)
+- Application: `Application.Abstractions/AI/IAIQuotaService.cs` (port)
+- Infrastructure: `Infrastructure.Persistence/Services/AIDispatch/AIQuotaService.cs` (cost-based quota tracking), `Application.Abstractions/AI/LlmModelCatalog.cs` (per-token prices on each model, `CalculateCost`), `Application.Abstractions/Payments/AIOverageBilling.cs` (cost → Stripe metered units; shared by Stripe metering and the tenant-visible accrued-charges figure)
 - API/UI: (quota bar in `tms-portal/pages/ai-dispatch/`), `admin-portal/pages/ai-settings/tenant-quotas/` (per-tenant usage + revenue-vs-LLM-cost margin report)
 - Quota numbers live in `SubscriptionPlanSeeder` + admin portal only - never exposed to tenants (tenant API returns a percentage)
 
 ### Global AI settings
 
-- Application: `Modules/AI/AISettings/` (`GetAISettings`, `UpdateAISettings`); `Abstractions/AIDispatch/LlmModelCatalog.cs`
+- Application: `Modules/AI/AISettings/` (`GetAISettings`, `UpdateAISettings`); `Abstractions/AI/LlmModelCatalog.cs`
 - Infrastructure: `SystemSettingsService` (`AI.Model`/`AI.ReasoningEffort` keys)
 - API/UI: `AISettingsController.cs`, `admin-portal/pages/ai-settings/`
 
@@ -319,7 +319,7 @@ registry, `AgentLoopRunner`, decisions, and quota. Gated by `TenantFeature.AICop
 ### Driver licensing
 
 - Domain: `Entities/Employee/DriverLicense.cs`
-- Application: `Modules/Identity/Employees/Commands/{Create,Update,Delete}DriverLicense/`, `Application.Abstractions/Dispatch/IDispatchEligibilityService`, `Modules/Compliance/Safety/Services/LicenseExpiryReminderService`
+- Application: `Modules/Identity/Employees/Commands/{Create,Update,Delete}DriverLicense/`, `Application.Abstractions/ApplicationServices/IDispatchEligibilityService`, `Modules/Compliance/Safety/Services/LicenseExpiryReminderService`
 - Infrastructure: `Infrastructure.AI/Tools/Dispatch/CheckDispatchEligibilityTool.cs`
 - API/UI: `EmployeeController` (extended), `tms-portal/pages/employees/components/driver-licenses-tab/`, mobile `feature/more/LicensesScreen.kt`, `ProcessLicenseExpiryReminders` in `Jobs/RecurringJobs.cs`
 
@@ -369,7 +369,7 @@ registry, `AgentLoopRunner`, decisions, and quota. Gated by `TenantFeature.AICop
 ### Tax engine
 
 - Domain: `Entities/TenantTaxRate.cs`, `Invoice.TaxBehavior`, `Invoice.TaxBreakdownJson`, `ValueObjects/TaxJurisdiction.cs` - build jurisdictions with `TaxJurisdiction.Create(country, region)` on every write path; it upper-cases and normalizes a blank region to null, which is what the equality comparisons rely on
-- Application: `Application.Abstractions/Tax/ITaxCalculator`, `Modules/Financial/Tax/Services/IInvoiceTaxApplier`, `Modules/Financial/Tax/Commands/`, `Modules/Financial/Tax/Queries/`, `Modules/Financial/Invoices/Queries/PreviewInvoiceTax/`
+- Application: `Application.Abstractions/Payments/ITaxCalculator`, `Modules/Financial/Tax/Services/IInvoiceTaxApplier`, `Modules/Financial/Tax/Commands/`, `Modules/Financial/Tax/Queries/`, `Modules/Financial/Invoices/Queries/PreviewInvoiceTax/`
 - Infrastructure: `Infrastructure.Payments/Tax/` (`StripeTaxCalculator`, `ManualTaxCalculator`, `StripeTaxConfigService`, `EUVatRates`/`USSalesTaxRates`/`OtherCountryRates`); `Infrastructure.Documents/Pdf/Invoice/` VAT block
 - API/UI: `TaxController.cs`, `TaxRatesController.cs`, `tms-portal/pages/settings/components/tenant-tax-rates-card/`
 
@@ -437,7 +437,7 @@ registry, `AgentLoopRunner`, decisions, and quota. Gated by `TenantFeature.AICop
 ### Accounting sync (QBO)
 
 - Domain: `Entities/Accounting/` (`AccountingProviderConfiguration` - tokens, `NeedsReconnect`, default item/accounts, `SyncFromDate`, item/category mappings as the `Mappings` JSON complex property (column `mappings`, `ValueObjects/Accounting/AccountingMappings`); `QboEntityMapping` - one row per pushed record; failed rows retry on every run)
-- Application: `Modules/Integrations/Accounting/` - `Services/AccountingSyncService` (the only push path, via `AccountingReceivablesSyncService` and `AccountingPayablesSyncService`: selects only rows edited since their last push, batches lookups, 500 per type per run), `AccountingMappingService` (reads and writes `QboEntityMapping`: what is not up to date, push outcomes, retiring), `AccountingPayloads` (payload + content hash + QBO `requestid`), `AccountingConnectionService` (token refresh, flags reconnect on `invalid_grant`); Commands: Connect/DisconnectQuickBooks, UpdateQuickBooksSettings, SyncQuickBooks → `RunAccountingSync` (enqueued, also the sync-issues Retry); Queries: GetQuickBooksConnection/AuthUrl/Lookups/SyncIssues. Ports in `Application.Abstractions/Accounting/` (`IAccountingProviderService`, `IAccountingProviderFactory`, `IOAuthStateProtector`, `AccountingReconnectRequiredException`)
+- Application: `Modules/Integrations/Accounting/` - `Services/AccountingSyncService` (the only push path, via `AccountingReceivablesSyncService` and `AccountingPayablesSyncService`: selects only rows edited since their last push, batches lookups, 500 per type per run), `AccountingMappingService` (reads and writes `QboEntityMapping`: what is not up to date, push outcomes, retiring), `AccountingPayloads` (payload + content hash + QBO `requestid`), `AccountingConnectionService` (token refresh, flags reconnect on `invalid_grant`); Commands: Connect/DisconnectQuickBooks, UpdateQuickBooksSettings, SyncQuickBooks → `RunAccountingSync` (enqueued, also the sync-issues Retry); Queries: GetQuickBooksConnection/AuthUrl/Lookups/SyncIssues. Ports in `Application.Abstractions/Integrations/` (`IAccountingProviderService`, `IAccountingProviderFactory`, `IOAuthStateProtector`, `AccountingReconnectRequiredException`)
 - Infrastructure: `Infrastructure.Integrations/Accounting/` (QBO OAuth2 + REST push: Customer, Vendor, Invoice + void, Payment + void (deleted payments, e.g. a factoring charge-back), Purchase, Bill; stale-SyncToken retry, `requestid` on creates, `intuit_tid` in errors); token cols encrypted via `Persistence/Converters/EncryptedStringConverter`; `Persistence/Services/Accounting/OAuthStateProtector` (10-minute state)
 - API/UI: `AccountingController.cs` (+ anonymous `/accounting/quickbooks/callback` and `/disconnected`), `Jobs/AccountingSyncJob.cs` (15 min fan-out), `tms-portal/pages/settings/integrations-settings/` + `pages/settings/components/quickbooks-card/`, `quickbooks-settings-form/`, `quickbooks-sync-issues/`. Setup guide: `docs/accounting-quickbooks-setup.md`
 - **Trap**: `GetQuickBooksConnection` and `DisconnectQuickBooks` are deliberately not feature-gated - a downgraded tenant must still be able to revoke access
@@ -454,7 +454,7 @@ registry, `AgentLoopRunner`, decisions, and quota. Gated by `TenantFeature.AICop
 ### Live tracking
 
 - Application: `Modules/Operations/Tracking/Commands/`, `Modules/Operations/Tracking/Queries/`
-- Infrastructure: `Infrastructure.Communications/SignalR/Hubs/TrackingHub.cs`, `SignalR/Services/SignalRTripTrackingService.cs` (port `Application.Abstractions/Routing/ITripTrackingService.cs`), `Infrastructure.Routing/Geocoding/` (Mapbox)
+- Infrastructure: `Infrastructure.Communications/SignalR/Hubs/TrackingHub.cs`, `SignalR/Services/SignalRTripTrackingService.cs` (port `Application.Abstractions/Communications/ITripTrackingService.cs`), `Infrastructure.Routing/Geocoding/` (Mapbox)
 - API/UI: `TrackingController.cs`, `customer-portal/pages/tracking/`
 
 ### Notifications
@@ -526,7 +526,7 @@ registry, `AgentLoopRunner`, decisions, and quota. Gated by `TenantFeature.AICop
 ### Feature flags
 
 - Domain: `Entities/Feature/TenantFeatureConfig.cs`, `TenantPresetCatalog.cs`
-- Application: `Modules/Tenancy/Features/Commands/`, `Modules/Tenancy/Features/Queries/`, `Application.Abstractions/Features/IFeatureService.cs` (port)
+- Application: `Modules/Tenancy/Features/Commands/`, `Modules/Tenancy/Features/Queries/`, `Application.Abstractions/Context/IFeatureService.cs` (port)
 - Infrastructure: `Infrastructure.Persistence/Services/Feature/FeatureService.cs` (`ApplyPresetFeaturesAsync` writes per-tenant rows from presets; admin-locked rows are kept; a feature with no row resolves through the tenant's presets - there are no platform-wide defaults)
 - API/UI: `FeaturesController.cs` (admin roles only), `TenantFeaturesController.cs` (read-only, current tenant), `admin-portal/pages/features/`. Tenants cannot toggle features; see _Tenant presets and solo mode_
 
@@ -568,7 +568,7 @@ registry, `AgentLoopRunner`, decisions, and quota. Gated by `TenantFeature.AICop
 
 - Domain: `Entities/LoadBoard/LoadBoardListing.cs`, `LoadBoardConfiguration.cs` (`UserEmail` = DAT One seat, `MarketRatesEnabled` = RateView), `Enums/LoadBoardEquipmentType.cs` (the one equipment list; DAT codes in `Providers/Dat/DatEquipment.cs`)
 - Application: `Modules/Integrations/LoadBoard/Commands/` (search, create/update/test provider, create load from listing), `Queries/`; `Services/LoadBoardProviderGateway.cs` - the only way to call a board: token refresh, one 401 retry, vendor error to per-provider `Result`
-- Abstractions: `Application.Abstractions/LoadBoard/ILoadBoardProviderService.cs` (throws `LoadBoardApiException`; no booking call - no board has a booking API)
+- Abstractions: `Application.Abstractions/Integrations/ILoadBoardProviderService.cs` (throws `LoadBoardApiException`; no booking call - no board has a booking API)
 - Infrastructure: `Infrastructure.Integrations/LoadBoard/` - `Providers/Dat/` (two-step org + user token, v1 search, truck posts, RateView), `Demo` (Truckstop and 123Loadboard have no provider; the gateway reports them "not available yet"); `LoadBoardHttp.cs` throwing HTTP helper. API verification status in `docs/loadboard-dat-setup.md`
 - API/UI: `LoadboardController.cs`, `tms-portal/pages/loadboard/` (`provider-dialog` add/edit, `loadboard.constants.ts` equipment + provider labels)
 
@@ -604,12 +604,12 @@ registry, `AgentLoopRunner`, decisions, and quota. Gated by `TenantFeature.AICop
 
 ### Captcha
 
-- Application: `Application.Abstractions/Captcha/ICaptchaService.cs` (port)
+- Application: `Application.Abstractions/Communications/ICaptchaService.cs` (port)
 - Infrastructure: `Infrastructure.Communications/Captcha/` (Google reCAPTCHA)
 
 ### Geocoding
 
-- Application: `Application.Abstractions/Geocoding/IGeocodingService.cs` (port)
+- Application: `Application.Abstractions/Routing/IGeocodingService.cs` (port)
 - Infrastructure: `Infrastructure.Routing/Geocoding/` (Mapbox; biased to `Tenant.Settings.Region` country + language)
 
 ### Trip optimization

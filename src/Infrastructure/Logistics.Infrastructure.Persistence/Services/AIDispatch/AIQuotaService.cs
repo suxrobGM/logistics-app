@@ -1,12 +1,12 @@
-using Logistics.Application.Abstractions.Payments.Stripe;
+using Logistics.Application.Abstractions.AI;
+using Logistics.Application.Abstractions.Payments;
 using Logistics.Domain.Entities;
+using Logistics.Domain.Extensions;
 using Logistics.Domain.Persistence;
 using Logistics.Domain.Primitives;
 using Logistics.Domain.Primitives.Enums;
 using Logistics.Shared.Models;
 using Microsoft.EntityFrameworkCore;
-using Logistics.Application.Abstractions.AIDispatch;
-using Logistics.Domain.Extensions;
 
 namespace Logistics.Infrastructure.Persistence.Services.AIDispatch;
 

@@ -1,14 +1,12 @@
-using Logistics.Application.Abstractions.Agents;
+using Logistics.Application.Abstractions.AI;
+using Logistics.Application.Abstractions.Context;
 using Logistics.Domain.Entities;
 using Logistics.Domain.Persistence;
 using Logistics.Domain.Primitives.Enums;
-using Logistics.Infrastructure.AI.Llm.Contracts;
-using Logistics.Application.Abstractions.AI;
 using Logistics.Infrastructure.AI.Llm;
+using Logistics.Infrastructure.AI.Llm.Contracts;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
-using Logistics.Application.Abstractions.Features;
-using Logistics.Application.Abstractions.AIDispatch;
 
 namespace Logistics.Infrastructure.AI.Agents.Dispatch;
 

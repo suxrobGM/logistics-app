@@ -1,6 +1,6 @@
-using Logistics.Application.Abstractions.SystemSettings;
-using Logistics.Domain.Primitives.Enums;
 using Logistics.Application.Abstractions.AI;
+using Logistics.Application.Abstractions.Context;
+using Logistics.Domain.Primitives.Enums;
 using Logistics.Infrastructure.AI.Llm.Contracts;
 using Microsoft.Extensions.Logging;
 

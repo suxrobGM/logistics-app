@@ -1,7 +1,7 @@
 using System.Linq.Expressions;
-using Logistics.Application.Abstractions.AIDispatch;
-using Logistics.Application.Abstractions.Email;
-using Logistics.Application.Abstractions.LoadBoard;
+using Logistics.Application.Abstractions.AI;
+using Logistics.Application.Abstractions.Communications;
+using Logistics.Application.Abstractions.Integrations;
 using Logistics.Application.Modules.AI.Negotiation.Commands;
 using Logistics.Application.Modules.AI.Negotiation.Services;
 using Logistics.Application.Modules.Integrations.LoadBoard.Services;

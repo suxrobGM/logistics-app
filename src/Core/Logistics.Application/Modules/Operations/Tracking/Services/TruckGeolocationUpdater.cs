@@ -1,9 +1,9 @@
-using Logistics.Application.Abstractions.Realtime;
+using Logistics.Application.Abstractions.ApplicationServices;
 using Logistics.Application.Modules.Operations.Trucks.Commands;
 using Logistics.Domain.Entities;
 using Logistics.Domain.Persistence;
-using Logistics.Shared.Models;
 using Logistics.Mediator;
+using Logistics.Shared.Models;
 
 namespace Logistics.Application.Modules.Operations.Tracking.Services;
 

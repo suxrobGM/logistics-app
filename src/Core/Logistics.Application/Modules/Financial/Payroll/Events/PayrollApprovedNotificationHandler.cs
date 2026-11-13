@@ -1,4 +1,4 @@
-using Logistics.Application.Abstractions.Email.Models;
+using Logistics.Application.Abstractions.Communications.EmailModels;
 using Logistics.Application.Modules.Operations.Notifications.Services;
 using Logistics.Domain.Events;
 using Logistics.Domain.Primitives.ValueObjects;

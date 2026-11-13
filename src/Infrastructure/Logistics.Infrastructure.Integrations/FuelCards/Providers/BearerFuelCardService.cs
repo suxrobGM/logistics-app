@@ -1,5 +1,5 @@
 using System.Net.Http.Headers;
-using Logistics.Application.Abstractions.FuelCards;
+using Logistics.Application.Abstractions.Integrations;
 using Logistics.Domain.Entities;
 using Logistics.Domain.Primitives.Enums;
 using Logistics.Infrastructure.Integrations.Common;

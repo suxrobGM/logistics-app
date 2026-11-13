@@ -1,9 +1,9 @@
 using Logistics.Application.Abstractions;
+using Logistics.Application.Abstractions.Communications;
 using Logistics.Domain.Entities.Messaging;
 using Logistics.Domain.Persistence;
 using Logistics.Mediator;
 using Logistics.Shared.Models;
-using Logistics.Application.Abstractions.Realtime;
 
 namespace Logistics.Application.Modules.Operations.Messaging.Commands;
 

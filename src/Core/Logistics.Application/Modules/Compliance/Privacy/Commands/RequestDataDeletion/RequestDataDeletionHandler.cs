@@ -1,4 +1,6 @@
 using Logistics.Application.Abstractions;
+using Logistics.Application.Abstractions.Context;
+using Logistics.Application.Modules.Compliance.Privacy.Constants;
 using Logistics.Domain.Entities;
 using Logistics.Domain.Persistence;
 using Logistics.Domain.Primitives;
@@ -6,8 +8,6 @@ using Logistics.Domain.Primitives.Enums;
 using Logistics.Mediator;
 using Logistics.Shared.Models;
 using Microsoft.EntityFrameworkCore;
-using Logistics.Application.Abstractions.CurrentUser;
-using Logistics.Application.Modules.Compliance.Privacy.Constants;
 
 namespace Logistics.Application.Modules.Compliance.Privacy.Commands;
 

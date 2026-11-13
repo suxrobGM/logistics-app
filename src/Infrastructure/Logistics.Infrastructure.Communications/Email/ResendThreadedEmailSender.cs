@@ -1,4 +1,4 @@
-using Logistics.Application.Abstractions.Email;
+using Logistics.Application.Abstractions.Communications;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using Resend;

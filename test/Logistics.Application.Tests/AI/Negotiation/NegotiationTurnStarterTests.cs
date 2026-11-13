@@ -1,6 +1,5 @@
-using Logistics.Application.Abstractions.AIDispatch;
+using Logistics.Application.Abstractions.AI;
 using Logistics.Application.Abstractions.BackgroundJobs;
-using Logistics.Application.Abstractions.Negotiation;
 using Logistics.Application.Modules.AI.Negotiation.Services;
 using Logistics.Application.Tests.TestKit;
 using Logistics.Domain.Entities;

@@ -1,9 +1,9 @@
+using Logistics.Application.Abstractions.Integrations;
 using Logistics.Domain.Entities;
 using Logistics.Domain.Primitives.Enums;
 using Logistics.Infrastructure.Integrations.Common;
 using Logistics.Shared.Models;
 using Microsoft.Extensions.Logging;
-using Logistics.Application.Abstractions.Eld;
 
 namespace Logistics.Infrastructure.Integrations.Eld.Providers.TtEld;
 

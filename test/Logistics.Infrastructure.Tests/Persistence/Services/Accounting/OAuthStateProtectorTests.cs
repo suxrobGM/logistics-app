@@ -1,4 +1,4 @@
-using Logistics.Application.Abstractions.Accounting;
+using Logistics.Application.Abstractions.Integrations;
 using Logistics.Infrastructure.Persistence.Services.Accounting;
 using Microsoft.AspNetCore.DataProtection;
 using NSubstitute;

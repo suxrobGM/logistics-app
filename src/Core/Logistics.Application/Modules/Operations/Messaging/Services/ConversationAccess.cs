@@ -1,4 +1,4 @@
-using Logistics.Application.Abstractions.Realtime;
+using Logistics.Application.Abstractions.ApplicationServices;
 using Logistics.Domain.Entities.Messaging;
 using Logistics.Domain.Persistence;
 using Microsoft.EntityFrameworkCore;

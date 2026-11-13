@@ -1,16 +1,16 @@
-using Logistics.Application.Abstractions.Privacy;
-using Logistics.Application.Abstractions.Tenancy;
+using Logistics.Application.Abstractions.Communications;
+using Logistics.Application.Abstractions.Context;
 using Logistics.Application.Abstractions.Options;
+using Logistics.Application.Abstractions.Persistence;
 using Logistics.Infrastructure.Persistence.Builder;
 using Logistics.Infrastructure.Persistence.Interceptors;
 using Logistics.Infrastructure.Persistence.Reads;
-using Logistics.Infrastructure.Persistence.Services.Privacy;
 using Logistics.Infrastructure.Persistence.Services;
+using Logistics.Infrastructure.Persistence.Services.Privacy;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
-using Logistics.Application.Abstractions.CurrentUser;
 
 namespace Logistics.Infrastructure.Persistence;
 

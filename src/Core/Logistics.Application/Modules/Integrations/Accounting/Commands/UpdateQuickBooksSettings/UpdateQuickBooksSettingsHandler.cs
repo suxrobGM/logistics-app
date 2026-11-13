@@ -1,5 +1,5 @@
 using Logistics.Application.Abstractions;
-using Logistics.Application.Abstractions.Accounting;
+using Logistics.Application.Abstractions.Integrations;
 using Logistics.Application.Modules.Integrations.Accounting.Services;
 using Logistics.Domain.Entities;
 using Logistics.Domain.Persistence;

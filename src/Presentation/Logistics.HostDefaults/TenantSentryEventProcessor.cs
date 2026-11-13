@@ -1,4 +1,4 @@
-using Logistics.Application.Abstractions.Tenancy;
+using Logistics.Application.Abstractions.Context;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.DependencyInjection;
 using Sentry;

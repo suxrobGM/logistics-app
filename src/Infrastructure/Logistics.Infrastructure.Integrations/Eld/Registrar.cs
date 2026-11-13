@@ -1,3 +1,5 @@
+using Logistics.Application.Abstractions.Integrations;
+using Logistics.Domain.Primitives.Enums;
 using Logistics.Infrastructure.Integrations.Common;
 using Logistics.Infrastructure.Integrations.Eld.Providers;
 using Logistics.Infrastructure.Integrations.Eld.Providers.Geotab;
@@ -7,8 +9,6 @@ using Logistics.Infrastructure.Integrations.Eld.Providers.TtEld;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
-using Logistics.Application.Abstractions.Eld;
-using Logistics.Domain.Primitives.Enums;
 
 namespace Logistics.Infrastructure.Integrations.Eld;
 

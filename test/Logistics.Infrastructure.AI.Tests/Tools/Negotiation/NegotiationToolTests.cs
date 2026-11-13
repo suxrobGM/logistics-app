@@ -1,6 +1,6 @@
 using System.Text.Json;
 using System.Text.Json.Nodes;
-using Logistics.Application.Abstractions.Agents;
+using Logistics.Application.Abstractions.AI;
 using Logistics.Application.Modules.AI.Negotiation.Commands;
 using Logistics.Application.Modules.AI.Negotiation.Queries;
 using Logistics.Domain.Primitives.Enums;

@@ -1,5 +1,5 @@
 using Logistics.Application.Abstractions;
-using Logistics.Application.Abstractions.CurrentUser;
+using Logistics.Application.Abstractions.Context;
 using Logistics.Application.Abstractions.Options;
 using Logistics.Application.Common.Security;
 using Logistics.Domain.Entities;

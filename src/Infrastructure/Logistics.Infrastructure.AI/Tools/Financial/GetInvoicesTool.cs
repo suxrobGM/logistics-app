@@ -1,9 +1,9 @@
 using System.ComponentModel;
-using Logistics.Application.Abstractions.Agents;
+using Logistics.Application.Abstractions.AI;
 using Logistics.Application.Modules.Financial.Invoices.Queries;
 using Logistics.Domain.Primitives.Enums;
-using Logistics.Shared.Identity.Policies;
 using Logistics.Mediator;
+using Logistics.Shared.Identity.Policies;
 
 namespace Logistics.Infrastructure.AI.Tools.Financial;
 

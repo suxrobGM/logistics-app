@@ -1,6 +1,6 @@
 using Hangfire;
+using Logistics.Application.Abstractions.AI;
 using Logistics.Application.Abstractions.BackgroundJobs;
-using Logistics.Application.Abstractions.Negotiation;
 
 namespace Logistics.API.Jobs;
 

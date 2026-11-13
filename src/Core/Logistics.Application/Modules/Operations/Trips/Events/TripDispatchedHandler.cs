@@ -1,4 +1,6 @@
 using Logistics.Application.Abstractions;
+using Logistics.Application.Abstractions.Communications;
+using Logistics.Application.Abstractions.Routing;
 using Logistics.Domain.Entities;
 using Logistics.Domain.Events;
 using Logistics.Domain.Persistence;
@@ -6,7 +8,6 @@ using Logistics.Domain.Primitives.Enums;
 using Logistics.Mediator;
 using Logistics.Shared.Models;
 using Microsoft.Extensions.Logging;
-using Logistics.Application.Abstractions.Routing;
 
 namespace Logistics.Application.Modules.Operations.Trips.Events;
 

@@ -1,15 +1,15 @@
 using Logistics.Application.Abstractions;
-using Logistics.Application.Abstractions.Email.Models;
-using Logistics.Application.Abstractions.Email;
+using Logistics.Application.Abstractions.Communications;
+using Logistics.Application.Abstractions.Communications.EmailModels;
+using Logistics.Application.Abstractions.Context;
 using Logistics.Application.Modules.Financial.PaymentLinks.Services;
 using Logistics.Domain.Entities;
-using Logistics.Domain.Primitives.ValueObjects;
 using Logistics.Domain.Persistence;
 using Logistics.Domain.Primitives.Enums;
+using Logistics.Domain.Primitives.ValueObjects;
 using Logistics.Mediator;
 using Logistics.Shared.Models;
 using Microsoft.Extensions.Logging;
-using Logistics.Application.Abstractions.CurrentUser;
 
 namespace Logistics.Application.Modules.Financial.Invoices.Commands;
 

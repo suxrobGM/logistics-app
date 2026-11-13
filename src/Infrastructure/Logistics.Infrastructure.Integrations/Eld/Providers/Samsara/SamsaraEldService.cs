@@ -1,7 +1,7 @@
 using System.Globalization;
 using System.Net.Http.Headers;
 using System.Text.Json;
-using Logistics.Application.Abstractions.Eld;
+using Logistics.Application.Abstractions.Integrations;
 using Logistics.Domain.Entities;
 using Logistics.Domain.Primitives.Enums;
 using Logistics.Infrastructure.Integrations.Common;

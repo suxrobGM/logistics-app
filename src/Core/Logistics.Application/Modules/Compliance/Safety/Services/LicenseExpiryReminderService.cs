@@ -1,9 +1,9 @@
+using Logistics.Application.Abstractions.Communications;
 using Logistics.Domain.Entities;
 using Logistics.Domain.Persistence;
 using Logistics.Domain.Primitives.Enums;
 using Logistics.Shared.Models;
 using Microsoft.Extensions.Logging;
-using Logistics.Application.Abstractions.Realtime;
 
 namespace Logistics.Application.Modules.Compliance.Safety.Services;
 

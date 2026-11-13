@@ -1,9 +1,9 @@
 using Logistics.Application.Abstractions;
+using Logistics.Application.Abstractions.Integrations;
 using Logistics.Domain.Entities;
 using Logistics.Domain.Persistence;
 using Logistics.Mediator;
 using Logistics.Shared.Models;
-using Logistics.Application.Abstractions.Eld;
 
 namespace Logistics.Application.Modules.Compliance.Eld.Queries;
 

@@ -1,4 +1,4 @@
-using Logistics.Application.Abstractions.Tax;
+using Logistics.Application.Abstractions.Payments;
 using Logistics.Application.Modules.Financial.Invoices;
 using Logistics.Domain.Entities;
 using Logistics.Shared.Models;

@@ -1,4 +1,4 @@
-using Logistics.Application.Abstractions.Agents;
+using Logistics.Application.Abstractions.AI;
 using Logistics.Domain.Primitives.Enums;
 
 namespace Logistics.Application.Modules.AI.AIDispatch.Services;

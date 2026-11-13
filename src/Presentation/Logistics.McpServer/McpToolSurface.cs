@@ -1,7 +1,7 @@
 using System.Collections.Concurrent;
 using System.Text.Json;
-using Logistics.Application.Abstractions.Agents;
-using Logistics.Application.Abstractions.Features;
+using Logistics.Application.Abstractions.AI;
+using Logistics.Application.Abstractions.Context;
 using Logistics.Domain.Persistence;
 using Logistics.Domain.Primitives.Enums;
 using ModelContextProtocol.Protocol;

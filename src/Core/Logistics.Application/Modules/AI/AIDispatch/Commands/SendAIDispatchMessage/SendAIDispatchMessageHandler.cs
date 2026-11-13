@@ -1,7 +1,7 @@
 using Logistics.Application.Abstractions;
-using Logistics.Application.Abstractions.AIDispatch;
+using Logistics.Application.Abstractions.AI;
 using Logistics.Application.Abstractions.BackgroundJobs;
-using Logistics.Application.Abstractions.CurrentUser;
+using Logistics.Application.Abstractions.Context;
 using Logistics.Application.Modules.AI.Agents;
 using Logistics.Application.Modules.AI.Agents.Services;
 using Logistics.Mediator;

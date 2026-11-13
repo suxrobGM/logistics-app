@@ -1,6 +1,6 @@
 using System.Security.Cryptography;
 using System.Text;
-using Logistics.Application.Abstractions.Email;
+using Logistics.Application.Abstractions.Communications;
 using Microsoft.Extensions.Options;
 
 namespace Logistics.Infrastructure.Communications.Email;

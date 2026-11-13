@@ -1,14 +1,14 @@
 using System.Data.Common;
 using System.Text.RegularExpressions;
-using Logistics.Domain.Entities;
+using Logistics.Application.Abstractions.Context;
 using Logistics.Application.Abstractions.Options;
+using Logistics.Domain.Entities;
 using Logistics.Infrastructure.Persistence.Data;
 using Logistics.Shared.Identity.Policies;
 using Logistics.Shared.Identity.Roles;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using Npgsql;
-using Logistics.Application.Abstractions.Tenancy;
 using CustomClaimTypes = Logistics.Shared.Identity.Claims.CustomClaimTypes;
 
 namespace Logistics.Infrastructure.Persistence.Services;

@@ -1,5 +1,5 @@
-using Logistics.Application.Abstractions.CurrentUser;
-using Logistics.Application.Abstractions.Payments.Stripe;
+using Logistics.Application.Abstractions.Context;
+using Logistics.Application.Abstractions.Payments;
 using Logistics.Application.Common.Extensions;
 using Logistics.Application.Modules.Financial.StripeConnect.Services;
 using Logistics.Domain.Entities;

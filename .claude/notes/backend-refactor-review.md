@@ -166,6 +166,8 @@ Update `AssemblyAnchors`, the arch-tests csproj, `overview.md`, CLAUDE.md ("15 f
   - Not done (not in the approved list): Telegram's own `FixedTimeEquals`.
 - [x] ✅ **`VerifySvix` moved to Communications, done 2026-11-12.** Now `SvixSignature.Verify` in `Infrastructure.Communications/Email/`, next to `ResendWebhookVerifier`; Communications no longer references `Infrastructure.Integrations`. Tests in `Logistics.Infrastructure.Tests/Communications/Email/ResendWebhookVerifierTests.cs`.
 
+- [x] ✅ `Application.Abstractions` regrouped 30 → 14 folders, done 2026-11-13: one flat folder per capability, mostly matching the implementing project (`AI`, `Communications`, `Context`, `Documents`, `Integrations`, `Payments`, `Persistence`, `Routing`, ...); interfaces Application implements for hosts sit in `ApplicationServices/`.
+
 **Inside Application:**
 - [x] ✅ Modules regrouped 6 → 9, done 2026-11-13: `IdentityAccess` split into `Identity` and `Tenancy`; AI features out of `Integrations` into `AI`; `Platform` dissolved into `Reporting`, `Website`, `Tenancy`, `AI` and `Operations` (Portal, Notifications, DataImport); Customers, Documents and Messaging into `Operations`; Accidents merged into `Compliance/Safety`. See `docs/architecture/module-layout.md`.
 - [ ] CustomerUser queries live in `Operations/Portal/Queries`; move them to `Identity/CustomerUsers/Queries`.

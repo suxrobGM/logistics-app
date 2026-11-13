@@ -1,6 +1,6 @@
 using Logistics.Application.Abstractions;
-using Logistics.Application.Abstractions.Accounting;
-using Logistics.Application.Abstractions.CurrentUser;
+using Logistics.Application.Abstractions.Context;
+using Logistics.Application.Abstractions.Integrations;
 using Logistics.Domain.Persistence;
 using Logistics.Domain.Primitives.Enums;
 using Logistics.Mediator;

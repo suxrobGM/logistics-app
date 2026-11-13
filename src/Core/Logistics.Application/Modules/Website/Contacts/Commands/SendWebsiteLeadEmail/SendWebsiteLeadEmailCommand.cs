@@ -1,4 +1,4 @@
-using Logistics.Application.Abstractions.Email.Models;
+using Logistics.Application.Abstractions.Communications.EmailModels;
 using Logistics.Shared.Models;
 
 namespace Logistics.Application.Modules.Website.Contacts.Commands;

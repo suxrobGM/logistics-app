@@ -1,4 +1,4 @@
-using Logistics.Application.Abstractions.Agents;
+using Logistics.Application.Abstractions.AI;
 
 namespace Logistics.Infrastructure.AI.Agents;
 

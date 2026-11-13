@@ -1,12 +1,12 @@
+using Logistics.Application.Abstractions.Context;
+using Logistics.Application.Abstractions.Payments;
 using Logistics.DbMigrator.Abstractions;
 using Logistics.DbMigrator.Models;
 using Logistics.Domain.Entities;
-using Stripe;
-using Stripe.Billing;
-using Logistics.Application.Abstractions.SystemSettings;
-using Logistics.Application.Abstractions.Payments.Stripe;
 using Logistics.Infrastructure.Payments.Stripe;
 using Microsoft.Extensions.Options;
+using Stripe;
+using Stripe.Billing;
 
 namespace Logistics.DbMigrator.Seeders.Infrastructure;
 

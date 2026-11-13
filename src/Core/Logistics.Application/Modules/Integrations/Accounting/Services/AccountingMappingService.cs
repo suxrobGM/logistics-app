@@ -1,5 +1,5 @@
 using System.Linq.Expressions;
-using Logistics.Application.Abstractions.Accounting;
+using Logistics.Application.Abstractions.Integrations;
 using Logistics.Domain.Core;
 using Logistics.Domain.Entities;
 using Logistics.Domain.Persistence;

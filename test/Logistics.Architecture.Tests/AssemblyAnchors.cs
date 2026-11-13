@@ -1,7 +1,7 @@
 using ArchUnitNET.Domain;
 using ArchUnitNET.Fluent;
 using ArchUnitNET.Loader;
-using Logistics.Application.Abstractions.CurrentUser;
+using Logistics.Application.Abstractions.Context;
 using static ArchUnitNET.Fluent.ArchRuleDefinition;
 using ArchitectureModel = ArchUnitNET.Domain.Architecture;
 using Assembly = System.Reflection.Assembly;

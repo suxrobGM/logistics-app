@@ -1,5 +1,4 @@
-using Logistics.Application.Abstractions.AICopilot;
-using Logistics.Application.Abstractions.AIDispatch;
+using Logistics.Application.Abstractions.AI;
 using Logistics.Application.Abstractions.BackgroundJobs;
 using Logistics.Application.Modules.AI.AICopilot.Commands;
 using Logistics.Application.Tests.TestKit;

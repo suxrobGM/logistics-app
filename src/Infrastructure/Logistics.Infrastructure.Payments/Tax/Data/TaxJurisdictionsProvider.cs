@@ -1,4 +1,4 @@
-using Logistics.Application.Abstractions.Tax;
+using Logistics.Application.Abstractions.Payments;
 using Logistics.Domain.Primitives;
 
 namespace Logistics.Infrastructure.Payments.Tax.Data;

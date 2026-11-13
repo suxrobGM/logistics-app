@@ -1,6 +1,6 @@
 using Logistics.Application.Abstractions;
-using Logistics.Application.Abstractions.Email.Models;
-using Logistics.Application.Abstractions.Email;
+using Logistics.Application.Abstractions.Communications;
+using Logistics.Application.Abstractions.Communications.EmailModels;
 using Logistics.Application.Modules.Operations.Tracking.Services;
 using Logistics.Domain.Entities;
 using Logistics.Domain.Persistence;

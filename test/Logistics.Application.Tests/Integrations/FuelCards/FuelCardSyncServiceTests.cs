@@ -1,4 +1,4 @@
-using Logistics.Application.Abstractions.FuelCards;
+using Logistics.Application.Abstractions.Integrations;
 using Logistics.Application.Modules.Integrations.FuelCards.Services;
 using Logistics.Domain.Entities;
 using Logistics.Domain.Persistence;

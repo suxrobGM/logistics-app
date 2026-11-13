@@ -1,5 +1,5 @@
-using Logistics.Application.Abstractions.Email;
-using Logistics.Application.Abstractions.Email.Models;
+using Logistics.Application.Abstractions.Communications;
+using Logistics.Application.Abstractions.Communications.EmailModels;
 using Logistics.Infrastructure.Communications;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;

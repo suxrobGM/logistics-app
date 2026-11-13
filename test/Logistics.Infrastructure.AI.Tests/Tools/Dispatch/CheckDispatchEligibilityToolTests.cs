@@ -1,8 +1,8 @@
-using Logistics.Infrastructure.AI.Tools.Dispatch;
 using System.Text.Json;
 using System.Text.Json.Nodes;
-using Logistics.Application.Abstractions.Dispatch;
+using Logistics.Application.Abstractions.ApplicationServices;
 using Logistics.Infrastructure.AI.Tools;
+using Logistics.Infrastructure.AI.Tools.Dispatch;
 using NSubstitute;
 using Xunit;
 

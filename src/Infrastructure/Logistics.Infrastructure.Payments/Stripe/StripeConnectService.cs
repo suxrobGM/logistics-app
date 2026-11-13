@@ -1,11 +1,10 @@
+using Logistics.Application.Abstractions.Payments;
 using Logistics.Domain.Entities;
 using Logistics.Domain.Primitives.Enums;
 using Logistics.Domain.Primitives.Geo;
 using Microsoft.Extensions.Logging;
 using Stripe;
 using Stripe.Checkout;
-using Logistics.Application.Abstractions.Payments;
-using Logistics.Application.Abstractions.Payments.Stripe;
 using Address = Logistics.Domain.Primitives.ValueObjects.Address;
 
 namespace Logistics.Infrastructure.Payments.Stripe;

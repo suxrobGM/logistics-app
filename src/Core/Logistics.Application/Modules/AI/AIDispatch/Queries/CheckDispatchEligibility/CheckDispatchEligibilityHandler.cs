@@ -1,5 +1,5 @@
 using Logistics.Application.Abstractions;
-using Logistics.Application.Abstractions.Dispatch;
+using Logistics.Application.Abstractions.ApplicationServices;
 using Logistics.Mediator;
 using Logistics.Shared.Models;
 

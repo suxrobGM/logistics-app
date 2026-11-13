@@ -1,6 +1,6 @@
 using System.ComponentModel;
-using Logistics.Application.Abstractions.Agents;
-using Logistics.Application.Abstractions.Dispatch;
+using Logistics.Application.Abstractions.AI;
+using Logistics.Application.Abstractions.ApplicationServices;
 using Logistics.Application.Modules.Operations.Loads.Queries;
 using Logistics.Domain.Persistence;
 using Logistics.Domain.Primitives.Enums;

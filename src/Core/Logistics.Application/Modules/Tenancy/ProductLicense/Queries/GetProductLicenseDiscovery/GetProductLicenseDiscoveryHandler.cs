@@ -1,4 +1,5 @@
 using Logistics.Application.Abstractions;
+using Logistics.Application.Abstractions.ApplicationServices;
 using Logistics.Application.Abstractions.ProductLicense;
 using Logistics.Mediator;
 using Logistics.Shared.Models;

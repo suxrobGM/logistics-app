@@ -1,5 +1,5 @@
 using Logistics.Application.Abstractions;
-using Logistics.Application.Abstractions.AIDispatch;
+using Logistics.Application.Abstractions.AI;
 using Logistics.Application.Common.Extensions;
 using Logistics.Domain.Entities;
 using Logistics.Domain.Extensions;

@@ -1,10 +1,10 @@
+using Logistics.Application.Abstractions.Payments;
 using Logistics.Infrastructure.Payments.Tax.Data;
 using Logistics.Infrastructure.Payments.Tax.Manual;
 using Logistics.Infrastructure.Payments.Tax.Stripe;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
-using Logistics.Application.Abstractions.Tax;
 
 namespace Logistics.Infrastructure.Payments.Tax;
 

@@ -1,10 +1,9 @@
+using Logistics.Application.Abstractions.Context;
 using Logistics.DbMigrator.Abstractions;
 using Logistics.DbMigrator.Models;
 using Logistics.DbMigrator.Regions;
 using Logistics.Domain.Entities;
 using Logistics.Domain.Primitives.Enums;
-using Logistics.Application.Abstractions.Features;
-using Logistics.Application.Abstractions.Tenancy;
 using Microsoft.EntityFrameworkCore;
 
 namespace Logistics.DbMigrator.Seeders.Infrastructure;

@@ -1,5 +1,5 @@
 using System.ComponentModel;
-using Logistics.Application.Abstractions.Agents;
+using Logistics.Application.Abstractions.AI;
 using Logistics.Application.Modules.Compliance.Inspections.Queries;
 using Logistics.Mediator;
 using Logistics.Shared.Identity.Policies;

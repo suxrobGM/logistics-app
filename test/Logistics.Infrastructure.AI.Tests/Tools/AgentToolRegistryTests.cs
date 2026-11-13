@@ -1,7 +1,7 @@
-using Logistics.Application.Abstractions.Agents;
-using Logistics.Shared.Identity.Policies;
+using Logistics.Application.Abstractions.AI;
 using Logistics.Domain.Primitives.Enums;
 using Logistics.Infrastructure.AI.Tools;
+using Logistics.Shared.Identity.Policies;
 using Xunit;
 
 namespace Logistics.Infrastructure.AI.Tests.Tools;

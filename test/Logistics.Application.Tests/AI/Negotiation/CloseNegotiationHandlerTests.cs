@@ -1,5 +1,5 @@
 using System.Linq.Expressions;
-using Logistics.Application.Abstractions.AIDispatch;
+using Logistics.Application.Abstractions.AI;
 using Logistics.Application.Modules.AI.Negotiation.Commands;
 using Logistics.Application.Modules.AI.Negotiation.Services;
 using Logistics.Application.Tests.TestKit;

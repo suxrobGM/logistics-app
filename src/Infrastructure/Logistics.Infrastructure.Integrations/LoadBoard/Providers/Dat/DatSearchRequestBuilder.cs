@@ -1,4 +1,4 @@
-using Logistics.Application.Abstractions.LoadBoard;
+using Logistics.Application.Abstractions.Integrations;
 using Logistics.Shared.Models;
 
 namespace Logistics.Infrastructure.Integrations.LoadBoard.Providers.Dat;
