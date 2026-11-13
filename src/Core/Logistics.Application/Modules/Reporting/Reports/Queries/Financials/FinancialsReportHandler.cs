@@ -15,7 +15,6 @@ internal sealed class FinancialsReportHandler(ITenantUnitOfWork tenantUow)
     {
         var invoicesQuery = tenantUow.Repository<LoadInvoice>().Query()
             .Where(i => InvoiceStatuses.Receivable.Contains(i.Status));
-        var expenseQuery = tenantUow.Repository<Expense>().Query();
 
         if (req.StartDate != default)
         {
@@ -58,7 +57,7 @@ internal sealed class FinancialsReportHandler(ITenantUnitOfWork tenantUow)
 
         var topCustomers = GetTopCustomersByValue(invoices);
         var statusDistribution = GetStatusDistribution(invoices, fullyPaidInvoices, partiallyPaidInvoices, unpaidInvoices);
-        var revenueTrends = CalculateRevenueTrends(invoices, expenseQuery, req.StartDate, req.EndDate);
+        var revenueTrends = await CalculateRevenueTrendsAsync(invoices, req.StartDate, req.EndDate, ct);
         List<FinancialMetricDto> financialMetrics =
         [
             new() { Metric = "Average Invoice Value", Value = averageInvoiceValue, Unit = "$", Category = "Revenue" },
@@ -102,10 +101,10 @@ internal sealed class FinancialsReportHandler(ITenantUnitOfWork tenantUow)
         while (currentDate <= endDate)
         {
             var monthStart = DateTime.SpecifyKind(new DateTime(currentDate.Year, currentDate.Month, 1), DateTimeKind.Utc);
-            var monthEnd = DateTime.SpecifyKind(monthStart.AddMonths(1).AddDays(-1), DateTimeKind.Utc);
+            var nextMonthStart = monthStart.AddMonths(1);
 
             var monthInvoices = invoices
-                .Where(i => i.CreatedAt >= monthStart && i.CreatedAt <= monthEnd)
+                .Where(i => i.CreatedAt >= monthStart && i.CreatedAt < nextMonthStart)
                 .ToList();
 
             var monthTotal = monthInvoices.Sum(i => i.Total.Amount);
@@ -155,32 +154,36 @@ internal sealed class FinancialsReportHandler(ITenantUnitOfWork tenantUow)
         };
     }
 
-    private static List<RevenueTrendDto> CalculateRevenueTrends(
+    /// <summary>Cash-basis net profit per month: paid invoices minus approved expenses, payroll and factoring fees.</summary>
+    private async Task<List<RevenueTrendDto>> CalculateRevenueTrendsAsync(
         List<LoadInvoice> invoices,
-        IQueryable<Expense> expenseQuery,
         DateTime startDate,
-        DateTime endDate)
+        DateTime endDate,
+        CancellationToken ct)
     {
+        var start = startDate == default ? DateTime.UtcNow.AddMonths(-6) : startDate;
+        var end = endDate == default ? DateTime.UtcNow : endDate;
+        var firstMonth = DateTime.SpecifyKind(new DateTime(start.Year, start.Month, 1), DateTimeKind.Utc);
+        var afterLastMonth = DateTime.SpecifyKind(new DateTime(end.Year, end.Month, 1), DateTimeKind.Utc).AddMonths(1);
+
+        var expensesByMonth = await SumExpensesByMonthAsync(firstMonth, afterLastMonth, ct);
+        var payrollByMonth = await SumPayrollByMonthAsync(firstMonth, afterLastMonth, ct);
+        var factoringByMonth = await SumFactoringFeesByMonthAsync(firstMonth, afterLastMonth, ct);
+
         var trends = new List<RevenueTrendDto>();
-        var currentDate = startDate == default ? DateTime.UtcNow.AddMonths(-6) : DateTime.SpecifyKind(startDate, DateTimeKind.Utc);
-        var end = endDate == default ? DateTime.UtcNow : DateTime.SpecifyKind(endDate, DateTimeKind.Utc);
-
-        while (currentDate <= end)
+        for (var monthStart = firstMonth; monthStart < afterLastMonth; monthStart = monthStart.AddMonths(1))
         {
-            var monthStart = DateTime.SpecifyKind(new DateTime(currentDate.Year, currentDate.Month, 1), DateTimeKind.Utc);
-            var monthEnd = DateTime.SpecifyKind(monthStart.AddMonths(1).AddDays(-1), DateTimeKind.Utc);
-
+            var nextMonthStart = monthStart.AddMonths(1);
             var monthInvoices = invoices
-                .Where(i => i.CreatedAt >= monthStart && i.CreatedAt <= monthEnd)
+                .Where(i => i.CreatedAt >= monthStart && i.CreatedAt < nextMonthStart)
                 .ToList();
 
             var revenue = monthInvoices.Sum(i => i.Total.Amount);
             var paid = monthInvoices.Sum(i => i.AmountPaid);
-
-            // Query actual expenses for this month
-            var expenses = expenseQuery
-                .Where(e => e.ExpenseDate >= monthStart && e.ExpenseDate <= monthEnd)
-                .Sum(e => e.Amount.Amount);
+            var month = (monthStart.Year, monthStart.Month);
+            var expenses = expensesByMonth.GetValueOrDefault(month)
+                + payrollByMonth.GetValueOrDefault(month)
+                + factoringByMonth.GetValueOrDefault(month);
 
             var profit = paid - expenses;
             var profitMargin = revenue > 0 ? (double)(profit / revenue) * 100 : 0;
@@ -193,10 +196,45 @@ internal sealed class FinancialsReportHandler(ITenantUnitOfWork tenantUow)
                 Expenses = expenses,
                 ProfitMargin = profitMargin
             });
-
-            currentDate = currentDate.AddMonths(1);
         }
 
         return trends;
+    }
+
+    private async Task<Dictionary<(int Year, int Month), decimal>> SumExpensesByMonthAsync(
+        DateTime from, DateTime to, CancellationToken ct)
+    {
+        var rows = await tenantUow.Repository<Expense>().Query()
+            .Where(e => e.Status == ExpenseStatus.Approved || e.Status == ExpenseStatus.Paid)
+            .Where(e => e.ExpenseDate >= from && e.ExpenseDate < to)
+            .GroupBy(e => new { e.ExpenseDate.Year, e.ExpenseDate.Month })
+            .Select(g => new { g.Key.Year, g.Key.Month, Total = g.Sum(e => e.Amount.Amount) })
+            .ToListAsync(ct);
+        return rows.ToDictionary(r => (r.Year, r.Month), r => r.Total);
+    }
+
+    private async Task<Dictionary<(int Year, int Month), decimal>> SumPayrollByMonthAsync(
+        DateTime from, DateTime to, CancellationToken ct)
+    {
+        var fromDay = DateOnly.FromDateTime(from);
+        var toDay = DateOnly.FromDateTime(to);
+        var rows = await tenantUow.Repository<PayrollInvoice>().Query()
+            .Where(p => p.Status == InvoiceStatus.Approved || InvoiceStatuses.Receivable.Contains(p.Status))
+            .Where(p => p.PeriodEnd >= fromDay && p.PeriodEnd < toDay)
+            .GroupBy(p => new { p.PeriodEnd.Year, p.PeriodEnd.Month })
+            .Select(g => new { g.Key.Year, g.Key.Month, Total = g.Sum(p => p.Total.Amount) })
+            .ToListAsync(ct);
+        return rows.ToDictionary(r => (r.Year, r.Month), r => r.Total);
+    }
+
+    private async Task<Dictionary<(int Year, int Month), decimal>> SumFactoringFeesByMonthAsync(
+        DateTime from, DateTime to, CancellationToken ct)
+    {
+        var rows = await tenantUow.Repository<FactoringBatchItem>().Query()
+            .Where(f => f.FeeAmount != null && f.FundedAt >= from && f.FundedAt < to)
+            .GroupBy(f => new { f.FundedAt!.Value.Year, f.FundedAt!.Value.Month })
+            .Select(g => new { g.Key.Year, g.Key.Month, Total = g.Sum(f => f.FeeAmount!.Value) })
+            .ToListAsync(ct);
+        return rows.ToDictionary(r => (r.Year, r.Month), r => r.Total);
     }
 }
