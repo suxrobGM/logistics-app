@@ -1,46 +1,27 @@
 ---
 name: add-hangfire-job
-description: Add a recurring or on-demand Hangfire background job (nightly sync, reminder sweep, cleanup, quarter close). Use when work must run on a schedule or outside a request - e.g. "sync fuel card transactions nightly", "email drivers whose licence expires in 30 days". Codifies the tenant fan-out, the per-tenant DI scope, and the feature gate that [RequiresFeature] cannot provide here.
+description: Add a recurring or on-demand Hangfire background job (nightly sync, reminder sweep, cleanup, quarter close). Use when work must run on a schedule or outside a request - e.g. "sync fuel card transactions nightly", "email drivers whose licence expires in 30 days". Covers tenant fan-out, per-tenant scopes and the feature gate [RequiresFeature] can't provide here.
 ---
 
 # Add a Hangfire job
 
-Jobs live in `src/Presentation/Logistics.API/Jobs/`. There is no base class - a job is a plain class
-with a primary constructor and a `static ScheduleJobs()`.
+Jobs live in `src/Presentation/Logistics.API/Jobs/`. **They bypass the request pipeline**: no feature check, no validation, no tenant from a request. Every guard a handler gets for free you write yourself.
 
-**The thing that makes jobs different from everything else in this repo: they do not go through the
-request pipeline.** No `FeatureCheckBehaviour`, no validation behaviour, no `ICurrentTenantAccessor`
-populated from a request. Every guard you get for free in a handler you must write yourself here.
+## Decide
 
-## Decide first
+- **No class needed** if the job is one call to a service that handles tenants itself: add a `RecurringJob.AddOrUpdate<IThingService>` line to `Jobs/Scheduling/RecurringJobs.cs`. Hangfire resolves it with no tenant set.
+- **Recurring** jobs have a `static ScheduleJobs()`. **On-demand** jobs are enqueued by a runner (`AIDispatchTurnJob` + `HangfireAIDispatchTurnRunner`).
+- **Per-tenant** (almost always): fan out with `TenantJobRunner.ForEachTenantAsync`. Global master-DB work uses one scope.
 
-1. **Does it need a job class at all?** If the whole job is one call to an application service that
-   works on the master DB or loops over the tenants itself, add one `RecurringJob.AddOrUpdate<IThingService>`
-   entry to `Jobs/Scheduling/RecurringJobs.cs` and stop here. Hangfire resolves the service in a scope with no
-   tenant set, so a service that reads tenant data without setting the tenant reads the wrong database.
-2. **Recurring or on-demand?** Recurring → `RecurringJob.AddOrUpdate` in `ScheduleJobs()`. On-demand →
-   no `ScheduleJobs()`; something enqueues it (see `AIDispatchTurnJob` + `HangfireAIDispatchTurnRunner`,
-   `NegotiationWakeJob` + `HangfireNegotiationWakeRunner`, `CommandEnqueuerJob` + `HangfireCommandEnqueuer`).
-3. **Per-tenant or global?** Almost always per-tenant → fan out with `TenantJobRunner.ForEachTenantAsync`.
-   Global (master DB only, e.g. the webhook event cleanup in `RecurringJobs.cs`) → one scope, no fan-out.
-4. **Is the work behind a tenant feature flag?** If yes, you must check it explicitly.
+## Write it
 
-## 1. The job class
-
-`src/Presentation/Logistics.API/Jobs/{Name}Job.cs`. Copy the shape from `FuelCardSyncJob.cs`:
+Copy `FuelCardSyncJob.cs`:
 
 ```csharp
-public class ThingSyncJob(
-    ILogger<ThingSyncJob> logger,
-    IServiceScopeFactory scopeFactory)
+public class ThingSyncJob(ILogger<ThingSyncJob> logger, IServiceScopeFactory scopeFactory)
 {
-    public static void ScheduleJobs()
-    {
-        RecurringJob.AddOrUpdate<ThingSyncJob>(
-            "thing-sync",                                   // kebab-case id
-            job => job.SyncAllTenantsAsync(CancellationToken.None),
-            Cron.Daily(2));
-    }
+    public static void ScheduleJobs() =>
+        RecurringJob.AddOrUpdate<ThingSyncJob>("thing-sync", job => job.SyncAllTenantsAsync(CancellationToken.None), Cron.Daily(2));
 
     [AutomaticRetry(Attempts = 2)]
     public Task SyncAllTenantsAsync(CancellationToken ct) =>
@@ -48,96 +29,25 @@ public class ThingSyncJob(
 
     private async Task SyncTenantAsync(IServiceScope scope, Tenant tenant, CancellationToken ct)
     {
-        // ...
+        var features = scope.ServiceProvider.GetRequiredService<IFeatureService>();
+        if (!await features.IsFeatureEnabledAsync(tenant.Id, TenantFeature.Things))
+        {
+            return;
+        }
+
+        await scope.ServiceProvider.GetRequiredService<IThingSyncService>().SyncAsync(ct);
     }
 }
 ```
 
-**Constructor injection is limited to `ILogger<T>` and `IServiceScopeFactory`** (plus `IHubContext<>`
-where the job pushes SignalR updates). The job instance is resolved from the **root** container, so
-anything scoped that you inject here is captured for the lifetime of the process. Everything else is
-pulled from the per-tenant scope inside the body.
+- **Constructor takes only `ILogger<T>`, `IServiceScopeFactory`** (and `IHubContext<>` for SignalR). The job comes from the root container; anything scoped injected there lives forever. Resolve everything else from the scope.
+- **Feature gate inside the body.** The runner doesn't check features on purpose (`IftaQuarterCloseJob` runs part of its work ungated).
+- **Tenant:** the runner already sets it per scope. Only on-demand jobs given a tenant id call `await tenantUow.SetCurrentTenantByIdAsync(tenantId)` themselves, before any `Repository<T>()`; otherwise they silently read another tenant's rows.
+- Keep the job as glue; the logic goes in an application service with a unit test. Don't add a per-tenant try/catch; the runner already isolates and logs each tenant.
 
-## 2. Register it
+## Register it
 
-One line in the `ScheduleJobs(this WebApplication app)` extension in
-`src/Presentation/Logistics.API/Setup.cs`:
+Add `ThingSyncJob.ScheduleJobs();` to `ScheduleJobs(this WebApplication app)` in `src/Presentation/Logistics.API/Setup.cs`. **Forget this and the job never runs, silently.**
 
-```csharp
-ThingSyncJob.ScheduleJobs();
-```
-
-If you **rename** an existing recurring id, the old entry stays orphaned in Hangfire storage and keeps
-firing. Add a cleanup line next to the others:
-
-```csharp
-RecurringJob.RemoveIfExists("old-id");
-```
-
-## 3. Feature gate (if the work is flag-gated)
-
-`TenantJobRunner.ForEachTenantAsync` deliberately does **not** check features - its XML doc explains
-why: `IftaQuarterCloseJob` needs its breadcrumb purge to run for every tenant while the quarter
-snapshot stays IFTA-gated. So the check goes in **your body**, first thing:
-
-```csharp
-// Jobs bypass the request pipeline, so the [RequiresFeature] gate on the commands does not
-// apply here - check explicitly, or a downgraded tenant keeps having expenses written.
-var featureService = scope.ServiceProvider.GetRequiredService<IFeatureService>();
-if (!await featureService.IsFeatureEnabledAsync(tenant.Id, TenantFeature.FuelCards))
-{
-    return;
-}
-```
-
-8 of the current 20 recurring jobs do this (7 in the job body, plus `AccountingSyncJob` inside
-`AccountingSyncService`). If your job writes anything a downgraded tenant shouldn't get, it needs to
-be the 9th.
-
-## 4. Tenant context
-
-Per-tenant work inside `ForEachTenantAsync` already has the tenant set - the runner calls
-`SetCurrentTenant(tenant)` on each scope before your body runs. Don't set it again.
-
-Only on-demand jobs that receive a tenant id set it themselves (`AIDispatchTurnJob`,
-`AICopilotTurnJob`, `NegotiationWakeJob`):
-
-```csharp
-var tenantUow = scope.ServiceProvider.GetRequiredService<ITenantUnitOfWork>();
-await tenantUow.SetCurrentTenantByIdAsync(tenantId);   // BEFORE any Repository<T>() call
-```
-
-Calling `Repository<T>()` before the tenant is set reads whatever tenant the scope last resolved.
-It does not throw. It returns the wrong tenant's rows.
-
-## 5. Keep the body thin
-
-Put the real work in an application service (`Logistics.Application/Modules/{Module}/{Feature}/Services/`)
-and have the job orchestrate: resolve → gate → call service → log. That service is what
-gets unit-tested; the job itself is glue.
-
-`TenantJobRunner` already wraps each tenant in its own try/catch and logs, so **don't** add a
-per-tenant try/catch that swallows - you'd hide the failure from the cycle log.
-
-## Checklist
-
-- [ ] `Jobs/{Name}Job.cs` created; only `ILogger<T>` / `IServiceScopeFactory` (/ `IHubContext<>`) in the constructor
-- [ ] `[AutomaticRetry(Attempts = 2)]` on the entry method
-- [ ] `static ScheduleJobs()` with a kebab-case recurring id and a `Cron.*` schedule
-- [ ] Called from `Setup.cs` `ScheduleJobs(this WebApplication app)`
-- [ ] Renamed an id? `RecurringJob.RemoveIfExists("old-id")` added
-- [ ] Per-tenant work fans out via `TenantJobRunner.ForEachTenantAsync`
-- [ ] Feature-gated work checks `IFeatureService` **inside the body**
-- [ ] On-demand job with a tenant id: `await tenantUow.SetCurrentTenantByIdAsync(tenantId)` precedes every `Repository<T>()` call (fan-out scopes already have the tenant set)
-- [ ] All services resolved from the per-tenant `IServiceScope`, none from the constructor
-- [ ] Real logic lives in an application service and has a unit test
-
-Two failures the checklist won't catch: **forgetting the `Setup.cs` line** compiles and simply never
-runs, with nothing reporting it; and a **`Cron.Minutely()` job doing tenant fan-out** stacks a scope
-per tenant per minute - `EldSyncJob`'s `Cron.MinuteInterval(5)` is the floor.
-
-## Related
-
-- `.claude/rules/backend/testing.md` - test the service, not the job
-- `add-tenant-feature-flag` - if you're introducing the flag as well as the job
-- `feature-map.md` → the feature's row, which should list the job under **Jobs**
+- Renamed a recurring id? Add `RecurringJob.RemoveIfExists("old-id");` or the old entry keeps firing.
+- Fan-out jobs run no more often than every 5 minutes (`EldSyncJob`'s `Cron.MinuteInterval(5)`).

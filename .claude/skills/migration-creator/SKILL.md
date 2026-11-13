@@ -1,99 +1,45 @@
 ﻿---
 name: migration-creator
-description: Creates EF Core migrations for master or tenant databases. Use when adding new entities, modifying existing ones, or changing relationships. Follow the workflow to ensure correct migration generation and application.
+description: Create EF Core migrations for the master or tenant database. Use when adding or changing entities, properties or relationships, or when squashing a branch's unshipped migrations.
 ---
 
-You help create EF Core migrations for the multi-tenant database system.
+# Create a migration
 
-## Database Types
+| Context | Holds | Output folder |
+| --- | --- | --- |
+| `TenantDbContext` | Per-company data (loads, trips, employees) | `Migrations/Tenant` |
+| `MasterDbContext` | Tenants, subscriptions, users | `Migrations/Master` |
+| `PersistedGrantDbContext` | IdentityServer grants; changes only on package upgrades | `Migrations/OperationalStore` |
 
-- **Master DB**: Contains Tenants, Subscriptions, SuperAdmin users
-  - DbContext: `MasterDbContext`
-  - Project: `Logistics.Infrastructure.Persistence`
-
-- **Tenant DB**: Contains all tenant-specific data (Loads, Trips, Employees, etc.)
-  - DbContext: `TenantDbContext`
-  - Project: `Logistics.Infrastructure.Persistence`
-
-- **Identity operational store** (in the master DB): IdentityServer refresh tokens and grants
-  - DbContext: `PersistedGrantDbContext` (Open.IdentityServer package; configured by `Data/OperationalStoreSetup.cs`), output `Migrations/OperationalStore`
-  - Only changes on Open.IdentityServer package upgrades with schema changes - never for app entities
-  - Never run `dotnet ef database update` against this context: its design-time factory ignores
-    `ConnectionStrings__MasterDatabase` and always targets `localhost:5432`. Use the DbMigrator.
-
-## Creating Migrations
-
-Use the helper script:
+All three live in `src/Infrastructure/Logistics.Infrastructure.Persistence`.
 
 ```bash
-scripts/add-migration.cmd
+dotnet ef migrations add AddDriverLicenseExpiry --project src/Infrastructure/Logistics.Infrastructure.Persistence --context TenantDbContext -o Migrations/Tenant
 ```
 
-Or manually:
+(`scripts/add-migration.cmd` wraps this.) Name it for what it does in PascalCase. EF adds the timestamp, so no version numbers or dates. Read the generated file before committing.
 
-**For Master DB:**
-
-```bash
-dotnet ef migrations add {MigrationName} --project src/Infrastructure/Logistics.Infrastructure.Persistence --context MasterDbContext -o Migrations/Master
-```
-
-**For Tenant DB:**
-
-```bash
-dotnet ef migrations add {MigrationName} --project src/Infrastructure/Logistics.Infrastructure.Persistence --context TenantDbContext -o Migrations/Tenant
-```
-
-**For the identity operational store (package upgrades only):**
-
-```bash
-dotnet ef migrations add {MigrationName} --project src/Infrastructure/Logistics.Infrastructure.Persistence --context PersistedGrantDbContext -o Migrations/OperationalStore
-```
-
-## Workflow
-
-1. Identify which database the entity change affects (Master or Tenant)
-2. Review the entity changes to understand the migration scope
-3. Generate the migration with a **concise descriptive name** (PascalCase) that summarizes what changed
-4. Review the generated migration file for correctness
-
-## Applying Migrations Locally
+## Apply locally
 
 ```bash
 DOTNET_ENVIRONMENT=Development dotnet run --project src/Presentation/Logistics.DbMigrator --no-launch-profile -- --exit
 ```
 
-`--exit` stops the host after migrate + seed (without it, it runs forever). **Always pin
-`DOTNET_ENVIRONMENT=Development`** - a missing environment silently targets the production DB.
+Always pin the environment. `--exit` stops after migrate and seed. Never `dotnet ef database update` the operational store: its design-time factory ignores the connection string.
 
-## Migration Naming
+## Unshipped migrations
 
-Use a short, descriptive PascalCase name that says what the migration does - EF Core auto-prefixes the timestamp, so do **not** add `Version_NNNN`, numeric suffixes, or a date.
-
-- Good: `InitialSchema`, `AddDriverLicenseExpiry`, `RenameLoadStatus`, `AddTenantVatNumber`, `DropLegacyDispatchTable`
-- Bad: `Version_0042`, `Migration_5`, `Update3`, `Changes_2026_05_19`
-
-The first migration for a database is conventionally named `InitialSchema` (or `InitialCreate`).
-
-## Amending a migration that hasn't shipped
-
-If the migration is only on your branch (`git branch -a --contains <sha>` - not on `main` means no
-real DB has applied it) and is the **latest** for that context, regenerate it rather than stacking
-a corrective one:
+If the latest migration exists only on your branch, regenerate it instead of stacking a fix:
 
 ```bash
 dotnet ef migrations remove --project src/Infrastructure/Logistics.Infrastructure.Persistence --context TenantDbContext --force
-dotnet ef migrations add {SameName} --project src/Infrastructure/Logistics.Infrastructure.Persistence --context TenantDbContext -o Migrations/Tenant
 ```
 
-The timestamp changes, so anyone who applied the old one locally must drop and re-migrate. The
-connection error `remove` prints when Postgres is unreachable is just the applied-check; `--force`
-removes the files anyway. Never do this to a migration already on `main`.
+Then add it again under the same name. Never do this to a migration on `main`. The connection error `remove` prints without Postgres is harmless with `--force`.
+
+Every migration writes a ~7,000-line `*.Designer.cs` snapshot, and GitHub's PR line count ignores `.gitattributes`. To shrink a PR, squash a branch's unshipped migrations to one per context.
 
 ## Traps
 
-- **Complex types cannot be part of a unique index.** If uniqueness spans a `ComplexProperty`
-  member, EF can't express it and there is no DB guard - every write path must probe in code
-  (`IftaTaxRateUniqueness.FindConflictAsync`), and the value object needs a normalizing factory
-  (`TaxJurisdiction.Create`) so casing or empty-vs-null can't defeat the comparison.
-- Seeders in `src/Presentation/Logistics.DbMigrator/Seeders/` are **explicitly registered** -
-  adding the file is not enough.
+- **Complex types can't be in a unique index.** Uniqueness over a `ComplexProperty` member needs an injected checker on every write path (`IIftaTaxRateDuplicateChecker`) and a normalizing factory on the value object (`TaxJurisdiction.Create`).
+- **Seeders are registered by hand** in `AddSeeders()` (`DbMigrator/Extensions/ServiceCollectionExtensions.cs`). An unregistered seeder is silently skipped.

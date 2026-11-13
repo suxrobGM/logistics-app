@@ -1,166 +1,56 @@
 ---
 name: add-integration-provider
-description: Add a third-party integration provider - a new ELD (Samsara/Motive/Geotab-style), load board (DAT-style), fuel card (WEX/EFS), or accounting (QuickBooks) vendor, or a whole new integration family. Use when wiring an external vendor API into the platform. Covers the keyed-service provider registration, options binding, secrets, and the frontend provider constants that silently break when only one of a family's lists is updated.
+description: Add a third-party integration provider - a new ELD (Samsara/Motive/Geotab-style), load board (DAT-style), fuel card (WEX/EFS) or accounting (QuickBooks) vendor, or a whole new integration family. Use when wiring an external vendor API. Covers keyed-service registration, options, secrets, and the frontend constants that break silently when only one list is updated.
 ---
 
 # Add an integration provider
 
-Four families exist today, all on the same shape (providers are added per pilot carrier, so no list here is final):
+All families live in `src/Infrastructure/Logistics.Infrastructure.Integrations/` and share one shape. Providers are added per pilot carrier, so no list is final.
 
-All of them are folders of one project, `src/Infrastructure/Logistics.Infrastructure.Integrations/`.
-
-| Family     | Folder        | Enum                     | Factory                     |
-| ---------- | ------------- | ------------------------ | --------------------------- |
-| ELD / HOS  | `Eld/`        | `EldProviderType`        | `EldProviderFactory`        |
-| Load board | `LoadBoard/`  | `LoadBoardProviderType`  | `LoadBoardProviderFactory`  |
-| Fuel cards | `FuelCards/`  | `FuelCardProviderType`   | `FuelCardProviderFactory`   |
+| Family | Folder | Enum | Factory |
+| --- | --- | --- | --- |
+| ELD / HOS | `Eld/` | `EldProviderType` | `EldProviderFactory` |
+| Load board | `LoadBoard/` | `LoadBoardProviderType` | `LoadBoardProviderFactory` |
+| Fuel cards | `FuelCards/` | `FuelCardProviderType` | `FuelCardProviderFactory` |
 | Accounting | `Accounting/` | `AccountingProviderType` | `AccountingProviderFactory` |
 
-Each provider is a .NET keyed service under its provider-type enum value. The family factory
-resolves it with `serviceProvider.GetRequiredProvider<I{Family}ProviderService>(type, "Family")` and
-answers `IsProviderSupported` with `HasProvider`, both in `ProviderRegistrationExtensions`
-(`Integrations/Common/`). Every family registrar calls
-`AddProviderIntegration<TOptions, TFactoryService, TFactoryImpl>(configuration, sectionName)`.
-**Do not invent a fifth pattern.**
+Each provider is a keyed service under its enum value, resolved through `GetRequiredProvider` / `HasProvider` and registered with `AddProviderIntegration` + `AddKeyedProvider` (`Integrations/Common/`). Don't invent another pattern.
 
-## Decide first
+## Before you start
 
-- **Which family?** If none fits, you're adding a _new family_ - see the last section.
-- **Does the enum value already exist?** Several do without an implementation (`EldProviderType`
-  already has `Omnitracs` and `PeopleNet`). Check before adding one; if it exists, skip step 1.
-- **Does the vendor push webhooks, or do we poll?** Push → also use the `add-webhook-handler` skill.
-  Poll → the family's existing sync job picks it up, nothing extra.
-- **What are the credentials?** Only non-secret, install-wide values (`BaseUrl`) go in `appsettings`.
-  Per-tenant `ApiKey` / `ApiSecret` / `WebhookSecret` live on the `{Family}ProviderConfiguration`
-  entity and are entered through the connect dialog.
+- The enum value may already exist without an implementation (`EldProviderType.Omnitracs`). Check.
+- Push webhooks? Also use `add-webhook-handler`. Polling? The family's sync job picks the provider up.
+- Per-tenant credentials (`ApiKey`, `ApiSecret`, `WebhookSecret`) live on the `{Family}ProviderConfiguration` entity, entered in the connect dialog. Only install-wide values like `BaseUrl` go in appsettings.
 
 ## Backend
 
-### 1. Enum value
+1. **Enum value** in `src/Core/Logistics.Domain.Primitives/Enums/Integrations/{Family}/` (ELD: `Enums/Compliance/Eld/`). `[Description]` only when humanizing isn't enough (`TtEld` → "TT ELD").
+2. **`Providers/{Name}/`** in the family folder, copying `Eld/Providers/Geotab/`: `{Name}{Family}Service.cs` (implements `I{Family}ProviderService`), `{Name}Mapper.cs`, `{Name}Models.cs`, `{Name}Options.cs`. A `{Name}Client.cs` only for non-REST vendors.
+   - Reads use `TryGetFromJsonAsync` (logs and returns `default`, never throws). QuickBooks helpers throw on purpose so push failures surface; load board providers use `LoadBoardHttp` behind `ILoadBoardProviderGateway` so errors show per provider. Don't fold these together.
+   - Retries come from the host resilience handler (GET only). Don't add another.
+3. **Options:** add `public {Name}Options? {Name} { get; set; }` to the family options, and read it as `options.Value.{Name} ?? new {Name}Options()` so a missing section falls back to defaults.
+4. **Register** in the family `Registrar.cs`. Without the keyed line the factory throws `NotSupportedException`:
 
-`src/Core/Logistics.Domain.Primitives/Enums/Integrations/{Family}/{Family}ProviderType.cs` (ELD's lives in `Enums/Compliance/Eld/`). Add `[Description]` only when
-`GetDescription()`'s humanization isn't enough (`TtEld` → `"TT ELD"`).
+   ```csharp
+   services.AddHttpClient<NameEldService>();
+   services.AddKeyedProvider<IEldProviderService, NameEldService>(EldProviderType.Name);
+   ```
 
-### 2. Provider implementation
-
-`Providers/{Name}/` inside the family project. The four-file convention (see `Providers/Geotab/`):
-
-- `{Name}EldService.cs` - implements the family's `I{Family}ProviderService`
-- `{Name}Mapper.cs` - vendor payload → domain
-- `{Name}Models.cs` - vendor DTOs
-- `{Name}Options.cs` - this provider's config shape
-
-Add a separate `{Name}Client.cs` only when the vendor isn't a plain REST/JSON API (Geotab does this).
-
-Use `TryGetFromJsonAsync` from `Integrations/Common/` for reads - it never throws, it logs and returns
-`default`. Do **not** copy it into the family folder. (`Integrations/Accounting/`'s QuickBooks helpers
-deliberately _do_ throw so push failures surface. That is not a duplicate - don't fold them together.)
-Load board providers are the other exception: they call `LoadBoardHttp` (throws `LoadBoardApiException`) and
-are reached only through `ILoadBoardProviderGateway`, so a vendor error shows per provider instead of as "no freight".
-
-Retries come from the host's standard resilience handler (`ConfigureHttpClientDefaults` in
-`Logistics.HostDefaults/LogisticsHost.cs`), GET-only via `DisableForUnsafeHttpMethods` - POST/PUT/DELETE
-are never retried. Don't add a provider retry handler on top.
-
-### 3. Options aggregate
-
-Add the property to the family's options root, e.g. `EldOptions.cs`:
-
-```csharp
-public GeotabOptions? Geotab { get; set; }
-```
-
-### 4. DI registration
-
-In the family's `Registrar.cs`, register the service, then key it under its enum value. The keyed
-registration forwards to the service's own registration, so the lifetime stays what you chose here.
-A provider without the keyed line throws `NotSupportedException` from the factory:
-
-```csharp
-services.AddHttpClient<NameEldService>();          // plain REST provider
-// or, when the vendor needs its own client:
-services.AddHttpClient<NameClient>();
-services.AddScoped<NameEldService>();
-
-services.AddKeyedProvider<IEldProviderService, NameEldService>(EldProviderType.Name);
-```
-
-### 5. Configuration
-
-`src/Presentation/Logistics.API/appsettings.json`, the family's section. Only `"LoadBoard"` and
-`"Accounting"` exist today; `"Eld"` and `"FuelCards"` must be created when a provider needs a
-non-default value. Env-var override form is `{Section}__{Provider}__BaseUrl`.
-
-Providers read their options as `options.Value.{Name} ?? new {Name}Options()`, with defaults on the
-options record, so a missing section binds to null and falls back to the defaults instead of
-failing at first call. Keep that shape.
+5. **Config:** non-default values go in the family's section of `Logistics.API/appsettings.json` (create `Eld` / `FuelCards` if missing). Env override: `{Section}__{Provider}__BaseUrl`.
+6. **Test** the mapper against a captured vendor payload.
 
 ## Frontend
 
-### 6. Provider constants
+Constants in `tms-portal/src/app/pages/{family}/components/{family}.constants.ts`. Updating only one list gives a provider you can't pick, or one that shows as a raw enum string.
 
-`projects/tms-portal/src/app/pages/{family}/components/{family}.constants.ts`. The shape differs per
-family:
+- **ELD:** `ELD_PROVIDER_OPTIONS` (dropdown), `ELD_PROVIDER_LABELS` (display), `ELD_WEBHOOK_PROVIDERS` (push vendors; shows the webhook URL).
+- **Fuel cards:** `FUEL_CARD_PROVIDER_OPTIONS` only.
+- **Load boards:** `PROVIDER_LABELS` (typed `Record`, so a gap is a type error) and `PROVIDER_OPTIONS`.
 
-- **ELD** (`eld.constants.ts`): exported `ELD_PROVIDER_OPTIONS` (what the dropdown offers), private
-  `ELD_PROVIDER_LABELS` (how a stored value is displayed), and private `ELD_WEBHOOK_PROVIDERS`
-  (push vendors; drives the webhook URL shown to the tenant). Update all that apply - labels only
-  gives a provider that renders but can't be picked; options only gives a pickable provider that
-  shows as a raw enum string.
-- **Fuel cards** (`fuel-cards.constants.ts`): one list, `FUEL_CARD_PROVIDER_OPTIONS`; labels are
-  looked up from it.
-- **Load boards** (`loadboard.constants.ts`): `PROVIDER_LABELS` covers every enum value (typed
-  `Record<LoadBoardProviderType, string>`, so a missing one is a type error); `PROVIDER_OPTIONS` lists
-  the connectable ones, labelled from `PROVIDER_LABELS`.
+Run `bun run gen:api` (or `gen:api:live`) after the enum change, or the casts to the generated union fail. A new credential layout projects into `<app-provider-connect-dialog>`; never a standalone dialog.
 
-### 7. Regenerate the API client
+Add the provider to `.claude/feature-map.md`.
 
-```bash
-bun run gen:api:live      # requires the API running; or gen:api against a fresh openapi.json
-```
+## A new family
 
-The constants cast snake_case strings to the **generated** union (`"demo" as EldProviderType`). Skip
-the regen after a C# enum change and the cast is a type error.
-
-### 8. Connect dialog
-
-Only if the credential fields differ from the family's existing dialog. It must project into
-`<app-provider-connect-dialog>` (`tms-portal/src/app/shared/components/integrations/provider-connect-dialog/`)
-
-- that component owns the dialog chrome, the `[formRoot]`, the submit and the footer. Keep the typed
-  form in the feature and reset from `(opened)`. Do not build a fourth standalone dialog.
-
-## Checklist
-
-- [ ] Enum value exists (added, or confirmed already present)
-- [ ] `Providers/{Name}/` with service + mapper + models + options
-- [ ] Reads go through `TryGetFromJsonAsync`, not a hand-rolled HTTP helper
-- [ ] Property added to `{Family}Options`
-- [ ] `AddHttpClient` / `AddScoped` plus `AddKeyedProvider` in the family `Registrar.cs`
-- [ ] `appsettings.json` section added if the provider needs a non-default value (create the family section if missing)
-- [ ] Family constants updated (ELD: options + labels + webhook set; fuel cards: options; load boards: labels + options)
-- [ ] `bun run gen:api` run after the enum change
-- [ ] Webhook receiver added via `add-webhook-handler` (push vendors only)
-- [ ] Unit test for the mapper against a captured vendor payload
-- [ ] `feature-map.md` row updated
-
-## Adding a whole new family
-
-Roadmap items like EDI will need this. On top of the above:
-
-1. New `src/Infrastructure/Logistics.Infrastructure.Integrations/{X}/` folder (namespace
-   `Logistics.Infrastructure.Integrations.{X}`) with its own `Registrar`, called from the project's
-   root `Registrar.AddIntegrationsInfrastructure`. No new project.
-2. Port interfaces (`I{X}ProviderService`, `I{X}ProviderFactory`) in
-   `src/Core/Logistics.Application.Abstractions/Integrations/` - **not** in the infrastructure project.
-3. Factory resolving through `GetRequiredProvider` / `HasProvider`; registrar using `AddProviderIntegration` and `AddKeyedProvider`.
-4. **Architecture tests:** nothing to add - the family lives in an assembly that is already
-   anchored. Only a brand-new infrastructure project needs the anchor + `ProjectReference` (CLAUDE.md).
-5. A `{X}ProviderConfiguration` tenant entity + EF configuration + migration (`migration-creator`).
-6. A sync job if the vendor is polled (`add-hangfire-job`).
-
-## Related
-
-- `add-webhook-handler` - inbound webhooks from the vendor
-- `add-hangfire-job` - the nightly/interval sync
-- `.claude/rules/backend/api-design.md`, `.claude/rules/backend/csharp-conventions.md`
+New folder `Integrations/{X}/` with its own `Registrar`, called from `AddIntegrationsInfrastructure` (no new project, so no arch-test changes). Port interfaces go in `Application.Abstractions/Integrations/`. Add a `{X}ProviderConfiguration` entity and migration (`migration-creator`) and a sync job if polled (`add-hangfire-job`).

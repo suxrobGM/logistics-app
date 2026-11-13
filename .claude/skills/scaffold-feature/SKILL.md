@@ -1,252 +1,35 @@
 ---
 name: scaffold-feature
-description: Scaffold a full vertical slice for a new domain feature in LogisticsX - entity, EF configuration, migration, command/query handlers, controller, DTO/mapper, Angular page, and feature-map row. Use when the user asks to add a new top-level feature (e.g., "add a Subcontractor entity with CRUD"). Outputs an ordered checklist tailored to the LogisticsX folder structure.
+description: Scaffold a full vertical slice for a new domain feature - entity, EF configuration, migration, commands/queries, controller, DTO and mapper, permissions, Angular page and feature-map row. Use when the user asks for a new top-level feature (e.g. "add a Subcontractor entity with CRUD").
 ---
 
-# Scaffold a Feature (Vertical Slice)
+# Scaffold a feature
 
-Adds a new top-level feature end-to-end. Run through the steps in order - earlier steps gate later ones (e.g., the migration depends on the entity + EF config).
+Work in order; later steps depend on earlier ones. Conventions come from `.claude/rules/`; this is the wiring.
 
-## Decide first
+## Decide
 
-Before writing any code:
+1. **Tenant or master DB?** Almost always tenant (`ITenantEntity`). Master (`IMasterEntity`) is platform data like tenants and subscriptions. The marker is all the DbContext needs; no `DbSet`.
+2. **Module:** `Operations`, `Compliance`, `Financial`, `Identity`, `Tenancy`, `AI`, `Integrations`, `Reporting` or `Website` (see [module-layout.md](../../../docs/architecture/module-layout.md)).
+3. **New aggregate or child** of an existing one. Inherit `AuditableEntity` unless it's a trivial lookup.
 
-1. **Master DB or tenant DB?** Master = platform-level data shared across tenants (Tenant, Subscription, BlogPost). Tenant = per-company operational data (Load, Trip, Customer). Most new features are tenant-scoped.
-2. **Which module?** Application code lives under `Logistics.Application/Modules/{Module}/{Feature}/`. Pick by bounded context: `Operations` (dispatching, fleet, customers, documents), `Compliance` (ELD, DVIR, safety, privacy), `Financial` (invoices, payments, payroll, tax), `Identity` (users, roles, employees), `Tenancy` (tenants, subscriptions, features), `AI` (dispatch, copilot, negotiation), `Integrations` (outside vendors, webhooks), `Reporting` (reports, stats), `Website` (marketing site). See [module-layout.md](../../../docs/architecture/module-layout.md).
-3. **Aggregate root or child entity?** A new aggregate gets its own folder under `Entities/{Module}/{Aggregate}/` (the module from step 2). A child entity belongs to an existing aggregate's folder.
-4. **Is it auditable?** Almost always yes - inherit `AuditableEntity`. Use `Entity` only for very simple lookup tables.
-5. **Which marker interface?** `IMasterEntity` (master DB) or `ITenantEntity` (tenant DB). The DbContext picks up the entity automatically based on this - **no manual `DbSet<T>` needed**.
+## Backend
 
-## Step-by-step
+1. **Entity:** `src/Core/Logistics.Domain/Entities/{Module}/{Aggregate}/{Entity}.cs`, namespace `Logistics.Domain.Entities`. Enums in `Logistics.Domain.Primitives/Enums/{Module}/{Aggregate}/`.
+2. **EF configuration:** `Logistics.Infrastructure.Persistence/Configurations/{Module}/{Aggregate}/{Entity}EntityConfiguration.cs`, `internal sealed`, auto-discovered. Enums need no conversion (stored as snake_case). Uniqueness over a complex-type member needs an injected checker (see `IIftaTaxRateDuplicateChecker`).
+3. **Migration:** `migration-creator`, e.g. `AddSubcontractor`.
+4. **Commands and queries** in `Logistics.Application/Modules/{Module}/{Feature}/Commands|Queries/{Name}/`: request, `internal sealed` handler, validator if it has real rules. Requests are flat and bound directly as the body. Delete and GetById subclass `DeleteTenantEntityHandler` / `GetTenantEntityByIdHandler` (`Common/Handlers/`). Lists use an inline `.Query()` ending in `ToPagedResultAsync(req, x => x.ToDto(), ct)`; extract an `IQueryable` extension only when a filter is reused.
+5. **DTO and mapper:** `src/Shared/Logistics.Shared.Models/{Feature}/{Entity}Dto.cs`; Mapperly mapper beside the feature, ignoring navigations.
+6. **Controller:** `Logistics.API/Controllers/{Module}/{Entity}Controller.cs`, plural route, `[Authorize(Policy = ...)]` on every action.
+7. **Permissions:** `add-permission` (`Permission.Subcontractor.View/Manage`).
+8. **Tests:** `test/Logistics.Application.Tests/{Module}/{Feature}/` for handlers with real logic.
 
-### 1. Domain entity
+## Frontend
 
-`src/Core/Logistics.Domain/Entities/{Module}/{Aggregate}/{Entity}.cs` (namespace `Logistics.Domain.Entities`, whatever the folder)
+1. `bun run gen:api:live` from `private/src/Client/Logistics.Angular` (API running).
+2. Page via `add-angular-page`, shaped like `pages/trailers/`: `{feature}.routes.ts`, `{x}-list`, `{x}-add`, `{x}-edit`, `{x}-details`, optional `store/`. Lazy-register in `app.routes.ts`, add the sidebar item.
+3. SignalR-backed data needs a `ttl: 0` rule in `cache.config.ts` before the catch-all.
 
-```csharp
-using Logistics.Domain.Core;
+## Finish
 
-namespace Logistics.Domain.Entities;
-
-public class Subcontractor : AuditableEntity, ITenantEntity
-{
-    public required string Name { get; set; }
-    public string? ContactEmail { get; set; }
-    public SubcontractorStatus Status { get; set; } = SubcontractorStatus.Active;
-    // value objects: Address, Money, etc.
-}
-```
-
-If status enum needed: `src/Core/Logistics.Domain.Primitives/Enums/{Module}/{Aggregate}/{Status}.cs` (namespace `Logistics.Domain.Primitives.Enums`). Use `GetDescription()` for display - `[Description]` only when humanization isn't enough (acronyms, special formatting).
-
-### 2. EF configuration
-
-`src/Infrastructure/Logistics.Infrastructure.Persistence/Configurations/{Module}/{Aggregate}/{Entity}EntityConfiguration.cs`
-
-```csharp
-internal sealed class SubcontractorEntityConfiguration : IEntityTypeConfiguration<Subcontractor>
-{
-    public void Configure(EntityTypeBuilder<Subcontractor> builder)
-    {
-        builder.ToTable("subcontractors");
-        builder.HasKey(s => s.Id);
-        builder.Property(s => s.Name).HasMaxLength(200).IsRequired();
-        // builder.ComplexProperty(s => s.Address); for value objects
-    }
-}
-```
-
-**Complex types cannot participate in a unique index.** If the entity needs uniqueness spanning a
-value-object member, EF can't express it - enforce it in code on every write path (see
-`IftaTaxRateUniqueness.FindConflictAsync`) and give the value object a normalizing factory like
-`TaxJurisdiction.Create` so casing or an empty-vs-null member can't defeat the comparison.
-
-The `MasterDbContext` / `TenantDbContext` discover configurations via `ApplyMasterConfigurationsFromAssembly<MasterDbContext>()` / `ApplyTenantConfigurationsFromAssembly<TenantDbContext>()` - you don't need to register them. Enums need no `HasConversion` - `SnakeCaseEnumConvention` stores every enum property as a snake_case string.
-
-### 3. Migration
-
-Use the `migration-creator` skill or run:
-
-```bash
-# Tenant
-dotnet ef migrations add Add{Entity} \
-  --project src/Infrastructure/Logistics.Infrastructure.Persistence \
-  --context TenantDbContext \
-  -o Migrations/Tenant
-```
-
-Name it for what it does (`AddSubcontractor`) - EF prefixes the timestamp, so no `Version_NNNN`,
-numeric suffix, or date. Inspect the generated SQL before committing.
-
-### 4. Reads (inline `.Query()` first)
-
-Default to an inline `.Query()` inside the query handler. When the same condition is genuinely reused across
-handlers, add an `IQueryable<T>` extension next to the feature (e.g. `LoadQueryableExtensions.FilterDeliveredBetween`).
-Paged list queries end with `ToPagedResultAsync(req, x => x.ToDto(), ct)`, which sorts with an id tie-breaker.
-
-### 5. Commands and queries
-
-Commands and queries are the request contract - bind them **directly** as the request body (flat properties),
-no `*Dto` wrapper. Add a dedicated `*Request` record only when the wire shape must differ from the command.
-
-`src/Core/Logistics.Application/Modules/{Module}/{Feature}/Commands/`:
-
-- `Create{Entity}/Create{Entity}Command.cs` - flat-property command `: ICommand` (or `ICommand<Result<T>>` if the client needs data back)
-- `Create{Entity}/Create{Entity}Handler.cs` - `internal sealed class`, primary-constructor DI
-- `Create{Entity}/Create{Entity}Validator.cs` - FluentValidation (see validator rules below)
-- Same pattern for `Update{Entity}/`, `Delete{Entity}/`
-
-**Don't hand-write trivial handlers.** `Delete`/`GetById`/`Update` slices subclass the generic base handlers in
-`src/Core/Logistics.Application/Common/Handlers/` - `DeleteTenantEntityHandler`, `DeleteMasterEntityHandler`,
-`GetTenantEntityByIdHandler`, `UpdateTenantEntityHandler`. Only write a bespoke handler when there's real logic.
-
-**Validators.** Skip the validator entirely when its only rule would be `Id NotEmpty` (the handler's not-found
-path covers it). For a Create/Update pair sharing ≥3 rules, put the shared rules in a base validator both
-subclass (see Ifta `TaxRates`).
-
-`src/Core/Logistics.Application/Modules/{Module}/{Feature}/Queries/`:
-
-- `Get{Entity}ById/Get{Entity}ByIdQuery.cs` + handler - `: IQuery<Result<{Entity}Dto>>` (`Get{Entity}ByIdQuery` can subclass the base handler)
-- `Get{Entities}/Get{Entities}Query.cs` + handler - paged list
-
-A command targets the master or tenant DB purely by which unit of work its handler injects (`IMasterUnitOfWork`
-vs `ITenantUnitOfWork`) - there is no separate marker interface. Handlers own their own `SaveChangesAsync`
-calls - there is no auto-transaction wrapper.
-
-### 6. DTOs and Mapperly mapper
-
-`src/Shared/Logistics.Shared.Models/{Feature}/{Entity}Dto.cs` for the public DTO.
-
-`src/Core/Logistics.Application/Modules/{Module}/{Feature}/{Entity}Mapper.cs` (namespace = the feature's, e.g. `Logistics.Application.Modules.Operations.Subcontractors`):
-
-```csharp
-[Mapper]
-public static partial class SubcontractorMapper
-{
-    [MapperIgnoreSource(nameof(Subcontractor.Loads))]  // ignore navigation properties
-    public static partial SubcontractorDto ToDto(this Subcontractor entity);
-}
-```
-
-Never write manual mapping in handlers.
-
-### 7. Controller
-
-`src/Presentation/Logistics.API/Controllers/{Module}/{Entity}Controller.cs`
-
-```csharp
-[Route("subcontractors")]
-[Produces("application/json")]
-[Authorize]
-public class SubcontractorController(IMediator mediator) : ControllerBase
-{
-    [HttpGet]
-    [Authorize(Policy = Permission.Subcontractor.View)]
-    [ProducesResponseType<PagedResponse<SubcontractorDto>>(200)]
-    public async Task<IActionResult> GetList([FromQuery] GetSubcontractorsQuery query, CancellationToken ct)
-        => Ok(await mediator.Send(query, ct));
-
-    // GET {id}, POST, PUT {id}, DELETE {id}
-}
-```
-
-REST conventions:
-
-- Plural lowercase nouns (`/subcontractors`, not `/subcontractor`)
-- Path params for IDs
-- Custom actions as sub-resources (`POST /subcontractors/{id}/archive`)
-- Sort syntax: `OrderBy=-CreatedAt` (NOT `"CreatedAt desc"`)
-
-### 8. Permissions
-
-Add `Subcontractor.View` and `Subcontractor.Manage` (singular class, like `Permission.Load`) to the `Permission` constants (use the `add-permission` skill - `src/Shared/Logistics.Shared.Identity/Policies/`, plus the hand-mirrored `projects/shared/src/lib/models/permissions.ts`). Wire to `TenantRole` claims via the seeder or admin UI.
-
-### 9. Tests
-
-`test/Logistics.Application.Tests/{Module}/{Feature}/{Class}Tests.cs` (e.g. `Operations/Trailers/`) - xUnit + NSubstitute. Field name `_sut`.
-
-See `.claude/rules/backend/testing.md` for the mock-setup pattern.
-
-### 10. Frontend
-
-#### Angular API regen first
-
-```bash
-cd private/src/Client/Logistics.Angular
-bun run gen:api:live   # regenerates from running API
-```
-
-This produces typed clients in `projects/shared/src/lib/api/generated/`. No barrel edit - `@logistics/shared/api` re-exports `generated/`.
-
-#### Page
-
-Follow the `add-angular-page` skill and `private/.claude/rules/frontend/folder-structure.md`. Copy the
-shape of `pages/trailers/`:
-
-`private/src/Client/Logistics.Angular/projects/tms-portal/src/app/pages/subcontractors/`:
-
-- `subcontractor.routes.ts` - the feature's routes, with `data.permission`
-- `subcontractors-list/`, `subcontractor-add/`, `subcontractor-edit/`, `subcontractor-details/` - one folder per page (`.ts` + `.html`)
-- `store/` if state is non-trivial (`@ngrx/signals`)
-
-Conventions: standalone components, signals (`signal()`, `computed()`), `input()`/`output()` (not decorators), native control flow (`@if`, `@for`), `<ui-form-field>` for inputs.
-
-#### Routing
-
-Register the feature's routes lazily in the portal's `app.routes.ts`. If user-facing, add the nav item in
-`shared/layout/sidebar/nav/{section}.nav.ts`.
-
-#### HTTP cache
-
-Default cache TTL is 2 min. If the feature gets real-time updates via SignalR, add a `ttl: 0` rule in `projects/shared/src/lib/api/cache.config.ts` **before** the catch-all.
-
-### 11. Update feature-map.md
-
-Add an entry under the appropriate domain section in `.claude/feature-map.md`, listing only the layers it touches:
-
-```markdown
-### Subcontractors
-
-- Domain: `Entities/Subcontractor.cs`
-- Application: `Modules/Operations/Subcontractors/Commands/`, `Modules/Operations/Subcontractors/Queries/`
-- API/UI: `SubcontractorController.cs`, `tms-portal/pages/subcontractors/`
-```
-
-## Verification checklist
-
-- [ ] Entity inherits `AuditableEntity`/`Entity` and implements `IMasterEntity`/`ITenantEntity`
-- [ ] EF configuration created (auto-discovered by DbContext)
-- [ ] Migration generated and inspected
-- [ ] Commands + queries + validators + handlers created (handlers `internal sealed`)
-- [ ] DTO + Mapperly mapper, no manual mapping
-- [ ] Controller with `[Authorize(Policy = ...)]` on each action
-- [ ] Permissions added
-- [ ] Unit tests for handlers
-- [ ] Angular API client regenerated
-- [ ] Angular page + route added
-- [ ] Cache rule added if real-time
-- [ ] **Entry added to `.claude/feature-map.md`**
-- [ ] `dotnet build` passes
-- [ ] `bun run lint` passes
-- [ ] Feature reachable end-to-end in the running app
-
-## Common mistakes
-
-- Missing `[Authorize(Policy = ...)]` - controller falls back to default auth, leaks data across tenants.
-- Skipping the feature-map entry - the feature becomes invisible to future sessions.
-
-## Related skills
-
-- `migration-creator` - the EF migration in step 3
-- `add-permission` - step 8
-- `add-angular-page` - step 10, if the page needs nav/role wiring
-- `add-dispatch-tool` - if the feature should be agent-callable
-
-## Related rules
-
-- `.claude/rules/backend/csharp-conventions.md`
-- `.claude/rules/backend/api-design.md`
-- `.claude/rules/backend/mapperly.md`
-- `.claude/rules/backend/testing.md`
-- `.claude/rules/code-quality.md`
-- `private/.claude/rules/frontend/angular-conventions.md`
+Add the feature to `.claude/feature-map.md` (unlisted features are invisible to later sessions). `dotnet build`, `bun run lint`, then exercise it end to end in the running app.

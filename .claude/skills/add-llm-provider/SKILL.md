@@ -1,149 +1,47 @@
 ---
 name: add-llm-provider
-description: Add a new LLM provider or model to the AI dispatch system. Use when adding a new model from an existing provider (e.g., a new Claude version) or wiring up a new OpenAI-compatible endpoint. Walks through the places that must change to keep pricing, quotas, and the admin model catalog in sync.
+description: Add a new LLM provider or model to the AI agents. Use when adding a model from an existing provider (e.g. a new Claude version) or wiring a new OpenAI-compatible or custom-SDK endpoint. Covers the catalog entry that drives pricing, quotas and the admin model list.
 ---
 
-# Add an LLM Provider or Model
+# Add an LLM provider or model
 
-Providers sit behind the `ILlmProvider` adapter.
+Background: `.claude/rules/backend/ai-agent.md`. The model is global and admin-selected; there is no per-tenant choice or tier.
 
-## Decide the path
+| Adding | Steps |
+| --- | --- |
+| A model from an existing provider | 3 |
+| An OpenAI-compatible endpoint (DeepSeek-style) | 1, 3 |
+| A custom-SDK provider (Gemini-style) | 1, 2, 3 |
 
-- **New OpenAI-compatible provider** (DeepSeek-style): no SDK code - `OpenAICompatibleLlmProvider` handles it via `BaseUrl`. Skip steps 3 and 4.
-- **New custom-SDK provider** (e.g. Gemini, Mistral): new `ILlmProvider` implementation in step 3.
-- **New model from an existing provider** (e.g. a new Claude version): steps 4–6 only.
+## 1. Enum and config
 
-> The dispatch model is **global** (admin-selected) - no per-tenant selection, no per-plan tier gating.
+Add the value to `LlmProvider` (`src/Core/Logistics.Domain.Primitives/Enums/AI/Agents/LlmProvider.cs`). Config binds from `Llm:Providers:{Name}` (`ApiKey`, `Model`, `BaseUrl`) into `LlmOptions.Providers`; no new options class. The key comes from the env var `Llm__Providers__{Name}__ApiKey`, never a committed file. A compatible provider without `BaseUrl` hits OpenAI and 401s.
 
-## Files that must change (full provider)
+## 2. Custom SDK only
 
-1. `src/Core/Logistics.Domain.Primitives/Enums/AI/Agents/LlmProvider.cs` - add enum value
-2. `src/Core/Logistics.Application.Abstractions/AI/LlmOptions.cs` - provider config section. Config is
-   deliberately **not** in `Infrastructure.AI` (the application layer reads it) - see `.claude/rules/backend/ai-agent.md`
-3. `src/Infrastructure/Logistics.Infrastructure.AI/Llm/Providers/{X}LlmProvider.cs` - only for non-OpenAI-compatible
-4. `src/Infrastructure/Logistics.Infrastructure.AI/Llm/LlmProviderFactory.cs` - resolution arm (custom SDK only)
-5. `src/Core/Logistics.Application.Abstractions/AI/LlmModelCatalog.cs` - add the model `{ Id, DisplayName, Provider, Prices }`
+- `Llm/Providers/{Name}LlmProvider.cs` implementing `ILlmProvider`. SDK types stay inside this file; everything else uses `Llm/Contracts/`.
+- Use the `HttpClient` the factory passes (the `llm` client). Your own client would pick up the host's 30s resilience timeout.
+- Translate SDK exceptions to `LlmProviderException` and stop reasons to `LlmStopReason`.
+- Add an arm to the `switch` in `LlmProviderFactory.Create`. Unlisted values fall through to `OpenAICompatibleLlmProvider`.
 
-## Step-by-step
+## 3. Catalog entry
 
-### 1. Add enum value
-
-```csharp
-public enum LlmProvider
-{
-    Anthropic,
-    OpenAI,
-    DeepSeek,
-    NewProvider // ← here
-}
-```
-
-### 2. Add provider config section
-
-In `LlmOptions.cs`:
+Add the model to `LlmModelCatalog.Models` (`src/Core/Logistics.Application.Abstractions/AI/`), with prices in USD per million tokens (input, output, cache read, cache write) and the vendor's pricing page in the comment above the list:
 
 ```csharp
-public class LlmProviderOptions
-{
-    public required string ApiKey { get; set; }
-    public string Model { get; set; } = "";
-    public string? BaseUrl { get; set; } // null for native SDKs
-}
+new("new-model-1", "New Model 1", LlmProvider.NewProvider, new(0.50m, 2.0m, 0.05m, 0.625m), ReasoningStyle.None),
 ```
 
-Binds from `Llm:Providers:{Name}` in `appsettings.json`; the API key comes from the env var
-`Llm__Providers__{Name}__ApiKey`, never a committed file.
+This one entry feeds the admin AI Settings dropdown, model validation, budgets and overage billing. No frontend change.
 
-### 3. (Custom SDK only) Create `ILlmProvider` implementation
+Pick `ReasoningStyle` deliberately:
 
-If the provider is OpenAI-compatible (most modern providers are), **skip this step** - `OpenAICompatibleLlmProvider` handles it via `BaseUrl`.
+- `OpenAIEffort`: takes a reasoning effort, which OpenAI accepts with tools only on `/v1/responses`. Use only under `LlmProvider.OpenAI`; other endpoints 404 there.
+- `AnthropicAdaptive`: adaptive thinking plus effort, no temperature; `None` effort is sent as `low`. Check `AnthropicLlmProvider.WebSearchFor`, since the newer search tool only works on some models.
+- `None`: no reasoning parameter. Use it when unsure and for endpoints that reject one (DeepSeek).
 
-If it requires a custom SDK, add `Llm/Providers/NewLlmProvider.cs`:
+The catalog id must equal the model id the provider sends, or cost silently falls back to Sonnet 5.5 rates. OpenAI-shaped providers fill `LlmTokenUsage` through `OpenAIUsage.From`.
 
-```csharp
-internal sealed class NewLlmProvider(LlmProviderOptions config, HttpClient httpClient) : ILlmProvider
-{
-    public async Task<LlmResponse> SendAsync(LlmRequest request, CancellationToken ct)
-    {
-        // Translate LlmRequest → provider SDK request
-        // Translate provider response → LlmResponse (Llm/Contracts only - no SDK types leak out)
-    }
-}
-```
+## Verify
 
-Use the `HttpClient` the factory passes in - the named `llm` client, which carries the configured
-`RequestTimeoutSeconds` and has `RemoveAllResilienceHandlers()` (`Infrastructure.AI/Registrar.cs`).
-A client of your own gets the host's default resilience handler, whose 30s total cuts agent turns short.
-
-Provider-specific SDK types **must not leak** outside this class. The agent loop uses only the `Llm/Contracts/` records (`LlmRequest`, `LlmResponse`, `LlmToolUseBlock`).
-
-### 4. (Custom SDK only) Resolve in `LlmProviderFactory`
-
-`Create` news up a provider per call. Any enum value without an arm falls through to
-`OpenAICompatibleLlmProvider`, so compatible providers need no change here:
-
-```csharp
-return type switch
-{
-    LlmProvider.Anthropic => new AnthropicLlmProvider(config, httpClient),
-    LlmProvider.OpenAI => new OpenAIResponsesLlmProvider(config, httpClient),
-    LlmProvider.NewProvider => new NewLlmProvider(config, httpClient),  // ← custom SDK only
-    _ => new OpenAICompatibleLlmProvider(config, httpClient)
-};
-```
-
-### 5. Add the model to `LlmModelCatalog`
-
-In `src/Core/Logistics.Application.Abstractions/AI/LlmModelCatalog.cs`. The `LlmTokenPrices` are USD
-per million tokens (input, output, cache read, cache write); add the vendor's pricing page to the
-comment above the list. The weekly budget and Stripe overage both derive from the cost
-`CalculateCost` computes from them; there is no tier or multiplier to pick.
-
-```csharp
-public static readonly IReadOnlyList<LlmModelInfo> Models =
-[
-    // existing entries
-    new("new-model-1", "New Model 1", LlmProvider.NewProvider, new(0.50m, 2.0m, 0.05m, 0.625m),
-        ReasoningStyle.OpenAIEffort),
-];
-```
-
-**Pick the `ReasoningStyle` deliberately** - it decides whether providers send a reasoning
-parameter for the admin-set effort level:
-
-- `OpenAIEffort` - takes a reasoning effort, which OpenAI only accepts alongside function tools on
-  `/v1/responses` (the GPT-6 Luna 400). Put these under `LlmProvider.OpenAI` - that enum value is
-  what selects the Responses provider.
-- `AnthropicAdaptive` - Claude adaptive thinking + effort (Sonnet 5.5 / Haiku 5.5 class). Also suppresses
-  temperature, which these models reject. These models have no clean "off", so effort `None` is sent
-  as `low`. Check `AnthropicLlmProvider.WebSearchFor` too: the dynamic-filtering web search tool is
-  only accepted by some models.
-- `None` (default) - no reasoning parameter is ever sent. For models without a reasoning control,
-  and for compatible endpoints that reject it (DeepSeek).
-
-This is the **single source** for the admin AI Settings dropdown (`GET /ai/settings`) and for validating the
-selected model in `UpdateAISettingsCommand`. The admin UI populates automatically - no frontend change.
-
-## Verification checklist
-
-- [ ] Enum value added
-- [ ] Config section + appsettings entry + env var documented
-- [ ] (If custom SDK) Provider implementation, no SDK types leak
-- [ ] (If custom SDK) Factory arm added; compatible providers fall through with no change
-- [ ] `LlmModelCatalog` includes the model with its **per-token prices** and the right `ReasoningStyle`
-- [ ] Admin AI Settings page shows the new model in the dropdown
-- [ ] Selecting the model as the global model runs a dispatch session successfully
-
-## Common mistakes
-
-- **Wrong `ReasoningStyle`**: a flagged non-reasoning endpoint rejects the parameter. Unsure? Start with `None`.
-- **`LlmProvider.OpenAI` for a non-OpenAI endpoint**: that value selects the Responses provider, and only OpenAI/Azure serve `/v1/responses`. Everything else 404s.
-- **Catalog id ≠ the model id the provider is configured with**: `CalculateCost` silently falls back to Sonnet 5.5 rates.
-- **No `BaseUrl`** on a compatible provider: defaults to OpenAI's endpoint and 401s.
-- **Raw token counts**: OpenAI folds cached tokens into `input_tokens`, so fill `LlmTokenUsage` via `OpenAIUsage.From` or every cache hit bills twice.
-- **SDK types leaking**: importing the provider SDK in any file other than `Llm/Providers/{X}LlmProvider.cs` breaks the abstraction.
-
-## Related
-
-- `.claude/rules/backend/ai-agent.md` - multi-provider architecture overview
-- `docs/ai-dispatch.md` - agent architecture
+Select the model in the admin AI Settings page and run a dispatch session end to end.
