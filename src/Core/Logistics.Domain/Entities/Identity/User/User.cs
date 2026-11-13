@@ -17,9 +17,9 @@ public class User : IdentityUser<Guid>, IEntity<Guid>, IMasterEntity, IAuditable
     public virtual Tenant? Tenant { get; set; }
 
     public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
-    public string? CreatedBy { get; set; }
+    public Guid? CreatedBy { get; set; }
     public DateTime? UpdatedAt { get; set; }
-    public string? UpdatedBy { get; set; }
+    public Guid? UpdatedBy { get; set; }
 
     /// <summary>
     /// Set after irreversible PII anonymization by the deletion job.

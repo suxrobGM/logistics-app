@@ -22,13 +22,13 @@ public record ExpenseDto
     public string? Notes { get; init; }
 
     // Approval info
-    public string? ApprovedById { get; init; }
+    public Guid? ApprovedById { get; init; }
     public DateTime? ApprovedAt { get; init; }
     public string? RejectionReason { get; init; }
 
     // Audit fields
     public DateTime CreatedAt { get; init; }
-    public string? CreatedBy { get; init; }
+    public Guid? CreatedBy { get; init; }
 
     // CompanyExpense fields
     public CompanyExpenseCategory? CompanyCategory { get; init; }

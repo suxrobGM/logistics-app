@@ -42,7 +42,7 @@ public abstract class Expense : AuditableEntity, ITenantEntity
     /// <summary>
     ///     User ID of the approver.
     /// </summary>
-    public string? ApprovedById { get; set; }
+    public Guid? ApprovedById { get; set; }
 
     /// <summary>
     ///     Date when the expense was approved or rejected.
@@ -54,7 +54,7 @@ public abstract class Expense : AuditableEntity, ITenantEntity
     /// </summary>
     public string? RejectionReason { get; set; }
 
-    public void Approve(string approverId)
+    public void Approve(Guid approverId)
     {
         Status = ExpenseStatus.Approved;
         ApprovedById = approverId;
@@ -62,7 +62,7 @@ public abstract class Expense : AuditableEntity, ITenantEntity
         RejectionReason = null;
     }
 
-    public void Reject(string approverId, string reason)
+    public void Reject(Guid approverId, string reason)
     {
         Status = ExpenseStatus.Rejected;
         ApprovedById = approverId;

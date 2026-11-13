@@ -29,12 +29,6 @@ internal static class ModelBuilderAuditExtensions
                 // (created_at, updated_at, created_by, updated_by).
                 entity.Property(nameof(AuditableEntity.CreatedAt))
                     .HasDefaultValueSql("CURRENT_TIMESTAMP");
-
-                entity.Property(nameof(AuditableEntity.CreatedBy))
-                    .HasMaxLength(50);
-
-                entity.Property(nameof(AuditableEntity.UpdatedBy))
-                    .HasMaxLength(50);
             }
         }
     }

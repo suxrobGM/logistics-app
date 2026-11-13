@@ -48,9 +48,8 @@ namespace Logistics.Infrastructure.Persistence.Migrations.Tenant
                         .HasColumnName("created_at")
                         .HasDefaultValueSql("CURRENT_TIMESTAMP");
 
-                    b.Property<string>("CreatedBy")
-                        .HasMaxLength(50)
-                        .HasColumnType("character varying(50)")
+                    b.Property<Guid?>("CreatedBy")
+                        .HasColumnType("uuid")
                         .HasColumnName("created_by");
 
                     b.Property<int>("DecisionsAnalyzed")
@@ -106,9 +105,8 @@ namespace Logistics.Infrastructure.Persistence.Migrations.Tenant
                         .HasColumnType("timestamp with time zone")
                         .HasColumnName("updated_at");
 
-                    b.Property<string>("UpdatedBy")
-                        .HasMaxLength(50)
-                        .HasColumnType("character varying(50)")
+                    b.Property<Guid?>("UpdatedBy")
+                        .HasColumnType("uuid")
                         .HasColumnName("updated_by");
 
                     b.HasKey("Id")
@@ -182,9 +180,8 @@ namespace Logistics.Infrastructure.Persistence.Migrations.Tenant
                         .HasColumnName("created_at")
                         .HasDefaultValueSql("CURRENT_TIMESTAMP");
 
-                    b.Property<string>("CreatedBy")
-                        .HasMaxLength(50)
-                        .HasColumnType("character varying(50)")
+                    b.Property<Guid?>("CreatedBy")
+                        .HasColumnType("uuid")
                         .HasColumnName("created_by");
 
                     b.Property<string>("Description")
@@ -334,9 +331,8 @@ namespace Logistics.Infrastructure.Persistence.Migrations.Tenant
                         .HasColumnType("timestamp with time zone")
                         .HasColumnName("updated_at");
 
-                    b.Property<string>("UpdatedBy")
-                        .HasMaxLength(50)
-                        .HasColumnType("character varying(50)")
+                    b.Property<Guid?>("UpdatedBy")
+                        .HasColumnType("uuid")
                         .HasColumnName("updated_by");
 
                     b.Property<string>("VehicleDamageDescription")
@@ -673,9 +669,8 @@ namespace Logistics.Infrastructure.Persistence.Migrations.Tenant
                         .HasColumnName("created_at")
                         .HasDefaultValueSql("CURRENT_TIMESTAMP");
 
-                    b.Property<string>("CreatedBy")
-                        .HasMaxLength(50)
-                        .HasColumnType("character varying(50)")
+                    b.Property<Guid?>("CreatedBy")
+                        .HasColumnType("uuid")
                         .HasColumnName("created_by");
 
                     b.Property<Guid>("CreatedById")
@@ -713,9 +708,8 @@ namespace Logistics.Infrastructure.Persistence.Migrations.Tenant
                         .HasColumnType("timestamp with time zone")
                         .HasColumnName("updated_at");
 
-                    b.Property<string>("UpdatedBy")
-                        .HasMaxLength(50)
-                        .HasColumnType("character varying(50)")
+                    b.Property<Guid?>("UpdatedBy")
+                        .HasColumnType("uuid")
                         .HasColumnName("updated_by");
 
                     b.HasKey("Id")
@@ -912,9 +906,8 @@ namespace Logistics.Infrastructure.Persistence.Migrations.Tenant
                         .HasColumnName("created_at")
                         .HasDefaultValueSql("CURRENT_TIMESTAMP");
 
-                    b.Property<string>("CreatedBy")
-                        .HasMaxLength(50)
-                        .HasColumnType("character varying(50)")
+                    b.Property<Guid?>("CreatedBy")
+                        .HasColumnType("uuid")
                         .HasColumnName("created_by");
 
                     b.Property<int>("DecisionCount")
@@ -965,9 +958,8 @@ namespace Logistics.Infrastructure.Persistence.Migrations.Tenant
                         .HasColumnType("timestamp with time zone")
                         .HasColumnName("updated_at");
 
-                    b.Property<string>("UpdatedBy")
-                        .HasMaxLength(50)
-                        .HasColumnType("character varying(50)")
+                    b.Property<Guid?>("UpdatedBy")
+                        .HasColumnType("uuid")
                         .HasColumnName("updated_by");
 
                     b.HasKey("Id")
@@ -1048,9 +1040,8 @@ namespace Logistics.Infrastructure.Persistence.Migrations.Tenant
                         .HasColumnName("created_at")
                         .HasDefaultValueSql("CURRENT_TIMESTAMP");
 
-                    b.Property<string>("CreatedBy")
-                        .HasMaxLength(50)
-                        .HasColumnType("character varying(50)")
+                    b.Property<Guid?>("CreatedBy")
+                        .HasColumnType("uuid")
                         .HasColumnName("created_by");
 
                     b.Property<int?>("CreditScore")
@@ -1076,9 +1067,8 @@ namespace Logistics.Infrastructure.Persistence.Migrations.Tenant
                         .HasColumnType("timestamp with time zone")
                         .HasColumnName("updated_at");
 
-                    b.Property<string>("UpdatedBy")
-                        .HasMaxLength(50)
-                        .HasColumnType("character varying(50)")
+                    b.Property<Guid?>("UpdatedBy")
+                        .HasColumnType("uuid")
                         .HasColumnName("updated_by");
 
                     b.HasKey("Id")
@@ -1109,9 +1099,8 @@ namespace Logistics.Infrastructure.Persistence.Migrations.Tenant
                         .HasColumnName("created_at")
                         .HasDefaultValueSql("CURRENT_TIMESTAMP");
 
-                    b.Property<string>("CreatedBy")
-                        .HasMaxLength(50)
-                        .HasColumnType("character varying(50)")
+                    b.Property<Guid?>("CreatedBy")
+                        .HasColumnType("uuid")
                         .HasColumnName("created_by");
 
                     b.Property<Guid>("EmployeeId")
@@ -1131,9 +1120,8 @@ namespace Logistics.Infrastructure.Persistence.Migrations.Tenant
                         .HasColumnType("timestamp with time zone")
                         .HasColumnName("updated_at");
 
-                    b.Property<string>("UpdatedBy")
-                        .HasMaxLength(50)
-                        .HasColumnType("character varying(50)")
+                    b.Property<Guid?>("UpdatedBy")
+                        .HasColumnType("uuid")
                         .HasColumnName("updated_by");
 
                     b.HasKey("Id")
@@ -1247,9 +1235,8 @@ namespace Logistics.Infrastructure.Persistence.Migrations.Tenant
                         .HasColumnName("created_at")
                         .HasDefaultValueSql("CURRENT_TIMESTAMP");
 
-                    b.Property<string>("CreatedBy")
-                        .HasMaxLength(50)
-                        .HasColumnType("character varying(50)")
+                    b.Property<Guid?>("CreatedBy")
+                        .HasColumnType("uuid")
                         .HasColumnName("created_by");
 
                     b.Property<Guid?>("CurrentTerminalId")
@@ -1394,9 +1381,8 @@ namespace Logistics.Infrastructure.Persistence.Migrations.Tenant
                         .HasColumnType("timestamp with time zone")
                         .HasColumnName("updated_at");
 
-                    b.Property<string>("UpdatedBy")
-                        .HasMaxLength(50)
-                        .HasColumnType("character varying(50)")
+                    b.Property<Guid?>("UpdatedBy")
+                        .HasColumnType("uuid")
                         .HasColumnName("updated_by");
 
                     b.HasKey("Id")
@@ -1508,9 +1494,8 @@ namespace Logistics.Infrastructure.Persistence.Migrations.Tenant
                         .HasColumnName("created_at")
                         .HasDefaultValueSql("CURRENT_TIMESTAMP");
 
-                    b.Property<string>("CreatedBy")
-                        .HasMaxLength(50)
-                        .HasColumnType("character varying(50)")
+                    b.Property<Guid?>("CreatedBy")
+                        .HasColumnType("uuid")
                         .HasColumnName("created_by");
 
                     b.Property<int?>("DetentionFreeMinutes")
@@ -1561,9 +1546,8 @@ namespace Logistics.Infrastructure.Persistence.Migrations.Tenant
                         .HasColumnType("timestamp with time zone")
                         .HasColumnName("updated_at");
 
-                    b.Property<string>("UpdatedBy")
-                        .HasMaxLength(50)
-                        .HasColumnType("character varying(50)")
+                    b.Property<Guid?>("UpdatedBy")
+                        .HasColumnType("uuid")
                         .HasColumnName("updated_by");
 
                     b.ComplexProperty(typeof(Dictionary<string, object>), "Address", "Logistics.Domain.Entities.Customer.Address#Address", b1 =>
@@ -1642,9 +1626,8 @@ namespace Logistics.Infrastructure.Persistence.Migrations.Tenant
                         .HasColumnName("created_at")
                         .HasDefaultValueSql("CURRENT_TIMESTAMP");
 
-                    b.Property<string>("CreatedBy")
-                        .HasMaxLength(50)
-                        .HasColumnType("character varying(50)")
+                    b.Property<Guid?>("CreatedBy")
+                        .HasColumnType("uuid")
                         .HasColumnName("created_by");
 
                     b.Property<Guid>("CustomerId")
@@ -1670,9 +1653,8 @@ namespace Logistics.Infrastructure.Persistence.Migrations.Tenant
                         .HasColumnType("timestamp with time zone")
                         .HasColumnName("updated_at");
 
-                    b.Property<string>("UpdatedBy")
-                        .HasMaxLength(50)
-                        .HasColumnType("character varying(50)")
+                    b.Property<Guid?>("UpdatedBy")
+                        .HasColumnType("uuid")
                         .HasColumnName("updated_by");
 
                     b.Property<Guid>("UserId")
@@ -1728,9 +1710,8 @@ namespace Logistics.Infrastructure.Persistence.Migrations.Tenant
                         .HasColumnName("created_at")
                         .HasDefaultValueSql("CURRENT_TIMESTAMP");
 
-                    b.Property<string>("CreatedBy")
-                        .HasMaxLength(50)
-                        .HasColumnType("character varying(50)")
+                    b.Property<Guid?>("CreatedBy")
+                        .HasColumnType("uuid")
                         .HasColumnName("created_by");
 
                     b.Property<string>("Description")
@@ -1768,9 +1749,8 @@ namespace Logistics.Infrastructure.Persistence.Migrations.Tenant
                         .HasColumnType("timestamp with time zone")
                         .HasColumnName("updated_at");
 
-                    b.Property<string>("UpdatedBy")
-                        .HasMaxLength(50)
-                        .HasColumnType("character varying(50)")
+                    b.Property<Guid?>("UpdatedBy")
+                        .HasColumnType("uuid")
                         .HasColumnName("updated_by");
 
                     b.Property<Guid>("UploadedById")
@@ -1861,9 +1841,8 @@ namespace Logistics.Infrastructure.Persistence.Migrations.Tenant
                         .HasColumnName("created_at")
                         .HasDefaultValueSql("CURRENT_TIMESTAMP");
 
-                    b.Property<string>("CreatedBy")
-                        .HasMaxLength(50)
-                        .HasColumnType("character varying(50)")
+                    b.Property<Guid?>("CreatedBy")
+                        .HasColumnType("uuid")
                         .HasColumnName("created_by");
 
                     b.Property<Guid?>("DocumentId")
@@ -1928,9 +1907,8 @@ namespace Logistics.Infrastructure.Persistence.Migrations.Tenant
                         .HasColumnType("timestamp with time zone")
                         .HasColumnName("updated_at");
 
-                    b.Property<string>("UpdatedBy")
-                        .HasMaxLength(50)
-                        .HasColumnType("character varying(50)")
+                    b.Property<Guid?>("UpdatedBy")
+                        .HasColumnType("uuid")
                         .HasColumnName("updated_by");
 
                     b.HasKey("Id")
@@ -2021,9 +1999,8 @@ namespace Logistics.Infrastructure.Persistence.Migrations.Tenant
                         .HasColumnName("created_at")
                         .HasDefaultValueSql("CURRENT_TIMESTAMP");
 
-                    b.Property<string>("CreatedBy")
-                        .HasMaxLength(50)
-                        .HasColumnType("character varying(50)")
+                    b.Property<Guid?>("CreatedBy")
+                        .HasColumnType("uuid")
                         .HasColumnName("created_by");
 
                     b.Property<bool?>("DefectsCorrected")
@@ -2102,9 +2079,8 @@ namespace Logistics.Infrastructure.Persistence.Migrations.Tenant
                         .HasColumnType("timestamp with time zone")
                         .HasColumnName("updated_at");
 
-                    b.Property<string>("UpdatedBy")
-                        .HasMaxLength(50)
-                        .HasColumnType("character varying(50)")
+                    b.Property<Guid?>("UpdatedBy")
+                        .HasColumnType("uuid")
                         .HasColumnName("updated_by");
 
                     b.HasKey("Id")
@@ -2426,9 +2402,8 @@ namespace Logistics.Infrastructure.Persistence.Migrations.Tenant
                         .HasColumnType("timestamp with time zone")
                         .HasColumnName("approved_at");
 
-                    b.Property<string>("ApprovedById")
-                        .HasMaxLength(50)
-                        .HasColumnType("character varying(50)")
+                    b.Property<Guid?>("ApprovedById")
+                        .HasColumnType("uuid")
                         .HasColumnName("approved_by_id");
 
                     b.Property<DateTime>("CreatedAt")
@@ -2437,9 +2412,8 @@ namespace Logistics.Infrastructure.Persistence.Migrations.Tenant
                         .HasColumnName("created_at")
                         .HasDefaultValueSql("CURRENT_TIMESTAMP");
 
-                    b.Property<string>("CreatedBy")
-                        .HasMaxLength(50)
-                        .HasColumnType("character varying(50)")
+                    b.Property<Guid?>("CreatedBy")
+                        .HasColumnType("uuid")
                         .HasColumnName("created_by");
 
                     b.Property<DateOnly>("ExpenseDate")
@@ -2482,9 +2456,8 @@ namespace Logistics.Infrastructure.Persistence.Migrations.Tenant
                         .HasColumnType("timestamp with time zone")
                         .HasColumnName("updated_at");
 
-                    b.Property<string>("UpdatedBy")
-                        .HasMaxLength(50)
-                        .HasColumnType("character varying(50)")
+                    b.Property<Guid?>("UpdatedBy")
+                        .HasColumnType("uuid")
                         .HasColumnName("updated_by");
 
                     b.Property<string>("VendorName")
@@ -2528,9 +2501,8 @@ namespace Logistics.Infrastructure.Persistence.Migrations.Tenant
                         .HasColumnName("created_at")
                         .HasDefaultValueSql("CURRENT_TIMESTAMP");
 
-                    b.Property<string>("CreatedBy")
-                        .HasMaxLength(50)
-                        .HasColumnType("character varying(50)")
+                    b.Property<Guid?>("CreatedBy")
+                        .HasColumnType("uuid")
                         .HasColumnName("created_by");
 
                     b.Property<Guid>("FactoringCompanyId")
@@ -2573,9 +2545,8 @@ namespace Logistics.Infrastructure.Persistence.Migrations.Tenant
                         .HasColumnType("timestamp with time zone")
                         .HasColumnName("updated_at");
 
-                    b.Property<string>("UpdatedBy")
-                        .HasMaxLength(50)
-                        .HasColumnType("character varying(50)")
+                    b.Property<Guid?>("UpdatedBy")
+                        .HasColumnType("uuid")
                         .HasColumnName("updated_by");
 
                     b.HasKey("Id")
@@ -2625,9 +2596,8 @@ namespace Logistics.Infrastructure.Persistence.Migrations.Tenant
                         .HasColumnName("created_at")
                         .HasDefaultValueSql("CURRENT_TIMESTAMP");
 
-                    b.Property<string>("CreatedBy")
-                        .HasMaxLength(50)
-                        .HasColumnType("character varying(50)")
+                    b.Property<Guid?>("CreatedBy")
+                        .HasColumnType("uuid")
                         .HasColumnName("created_by");
 
                     b.Property<decimal?>("FeeAmount")
@@ -2675,9 +2645,8 @@ namespace Logistics.Infrastructure.Persistence.Migrations.Tenant
                         .HasColumnType("timestamp with time zone")
                         .HasColumnName("updated_at");
 
-                    b.Property<string>("UpdatedBy")
-                        .HasMaxLength(50)
-                        .HasColumnType("character varying(50)")
+                    b.Property<Guid?>("UpdatedBy")
+                        .HasColumnType("uuid")
                         .HasColumnName("updated_by");
 
                     b.HasKey("Id")
@@ -2713,9 +2682,8 @@ namespace Logistics.Infrastructure.Persistence.Migrations.Tenant
                         .HasColumnName("created_at")
                         .HasDefaultValueSql("CURRENT_TIMESTAMP");
 
-                    b.Property<string>("CreatedBy")
-                        .HasMaxLength(50)
-                        .HasColumnType("character varying(50)")
+                    b.Property<Guid?>("CreatedBy")
+                        .HasColumnType("uuid")
                         .HasColumnName("created_by");
 
                     b.Property<decimal>("FeePercent")
@@ -2744,9 +2712,8 @@ namespace Logistics.Infrastructure.Persistence.Migrations.Tenant
                         .HasColumnType("timestamp with time zone")
                         .HasColumnName("updated_at");
 
-                    b.Property<string>("UpdatedBy")
-                        .HasMaxLength(50)
-                        .HasColumnType("character varying(50)")
+                    b.Property<Guid?>("UpdatedBy")
+                        .HasColumnType("uuid")
                         .HasColumnName("updated_by");
 
                     b.ComplexProperty(typeof(Dictionary<string, object>), "RemitToAddress", "Logistics.Domain.Entities.FactoringCompany.RemitToAddress#Address", b1 =>
@@ -2801,9 +2768,8 @@ namespace Logistics.Infrastructure.Persistence.Migrations.Tenant
                         .HasColumnName("created_at")
                         .HasDefaultValueSql("CURRENT_TIMESTAMP");
 
-                    b.Property<string>("CreatedBy")
-                        .HasMaxLength(50)
-                        .HasColumnType("character varying(50)")
+                    b.Property<Guid?>("CreatedBy")
+                        .HasColumnType("uuid")
                         .HasColumnName("created_by");
 
                     b.Property<string>("ExternalCardId")
@@ -2834,9 +2800,8 @@ namespace Logistics.Infrastructure.Persistence.Migrations.Tenant
                         .HasColumnType("timestamp with time zone")
                         .HasColumnName("updated_at");
 
-                    b.Property<string>("UpdatedBy")
-                        .HasMaxLength(50)
-                        .HasColumnType("character varying(50)")
+                    b.Property<Guid?>("UpdatedBy")
+                        .HasColumnType("uuid")
                         .HasColumnName("updated_by");
 
                     b.HasKey("Id")
@@ -2926,9 +2891,8 @@ namespace Logistics.Infrastructure.Persistence.Migrations.Tenant
                         .HasColumnName("created_at")
                         .HasDefaultValueSql("CURRENT_TIMESTAMP");
 
-                    b.Property<string>("CreatedBy")
-                        .HasMaxLength(50)
-                        .HasColumnType("character varying(50)")
+                    b.Property<Guid?>("CreatedBy")
+                        .HasColumnType("uuid")
                         .HasColumnName("created_by");
 
                     b.Property<string>("DriverName")
@@ -3015,9 +2979,8 @@ namespace Logistics.Infrastructure.Persistence.Migrations.Tenant
                         .HasColumnType("timestamp with time zone")
                         .HasColumnName("updated_at");
 
-                    b.Property<string>("UpdatedBy")
-                        .HasMaxLength(50)
-                        .HasColumnType("character varying(50)")
+                    b.Property<Guid?>("UpdatedBy")
+                        .HasColumnType("uuid")
                         .HasColumnName("updated_by");
 
                     b.ComplexProperty(typeof(Dictionary<string, object>), "Amount", "Logistics.Domain.Entities.FuelCardTransaction.Amount#Money", b1 =>
@@ -3231,9 +3194,8 @@ namespace Logistics.Infrastructure.Persistence.Migrations.Tenant
                         .HasColumnName("created_at")
                         .HasDefaultValueSql("CURRENT_TIMESTAMP");
 
-                    b.Property<string>("CreatedBy")
-                        .HasMaxLength(50)
-                        .HasColumnType("character varying(50)")
+                    b.Property<Guid?>("CreatedBy")
+                        .HasColumnType("uuid")
                         .HasColumnName("created_by");
 
                     b.Property<int>("Quarter")
@@ -3249,9 +3211,8 @@ namespace Logistics.Infrastructure.Persistence.Migrations.Tenant
                         .HasColumnType("timestamp with time zone")
                         .HasColumnName("updated_at");
 
-                    b.Property<string>("UpdatedBy")
-                        .HasMaxLength(50)
-                        .HasColumnType("character varying(50)")
+                    b.Property<Guid?>("UpdatedBy")
+                        .HasColumnType("uuid")
                         .HasColumnName("updated_by");
 
                     b.Property<int>("Year")
@@ -3281,9 +3242,8 @@ namespace Logistics.Infrastructure.Persistence.Migrations.Tenant
                         .HasColumnName("created_at")
                         .HasDefaultValueSql("CURRENT_TIMESTAMP");
 
-                    b.Property<string>("CreatedBy")
-                        .HasMaxLength(50)
-                        .HasColumnType("character varying(50)")
+                    b.Property<Guid?>("CreatedBy")
+                        .HasColumnType("uuid")
                         .HasColumnName("created_by");
 
                     b.Property<DateOnly?>("DueDate")
@@ -3349,9 +3309,8 @@ namespace Logistics.Infrastructure.Persistence.Migrations.Tenant
                         .HasColumnType("timestamp with time zone")
                         .HasColumnName("updated_at");
 
-                    b.Property<string>("UpdatedBy")
-                        .HasMaxLength(50)
-                        .HasColumnType("character varying(50)")
+                    b.Property<Guid?>("UpdatedBy")
+                        .HasColumnType("uuid")
                         .HasColumnName("updated_by");
 
                     b.HasKey("Id")
@@ -3450,9 +3409,8 @@ namespace Logistics.Infrastructure.Persistence.Migrations.Tenant
                         .HasColumnName("created_at")
                         .HasDefaultValueSql("CURRENT_TIMESTAMP");
 
-                    b.Property<string>("CreatedBy")
-                        .HasMaxLength(50)
-                        .HasColumnType("character varying(50)")
+                    b.Property<Guid?>("CreatedBy")
+                        .HasColumnType("uuid")
                         .HasColumnName("created_by");
 
                     b.Property<string>("DestinationCountry")
@@ -3496,9 +3454,8 @@ namespace Logistics.Infrastructure.Persistence.Migrations.Tenant
                         .HasColumnType("timestamp with time zone")
                         .HasColumnName("updated_at");
 
-                    b.Property<string>("UpdatedBy")
-                        .HasMaxLength(50)
-                        .HasColumnType("character varying(50)")
+                    b.Property<Guid?>("UpdatedBy")
+                        .HasColumnType("uuid")
                         .HasColumnName("updated_by");
 
                     b.HasKey("Id")
@@ -3542,9 +3499,8 @@ namespace Logistics.Infrastructure.Persistence.Migrations.Tenant
                         .HasColumnName("created_at")
                         .HasDefaultValueSql("CURRENT_TIMESTAMP");
 
-                    b.Property<string>("CreatedBy")
-                        .HasMaxLength(50)
-                        .HasColumnType("character varying(50)")
+                    b.Property<Guid?>("CreatedBy")
+                        .HasColumnType("uuid")
                         .HasColumnName("created_by");
 
                     b.Property<Guid>("CustomerId")
@@ -3689,9 +3645,8 @@ namespace Logistics.Infrastructure.Persistence.Migrations.Tenant
                         .HasColumnType("timestamp with time zone")
                         .HasColumnName("updated_at");
 
-                    b.Property<string>("UpdatedBy")
-                        .HasMaxLength(50)
-                        .HasColumnType("character varying(50)")
+                    b.Property<Guid?>("UpdatedBy")
+                        .HasColumnType("uuid")
                         .HasColumnName("updated_by");
 
                     b.Property<decimal?>("WeightKg")
@@ -4064,9 +4019,8 @@ namespace Logistics.Infrastructure.Persistence.Migrations.Tenant
                         .HasColumnName("created_at")
                         .HasDefaultValueSql("CURRENT_TIMESTAMP");
 
-                    b.Property<string>("CreatedBy")
-                        .HasMaxLength(50)
-                        .HasColumnType("character varying(50)")
+                    b.Property<Guid?>("CreatedBy")
+                        .HasColumnType("uuid")
                         .HasColumnName("created_by");
 
                     b.Property<DateTime?>("DeliveryDateEnd")
@@ -4136,9 +4090,8 @@ namespace Logistics.Infrastructure.Persistence.Migrations.Tenant
                         .HasColumnType("timestamp with time zone")
                         .HasColumnName("updated_at");
 
-                    b.Property<string>("UpdatedBy")
-                        .HasMaxLength(50)
-                        .HasColumnType("character varying(50)")
+                    b.Property<Guid?>("UpdatedBy")
+                        .HasColumnType("uuid")
                         .HasColumnName("updated_by");
 
                     b.Property<decimal?>("WeightKg")
@@ -4293,9 +4246,8 @@ namespace Logistics.Infrastructure.Persistence.Migrations.Tenant
                         .HasColumnName("created_at")
                         .HasDefaultValueSql("CURRENT_TIMESTAMP");
 
-                    b.Property<string>("CreatedBy")
-                        .HasMaxLength(50)
-                        .HasColumnType("character varying(50)")
+                    b.Property<Guid?>("CreatedBy")
+                        .HasColumnType("uuid")
                         .HasColumnName("created_by");
 
                     b.Property<DateTime>("InspectedAt")
@@ -4346,9 +4298,8 @@ namespace Logistics.Infrastructure.Persistence.Migrations.Tenant
                         .HasColumnType("timestamp with time zone")
                         .HasColumnName("updated_at");
 
-                    b.Property<string>("UpdatedBy")
-                        .HasMaxLength(50)
-                        .HasColumnType("character varying(50)")
+                    b.Property<Guid?>("UpdatedBy")
+                        .HasColumnType("uuid")
                         .HasColumnName("updated_by");
 
                     b.Property<string>("VehicleBodyClass")
@@ -4412,9 +4363,8 @@ namespace Logistics.Infrastructure.Persistence.Migrations.Tenant
                         .HasColumnName("created_at")
                         .HasDefaultValueSql("CURRENT_TIMESTAMP");
 
-                    b.Property<string>("CreatedBy")
-                        .HasMaxLength(50)
-                        .HasColumnType("character varying(50)")
+                    b.Property<Guid?>("CreatedBy")
+                        .HasColumnType("uuid")
                         .HasColumnName("created_by");
 
                     b.Property<Guid>("LoadId")
@@ -4455,9 +4405,8 @@ namespace Logistics.Infrastructure.Persistence.Migrations.Tenant
                         .HasColumnType("timestamp with time zone")
                         .HasColumnName("updated_at");
 
-                    b.Property<string>("UpdatedBy")
-                        .HasMaxLength(50)
-                        .HasColumnType("character varying(50)")
+                    b.Property<Guid?>("UpdatedBy")
+                        .HasColumnType("uuid")
                         .HasColumnName("updated_by");
 
                     b.HasKey("Id")
@@ -4531,9 +4480,8 @@ namespace Logistics.Infrastructure.Persistence.Migrations.Tenant
                         .HasColumnName("created_at")
                         .HasDefaultValueSql("CURRENT_TIMESTAMP");
 
-                    b.Property<string>("CreatedBy")
-                        .HasMaxLength(50)
-                        .HasColumnType("character varying(50)")
+                    b.Property<Guid?>("CreatedBy")
+                        .HasColumnType("uuid")
                         .HasColumnName("created_by");
 
                     b.Property<string>("Description")
@@ -4591,9 +4539,8 @@ namespace Logistics.Infrastructure.Persistence.Migrations.Tenant
                         .HasColumnType("timestamp with time zone")
                         .HasColumnName("updated_at");
 
-                    b.Property<string>("UpdatedBy")
-                        .HasMaxLength(50)
-                        .HasColumnType("character varying(50)")
+                    b.Property<Guid?>("UpdatedBy")
+                        .HasColumnType("uuid")
                         .HasColumnName("updated_by");
 
                     b.Property<string>("VendorAddress")
@@ -4865,9 +4812,8 @@ namespace Logistics.Infrastructure.Persistence.Migrations.Tenant
                         .HasColumnName("created_at")
                         .HasDefaultValueSql("CURRENT_TIMESTAMP");
 
-                    b.Property<string>("CreatedBy")
-                        .HasMaxLength(50)
-                        .HasColumnType("character varying(50)")
+                    b.Property<Guid?>("CreatedBy")
+                        .HasColumnType("uuid")
                         .HasColumnName("created_by");
 
                     b.Property<string>("Description")
@@ -4907,9 +4853,8 @@ namespace Logistics.Infrastructure.Persistence.Migrations.Tenant
                         .HasColumnType("timestamp with time zone")
                         .HasColumnName("updated_at");
 
-                    b.Property<string>("UpdatedBy")
-                        .HasMaxLength(50)
-                        .HasColumnType("character varying(50)")
+                    b.Property<Guid?>("UpdatedBy")
+                        .HasColumnType("uuid")
                         .HasColumnName("updated_by");
 
                     b.ComplexProperty(typeof(Dictionary<string, object>), "BillingAddress", "Logistics.Domain.Entities.Payment.BillingAddress#Address", b1 =>
@@ -4983,9 +4928,8 @@ namespace Logistics.Infrastructure.Persistence.Migrations.Tenant
                         .HasColumnName("created_at")
                         .HasDefaultValueSql("CURRENT_TIMESTAMP");
 
-                    b.Property<string>("CreatedBy")
-                        .HasMaxLength(50)
-                        .HasColumnType("character varying(50)")
+                    b.Property<Guid?>("CreatedBy")
+                        .HasColumnType("uuid")
                         .HasColumnName("created_by");
 
                     b.Property<Guid>("CreatedByUserId")
@@ -5018,9 +4962,8 @@ namespace Logistics.Infrastructure.Persistence.Migrations.Tenant
                         .HasColumnType("timestamp with time zone")
                         .HasColumnName("updated_at");
 
-                    b.Property<string>("UpdatedBy")
-                        .HasMaxLength(50)
-                        .HasColumnType("character varying(50)")
+                    b.Property<Guid?>("UpdatedBy")
+                        .HasColumnType("uuid")
                         .HasColumnName("updated_by");
 
                     b.HasKey("Id")
@@ -5060,9 +5003,8 @@ namespace Logistics.Infrastructure.Persistence.Migrations.Tenant
                         .HasColumnName("created_at")
                         .HasDefaultValueSql("CURRENT_TIMESTAMP");
 
-                    b.Property<string>("CreatedBy")
-                        .HasMaxLength(50)
-                        .HasColumnType("character varying(50)")
+                    b.Property<Guid?>("CreatedBy")
+                        .HasColumnType("uuid")
                         .HasColumnName("created_by");
 
                     b.Property<int?>("DestinationRadiusMeters")
@@ -5114,9 +5056,8 @@ namespace Logistics.Infrastructure.Persistence.Migrations.Tenant
                         .HasColumnType("timestamp with time zone")
                         .HasColumnName("updated_at");
 
-                    b.Property<string>("UpdatedBy")
-                        .HasMaxLength(50)
-                        .HasColumnType("character varying(50)")
+                    b.Property<Guid?>("UpdatedBy")
+                        .HasColumnType("uuid")
                         .HasColumnName("updated_by");
 
                     b.ComplexProperty(typeof(Dictionary<string, object>), "AvailableAtAddress", "Logistics.Domain.Entities.PostedTruck.AvailableAtAddress#Address", b1 =>
@@ -5229,9 +5170,8 @@ namespace Logistics.Infrastructure.Persistence.Migrations.Tenant
                         .HasColumnName("created_at")
                         .HasDefaultValueSql("CURRENT_TIMESTAMP");
 
-                    b.Property<string>("CreatedBy")
-                        .HasMaxLength(50)
-                        .HasColumnType("character varying(50)")
+                    b.Property<Guid?>("CreatedBy")
+                        .HasColumnType("uuid")
                         .HasColumnName("created_by");
 
                     b.Property<string>("LastError")
@@ -5276,9 +5216,8 @@ namespace Logistics.Infrastructure.Persistence.Migrations.Tenant
                         .HasColumnType("timestamp with time zone")
                         .HasColumnName("updated_at");
 
-                    b.Property<string>("UpdatedBy")
-                        .HasMaxLength(50)
-                        .HasColumnType("character varying(50)")
+                    b.Property<Guid?>("UpdatedBy")
+                        .HasColumnType("uuid")
                         .HasColumnName("updated_by");
 
                     b.HasKey("Id")
@@ -5336,9 +5275,8 @@ namespace Logistics.Infrastructure.Persistence.Migrations.Tenant
                         .HasColumnName("created_at")
                         .HasDefaultValueSql("CURRENT_TIMESTAMP");
 
-                    b.Property<string>("CreatedBy")
-                        .HasMaxLength(50)
-                        .HasColumnType("character varying(50)")
+                    b.Property<Guid?>("CreatedBy")
+                        .HasColumnType("uuid")
                         .HasColumnName("created_by");
 
                     b.Property<DateTime?>("ExpiresAt")
@@ -5386,9 +5324,8 @@ namespace Logistics.Infrastructure.Persistence.Migrations.Tenant
                         .HasColumnType("timestamp with time zone")
                         .HasColumnName("updated_at");
 
-                    b.Property<string>("UpdatedBy")
-                        .HasMaxLength(50)
-                        .HasColumnType("character varying(50)")
+                    b.Property<Guid?>("UpdatedBy")
+                        .HasColumnType("uuid")
                         .HasColumnName("updated_by");
 
                     b.ComplexProperty(typeof(Dictionary<string, object>), "FloorTotalRate", "Logistics.Domain.Entities.RateNegotiation.FloorTotalRate#Money", b1 =>
@@ -5618,9 +5555,8 @@ namespace Logistics.Infrastructure.Persistence.Migrations.Tenant
                         .HasColumnName("created_at")
                         .HasDefaultValueSql("CURRENT_TIMESTAMP");
 
-                    b.Property<string>("CreatedBy")
-                        .HasMaxLength(50)
-                        .HasColumnType("character varying(50)")
+                    b.Property<Guid?>("CreatedBy")
+                        .HasColumnType("uuid")
                         .HasColumnName("created_by");
 
                     b.Property<string>("Name")
@@ -5643,9 +5579,8 @@ namespace Logistics.Infrastructure.Persistence.Migrations.Tenant
                         .HasColumnType("timestamp with time zone")
                         .HasColumnName("updated_at");
 
-                    b.Property<string>("UpdatedBy")
-                        .HasMaxLength(50)
-                        .HasColumnType("character varying(50)")
+                    b.Property<Guid?>("UpdatedBy")
+                        .HasColumnType("uuid")
                         .HasColumnName("updated_by");
 
                     b.ComplexProperty(typeof(Dictionary<string, object>), "Address", "Logistics.Domain.Entities.Terminal.Address#Address", b1 =>
@@ -5706,9 +5641,8 @@ namespace Logistics.Infrastructure.Persistence.Migrations.Tenant
                         .HasColumnName("created_at")
                         .HasDefaultValueSql("CURRENT_TIMESTAMP");
 
-                    b.Property<string>("CreatedBy")
-                        .HasMaxLength(50)
-                        .HasColumnType("character varying(50)")
+                    b.Property<Guid?>("CreatedBy")
+                        .HasColumnType("uuid")
                         .HasColumnName("created_by");
 
                     b.Property<Guid>("EmployeeId")
@@ -5746,9 +5680,8 @@ namespace Logistics.Infrastructure.Persistence.Migrations.Tenant
                         .HasColumnType("timestamp with time zone")
                         .HasColumnName("updated_at");
 
-                    b.Property<string>("UpdatedBy")
-                        .HasMaxLength(50)
-                        .HasColumnType("character varying(50)")
+                    b.Property<Guid?>("UpdatedBy")
+                        .HasColumnType("uuid")
                         .HasColumnName("updated_by");
 
                     b.HasKey("Id")
@@ -5780,9 +5713,8 @@ namespace Logistics.Infrastructure.Persistence.Migrations.Tenant
                         .HasColumnName("created_at")
                         .HasDefaultValueSql("CURRENT_TIMESTAMP");
 
-                    b.Property<string>("CreatedBy")
-                        .HasMaxLength(50)
-                        .HasColumnType("character varying(50)")
+                    b.Property<Guid?>("CreatedBy")
+                        .HasColumnType("uuid")
                         .HasColumnName("created_by");
 
                     b.Property<DateTime>("ExpiresAt")
@@ -5811,9 +5743,8 @@ namespace Logistics.Infrastructure.Persistence.Migrations.Tenant
                         .HasColumnType("timestamp with time zone")
                         .HasColumnName("updated_at");
 
-                    b.Property<string>("UpdatedBy")
-                        .HasMaxLength(50)
-                        .HasColumnType("character varying(50)")
+                    b.Property<Guid?>("UpdatedBy")
+                        .HasColumnType("uuid")
                         .HasColumnName("updated_by");
 
                     b.HasKey("Id")
@@ -5845,9 +5776,8 @@ namespace Logistics.Infrastructure.Persistence.Migrations.Tenant
                         .HasColumnName("created_at")
                         .HasDefaultValueSql("CURRENT_TIMESTAMP");
 
-                    b.Property<string>("CreatedBy")
-                        .HasMaxLength(50)
-                        .HasColumnType("character varying(50)")
+                    b.Property<Guid?>("CreatedBy")
+                        .HasColumnType("uuid")
                         .HasColumnName("created_by");
 
                     b.Property<decimal?>("LengthMeters")
@@ -5900,9 +5830,8 @@ namespace Logistics.Infrastructure.Persistence.Migrations.Tenant
                         .HasColumnType("timestamp with time zone")
                         .HasColumnName("updated_at");
 
-                    b.Property<string>("UpdatedBy")
-                        .HasMaxLength(50)
-                        .HasColumnType("character varying(50)")
+                    b.Property<Guid?>("UpdatedBy")
+                        .HasColumnType("uuid")
                         .HasColumnName("updated_by");
 
                     b.Property<string>("Vin")
@@ -5954,9 +5883,8 @@ namespace Logistics.Infrastructure.Persistence.Migrations.Tenant
                         .HasColumnName("created_at")
                         .HasDefaultValueSql("CURRENT_TIMESTAMP");
 
-                    b.Property<string>("CreatedBy")
-                        .HasMaxLength(50)
-                        .HasColumnType("character varying(50)")
+                    b.Property<Guid?>("CreatedBy")
+                        .HasColumnType("uuid")
                         .HasColumnName("created_by");
 
                     b.Property<DateTime?>("DispatchedAt")
@@ -6012,9 +5940,8 @@ namespace Logistics.Infrastructure.Persistence.Migrations.Tenant
                         .HasColumnType("timestamp with time zone")
                         .HasColumnName("updated_at");
 
-                    b.Property<string>("UpdatedBy")
-                        .HasMaxLength(50)
-                        .HasColumnType("character varying(50)")
+                    b.Property<Guid?>("UpdatedBy")
+                        .HasColumnType("uuid")
                         .HasColumnName("updated_by");
 
                     b.HasKey("Id")

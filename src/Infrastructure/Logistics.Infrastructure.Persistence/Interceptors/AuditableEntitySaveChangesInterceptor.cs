@@ -64,11 +64,12 @@ public static class Extensions
 
     extension(HttpContext? httpContext)
     {
-        public string? GetUserId()
+        public Guid? GetUserId()
         {
             try
             {
-                return httpContext?.User?.FindFirstValue(ClaimTypes.NameIdentifier);
+                var userId = httpContext?.User?.FindFirstValue(ClaimTypes.NameIdentifier);
+                return Guid.TryParse(userId, out var id) ? id : null;
             }
             catch (ObjectDisposedException)
             {

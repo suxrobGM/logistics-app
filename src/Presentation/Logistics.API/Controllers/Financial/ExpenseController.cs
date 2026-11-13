@@ -15,7 +15,7 @@ namespace Logistics.API.Controllers.Financial;
 [Produces("application/json")]
 public class ExpenseController(IMediator mediator) : ControllerBase
 {
-    private string UserId => User.FindFirstValue(ClaimTypes.NameIdentifier) ?? string.Empty;
+    private Guid UserId => Guid.TryParse(User.FindFirstValue(ClaimTypes.NameIdentifier), out var id) ? id : Guid.Empty;
 
     #region Queries
 
@@ -36,7 +36,7 @@ public class ExpenseController(IMediator mediator) : ControllerBase
     [Authorize(Policy = Permission.Expense.View)]
     public async Task<IActionResult> DownloadReceipt(Guid id)
     {
-        var requestedById = Guid.TryParse(UserId, out var uid) ? uid : Guid.Empty;
+        var requestedById = UserId;
 
         var result = await mediator.Send(new DownloadExpenseReceiptQuery
         {

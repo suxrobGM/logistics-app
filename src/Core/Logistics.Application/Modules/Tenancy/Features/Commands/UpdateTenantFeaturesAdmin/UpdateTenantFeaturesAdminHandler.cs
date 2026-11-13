@@ -25,7 +25,7 @@ internal sealed class UpdateTenantFeaturesAdminHandler(
         var existingConfigs = await masterUow.Repository<TenantFeatureConfig>()
             .GetListAsync(c => c.TenantId == req.TenantId, ct);
 
-        var userId = currentUserService.GetUserId().ToString();
+        var userId = currentUserService.GetUserId();
         var now = DateTime.UtcNow;
 
         foreach (var update in req.Features)

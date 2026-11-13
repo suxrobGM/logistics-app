@@ -32,7 +32,6 @@ internal sealed class ExpenseEntityConfiguration : IEntityTypeConfiguration<Expe
         builder.Property(e => e.VendorName).HasMaxLength(255);
         builder.Property(e => e.ReceiptBlobPath).HasMaxLength(500);
         builder.Property(e => e.Notes).HasMaxLength(2000);
-        builder.Property(e => e.ApprovedById).HasMaxLength(50);
         builder.Property(e => e.RejectionReason).HasMaxLength(500);
 
         // Indexes for common queries
