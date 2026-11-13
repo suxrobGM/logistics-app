@@ -47,11 +47,11 @@ public class TripNewLoadTests
     [Fact]
     public void UpdateTripValidator_NegativeWeightOnNewLoad_Fails()
     {
-        var command = new UpdateTripCommand { TripId = Guid.NewGuid(), NewLoads = [TestData.TripLoadCommand() with { Weight = -5 }] };
+        var command = new UpdateTripCommand { TripId = Guid.NewGuid(), NewLoads = [TestData.TripLoadCommand() with { WeightKg = -5 }] };
 
         var result = new UpdateTripValidator().TestValidate(command);
 
-        result.ShouldHaveValidationErrorFor("NewLoads[0].Weight");
+        result.ShouldHaveValidationErrorFor("NewLoads[0].WeightKg");
     }
 
     #endregion

@@ -1280,10 +1280,10 @@ namespace Logistics.Infrastructure.Persistence.Migrations.Tenant
                         .HasColumnType("boolean")
                         .HasColumnName("freight_hold");
 
-                    b.Property<decimal>("GrossWeight")
+                    b.Property<decimal>("GrossWeightKg")
                         .HasPrecision(18, 2)
                         .HasColumnType("numeric(18,2)")
-                        .HasColumnName("gross_weight");
+                        .HasColumnName("gross_weight_kg");
 
                     b.Property<bool>("IsLaden")
                         .HasColumnType("boolean")
@@ -3689,9 +3689,10 @@ namespace Logistics.Infrastructure.Persistence.Migrations.Tenant
                         .HasColumnType("character varying(50)")
                         .HasColumnName("updated_by");
 
-                    b.Property<double?>("Weight")
-                        .HasColumnType("double precision")
-                        .HasColumnName("weight");
+                    b.Property<decimal?>("WeightKg")
+                        .HasPrecision(18, 2)
+                        .HasColumnType("numeric(18,2)")
+                        .HasColumnName("weight_kg");
 
                     b.ComplexCollection(typeof(List<Dictionary<string, object>>), "CustomerUpdates", "Logistics.Domain.Entities.Load.CustomerUpdates#CustomerUpdate", b1 =>
                         {

@@ -13,7 +13,7 @@ public class CreateContainerCommand : ICommand<Result<ContainerDto>>
     public string? BookingReference { get; set; }
     public string? BillOfLadingNumber { get; set; }
     public bool IsLaden { get; set; }
-    public decimal GrossWeight { get; set; }
+    public decimal GrossWeightKg { get; set; }
     public ContainerStatus Status { get; set; } = ContainerStatus.Empty;
     public Guid? CurrentTerminalId { get; set; }
     public string? Notes { get; set; }

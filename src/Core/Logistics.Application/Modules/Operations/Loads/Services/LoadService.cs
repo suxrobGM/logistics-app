@@ -139,7 +139,7 @@ internal sealed class LoadService(ITenantUnitOfWork tenantUow, IVehicleTransport
             load.NmfcCode = details.NmfcCode;
             load.PalletCount = details.PalletCount;
             load.PieceCount = details.PieceCount;
-            load.Weight = details.Weight;
+            load.WeightKg = details.WeightKg;
             load.Dimensions = details.Dimensions;
             load.IsStackable = details.IsStackable;
             load.Accessorials = details.Accessorials.Select(a => LoadChargeService.NewAccessorial(load, a)).ToList();

@@ -54,7 +54,7 @@ public class LoadServiceTests
             NmfcCode = "123456",
             PalletCount = 10,
             PieceCount = 40,
-            Weight = 8000,
+            WeightKg = 8000,
             Dimensions = "48x40x60",
             IsStackable = true
         };
@@ -83,7 +83,7 @@ public class LoadServiceTests
         Assert.Equal("123456", load.NmfcCode);
         Assert.Equal(10, load.PalletCount);
         Assert.Equal(40, load.PieceCount);
-        Assert.Equal(8000, load.Weight);
+        Assert.Equal(8000, load.WeightKg);
         Assert.Equal("48x40x60", load.Dimensions);
         Assert.True(load.IsStackable);
     }

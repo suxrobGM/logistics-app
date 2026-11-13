@@ -80,7 +80,7 @@ public class GetContainerStatusToolTests
             BillOfLadingNumber = "BL-777",
             BookingReference = "BK-42",
             IsLaden = true,
-            GrossWeight = 18500m,
+            GrossWeightKg = 18500m,
             CurrentTerminal = terminal
         };
         container.MarkAtPort(terminal);

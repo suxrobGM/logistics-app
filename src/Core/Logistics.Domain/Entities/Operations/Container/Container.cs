@@ -43,10 +43,8 @@ public partial class Container : AuditableEntity, ITenantEntity
     /// </summary>
     public bool IsLaden { get; set; }
 
-    /// <summary>
-    /// Gross weight in kilograms or pounds depending on the tenant's unit setting.
-    /// </summary>
-    public decimal GrossWeight { get; set; }
+    /// <summary>Gross weight in kilograms.</summary>
+    public decimal GrossWeightKg { get; set; }
 
     public ContainerStatus Status { get; private set; } = ContainerStatus.Empty;
 

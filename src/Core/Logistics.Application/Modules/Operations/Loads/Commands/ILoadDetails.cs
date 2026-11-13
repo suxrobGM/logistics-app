@@ -34,7 +34,7 @@ public interface ILoadDetails : ILoadScheduleFields
     string? NmfcCode { get; }
     int? PalletCount { get; }
     int? PieceCount { get; }
-    double? Weight { get; }
+    decimal? WeightKg { get; }
     string? Dimensions { get; }
     bool IsStackable { get; }
 }

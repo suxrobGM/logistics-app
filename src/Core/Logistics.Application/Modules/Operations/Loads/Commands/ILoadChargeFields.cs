@@ -12,6 +12,6 @@ public interface ILoadChargeFields
     string? NmfcCode { get; }
     int? PalletCount { get; }
     int? PieceCount { get; }
-    double? Weight { get; }
+    decimal? WeightKg { get; }
     string? Dimensions { get; }
 }

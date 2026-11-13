@@ -54,7 +54,7 @@ public record CreateTripLoadCommand : ILoadDetails, ILoadChargeFields
     public string? NmfcCode { get; set; }
     public int? PalletCount { get; set; }
     public int? PieceCount { get; set; }
-    public double? Weight { get; set; }
+    public decimal? WeightKg { get; set; }
     public string? Dimensions { get; set; }
     public bool IsStackable { get; set; }
 }

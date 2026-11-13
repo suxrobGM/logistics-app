@@ -11,7 +11,7 @@ public class ContainerDto
     public string? BookingReference { get; set; }
     public string? BillOfLadingNumber { get; set; }
     public bool IsLaden { get; set; }
-    public decimal GrossWeight { get; set; }
+    public decimal GrossWeightKg { get; set; }
     public ContainerStatus Status { get; set; }
     public Guid? CurrentTerminalId { get; set; }
     public string? CurrentTerminalName { get; set; }

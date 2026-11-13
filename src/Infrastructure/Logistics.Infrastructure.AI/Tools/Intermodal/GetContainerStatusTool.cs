@@ -75,7 +75,7 @@ internal sealed class GetContainerStatusTool(ITenantUnitOfWork tenantUow)
             iso_type_description = container.IsoType.GetDescription(),
             status = container.Status.ToString(),
             is_laden = container.IsLaden,
-            gross_weight = container.GrossWeight,
+            gross_weight_kg = container.GrossWeightKg,
             seal_number = container.SealNumber,
             booking_reference = container.BookingReference,
             bill_of_lading_number = container.BillOfLadingNumber,

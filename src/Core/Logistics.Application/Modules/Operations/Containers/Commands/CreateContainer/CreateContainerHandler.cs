@@ -40,7 +40,7 @@ internal sealed class CreateContainerHandler(ITenantUnitOfWork tenantUow)
             BookingReference = req.BookingReference,
             BillOfLadingNumber = req.BillOfLadingNumber,
             IsLaden = req.IsLaden,
-            GrossWeight = req.GrossWeight,
+            GrossWeightKg = req.GrossWeightKg,
             CurrentTerminalId = terminal?.Id,
             CurrentTerminal = terminal,
             Notes = req.Notes

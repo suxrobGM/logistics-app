@@ -82,8 +82,8 @@ internal sealed class GetLoadTool(IMediator mediator, ITenantUnitOfWork tenantUo
             parts.Add($"{pallets} pallets");
         if (load.PieceCount is { } pieces)
             parts.Add($"{pieces} pieces");
-        if (load.Weight is { } weight)
-            parts.Add($"weight {weight:0.#}");
+        if (load.WeightKg is { } weight)
+            parts.Add($"weight {weight:0.#} kg");
         if (!string.IsNullOrWhiteSpace(load.Dimensions))
             parts.Add(load.Dimensions);
 

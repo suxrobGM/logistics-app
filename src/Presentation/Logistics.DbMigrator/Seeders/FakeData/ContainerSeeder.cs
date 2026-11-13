@@ -68,7 +68,7 @@ internal class ContainerSeeder(ILogger<ContainerSeeder> logger) : SeederBase(log
                 SealNumber = $"SL{random.Next(100000, 999999)}",
                 BookingReference = $"BK-{DateTime.UtcNow:yyyyMMdd}-{i + 1:D3}",
                 IsLaden = false,
-                GrossWeight = isoType is ContainerIsoType.Gp40 or ContainerIsoType.Hc40 or ContainerIsoType.Hc45
+                GrossWeightKg = isoType is ContainerIsoType.Gp40 or ContainerIsoType.Hc40 or ContainerIsoType.Hc45
                     ? random.Next(18000, 30000)
                     : random.Next(8000, 18000)
             };

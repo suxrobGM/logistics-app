@@ -36,7 +36,7 @@ internal sealed class UpdateContainerHandler(ITenantUnitOfWork tenantUow)
         container.SealNumber = PropertyUpdater.UpdateIfChanged(req.SealNumber, container.SealNumber);
         container.BookingReference = PropertyUpdater.UpdateIfChanged(req.BookingReference, container.BookingReference);
         container.BillOfLadingNumber = PropertyUpdater.UpdateIfChanged(req.BillOfLadingNumber, container.BillOfLadingNumber);
-        container.GrossWeight = PropertyUpdater.UpdateIfChanged(req.GrossWeight, container.GrossWeight);
+        container.GrossWeightKg = PropertyUpdater.UpdateIfChanged(req.GrossWeightKg, container.GrossWeightKg);
         container.Notes = PropertyUpdater.UpdateIfChanged(req.Notes, container.Notes);
 
         await tenantUow.SaveChangesAsync(ct);

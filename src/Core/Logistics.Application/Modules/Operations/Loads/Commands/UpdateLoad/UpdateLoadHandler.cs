@@ -136,7 +136,7 @@ internal sealed class UpdateLoadHandler(
         if (req.NmfcCode is not null) load.NmfcCode = req.NmfcCode;
         if (req.PalletCount.HasValue) load.PalletCount = req.PalletCount;
         if (req.PieceCount.HasValue) load.PieceCount = req.PieceCount;
-        if (req.Weight.HasValue) load.Weight = req.Weight;
+        if (req.WeightKg.HasValue) load.WeightKg = req.WeightKg;
         if (req.Dimensions is not null) load.Dimensions = req.Dimensions;
         if (req.IsStackable.HasValue) load.IsStackable = req.IsStackable.Value;
 

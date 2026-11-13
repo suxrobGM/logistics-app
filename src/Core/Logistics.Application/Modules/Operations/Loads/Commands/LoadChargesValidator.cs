@@ -12,6 +12,6 @@ internal sealed class LoadChargesValidator : AbstractValidator<ILoadChargeFields
         RuleFor(i => i.Dimensions).MaximumLength(100);
         RuleFor(i => i.PalletCount).GreaterThanOrEqualTo(0);
         RuleFor(i => i.PieceCount).GreaterThanOrEqualTo(0);
-        RuleFor(i => i.Weight).GreaterThanOrEqualTo(0);
+        RuleFor(i => i.WeightKg).GreaterThanOrEqualTo(0);
     }
 }

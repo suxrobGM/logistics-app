@@ -17,6 +17,6 @@ public class UpdateContainerCommand : ICommand<Result>
     public string? SealNumber { get; set; }
     public string? BookingReference { get; set; }
     public string? BillOfLadingNumber { get; set; }
-    public decimal? GrossWeight { get; set; }
+    public decimal? GrossWeightKg { get; set; }
     public string? Notes { get; set; }
 }

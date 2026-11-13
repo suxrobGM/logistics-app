@@ -15,8 +15,8 @@ public partial class Load
     public int? PalletCount { get; set; }
     public int? PieceCount { get; set; }
 
-    /// <summary>Gross weight in the tenant's weight unit.</summary>
-    public double? Weight { get; set; }
+    /// <summary>Gross weight in kilograms; clients convert to the tenant's unit.</summary>
+    public decimal? WeightKg { get; set; }
 
     /// <summary>Free-text dimensions as the shipper states them, e.g. "48x40x60 in".</summary>
     public string? Dimensions { get; set; }

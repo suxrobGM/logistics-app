@@ -12,9 +12,9 @@ internal sealed class UpdateContainerValidator : AbstractValidator<UpdateContain
                 .Length(11)
                 .WithMessage("Container number must be exactly 11 characters (ISO 6346).");
         });
-        When(i => i.GrossWeight.HasValue, () =>
+        When(i => i.GrossWeightKg.HasValue, () =>
         {
-            RuleFor(i => i.GrossWeight!.Value).GreaterThanOrEqualTo(0);
+            RuleFor(i => i.GrossWeightKg!.Value).GreaterThanOrEqualTo(0);
         });
     }
 }

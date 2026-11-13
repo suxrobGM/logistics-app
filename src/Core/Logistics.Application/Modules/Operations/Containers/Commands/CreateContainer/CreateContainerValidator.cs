@@ -11,6 +11,6 @@ internal sealed class CreateContainerValidator : AbstractValidator<CreateContain
             .Length(11)
             .WithMessage("Container number must be exactly 11 characters (ISO 6346).");
 
-        RuleFor(i => i.GrossWeight).GreaterThanOrEqualTo(0);
+        RuleFor(i => i.GrossWeightKg).GreaterThanOrEqualTo(0);
     }
 }
