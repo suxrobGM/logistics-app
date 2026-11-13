@@ -2066,9 +2066,9 @@ namespace Logistics.Infrastructure.Persistence.Migrations.Tenant
                         .HasColumnType("text")
                         .HasColumnName("mechanic_signature");
 
-                    b.Property<int?>("OdometerReading")
-                        .HasColumnType("integer")
-                        .HasColumnName("odometer_reading");
+                    b.Property<long?>("OdometerMeters")
+                        .HasColumnType("bigint")
+                        .HasColumnName("odometer_meters");
 
                     b.Property<DateTime?>("ReviewedAt")
                         .HasColumnType("timestamp with time zone")
@@ -4547,9 +4547,9 @@ namespace Logistics.Infrastructure.Persistence.Migrations.Tenant
                         .HasColumnType("text")
                         .HasColumnName("maintenance_type");
 
-                    b.Property<int>("OdometerReading")
-                        .HasColumnType("integer")
-                        .HasColumnName("odometer_reading");
+                    b.Property<long>("OdometerMeters")
+                        .HasColumnType("bigint")
+                        .HasColumnName("odometer_meters");
 
                     b.Property<decimal>("PartsCost")
                         .HasPrecision(18, 2)
@@ -6309,10 +6309,10 @@ namespace Logistics.Infrastructure.Persistence.Migrations.Tenant
                         .HasColumnType("date")
                         .HasColumnName("date");
 
-                    b.Property<decimal>("Miles")
-                        .HasPrecision(12, 2)
-                        .HasColumnType("numeric(12,2)")
-                        .HasColumnName("miles");
+                    b.Property<decimal>("Meters")
+                        .HasPrecision(14, 2)
+                        .HasColumnType("numeric(14,2)")
+                        .HasColumnName("meters");
 
                     b.Property<Guid>("TruckId")
                         .HasColumnType("uuid")
@@ -6353,9 +6353,9 @@ namespace Logistics.Infrastructure.Persistence.Migrations.Tenant
                         .HasColumnType("uuid")
                         .HasColumnName("id");
 
-                    b.Property<int?>("OdometerReading")
-                        .HasColumnType("integer")
-                        .HasColumnName("odometer_reading");
+                    b.Property<long?>("OdometerMeters")
+                        .HasColumnType("bigint")
+                        .HasColumnName("odometer_meters");
 
                     b.Property<string>("Source")
                         .HasColumnType("text")
@@ -6659,9 +6659,9 @@ namespace Logistics.Infrastructure.Persistence.Migrations.Tenant
                         .HasColumnType("text")
                         .HasColumnName("fuel_card_provider");
 
-                    b.Property<int?>("OdometerReading")
-                        .HasColumnType("integer")
-                        .HasColumnName("odometer_reading");
+                    b.Property<long?>("OdometerMeters")
+                        .HasColumnType("bigint")
+                        .HasColumnName("odometer_meters");
 
                     b.Property<decimal?>("PricePerUnit")
                         .HasPrecision(18, 4)

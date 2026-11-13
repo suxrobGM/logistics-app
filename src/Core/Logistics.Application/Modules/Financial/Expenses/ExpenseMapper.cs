@@ -16,7 +16,7 @@ public static partial class ExpenseMapper
     [MapperIgnoreTarget(nameof(ExpenseDto.TruckId))]
     [MapperIgnoreTarget(nameof(ExpenseDto.Truck))]
     [MapperIgnoreTarget(nameof(ExpenseDto.TruckCategory))]
-    [MapperIgnoreTarget(nameof(ExpenseDto.OdometerReading))]
+    [MapperIgnoreTarget(nameof(ExpenseDto.OdometerMeters))]
     [MapperIgnoreTarget(nameof(ExpenseDto.Quantity))]
     [MapperIgnoreTarget(nameof(ExpenseDto.QuantityUnit))]
     [MapperIgnoreTarget(nameof(ExpenseDto.PurchaseJurisdiction))]
@@ -55,7 +55,7 @@ public static partial class ExpenseMapper
                     TruckId = truckExpense.TruckId,
                     Truck = truck,
                     TruckCategory = truckExpense.Category,
-                    OdometerReading = truckExpense.OdometerReading,
+                    OdometerMeters = truckExpense.OdometerMeters,
                     Quantity = truckExpense.Quantity,
                     QuantityUnit = truckExpense.QuantityUnit,
                     PurchaseJurisdiction = truckExpense.PurchaseJurisdiction,

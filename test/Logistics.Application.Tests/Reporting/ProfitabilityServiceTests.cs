@@ -291,7 +291,7 @@ public class ProfitabilityServiceTests
         TruckId = truck.Id,
         Jurisdiction = TaxJurisdiction.Create("US", "TX"),
         Date = DateOnly.FromDateTime(From.AddDays(2)),
-        Miles = miles
+        Meters = miles * 1609.344m
     };
 
     private FuelCardTransaction FuelTransaction(decimal amount, FuelCardTransactionStatus status, Guid? truckId) => new()

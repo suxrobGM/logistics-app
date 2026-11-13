@@ -12,7 +12,7 @@ public record CreateDvirReportCommand : ICommand<Result<DvirReportDto>>
     public required DvirType Type { get; set; }
     public double? Latitude { get; set; }
     public double? Longitude { get; set; }
-    public int? OdometerReading { get; set; }
+    public long? OdometerMeters { get; set; }
     public string? DriverNotes { get; set; }
     public string? DriverSignature { get; set; }
     public Guid? TripId { get; set; }

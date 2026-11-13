@@ -23,5 +23,5 @@ public class TruckLocationHistory : Entity, ITenantEntity
     /// <summary>ELD provider the ping came from; null for driver-app/manual sources.</summary>
     public EldProviderType? Source { get; set; }
 
-    public int? OdometerReading { get; set; }
+    public long? OdometerMeters { get; set; }
 }

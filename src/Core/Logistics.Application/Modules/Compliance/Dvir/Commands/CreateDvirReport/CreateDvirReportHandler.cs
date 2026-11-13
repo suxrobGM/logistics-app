@@ -42,7 +42,7 @@ internal sealed class CreateDvirReportHandler(
             InspectionDate = DateTime.UtcNow,
             Latitude = req.Latitude,
             Longitude = req.Longitude,
-            OdometerReading = req.OdometerReading,
+            OdometerMeters = req.OdometerMeters,
             DriverNotes = req.DriverNotes,
             DriverSignature = req.DriverSignature,
             TripId = req.TripId,

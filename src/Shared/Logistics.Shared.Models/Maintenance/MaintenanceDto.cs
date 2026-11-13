@@ -13,7 +13,7 @@ public class MaintenanceRecordDto
     public string Description { get; set; } = string.Empty;
 
     public DateTime ServiceDate { get; set; }
-    public int? OdometerReading { get; set; }
+    public long? OdometerMeters { get; set; }
     public int? EngineHours { get; set; }
 
     public string? VendorName { get; set; }

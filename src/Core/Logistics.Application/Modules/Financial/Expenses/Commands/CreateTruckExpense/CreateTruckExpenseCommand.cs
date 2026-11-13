@@ -12,7 +12,7 @@ public class CreateTruckExpenseCommand : ICommand<Result<Guid>>, IExpenseFields
     public string? Notes { get; set; }
     public required Guid TruckId { get; set; }
     public TruckExpenseCategory Category { get; set; }
-    public int? OdometerReading { get; set; }
+    public long? OdometerMeters { get; set; }
     public decimal? Quantity { get; set; }
     public VolumeUnit? QuantityUnit { get; set; }
 }

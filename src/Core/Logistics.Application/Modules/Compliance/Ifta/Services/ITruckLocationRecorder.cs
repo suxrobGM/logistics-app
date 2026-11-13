@@ -19,7 +19,7 @@ public interface ITruckLocationRecorder : IApplicationService
         GeoPoint location,
         DateTime timestampUtc,
         EldProviderType? source = null,
-        int? odometerReading = null,
+        long? odometerMeters = null,
         Address? address = null,
         CancellationToken ct = default);
 }

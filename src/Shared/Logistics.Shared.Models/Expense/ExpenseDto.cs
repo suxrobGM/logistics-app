@@ -37,7 +37,7 @@ public record ExpenseDto
     public Guid? TruckId { get; init; }
     public TruckDto? Truck { get; init; }
     public TruckExpenseCategory? TruckCategory { get; init; }
-    public int? OdometerReading { get; init; }
+    public long? OdometerMeters { get; init; }
     public decimal? Quantity { get; init; }
     public VolumeUnit? QuantityUnit { get; init; }
     public TaxJurisdiction? PurchaseJurisdiction { get; init; }

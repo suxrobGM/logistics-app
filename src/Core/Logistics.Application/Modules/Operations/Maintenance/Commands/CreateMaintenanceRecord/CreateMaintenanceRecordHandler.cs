@@ -34,7 +34,7 @@ internal sealed class CreateMaintenanceRecordHandler(ITenantUnitOfWork tenantUow
             MaintenanceType = req.Type,
             Description = req.Description,
             ServiceDate = req.ServiceDate,
-            OdometerReading = req.OdometerReading ?? 0,
+            OdometerMeters = req.OdometerMeters ?? 0,
             EngineHours = req.EngineHours,
             VendorName = req.VendorName,
             InvoiceNumber = req.InvoiceNumber,

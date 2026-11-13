@@ -282,7 +282,7 @@ public class SamsaraMapperTests
     }
 
     [Fact]
-    public void MapToLocationDto_DocumentedStats_ReadsGpsAndOdometerInMiles()
+    public void MapToLocationDto_DocumentedStats_ReadsGpsAndOdometerInMeters()
     {
         var stats = Page<SamsaraVehicleStats>(VehicleStatsJson);
 
@@ -292,7 +292,7 @@ public class SamsaraMapperTests
         Assert.Equal(37.7749, dto.Latitude);
         Assert.Equal(-122.4194, dto.Longitude);
         Assert.Equal(new DateTime(2020, 1, 27, 7, 6, 25, DateTimeKind.Utc), dto.Timestamp);
-        Assert.Equal(8705, dto.OdometerMiles);
+        Assert.Equal(14010293, dto.OdometerMeters);
     }
 
     [Fact]

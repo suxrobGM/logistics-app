@@ -205,7 +205,7 @@ internal class DvirReportSeeder(ILogger<DvirReportSeeder> logger) : SeederBase(l
             InspectionDate = inspectionDate,
             Latitude = location.Latitude + (random.NextDouble() - 0.5) * 0.01,
             Longitude = location.Longitude + (random.NextDouble() - 0.5) * 0.01,
-            OdometerReading = random.Next(50000, 500000),
+            OdometerMeters = random.Next(50000, 500000) * 1609L,
             HasDefects = hasDefects,
             DriverSignature = GenerateFakeSignature(),
             DriverNotes = hasDefects ? "Issues noted during inspection." : random.Pick(DriverNotes)

@@ -28,7 +28,7 @@ internal sealed class CreateTruckExpenseHandler(ITenantUnitOfWork tenantUow)
             Notes = req.Notes,
             TruckId = req.TruckId,
             Category = req.Category,
-            OdometerReading = req.OdometerReading,
+            OdometerMeters = req.OdometerMeters,
             Quantity = req.Quantity,
             QuantityUnit = req.QuantityUnit
         };

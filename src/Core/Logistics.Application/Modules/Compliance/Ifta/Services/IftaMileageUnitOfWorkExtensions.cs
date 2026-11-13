@@ -1,6 +1,5 @@
 using Logistics.Domain.Entities;
 using Logistics.Domain.Persistence;
-using Logistics.Domain.Primitives.Enums;
 using Microsoft.EntityFrameworkCore;
 
 namespace Logistics.Application.Modules.Compliance.Ifta.Services;
@@ -15,12 +14,12 @@ public static class IftaMileageUnitOfWorkExtensions
         {
             var fromDay = DateOnly.FromDateTime(from);
             var toDay = DateOnly.FromDateTime(to);
-            var miles = await tenantUow.Repository<TruckJurisdictionMileage>().Query()
+            var logged = await tenantUow.Repository<TruckJurisdictionMileage>().Query()
                 .Where(m => m.Date >= fromDay && m.Date < toDay)
                 .GroupBy(m => m.TruckId)
-                .Select(g => new { TruckId = g.Key, Miles = g.Sum(m => m.Miles) })
+                .Select(g => new { TruckId = g.Key, Meters = g.Sum(m => m.Meters) })
                 .ToListAsync(ct);
-            return miles.ToDictionary(m => m.TruckId, m => DistanceUnit.Miles.ToMeters((double)m.Miles));
+            return logged.ToDictionary(m => m.TruckId, m => (double)m.Meters);
         }
     }
 }

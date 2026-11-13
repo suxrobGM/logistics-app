@@ -12,6 +12,7 @@ internal sealed class IftaReportService(
     IMasterUnitOfWork masterUow) : IIftaReportService
 {
     private const decimal LitersPerGallon = 3.785411784m;
+    private const decimal MetersPerMile = 1609.344m;
 
     public async Task<IftaReportDto> GetReportAsync(int year, int quarter, CancellationToken ct = default)
     {
@@ -37,12 +38,15 @@ internal sealed class IftaReportService(
         var startDate = DateOnly.FromDateTime(start);
         var endDate = DateOnly.FromDateTime(end);
 
-        // Miles per jurisdiction from the daily rollups
-        var mileage = await tenantUow.Repository<TruckJurisdictionMileage>().Query()
+        // Distance per jurisdiction from the daily rollups; IFTA files in miles
+        var logged = await tenantUow.Repository<TruckJurisdictionMileage>().Query()
             .Where(m => m.Date >= startDate && m.Date < endDate)
             .GroupBy(m => new { m.Jurisdiction.CountryCode, m.Jurisdiction.Region })
-            .Select(g => new { g.Key.CountryCode, g.Key.Region, Miles = g.Sum(m => m.Miles) })
+            .Select(g => new { g.Key.CountryCode, g.Key.Region, Meters = g.Sum(m => m.Meters) })
             .ToListAsync(ct);
+        var mileage = logged
+            .Select(m => new { m.CountryCode, m.Region, Miles = decimal.Round(m.Meters / MetersPerMile, 2) })
+            .ToList();
 
         // Fuel purchases in the quarter (gallons); jurisdiction may be missing on manual entries
         var fuelPurchases = await tenantUow.Repository<Expense>().Query()

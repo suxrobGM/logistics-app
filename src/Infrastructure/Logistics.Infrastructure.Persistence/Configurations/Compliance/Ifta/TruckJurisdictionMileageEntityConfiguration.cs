@@ -21,7 +21,7 @@ internal sealed class TruckJurisdictionMileageEntityConfiguration : IEntityTypeC
             j.Property(p => p.Region).HasMaxLength(10);
         });
 
-        builder.Property(i => i.Miles).HasPrecision(12, 2);
+        builder.Property(i => i.Meters).HasPrecision(14, 2);
 
         // Row identity (truck, date, jurisdiction) is the raw-SQL unique index
         // ux_truck_jurisdiction_mileage_truck_date_jurisdiction (NULLS NOT DISTINCT on region), created in

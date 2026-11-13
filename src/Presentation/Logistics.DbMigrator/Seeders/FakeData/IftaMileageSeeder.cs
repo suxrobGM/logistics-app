@@ -89,7 +89,7 @@ internal class IftaMileageSeeder(ILogger<IftaMileageSeeder> logger) : SeederBase
                         TruckId = truck.Id,
                         Jurisdiction = new TaxJurisdiction { CountryCode = "US", Region = region },
                         Date = date,
-                        Miles = miles
+                        Meters = miles * 1609.344m
                     }, cancellationToken);
 
                     // Thin breadcrumb trail (one ping per jurisdiction visit, not full 5-min density)

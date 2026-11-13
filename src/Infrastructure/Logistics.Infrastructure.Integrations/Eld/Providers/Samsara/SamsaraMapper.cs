@@ -5,8 +5,6 @@ namespace Logistics.Infrastructure.Integrations.Eld.Providers.Samsara;
 
 internal static class SamsaraMapper
 {
-    private const double MetersPerMile = 1609.344;
-
     /// <summary>Null when the clock has no driver id or no known duty status (driver app disconnected).</summary>
     public static EldDriverHosDataDto? MapToDto(SamsaraHosClock clock)
     {
@@ -114,7 +112,6 @@ internal static class SamsaraMapper
             return null;
         }
 
-        var odometerMeters = stats.ObdOdometerMeters?.Value ?? stats.GpsOdometerMeters?.Value;
         return new EldVehicleLocationDto
         {
             ExternalVehicleId = stats.Id,
@@ -122,7 +119,7 @@ internal static class SamsaraMapper
             Latitude = stats.Gps.Latitude,
             Longitude = stats.Gps.Longitude,
             Timestamp = stats.Gps.Time.UtcDateTime,
-            OdometerMiles = odometerMeters.HasValue ? (int)(odometerMeters.Value / MetersPerMile) : null
+            OdometerMeters = stats.ObdOdometerMeters?.Value ?? stats.GpsOdometerMeters?.Value
         };
     }
 

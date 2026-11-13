@@ -18,6 +18,6 @@ public class TruckJurisdictionMileage : Entity, ITenantEntity
     /// <summary>UTC date the miles were driven.</summary>
     public required DateOnly Date { get; set; }
 
-    /// <summary>Accumulated distance in miles.</summary>
-    public decimal Miles { get; set; }
+    /// <summary>Accumulated distance in meters.</summary>
+    public decimal Meters { get; set; }
 }

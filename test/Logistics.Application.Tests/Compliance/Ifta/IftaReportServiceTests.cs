@@ -63,7 +63,7 @@ public class IftaReportServiceTests
         TruckId = _truckId,
         Jurisdiction = new TaxJurisdiction { CountryCode = "US", Region = region },
         Date = date ?? new DateOnly(2026, 5, 10),
-        Miles = miles
+        Meters = miles * 1609.344m
     };
 
     private TruckExpense Fuel(string? region, decimal quantity, VolumeUnit unit = VolumeUnit.Gallons) => new()

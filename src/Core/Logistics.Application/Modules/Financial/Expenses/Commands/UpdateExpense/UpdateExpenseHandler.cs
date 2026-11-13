@@ -50,7 +50,7 @@ internal sealed class UpdateExpenseHandler(ITenantUnitOfWork tenantUow)
                     truckExpense.Category = req.TruckCategory.Value;
                 }
 
-                truckExpense.OdometerReading = req.OdometerReading;
+                truckExpense.OdometerMeters = req.OdometerMeters;
                 truckExpense.Quantity = req.Quantity;
                 truckExpense.QuantityUnit = req.QuantityUnit;
                 break;

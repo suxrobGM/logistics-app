@@ -40,9 +40,9 @@ public class DvirReport : AuditableEntity, ITenantEntity
     public double? Longitude { get; set; }
 
     /// <summary>
-    /// Odometer reading at time of inspection
+    /// Odometer reading at time of inspection, in meters
     /// </summary>
-    public int? OdometerReading { get; set; }
+    public long? OdometerMeters { get; set; }
 
     /// <summary>
     /// Whether any defects were found during inspection

@@ -135,8 +135,8 @@ public record EldVehicleLocationDto
     public double Longitude { get; set; }
     public DateTime Timestamp { get; set; }
 
-    /// <summary>Odometer reading in whole miles, when the device reports one.</summary>
-    public int? OdometerMiles { get; set; }
+    /// <summary>Odometer reading in meters, when the device reports one.</summary>
+    public long? OdometerMeters { get; set; }
 }
 
 /// <summary>

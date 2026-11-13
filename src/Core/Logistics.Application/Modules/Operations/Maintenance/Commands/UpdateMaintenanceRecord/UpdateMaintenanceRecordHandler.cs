@@ -51,7 +51,7 @@ internal sealed class UpdateMaintenanceRecordHandler(ITenantUnitOfWork tenantUow
         record.MaintenanceType = req.Type;
         record.Description = req.Description;
         record.ServiceDate = req.ServiceDate;
-        record.OdometerReading = req.OdometerReading ?? 0;
+        record.OdometerMeters = req.OdometerMeters ?? 0;
         record.EngineHours = req.EngineHours;
         record.VendorName = req.VendorName;
         record.InvoiceNumber = req.InvoiceNumber;

@@ -229,7 +229,7 @@ public class EldSyncServiceTests
         var seen = new DateTime(2026, 10, 14, 12, 0, 0, DateTimeKind.Utc);
         ((IEldGpsTrackingProvider)_provider).GetAllVehicleLocationsAsync(Arg.Any<CancellationToken>()).Returns(
         [
-            new EldVehicleLocationDto { ExternalVehicleId = "112", Latitude = 41.88, Longitude = -87.63, Timestamp = seen, OdometerMiles = 8705 },
+            new EldVehicleLocationDto { ExternalVehicleId = "112", Latitude = 41.88, Longitude = -87.63, Timestamp = seen, OdometerMeters = 8705 },
             new EldVehicleLocationDto { ExternalVehicleId = "999", Latitude = 40, Longitude = -80, Timestamp = seen }
         ]);
 

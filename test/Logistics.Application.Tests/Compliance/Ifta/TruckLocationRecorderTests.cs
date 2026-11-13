@@ -43,7 +43,8 @@ public class TruckLocationRecorderTests
             NullLogger<TruckLocationRecorder>.Instance);
     }
 
-    private decimal AccruedMiles => (decimal)_upsert!.GetArgument(3)!;
+    private decimal AccruedMeters => (decimal)_upsert!.GetArgument(3)!;
+    private decimal AccruedMiles => AccruedMeters / 1609.344m;
     private string? AccruedRegion => (string?)_upsert!.GetArgument(5);
 
     private void SetupPrevious(TruckLocationHistory? previous)
@@ -52,12 +53,12 @@ public class TruckLocationRecorderTests
         _historyRepo.Query().Returns(rows.BuildMock());
     }
 
-    private TruckLocationHistory Previous(GeoPoint location, DateTime timestamp, int? odometer = null) => new()
+    private TruckLocationHistory Previous(GeoPoint location, DateTime timestamp, long? odometer = null) => new()
     {
         TruckId = _truck.Id,
         Location = location,
         Timestamp = timestamp,
-        OdometerReading = odometer
+        OdometerMeters = odometer
     };
 
     [Fact]
@@ -96,7 +97,7 @@ public class TruckLocationRecorderTests
 
         var sql = _upsert!.Format;
         Assert.Contains("ON CONFLICT (truck_id, date, jurisdiction_country_code, jurisdiction_region)", sql);
-        Assert.Contains("miles = truck_jurisdiction_mileage.miles + excluded.miles", sql);
+        Assert.Contains("meters = truck_jurisdiction_mileage.meters + excluded.meters", sql);
     }
 
     [Fact]
@@ -140,12 +141,12 @@ public class TruckLocationRecorderTests
     public async Task Record_PlausibleOdometerDelta_WinsOverHaversine()
     {
         var now = DateTime.UtcNow;
-        // Haversine Dallas→Fort Worth ~31 mi; odometer says 40 (road distance) - within 2×h+5
-        SetupPrevious(Previous(Dallas, now.AddHours(-1), odometer: 10_000));
+        // Haversine Dallas→Fort Worth ~50 km; odometer says 64 km (road distance) - within 2×h+8 km
+        SetupPrevious(Previous(Dallas, now.AddHours(-1), odometer: 16_000_000));
 
-        await _sut.RecordAsync(_truck, FortWorth, now, odometerReading: 10_040);
+        await _sut.RecordAsync(_truck, FortWorth, now, odometerMeters: 16_064_000);
 
-        Assert.Equal(40m, AccruedMiles);
+        Assert.Equal(64_000m, AccruedMeters);
     }
 
     [Fact]

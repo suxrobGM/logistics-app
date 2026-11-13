@@ -17,7 +17,7 @@ public class UpdateExpenseCommand : ICommand<Result>, IExpenseFields
 
     // TruckExpense fields
     public TruckExpenseCategory? TruckCategory { get; set; }
-    public int? OdometerReading { get; set; }
+    public long? OdometerMeters { get; set; }
     public decimal? Quantity { get; set; }
     public VolumeUnit? QuantityUnit { get; set; }
 

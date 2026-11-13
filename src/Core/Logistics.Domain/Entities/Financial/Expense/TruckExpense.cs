@@ -16,9 +16,9 @@ public class TruckExpense : TruckLinkedExpense
     public TruckExpenseCategory Category { get; set; }
 
     /// <summary>
-    ///     Odometer reading at the time of expense (optional).
+    ///     Odometer reading at the time of expense, in meters (optional).
     /// </summary>
-    public int? OdometerReading { get; set; }
+    public long? OdometerMeters { get; set; }
 
     /// <summary>
     ///     Quantity purchased (typically fuel volume). Captured in <see cref="QuantityUnit"/>;

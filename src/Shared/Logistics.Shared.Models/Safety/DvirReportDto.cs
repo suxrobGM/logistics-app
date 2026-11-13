@@ -16,7 +16,7 @@ public class DvirReportDto
 
     public double? Latitude { get; set; }
     public double? Longitude { get; set; }
-    public int? OdometerReading { get; set; }
+    public long? OdometerMeters { get; set; }
 
     public bool HasDefects { get; set; }
     public bool HasDriverSignature { get; set; }

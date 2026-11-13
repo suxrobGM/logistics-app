@@ -12,7 +12,7 @@ public record UpdateMaintenanceRecordCommand : ICommand<Result<MaintenanceRecord
     public required MaintenanceType Type { get; set; }
     public required string Description { get; set; }
     public required DateTime ServiceDate { get; set; }
-    public int? OdometerReading { get; set; }
+    public long? OdometerMeters { get; set; }
     public int? EngineHours { get; set; }
     public string? VendorName { get; set; }
     public string? InvoiceNumber { get; set; }

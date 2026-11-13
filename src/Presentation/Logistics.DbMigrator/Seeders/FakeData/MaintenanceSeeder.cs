@@ -159,7 +159,7 @@ internal class MaintenanceSeeder(ILogger<MaintenanceSeeder> logger) : SeederBase
             TruckId = truck.Id,
             MaintenanceType = maintenanceType,
             ServiceDate = serviceDate,
-            OdometerReading = random.Next(100000, 500000),
+            OdometerMeters = random.Next(100000, 500000) * 1609L,
             EngineHours = random.NextDouble() < 0.5 ? random.Next(5000, 20000) : null,
             VendorName = random.Pick(VendorNames),
             InvoiceNumber = $"INV-{random.Next(10000, 99999)}",
