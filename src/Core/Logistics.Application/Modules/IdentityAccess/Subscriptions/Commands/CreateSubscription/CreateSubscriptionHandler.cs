@@ -26,7 +26,7 @@ internal sealed class CreateSubscriptionHandler(
 
         if (tenant.StripeCustomerId is null)
         {
-            await CreateStripeCustomerAsync(tenant);
+            await CreateStripeCustomerAsync(tenant, ct);
         }
 
         var subscriptionPlan = await masterUow.Repository<SubscriptionPlan>().GetByIdAsync(req.PlanId, ct);
@@ -48,10 +48,9 @@ internal sealed class CreateSubscriptionHandler(
         return Result.Ok();
     }
 
-    private async Task CreateStripeCustomerAsync(Tenant tenant)
+    private async Task CreateStripeCustomerAsync(Tenant tenant, CancellationToken ct)
     {
         tenant.StripeCustomerId = await stripeCustomerService.CreateCustomerAsync(tenant);
-        masterUow.Repository<Tenant>().Update(tenant);
-        await masterUow.SaveChangesAsync();
+        await masterUow.SaveChangesAsync(ct);
     }
 }

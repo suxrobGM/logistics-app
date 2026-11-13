@@ -34,7 +34,7 @@ internal sealed class GetPublicInvoiceHandler(
         var found = await paymentLinkService.FindValidAsync(req.Token, ct);
         if (!found.IsSuccess)
         {
-            return Result<PublicInvoiceDto>.Fail(found.Error!);
+            return Result<PublicInvoiceDto>.Fail(found);
         }
 
         var paymentLink = found.Value!;

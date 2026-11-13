@@ -5,7 +5,8 @@ using Logistics.Domain.Persistence;
 using Logistics.Mappings;
 using Logistics.Mediator;
 using Logistics.Shared.Models;
-using Logistics.Application.Modules.Operations.Common.Services;
+using Microsoft.EntityFrameworkCore;
+using Logistics.Application.Modules.Common.Services;
 
 namespace Logistics.Application.Modules.Compliance.Accidents.Queries;
 
@@ -48,14 +49,17 @@ internal sealed class GetAccidentReportsHandler(ITenantUnitOfWork tenantUow, IDi
 
         return await baseQuery.ToPagedResultAsync(req, MapPageAsync, ct, defaultOrderBy: "-AccidentDateTime");
     }
+
     private async Task<IEnumerable<AccidentReportDto>> MapPageAsync(
         IReadOnlyList<AccidentReport> reports, CancellationToken ct)
     {
         var reportIds = reports.Select(r => r.Id).ToArray();
-        var witnesses = (await tenantUow.Repository<AccidentWitness>()
-            .GetListAsync(w => reportIds.Contains(w.AccidentReportId), ct)).ToLookup(w => w.AccidentReportId);
-        var thirdParties = (await tenantUow.Repository<AccidentThirdParty>()
-            .GetListAsync(tp => reportIds.Contains(tp.AccidentReportId), ct)).ToLookup(tp => tp.AccidentReportId);
+        var witnesses = (await tenantUow.Repository<AccidentWitness>().Query()
+            .Where(w => reportIds.Contains(w.AccidentReportId))
+            .ToListAsync(ct)).ToLookup(w => w.AccidentReportId);
+        var thirdParties = (await tenantUow.Repository<AccidentThirdParty>().Query()
+            .Where(tp => reportIds.Contains(tp.AccidentReportId))
+            .ToListAsync(ct)).ToLookup(tp => tp.AccidentReportId);
 
         var employeeNames = await names.GetEmployeeNamesAsync(
             reports.SelectMany(r => new Guid?[] { r.DriverId, r.ReviewedById }), ct);

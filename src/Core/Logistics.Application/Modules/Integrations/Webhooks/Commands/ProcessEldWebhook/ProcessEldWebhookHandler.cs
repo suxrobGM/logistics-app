@@ -60,9 +60,7 @@ internal sealed class ProcessEldWebhookHandler(
             return Result.Fail(webhookResult.ErrorMessage ?? "Invalid webhook");
         }
 
-        // Idempotency (master DB): providers retry deliveries. Prefer a provider-supplied event id;
-        // otherwise fall back to a hash of the raw body so a re-sent payload maps to the same key. Scoped
-        // by tenant: the ledger is shared, and two tenants can receive byte-identical bodies.
+        // Tenant-scoped because the ledger is shared and two tenants can receive identical bodies.
         var provider = req.ProviderType.ToString();
         var eventKey = $"{req.TenantId}:{webhookResult.ExternalEventId ?? webhookEvents.BuildKeyFromBody(req.RequestBodyJson)}";
 

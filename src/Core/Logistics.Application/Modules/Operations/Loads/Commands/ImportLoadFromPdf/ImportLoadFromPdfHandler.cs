@@ -152,7 +152,7 @@ internal sealed class ImportLoadFromPdfHandler(
         if (!created.IsSuccess)
         {
             logger.LogError("Error creating load from PDF import: {Error}", created.Error);
-            return Result<ImportLoadFromPdfResponse>.Fail(created.Error!, created.ErrorCode!);
+            return Result<ImportLoadFromPdfResponse>.Fail(created);
         }
 
         var newLoad = created.Value!;

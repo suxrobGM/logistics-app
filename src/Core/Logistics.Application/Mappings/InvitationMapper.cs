@@ -20,10 +20,7 @@ public static partial class InvitationMapper
 
     extension(Invitation entity)
     {
-        /// <summary>
-        /// Maps an Invitation entity to InvitationDto with tenant information.
-        /// CustomerName stays null - the handler looks it up in the tenant database.
-        /// </summary>
+        /// <summary>CustomerName stays null because customers live in the tenant database.</summary>
         public InvitationDto ToDto()
         {
             var dto = MapInvitation(entity);
@@ -34,9 +31,6 @@ public static partial class InvitationMapper
             };
         }
 
-        /// <summary>
-        /// Maps an Invitation entity to InvitationDto with explicit tenant and inviter names.
-        /// </summary>
         public InvitationDto ToDto(string tenantName, string invitedByName, string? customerName = null)
         {
             var dto = entity.ToDto();
@@ -54,9 +48,6 @@ public static partial class InvitationMapper
             ? GetAppRoleDisplayName(entity.AppRole)
             : GetRoleDisplayName(entity.TenantRole);
 
-    /// <summary>
-    /// Gets the display name for a tenant role.
-    /// </summary>
     public static string GetRoleDisplayName(string? role) => role switch
     {
         TenantRoles.Owner => "Owner",

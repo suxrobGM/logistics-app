@@ -16,9 +16,6 @@ public static partial class UserTenantAccessMapper
 
     extension(UserTenantAccess entity)
     {
-        /// <summary>
-        /// Maps a UserTenantAccess entity to UserTenantAccessDto.
-        /// </summary>
         public UserTenantAccessDto ToDto()
         {
             var dto = MapAccess(entity);

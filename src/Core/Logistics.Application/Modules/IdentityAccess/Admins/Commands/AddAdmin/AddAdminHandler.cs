@@ -83,7 +83,7 @@ internal sealed class AddAdminHandler(
         await masterUow.Repository<Invitation>().AddAsync(invitation, ct);
         await masterUow.SaveChangesAsync(ct);
 
-        await invitationEmailSender.SendAsync(invitation, token, currentUser?.GetFullName() ?? "An administrator",
+        await invitationEmailSender.SendAsync(invitation, token, currentUser?.GetFullName(),
             tenant: null, isReminder: false);
 
         return Result<AddAdminResult>.Ok(new AddAdminResult { Invited = true });

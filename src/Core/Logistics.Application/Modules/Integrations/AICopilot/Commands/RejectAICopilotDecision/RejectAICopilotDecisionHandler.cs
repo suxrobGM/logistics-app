@@ -23,7 +23,7 @@ internal sealed class RejectAICopilotDecisionHandler(
         var userId = currentUser.GetUserId();
         var loaded = await guard.LoadAsync(request.DecisionId, userId, ct);
         if (!loaded.IsSuccess)
-            return Result.Fail(loaded.Error!);
+            return Result.Fail(loaded);
 
         var (decision, conversation) = loaded.Value!;
         decision.Reject(userId!.Value, request.Reason);

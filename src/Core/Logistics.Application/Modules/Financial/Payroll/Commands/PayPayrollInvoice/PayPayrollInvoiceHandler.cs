@@ -72,7 +72,6 @@ internal sealed class PayPayrollInvoiceHandler(
 
             await tenantUow.Repository<Payment>().AddAsync(payment, ct);
             payrollInvoice.ApplyPaymentWithEvent(payment);
-            tenantUow.Repository<Invoice>().Update(payrollInvoice);
             await tenantUow.SaveChangesAsync(ct);
 
             logger.LogInformation(

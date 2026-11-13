@@ -28,27 +28,17 @@ internal sealed class ResendAdminInvitationHandler(
             return Result.Fail("Invitation not found.", ErrorCodes.NotFound);
         }
 
-        if (invitation.Status != InvitationStatus.Pending)
-        {
-            return Result.Fail("Only pending invitations can be resent.");
-        }
-
-        if (invitation.IsExpired)
-        {
-            return Result.Fail("Cannot resend an expired invitation. Please create a new invitation.");
-        }
-
         // Only the hash is stored, so a resend issues a fresh token; the previous link stops working.
         var token = TokenGenerator.GenerateSecureToken(64);
-        invitation.TokenHash = TokenHasher.Hash(token);
-        invitation.SendCount++;
-        invitation.LastSentAt = DateTime.UtcNow;
+        if (invitation.Resend(TokenHasher.Hash(token)) is { } resendBlocked)
+        {
+            return Result.Fail(resendBlocked);
+        }
 
-        masterUow.Repository<Invitation>().Update(invitation);
         await masterUow.SaveChangesAsync(ct);
 
         await invitationEmailSender.SendAsync(invitation, token,
-            invitation.InvitedByUser?.GetFullName() ?? "An administrator", tenant: null, isReminder: true);
+            invitation.InvitedByUser?.GetFullName(), tenant: null, isReminder: true);
 
         return Result.Ok();
     }

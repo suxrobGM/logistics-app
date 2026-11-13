@@ -1,6 +1,6 @@
 using System.Text.RegularExpressions;
 using Logistics.Domain.Primitives.ValueObjects;
-using Logistics.Shared.Geo;
+using Logistics.Domain.Primitives.Geo;
 
 namespace Logistics.Application.Modules.Platform.DataImport.Services;
 

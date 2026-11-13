@@ -6,47 +6,7 @@ namespace Logistics.Application.Utilities;
 
 public static class QueryableExtensions
 {
-    /// <summary>
-    ///     Shortcut for ordering a queryable source by a key selector.
-    ///     It allows specifying whether the order should be ascending or descending.
-    /// </summary>
-    /// <param name="query">The queryable source to order.</param>
-    /// <param name="keySelector">The key selector expression to determine the order.</param>
-    /// <param name="descending">A boolean indicating whether to order in descending order (true) or ascending order (false).</param>
-    public static IQueryable<TSource> OrderBy<TSource, TKey>(
-        this IQueryable<TSource> query,
-        Expression<Func<TSource, TKey>> keySelector,
-        bool descending)
-    {
-        return descending ? query.OrderByDescending(keySelector) : query.OrderBy(keySelector);
-    }
-
-    /// <summary>
-    ///     Shortcut for ordering a queryable source by a string.
-    /// </summary>
-    /// <param name="query">The queryable source to order.</param>
-    /// <param name="orderBy">the string to determine the order.</param>
-    public static IQueryable<T> OrderBy<T>(this IQueryable<T> query, string? orderBy)
-    {
-        if (string.IsNullOrEmpty(orderBy))
-        {
-            return query;
-        }
-
-        var orderByQuery = CreateOrderQuery<T>(orderBy);
-        return orderByQuery is null ? query : DynamicQueryableExtensions.OrderBy(query, orderByQuery);
-    }
-
-    /// <summary>
-    ///     Orders by a sort string and always appends <paramref name="tieBreaker" /> as the final
-    ///     key, falling back to it entirely when the string names nothing sortable. Use this
-    ///     overload, not the one above, whenever paging follows: the string overload no-ops on an
-    ///     empty or unknown field, and paging without a total order repeats and drops rows.
-    /// </summary>
-    /// <param name="query">The queryable source to order.</param>
-    /// <param name="orderBy">The string to determine the order. May be null, empty, or unknown.</param>
-    /// <param name="tieBreaker">A key that is unique per row, used last and as the fallback.</param>
-    /// <param name="defaultOrderBy">The sort string used when <paramref name="orderBy" /> is empty.</param>
+    /// <summary>Always ends on the unique <paramref name="tieBreaker" />, so paging never repeats or drops rows.</summary>
     public static IOrderedQueryable<T> OrderBy<T, TKey>(
         this IQueryable<T> query,
         string? orderBy,
@@ -61,11 +21,7 @@ public static class QueryableExtensions
             : DynamicQueryableExtensions.OrderBy(query, orderByQuery).ThenBy(tieBreaker);
     }
 
-    /// <summary>
-    ///     Null leaves the order untouched. Sort strings name an entity property, but callers reach
-    ///     for the DTO's (<c>CreatedDate</c> for <c>CreatedAt</c>) often enough that an unknown one
-    ///     must not become a dynamic-LINQ parse error.
-    /// </summary>
+    /// <summary>Null for an unknown field, because callers often send the DTO's name (CreatedDate for CreatedAt).</summary>
     private static string? CreateOrderQuery<T>(string orderBy)
     {
         var desc = orderBy[0] == '-';
@@ -74,10 +30,7 @@ public static class QueryableExtensions
         return path is null ? null : $"{path} {(desc ? "descending" : "ascending")}";
     }
 
-    /// <summary>
-    ///     Resolves a dotted path (<c>Customer.Name</c>) segment by segment, in each property's own
-    ///     casing. Matching the whole path as a single name resolves no nested sort at all.
-    /// </summary>
+    /// <summary>Resolves segment by segment, since matching the whole dotted path finds no nested property.</summary>
     private static string? ResolvePropertyPath(Type type, string path)
     {
         var canonical = new List<string>();
@@ -101,13 +54,7 @@ public static class QueryableExtensions
         return string.Join('.', canonical);
     }
 
-    /// <summary>
-    ///     Applies paging to the queryable source based on the specified page and page size.
-    ///     The page is 1-based, meaning that page 1 corresponds to the first set of results.
-    /// </summary>
-    /// <param name="query">The queryable source to apply paging to.</param>
-    /// <param name="page">The page number to retrieve, starting from 1.</param>
-    /// <param name="pageSize">The number of items to include in each page.</param>
+    /// <summary>The page is 1-based.</summary>
     public static IQueryable<TSource> ApplyPaging<TSource>(
         this IQueryable<TSource> query,
         int page,

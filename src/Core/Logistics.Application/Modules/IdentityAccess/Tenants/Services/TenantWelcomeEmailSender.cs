@@ -16,7 +16,7 @@ internal sealed class TenantWelcomeEmailSender(
     {
         var model = new TenantWelcomeEmailModel
         {
-            OwnerName = $"{owner.FirstName} {owner.LastName}",
+            OwnerName = owner.GetFullName(),
             CompanyName = tenant.DisplayName,
             Email = owner.Email!,
             TemporaryPassword = temporaryPassword,

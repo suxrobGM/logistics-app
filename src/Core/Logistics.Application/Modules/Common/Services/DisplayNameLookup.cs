@@ -2,9 +2,9 @@ using Logistics.Domain.Entities;
 using Logistics.Domain.Persistence;
 using Microsoft.EntityFrameworkCore;
 
-namespace Logistics.Application.Modules.Operations.Common.Services;
+namespace Logistics.Application.Modules.Common.Services;
 
-internal sealed class DisplayNameLookup(ITenantUnitOfWork tenantUow) : IDisplayNameLookup
+public sealed class DisplayNameLookup(ITenantUnitOfWork tenantUow) : IDisplayNameLookup
 {
     public async Task<IReadOnlyDictionary<Guid, string>> GetEmployeeNamesAsync(
         IEnumerable<Guid?> ids, CancellationToken ct)
@@ -35,6 +35,7 @@ internal sealed class DisplayNameLookup(ITenantUnitOfWork tenantUow) : IDisplayN
 
         return await tenantUow.Repository<Truck>().Query()
             .Where(t => wanted.Contains(t.Id))
+            .Select(t => new { t.Id, t.Number })
             .ToDictionaryAsync(t => t.Id, t => t.Number, ct);
     }
 

@@ -43,8 +43,7 @@ public static partial class AccidentMapper
 
     extension(AccidentReport entity)
     {
-        /// <summary>For one row: reads the related names off the navigations. Lists pass them in
-        /// through the overload instead, looked up for the whole page at once.</summary>
+        /// <summary>Single rows only; lists batch the names and use the overload.</summary>
         public AccidentReportDto ToDto() => entity.ToDto(
             entity.Truck?.Number,
             entity.Driver?.GetFullName(),

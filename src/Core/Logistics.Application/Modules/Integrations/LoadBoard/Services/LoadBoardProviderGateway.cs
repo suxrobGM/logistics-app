@@ -68,7 +68,7 @@ internal sealed class LoadBoardProviderGateway(
             await call(provider);
             return true;
         }, ct);
-        return result.IsSuccess ? Result.Ok() : Result.Fail(result.Error!);
+        return result.IsSuccess ? Result.Ok() : Result.Fail(result);
     }
 
     public async Task<Result> TestConnectionAsync(LoadBoardConfiguration configuration, CancellationToken ct = default)

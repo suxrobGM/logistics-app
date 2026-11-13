@@ -37,7 +37,7 @@ internal sealed class BookLoadBoardLoadHandler(
             return Result<LoadBoardBookingResultDto>.Fail("Load board listing not found", ErrorCodes.NotFound);
         }
 
-        if (listing.UnavailableReason() is { } unavailable)
+        if (listing.GetUnavailableReason() is { } unavailable)
         {
             return Result<LoadBoardBookingResultDto>.Fail(unavailable);
         }
@@ -53,7 +53,7 @@ internal sealed class BookLoadBoardLoadHandler(
         var typeCheck = await vehicleTransportCheck.CheckLoadTypeAsync(loadType);
         if (!typeCheck.IsSuccess)
         {
-            return Result<LoadBoardBookingResultDto>.Fail(typeCheck.Error!, typeCheck.ErrorCode!);
+            return Result<LoadBoardBookingResultDto>.Fail(typeCheck);
         }
 
         var truck = await tenantUow.Repository<Truck>().GetByIdAsync(req.TruckId, ct);
@@ -77,7 +77,7 @@ internal sealed class BookLoadBoardLoadHandler(
 
         if (!creditCheck.IsSuccess)
         {
-            return Result<LoadBoardBookingResultDto>.Fail(creditCheck.Error!, creditCheck.ErrorCode!);
+            return Result<LoadBoardBookingResultDto>.Fail(creditCheck);
         }
 
         var negotiation = await tenantUow.Repository<RateNegotiation>()

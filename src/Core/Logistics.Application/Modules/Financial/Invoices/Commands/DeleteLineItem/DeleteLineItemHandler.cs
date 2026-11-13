@@ -20,7 +20,7 @@ internal sealed class DeleteLineItemHandler(
             return Result.Fail("Invoice not found.", ErrorCodes.NotFound);
         }
 
-        if (invoice.EditBlockedReason() is { } editBlocked)
+        if (invoice.GetEditBlockedReason() is { } editBlocked)
         {
             return Result.Fail(editBlocked);
         }

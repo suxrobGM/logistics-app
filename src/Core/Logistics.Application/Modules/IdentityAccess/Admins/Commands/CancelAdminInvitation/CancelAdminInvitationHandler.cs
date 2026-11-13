@@ -20,12 +20,10 @@ internal sealed class CancelAdminInvitationHandler(IMasterUnitOfWork masterUow)
             return Result.Fail("Invitation not found.", ErrorCodes.NotFound);
         }
 
-        if (invitation.Status != InvitationStatus.Pending)
+        if (invitation.Cancel() is { } cancelBlocked)
         {
-            return Result.Fail("Only pending invitations can be cancelled.");
+            return Result.Fail(cancelBlocked);
         }
-
-        invitation.Status = InvitationStatus.Cancelled;
 
         await masterUow.SaveChangesAsync(ct);
 

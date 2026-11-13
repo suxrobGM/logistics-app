@@ -20,21 +20,20 @@ internal sealed class GetFactoringBatchesHandler(ITenantUnitOfWork tenantUow)
             query = query.Where(b => b.Status == status);
         }
 
-        var totalItems = await query.CountAsync(ct);
-        var batches = await query
-            .OrderBy(req.OrderBy, x => x.Id, defaultOrderBy: "-SubmittedAt")
-            .ApplyPaging(req.Page, req.PageSize)
-            .ToListAsync(ct);
+        return await query.ToPagedResultAsync(req, MapPageAsync, ct, defaultOrderBy: "-SubmittedAt");
+    }
 
+    private async Task<IEnumerable<FactoringBatchDto>> MapPageAsync(
+        IReadOnlyList<FactoringBatch> batches,
+        CancellationToken ct)
+    {
         var batchIds = batches.Select(b => b.Id).ToList();
         var items = (await tenantUow.Repository<FactoringBatchItem>().GetListAsync(i => batchIds.Contains(i.BatchId), ct))
             .ToLookup(i => i.BatchId);
         var companyNames = await tenantUow.Repository<FactoringCompany>().Query()
+            .Select(f => new { f.Id, f.Name })
             .ToDictionaryAsync(f => f.Id, f => f.Name, ct);
 
-        var dtos = batches
-            .Select(b => b.ToDto(companyNames.GetValueOrDefault(b.FactoringCompanyId), items[b.Id].ToList()))
-            .ToArray();
-        return PagedResult<FactoringBatchDto>.Ok(dtos, totalItems, req.PageSize);
+        return batches.Select(b => b.ToDto(companyNames.GetValueOrDefault(b.FactoringCompanyId), items[b.Id].ToList()));
     }
 }

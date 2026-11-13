@@ -25,8 +25,7 @@ public static partial class MaintenanceMapper
 
     extension(MaintenanceRecord entity)
     {
-        /// <summary>For one row: reads the related names off the navigations. Lists pass them in
-        /// through the overload instead, looked up for the whole page at once.</summary>
+        /// <summary>Single rows only; lists batch the names and use the overload.</summary>
         public MaintenanceRecordDto ToDto() => entity.ToDto(
             entity.Truck?.Number, entity.PerformedBy?.GetFullName(), entity.Parts.Select(p => p.ToDto()));
 

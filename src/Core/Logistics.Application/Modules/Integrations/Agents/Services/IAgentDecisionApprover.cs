@@ -6,12 +6,10 @@ namespace Logistics.Application.Modules.Integrations.Agents.Services;
 
 internal interface IAgentDecisionApprover : IApplicationService
 {
-    /// <summary>
-    /// Requires the tool's own permission, not just the surface's Manage. A tool failure marks the decision Failed;
-    /// the outcome note is written either way.
-    /// </summary>
+    /// <summary>Checks the tool's own permission, since the surface's Manage alone is too broad.</summary>
     Task<Result> ApproveAsync(
         AgentDecision decision,
+        AgentConversation conversation,
         Guid userId,
         Guid tenantId,
         Func<AgentMessageDto, Task> broadcastMessageAsync,

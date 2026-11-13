@@ -37,7 +37,7 @@ internal sealed class CreateConditionReportHandler(
         var vehicleCheck = ResolveVehicle(load, req.LoadVehicleId);
         if (!vehicleCheck.IsSuccess)
         {
-            return Result<Guid>.Fail(vehicleCheck.Error!);
+            return Result<Guid>.Fail(vehicleCheck);
         }
 
         var defectError = ValidateDefects(req, load.Type);

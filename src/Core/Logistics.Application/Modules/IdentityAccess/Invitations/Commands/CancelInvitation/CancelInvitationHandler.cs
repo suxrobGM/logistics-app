@@ -1,7 +1,7 @@
 using Logistics.Application.Abstractions;
 using Logistics.Domain.Entities;
 using Logistics.Domain.Persistence;
-using Logistics.Domain.Primitives.Enums;
+
 using Logistics.Mediator;
 using Logistics.Shared.Models;
 
@@ -24,12 +24,10 @@ internal sealed class CancelInvitationHandler(
             return Result.Fail("Invitation not found.", ErrorCodes.NotFound);
         }
 
-        if (invitation.Status != InvitationStatus.Pending)
+        if (invitation.Cancel() is { } cancelBlocked)
         {
-            return Result.Fail("Only pending invitations can be cancelled.");
+            return Result.Fail(cancelBlocked);
         }
-
-        invitation.Status = InvitationStatus.Cancelled;
 
         await masterUow.SaveChangesAsync(ct);
 

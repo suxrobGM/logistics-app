@@ -1,15 +1,15 @@
 using Logistics.Application.Abstractions;
+using Logistics.Application.Modules.Common.Services;
 using Logistics.Domain.Entities;
 using Logistics.Domain.Persistence;
 using Logistics.Mappings;
 using Logistics.Mediator;
 using Logistics.Shared.Models;
-using Microsoft.EntityFrameworkCore;
 using Logistics.Application.Utilities;
 
 namespace Logistics.Application.Modules.Integrations.FuelCards.Queries;
 
-internal sealed class GetFuelCardTransactionsHandler(ITenantUnitOfWork tenantUow)
+internal sealed class GetFuelCardTransactionsHandler(ITenantUnitOfWork tenantUow, IDisplayNameLookup names)
     : IRequestHandler<GetFuelCardTransactionsQuery, PagedResult<FuelCardTransactionDto>>
 {
     public async Task<PagedResult<FuelCardTransactionDto>> Handle(
@@ -43,36 +43,14 @@ internal sealed class GetFuelCardTransactionsHandler(ITenantUnitOfWork tenantUow
             query = query.Where(t => t.TransactionDate <= req.ToDate.Value);
         }
 
-        var totalItems = await query.CountAsync(ct);
-
-        var transactions = await query
-            .OrderBy(req.OrderBy, x => x.Id, defaultOrderBy: "-TransactionDate")
-            .ApplyPaging(req.Page, req.PageSize)
-            .ToListAsync(ct);
-
-        var truckNumbers = await GetTruckNumbersAsync(transactions.Select(t => t.TruckId), ct);
-        var dtos = transactions
-            .Select(t => t.ToDto(t.TruckId is { } id ? truckNumbers.GetValueOrDefault(id) : null))
-            .ToArray();
-
-        return PagedResult<FuelCardTransactionDto>.Ok(dtos, totalItems, req.PageSize);
+        return await query.ToPagedResultAsync(req, MapPageAsync, ct, defaultOrderBy: "-TransactionDate");
     }
 
-    /// <summary>
-    /// One query for the whole page - reading Truck.Number off each row would lazy-load per row.
-    /// </summary>
-    private async Task<Dictionary<Guid, string>> GetTruckNumbersAsync(
-        IEnumerable<Guid?> truckIds,
+    private async Task<IEnumerable<FuelCardTransactionDto>> MapPageAsync(
+        IReadOnlyList<FuelCardTransaction> transactions,
         CancellationToken ct)
     {
-        var ids = truckIds.OfType<Guid>().Distinct().ToArray();
-        if (ids.Length == 0)
-        {
-            return [];
-        }
-
-        return await tenantUow.Repository<Truck>().Query()
-            .Where(t => ids.Contains(t.Id))
-            .ToDictionaryAsync(t => t.Id, t => t.Number, ct);
+        var truckNumbers = await names.GetTruckNumbersAsync(transactions.Select(t => t.TruckId), ct);
+        return transactions.Select(t => t.ToDto(truckNumbers.Find(t.TruckId)));
     }
 }

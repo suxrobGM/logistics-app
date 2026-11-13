@@ -43,13 +43,11 @@ internal sealed class GetContainersHandler(ITenantUnitOfWork tenantUow)
             query = query.Where(i => i.CurrentTerminalId == req.CurrentTerminalId.Value);
         }
 
-        var totalItems = query.Count();
+        return await query.ToPagedResultAsync(req, MapPageAsync, ct);
+    }
 
-        var containers = query
-            .OrderBy(req.OrderBy, x => x.Id)
-            .ApplyPaging(req.Page, req.PageSize)
-            .ToArray();
-
+    private async Task<IEnumerable<ContainerDto>> MapPageAsync(IReadOnlyList<Container> containers, CancellationToken ct)
+    {
         // Both terminals in one query - reading them off the navigations costs two SELECTs per row.
         var terminalIds = containers.Select(c => c.CurrentTerminalId)
             .Concat(containers.Select(c => c.EmptyReturnTerminalId))
@@ -64,11 +62,8 @@ internal sealed class GetContainersHandler(ITenantUnitOfWork tenantUow)
                 .ToDictionaryAsync(t => t.Id, t => new TerminalRef(t.Name, t.Code), ct);
 
         var now = DateTime.UtcNow;
-        var items = containers
-            .Select(c => c.ToDto(now, Find(terminals, c.CurrentTerminalId), Find(terminals, c.EmptyReturnTerminalId)))
-            .ToArray();
-
-        return PagedResult<ContainerDto>.Ok(items, totalItems, req.PageSize);
+        return containers
+            .Select(c => c.ToDto(now, Find(terminals, c.CurrentTerminalId), Find(terminals, c.EmptyReturnTerminalId)));
     }
 
     private static TerminalRef? Find(Dictionary<Guid, TerminalRef> terminals, Guid? id) =>

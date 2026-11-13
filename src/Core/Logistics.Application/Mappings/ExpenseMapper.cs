@@ -30,7 +30,14 @@ public static partial class ExpenseMapper
 
     extension(Expense entity)
     {
+        /// <summary>Single rows only; lists batch the trucks through ITruckDtoMapper.</summary>
         public ExpenseDto ToDto(string? receiptDownloadUrl = null)
+        {
+            var truck = entity is TruckLinkedExpense linked ? linked.Truck.ToDto() : null;
+            return entity.ToDto(truck, receiptDownloadUrl);
+        }
+
+        public ExpenseDto ToDto(TruckDto? truck, string? receiptDownloadUrl)
         {
             var dto = MapExpense(entity) with { ReceiptDownloadUrl = receiptDownloadUrl };
             return entity switch
@@ -44,7 +51,7 @@ public static partial class ExpenseMapper
                 {
                     Type = ExpenseType.Truck,
                     TruckId = truckExpense.TruckId,
-                    Truck = truckExpense.Truck.ToDto(),
+                    Truck = truck,
                     TruckCategory = truckExpense.Category,
                     OdometerReading = truckExpense.OdometerReading,
                     Quantity = truckExpense.Quantity,
@@ -57,7 +64,7 @@ public static partial class ExpenseMapper
                 {
                     Type = ExpenseType.BodyShop,
                     TruckId = bodyShopExpense.TruckId,
-                    Truck = bodyShopExpense.Truck.ToDto(),
+                    Truck = truck,
                     VendorAddress = bodyShopExpense.VendorAddress,
                     VendorPhone = bodyShopExpense.VendorPhone,
                     RepairDescription = bodyShopExpense.RepairDescription,

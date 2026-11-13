@@ -36,8 +36,6 @@ internal sealed class RefreshConnectStatusHandler(
             // Sync the latest status from Stripe
             await stripeConnectService.SyncConnectedAccountStatusAsync(tenant);
 
-            // Save the updated status
-            masterUow.Repository<Domain.Entities.Tenant>().Update(tenant);
             await masterUow.SaveChangesAsync(ct);
 
             return Result<StripeConnectStatusDto>.Ok(new StripeConnectStatusDto

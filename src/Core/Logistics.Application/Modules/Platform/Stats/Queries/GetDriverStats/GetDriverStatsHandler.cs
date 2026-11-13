@@ -24,7 +24,7 @@ internal sealed class GetDriverStatsHandler(ITenantUnitOfWork tenantUow)
         }
 
         var assignedTruck = await tenantUow.Repository<Truck>().GetAsync(i => i.MainDriverId == driver.Id
-                                                                               || i.SecondaryDriverId == driver.Id);
+                                                                               || i.SecondaryDriverId == driver.Id, ct);
 
         if (assignedTruck is null)
         {
@@ -38,11 +38,17 @@ internal sealed class GetDriverStatsHandler(ITenantUnitOfWork tenantUow)
         var startOfMonth = new DateTime(now.Year, now.Month, 1, 0, 0, 0, DateTimeKind.Utc);
         var lastMonthStart = startOfMonth.AddMonths(-1);
 
-        var loadsRepository = tenantUow.Repository<Load>();
-        var thisWeekLoads = await loadsRepository.Query().FilterDeliveredBetween(assignedTruck.Id, startOfWeek, now).ToListAsync(ct);
-        var lastWeekLoads = await loadsRepository.Query().FilterDeliveredBetween(assignedTruck.Id, lastWeekStart, startOfWeek).ToListAsync(ct);
-        var thisMonthLoads = await loadsRepository.Query().FilterDeliveredBetween(assignedTruck.Id, startOfMonth, now).ToListAsync(ct);
-        var lastMonthLoads = await loadsRepository.Query().FilterDeliveredBetween(assignedTruck.Id, lastMonthStart, startOfMonth).ToListAsync(ct);
+        // startOfWeek lands after now on a Sunday, so the range end is the latest bound, not now.
+        var rangeStart = lastWeekStart < lastMonthStart ? lastWeekStart : lastMonthStart;
+        var rangeEnd = new[] { now, startOfWeek, startOfMonth }.Max();
+        var loads = await tenantUow.Repository<Load>().Query()
+            .FilterDeliveredBetween(assignedTruck.Id, rangeStart, rangeEnd)
+            .ToListAsync(ct);
+
+        var thisWeekLoads = DeliveredBetween(loads, startOfWeek, now);
+        var lastWeekLoads = DeliveredBetween(loads, lastWeekStart, startOfWeek);
+        var thisMonthLoads = DeliveredBetween(loads, startOfMonth, now);
+        var lastMonthLoads = DeliveredBetween(loads, lastMonthStart, startOfMonth);
 
         driverStats.ThisWeekGross = thisWeekLoads.Sum(l => l.DeliveryCost);
         driverStats.ThisWeekShare = driverStats.ThisWeekGross * driverIncomePercentage;
@@ -58,4 +64,8 @@ internal sealed class GetDriverStatsHandler(ITenantUnitOfWork tenantUow)
         driverStats.LastMonthDistance = lastMonthLoads.Sum(l => l.Distance);
         return Result<DriverStatsDto>.Ok(driverStats);
     }
+
+    /// <summary>Same inclusive bounds as FilterDeliveredBetween.</summary>
+    private static List<Load> DeliveredBetween(List<Load> loads, DateTime start, DateTime end) =>
+        loads.Where(l => l.DeliveredAt >= start && l.DeliveredAt <= end).ToList();
 }

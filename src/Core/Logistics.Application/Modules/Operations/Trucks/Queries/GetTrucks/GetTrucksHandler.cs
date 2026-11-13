@@ -6,11 +6,15 @@ using Logistics.Mediator;
 using Logistics.Shared.Models;
 using Microsoft.EntityFrameworkCore;
 using Logistics.Application.Modules.Operations.Loads.Services;
+using Logistics.Application.Modules.Operations.Trucks.Services;
 using Logistics.Application.Utilities;
 
 namespace Logistics.Application.Modules.Operations.Trucks.Queries;
 
-internal sealed class GetTrucksHandler(ITenantUnitOfWork tenantUow, ILoadLookupBuilder lookupBuilder)
+internal sealed class GetTrucksHandler(
+    ITenantUnitOfWork tenantUow,
+    ILoadLookupBuilder lookupBuilder,
+    ITruckDtoMapper truckDtoMapper)
     : IRequestHandler<GetTrucksQuery, PagedResult<TruckDto>>
 {
     public async Task<PagedResult<TruckDto>> Handle(
@@ -47,11 +51,12 @@ internal sealed class GetTrucksHandler(ITenantUnitOfWork tenantUow, ILoadLookupB
 
         var entities = await baseQuery.ToArrayAsync(ct);
         var trailerNumbers = await GetTrailerNumbersAsync(entities, ct);
+        var truckDtos = await truckDtoMapper.MapAsync(entities, ct);
 
         if (!req.IncludeLoads)
         {
             var withoutLoads = entities
-                .Select(i => WithTrailer(i.ToDto([]), trailerNumbers))
+                .Select(i => WithTrailer(truckDtos[i.Id], trailerNumbers))
                 .ToArray();
             return PagedResult<TruckDto>.Ok(withoutLoads, totalItems, req.PageSize);
         }
@@ -70,7 +75,7 @@ internal sealed class GetTrucksHandler(ITenantUnitOfWork tenantUow, ILoadLookupB
 
         var trucks = entities
             .Select(i => WithTrailer(
-                i.ToDto(loadsByTruck.GetValueOrDefault(i.Id, []).Select(load => load.ToDto(lookup))),
+                WithLoads(truckDtos[i.Id], loadsByTruck.GetValueOrDefault(i.Id, []).Select(load => load.ToDto(lookup))),
                 trailerNumbers))
             .ToArray();
 
@@ -88,6 +93,12 @@ internal sealed class GetTrucksHandler(ITenantUnitOfWork tenantUow, ILoadLookupB
         return await tenantUow.Repository<Trailer>().Query()
             .Where(i => trailerIds.Contains(i.Id))
             .ToDictionaryAsync(i => i.Id, i => i.Number, ct);
+    }
+
+    private static TruckDto WithLoads(TruckDto dto, IEnumerable<LoadDto> loads)
+    {
+        dto.Loads = loads;
+        return dto;
     }
 
     private static TruckDto WithTrailer(TruckDto dto, Dictionary<Guid, string> trailerNumbers)

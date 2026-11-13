@@ -1,4 +1,5 @@
 using Logistics.Application.Abstractions;
+using Logistics.Application.Modules.Operations.Trucks.Services;
 using Logistics.Application.Utilities;
 using Logistics.Domain.Entities;
 using Logistics.Domain.Persistence;
@@ -9,7 +10,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Logistics.Application.Modules.Financial.Expenses.Queries;
 
-internal sealed class GetExpensesHandler(ITenantUnitOfWork tenantUow)
+internal sealed class GetExpensesHandler(ITenantUnitOfWork tenantUow, ITruckDtoMapper truckDtoMapper)
     : IRequestHandler<GetExpensesQuery, PagedResult<ExpenseDto>>
 {
     public async Task<PagedResult<ExpenseDto>> Handle(GetExpensesQuery req, CancellationToken ct)
@@ -56,6 +57,21 @@ internal sealed class GetExpensesHandler(ITenantUnitOfWork tenantUow)
                 (e.Notes ?? "").ToLower().Contains(search));
         }
 
-        return await query.ToPagedResultAsync(req, e => e.ToDto(), ct, defaultOrderBy: "-ExpenseDate");
+        return await query.ToPagedResultAsync(req, MapPageAsync, ct, defaultOrderBy: "-ExpenseDate");
+    }
+
+    private async Task<IEnumerable<ExpenseDto>> MapPageAsync(IReadOnlyList<Expense> expenses, CancellationToken ct)
+    {
+        var truckIds = expenses.OfType<TruckLinkedExpense>().Select(e => e.TruckId).Distinct().ToArray();
+        var trucks = truckIds.Length == 0
+            ? []
+            : await tenantUow.Repository<Truck>().Query()
+                .Where(t => truckIds.Contains(t.Id))
+                .ToListAsync(ct);
+        var truckDtos = await truckDtoMapper.MapAsync(trucks, ct);
+
+        return expenses.Select(e => e.ToDto(
+            e is TruckLinkedExpense linked ? truckDtos.GetValueOrDefault(linked.TruckId) : null,
+            receiptDownloadUrl: null));
     }
 }

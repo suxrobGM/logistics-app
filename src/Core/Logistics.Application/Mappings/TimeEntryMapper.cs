@@ -18,8 +18,7 @@ public static partial class TimeEntryMapper
 
     extension(TimeEntry entity)
     {
-        /// <summary>For one row: reads the related names off the navigations. Lists pass them in
-        /// through the overload instead, looked up for the whole page at once.</summary>
+        /// <summary>Single rows only; lists batch the names and use the overload.</summary>
         public TimeEntryDto ToDto() => entity.ToDto(entity.Employee.GetFullName());
 
         public TimeEntryDto ToDto(string? employeeName)

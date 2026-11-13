@@ -165,7 +165,7 @@ internal sealed class UpdateTruckHandler(
         var driverResult = await driverFinder.FindAssignableDriverAsync(newDriverId.Value, truck.Id, ct);
         if (driverResult.Value is not { } driver)
         {
-            return Result.Fail(driverResult.Error!);
+            return Result.Fail(driverResult);
         }
 
         if (isMain)

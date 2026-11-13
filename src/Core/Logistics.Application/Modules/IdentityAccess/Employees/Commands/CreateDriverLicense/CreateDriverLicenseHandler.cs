@@ -35,7 +35,7 @@ internal sealed class CreateDriverLicenseHandler(ITenantUnitOfWork tenantUow)
             var docCheck = await ValidateDocumentOwnershipAsync(req.DocumentId.Value, req.EmployeeId, ct);
             if (!docCheck.IsSuccess)
             {
-                return Result<Guid>.Fail(docCheck.Error!);
+                return Result<Guid>.Fail(docCheck);
             }
         }
 

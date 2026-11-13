@@ -192,7 +192,7 @@ internal sealed class TruckImporter(ITenantUnitOfWork tenantUow, IVehicleTranspo
         var count = currentCount;
         foreach (var draft in drafts.Where(d => d is { Exists: false, Errors.Count: 0 }))
         {
-            if (plan.TruckLimitReason(++count) is { } reason)
+            if (plan.GetTruckLimitReason(++count) is { } reason)
             {
                 draft.Errors.Add(reason);
             }

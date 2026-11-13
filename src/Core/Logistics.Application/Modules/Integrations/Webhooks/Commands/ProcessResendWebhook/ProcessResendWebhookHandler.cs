@@ -103,7 +103,7 @@ internal sealed class ProcessResendWebhookHandler(
         {
             logger.LogWarning("Resend webhook {EventKey} could not be processed yet: {Error}",
                 eventKey, inner.Error);
-            return Result.Fail(inner.Error!);
+            return Result.Fail(inner);
         }
 
         await webhookEvents.MarkHandledAsync(Provider, eventKey, ct);

@@ -13,6 +13,7 @@ internal sealed class ApproveAIDispatchDecisionHandler(
     ITenantUnitOfWork tenantUow,
     IAIDispatchDecisionGuard guard,
     IAgentDecisionApprover approver,
+    IAgentDecisionNotes notes,
     ICurrentUserService currentUser,
     IAIDispatchBroadcastService broadcastService) : IRequestHandler<ApproveAIDispatchDecisionCommand, Result>
 {
@@ -20,13 +21,14 @@ internal sealed class ApproveAIDispatchDecisionHandler(
     {
         var loaded = await guard.LoadAsync(request.DecisionId, ct);
         if (!loaded.IsSuccess)
-            return Result.Fail(loaded.Error!);
+            return Result.Fail(loaded);
 
         var decision = loaded.Value!;
+        var conversation = await notes.LoadConversationAsync(decision, ct);
         var userId = currentUser.GetUserId() ?? Guid.Empty;
         var tenantId = tenantUow.GetCurrentTenant().Id;
 
         return await approver.ApproveAsync(
-            decision, userId, tenantId, message => broadcastService.BroadcastMessageAsync(tenantId, message), ct);
+            decision, conversation, userId, tenantId, message => broadcastService.BroadcastMessageAsync(tenantId, message), ct);
     }
 }

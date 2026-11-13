@@ -47,7 +47,7 @@ internal sealed class LoadChargeService(
     public async Task<bool> SyncInvoiceAsync(Load load, CancellationToken ct = default)
     {
         var invoice = await tenantUow.Repository<LoadInvoice>().GetAsync(i => i.LoadId == load.Id, ct);
-        if (invoice is null || invoice.EditBlockedReason() is not null)
+        if (invoice is null || invoice.GetEditBlockedReason() is not null)
         {
             return false;
         }

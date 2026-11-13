@@ -51,5 +51,5 @@ public sealed class LoadLookup(
     public InvoiceDto? FindInvoice(Guid loadId) => invoicesByLoad.GetValueOrDefault(loadId);
 
     public List<LoadAccessorialDto> FindAccessorials(Guid loadId) =>
-        accessorialsByLoad.TryGetValue(loadId, out var found) ? [.. found] : [];
+        accessorialsByLoad.GetValueOrDefault(loadId) ?? [];
 }

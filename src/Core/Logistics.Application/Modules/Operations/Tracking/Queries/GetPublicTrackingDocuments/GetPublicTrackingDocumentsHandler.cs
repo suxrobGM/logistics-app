@@ -21,7 +21,7 @@ internal sealed class GetPublicTrackingDocumentsHandler(
         var opened = await trackingLinkService.OpenPublicLinkAsync(req.TenantId, req.Token, ct);
         if (!opened.IsSuccess)
         {
-            return Result<IEnumerable<DocumentDto>>.Fail(opened.Error!);
+            return Result<IEnumerable<DocumentDto>>.Fail(opened);
         }
 
         var trackingLink = opened.Value!;

@@ -33,20 +33,17 @@ public static partial class TruckMapper
 
     extension(Truck entity)
     {
-        /// <summary>
-        ///     Maps a Truck entity to TruckDto without loads.
-        /// </summary>
-        public TruckDto ToDto()
+        /// <summary>Single rows only; lists batch the drivers through ITruckDtoMapper.</summary>
+        public TruckDto ToDto() => entity.ToDto(entity.MainDriver?.ToDto(), entity.SecondaryDriver?.ToDto());
+
+        public TruckDto ToDto(EmployeeDto? mainDriver, EmployeeDto? secondaryDriver)
         {
             var dto = MapTruck(entity);
-            dto.MainDriver = entity.MainDriver?.ToDto();
-            dto.SecondaryDriver = entity.SecondaryDriver?.ToDto();
+            dto.MainDriver = mainDriver;
+            dto.SecondaryDriver = secondaryDriver;
             return dto;
         }
 
-        /// <summary>
-        ///     Maps a Truck entity to TruckDto with loads.
-        /// </summary>
         public TruckDto ToDto(IEnumerable<LoadDto> loads)
         {
             var dto = entity.ToDto();

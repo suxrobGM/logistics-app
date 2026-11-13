@@ -13,9 +13,6 @@ public static partial class CustomerUserMapper
 
     extension(CustomerUser entity)
     {
-        /// <summary>
-        /// Maps a CustomerUser entity to CustomerUserDto.
-        /// </summary>
         public CustomerUserDto ToDto()
         {
             var dto = MapCustomerUser(entity);

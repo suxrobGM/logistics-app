@@ -21,7 +21,7 @@ internal sealed class UpdateLineItemHandler(
             return Result<InvoiceLineItemDto>.Fail("Invoice not found.", ErrorCodes.NotFound);
         }
 
-        if (invoice.EditBlockedReason() is { } editBlocked)
+        if (invoice.GetEditBlockedReason() is { } editBlocked)
         {
             return Result<InvoiceLineItemDto>.Fail(editBlocked);
         }
@@ -65,8 +65,6 @@ internal sealed class UpdateLineItemHandler(
         {
             lineItem.Notes = req.Notes;
         }
-
-        tenantUow.Repository<InvoiceLineItem>().Update(lineItem);
 
         await taxApplier.ApplyAsync(invoice, ct);
 

@@ -22,7 +22,7 @@ internal sealed class DownloadPublicTrackingDocumentHandler(
         var opened = await trackingLinkService.OpenPublicLinkAsync(req.TenantId, req.Token, ct);
         if (!opened.IsSuccess)
         {
-            return Result<DocumentDownloadDto>.Fail(opened.Error!);
+            return Result<DocumentDownloadDto>.Fail(opened);
         }
 
         var trackingLink = opened.Value!;

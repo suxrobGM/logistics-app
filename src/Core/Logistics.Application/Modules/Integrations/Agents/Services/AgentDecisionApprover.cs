@@ -16,19 +16,20 @@ internal sealed class AgentDecisionApprover(
 
     public async Task<Result> ApproveAsync(
         AgentDecision decision,
+        AgentConversation conversation,
         Guid userId,
         Guid tenantId,
         Func<AgentMessageDto, Task> broadcastMessageAsync,
         CancellationToken ct)
     {
-        if (toolRegistry.TryGetDefinition(decision.ToolName!)?.RequiredPermission is { } required
-            && !await userPermissions.HasPermissionAsync(userId, tenantId, required, ct))
+        var required = toolRegistry.TryGetDefinition(decision.ToolName!)?.RequiredPermission;
+        var allowed = required is null || await userPermissions.HasPermissionAsync(userId, tenantId, required, ct);
+        if (!allowed)
         {
             return Result.Fail($"You need the {required} permission to approve this action");
         }
 
         decision.Approve(userId);
-        var conversation = await notes.LoadConversationAsync(decision, ct);
 
         // Approval runs in an HTTP scope with no agent run behind it, so a tool that needs to know
         // which conversation and decision it belongs to has no other source.

@@ -58,7 +58,6 @@ internal sealed class NegotiationEmailComposer(IEmailTemplateService emailTempla
         return new ComposedNegotiationEmail(subject, htmlBody, sanitizedMessage);
     }
 
-
     internal static string SanitizeMessage(string raw)
     {
         var withoutTags = HtmlTagPattern.Replace(raw, string.Empty);

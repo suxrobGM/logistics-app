@@ -1,4 +1,4 @@
-namespace Logistics.Application.Modules.Operations.Common.Services;
+namespace Logistics.Application.Modules.Common.Services;
 
 /// <summary>Batches a page's name lookups so list handlers avoid a lazy load per row.</summary>
 public interface IDisplayNameLookup : IApplicationService

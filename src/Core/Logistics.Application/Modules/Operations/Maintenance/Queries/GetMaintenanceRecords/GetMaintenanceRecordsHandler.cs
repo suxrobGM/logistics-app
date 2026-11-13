@@ -5,7 +5,8 @@ using Logistics.Domain.Persistence;
 using Logistics.Mappings;
 using Logistics.Mediator;
 using Logistics.Shared.Models;
-using Logistics.Application.Modules.Operations.Common.Services;
+using Microsoft.EntityFrameworkCore;
+using Logistics.Application.Modules.Common.Services;
 
 namespace Logistics.Application.Modules.Operations.Maintenance.Queries;
 
@@ -38,12 +39,14 @@ internal sealed class GetMaintenanceRecordsHandler(ITenantUnitOfWork tenantUow, 
 
         return await baseQuery.ToPagedResultAsync(req, MapPageAsync, ct, defaultOrderBy: "-ServiceDate");
     }
+
     private async Task<IEnumerable<MaintenanceRecordDto>> MapPageAsync(
         IReadOnlyList<MaintenanceRecord> records, CancellationToken ct)
     {
         var recordIds = records.Select(r => r.Id).ToArray();
-        var parts = (await tenantUow.Repository<MaintenancePart>()
-            .GetListAsync(p => recordIds.Contains(p.MaintenanceRecordId), ct)).ToLookup(p => p.MaintenanceRecordId);
+        var parts = (await tenantUow.Repository<MaintenancePart>().Query()
+            .Where(p => recordIds.Contains(p.MaintenanceRecordId))
+            .ToListAsync(ct)).ToLookup(p => p.MaintenanceRecordId);
 
         var employeeNames = await names.GetEmployeeNamesAsync(records.Select(r => r.PerformedById), ct);
         var truckNumbers = await names.GetTruckNumbersAsync(records.Select(r => (Guid?)r.TruckId), ct);

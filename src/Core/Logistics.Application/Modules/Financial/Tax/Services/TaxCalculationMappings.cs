@@ -10,8 +10,7 @@ public static class TaxCalculationMappings
     extension(IEnumerable<InvoiceLineItem> lineItems)
     {
         /// <summary>Taxes each line on its net total, Amount * Quantity.</summary>
-        public IReadOnlyList<TaxCalculationLineItem> ToCalculationLines(
-            ) =>
+        public IReadOnlyList<TaxCalculationLineItem> ToCalculationLines() =>
             lineItems
                 .Select(li => new TaxCalculationLineItem
                 {
@@ -25,8 +24,7 @@ public static class TaxCalculationMappings
 
     extension(IEnumerable<PreviewInvoiceTaxLineItem> lineItems)
     {
-        public IReadOnlyList<TaxCalculationLineItem> ToCalculationLines(
-            ) =>
+        public IReadOnlyList<TaxCalculationLineItem> ToCalculationLines() =>
             lineItems
                 .Select(li => new TaxCalculationLineItem
                 {

@@ -26,7 +26,7 @@ internal sealed class GetPublicTrackingHandler(
         var opened = await trackingLinkService.OpenPublicLinkAsync(req.TenantId, req.Token, ct);
         if (!opened.IsSuccess)
         {
-            return Result<PublicTrackingDto>.Fail(opened.Error!);
+            return Result<PublicTrackingDto>.Fail(opened);
         }
 
         var trackingLink = opened.Value!;

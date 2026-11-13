@@ -70,7 +70,7 @@ internal sealed class UpdateTripHandler(
         var created = await CreateNewLoadsAsync(trip, loadsMap, req.NewLoads);
         if (!created.IsSuccess)
         {
-            return Result.Fail(created.Error!, created.ErrorCode!);
+            return Result.Fail(created);
         }
 
         var createdCount = created.Value;
@@ -120,7 +120,6 @@ internal sealed class UpdateTripHandler(
         return before - loadsMap.Count;
     }
 
-
     private async Task<Result<int>> CreateNewLoadsAsync(
         Trip trip,
         Dictionary<Guid, Load> loadsMap,
@@ -136,7 +135,7 @@ internal sealed class UpdateTripHandler(
 
         if (!created.IsSuccess)
         {
-            return Result<int>.Fail(created.Error!, created.ErrorCode!);
+            return Result<int>.Fail(created);
         }
 
         foreach (var load in created.Value!)

@@ -24,12 +24,12 @@ internal sealed class ApproveAICopilotDecisionHandler(
         var userId = currentUser.GetUserId();
         var loaded = await guard.LoadAsync(request.DecisionId, userId, ct);
         if (!loaded.IsSuccess)
-            return Result.Fail(loaded.Error!);
+            return Result.Fail(loaded);
 
         var (decision, conversation) = loaded.Value!;
 
         var outcome = await approver.ApproveAsync(
-            decision, userId!.Value, tenant.Id,
+            decision, conversation, userId!.Value, tenant.Id,
             message => broadcastService.BroadcastMessageAsync(tenant.Id, conversation.CreatedById, message), ct);
 
         await broadcastService.BroadcastDecisionAsync(

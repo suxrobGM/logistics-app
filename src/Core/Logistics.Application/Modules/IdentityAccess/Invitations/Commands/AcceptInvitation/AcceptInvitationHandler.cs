@@ -93,7 +93,7 @@ internal sealed class AcceptInvitationHandler(
             var created = await CreateInvitedUserAsync(req, invitation, invitation.TenantId);
             if (!created.IsSuccess)
             {
-                return Result<AcceptInvitationResult>.Fail(created.Error!);
+                return Result<AcceptInvitationResult>.Fail(created);
             }
 
             user = created.Value!;
@@ -151,7 +151,7 @@ internal sealed class AcceptInvitationHandler(
             var created = await CreateInvitedUserAsync(req, invitation, tenantId: null);
             if (!created.IsSuccess)
             {
-                return Result<AcceptInvitationResult>.Fail(created.Error!);
+                return Result<AcceptInvitationResult>.Fail(created);
             }
 
             user = created.Value!;

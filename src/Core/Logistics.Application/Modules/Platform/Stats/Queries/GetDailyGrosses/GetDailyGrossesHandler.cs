@@ -5,6 +5,7 @@ using Logistics.Domain.Extensions;
 using Logistics.Domain.Persistence;
 using Logistics.Mediator;
 using Logistics.Shared.Models;
+using Microsoft.EntityFrameworkCore;
 
 namespace Logistics.Application.Modules.Platform.Stats.Queries;
 
@@ -18,7 +19,7 @@ internal sealed class GetDailyGrossesHandler(ITenantUnitOfWork tenantUow) : IReq
         if (req.UserId.HasValue)
         {
             var truck = await tenantUow.Repository<Truck>().GetAsync(i => i.MainDriverId == req.UserId.Value ||
-                                                                           i.SecondaryDriverId == req.UserId.Value);
+                                                                           i.SecondaryDriverId == req.UserId.Value, ct);
 
             if (truck is null)
             {
@@ -32,13 +33,12 @@ internal sealed class GetDailyGrossesHandler(ITenantUnitOfWork tenantUow) : IReq
         var startDate = DateTime.SpecifyKind(req.StartDate, DateTimeKind.Utc);
         var endDate = DateTime.SpecifyKind(req.EndDate, DateTimeKind.Utc);
 
-
         var days = req.StartDate.DaysBetween(req.EndDate);
         var dict = days.ToDictionary(
             k => (k.Year, k.Month, k.Day),
             m => new DailyGrossDto(m.Year, m.Month, m.Day));
 
-        var filteredLoads = tenantUow.Repository<Load>().Query().FilterDeliveredBetween(truckId, startDate, endDate).ToArray();
+        var filteredLoads = await tenantUow.Repository<Load>().Query().FilterDeliveredBetween(truckId, startDate, endDate).ToArrayAsync(ct);
 
         foreach (var load in filteredLoads)
         {

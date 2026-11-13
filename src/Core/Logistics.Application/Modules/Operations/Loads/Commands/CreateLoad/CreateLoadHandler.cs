@@ -14,6 +14,6 @@ internal sealed class CreateLoadHandler(ILoadService loadService)
         // - NewLoadCreatedEvent (always)
         // - LoadAssignedToTruckEvent (if truck assigned)
         var created = await loadService.CreateLoadAsync(new NewLoad(req, req.AssignedTruckId), ct: ct);
-        return created.IsSuccess ? Result.Ok() : Result.Fail(created.Error!, created.ErrorCode!);
+        return created.IsSuccess ? Result.Ok() : Result.Fail(created);
     }
 }

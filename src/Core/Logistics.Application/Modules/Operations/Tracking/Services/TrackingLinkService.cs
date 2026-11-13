@@ -31,7 +31,7 @@ internal sealed class TrackingLinkService(
         var link = await tenantUow.Repository<TrackingLink>().GetAsync(t => t.Token == token, ct);
         if (link is null)
         {
-            return Result<TrackingLink>.Fail("Tracking link not found.");
+            return Result<TrackingLink>.Fail("Tracking link not found.", ErrorCodes.NotFound);
         }
 
         return link.IsValid

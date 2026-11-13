@@ -70,7 +70,7 @@ internal sealed class CreateTenantHandler(
         await masterUow.SaveChangesAsync(ct);
 
         // Create owner account and send welcome email
-        var ownerResult = await CreateOwnerAccountAsync(req, tenant);
+        var ownerResult = await CreateOwnerAccountAsync(req, tenant, ct);
         if (!ownerResult.IsSuccess)
         {
             return ownerResult;
@@ -79,7 +79,7 @@ internal sealed class CreateTenantHandler(
         return Result.Ok();
     }
 
-    private async Task<Result> CreateOwnerAccountAsync(CreateTenantCommand req, Tenant tenant)
+    private async Task<Result> CreateOwnerAccountAsync(CreateTenantCommand req, Tenant tenant, CancellationToken ct)
     {
         var existingUser = await userManager.FindByEmailAsync(req.OwnerEmail);
         User owner;
@@ -126,7 +126,7 @@ internal sealed class CreateTenantHandler(
         await tenantUow.SetCurrentTenantByIdAsync(tenant.Id);
 
         var ownerRole = await tenantUow.Repository<TenantRole>()
-            .GetAsync(r => r.Name == TenantRoles.Owner);
+            .GetAsync(r => r.Name == TenantRoles.Owner, ct);
 
         var employee = Employee.CreateEmployeeFromUser(owner, tenant.Settings.Currency.ToString());
         if (ownerRole is not null)
@@ -134,8 +134,8 @@ internal sealed class CreateTenantHandler(
             employee.Role = ownerRole;
         }
 
-        await tenantUow.Repository<Employee>().AddAsync(employee);
-        await tenantUow.SaveChangesAsync();
+        await tenantUow.Repository<Employee>().AddAsync(employee, ct);
+        await tenantUow.SaveChangesAsync(ct);
 
         return Result.Ok();
     }

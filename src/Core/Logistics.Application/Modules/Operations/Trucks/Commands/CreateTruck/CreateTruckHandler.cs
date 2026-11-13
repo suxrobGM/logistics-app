@@ -36,7 +36,7 @@ internal sealed class CreateTruckHandler(
         var driverResult = await driverFinder.FindAssignableDriverAsync(req.MainDriverId, null, ct);
         if (driverResult.Value is not { } driver)
         {
-            return Result.Fail(driverResult.Error!);
+            return Result.Fail(driverResult);
         }
 
         var truckEntity = Truck.Create(req.TruckNumber, req.TruckType, driver);
@@ -72,7 +72,7 @@ internal sealed class CreateTruckHandler(
         }
 
         var currentCount = await tenantUow.Repository<Truck>().Query().CountAsync(ct);
-        return plan.TruckLimitReason(currentCount + 1) is { } reason
+        return plan.GetTruckLimitReason(currentCount + 1) is { } reason
             ? Result.Fail(reason, ErrorCodes.ResourceLimitReached)
             : Result.Ok();
     }

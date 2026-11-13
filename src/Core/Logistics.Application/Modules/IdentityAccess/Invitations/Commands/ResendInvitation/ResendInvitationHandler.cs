@@ -3,7 +3,7 @@ using Logistics.Application.Modules.IdentityAccess.Invitations.Services;
 using Logistics.Application.Utilities;
 using Logistics.Domain.Entities;
 using Logistics.Domain.Persistence;
-using Logistics.Domain.Primitives.Enums;
+
 using Logistics.Mappings;
 using Logistics.Mediator;
 using Logistics.Shared.Models;
@@ -30,27 +30,17 @@ internal sealed class ResendInvitationHandler(
             return Result.Fail("Invitation not found.", ErrorCodes.NotFound);
         }
 
-        if (invitation.Status != InvitationStatus.Pending)
-        {
-            return Result.Fail("Only pending invitations can be resent.");
-        }
-
-        if (invitation.IsExpired)
-        {
-            return Result.Fail("Cannot resend an expired invitation. Please create a new invitation.");
-        }
-
         // Only the hash is stored, so a resend issues a fresh token; the previous link stops working.
         var token = TokenGenerator.GenerateSecureToken(64);
-        invitation.TokenHash = TokenHasher.Hash(token);
-        invitation.SendCount++;
-        invitation.LastSentAt = DateTime.UtcNow;
+        if (invitation.Resend(TokenHasher.Hash(token)) is { } resendBlocked)
+        {
+            return Result.Fail(resendBlocked);
+        }
 
-        masterUow.Repository<Invitation>().Update(invitation);
         await masterUow.SaveChangesAsync(ct);
 
         await invitationEmailSender.SendAsync(invitation, token,
-            invitation.InvitedByUser?.GetFullName() ?? "A team member", tenant, isReminder: true);
+            invitation.InvitedByUser?.GetFullName(), tenant, isReminder: true);
 
         return Result.Ok();
     }

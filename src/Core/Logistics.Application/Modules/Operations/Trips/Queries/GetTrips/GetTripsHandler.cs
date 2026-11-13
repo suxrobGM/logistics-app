@@ -6,6 +6,7 @@ using Logistics.Mappings;
 using Logistics.Mediator;
 using Logistics.Shared.Models;
 using Logistics.Application.Utilities;
+using Microsoft.EntityFrameworkCore;
 
 namespace Logistics.Application.Modules.Operations.Trips.Queries;
 
@@ -48,23 +49,17 @@ internal sealed class GetTripsHandler(ITenantUnitOfWork tenantUow)
             query = query.Where(i => i.Status != TripStatus.Completed && i.Status != TripStatus.Cancelled);
         }
 
-        var totalItems = query.Count();
+        return query.ToPagedResultAsync(req, MapPageAsync, ct);
+    }
 
-        var trips = query
-            .OrderBy(req.OrderBy, x => x.Id)
-            .ApplyPaging(req.Page, req.PageSize)
-            .ToArray();
-
+    private async Task<IEnumerable<TripDto>> MapPageAsync(IReadOnlyList<Trip> trips, CancellationToken ct)
+    {
         var trailerIds = trips.Where(t => t.TrailerId is not null).Select(t => t.TrailerId!.Value).Distinct().ToList();
-        var trailerNumbers = tenantUow.Repository<Trailer>().Query()
+        var trailerNumbers = await tenantUow.Repository<Trailer>().Query()
             .Where(t => trailerIds.Contains(t.Id))
             .Select(t => new { t.Id, t.Number })
-            .ToDictionary(t => t.Id, t => t.Number);
+            .ToDictionaryAsync(t => t.Id, t => t.Number, ct);
 
-        var items = trips
-            .Select(trip => trip.ToDto(trip.TrailerId is { } id ? trailerNumbers.GetValueOrDefault(id) : null))
-            .ToArray();
-
-        return Task.FromResult(PagedResult<TripDto>.Ok(items, totalItems, req.PageSize));
+        return trips.Select(trip => trip.ToDto(trip.TrailerId is { } id ? trailerNumbers.GetValueOrDefault(id) : null));
     }
 }

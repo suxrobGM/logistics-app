@@ -15,16 +15,16 @@ internal sealed class InvitationEmailSender(
     IOptions<IdentityServerOptions> identityServerOptions) : IInvitationEmailSender
 {
     public async Task SendAsync(
-        Invitation invitation, string token, string invitedByName, Tenant? tenant, bool isReminder)
+        Invitation invitation, string token, string? invitedByName, Tenant? tenant, bool isReminder)
     {
         var isAdmin = invitation.Type == InvitationType.AppUser;
         var companyName = tenant?.DisplayName ?? PlatformConstants.PlatformName;
 
         var model = new InvitationEmailModel
         {
-            InvitedByName = invitedByName,
+            InvitedByName = invitedByName ?? (isAdmin ? "An administrator" : "A team member"),
             CompanyName = companyName,
-            TypeLabel = TypeLabel(invitation.Type),
+            TypeLabel = GetTypeLabel(invitation.Type),
             RoleDisplayName = isAdmin
                 ? InvitationMapper.GetAppRoleDisplayName(invitation.AppRole)
                 : InvitationMapper.GetRoleDisplayName(invitation.TenantRole),
@@ -47,7 +47,7 @@ internal sealed class InvitationEmailSender(
         await emailSender.SendEmailAsync(invitation.Email, subject, body);
     }
 
-    private static string TypeLabel(InvitationType type) => type switch
+    private static string GetTypeLabel(InvitationType type) => type switch
     {
         InvitationType.AppUser => "administrator",
         InvitationType.Employee => "team member",

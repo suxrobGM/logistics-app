@@ -63,7 +63,7 @@ internal sealed class GetTenantQuotaUsagesHandler(
         var usages = rows.OfType<TenantQuotaUsageDto>().ToList();
 
         var paged = usages.AsQueryable()
-            .OrderBy(request.OrderBy ?? "-SpentThisWeekUsd")
+            .OrderBy(request.OrderBy, x => x.TenantId, defaultOrderBy: "-SpentThisWeekUsd")
             .ApplyPaging(request.Page, request.PageSize)
             .ToArray();
 

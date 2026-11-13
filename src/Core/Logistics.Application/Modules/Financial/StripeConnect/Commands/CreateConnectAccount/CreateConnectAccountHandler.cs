@@ -39,7 +39,6 @@ internal sealed class CreateConnectAccountHandler(
             tenant.StripeConnectedAccountId = accountId;
             tenant.ConnectStatus = Domain.Primitives.Enums.StripeConnectStatus.Pending;
 
-            masterUow.Repository<Domain.Entities.Tenant>().Update(tenant);
             await masterUow.SaveChangesAsync(ct);
 
             logger.LogInformation(

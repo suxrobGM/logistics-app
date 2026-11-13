@@ -45,7 +45,7 @@ internal sealed class CreatePublicCheckoutSessionHandler(
         var found = await paymentLinkService.FindValidAsync(req.Token, ct);
         if (!found.IsSuccess)
         {
-            return Result<PublicCheckoutSessionDto>.Fail(found.Error!);
+            return Result<PublicCheckoutSessionDto>.Fail(found);
         }
 
         var paymentLink = found.Value!;
@@ -63,7 +63,7 @@ internal sealed class CreatePublicCheckoutSessionHandler(
         }
 
         var paymentAmount = req.Amount ?? invoice.AmountDue;
-        if (invoice.PaymentBlockedReason(paymentAmount) is { } paymentBlocked)
+        if (invoice.GetPaymentBlockedReason(paymentAmount) is { } paymentBlocked)
         {
             return Result<PublicCheckoutSessionDto>.Fail(paymentBlocked);
         }

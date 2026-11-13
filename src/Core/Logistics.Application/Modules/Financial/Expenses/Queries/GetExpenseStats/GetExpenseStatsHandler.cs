@@ -95,17 +95,17 @@ internal sealed class GetExpenseStatsHandler(ITenantUnitOfWork tenantUow)
             .GroupBy(e => e.TruckId)
             .Select(g => new { TruckId = g.Key, Amount = g.Sum(e => e.Amount.Amount), Count = g.Count() })
             .OrderByDescending(t => t.Amount)
+            .Take(TopTruckCount)
             .ToList();
 
-        // One query for every truck number; reading Truck off each expense would lazy-load per row.
+        // One query for the top trucks' numbers; reading Truck off each expense would lazy-load per row.
         var truckIds = totals.Select(t => t.TruckId).ToArray();
         var truckNumbers = await tenantUow.Repository<Truck>().Query()
             .Where(t => truckIds.Contains(t.Id))
+            .Select(t => new { t.Id, t.Number })
             .ToDictionaryAsync(t => t.Id, t => t.Number, ct);
 
         return totals
-            .Where(t => truckNumbers.ContainsKey(t.TruckId))
-            .Take(TopTruckCount)
             .Select(t => new TruckExpenseStatDto
             {
                 TruckId = t.TruckId,

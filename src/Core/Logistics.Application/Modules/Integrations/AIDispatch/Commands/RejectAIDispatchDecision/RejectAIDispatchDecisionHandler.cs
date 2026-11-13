@@ -20,7 +20,7 @@ internal sealed class RejectAIDispatchDecisionHandler(
     {
         var loaded = await guard.LoadAsync(request.DecisionId, ct);
         if (!loaded.IsSuccess)
-            return Result.Fail(loaded.Error!);
+            return Result.Fail(loaded);
 
         var decision = loaded.Value!;
         var userId = currentUser.GetUserId() ?? Guid.Empty;

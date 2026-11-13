@@ -50,7 +50,7 @@ internal sealed class AccountingConnectionService(
         Func<IAccountingProviderService, AccountingProviderConfiguration, Task<Result>> call, CancellationToken ct)
     {
         var result = await ExecuteAsync<Result>(call, ct);
-        return result.IsSuccess ? result.Value! : Result.Fail(result.Error!);
+        return result.IsSuccess ? result.Value! : Result.Fail(result);
     }
 
     public async Task<IAccountingProviderService?> GetProviderAsync(

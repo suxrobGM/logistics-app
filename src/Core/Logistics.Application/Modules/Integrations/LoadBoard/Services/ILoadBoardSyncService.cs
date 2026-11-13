@@ -1,20 +1,11 @@
 namespace Logistics.Application.Modules.Integrations.LoadBoard.Services;
 
-/// <summary>
-/// Keeps the current tenant's load board data in step with the boards. Does not check the
-/// LoadBoard feature; the caller does.
-/// </summary>
+/// <summary>Skips the LoadBoard feature check, because the calling job already does it.</summary>
 public interface ILoadBoardSyncService : IApplicationService
 {
-    /// <summary>
-    /// Marks a truck post expired when its board no longer lists it (DAT expired it, or a
-    /// dispatcher took it down in DAT One), and refreshes the expiry of the posts still listed.
-    /// </summary>
+    /// <summary>Catches posts that DAT expired or a dispatcher removed in DAT One.</summary>
     Task ReconcilePostedTrucksAsync(CancellationToken ct);
 
-    /// <summary>
-    /// Expires listings and truck posts past their window, then deletes the ones that have been
-    /// expired for more than 30 days.
-    /// </summary>
+    /// <summary>Deletes rows only after 30 days expired, so recent history stays visible.</summary>
     Task CleanupExpiredDataAsync(CancellationToken ct);
 }

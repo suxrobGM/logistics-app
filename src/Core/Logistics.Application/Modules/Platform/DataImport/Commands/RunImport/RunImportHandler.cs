@@ -20,7 +20,7 @@ internal sealed class RunImportHandler(
         var table = ImportFileReader.Read(spreadsheetReader, req);
         if (!table.IsSuccess)
         {
-            return Result<ImportResultDto>.Fail(table.Error!);
+            return Result<ImportResultDto>.Fail(table);
         }
 
         var mappedKeys = req.Mapping.Where(m => m.FieldKey is not null).Select(m => m.FieldKey!).ToHashSet();

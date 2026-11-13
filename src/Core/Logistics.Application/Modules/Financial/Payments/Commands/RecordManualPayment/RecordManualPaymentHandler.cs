@@ -37,7 +37,7 @@ internal sealed class RecordManualPaymentHandler(
             return Result.Fail("Invoice not found.", ErrorCodes.NotFound);
         }
 
-        if (invoice.PaymentBlockedReason(req.Amount) is { } paymentBlocked)
+        if (invoice.GetPaymentBlockedReason(req.Amount) is { } paymentBlocked)
         {
             return Result.Fail(paymentBlocked);
         }

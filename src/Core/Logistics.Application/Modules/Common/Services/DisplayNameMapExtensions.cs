@@ -1,4 +1,4 @@
-namespace Logistics.Application.Modules.Operations.Common.Services;
+namespace Logistics.Application.Modules.Common.Services;
 
 public static class DisplayNameMapExtensions
 {

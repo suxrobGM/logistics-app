@@ -40,7 +40,7 @@ internal sealed class ProposeCounterOfferHandler(
             return Result<RateNegotiationDto>.Fail("Load board listing not found", ErrorCodes.NotFound);
         }
 
-        if (listing.UnavailableReason() is { } unavailable)
+        if (listing.GetUnavailableReason() is { } unavailable)
         {
             return Result<RateNegotiationDto>.Fail(unavailable);
         }
@@ -75,7 +75,7 @@ internal sealed class ProposeCounterOfferHandler(
 
         if (!creditCheck.IsSuccess)
         {
-            return Result<RateNegotiationDto>.Fail(creditCheck.Error!, creditCheck.ErrorCode!);
+            return Result<RateNegotiationDto>.Fail(creditCheck);
         }
 
         if (negotiation is null)

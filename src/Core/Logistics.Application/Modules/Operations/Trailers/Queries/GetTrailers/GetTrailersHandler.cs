@@ -35,18 +35,16 @@ internal sealed class GetTrailersHandler(ITenantUnitOfWork tenantUow)
             query = query.Where(i => i.Type == req.Type.Value);
         }
 
-        var totalItems = await query.CountAsync(ct);
-        var trailers = await query
-            .OrderBy(req.OrderBy, x => x.Id)
-            .ApplyPaging(req.Page, req.PageSize)
-            .ToArrayAsync(ct);
+        return await query.ToPagedResultAsync(req, MapPageAsync, ct);
+    }
 
+    private async Task<IEnumerable<TrailerDto>> MapPageAsync(IReadOnlyList<Trailer> trailers, CancellationToken ct)
+    {
         var trailerIds = trailers.Select(i => i.Id).ToArray();
         var trucksByTrailer = await tenantUow.Repository<Truck>().Query()
             .Where(i => i.CurrentTrailerId != null && trailerIds.Contains(i.CurrentTrailerId.Value))
             .ToDictionaryAsync(i => i.CurrentTrailerId!.Value, ct);
 
-        var items = trailers.Select(i => i.ToDto(trucksByTrailer.GetValueOrDefault(i.Id))).ToArray();
-        return PagedResult<TrailerDto>.Ok(items, totalItems, req.PageSize);
+        return trailers.Select(i => i.ToDto(trucksByTrailer.GetValueOrDefault(i.Id)));
     }
 }

@@ -42,7 +42,7 @@ internal sealed class CreateTripHandler(
         var created = await CreateNewLoadsAsync(req);
         if (!created.IsSuccess)
         {
-            return Result<Guid>.Fail(created.Error!, created.ErrorCode!);
+            return Result<Guid>.Fail(created);
         }
 
         var (newLoads, tempIdToLoadMap) = created.Value;
@@ -101,7 +101,7 @@ internal sealed class CreateTripHandler(
 
         if (!created.IsSuccess)
         {
-            return Result<(IReadOnlyList<Load>, Dictionary<string, Guid>)>.Fail(created.Error!, created.ErrorCode!);
+            return Result<(IReadOnlyList<Load>, Dictionary<string, Guid>)>.Fail(created);
         }
 
         var loads = created.Value!;

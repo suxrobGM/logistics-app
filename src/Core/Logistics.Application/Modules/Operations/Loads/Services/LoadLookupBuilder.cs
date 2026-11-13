@@ -1,3 +1,4 @@
+using Logistics.Application.Modules.Common.Services;
 using Logistics.Domain.Entities;
 using Logistics.Domain.Persistence;
 using Logistics.Mappings;
@@ -6,7 +7,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Logistics.Application.Modules.Operations.Loads.Services;
 
-internal sealed class LoadLookupBuilder(ITenantUnitOfWork uow) : ILoadLookupBuilder
+internal sealed class LoadLookupBuilder(ITenantUnitOfWork uow, IDisplayNameLookup names) : ILoadLookupBuilder
 {
     public async Task<LoadLookup> BuildAsync(IReadOnlyCollection<Load> loads, CancellationToken ct = default)
     {
@@ -47,18 +48,11 @@ internal sealed class LoadLookupBuilder(ITenantUnitOfWork uow) : ILoadLookupBuil
                 .Where(t => truckIds.Contains(t.Id))
                 .ToListAsync(ct);
 
-        var employeeIds = loads.Select(l => l.AssignedDispatcherId)
-            .Concat(trucks.Select(t => t.MainDriverId))
-            .Concat(trucks.Select(t => t.SecondaryDriverId))
-            .OfType<Guid>()
-            .Distinct()
-            .ToArray();
-        var employeeNames = employeeIds.Length == 0
-            ? []
-            : (await uow.Repository<Employee>().Query()
-                .Where(e => employeeIds.Contains(e.Id))
-                .ToListAsync(ct))
-                .ToDictionary(e => e.Id, e => e.GetFullName());
+        var employeeNames = await names.GetEmployeeNamesAsync(
+            loads.Select(l => l.AssignedDispatcherId)
+                .Concat(trucks.Select(t => t.MainDriverId))
+                .Concat(trucks.Select(t => t.SecondaryDriverId)),
+            ct);
 
         var trips = loadIds.Length == 0
             ? []
@@ -106,7 +100,7 @@ internal sealed class LoadLookupBuilder(ITenantUnitOfWork uow) : ILoadLookupBuil
         var truckRefs = trucks.ToDictionary(t => t.Id, t => new TruckRef(
             t.Number,
             [.. new[] { t.MainDriverId, t.SecondaryDriverId }
-                .Select(id => id is { } key ? employeeNames.GetValueOrDefault(key) : null)
+                .Select(employeeNames.Find)
                 .OfType<string>()],
             t.CurrentAddress,
             t.CurrentLocation));

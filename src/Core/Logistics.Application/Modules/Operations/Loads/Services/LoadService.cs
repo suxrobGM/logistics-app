@@ -14,29 +14,29 @@ internal sealed class LoadService(ITenantUnitOfWork tenantUow, IVehicleTransport
         var created = await CreateLoadsAsync([newLoad], saveChanges, ct);
         return created.IsSuccess
             ? Result<Load>.Ok(created.Value![0])
-            : Result<Load>.Fail(created.Error!, created.ErrorCode!);
+            : Result<Load>.Fail(created);
     }
 
     public async Task<Result<IReadOnlyList<Load>>> CreateLoadsAsync(IEnumerable<NewLoad> newLoads,
         bool saveChanges = true, CancellationToken ct = default)
     {
-        var paramList = newLoads as IList<NewLoad> ?? newLoads.ToList();
-        if (paramList.Count == 0)
+        var newLoadList = newLoads as IList<NewLoad> ?? newLoads.ToList();
+        if (newLoadList.Count == 0)
         {
             return Result<IReadOnlyList<Load>>.Ok([]);
         }
 
-        var typeCheck = await vehicleTransportCheck.CheckLoadTypesAsync(paramList.Select(p => p.Details.Type));
+        var typeCheck = await vehicleTransportCheck.CheckLoadTypesAsync(newLoadList.Select(p => p.Details.Type));
         if (!typeCheck.IsSuccess)
         {
-            return Result<IReadOnlyList<Load>>.Fail(typeCheck.Error!, typeCheck.ErrorCode!);
+            return Result<IReadOnlyList<Load>>.Fail(typeCheck);
         }
 
         // 1) Collect distinct foreign keys (filter out null truck IDs)
-        var dispatcherIds = paramList.Select(p => p.Details.AssignedDispatcherId).Distinct().ToList();
-        var truckIds = paramList.Where(p => p.TruckId.HasValue).Select(p => p.TruckId!.Value).Distinct().ToList();
-        var customerIds = paramList.Select(p => p.Details.CustomerId).Distinct().ToList();
-        var tripIds = paramList.Select(p => p.TripId).Distinct().ToList();
+        var dispatcherIds = newLoadList.Select(p => p.Details.AssignedDispatcherId).Distinct().ToList();
+        var truckIds = newLoadList.Where(p => p.TruckId.HasValue).Select(p => p.TruckId!.Value).Distinct().ToList();
+        var customerIds = newLoadList.Select(p => p.Details.CustomerId).Distinct().ToList();
+        var tripIds = newLoadList.Select(p => p.TripId).Distinct().ToList();
 
         // 2) Batch-load referenced rows (at most 3 queries total)
         var dispatcherRepo = tenantUow.Repository<Employee>();
@@ -85,13 +85,13 @@ internal sealed class LoadService(ITenantUnitOfWork tenantUow, IVehicleTransport
 
         // 4) Create domain entities in memory
         var currency = tenantUow.GetCurrentTenant().Settings.Currency.ToString();
-        var loads = new List<Load>(paramList.Count);
-        foreach (var newLoad in paramList)
+        var loads = new List<Load>(newLoadList.Count);
+        foreach (var newLoad in newLoadList)
         {
-            var p = newLoad.Details;
-            var dispatcher = dispatcherById[p.AssignedDispatcherId];
+            var details = newLoad.Details;
+            var dispatcher = dispatcherById[details.AssignedDispatcherId];
             var truck = newLoad.TruckId.HasValue ? truckById[newLoad.TruckId.Value] : null;
-            var customer = customerById[p.CustomerId];
+            var customer = customerById[details.CustomerId];
             Trip? trip = null;
 
             if (newLoad.TripId.HasValue)
@@ -100,13 +100,13 @@ internal sealed class LoadService(ITenantUnitOfWork tenantUow, IVehicleTransport
             }
 
             var load = Load.Create(
-                p.Name,
-                p.Type,
-                p.DeliveryCost,
-                p.OriginAddress,
-                p.OriginLocation,
-                p.DestinationAddress,
-                p.DestinationLocation,
+                details.Name,
+                details.Type,
+                details.DeliveryCost,
+                details.OriginAddress,
+                details.OriginLocation,
+                details.DestinationAddress,
+                details.DestinationLocation,
                 customer,
                 truck,
                 dispatcher,
@@ -114,38 +114,38 @@ internal sealed class LoadService(ITenantUnitOfWork tenantUow, IVehicleTransport
                 trip
             );
 
-            load.Distance = p.Distance;
-            load.Source = p.Source;
-            load.RequestedPickupDate = p.RequestedPickupDate;
-            load.RequestedDeliveryDate = p.RequestedDeliveryDate;
-            load.PickupAppointmentFrom = p.PickupAppointmentFrom;
-            load.PickupAppointmentTo = p.PickupAppointmentTo;
-            load.DeliveryAppointmentFrom = p.DeliveryAppointmentFrom;
-            load.DeliveryAppointmentTo = p.DeliveryAppointmentTo;
-            load.Notes = p.Notes;
-            load.ContainerId = p.ContainerId;
-            load.OriginTerminalId = p.OriginTerminalId;
-            load.DestinationTerminalId = p.DestinationTerminalId;
-            load.HazmatClass = p.HazmatClass;
-            load.UnNumber = p.UnNumber;
+            load.Distance = details.Distance;
+            load.Source = details.Source;
+            load.RequestedPickupDate = details.RequestedPickupDate;
+            load.RequestedDeliveryDate = details.RequestedDeliveryDate;
+            load.PickupAppointmentFrom = details.PickupAppointmentFrom;
+            load.PickupAppointmentTo = details.PickupAppointmentTo;
+            load.DeliveryAppointmentFrom = details.DeliveryAppointmentFrom;
+            load.DeliveryAppointmentTo = details.DeliveryAppointmentTo;
+            load.Notes = details.Notes;
+            load.ContainerId = details.ContainerId;
+            load.OriginTerminalId = details.OriginTerminalId;
+            load.DestinationTerminalId = details.DestinationTerminalId;
+            load.HazmatClass = details.HazmatClass;
+            load.UnNumber = details.UnNumber;
             try
             {
-                load.SetVehicles(p.Vehicles.ToLoadVehicles());
+                load.SetVehicles(details.Vehicles.ToLoadVehicles());
             }
             catch (InvalidOperationException ex)
             {
                 return Result<IReadOnlyList<Load>>.Fail(ex.Message);
             }
 
-            load.FuelSurcharge = p.FuelSurcharge;
-            load.FreightClass = p.FreightClass;
-            load.NmfcCode = p.NmfcCode;
-            load.PalletCount = p.PalletCount;
-            load.PieceCount = p.PieceCount;
-            load.Weight = p.Weight;
-            load.Dimensions = p.Dimensions;
-            load.IsStackable = p.IsStackable;
-            load.Accessorials = p.Accessorials.Select(a => LoadChargeService.NewAccessorial(load, a)).ToList();
+            load.FuelSurcharge = details.FuelSurcharge;
+            load.FreightClass = details.FreightClass;
+            load.NmfcCode = details.NmfcCode;
+            load.PalletCount = details.PalletCount;
+            load.PieceCount = details.PieceCount;
+            load.Weight = details.Weight;
+            load.Dimensions = details.Dimensions;
+            load.IsStackable = details.IsStackable;
+            load.Accessorials = details.Accessorials.Select(a => LoadChargeService.NewAccessorial(load, a)).ToList();
             if (load.Invoice is { } invoice)
             {
                 invoice.ReplaceLoadCharges(load);

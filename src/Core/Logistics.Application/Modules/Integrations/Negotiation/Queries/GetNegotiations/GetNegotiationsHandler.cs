@@ -4,7 +4,6 @@ using Logistics.Domain.Entities;
 using Logistics.Domain.Persistence;
 using Logistics.Mediator;
 using Logistics.Shared.Models;
-using Microsoft.EntityFrameworkCore;
 using Logistics.Application.Utilities;
 
 namespace Logistics.Application.Modules.Integrations.Negotiation.Queries;
@@ -25,15 +24,11 @@ internal sealed class GetNegotiationsHandler(ITenantUnitOfWork tenantUow, INegot
             query = query.Where(RateNegotiation.Open());
         }
 
-        var totalItems = await query.CountAsync(ct);
-
-        var negotiations = await query
-            .OrderBy(req.OrderBy, x => x.Id, defaultOrderBy: "-CreatedAt")
-            .ApplyPaging(req.Page, req.PageSize)
-            .ToListAsync(ct);
-
-        var dtos = await dtoMapper.MapAsync(negotiations, ct);
-
-        return PagedResult<RateNegotiationDto>.Ok(dtos, totalItems, req.PageSize);
+        return await query.ToPagedResultAsync(req, MapPageAsync, ct, defaultOrderBy: "-CreatedAt");
     }
+
+    private async Task<IEnumerable<RateNegotiationDto>> MapPageAsync(
+        IReadOnlyList<RateNegotiation> negotiations,
+        CancellationToken ct) =>
+        await dtoMapper.MapAsync(negotiations, ct);
 }

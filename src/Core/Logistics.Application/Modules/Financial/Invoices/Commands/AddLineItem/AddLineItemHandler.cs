@@ -21,7 +21,7 @@ internal sealed class AddLineItemHandler(
             return Result<InvoiceLineItemDto>.Fail("Invoice not found.", ErrorCodes.NotFound);
         }
 
-        if (invoice.EditBlockedReason() is { } editBlocked)
+        if (invoice.GetEditBlockedReason() is { } editBlocked)
         {
             return Result<InvoiceLineItemDto>.Fail(editBlocked);
         }

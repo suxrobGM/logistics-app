@@ -16,7 +16,7 @@ internal sealed class PreviewImportHandler(ISpreadsheetReader spreadsheetReader)
         var table = ImportFileReader.Read(spreadsheetReader, req);
         if (!table.IsSuccess)
         {
-            return Task.FromResult(Result<ImportPreviewDto>.Fail(table.Error!));
+            return Task.FromResult(Result<ImportPreviewDto>.Fail(table));
         }
 
         var headers = table.Value!.Headers;

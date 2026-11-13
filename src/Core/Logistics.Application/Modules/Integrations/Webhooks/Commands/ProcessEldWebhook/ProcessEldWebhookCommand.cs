@@ -2,11 +2,7 @@ using Logistics.Domain.Primitives.Enums;
 
 namespace Logistics.Application.Modules.Integrations.Webhooks.Commands;
 
-/// <summary>
-/// An inbound ELD webhook. The endpoint is anonymous, so the tenant comes from the per-tenant URL
-/// the tenant registered with the provider (<c>/webhooks/eld/{provider}/{tenantId}</c>) and the
-/// signature, checked against that tenant's secret, is what authenticates it.
-/// </summary>
+/// <summary>The endpoint is anonymous, so the tenant's signature secret is what authenticates it.</summary>
 public class ProcessEldWebhookCommand : ICommand
 {
     public Guid TenantId { get; set; }
