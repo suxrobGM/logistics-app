@@ -17,7 +17,7 @@ public class AIDispatchController(IMediator mediator) : ControllerBase
     [HttpPost("conversations", Name = "CreateAIDispatchConversation")]
     [ProducesResponseType(typeof(AgentConversationDto), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status400BadRequest)]
-    [Authorize(Policy = Permission.Dispatch.Manage)]
+    [Authorize(Policy = Permission.AIDispatch.Manage)]
     public async Task<IActionResult> CreateConversation()
     {
         var result = await mediator.Send(new CreateAIDispatchConversationCommand());
@@ -26,7 +26,7 @@ public class AIDispatchController(IMediator mediator) : ControllerBase
 
     [HttpGet("conversations", Name = "GetAIDispatchConversations")]
     [ProducesResponseType(typeof(PagedResponse<AgentConversationDto>), StatusCodes.Status200OK)]
-    [Authorize(Policy = Permission.Dispatch.View)]
+    [Authorize(Policy = Permission.AIDispatch.View)]
     public async Task<IActionResult> GetConversations([FromQuery] GetAIDispatchConversationsQuery query)
     {
         var result = await mediator.Send(query);
@@ -36,7 +36,7 @@ public class AIDispatchController(IMediator mediator) : ControllerBase
     [HttpGet("conversations/{conversationId:guid}", Name = "GetAIDispatchConversationById")]
     [ProducesResponseType(typeof(AgentConversationDto), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status404NotFound)]
-    [Authorize(Policy = Permission.Dispatch.View)]
+    [Authorize(Policy = Permission.AIDispatch.View)]
     public async Task<IActionResult> GetConversationById(Guid conversationId)
     {
         var result = await mediator.Send(new GetAIDispatchConversationByIdQuery { Id = conversationId });
@@ -50,7 +50,7 @@ public class AIDispatchController(IMediator mediator) : ControllerBase
     [HttpPost("conversations/{conversationId:guid}/messages", Name = "SendAIDispatchMessage")]
     [ProducesResponseType(typeof(SendAgentMessageResultDto), StatusCodes.Status202Accepted)]
     [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status400BadRequest)]
-    [Authorize(Policy = Permission.Dispatch.Manage)]
+    [Authorize(Policy = Permission.AIDispatch.Manage)]
     public async Task<IActionResult> SendMessage(Guid conversationId, [FromBody] SendAIDispatchMessageCommand request)
     {
         request.ConversationId = conversationId;
@@ -63,7 +63,7 @@ public class AIDispatchController(IMediator mediator) : ControllerBase
     [HttpPost("conversations/{conversationId:guid}/cancel", Name = "CancelAIDispatchTurn")]
     [ProducesResponseType(StatusCodes.Status204NoContent)]
     [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status400BadRequest)]
-    [Authorize(Policy = Permission.Dispatch.Manage)]
+    [Authorize(Policy = Permission.AIDispatch.Manage)]
     public async Task<IActionResult> CancelTurn(Guid conversationId)
     {
         var result = await mediator.Send(new CancelAIDispatchTurnCommand { ConversationId = conversationId });
@@ -73,7 +73,7 @@ public class AIDispatchController(IMediator mediator) : ControllerBase
     [HttpPut("conversations/{conversationId:guid}", Name = "RenameAIDispatchConversation")]
     [ProducesResponseType(StatusCodes.Status204NoContent)]
     [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status400BadRequest)]
-    [Authorize(Policy = Permission.Dispatch.Manage)]
+    [Authorize(Policy = Permission.AIDispatch.Manage)]
     public async Task<IActionResult> RenameConversation(
         Guid conversationId, [FromBody] RenameAIDispatchConversationCommand request)
     {
@@ -85,7 +85,7 @@ public class AIDispatchController(IMediator mediator) : ControllerBase
     [HttpDelete("conversations/{conversationId:guid}", Name = "DeleteAIDispatchConversation")]
     [ProducesResponseType(StatusCodes.Status204NoContent)]
     [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status400BadRequest)]
-    [Authorize(Policy = Permission.Dispatch.Manage)]
+    [Authorize(Policy = Permission.AIDispatch.Manage)]
     public async Task<IActionResult> DeleteConversation(Guid conversationId)
     {
         var result = await mediator.Send(new DeleteAIDispatchConversationCommand { ConversationId = conversationId });
@@ -94,7 +94,7 @@ public class AIDispatchController(IMediator mediator) : ControllerBase
 
     [HttpGet("quota", Name = "GetAIQuotaStatus")]
     [ProducesResponseType(typeof(AIQuotaStatusDto), StatusCodes.Status200OK)]
-    [Authorize(Policy = Permission.Dispatch.View)]
+    [Authorize(Policy = Permission.AIDispatch.View)]
     public async Task<IActionResult> GetQuotaStatus()
     {
         var result = await mediator.Send(new GetAIQuotaStatusQuery());
@@ -103,7 +103,7 @@ public class AIDispatchController(IMediator mediator) : ControllerBase
 
     [HttpGet("pending", Name = "GetPendingDecisions")]
     [ProducesResponseType(typeof(List<AgentDecisionDto>), StatusCodes.Status200OK)]
-    [Authorize(Policy = Permission.Dispatch.View)]
+    [Authorize(Policy = Permission.AIDispatch.View)]
     public async Task<IActionResult> GetPendingDecisions()
     {
         var result = await mediator.Send(new GetPendingDecisionsQuery());
@@ -113,7 +113,7 @@ public class AIDispatchController(IMediator mediator) : ControllerBase
     [HttpPost("decisions/{decisionId:guid}/approve", Name = "ApproveAIDispatchDecision")]
     [ProducesResponseType(StatusCodes.Status204NoContent)]
     [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status400BadRequest)]
-    [Authorize(Policy = Permission.Dispatch.Manage)]
+    [Authorize(Policy = Permission.AIDispatch.Manage)]
     public async Task<IActionResult> ApproveDecision(Guid decisionId)
     {
         var result = await mediator.Send(new ApproveAIDispatchDecisionCommand { DecisionId = decisionId });
@@ -123,7 +123,7 @@ public class AIDispatchController(IMediator mediator) : ControllerBase
     [HttpPost("decisions/{decisionId:guid}/reject", Name = "RejectAIDispatchDecision")]
     [ProducesResponseType(StatusCodes.Status204NoContent)]
     [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status400BadRequest)]
-    [Authorize(Policy = Permission.Dispatch.Manage)]
+    [Authorize(Policy = Permission.AIDispatch.Manage)]
     public async Task<IActionResult> RejectDecision(Guid decisionId, [FromBody] RejectAIDispatchDecisionCommand command)
     {
         command.DecisionId = decisionId;
@@ -135,7 +135,7 @@ public class AIDispatchController(IMediator mediator) : ControllerBase
     [HttpPost("decisions/{decisionId:guid}/revert", Name = "RevertAIDispatchDecision")]
     [ProducesResponseType(StatusCodes.Status204NoContent)]
     [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status400BadRequest)]
-    [Authorize(Policy = Permission.Dispatch.Manage)]
+    [Authorize(Policy = Permission.AIDispatch.Manage)]
     public async Task<IActionResult> RevertDecision(Guid decisionId)
     {
         var result = await mediator.Send(new RevertAIDispatchDecisionCommand { DecisionId = decisionId });
@@ -145,7 +145,7 @@ public class AIDispatchController(IMediator mediator) : ControllerBase
     [HttpGet("autonomy", Name = "GetAIDispatchAutonomy")]
     [ProducesResponseType(typeof(AIDispatchAutonomyDto), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status400BadRequest)]
-    [Authorize(Policy = Permission.Dispatch.View)]
+    [Authorize(Policy = Permission.AIDispatch.View)]
     public async Task<IActionResult> GetAutonomy()
     {
         var result = await mediator.Send(new GetAIDispatchAutonomyQuery());
@@ -155,7 +155,7 @@ public class AIDispatchController(IMediator mediator) : ControllerBase
     [HttpPut("autonomy", Name = "UpdateAIDispatchAutonomy")]
     [ProducesResponseType(StatusCodes.Status204NoContent)]
     [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status400BadRequest)]
-    [Authorize(Policy = Permission.Dispatch.Manage)]
+    [Authorize(Policy = Permission.AIDispatch.Manage)]
     public async Task<IActionResult> UpdateAutonomy([FromBody] UpdateAIDispatchAutonomyCommand command)
     {
         var result = await mediator.Send(command);
@@ -165,7 +165,7 @@ public class AIDispatchController(IMediator mediator) : ControllerBase
     [HttpGet("policy", Name = "GetAIDispatchPolicy")]
     [ProducesResponseType(typeof(AIDispatchPolicyDto), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status400BadRequest)]
-    [Authorize(Policy = Permission.Dispatch.View)]
+    [Authorize(Policy = Permission.AIDispatch.View)]
     public async Task<IActionResult> GetPolicy()
     {
         var result = await mediator.Send(new GetAIDispatchPolicyQuery());
@@ -175,7 +175,7 @@ public class AIDispatchController(IMediator mediator) : ControllerBase
     [HttpPut("policy", Name = "UpdateAIDispatchPolicy")]
     [ProducesResponseType(StatusCodes.Status204NoContent)]
     [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status400BadRequest)]
-    [Authorize(Policy = Permission.Dispatch.Manage)]
+    [Authorize(Policy = Permission.AIDispatch.Manage)]
     public async Task<IActionResult> UpdatePolicy([FromBody] UpdateAIDispatchPolicyCommand command)
     {
         var result = await mediator.Send(command);
@@ -185,7 +185,7 @@ public class AIDispatchController(IMediator mediator) : ControllerBase
     [HttpPost("policy/regenerate", Name = "RegenerateAIDispatchPolicy")]
     [ProducesResponseType(typeof(AIDispatchPolicyDto), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status400BadRequest)]
-    [Authorize(Policy = Permission.Dispatch.Manage)]
+    [Authorize(Policy = Permission.AIDispatch.Manage)]
     public async Task<IActionResult> RegeneratePolicy()
     {
         var result = await mediator.Send(new RegenerateAIDispatchPolicyCommand());
@@ -195,7 +195,7 @@ public class AIDispatchController(IMediator mediator) : ControllerBase
     [HttpDelete("policy", Name = "DeleteAIDispatchPolicy")]
     [ProducesResponseType(StatusCodes.Status204NoContent)]
     [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status400BadRequest)]
-    [Authorize(Policy = Permission.Dispatch.Manage)]
+    [Authorize(Policy = Permission.AIDispatch.Manage)]
     public async Task<IActionResult> DeletePolicy()
     {
         var result = await mediator.Send(new DeleteAIDispatchPolicyCommand());

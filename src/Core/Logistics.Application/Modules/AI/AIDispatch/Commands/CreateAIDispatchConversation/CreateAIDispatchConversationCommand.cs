@@ -4,5 +4,5 @@ using Logistics.Shared.Models;
 
 namespace Logistics.Application.Modules.AI.AIDispatch.Commands;
 
-[RequiresFeature(TenantFeature.AgenticDispatch)]
+[RequiresFeature(TenantFeature.AIDispatch)]
 public class CreateAIDispatchConversationCommand : ICommand<Result<AgentConversationDto>>;

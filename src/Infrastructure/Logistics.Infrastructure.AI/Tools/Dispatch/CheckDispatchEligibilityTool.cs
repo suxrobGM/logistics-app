@@ -26,7 +26,7 @@ internal sealed class CheckDispatchEligibilityTool(IDispatchEligibilityService e
         "check_dispatch_eligibility",
         "Check if a truck (and optionally a specific driver) is eligible to carry a load based on driver license class + endorsements, US Hazmat / EU ADR rules, ADR cert validity, truck Hazmat-placarding, and DOT medical certificate. Returns is_eligible and a list of issues with reason codes (severity: error blocks dispatch, warning is informational). Call this BEFORE dispatch_trip or assign_load_to_truck on hazmat / ADR loads, and whenever the human asks 'can driver X carry load Y'.")
     {
-        RequiredPermission = Permission.Dispatch.View,
+        RequiredPermission = Permission.AIDispatch.View,
         Surfaces = AgentSurfaces.All
     };
 

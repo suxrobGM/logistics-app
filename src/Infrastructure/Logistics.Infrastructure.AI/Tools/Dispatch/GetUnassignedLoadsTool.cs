@@ -13,7 +13,7 @@ internal sealed class GetUnassignedLoadsTool(IMediator mediator)
         "get_unassigned_loads",
         "Get the Draft loads not assigned to any trip (up to 50; total says how many exist). Returns load ID, name, type, origin, destination, distance, delivery cost, customer, hazmat_class on hazmat loads, and for car hauler loads vehicle_count and vehicles (compare with a truck's vehicle_capacity).")
     {
-        RequiredPermission = Permission.Dispatch.View,
+        RequiredPermission = Permission.AIDispatch.View,
         Surfaces = AgentSurfaces.All
     };
 

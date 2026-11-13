@@ -41,7 +41,7 @@ public class AIDispatchPolicyLearningJob(
         var featureService = scope.ServiceProvider.GetRequiredService<IFeatureService>();
 
         // [RequiresFeature] is a pipeline behaviour and inert here, so the job checks itself.
-        if (!await featureService.IsFeatureEnabledAsync(tenant.Id, TenantFeature.AgenticDispatch))
+        if (!await featureService.IsFeatureEnabledAsync(tenant.Id, TenantFeature.AIDispatch))
         {
             return;
         }

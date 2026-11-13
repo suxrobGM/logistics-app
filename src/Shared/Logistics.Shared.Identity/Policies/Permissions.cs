@@ -179,10 +179,10 @@ public static class Permission
         public const string Manage = $"{nameof(Permission)}.{nameof(FuelCard)}.Manage";
     }
 
-    public static class Dispatch
+    public static class AIDispatch
     {
-        public const string View = $"{nameof(Permission)}.{nameof(Dispatch)}.View";
-        public const string Manage = $"{nameof(Permission)}.{nameof(Dispatch)}.Manage";
+        public const string View = $"{nameof(Permission)}.{nameof(AIDispatch)}.View";
+        public const string Manage = $"{nameof(Permission)}.{nameof(AIDispatch)}.Manage";
     }
 
     public static class BlogPost
@@ -246,16 +246,16 @@ public static class Permission
         public const string Manage = $"{nameof(Permission)}.{nameof(Terminal)}.Manage";
     }
 
-    public static class Copilot
+    public static class AICopilot
     {
-        public const string View = $"{nameof(Permission)}.{nameof(Copilot)}.View";
-        public const string Manage = $"{nameof(Permission)}.{nameof(Copilot)}.Manage";
+        public const string View = $"{nameof(Permission)}.{nameof(AICopilot)}.View";
+        public const string Manage = $"{nameof(Permission)}.{nameof(AICopilot)}.Manage";
     }
 
-    public static class Negotiation
+    public static class AINegotiation
     {
-        public const string View = $"{nameof(Permission)}.{nameof(Negotiation)}.View";
-        public const string Manage = $"{nameof(Permission)}.{nameof(Negotiation)}.Manage";
+        public const string View = $"{nameof(Permission)}.{nameof(AINegotiation)}.View";
+        public const string Manage = $"{nameof(Permission)}.{nameof(AINegotiation)}.Manage";
     }
 
     public static class ProductLicense

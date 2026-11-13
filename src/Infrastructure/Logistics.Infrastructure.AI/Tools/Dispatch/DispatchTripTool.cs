@@ -21,7 +21,7 @@ internal sealed class DispatchTripTool(IMediator mediator)
         "dispatch_trip",
         "Dispatch a trip, transitioning it from Draft to Dispatched status. This notifies the driver and starts the trip.")
     {
-        RequiredPermission = Permission.Dispatch.Manage,
+        RequiredPermission = Permission.AIDispatch.Manage,
         DecisionType = AgentDecisionType.DispatchTrip,
         Surfaces = AgentSurfaces.Copilot | AgentSurfaces.Dispatch
     };

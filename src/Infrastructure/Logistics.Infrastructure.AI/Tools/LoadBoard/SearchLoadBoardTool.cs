@@ -34,7 +34,7 @@ internal sealed class SearchLoadBoardTool(IMediator mediator, ITenantUnitOfWork 
         "Search the connected load boards (DAT) for available loads leaving a city. Use this when trucks have capacity gaps to find revenue opportunities. Rate and distance keys end in the company's unit (`_mi` or `_km`). market_rate_per_{unit}, when present, is the DAT RateView spot rate for the lane. est_margin_per_{unit}, when present, is the rate minus the fleet's operating cost per distance unit (no deadhead or driver pay); a negative one is a below-cost load.")
     {
         RequiredFeature = TenantFeature.LoadBoard,
-        RequiredPermission = Permission.Dispatch.View,
+        RequiredPermission = Permission.AIDispatch.View,
         Surfaces = AgentSurfaces.All
     };
 

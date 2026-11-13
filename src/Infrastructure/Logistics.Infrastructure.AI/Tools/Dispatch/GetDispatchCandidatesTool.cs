@@ -38,7 +38,7 @@ internal sealed class GetDispatchCandidatesTool(
         "get_dispatch_candidates",
         "Rank the Available trucks for each unassigned load. Type-incompatible trucks and drivers whose hours cannot cover the trip are already removed and counted under excluded. Each candidate carries deadhead and total distance in the tenant's unit (key suffix _mi or _km), estimated drive_time and the driver's driving_time_left, hos (feasible, multi_day or unknown), equipment (match, unconfirmed or mismatch, with a note) linehaul rate per distance unit, and est_margin with margin per distance unit (revenue minus truck operating cost over the total distance minus the driver's per-load pay; absent when costs are unknown). Hazmat and car hauler loads also run the eligibility check: blocked = true means an error issue that stops the assignment. Ranked by equipment, then HOS, then margin per distance, then deadhead; best candidate first.")
     {
-        RequiredPermission = Permission.Dispatch.View,
+        RequiredPermission = Permission.AIDispatch.View,
         Surfaces = AgentSurfaces.All
     };
 

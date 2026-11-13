@@ -67,8 +67,8 @@ assignment table, since there is one truck and the owner is the driver.
 
 ## How It Works
 
-Dispatch is a **tenant-shared, multi-turn conversation** - any user with `Permission.Dispatch.View`
-can open and read one; anyone with `Permission.Dispatch.Manage` can send messages, cancel a running
+Dispatch is a **tenant-shared, multi-turn conversation** - any user with `Permission.AIDispatch.View`
+can open and read one; anyone with `Permission.AIDispatch.Manage` can send messages, cancel a running
 turn, rename, or delete. It reuses the same conversation/turn machinery as the
 [AI copilot](ai-copilot.md) (`AgentConversation`/`AgentMessage`, `AgentTurnService`,
 `AgentTranscriptLoader`), scoped by `AgentConversationKind.Dispatch` - a dispatch conversation never
@@ -84,7 +84,7 @@ and the broker-reply envelope carry no sender and render unattributed.
    - handler checks the concurrency guard (no ownership check - the conversation is
      tenant-shared), persists the user message stamped with the sender, broadcasts it
      to the board, marks the conversation Running, enqueues a Hangfire job
-2. AIDispatchTurnJob re-checks the AgenticDispatch feature flag and runs
+2. AIDispatchTurnJob re-checks the AIDispatch feature flag and runs
    IAIDispatchService.RunTurnAsync, a thin adapter onto AgentTurnService with the
    DispatchAgentSurface
 3. The turn creates an AgentSession (Type = Dispatch) - quota, tokens, and decisions
@@ -130,7 +130,7 @@ immediately.
 
 ## Rate Negotiation
 
-With `TenantFeature.AIRateNegotiation` enabled and a load board connected, the agent can counter a
+With `TenantFeature.AINegotiation` enabled and a load board connected, the agent can counter a
 broker by email instead of skipping a listing that pays too little.
 
 The prompt gains a `## Rate Negotiation` section that travels with the three tools above. It tells
@@ -146,9 +146,9 @@ Full pipeline, threat model, and Resend setup: [Broker Email Negotiation](broker
 
 ## API Endpoints
 
-All endpoints require the `AgenticDispatch` feature to be enabled. Reads take
-`Permission.Dispatch.View`; every write (send, cancel, rename, delete, approve, reject, policy
-edits) takes `Permission.Dispatch.Manage`. Handlers do not check conversation ownership -
+All endpoints require the `AIDispatch` feature to be enabled. Reads take
+`Permission.AIDispatch.View`; every write (send, cancel, rename, delete, approve, reject, policy
+edits) takes `Permission.AIDispatch.Manage`. Handlers do not check conversation ownership -
 conversations are tenant-shared, so the endpoint policy is the only gate.
 
 ```text
@@ -294,7 +294,7 @@ expect tenants to hit their budgets sooner.
 
 ### Feature Gating
 
-The feature is gated behind `TenantFeature.AgenticDispatch`, granted from the Starter plan up (`SubscriptionPlanSeeder`). Enable via the admin portal's feature management or by adding a `PlanFeature` entry.
+The feature is gated behind `TenantFeature.AIDispatch`, granted from the Starter plan up (`SubscriptionPlanSeeder`). Enable via the admin portal's feature management or by adding a `PlanFeature` entry.
 
 ## Architecture
 

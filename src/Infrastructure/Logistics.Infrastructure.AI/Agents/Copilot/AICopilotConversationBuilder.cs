@@ -38,7 +38,7 @@ internal sealed class AICopilotConversationBuilder(
             IsSolo = tenant.IsSolo,
             // Read from metadata, so a new dispatch write tool brings the guardrails along.
             HasDispatchTools =
-                tools.Any(t => t.IsWrite && t.RequiredPermission == Permission.Dispatch.Manage)
+                tools.Any(t => t.IsWrite && t.RequiredPermission == Permission.AIDispatch.Manage)
         });
 
         session.ModelUsed = selection.Model;

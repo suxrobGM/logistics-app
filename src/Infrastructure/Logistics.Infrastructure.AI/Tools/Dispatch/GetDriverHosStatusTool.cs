@@ -19,7 +19,7 @@ internal sealed class GetDriverHosStatusTool(ITenantUnitOfWork tenantUow)
         AgentToolNames.GetDriverHosStatus,
         "Get detailed HOS (Hours of Service) status for a specific driver. Returns current duty status, driving, on-duty and cycle time left (e.g. 6h 30m), violation status, and time until the next mandatory break.")
     {
-        RequiredPermission = Permission.Dispatch.View,
+        RequiredPermission = Permission.AIDispatch.View,
         Surfaces = AgentSurfaces.All
     };
 

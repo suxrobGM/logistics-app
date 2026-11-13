@@ -25,10 +25,10 @@ public class AIDispatchTurnJob(
 
         // Hangfire bypasses the request pipeline, so [RequiresFeature] is inert here.
         var featureService = scope.ServiceProvider.GetRequiredService<IFeatureService>();
-        if (!await featureService.IsFeatureEnabledAsync(tenantId, TenantFeature.AgenticDispatch))
+        if (!await featureService.IsFeatureEnabledAsync(tenantId, TenantFeature.AIDispatch))
         {
             logger.LogWarning(
-                "AgenticDispatch feature is disabled for tenant {TenantId}; skipping turn for conversation {ConversationId}",
+                "AIDispatch feature is disabled for tenant {TenantId}; skipping turn for conversation {ConversationId}",
                 tenantId, conversationId);
             return;
         }

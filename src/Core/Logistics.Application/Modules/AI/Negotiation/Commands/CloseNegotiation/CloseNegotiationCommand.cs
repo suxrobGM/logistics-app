@@ -8,7 +8,7 @@ namespace Logistics.Application.Modules.AI.Negotiation.Commands;
 /// Ends a negotiation thread and revokes its reply address, so later broker mail to that address
 /// is dropped instead of reopening the conversation.
 /// </summary>
-[RequiresFeature(TenantFeature.AIRateNegotiation)]
+[RequiresFeature(TenantFeature.AINegotiation)]
 public class CloseNegotiationCommand : ICommand<Result>
 {
     public Guid Id { get; set; }

@@ -3,7 +3,7 @@ using Logistics.Domain.Primitives.Enums;
 
 namespace Logistics.Application.Modules.AI.AIDispatch.Commands;
 
-[RequiresFeature(TenantFeature.AgenticDispatch)]
+[RequiresFeature(TenantFeature.AIDispatch)]
 public class UpdateAIDispatchPolicyCommand : ICommand
 {
     /// <summary>Dispatcher directives. Null or empty clears them; the learned section is untouched.</summary>

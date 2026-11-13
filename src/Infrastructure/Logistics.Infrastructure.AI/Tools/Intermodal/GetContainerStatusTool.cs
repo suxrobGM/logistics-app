@@ -29,7 +29,7 @@ internal sealed class GetContainerStatusTool(ITenantUnitOfWork tenantUow)
         "Look up an intermodal container by its ISO 6346 number. Returns status (Empty, Loaded, AtPort, InTransit, Delivered, Returned), ISO type, laden flag, gross weight, seal, booking reference, bill of lading, the terminal the box is currently at, the load it is linked to, and its drayage state: steamship line, demurrage (last free day) and per-diem (empty return) clocks with days remaining/over and accrued charge, chassis days, customs/freight/line holds and pickup availability, pickup/return appointments, the empty return terminal and any street turn. Call this for any load that reports a container_number before assigning it.")
     {
         RequiredFeature = TenantFeature.IntermodalContainers,
-        RequiredPermission = Permission.Dispatch.View,
+        RequiredPermission = Permission.AIDispatch.View,
         Surfaces = AgentSurfaces.All
     };
 

@@ -39,7 +39,7 @@ public class LoadController(IMediator mediator) : ControllerBase
 
     [HttpGet("unassigned", Name = "GetUnassignedLoads")]
     [ProducesResponseType(typeof(PagedResponse<LoadDto>), StatusCodes.Status200OK)]
-    [Authorize(Policy = Permission.Dispatch.View)]
+    [Authorize(Policy = Permission.AIDispatch.View)]
     public async Task<IActionResult> GetUnassignedLoads([FromQuery] GetUnassignedLoadsQuery query)
     {
         var result = await mediator.Send(query);

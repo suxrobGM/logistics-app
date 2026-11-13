@@ -28,7 +28,7 @@ internal sealed class AssignLoadToTruckTool(IMediator mediator)
         "assign_load_to_truck",
         "Assign a specific load to a specific truck.")
     {
-        RequiredPermission = Permission.Dispatch.Manage,
+        RequiredPermission = Permission.AIDispatch.Manage,
         DecisionType = AgentDecisionType.AssignLoad,
         Surfaces = AgentSurfaces.Copilot | AgentSurfaces.Dispatch
     };

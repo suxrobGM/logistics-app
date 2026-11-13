@@ -41,7 +41,7 @@ public class ApproveAICopilotDecisionHandlerTests
     public async Task Handle_ApproverLacksToolPermission_FailsWithoutExecuting()
     {
         var (decision, _) = _ctx.SetCopilotSuggestedDecision();
-        _ctx.SetCallerPermissions("Permission.Copilot.Manage");
+        _ctx.SetCallerPermissions("Permission.AICopilot.Manage");
 
         var result = await _sut.Handle(
             new ApproveAICopilotDecisionCommand { DecisionId = decision.Id }, CancellationToken.None);

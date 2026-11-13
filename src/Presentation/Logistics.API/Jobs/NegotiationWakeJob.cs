@@ -23,7 +23,7 @@ public class NegotiationWakeJob(
 
         // Hangfire bypasses the request pipeline, so [RequiresFeature] is inert here.
         var featureService = scope.ServiceProvider.GetRequiredService<IFeatureService>();
-        if (!await featureService.IsFeatureEnabledAsync(tenantId, TenantFeature.AIRateNegotiation))
+        if (!await featureService.IsFeatureEnabledAsync(tenantId, TenantFeature.AINegotiation))
         {
             return;
         }

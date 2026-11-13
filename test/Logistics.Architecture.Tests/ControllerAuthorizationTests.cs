@@ -183,6 +183,6 @@ public class ControllerAuthorizationTests
             .GetMethod(nameof(LoadController.GetUnassignedLoads), BindingFlags.Public | BindingFlags.Instance)
             ?.GetCustomAttribute<AuthorizeAttribute>()?.Policy;
 
-        Assert.Equal(Permission.Dispatch.View, policy);
+        Assert.Equal(Permission.AIDispatch.View, policy);
     }
 }

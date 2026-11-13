@@ -35,7 +35,7 @@ internal sealed class AIDispatchConversationBuilder(
         var enabledFeatures = setup.EnabledFeatures;
         var hasLoadBoard = enabledFeatures.Contains(TenantFeature.LoadBoard);
         var hasIntermodal = enabledFeatures.Contains(TenantFeature.IntermodalContainers);
-        var hasRateNegotiation = hasLoadBoard && enabledFeatures.Contains(TenantFeature.AIRateNegotiation);
+        var hasRateNegotiation = hasLoadBoard && enabledFeatures.Contains(TenantFeature.AINegotiation);
 
         var policy = await GetLearnedPolicyAsync(ct);
         var systemPrompt = AIDispatchSystemPrompt.Build(new(companyName)

@@ -161,8 +161,8 @@ Stateless: the client re-sends the file on every step; nothing is stored. Full g
 
 ### Dispatch conversations & turns
 
-Tenant-shared, not per-user: any user with `Permission.Dispatch.View` can list/read a conversation;
-`Permission.Dispatch.Manage` sends/cancels/renames/deletes. Handlers do not check ownership -
+Tenant-shared, not per-user: any user with `Permission.AIDispatch.View` can list/read a conversation;
+`Permission.AIDispatch.Manage` sends/cancels/renames/deletes. Handlers do not check ownership -
 `CreatedById` is audit-only. Shares the conversation/turn machinery with the
 [AI copilot](../docs/ai-copilot.md) (`AgentConversation`/`AgentMessage`, `AgentTurnService`,
 `AgentTranscriptLoader`), scoped by `AgentConversationKind.Dispatch`; each turn is an `AgentSession`
@@ -171,7 +171,7 @@ with `Type == Dispatch`.
 - Domain: `Entities/AI/AIDispatch/AgentSession.cs`, `AgentConversation.cs`, `AgentMessage.cs`
 - Application: `Modules/AI/AIDispatch/Commands/` (`Create`/`Rename`/`Delete`AIDispatchConversation, `SendAIDispatchMessage` - concurrency guard + quota gate, mirrors `SendAICopilotMessage`; `CancelAIDispatchTurn`), `Modules/AI/AIDispatch/Queries/` (`GetAIDispatchConversations` - no owner filter, `GetAIDispatchConversationById` - messages + decisions + per-turn `AgentSessionDto` stats)
 - Infrastructure: `Infrastructure.AI/Agents/Dispatch/AIDispatchService.cs` (thin adapter onto the shared `AgentTurnService`) + `DispatchAgentSurface.cs` (`IAgentSurface`: no per-caller tool scoping, tenant-wide broadcasts) + `AIDispatchConversationBuilder.cs` (system prompt, transcript replay via `AgentTranscriptLoader.LoadAsync`); planning runs on `Tools/Dispatch/GetDispatchCandidatesTool.cs` (type rule, HOS, deadhead, `EquipmentFit`, eligibility in one call); `Infrastructure.Communications/SignalR/Hubs/AIDispatchHub.cs` (tenant-wide `dispatch-board:{tenantId}` group, mounted at `/hubs/ai-dispatch`)
-- Jobs: `Logistics.API/Jobs/AIDispatchTurnJob.cs` (re-checks `AgenticDispatch` inside the job, mirrors `AICopilotTurnJob`)
+- Jobs: `Logistics.API/Jobs/AIDispatchTurnJob.cs` (re-checks `AIDispatch` inside the job, mirrors `AICopilotTurnJob`)
 - API/UI: `AIDispatchController.cs` (`ai/dispatch/conversations` CRUD + messages + cancel, mirroring `AICopilotController`'s route style), `tms-portal/pages/ai-dispatch/`
 
 ### Dispatch decisions
@@ -212,7 +212,7 @@ Gated by `TenantFeature.AITripAlerts` (Professional+). The agent proposes; nothi
 ### Broker rate negotiation (email)
 
 See [docs/broker-email-negotiation.md](../docs/broker-email-negotiation.md). Gated by
-`TenantFeature.AIRateNegotiation` + `Permission.Negotiation.View/Manage`. Every outbound offer is an
+`TenantFeature.AINegotiation` + `Permission.AINegotiation.View/Manage`. Every outbound offer is an
 approved `AgentDecision`; inbound mail can only append a message and ask for a turn.
 
 - Domain: `Entities/AI/Negotiation/RateNegotiation.cs` (owns the reply token and the round cap), `NegotiationMessage.cs`, `LaneRateFloor.cs`; `Entities/AI/Negotiation/InboundEmailRoute.cs` (**master** DB - maps a reply token to a tenant); `AgentDecision.NegotiationId`, `TenantSettings.DefaultRateFloorPerMile`
@@ -226,12 +226,12 @@ approved `AgentDecision`; inbound mail can only append a message and ask for a t
 
 See [docs/ai-copilot.md](../docs/ai-copilot.md). Conversational agent sharing the dispatch tool
 registry, `AgentLoopRunner`, decisions, and quota. Gated by `TenantFeature.AICopilot` +
-`Permission.Copilot.View/Manage`; tool catalogue scoped per user.
+`Permission.AICopilot.View/Manage`; tool catalogue scoped per user.
 
 ### Conversations & turns
 
 - Domain: `Entities/AI/AIDispatch/AgentConversation.cs`, `AgentMessage.cs` (transcript with tool_use ids; `Kind` distinguishes the per-user Copilot conversations here from the tenant-shared Dispatch ones above - every copilot query/list/get filters `Kind == Copilot`); `AgentSession.Type == Copilot` per turn
-- Application: `Modules/AI/AICopilot/Commands/` (send returns the server-stamped `UserMessageCreatedAt` so the client's optimistic echo never sorts by a browser clock; rename via `RenameAICopilotConversation`), `Queries/` (incl. `GetAICopilotQuotaStatus` - the shared AI quota behind `Permission.Copilot.View` for tenants without AgenticDispatch)
+- Application: `Modules/AI/AICopilot/Commands/` (send returns the server-stamped `UserMessageCreatedAt` so the client's optimistic echo never sorts by a browser clock; rename via `RenameAICopilotConversation`), `Queries/` (incl. `GetAICopilotQuotaStatus` - the shared AI quota behind `Permission.AICopilot.View` for tenants without AIDispatch)
 - Infrastructure: `Infrastructure.AI/Agents/` (`AgentTurnService.cs` - the shared turn lifecycle every conversational agent runs through, parameterized by `IAgentSurface`; `AgentTranscriptCodec.cs`, `AgentTranscriptLoader.cs`) and `Agents/Copilot/` (`AICopilotService.cs` - thin adapter onto `AgentTurnService` + `CopilotAgentSurface.cs`, `AICopilotConversationBuilder.cs`, `AICopilotSystemPrompt.cs` - dispatch-action guardrails render only when the caller's tool catalogue includes the dispatch write tools); `Infrastructure.Communications/SignalR/Hubs/CopilotHub.cs` (`/hubs/copilot`, authorized, per-user groups)
 - Jobs: `Logistics.API/Jobs/AICopilotTurnJob.cs`
 - API/UI: `AICopilotController.cs` (`ai/copilot` - conversations CRUD + rename, messages, cancel, `quota`, decisions approve/reject), `tms-portal/shared/layout/copilot-drawer/`; state in `core/store/copilot.store.ts` (persists drawer width, polls stuck Running turns, gates the launcher on `Copilot.View`)

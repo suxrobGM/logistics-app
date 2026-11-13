@@ -58,8 +58,8 @@ public class FeatureServiceCachingTests
     [Fact]
     public async Task IsFeatureEnabled_SameFeatureTwice_QueriesMasterOnce()
     {
-        await _sut.IsFeatureEnabledAsync(_tenantId, TenantFeature.AgenticDispatch);
-        await _sut.IsFeatureEnabledAsync(_tenantId, TenantFeature.AgenticDispatch);
+        await _sut.IsFeatureEnabledAsync(_tenantId, TenantFeature.AIDispatch);
+        await _sut.IsFeatureEnabledAsync(_tenantId, TenantFeature.AIDispatch);
 
         Assert.Equal(1, ConfigQueryCount);
         Assert.Equal(1, TenantQueryCount);
@@ -82,8 +82,8 @@ public class FeatureServiceCachingTests
     {
         var otherTenantId = Guid.NewGuid();
 
-        await _sut.IsFeatureEnabledAsync(_tenantId, TenantFeature.AgenticDispatch);
-        await _sut.IsFeatureEnabledAsync(otherTenantId, TenantFeature.AgenticDispatch);
+        await _sut.IsFeatureEnabledAsync(_tenantId, TenantFeature.AIDispatch);
+        await _sut.IsFeatureEnabledAsync(otherTenantId, TenantFeature.AIDispatch);
 
         Assert.Equal(2, ConfigQueryCount);
         Assert.Equal(2, TenantQueryCount);
@@ -103,7 +103,7 @@ public class FeatureServiceCachingTests
     [Fact]
     public async Task GetEnabledFeatures_AfterIsFeatureEnabled_ReusesTheSameCache()
     {
-        await _sut.IsFeatureEnabledAsync(_tenantId, TenantFeature.AgenticDispatch);
+        await _sut.IsFeatureEnabledAsync(_tenantId, TenantFeature.AIDispatch);
         await _sut.GetEnabledFeaturesAsync(_tenantId);
         await _sut.GetAllFeatureStatusAsync(_tenantId);
 

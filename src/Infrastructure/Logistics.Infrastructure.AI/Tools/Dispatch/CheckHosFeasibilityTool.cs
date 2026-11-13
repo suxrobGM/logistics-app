@@ -29,7 +29,7 @@ internal sealed class CheckHosFeasibilityTool(ITenantUnitOfWork tenantUow)
         "check_hos_feasibility",
         "Check if a driver can feasibly complete a trip given the estimated driving distance. Returns whether the driver has enough HOS hours remaining and details about any constraints.")
     {
-        RequiredPermission = Permission.Dispatch.View,
+        RequiredPermission = Permission.AIDispatch.View,
         Surfaces = AgentSurfaces.All
     };
 

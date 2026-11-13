@@ -33,7 +33,7 @@ public enum TenantFeature
     Reports,
 
     [Description("AI Dispatch")]
-    AgenticDispatch,
+    AIDispatch,
 
     [Description("Priority Support")]
     PrioritySupport,
@@ -63,7 +63,7 @@ public enum TenantFeature
     AICopilot,
 
     [Description("AI Rate Negotiation")]
-    AIRateNegotiation,
+    AINegotiation,
 
     VehicleTransport,
 

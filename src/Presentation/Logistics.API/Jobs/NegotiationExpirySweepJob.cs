@@ -33,7 +33,7 @@ public class NegotiationExpirySweepJob(
     private async Task ExpireForTenantAsync(IServiceScope scope, Tenant tenant, CancellationToken ct)
     {
         var featureService = scope.ServiceProvider.GetRequiredService<IFeatureService>();
-        if (!await featureService.IsFeatureEnabledAsync(tenant.Id, TenantFeature.AIRateNegotiation))
+        if (!await featureService.IsFeatureEnabledAsync(tenant.Id, TenantFeature.AINegotiation))
         {
             return;
         }

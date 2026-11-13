@@ -16,8 +16,8 @@ public class ApproveAIDispatchDecisionHandlerTests
 
     public ApproveAIDispatchDecisionHandlerTests()
     {
-        _ctx.SetCallerPermissions("Permission.Dispatch.Manage");
-        _ctx.SetToolDefinition("assign_load_to_truck", "Permission.Dispatch.Manage", AgentDecisionType.AssignLoad);
+        _ctx.SetCallerPermissions("Permission.AIDispatch.Manage");
+        _ctx.SetToolDefinition("assign_load_to_truck", "Permission.AIDispatch.Manage", AgentDecisionType.AssignLoad);
 
         _sut = new ApproveAIDispatchDecisionHandler(
             _ctx.TenantUow, _ctx.DispatchGuard(), _ctx.Approver, _ctx.Notes, _ctx.CurrentUser, _broadcastService);
@@ -33,7 +33,7 @@ public class ApproveAIDispatchDecisionHandlerTests
             new ApproveAIDispatchDecisionCommand { DecisionId = decision.Id }, CancellationToken.None);
 
         Assert.False(result.IsSuccess);
-        Assert.Contains("Permission.Dispatch.Manage", result.Error);
+        Assert.Contains("Permission.AIDispatch.Manage", result.Error);
         Assert.Equal(AgentDecisionStatus.Suggested, decision.Status);
         await _ctx.ToolExecutor.DidNotReceiveWithAnyArgs().ExecuteToolAsync(default!, default!, default);
     }

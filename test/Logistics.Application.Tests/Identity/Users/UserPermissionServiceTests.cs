@@ -29,12 +29,12 @@ public class UserPermissionServiceTests
     [Fact]
     public async Task GetPermissionsAsync_CalledTwice_ResolvesOnlyOnce()
     {
-        SetPermissions("Permission.Dispatch.Manage");
+        SetPermissions("Permission.AIDispatch.Manage");
 
         await _sut.GetPermissionsAsync(_userId, _tenantId);
         var second = await _sut.GetPermissionsAsync(_userId, _tenantId);
 
-        Assert.Contains("Permission.Dispatch.Manage", second);
+        Assert.Contains("Permission.AIDispatch.Manage", second);
         await _mediator.Received(1).Send(
             Arg.Any<GetCurrentUserPermissionsQuery>(), Arg.Any<CancellationToken>());
     }
@@ -43,7 +43,7 @@ public class UserPermissionServiceTests
     [Fact]
     public async Task GetPermissionsAsync_DifferentTenant_ResolvesSeparately()
     {
-        SetPermissions("Permission.Dispatch.Manage");
+        SetPermissions("Permission.AIDispatch.Manage");
 
         await _sut.GetPermissionsAsync(_userId, _tenantId);
         await _sut.GetPermissionsAsync(_userId, Guid.NewGuid());
@@ -64,17 +64,17 @@ public class UserPermissionServiceTests
 
         Assert.Empty(await _sut.GetPermissionsAsync(_userId, _tenantId));
 
-        SetPermissions("Permission.Dispatch.Manage");
+        SetPermissions("Permission.AIDispatch.Manage");
 
-        Assert.Contains("Permission.Dispatch.Manage", await _sut.GetPermissionsAsync(_userId, _tenantId));
+        Assert.Contains("Permission.AIDispatch.Manage", await _sut.GetPermissionsAsync(_userId, _tenantId));
     }
 
     [Fact]
     public async Task HasPermissionAsync_ReflectsTheResolvedSet()
     {
-        SetPermissions("Permission.Dispatch.Manage");
+        SetPermissions("Permission.AIDispatch.Manage");
 
-        Assert.True(await _sut.HasPermissionAsync(_userId, _tenantId, "Permission.Dispatch.Manage"));
+        Assert.True(await _sut.HasPermissionAsync(_userId, _tenantId, "Permission.AIDispatch.Manage"));
         Assert.False(await _sut.HasPermissionAsync(_userId, _tenantId, "Permission.Invoice.Manage"));
     }
 }

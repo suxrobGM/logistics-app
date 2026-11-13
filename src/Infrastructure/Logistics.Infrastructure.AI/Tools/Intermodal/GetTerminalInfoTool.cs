@@ -30,7 +30,7 @@ internal sealed class GetTerminalInfoTool(ITenantUnitOfWork tenantUow)
         "Look up an intermodal terminal by UN/LOCODE. Returns name, type (SeaPort, RailTerminal, InlandDepot, AirCargo, BorderCrossing), country, street address, and how many containers are currently sitting there. Terminals carry no coordinates - keep using the load's origin_lat/origin_lng for deadhead math.")
     {
         RequiredFeature = TenantFeature.IntermodalContainers,
-        RequiredPermission = Permission.Dispatch.View,
+        RequiredPermission = Permission.AIDispatch.View,
         Surfaces = AgentSurfaces.All
     };
 

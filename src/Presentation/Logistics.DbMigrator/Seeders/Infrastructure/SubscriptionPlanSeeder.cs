@@ -32,7 +32,7 @@ internal class SubscriptionPlanSeeder(ILogger<SubscriptionPlanSeeder> logger) : 
         TenantFeature.Eld,
         // DVIR is a federal requirement; the broader Safety suite stays Professional
         TenantFeature.Dvir,
-        TenantFeature.AgenticDispatch,
+        TenantFeature.AIDispatch,
         TenantFeature.AICopilot,
         TenantFeature.McpServer,
         TenantFeature.VehicleTransport,
@@ -51,7 +51,7 @@ internal class SubscriptionPlanSeeder(ILogger<SubscriptionPlanSeeder> logger) : 
         TenantFeature.FuelCards,
         TenantFeature.Ifta,
         TenantFeature.IntermodalContainers,
-        TenantFeature.AIRateNegotiation,
+        TenantFeature.AINegotiation,
         TenantFeature.AITripAlerts
     ];
 

@@ -48,7 +48,7 @@ public class ProcessInboundNegotiationEmailHandlerTests
         _tenantUow.GetCurrentTenant().Returns(_tenant);
         _tenantUow.SqlQueryAsync<int>(Arg.Any<FormattableString>(), Arg.Any<CancellationToken>()).Returns([1]);
 
-        _featureService.IsFeatureEnabledAsync(_tenant.Id, TenantFeature.AIRateNegotiation).Returns(true);
+        _featureService.IsFeatureEnabledAsync(_tenant.Id, TenantFeature.AINegotiation).Returns(true);
 
         _negotiationRepo.GetAsync(Arg.Any<Expression<Func<RateNegotiation, bool>>>(), Arg.Any<CancellationToken>())
             .Returns(_negotiation);
@@ -81,7 +81,7 @@ public class ProcessInboundNegotiationEmailHandlerTests
     [Fact]
     public async Task Handle_FeatureDisabled_DropsTheReply()
     {
-        _featureService.IsFeatureEnabledAsync(_tenant.Id, TenantFeature.AIRateNegotiation).Returns(false);
+        _featureService.IsFeatureEnabledAsync(_tenant.Id, TenantFeature.AINegotiation).Returns(false);
 
         var result = await _sut.Handle(Command(), CancellationToken.None);
 

@@ -4,7 +4,7 @@ using Logistics.Shared.Models;
 
 namespace Logistics.Application.Modules.AI.Negotiation.Commands;
 
-[RequiresFeature(TenantFeature.AIRateNegotiation)]
+[RequiresFeature(TenantFeature.AINegotiation)]
 public class UpdateLaneRateFloorCommand : ICommand<Result>, ILaneRateFloorFields, IHaveId
 {
     public Guid Id { get; set; }

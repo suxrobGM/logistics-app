@@ -16,7 +16,7 @@ public class RateFloorController(IMediator mediator) : ControllerBase
 {
     [HttpGet(Name = "GetLaneRateFloors")]
     [ProducesResponseType(typeof(List<LaneRateFloorDto>), StatusCodes.Status200OK)]
-    [Authorize(Policy = Permission.Negotiation.View)]
+    [Authorize(Policy = Permission.AINegotiation.View)]
     public async Task<IActionResult> GetLaneRateFloors()
     {
         var result = await mediator.Send(new GetLaneRateFloorsQuery());
@@ -26,7 +26,7 @@ public class RateFloorController(IMediator mediator) : ControllerBase
     [HttpPost(Name = "CreateLaneRateFloor")]
     [ProducesResponseType(typeof(Guid), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status400BadRequest)]
-    [Authorize(Policy = Permission.Negotiation.Manage)]
+    [Authorize(Policy = Permission.AINegotiation.Manage)]
     public async Task<IActionResult> CreateLaneRateFloor([FromBody] CreateLaneRateFloorCommand request)
     {
         var result = await mediator.Send(request);
@@ -36,7 +36,7 @@ public class RateFloorController(IMediator mediator) : ControllerBase
     [HttpPut("{id:guid}", Name = "UpdateLaneRateFloor")]
     [ProducesResponseType(StatusCodes.Status204NoContent)]
     [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status400BadRequest)]
-    [Authorize(Policy = Permission.Negotiation.Manage)]
+    [Authorize(Policy = Permission.AINegotiation.Manage)]
     public async Task<IActionResult> UpdateLaneRateFloor(Guid id, [FromBody] UpdateLaneRateFloorCommand request)
     {
         request.Id = id;
@@ -47,7 +47,7 @@ public class RateFloorController(IMediator mediator) : ControllerBase
     [HttpDelete("{id:guid}", Name = "DeleteLaneRateFloor")]
     [ProducesResponseType(StatusCodes.Status204NoContent)]
     [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status400BadRequest)]
-    [Authorize(Policy = Permission.Negotiation.Manage)]
+    [Authorize(Policy = Permission.AINegotiation.Manage)]
     public async Task<IActionResult> DeleteLaneRateFloor(Guid id)
     {
         var result = await mediator.Send(new DeleteLaneRateFloorCommand { Id = id });

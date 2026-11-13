@@ -26,7 +26,7 @@ internal sealed class ProcessInboundNegotiationEmailHandler(
     {
         var tenant = tenantUow.GetCurrentTenant();
 
-        if (!await featureService.IsFeatureEnabledAsync(tenant.Id, TenantFeature.AIRateNegotiation))
+        if (!await featureService.IsFeatureEnabledAsync(tenant.Id, TenantFeature.AINegotiation))
         {
             logger.LogInformation(
                 "Rate negotiation is disabled for tenant {TenantId}; dropping inbound reply", tenant.Id);

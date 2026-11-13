@@ -8,7 +8,7 @@ namespace Logistics.Application.Modules.AI.Negotiation.Queries;
 /// Renders the email a pending counter-offer decision would send, so approving it is a decision
 /// about the real message rather than about a summary of it.
 /// </summary>
-[RequiresFeature(TenantFeature.AIRateNegotiation)]
+[RequiresFeature(TenantFeature.AINegotiation)]
 public class PreviewCounterOfferQuery : IQuery<Result<CounterOfferPreviewDto>>
 {
     public Guid DecisionId { get; set; }

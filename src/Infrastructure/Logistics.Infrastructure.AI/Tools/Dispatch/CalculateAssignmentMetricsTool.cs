@@ -33,7 +33,7 @@ internal sealed class CalculateAssignmentMetricsTool(ITenantUnitOfWork tenantUow
         "calculate_assignment_metrics",
         "Score candidate truck-load pairs: deadhead, loaded and total distance, linehaul (delivery_cost, excluding fuel surcharge and accessorials), linehaul rate per distance unit, deadhead ratio, and est_margin with margin per distance unit (revenue minus truck operating cost over the total distance minus the driver's per-load pay; absent when costs are unknown). Best margin per distance first, else best rate. Distances are in the tenant's unit, named in each key (_mi or _km).")
     {
-        RequiredPermission = Permission.Dispatch.View,
+        RequiredPermission = Permission.AIDispatch.View,
         Surfaces = AgentSurfaces.All
     };
 

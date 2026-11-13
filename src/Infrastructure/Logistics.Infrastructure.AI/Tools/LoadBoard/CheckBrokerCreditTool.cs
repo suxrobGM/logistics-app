@@ -20,7 +20,7 @@ internal sealed class CheckBrokerCreditTool(IBrokerCreditService brokerCreditSer
         "Check a load-board broker's credit standing (score 0-100, days-to-pay, FMCSA authority status) by MC number. Always call this before book_loadboard_load; never book when the score is below the tenant minimum or the authority is inactive.")
     {
         RequiredFeature = TenantFeature.LoadBoard,
-        RequiredPermission = Permission.Dispatch.View,
+        RequiredPermission = Permission.AIDispatch.View,
         Surfaces = AgentSurfaces.All
     };
 

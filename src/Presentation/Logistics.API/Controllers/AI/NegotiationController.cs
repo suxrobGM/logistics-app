@@ -20,7 +20,7 @@ public class NegotiationController(IMediator mediator) : ControllerBase
 {
     [HttpGet(Name = "GetNegotiations")]
     [ProducesResponseType(typeof(PagedResponse<RateNegotiationDto>), StatusCodes.Status200OK)]
-    [Authorize(Policy = Permission.Negotiation.View)]
+    [Authorize(Policy = Permission.AINegotiation.View)]
     public async Task<IActionResult> GetNegotiations([FromQuery] GetNegotiationsQuery query)
     {
         var result = await mediator.Send(query);
@@ -30,7 +30,7 @@ public class NegotiationController(IMediator mediator) : ControllerBase
     [HttpGet("{id:guid}", Name = "GetNegotiationById")]
     [ProducesResponseType(typeof(RateNegotiationDto), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status404NotFound)]
-    [Authorize(Policy = Permission.Negotiation.View)]
+    [Authorize(Policy = Permission.AINegotiation.View)]
     public async Task<IActionResult> GetNegotiationById(Guid id)
     {
         var result = await mediator.Send(new GetNegotiationByIdQuery { Id = id });
@@ -40,7 +40,7 @@ public class NegotiationController(IMediator mediator) : ControllerBase
     [HttpGet("decisions/{decisionId:guid}/preview", Name = "PreviewCounterOffer")]
     [ProducesResponseType(typeof(CounterOfferPreviewDto), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status400BadRequest)]
-    [Authorize(Policy = Permission.Negotiation.View)]
+    [Authorize(Policy = Permission.AINegotiation.View)]
     public async Task<IActionResult> PreviewCounterOffer(Guid decisionId)
     {
         var result = await mediator.Send(new PreviewCounterOfferQuery { DecisionId = decisionId });
@@ -50,7 +50,7 @@ public class NegotiationController(IMediator mediator) : ControllerBase
     [HttpPost("{id:guid}/close", Name = "CloseNegotiation")]
     [ProducesResponseType(StatusCodes.Status204NoContent)]
     [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status400BadRequest)]
-    [Authorize(Policy = Permission.Negotiation.Manage)]
+    [Authorize(Policy = Permission.AINegotiation.Manage)]
     public async Task<IActionResult> CloseNegotiation(Guid id, [FromBody] CloseNegotiationCommand request)
     {
         request.Id = id;

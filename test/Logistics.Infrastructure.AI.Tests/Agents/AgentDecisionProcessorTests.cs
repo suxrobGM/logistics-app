@@ -198,7 +198,7 @@ public class AgentDecisionProcessorTests
         var session = CreateSession();
         var toolUse = CreateToolUse("get_available_trucks");
         var context = new ToolCallContext(
-            CallerPermissions: new HashSet<string> { "Permission.Dispatch.View" });
+            CallerPermissions: new HashSet<string> { "Permission.AIDispatch.View" });
 
         _toolExecutor.ExecuteToolAsync("get_available_trucks", Arg.Any<string>(), Arg.Any<CancellationToken>())
             .Returns("{}");

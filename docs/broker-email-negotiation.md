@@ -4,8 +4,8 @@ The dispatch agent counters a broker by email when a load-board listing pays bel
 floor. The dispatcher approves every offer before it is sent. Broker replies come back through an
 inbound webhook and wake the agent for the next round.
 
-Gated by `TenantFeature.AIRateNegotiation` (Professional and above) plus
-`Permission.Negotiation.View` / `Permission.Negotiation.Manage`. Needs a load board connected, since
+Gated by `TenantFeature.AINegotiation` (Professional and above) plus
+`Permission.AINegotiation.View` / `Permission.AINegotiation.Manage`. Needs a load board connected, since
 there is nothing to negotiate without listings.
 
 ## The loop

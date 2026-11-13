@@ -34,8 +34,8 @@ internal sealed class ProposeCounterOfferTool(
         AgentToolNames.ProposeCounterOffer,
         "Email a counter-offer to the broker behind a load board listing. Call get_rate_floor first: the offer is rejected if it is below the floor, if no floor covers the lane, or if the round budget is spent. You write only the broker-facing paragraph - the address, the rate line and the rest of the email are filled in by the system.")
     {
-        RequiredFeature = TenantFeature.AIRateNegotiation,
-        RequiredPermission = Permission.Negotiation.Manage,
+        RequiredFeature = TenantFeature.AINegotiation,
+        RequiredPermission = Permission.AINegotiation.Manage,
         DecisionType = AgentDecisionType.ProposeCounterOffer,
         // No MCP: this emails a real broker. Off the agent surfaces there is no approval step and
         // no conversation or decision to link the offer back to.

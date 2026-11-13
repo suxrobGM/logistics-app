@@ -63,7 +63,7 @@ Two layers, both driven by `AgentToolDefinition.RequiredPermission`:
 2. **Execution guard** - the decision processor re-checks at call time; a denied tool records a
    Failed decision with `permission_denied` and never executes.
 
-Approving a suggestion re-checks again: the approver needs `Permission.Copilot.Manage` for the
+Approving a suggestion re-checks again: the approver needs `Permission.AICopilot.Manage` for the
 endpoint **and** the tool's own permission (e.g. `Permission.Invoice.Manage`).
 
 The dispatch agent's catalogue is a separate axis: it keeps only tools declaring
@@ -81,8 +81,8 @@ trail as dispatch (`agent_decisions`, linked to the turn's session).
 
 ## API
 
-All endpoints require the `AICopilot` feature and `Permission.Copilot.View` (reads) or
-`Permission.Copilot.Manage` (writes). Conversations are always scoped to the calling user.
+All endpoints require the `AICopilot` feature and `Permission.AICopilot.View` (reads) or
+`Permission.AICopilot.Manage` (writes). Conversations are always scoped to the calling user.
 
 ```text
 POST   /ai/copilot/conversations                    Create a conversation
@@ -128,7 +128,7 @@ the dispatch agent (if dispatch-scoped), and the MCP server in one change. The c
 | `send_invoice`                          | Write | `SendInvoiceCommand` (payment link, or remit-to notice if factored)   |
 | `create_payment_link`                   | Write | `CreatePaymentLinkCommand` (refused for factored customers)           |
 
-Plus every dispatch tool, for users holding `Permission.Dispatch.*`.
+Plus every dispatch tool, for users holding `Permission.AIDispatch.*`.
 
 ## Related
 

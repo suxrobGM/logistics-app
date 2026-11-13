@@ -48,7 +48,7 @@ internal sealed class PreviewTaxCalculationTool(IMediator mediator)
         "preview_tax_calculation",
         "Compute VAT / sales tax / GST for a hypothetical set of line items without persisting an invoice. Returns per-line tax amount, aggregate breakdown by jurisdiction, and reverse-charge / not-collecting flags. Use when quoting a customer or sanity-checking that tax setup will work before creating the invoice. Read-only.")
     {
-        RequiredPermission = Permission.Dispatch.View,
+        RequiredPermission = Permission.AIDispatch.View,
         Surfaces = AgentSurfaces.All
     };
 

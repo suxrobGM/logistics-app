@@ -32,7 +32,7 @@ internal sealed class CalculateDistanceTool(ITenantUnitOfWork tenantUow)
         "calculate_distance",
         "Estimate the driving distance (in the tenant's unit, named in each key) and drive time between two geographic points.")
     {
-        RequiredPermission = Permission.Dispatch.View,
+        RequiredPermission = Permission.AIDispatch.View,
         Surfaces = AgentSurfaces.All
     };
 

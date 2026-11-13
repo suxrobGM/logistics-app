@@ -11,7 +11,7 @@ namespace Logistics.Application.Modules.AI.AIDispatch.Commands;
 
 /// <summary>
 /// Dispatch conversations are tenant-shared: no ownership check, only the endpoint's
-/// <c>Permission.Dispatch.Manage</c> policy gates who may send. <c>CreatedById</c> stays whoever
+/// <c>Permission.AIDispatch.Manage</c> policy gates who may send. <c>CreatedById</c> stays whoever
 /// created the conversation, for audit only.
 /// </summary>
 internal sealed class SendAIDispatchMessageHandler(

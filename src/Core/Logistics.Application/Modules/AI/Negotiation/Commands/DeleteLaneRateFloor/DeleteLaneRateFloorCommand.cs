@@ -3,7 +3,7 @@ using Logistics.Domain.Primitives.Enums;
 
 namespace Logistics.Application.Modules.AI.Negotiation.Commands;
 
-[RequiresFeature(TenantFeature.AIRateNegotiation)]
+[RequiresFeature(TenantFeature.AINegotiation)]
 public class DeleteLaneRateFloorCommand : ICommand, IHaveId
 {
     public Guid Id { get; set; }

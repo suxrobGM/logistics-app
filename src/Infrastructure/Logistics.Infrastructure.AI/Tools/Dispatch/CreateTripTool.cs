@@ -27,7 +27,7 @@ internal sealed class CreateTripTool(IMediator mediator)
         "create_trip",
         "Create a new trip from a set of loads assigned to a truck. Groups multiple loads into an optimized multi-stop trip.")
     {
-        RequiredPermission = Permission.Dispatch.Manage,
+        RequiredPermission = Permission.AIDispatch.Manage,
         DecisionType = AgentDecisionType.CreateTrip,
         Surfaces = AgentSurfaces.Copilot | AgentSurfaces.Dispatch
     };

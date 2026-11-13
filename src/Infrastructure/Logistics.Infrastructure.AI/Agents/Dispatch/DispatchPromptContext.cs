@@ -24,7 +24,7 @@ internal sealed record DispatchPromptContext(string CompanyName)
     /// <summary><c>TenantFeature.VehicleTransport</c>; adds the car hauler rules.</summary>
     public bool HasVehicleTransport { get; init; }
 
-    /// <summary><c>TenantFeature.AIRateNegotiation</c> and a load board - the tools need both.</summary>
+    /// <summary><c>TenantFeature.AINegotiation</c> and a load board - the tools need both.</summary>
     public bool HasRateNegotiation { get; init; }
 
     /// <summary>Null omits the section.</summary>

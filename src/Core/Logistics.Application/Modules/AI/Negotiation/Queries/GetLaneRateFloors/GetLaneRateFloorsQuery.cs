@@ -4,7 +4,7 @@ using Logistics.Shared.Models;
 
 namespace Logistics.Application.Modules.AI.Negotiation.Queries;
 
-[RequiresFeature(TenantFeature.AIRateNegotiation)]
+[RequiresFeature(TenantFeature.AINegotiation)]
 public class GetLaneRateFloorsQuery : IQuery<Result<List<LaneRateFloorDto>>>
 {
 }

@@ -8,7 +8,7 @@ namespace Logistics.Application.Modules.AI.Negotiation.Commands;
 /// Sends a counter-offer email to the broker behind a load board listing. The recipient is read
 /// from the listing server-side and is never part of this request.
 /// </summary>
-[RequiresFeature(TenantFeature.AIRateNegotiation)]
+[RequiresFeature(TenantFeature.AINegotiation)]
 public class ProposeCounterOfferCommand : ICommand<Result<RateNegotiationDto>>
 {
     public Guid ListingId { get; set; }

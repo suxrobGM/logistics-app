@@ -34,7 +34,7 @@ internal sealed class BookLoadBoardLoadTool(IMediator mediator, IAgentRunContext
         "Create a load in the TMS from a load board listing and assign the truck. Load boards have no booking API, so this does NOT claim the load with the broker: tell the dispatcher to call or email the broker contact returned here to confirm it.")
     {
         RequiredFeature = TenantFeature.LoadBoard,
-        RequiredPermission = Permission.Dispatch.Manage,
+        RequiredPermission = Permission.AIDispatch.Manage,
         DecisionType = AgentDecisionType.BookLoadBoardLoad,
         // No MCP: the booking is attributed to a real dispatcher, and an API key names a tenant. The
         // model is never asked for the user id - it has no reliable source for one.

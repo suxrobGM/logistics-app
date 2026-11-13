@@ -21,8 +21,8 @@ internal sealed class GetRateFloorTool(IMediator mediator, ITenantUnitOfWork ten
         "get_rate_floor",
         "The minimum rate this carrier accepts on a listing's lane, and how the listing compares to it. Returns has_floor, the floor per distance unit (_mi or _km) and total, below_floor, the gap, whether the listing has a broker email, and any negotiation already running on it. Call this before proposing a counter-offer - without a floor there is no basis to negotiate.")
     {
-        RequiredFeature = TenantFeature.AIRateNegotiation,
-        RequiredPermission = Permission.Negotiation.View,
+        RequiredFeature = TenantFeature.AINegotiation,
+        RequiredPermission = Permission.AINegotiation.View,
         Surfaces = AgentSurfaces.All
     };
 
