@@ -927,7 +927,8 @@ namespace Logistics.Infrastructure.Persistence.Migrations.Tenant
                         .HasColumnName("error_message");
 
                     b.Property<decimal>("EstimatedCostUsd")
-                        .HasColumnType("numeric")
+                        .HasPrecision(18, 6)
+                        .HasColumnType("numeric(18,6)")
                         .HasColumnName("estimated_cost_usd");
 
                     b.Property<int>("InputTokensUsed")
@@ -1820,6 +1821,10 @@ namespace Logistics.Infrastructure.Persistence.Migrations.Tenant
                         .HasColumnType("timestamp with time zone")
                         .HasColumnName("last_updated_at");
 
+                    b.Property<int?>("MinutesUntilBreakRequired")
+                        .HasColumnType("integer")
+                        .HasColumnName("minutes_until_break_required");
+
                     b.Property<DateTime?>("NextMandatoryBreakAt")
                         .HasColumnType("timestamp with time zone")
                         .HasColumnName("next_mandatory_break_at");
@@ -1831,10 +1836,6 @@ namespace Logistics.Infrastructure.Persistence.Migrations.Tenant
                     b.Property<DateTime>("StatusChangedAt")
                         .HasColumnType("timestamp with time zone")
                         .HasColumnName("status_changed_at");
-
-                    b.Property<TimeSpan?>("TimeUntilBreakRequired")
-                        .HasColumnType("interval")
-                        .HasColumnName("time_until_break_required");
 
                     b.HasKey("Id")
                         .HasName("pk_driver_hos_statuses");
@@ -3395,8 +3396,9 @@ namespace Logistics.Infrastructure.Persistence.Migrations.Tenant
                         .HasColumnType("integer")
                         .HasColumnName("order");
 
-                    b.Property<int>("Quantity")
-                        .HasColumnType("integer")
+                    b.Property<decimal>("Quantity")
+                        .HasPrecision(12, 2)
+                        .HasColumnType("numeric(12,2)")
                         .HasColumnName("quantity");
 
                     b.Property<Guid?>("SourceId")
@@ -4485,8 +4487,9 @@ namespace Logistics.Infrastructure.Persistence.Migrations.Tenant
                         .HasColumnType("character varying(100)")
                         .HasColumnName("part_number");
 
-                    b.Property<int>("Quantity")
-                        .HasColumnType("integer")
+                    b.Property<decimal>("Quantity")
+                        .HasPrecision(12, 2)
+                        .HasColumnType("numeric(12,2)")
                         .HasColumnName("quantity");
 
                     b.Property<decimal>("TotalCost")
@@ -4531,8 +4534,9 @@ namespace Logistics.Infrastructure.Persistence.Migrations.Tenant
                         .HasColumnType("character varying(1000)")
                         .HasColumnName("description");
 
-                    b.Property<int?>("EngineHours")
-                        .HasColumnType("integer")
+                    b.Property<decimal?>("EngineHours")
+                        .HasPrecision(10, 1)
+                        .HasColumnType("numeric(10,1)")
                         .HasColumnName("engine_hours");
 
                     b.Property<string>("InvoiceNumber")
@@ -5702,17 +5706,13 @@ namespace Logistics.Infrastructure.Persistence.Migrations.Tenant
                         .HasColumnType("character varying(50)")
                         .HasColumnName("created_by");
 
-                    b.Property<DateTime>("Date")
-                        .HasColumnType("timestamp with time zone")
-                        .HasColumnName("date");
-
                     b.Property<Guid>("EmployeeId")
                         .HasColumnType("uuid")
                         .HasColumnName("employee_id");
 
-                    b.Property<TimeSpan>("EndTime")
-                        .HasColumnType("interval")
-                        .HasColumnName("end_time");
+                    b.Property<DateTime>("EndedAt")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("ended_at");
 
                     b.Property<string>("Notes")
                         .HasMaxLength(500)
@@ -5723,9 +5723,9 @@ namespace Logistics.Infrastructure.Persistence.Migrations.Tenant
                         .HasColumnType("uuid")
                         .HasColumnName("payroll_invoice_id");
 
-                    b.Property<TimeSpan>("StartTime")
-                        .HasColumnType("interval")
-                        .HasColumnName("start_time");
+                    b.Property<DateTime>("StartedAt")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("started_at");
 
                     b.Property<decimal>("TotalHours")
                         .HasPrecision(10, 2)
@@ -5752,8 +5752,8 @@ namespace Logistics.Infrastructure.Persistence.Migrations.Tenant
                     b.HasIndex("PayrollInvoiceId")
                         .HasDatabaseName("ix_time_entries_payroll_invoice_id");
 
-                    b.HasIndex("EmployeeId", "Date")
-                        .HasDatabaseName("ix_time_entries_employee_id_date");
+                    b.HasIndex("EmployeeId", "StartedAt")
+                        .HasDatabaseName("ix_time_entries_employee_id_started_at");
 
                     b.ToTable("time_entries", (string)null);
                 });
@@ -6674,7 +6674,8 @@ namespace Logistics.Infrastructure.Persistence.Migrations.Tenant
                         .HasColumnName("price_per_unit");
 
                     b.Property<decimal?>("Quantity")
-                        .HasColumnType("numeric")
+                        .HasPrecision(18, 3)
+                        .HasColumnType("numeric(18,3)")
                         .HasColumnName("quantity");
 
                     b.Property<string>("QuantityUnit")

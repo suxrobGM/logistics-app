@@ -68,8 +68,8 @@ internal sealed class ExpenseEntityConfiguration : IEntityTypeConfiguration<Expe
         {
             builder.Property(e => e.ExternalTransactionId).HasMaxLength(100);
             builder.Property(e => e.PricePerUnit).HasPrecision(18, 4);
-            // Fuel volume keeps the unbounded numeric it was created with, outside the (18,2) decimal convention.
-            builder.Property(e => e.Quantity).Metadata.SetPrecision(null);
+            // Fuel volume to the thousandth, matching fuel card transactions.
+            builder.Property(e => e.Quantity).HasPrecision(18, 3);
 
             // Belt-and-suspenders idempotency for fuel-card imports (the staging table's
             // unique index is the primary guard).

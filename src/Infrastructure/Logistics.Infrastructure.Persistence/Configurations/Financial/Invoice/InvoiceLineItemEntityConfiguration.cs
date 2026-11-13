@@ -10,6 +10,8 @@ internal sealed class InvoiceLineItemEntityConfiguration : IEntityTypeConfigurat
     {
         builder.ToTable("invoice_line_items");
 
+        builder.Property(i => i.Quantity).HasPrecision(12, 2);
+
         builder.Property(i => i.Description)
             .IsRequired()
             .HasMaxLength(500);

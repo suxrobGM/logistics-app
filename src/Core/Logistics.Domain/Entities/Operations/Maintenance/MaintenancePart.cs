@@ -12,7 +12,7 @@ public class MaintenancePart : Entity, ITenantEntity
 
     public required string PartName { get; set; }
     public string? PartNumber { get; set; }
-    public int Quantity { get; set; } = 1;
+    public decimal Quantity { get; set; } = 1;
     public decimal UnitCost { get; set; }
     public decimal TotalCost { get; set; }
 }

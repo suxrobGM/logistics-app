@@ -15,7 +15,7 @@ public record PreviewInvoiceTaxLineItem
     public required string Description { get; set; }
     public required InvoiceLineItemType Type { get; set; }
     public required decimal Amount { get; set; }
-    public int Quantity { get; set; } = 1;
+    public decimal Quantity { get; set; } = 1;
     public string? TaxCode { get; set; }
 }
 

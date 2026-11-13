@@ -13,6 +13,6 @@ public record UpdateLineItemCommand : ICommand<Result<InvoiceLineItemDto>>
     public string? Description { get; set; }
     public InvoiceLineItemType? Type { get; set; }
     public decimal? Amount { get; set; }
-    public int? Quantity { get; set; }
+    public decimal? Quantity { get; set; }
     public string? Notes { get; set; }
 }

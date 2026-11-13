@@ -161,7 +161,9 @@ internal sealed class EldSyncService(
         status.DrivingMinutesRemaining = hosData.DrivingMinutesRemaining;
         status.OnDutyMinutesRemaining = hosData.OnDutyMinutesRemaining;
         status.CycleMinutesRemaining = hosData.CycleMinutesRemaining;
-        status.TimeUntilBreakRequired = hosData.TimeUntilBreakRequired;
+        status.MinutesUntilBreakRequired = hosData.TimeUntilBreakRequired is { } untilBreak
+            ? (int)untilBreak.TotalMinutes
+            : null;
         status.IsInViolation = hosData.IsInViolation;
         status.NextMandatoryBreakAt = hosData.NextMandatoryBreakAt;
         status.LastUpdatedAt = now;

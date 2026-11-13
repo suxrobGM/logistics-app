@@ -13,7 +13,7 @@ public record UpdateMaintenanceRecordCommand : ICommand<Result<MaintenanceRecord
     public required string Description { get; set; }
     public required DateTime ServiceDate { get; set; }
     public long? OdometerMeters { get; set; }
-    public int? EngineHours { get; set; }
+    public decimal? EngineHours { get; set; }
     public string? VendorName { get; set; }
     public string? InvoiceNumber { get; set; }
     public decimal LaborCost { get; set; }

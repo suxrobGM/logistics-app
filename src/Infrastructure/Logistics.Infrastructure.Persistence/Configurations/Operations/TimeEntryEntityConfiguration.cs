@@ -26,6 +26,6 @@ internal sealed class TimeEntryEntityConfiguration : IEntityTypeConfiguration<Ti
             .HasForeignKey(t => t.PayrollInvoiceId)
             .OnDelete(DeleteBehavior.SetNull);
 
-        builder.HasIndex(t => new { t.EmployeeId, t.Date });
+        builder.HasIndex(t => new { t.EmployeeId, t.StartedAt });
     }
 }

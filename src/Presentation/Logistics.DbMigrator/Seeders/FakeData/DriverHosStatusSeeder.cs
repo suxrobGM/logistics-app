@@ -84,7 +84,7 @@ internal class DriverHosStatusSeeder(ILogger<DriverHosStatusSeeder> logger) : Se
             DrivingMinutesRemaining = drivingRemaining,
             OnDutyMinutesRemaining = onDutyRemaining,
             CycleMinutesRemaining = random.Next(2400, 4200), // 40-70 hours
-            TimeUntilBreakRequired = TimeSpan.FromMinutes(random.Next(360, 480)),
+            MinutesUntilBreakRequired = random.Next(360, 480),
             IsInViolation = false,
             LastUpdatedAt = DateTime.UtcNow.AddMinutes(-random.Next(1, 15)),
             NextMandatoryBreakAt = DateTime.UtcNow.AddHours(random.Next(6, 8))
@@ -103,7 +103,7 @@ internal class DriverHosStatusSeeder(ILogger<DriverHosStatusSeeder> logger) : Se
             DrivingMinutesRemaining = drivingRemaining,
             OnDutyMinutesRemaining = onDutyRemaining,
             CycleMinutesRemaining = random.Next(1800, 3600), // 30-60 hours
-            TimeUntilBreakRequired = TimeSpan.FromMinutes(random.Next(60, 240)),
+            MinutesUntilBreakRequired = random.Next(60, 240),
             IsInViolation = false,
             LastUpdatedAt = DateTime.UtcNow.AddMinutes(-random.Next(1, 10)),
             NextMandatoryBreakAt = DateTime.UtcNow.AddHours(random.Next(1, 4))
@@ -122,7 +122,7 @@ internal class DriverHosStatusSeeder(ILogger<DriverHosStatusSeeder> logger) : Se
             DrivingMinutesRemaining = drivingRemaining,
             OnDutyMinutesRemaining = onDutyRemaining,
             CycleMinutesRemaining = random.Next(600, 1200), // 10-20 hours
-            TimeUntilBreakRequired = TimeSpan.FromMinutes(random.Next(10, 60)),
+            MinutesUntilBreakRequired = random.Next(10, 60),
             IsInViolation = false,
             LastUpdatedAt = DateTime.UtcNow.AddMinutes(-random.Next(1, 5)),
             NextMandatoryBreakAt = DateTime.UtcNow.AddMinutes(random.Next(30, 120))
@@ -139,7 +139,7 @@ internal class DriverHosStatusSeeder(ILogger<DriverHosStatusSeeder> logger) : Se
             DrivingMinutesRemaining = 660, // Full 11 hours (resting)
             OnDutyMinutesRemaining = 840,  // Full 14 hours
             CycleMinutesRemaining = random.Next(3000, 4200),
-            TimeUntilBreakRequired = null,
+            MinutesUntilBreakRequired = null,
             IsInViolation = false,
             LastUpdatedAt = DateTime.UtcNow.AddMinutes(-random.Next(1, 30))
         };
@@ -155,7 +155,7 @@ internal class DriverHosStatusSeeder(ILogger<DriverHosStatusSeeder> logger) : Se
             DrivingMinutesRemaining = 0,
             OnDutyMinutesRemaining = random.Next(0, 30),
             CycleMinutesRemaining = random.Next(0, 120),
-            TimeUntilBreakRequired = TimeSpan.Zero,
+            MinutesUntilBreakRequired = 0,
             IsInViolation = true,
             LastUpdatedAt = DateTime.UtcNow.AddMinutes(-random.Next(1, 5)),
             NextMandatoryBreakAt = DateTime.UtcNow.AddMinutes(-random.Next(5, 30))

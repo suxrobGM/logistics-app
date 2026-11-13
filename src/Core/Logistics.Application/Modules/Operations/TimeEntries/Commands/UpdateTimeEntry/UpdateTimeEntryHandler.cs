@@ -23,14 +23,11 @@ internal sealed class UpdateTimeEntryHandler(ITenantUnitOfWork tenantUow)
             return Result.Fail("Cannot modify a time entry that has been included in a payroll invoice");
         }
 
-        if (req.Date.HasValue)
-            timeEntry.Date = req.Date.Value;
+        if (req.StartedAt.HasValue)
+            timeEntry.StartedAt = req.StartedAt.Value;
 
-        if (req.StartTime.HasValue)
-            timeEntry.StartTime = req.StartTime.Value;
-
-        if (req.EndTime.HasValue)
-            timeEntry.EndTime = req.EndTime.Value;
+        if (req.EndedAt.HasValue)
+            timeEntry.EndedAt = req.EndedAt.Value;
 
         if (req.Type.HasValue)
             timeEntry.Type = req.Type.Value;
@@ -43,7 +40,7 @@ internal sealed class UpdateTimeEntryHandler(ITenantUnitOfWork tenantUow)
         {
             timeEntry.TotalHours = req.TotalHours.Value;
         }
-        else if (req.StartTime.HasValue || req.EndTime.HasValue)
+        else if (req.StartedAt.HasValue || req.EndedAt.HasValue)
         {
             timeEntry.CalculateTotalHours();
         }

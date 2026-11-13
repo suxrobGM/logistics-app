@@ -8,9 +8,8 @@ namespace Logistics.Application.Modules.Operations.TimeEntries.Commands;
 public class UpdateTimeEntryCommand : ICommand<Result>
 {
     public required Guid Id { get; set; }
-    public DateTime? Date { get; set; }
-    public TimeSpan? StartTime { get; set; }
-    public TimeSpan? EndTime { get; set; }
+    public DateTime? StartedAt { get; set; }
+    public DateTime? EndedAt { get; set; }
     public decimal? TotalHours { get; set; }
     public TimeEntryType? Type { get; set; }
     public string? Notes { get; set; }

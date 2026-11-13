@@ -99,7 +99,7 @@ public abstract partial class Invoice : AuditableEntity, ITenantEntity, IAuditab
 
     /// <summary>On a payroll the amount is signed by <paramref name="type" />. The caller adds the line to its repository.</summary>
     public InvoiceLineItem AddLineItem(
-        string description, InvoiceLineItemType type, decimal amount, int quantity, string? notes)
+        string description, InvoiceLineItemType type, decimal amount, decimal quantity, string? notes)
     {
         var lineItem = new InvoiceLineItem
         {

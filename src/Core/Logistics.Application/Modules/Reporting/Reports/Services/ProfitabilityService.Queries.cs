@@ -105,7 +105,7 @@ internal sealed partial class ProfitabilityService
         }
 
         var hours = await tenantUow.Repository<TimeEntry>().Query()
-            .Where(te => hourlyIds.Contains(te.EmployeeId) && te.Date >= from && te.Date < to)
+            .Where(te => hourlyIds.Contains(te.EmployeeId) && te.StartedAt >= from && te.StartedAt < to)
             .GroupBy(te => te.EmployeeId)
             .Select(g => new { EmployeeId = g.Key, Hours = g.Sum(te => te.TotalHours) })
             .ToListAsync(ct);

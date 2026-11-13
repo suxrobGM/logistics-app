@@ -10,7 +10,7 @@ public record InvoiceLineItemDto
     public required string Description { get; set; }
     public InvoiceLineItemType Type { get; set; }
     public decimal Amount { get; set; }
-    public int Quantity { get; set; }
+    public decimal Quantity { get; set; }
     public int Order { get; set; }
     public string? Notes { get; set; }
 

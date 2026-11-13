@@ -10,6 +10,8 @@ internal sealed class MaintenanceRecordEntityConfiguration : IEntityTypeConfigur
     {
         builder.ToTable("maintenance_records");
 
+        builder.Property(i => i.EngineHours).HasPrecision(10, 1);
+
         builder.HasIndex(i => new { i.TruckId, i.ServiceDate });
         builder.HasIndex(i => i.MaintenanceType);
 

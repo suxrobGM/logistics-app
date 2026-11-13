@@ -42,7 +42,7 @@ internal partial class PayrollService
             case SalaryType.Hourly:
                 {
                     var hours = await tenantUow.Repository<TimeEntry>().Query()
-                        .Where(te => te.EmployeeId == employee.Id && te.Date >= from && te.Date < to)
+                        .Where(te => te.EmployeeId == employee.Id && te.StartedAt >= from && te.StartedAt < to)
                         .SumAsync(te => te.TotalHours, ct);
                     return new GrossPay(hours * rate, $"{hours:0.##} hour(s) x {rate:0.00}", Hours: hours);
                 }

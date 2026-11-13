@@ -20,9 +20,8 @@ internal sealed class CreateTimeEntryHandler(ITenantUnitOfWork tenantUow)
         var timeEntry = new TimeEntry
         {
             EmployeeId = req.EmployeeId,
-            Date = req.Date,
-            StartTime = req.StartTime,
-            EndTime = req.EndTime,
+            StartedAt = req.StartedAt,
+            EndedAt = req.EndedAt,
             Type = req.Type,
             Notes = req.Notes
         };

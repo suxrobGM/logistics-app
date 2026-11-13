@@ -14,7 +14,7 @@ public class MaintenanceRecord : AuditableEntity, ITenantEntity
     public required MaintenanceType MaintenanceType { get; set; }
     public required DateTime ServiceDate { get; set; }
     public required long OdometerMeters { get; set; }
-    public int? EngineHours { get; set; }
+    public decimal? EngineHours { get; set; }
 
     public string? VendorName { get; set; }
     public string? VendorAddress { get; set; }

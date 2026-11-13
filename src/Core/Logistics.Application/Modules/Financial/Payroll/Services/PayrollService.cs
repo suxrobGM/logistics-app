@@ -78,8 +78,8 @@ internal partial class PayrollService(
         var timeEntries = await tenantUow.Repository<TimeEntry>().GetListAsync(te =>
             te.EmployeeId == payroll.EmployeeId &&
             te.PayrollInvoiceId == null &&
-            te.Date >= from &&
-            te.Date < to, ct);
+            te.StartedAt >= from &&
+            te.StartedAt < to, ct);
 
         foreach (var entry in timeEntries)
         {

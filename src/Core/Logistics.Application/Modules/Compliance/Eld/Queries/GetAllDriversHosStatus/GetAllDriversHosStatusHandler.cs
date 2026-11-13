@@ -30,7 +30,7 @@ internal sealed class GetAllDriversHosStatusHandler(ITenantUnitOfWork tenantUow)
                 DrivingTimeRemainingDisplay = (h.DrivingMinutesRemaining / 60) + "h " + (h.DrivingMinutesRemaining % 60) + "m",
                 OnDutyTimeRemainingDisplay = (h.OnDutyMinutesRemaining / 60) + "h " + (h.OnDutyMinutesRemaining % 60) + "m",
                 CycleTimeRemainingDisplay = (h.CycleMinutesRemaining / 60) + "h " + (h.CycleMinutesRemaining % 60) + "m",
-                TimeUntilBreakRequired = h.TimeUntilBreakRequired,
+                MinutesUntilBreakRequired = h.MinutesUntilBreakRequired,
                 IsInViolation = h.IsInViolation,
                 IsAvailableForDispatch = !h.IsInViolation && h.DrivingMinutesRemaining >= 60,
                 LastUpdatedAt = h.LastUpdatedAt,

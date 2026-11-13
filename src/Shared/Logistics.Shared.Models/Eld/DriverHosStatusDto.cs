@@ -18,7 +18,7 @@ public record DriverHosStatusDto
     public string? OnDutyTimeRemainingDisplay { get; set; }
     public string? CycleTimeRemainingDisplay { get; set; }
 
-    public TimeSpan? TimeUntilBreakRequired { get; set; }
+    public int? MinutesUntilBreakRequired { get; set; }
     public bool IsInViolation { get; set; }
     public bool IsAvailableForDispatch { get; set; }
 

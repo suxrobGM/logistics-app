@@ -40,8 +40,8 @@ internal sealed class GetDriverHosStatusTool(ITenantUnitOfWork tenantUow)
             cycle_time_left = AgentDuration.Format(hos.CycleMinutesRemaining),
             is_in_violation = hos.IsInViolation,
             is_available = hos.IsAvailableForDispatch(),
-            time_until_break = hos.TimeUntilBreakRequired is { } untilBreak
-                ? AgentDuration.Format((int)untilBreak.TotalMinutes)
+            time_until_break = hos.MinutesUntilBreakRequired is { } untilBreak
+                ? AgentDuration.Format(untilBreak)
                 : null,
             last_updated = hos.LastUpdatedAt
         });

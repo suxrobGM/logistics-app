@@ -38,7 +38,7 @@ internal sealed class PreviewTaxCalculationTool(IMediator mediator)
         public InvoiceLineItemType? Type { get; init; }
 
         [Description("Quantity (defaults to 1)")]
-        public int? Quantity { get; init; }
+        public decimal? Quantity { get; init; }
 
         [Description("Optional Stripe Tax product code (txcd_*); leave blank to use the tenant default")]
         public string? TaxCode { get; init; }

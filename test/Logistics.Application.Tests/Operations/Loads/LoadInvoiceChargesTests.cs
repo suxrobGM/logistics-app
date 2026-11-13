@@ -63,7 +63,7 @@ public class LoadInvoiceChargesTests
     }
 
     [Fact]
-    public void ReplaceLoadCharges_FractionalQuantity_BillsTotalOnOneLine()
+    public void ReplaceLoadCharges_FractionalQuantity_KeepsQuantityAndRate()
     {
         var load = NewLoad();
         load.Accessorials.Add(Accessorial(load, "Detention", InvoiceLineItemType.Detention, 50m, 2.25m,
@@ -72,9 +72,9 @@ public class LoadInvoiceChargesTests
         var invoice = LoadInvoice.Create(load);
 
         var detention = invoice.LineItems.Single(l => l.Type == InvoiceLineItemType.Detention);
-        Assert.Equal(1, detention.Quantity);
-        Assert.Equal(112.50m, detention.Amount);
-        Assert.Contains("2.25 x 50.00", detention.Description);
+        Assert.Equal(2.25m, detention.Quantity);
+        Assert.Equal(50m, detention.Amount);
+        Assert.Equal(112.50m, detention.Total);
     }
 
     [Fact]

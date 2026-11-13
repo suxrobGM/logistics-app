@@ -34,8 +34,8 @@ a missing row (usually this trap), not a write conflict. Only master `User` / `A
 
 Both DbContexts set every `decimal` to `numeric(18,2)` and every `Money.Currency` to length 3 in
 `ConfigureConventions`, so don't repeat `HasPrecision(18, 2)`. A column that needs another scale
-says so with `HasPrecision(p, s)`; one that must stay unbounded `numeric` (AI cost, fuel volume)
-uses `Property(x).Metadata.SetPrecision(null)`.
+says so with `HasPrecision(p, s)`: per-km rates `(18,4)`, fuel volume `(18,3)`, AI cost `(18,6)`.
+Never leave a column as unbounded `numeric`.
 
 Tenant-internal amounts are plain `decimal` in `Tenant.Currency`. `Money` is only for money that
 arrives in another currency (fuel card transactions, load board listings and negotiation offers,

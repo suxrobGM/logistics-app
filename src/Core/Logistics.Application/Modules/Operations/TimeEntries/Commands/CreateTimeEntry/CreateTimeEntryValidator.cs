@@ -7,8 +7,8 @@ internal sealed class CreateTimeEntryValidator : AbstractValidator<CreateTimeEnt
     public CreateTimeEntryValidator()
     {
         RuleFor(x => x.EmployeeId).NotEmpty();
-        RuleFor(x => x.Date).NotEmpty();
-        RuleFor(x => x.StartTime).LessThan(x => x.EndTime)
+        RuleFor(x => x.StartedAt).NotEmpty();
+        RuleFor(x => x.StartedAt).LessThan(x => x.EndedAt)
             .WithMessage("Start time must be before end time");
         RuleFor(x => x.TotalHours)
             .GreaterThan(0)

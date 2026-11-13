@@ -34,9 +34,9 @@ public class DriverHosStatus : Entity, ITenantEntity
     public int CycleMinutesRemaining { get; set; }
 
     /// <summary>
-    /// Time until a 30-minute break is required
+    /// Minutes until a 30-minute break is required
     /// </summary>
-    public TimeSpan? TimeUntilBreakRequired { get; set; }
+    public int? MinutesUntilBreakRequired { get; set; }
 
     /// <summary>
     /// Whether the driver is currently in an HOS violation

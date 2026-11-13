@@ -14,7 +14,7 @@ public class MaintenanceRecordDto
 
     public DateTime ServiceDate { get; set; }
     public long? OdometerMeters { get; set; }
-    public int? EngineHours { get; set; }
+    public decimal? EngineHours { get; set; }
 
     public string? VendorName { get; set; }
     public string? InvoiceNumber { get; set; }
@@ -36,7 +36,7 @@ public class MaintenancePartDto
     public Guid Id { get; set; }
     public string PartNumber { get; set; } = string.Empty;
     public string PartName { get; set; } = string.Empty;
-    public int Quantity { get; set; }
+    public decimal Quantity { get; set; }
     public decimal UnitCost { get; set; }
     public decimal TotalCost { get; set; }
 }
@@ -47,7 +47,7 @@ public class CreateMaintenancePartRequest
 {
     public required string PartNumber { get; set; }
     public required string PartName { get; set; }
-    public required int Quantity { get; set; }
+    public required decimal Quantity { get; set; }
     public required decimal UnitCost { get; set; }
     public string? Vendor { get; set; }
     public string? WarrantyInfo { get; set; }

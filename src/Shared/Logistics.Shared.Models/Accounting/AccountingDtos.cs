@@ -155,7 +155,7 @@ public record QboInvoiceLinePayload
 {
     public required string Description { get; set; }
     public decimal Amount { get; set; }
-    public int Quantity { get; set; } = 1;
+    public decimal Quantity { get; set; } = 1;
 
     /// <summary>Sales item the line posts to; null lets QBO use its default item.</summary>
     public string? ItemId { get; set; }

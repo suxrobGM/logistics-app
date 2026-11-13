@@ -38,6 +38,6 @@ public record InvoiceLineItemEmailModel
 {
     public required string Description { get; init; }
     public required string Amount { get; init; }
-    public int Quantity { get; init; } = 1;
+    public decimal Quantity { get; init; } = 1;
     public required string Total { get; init; }
 }

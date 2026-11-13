@@ -83,7 +83,7 @@ public record AddLineItemRequest
     /// <summary>
     /// Quantity. Defaults to 1.
     /// </summary>
-    public int Quantity { get; set; } = 1;
+    public decimal Quantity { get; set; } = 1;
 
     /// <summary>
     /// Optional notes.
@@ -114,7 +114,7 @@ public record UpdateLineItemRequest
     /// <summary>
     /// Quantity.
     /// </summary>
-    public int? Quantity { get; set; }
+    public decimal? Quantity { get; set; }
 
     /// <summary>
     /// Optional notes.

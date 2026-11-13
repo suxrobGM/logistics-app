@@ -6,9 +6,9 @@ internal sealed class UpdateTimeEntryValidator : AbstractValidator<UpdateTimeEnt
 {
     public UpdateTimeEntryValidator()
     {
-        RuleFor(x => x.StartTime)
-            .LessThan(x => x.EndTime!.Value)
-            .When(x => x.StartTime.HasValue && x.EndTime.HasValue)
+        RuleFor(x => x.StartedAt)
+            .LessThan(x => x.EndedAt!.Value)
+            .When(x => x.StartedAt.HasValue && x.EndedAt.HasValue)
             .WithMessage("Start time must be before end time");
 
         RuleFor(x => x.TotalHours)

@@ -13,19 +13,14 @@ public class TimeEntry : AuditableEntity, ITenantEntity
     public virtual Employee Employee { get; set; } = null!;
 
     /// <summary>
-    /// The date of the time entry.
+    /// When work started, UTC.
     /// </summary>
-    public DateTime Date { get; set; }
+    public DateTime StartedAt { get; set; }
 
     /// <summary>
-    /// Start time of work.
+    /// When work ended, UTC; an overnight shift ends the next day.
     /// </summary>
-    public TimeSpan StartTime { get; set; }
-
-    /// <summary>
-    /// End time of work.
-    /// </summary>
-    public TimeSpan EndTime { get; set; }
+    public DateTime EndedAt { get; set; }
 
     /// <summary>
     /// Total hours worked (can be manually adjusted).
@@ -53,7 +48,7 @@ public class TimeEntry : AuditableEntity, ITenantEntity
     /// </summary>
     public void CalculateTotalHours()
     {
-        var duration = EndTime - StartTime;
+        var duration = EndedAt - StartedAt;
         TotalHours = duration.TotalHours.ToDecimal();
     }
 }

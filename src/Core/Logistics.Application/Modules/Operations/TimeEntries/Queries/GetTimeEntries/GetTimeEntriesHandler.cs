@@ -27,11 +27,12 @@ internal sealed class GetTimeEntriesHandler(ITenantUnitOfWork tenantUow, IDispla
         // Filter by date range
         if (req.StartDate.HasValue)
         {
-            query = query.Where(t => t.Date >= req.StartDate.Value);
+            query = query.Where(t => t.StartedAt >= req.StartDate.Value);
         }
         if (req.EndDate.HasValue)
         {
-            query = query.Where(t => t.Date <= req.EndDate.Value);
+            // EndDate is a day and inclusive.
+            query = query.Where(t => t.StartedAt < req.EndDate.Value.AddDays(1));
         }
 
         // Filter by type
@@ -50,6 +51,6 @@ internal sealed class GetTimeEntriesHandler(ITenantUnitOfWork tenantUow, IDispla
         {
             var employeeNames = await names.GetEmployeeNamesAsync(page.Select(t => (Guid?)t.EmployeeId), token);
             return page.Select(t => t.ToDto(employeeNames.Find(t.EmployeeId)));
-        }, ct, defaultOrderBy: "-Date");
+        }, ct, defaultOrderBy: "-StartedAt");
     }
 }

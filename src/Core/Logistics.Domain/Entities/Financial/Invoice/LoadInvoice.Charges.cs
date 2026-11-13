@@ -1,4 +1,3 @@
-using System.Globalization;
 using Logistics.Domain.Primitives.Enums;
 
 namespace Logistics.Domain.Entities;
@@ -38,12 +37,12 @@ public partial class LoadInvoice
 
         foreach (var accessorial in load.Accessorials.OrderBy(a => a.Name, StringComparer.Ordinal))
         {
-            lines.Add(AccessorialLine(accessorial));
+            lines.Add(Line(accessorial.Name, accessorial.LineItemType, accessorial.Rate, accessorial.Quantity, accessorial.Id));
         }
 
         return lines;
 
-        InvoiceLineItem Line(string description, InvoiceLineItemType type, decimal amount, int quantity, Guid? sourceId) => new()
+        InvoiceLineItem Line(string description, InvoiceLineItemType type, decimal amount, decimal quantity, Guid? sourceId) => new()
         {
             InvoiceId = Id,
             Description = description,
@@ -52,19 +51,6 @@ public partial class LoadInvoice
             Quantity = quantity,
             SourceId = sourceId
         };
-
-        // Line quantities are whole numbers; a fractional one (2.25 h) is billed as a single line
-        // carrying the total, with the arithmetic in the description.
-        InvoiceLineItem AccessorialLine(LoadAccessorial a)
-        {
-            if (a.Quantity == decimal.Truncate(a.Quantity) && a.Quantity is > 0 and <= int.MaxValue)
-            {
-                return Line(a.Name, a.LineItemType, a.Rate, (int)a.Quantity, a.Id);
-            }
-
-            var math = string.Create(CultureInfo.InvariantCulture, $"{a.Quantity:0.##} x {a.Rate:0.00}");
-            return Line($"{a.Name} ({math})", a.LineItemType, a.Total, 1, a.Id);
-        }
     }
 
     private static string BaseRateDescription(Load load) => load.Type switch

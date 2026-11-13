@@ -73,7 +73,7 @@ public class CreateMaintenanceRecordHandlerTests
         Parts = parts
     };
 
-    private static CreateMaintenancePartRequest Part(int quantity, decimal unitCost) => new()
+    private static CreateMaintenancePartRequest Part(decimal quantity, decimal unitCost) => new()
     {
         PartNumber = "P-1",
         PartName = "Filter",

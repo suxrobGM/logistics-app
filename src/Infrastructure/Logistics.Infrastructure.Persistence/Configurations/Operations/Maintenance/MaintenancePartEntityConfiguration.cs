@@ -10,6 +10,8 @@ internal sealed class MaintenancePartEntityConfiguration : IEntityTypeConfigurat
     {
         builder.ToTable("maintenance_parts");
 
+        builder.Property(i => i.Quantity).HasPrecision(12, 2);
+
         builder.HasIndex(i => i.MaintenanceRecordId);
 
         builder.Property(i => i.PartName)
