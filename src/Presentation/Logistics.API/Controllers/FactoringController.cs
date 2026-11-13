@@ -92,9 +92,7 @@ public class FactoringController(IMediator mediator) : ControllerBase
     public async Task<IActionResult> DownloadSchedulePdf(Guid id)
     {
         var result = await mediator.Send(new GetFactoringSchedulePdfQuery { BatchId = id });
-        return result.IsSuccess
-            ? File(result.Value!.PdfBytes, "application/pdf", result.Value.FileName)
-            : NotFound(ErrorResponse.FromResult(result));
+        return result.ToFileResult(x => File(x.PdfBytes, "application/pdf", x.FileName));
     }
 
     /// <summary>

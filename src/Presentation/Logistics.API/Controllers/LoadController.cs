@@ -166,14 +166,13 @@ public class LoadController(IMediator mediator) : ControllerBase
     /// </summary>
     [HttpGet("{id:guid}/ebol", Name = "DownloadLoadVehicleBol")]
     [ProducesResponseType(typeof(FileContentResult), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status400BadRequest)]
     [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status404NotFound)]
     [Authorize(Policy = Permission.Load.View)]
     public async Task<IActionResult> DownloadVehicleBol(Guid id)
     {
         var result = await mediator.Send(new GetVehicleBolPdfQuery { LoadId = id });
-        return result.IsSuccess
-            ? File(result.Value!.PdfBytes, "application/pdf", result.Value.FileName)
-            : NotFound(ErrorResponse.FromResult(result));
+        return result.ToFileResult(x => File(x.PdfBytes, "application/pdf", x.FileName));
     }
 
     [HttpPost("{id:guid}/assign", Name = "AssignLoadToTruck")]

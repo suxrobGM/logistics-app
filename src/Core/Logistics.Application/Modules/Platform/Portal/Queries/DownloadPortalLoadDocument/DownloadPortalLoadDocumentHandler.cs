@@ -19,13 +19,13 @@ internal sealed class DownloadPortalLoadDocumentHandler(
         var load = await tenantUow.Repository<Load>().GetByIdAsync(req.LoadId, ct);
         if (load is null || load.CustomerId != req.CustomerId)
         {
-            return Result<DocumentDownloadDto>.Fail(NotFound);
+            return Result<DocumentDownloadDto>.Fail(NotFound, ErrorCodes.NotFound);
         }
 
         var document = await tenantUow.Repository<LoadDocument>().GetByIdAsync(req.DocumentId, ct);
         if (document is null || document.LoadId != req.LoadId)
         {
-            return Result<DocumentDownloadDto>.Fail(NotFound);
+            return Result<DocumentDownloadDto>.Fail(NotFound, ErrorCodes.NotFound);
         }
 
         return await documentDownloads.OpenAsync(document, ct);

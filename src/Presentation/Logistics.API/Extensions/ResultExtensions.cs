@@ -29,6 +29,12 @@ public static class ResultExtensions
                 ? new CreatedAtRouteResult(routeName, routeValues(result.Value!), result.Value)
                 : CreateErrorResult(result);
         }
+
+        /// <summary>The file built from the value, or the same error mapping as <c>ToActionResult</c>.</summary>
+        public IActionResult ToFileResult(Func<T, FileResult> file)
+        {
+            return result.IsSuccess ? file(result.Value!) : CreateErrorResult(result);
+        }
     }
 
     private static IActionResult CreateErrorResult(Result result)

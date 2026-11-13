@@ -166,11 +166,6 @@ public class InvoicesPayrollController(IMediator mediator) : ControllerBase
     {
         var result = await mediator.Send(new GetPayrollPayStubPdfQuery { PayrollInvoiceId = id });
 
-        if (!result.IsSuccess)
-        {
-            return NotFound(ErrorResponse.FromResult(result));
-        }
-
-        return File(result.Value!.PdfBytes, "application/pdf", result.Value.FileName);
+        return result.ToFileResult(x => File(x.PdfBytes, "application/pdf", x.FileName));
     }
 }

@@ -36,12 +36,7 @@ public class DocumentController(IMediator mediator) : ControllerBase
     public async Task<IActionResult> GetDocumentById(Guid documentId)
     {
         var result = await mediator.Send(new GetDocumentByIdQuery { DocumentId = documentId });
-        if (!result.IsSuccess || result.Value is null)
-        {
-            return NotFound(ErrorResponse.FromResult(result));
-        }
-
-        return Ok(result.Value);
+        return result.ToActionResult();
     }
 
     // POST /documents/upload
@@ -83,12 +78,7 @@ public class DocumentController(IMediator mediator) : ControllerBase
     {
         var result = await mediator.Send(new DownloadDocumentQuery { DocumentId = documentId });
 
-        if (!result.IsSuccess || result.Value is null)
-        {
-            return NotFound(ErrorResponse.FromResult(result));
-        }
-
-        return File(result.Value.FileContent, result.Value.ContentType, result.Value.OriginalFileName);
+        return result.ToFileResult(x => File(x.FileContent, x.ContentType, x.OriginalFileName));
     }
 
     // PUT /documents/{documentId}

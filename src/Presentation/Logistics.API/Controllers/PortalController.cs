@@ -182,9 +182,7 @@ public class PortalController(IMediator mediator) : ControllerBase
             CustomerId = customerId.Value
         });
 
-        return result.IsSuccess
-            ? File(result.Value!.FileContent, result.Value.ContentType, result.Value.OriginalFileName)
-            : NotFound(ErrorResponse.FromResult(result));
+        return result.ToFileResult(x => File(x.FileContent, x.ContentType, x.OriginalFileName));
     }
 
     /// <summary>
@@ -192,6 +190,7 @@ public class PortalController(IMediator mediator) : ControllerBase
     /// </summary>
     [HttpGet("loads/{loadId:guid}/ebol", Name = "DownloadPortalLoadVehicleBol")]
     [ProducesResponseType(typeof(FileContentResult), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status400BadRequest)]
     [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status404NotFound)]
     [Authorize(Policy = Permission.Portal.ViewDocuments)]
     public async Task<IActionResult> DownloadLoadVehicleBol(Guid loadId)
@@ -208,9 +207,7 @@ public class PortalController(IMediator mediator) : ControllerBase
             CustomerId = customerId.Value
         });
 
-        return result.IsSuccess
-            ? File(result.Value!.PdfBytes, "application/pdf", result.Value.FileName)
-            : NotFound(ErrorResponse.FromResult(result));
+        return result.ToFileResult(x => File(x.PdfBytes, "application/pdf", x.FileName));
     }
 
     /// <summary>

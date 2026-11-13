@@ -31,6 +31,7 @@ public class ExpenseController(IMediator mediator) : ControllerBase
 
     [HttpGet("{id:guid}/receipt", Name = "DownloadExpenseReceipt")]
     [ProducesResponseType(typeof(FileStreamResult), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status400BadRequest)]
     [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status404NotFound)]
     [Authorize(Policy = Permission.Expense.View)]
     public async Task<IActionResult> DownloadReceipt(Guid id)
@@ -43,12 +44,7 @@ public class ExpenseController(IMediator mediator) : ControllerBase
             RequestedById = requestedById
         });
 
-        if (!result.IsSuccess || result.Value is null)
-        {
-            return NotFound(ErrorResponse.FromResult(result));
-        }
-
-        return File(result.Value.FileContent, result.Value.ContentType, result.Value.OriginalFileName);
+        return result.ToFileResult(x => File(x.FileContent, x.ContentType, x.OriginalFileName));
     }
 
     [HttpGet(Name = "GetExpenses")]
