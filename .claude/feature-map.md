@@ -1,672 +1,82 @@
-﻿# Feature Map
-
-Stable starting points for finding code by feature. Read this before grepping. If a feature isn't here, it doesn't exist yet (or this file is stale - flag it).
-
-Each feature lists only the layers it touches: **Domain** (entities/VOs), **Application** (commands/queries/services), **Infrastructure** (service implementations), **API/UI** (controllers, jobs, frontend pages). A missing label means that layer has nothing feature-specific.
-
-This file answers _where_. For _how it works_, follow the deep dive: **AI dispatch** → [docs/ai-dispatch.md](../docs/ai-dispatch.md) · **Financial** → [invoices](../docs/invoices.md), [customer payments](../docs/customer-payments.md), [Stripe Connect](../docs/stripe-connect.md), [Stripe webhooks](../docs/stripe-webhooks.md) · **MCP** → [docs/mcp-server.md](../docs/mcp-server.md) · **architecture** → [overview](../docs/architecture/overview.md), [multi-tenancy](../docs/architecture/multi-tenancy.md), [domain model](../docs/architecture/domain-model.md), [module layout](../docs/architecture/module-layout.md) · **not built yet** → [docs/roadmap/](../docs/roadmap/README.md).
-
-## Where things go (conventions)
-
-- **Domain entity**: `src/Core/Logistics.Domain/Entities/{Module}/{Aggregate}/` (same module names as Application; a one-file aggregate sits directly in the module folder). Every entity shares the namespace `Logistics.Domain.Entities`, every enum `Logistics.Domain.Primitives.Enums` (`Enums/{Module}/{Aggregate}/`)
-- **Commands**: `src/Core/Logistics.Application/Modules/{Module}/{Feature}/Commands/{Verb}{Entity}/`
-- **Queries**: `src/Core/Logistics.Application/Modules/{Module}/{Feature}/Queries/Get{Entity}/`
-- **Domain events**: `src/Core/Logistics.Domain/Events/`; handlers in `src/Core/Logistics.Application/Modules/{Module}/{Feature}/Events/`
-- **Reused query filters**: `IQueryable<T>` extensions next to the feature (e.g. `Modules/Operations/Loads/LoadQueryableExtensions.cs`); paged lists end with `Common/Extensions/PagedQueryableExtensions.ToPagedResultAsync`
-- **Infrastructure-port interfaces** (implemented by Infrastructure): `src/Core/Logistics.Application.Abstractions/{Group}/`, one flat folder per capability that mostly matches the implementing project (`AI`, `Communications`, `Context`, `Documents`, `Integrations`, `Payments`, `Persistence`, `Routing`, `Storage`, ...). Interfaces that `Logistics.Application` implements for hosts and infrastructure to call sit in `ApplicationServices/`
-- **Application workflow services** (stay in Application): `src/Core/Logistics.Application/Modules/{Module}/{Feature}/Services/`
-- **Application constants**: feature-scoped under `Modules/{Module}/{Feature}/Constants/`; cross-module shared in `Common/Constants/`
-- **Service implementations**: `src/Infrastructure/Logistics.Infrastructure.{Module}/`
-- **Shared provider HTTP**: `Logistics.Infrastructure.Integrations/Common/HttpClientJsonExtensions.cs` - `TryGetFromJsonAsync` (never throws; logs, returns `default`), used by FuelCards/Eld (load boards throw instead: `Integrations/LoadBoard/LoadBoardHttp.cs`). Don't copy it into a new integration. `Integrations/Accounting/`'s QBO helpers deliberately **throw** so push errors surface - not duplicates, don't fold in
-- **REST controllers**: `src/Presentation/Logistics.API/Controllers/{Module}/{Feature}Controller.cs` (same module names as Application)
-- **SignalR hubs**: `src/Infrastructure/Logistics.Infrastructure.Communications/SignalR/Hubs/`
-- **Hangfire jobs**: `src/Presentation/Logistics.API/Jobs/` (shared plumbing - `TenantJobRunner`, `RecurringJobs`, the enqueuer - in `Jobs/Scheduling/`) - fan out with `TenantJobRunner.ForEachTenantAsync` and gate features inside the body (see CLAUDE.md for the canonical `[RequiresFeature]`-is-inert rule)
-- **Machine-readable API errors**: `Logistics.Shared.Models/ErrorCodes.cs`, mirrored in `projects/shared/src/lib/errors/upgrade-handler.ts` (see `.claude/rules/backend/api-design.md` for the contract)
-- **Webhooks**: `WebhookController.cs` + `Application/Modules/Integrations/Webhooks/Commands/`
-- **EF configurations**: `src/Infrastructure/Logistics.Infrastructure.Persistence/Configurations/{Module}/{Aggregate}/`, mirroring the entity folders
-- **Frontend pages**: `private/src/Client/Logistics.Angular/projects/{portal}/src/app/pages/{feature}/`
-  - Portals: `tms-portal` (dispatchers), `customer-portal` (shippers), `admin-portal` (super admin), `website` (marketing)
-- **Mobile (driver)**: `private/src/Client/Logistics.DriverApp/composeApp/src/commonMain/kotlin/com/logisticsx/driver/`
-- **Provider connect dialogs**: `tms-portal/src/app/shared/components/integrations/provider-connect-dialog/` - MUST be used for every ELD / load board / fuel card "add provider" dialog (see the Angular `CLAUDE.md` for how)
-- **Address inputs**: `<ui-address-form>` from `@logistics/shared/ui` - MUST be used by every form that captures an `Address` value object; never raw `<input>`s. Country drives the State / Region / Province label (`state-labels.ts`), State stays required everywhere. Server-side counterpart: `Logistics.Application.Common.Validation.AddressValidator`
-
-## Operations
-
-### Loads
-
-- Domain: `Entities/Operations/Load/`
-- Application: `Modules/Operations/Loads/` (Commands, Queries, Services, Constants)
-- API/UI: `LoadController.cs`, `tms-portal/pages/loads/`
-- Car hauler vehicles: `Entities/Operations/Load/LoadVehicle.cs` + `Load.Vehicles.cs` (JSON complex collection `loads.vehicles`; `LoadVehicle.Id` is what a condition report points at), input `LoadVehicleInput` + `LoadVehicleInputValidator.cs`, `Services/LoadVehicleInputExtensions.cs`. Capacity warning: `Operations/Loads/Services/VehicleCapacityChecker.cs` (used by `GetLoadByIdHandler` and `DispatchEligibilityService` as `VehicleCapacityExceeded`, a warning). eBOL: `Queries/GetVehicleBolPdf/` → `GET /loads/{id}/ebol`, `GET /portal/loads/{id}/ebol`; delivery email is the eBOL variant of the `ShipmentDelivered` customer update (see Customer updates). UI: `load-form/load-vehicles-section.ts` (per-row VIN decode, capacity warning), `pages/loads/components/load-vehicles-content/` (details + eBOL download), `shared/components/display/vehicle-damage-diagram/` (read-only diagram on condition-report-details), customer-portal `shipments/shipment-details` + `documents/`. Guide: [docs/car-hauler-guide.md](../docs/car-hauler-guide.md)
-- Charges and LTL: `Load.Billing.cs` (`FuelSurcharge`, `Accessorials`), `Load.Freight.cs` (freight class, NMFC, pallets, pieces, weight, dimensions, stackable), `LoadAccessorial.cs`; invoice lines from `Entities/Financial/Invoice/LoadInvoice.Charges.cs` (`ReplaceLoadCharges` - owns `BaseRate`, `FuelSurcharge` and lines whose `SourceId` is an accessorial). Application: `Services/LoadChargeService.cs` (replace accessorials, sync the invoice, write detention), `Commands/{Create,Update}Load/*Command.Charges.cs`. UI: `load-form/load-charges-section.ts`, `load-form/load-freight-section.ts`, `pages/loads/components/load-charges-content/`
-- Detention: `Entities/Operations/Trip/DetentionCalculator.cs` + `DetentionTerms.cs` (customer → tenant → 2 h), applied by `MarkStopDepartedHandler` → `LoadChargeService.ApplyDetentionAsync`; `Queries/GetLoadDetention/` (`GET /loads/{id}/detention`, UI `pages/loads/components/load-detention-content/`); alert `Modules/Operations/Trips/Services/DetentionAlertService.cs` + `Jobs/DetentionAlertJob.cs` (every 15 min, once per stop via `TripStop.DetentionAlertedAt`)
-
-- Appointment windows: `Load.PickupAppointmentFrom/To`, `DeliveryAppointmentFrom/To` (load form `load-schedule-section`, PDF import `DispatchSheetPrompt`, CSV import `ImportFieldCatalog`). Status changes raise `Events/Load/LoadStatusChangedEvent` from `Load.UpdateStatus` (not from `RestoreImportedStatus`)
-
-### Customer updates
-
-Template emails, no LLM. Gated by `TenantFeature.CustomerUpdates` (every plan).
-
-- Domain: `Entities/Operations/Load/Load.CustomerUpdates.cs` + `CustomerUpdate.cs` (JSON `loads.customer_updates`: sent / skipped / failed), `Customer.UpdatePreferences` (`ValueObjects/CustomerUpdatePreferences.cs`)
-- Application: `Modules/Operations/Loads/Services/CustomerUpdateService.cs` (recipients = `Customer.Email` + active `CustomerUser`s; tracking link from `Tracking/Services/TrackingLinkService.cs`), queued by `Loads/Events/LoadStatusChangedCustomerUpdateHandler.cs` and `Trips/Events/TripStopRunningLateCustomerUpdateHandler.cs` as `Commands/SendCustomerStatusUpdate/` and `Commands/SendCustomerLateNotice/` background jobs; `Commands/SendCustomerDelayNotice/` (the agent's `send_customer_update`); `Operations/Customers/Commands/SetCustomerUpdatePreferences/` (`PUT /customers/{id}/preferences`)
-- Templates: `Infrastructure.Communications/Email/Templates/Shipment{Dispatched,PickedUp,Delivered,Late}.liquid`, model `ShipmentUpdateEmailModel`
-- UI: `tms-portal/pages/loads/components/load-customer-updates-content/`, `pages/customers/components/customer-update-preferences/`; customer-portal `shipments/components/shipment-schedule/` (windows, ETA, tracking link, sent updates via `PortalLoadDto`)
-
-### Trips
-
-- Domain: `Entities/Operations/Trip/`
-- Application: `Modules/Operations/Trips/Commands/`, `Modules/Operations/Trips/Queries/`
-- Infrastructure: `Routing/Optimization/` (trip optimizer; `MapboxRouteDurationService` behind `IRouteDurationService` for ETAs)
-- ETA: `Trip.Eta.cs` (`ApplyArrivalEstimates`, raises `TripStopRunningLateEvent` once per stop via `TripStop.LateNotifiedAt`), `Modules/Operations/Trips/Services/EtaService.cs`, called from `TruckLocationRecorder` at most every 10 min per trip; dwell per stop `TenantSettings.StopDwellMinutes`
-- API/UI: `TripController.cs`, `tms-portal/pages/trips/`; driver stop events `DriverController.cs` (`POST /drivers/trips/{tripId}/stops/{stopId}/arrive|depart`, assignment-checked, sets `TripStop.ArrivedAt`/`DepartedAt`) - departure also bills detention (see Loads)
-
-### Trucks
-
-- Domain: `Entities/Operations/Truck.cs`
-- Application: `Modules/Operations/Trucks/Commands/`, `Modules/Operations/Trucks/Queries/`
-- Truck/load type pairings: `Domain.Primitives/Geo/Truck/TruckLoadCompatibility.cs` (car haulers carry only vehicles, container trucks only containers) - enforced by `AssignLoadToTruckHandler` and `DispatchEligibilityService` (`TruckTypeIncompatible`), and rendered into both agent prompts by `Infrastructure.AI/Agents/PromptText.cs`
-- API/UI: `TruckController.cs`, `tms-portal/pages/trucks/`
-
-### Trailers
-
-- Domain: `Entities/Operations/Trailer.cs`, `Primitives/Enums/Operations/Trailer/` (`TrailerType` incl. `Chassis`, `TrailerStatus`); `Truck.CurrentTrailerId` (hooked trailer, filtered unique index), `Trip.TrailerId` (trailer pulled on the trip; loads read it through their trip as `LoadDto.TrailerNumber`, filled by `GetLoadById` only). `LengthMeters` is always metres
-- Application: `Modules/Operations/Trailers/Commands/`, `Modules/Operations/Trailers/Queries/`; hooking goes through `Modules/Operations/Trailers/Services/TrailerHookService` - `HookAsync` (from `UpdateTruckCommand.CurrentTrailerId`; moves a trailer off another truck) and `UnhookUnlessActiveAsync` (from `UpdateTrailer` and the data-import `TrailerImporter`, when a trailer leaves Active); `CreateTrip` defaults to the truck's trailer, `UpdateTrip` takes the new truck's trailer when the truck changes
-- API/UI: `TrailerController.cs` (`Permission.Trailer.*`), `tms-portal/pages/trailers/`, current-trailer picker in `pages/trucks/components/truck-form/`, trailer picker in `pages/trips/components/trip-wizard-basic/`, driver app `feature/trips/TripDetailScreen.kt`
-- Seed: `DbMigrator/Seeders/FakeData/TrailerSeeder.cs` (one per truck plus spares)
-- Not built: trailer documents, trailer DVIR, load-board posting by trailer type
-
-### Customers
-
-- Domain: `Entities/Operations/Customer/Customer.cs`
-- Application: `Modules/Operations/Customers/Commands/`, `Modules/Operations/Customers/Queries/`
-- API/UI: `CustomerController.cs`, `tms-portal/pages/customers/`
-
-### Customer users
-
-- Domain: `Entities/Identity/CustomerUser.cs`
-- Application: `Modules/Identity/CustomerUsers/Commands/`
-- API/UI: `CustomerUserController.cs`, `customer-portal/pages/`
-
-### Customer portal
-
-- Application: `Modules/Operations/Portal/Queries/` (portal loads, load documents + download, invoices, customer users, tenant access)
-- API/UI: `PortalController.cs` (`/portal/*`), `customer-portal/pages/` (`shipments/`, `documents/`, `invoices/`, `tracking/`, `payment/`, `account/`)
-
-### Containers (ISO 6346)
-
-- Domain: `Entities/Operations/Container/` - `Number` is canonicalised on write by `Container.NormalizeNumber`
-- Application: `Modules/Operations/Containers/Commands/`, `Modules/Operations/Containers/Queries/`
-- API/UI: `ContainerController.cs`, `tms-portal/pages/containers/`
-- Feature flag: `TenantFeature.IntermodalContainers` (Professional+; off by default)
-- Drayage (per move, on the container): `Container.Drayage.cs` (steamship line, LFD / empty return deadline + daily rates, holds, appointments, chassis number/pool/rate, empty return terminal, street turn), clocks in `ContainerFreeTimeCalculator` (calendar days, UTC date, deadline day free). `PickedUpAt` is stamped when status leaves `AtPort`; leaving `Returned` clears the per-move data (`ContainerStatusMachine`)
-- Drayage commands: `UpdateContainerDrayage` (`PUT /containers/{id}/drayage`, full replace), `StreetTurnContainer` (`POST /containers/{id}/streetturn`), `AddDrayageCharges` (`POST /loads/{id}/drayagecharges`, writes Demurrage/PerDiem/Chassis per-day accessorials, replacing its own, then syncs the invoice)
-- Job: `ContainerDeadlineAlertJob` (daily 12:00 UTC) -> `Containers/Services/ContainerDeadlineAlertService` (`INotificationService`)
-- UI: `tms-portal/shared/components/drayage/container-drayage-panel/` (container + load details), `tags/free-time-tag`, `tags/container-holds-tag`, `pages/containers/components/drayage-form/` (container edit)
-
-### Terminals (UN/LOCODE)
-
-- Domain: `Entities/Operations/Terminal.cs` - `Code` is canonicalised on write by `Terminal.NormalizeCode`
-- Application: `Modules/Operations/Terminals/Commands/`, `Modules/Operations/Terminals/Queries/`
-- API/UI: `TerminalController.cs`, `tms-portal/pages/terminals/`
-- Feature flag: `TenantFeature.IntermodalContainers` (shared with Containers)
-
-### Employees / Drivers
-
-- Domain: `Entities/Identity/Employee/Employee.cs`
-- Application: `Modules/Identity/Employees/Commands/`, `Modules/Identity/Employees/Queries/`
-- API/UI: `EmployeeController.cs`, `DriverController.cs`, `tms-portal/pages/employees/`
-
-### Time entries
-
-- Domain: `Entities/Operations/TimeEntry.cs`
-- Application: `Modules/Operations/TimeEntries/Commands/`, `Modules/Operations/TimeEntries/Queries/`
-- API/UI: `TimeEntryController.cs`, `tms-portal/pages/timesheets/`
-
-### Dashboard / stats
-
-- Application: `Modules/Reporting/Stats/Queries/`, `Modules/Reporting/Reports/Queries/`
-- API/UI: `StatController.cs`, `ReportController.cs`, `tms-portal/pages/home/` (+ its `components/` panels), `pages/reports/`. `pages/dashboard/` is a redirect-only stub kept for old bookmarks - don't add anything there
-
-### Profitability (profit per load, truck and lane)
-
-- Application: `Modules/Reporting/Reports/Services/ProfitabilityService*.cs` (compute-on-read, no table; spreads truck costs and salaried pay over loads by distance; unallocated lines keep net profit reconciled), `ProfitEstimateService` (forward-looking margin for AI dispatch and the load board, behind `Application.Abstractions/ApplicationServices/IProfitEstimateService`), `Modules/Reporting/Reports/Queries/Profitability/`; driver pay rules shared with payroll on `Employee.PayForLoads` / `PayForPeriod`
-- Domain: `TenantSettings.CostPerMile` (null = trailing 90-day truck cost)
-- API/UI: `ReportController` `/reports/profitability/{loads,trucks,lanes,summary}`, `LoadController` `/loads/{id}/profit` (all `Stat.View`), `tms-portal/pages/reports/profitability-report/`, `pages/loads/components/load-profit-content/`, truck-details margin stats, home top performers (ranked by margin)
-- AI: `est_margin` / `margin_per_{unit}` in `Tools/Dispatch/CalculateAssignmentMetricsTool.cs` and `GetDispatchCandidatesTool.cs`, `est_margin_per_mile` in `SearchLoadBoardTool`, `Tools/Financial/GetProfitabilityTool.cs` (`get_profitability`, copilot + MCP)
-
-### Onboarding
-
-- Application: `Modules/Tenancy/Onboarding/Queries/GetOnboardingProgress/` - read-only checklist; step keys are camelCase, labels/icons/routes live on the client. Each step declares a `TenantFeature`, so a disabled feature drops its step rather than shipping one that can never complete
-- API/UI: `OnboardingController.cs` (`GET /onboarding/progress`, `Permission.Employee.Manage` - Owner + Manager), `tms-portal/pages/home/components/onboarding-checklist/` (also links to the data import)
-
-### Data import (CSV / XLSX from another TMS)
-
-Stateless: the client re-sends the file on every step; nothing is stored. Full guide: [docs/data-import.md](../docs/data-import.md).
-
-- Application: `Modules/Operations/DataImport/` - `Constants/ImportFieldCatalog.cs` (fields + header synonyms per entity), `Services/` (`ImportHeaderMapper`, `ImportValueParser`, `ImportAddressParser`), `Importers/` (one `EntityImporter<TDraft>` per entity: customers, drivers, trucks, trailers, loads), `Commands/RunImport/` (validate = dry run, import), `Queries/PreviewImport|GetImportTemplate/`
-- Infrastructure: `Infrastructure.Documents/Spreadsheets/SpreadsheetReader.cs` (ExcelDataReader) behind `Application.Abstractions/Documents/ISpreadsheetReader`
-- API/UI: `ImportController.cs` (`/imports/*`, `Permission.Import.Manage`), `tms-portal/pages/settings/data-import/`
-- Trap: imported drivers get a password-less master `User`; `CreateInvitationHandler` lets such a member be invited and `AcceptInvitationHandler` sets the password on accept instead of failing "already an employee"
-
-### Tenant presets and solo mode
-
-- Domain: `Primitives/Enums/Tenancy/Tenant/TenantPreset.cs` (`GeneralFreight` | `CarHauler` | `Intermodal` | `SoloOperator`), stored as `Tenant.Presets` (`presets text[]` on `tenants`, master DB) with `Tenant.IsSolo`; `Entities/Tenancy/Feature/TenantPresetCatalog.cs` maps presets to features (presets combine; solo drops `Payroll`/`Timesheets`)
-- Application: `Modules/Tenancy/Tenants/Commands/CreateTenant` + `UpdateTenantPresets` (admin roles only) call `IFeatureService.ApplyPresetFeaturesAsync`; `Modules/Tenancy/Onboarding/` drops the `inviteTeam` step for solo; `Modules/Operations/Loads/Services/VehicleTransportFeatureChecker.cs` gates vehicle load and car hauler truck types on `TenantFeature.VehicleTransport`
-- Infrastructure: `Infrastructure.AI/Agents/Dispatch/AIDispatchSystemPrompt.cs` - solo swaps in a `## Fleet Profile: SOLO OWNER-OPERATOR` section
-- API/UI: `TenantController.UpdateTenantPresets`, `tms-portal/core/services/tenant.service.ts` (`isSoloMode`), `core/services/sidebar-nav.service.ts` (`SOLO_HIDDEN_ITEMS`), `admin-portal/shared/components/tenant-form/`, `admin-portal/pages/tenants/tenant-edit/`
-- Note: solo relies on Owner holding `Permission.Driver.*` (`Shared.Identity/Policies/TenantRolePermissions.cs`), and driver-facing queries keying off `Truck.MainDriverId`/`SecondaryDriverId` rather than the role. There is no multi-role model
-- Seed: `DbMigrator` tenants set `Presets` on `Models/DemoTenantConfig.cs`; `solo` also uses `SeedData/solo.json`, `SeedDataKey` and `DataScale`
-
-## AI dispatch
-
-### Dispatch conversations & turns
-
-Tenant-shared, not per-user: any user with `Permission.AIDispatch.View` can list/read a conversation;
-`Permission.AIDispatch.Manage` sends/cancels/renames/deletes. Handlers do not check ownership -
-`CreatedById` is audit-only. Shares the conversation/turn machinery with the
-[AI copilot](../docs/ai-copilot.md) (`AgentConversation`/`AgentMessage`, `AgentTurnService`,
-`AgentTranscriptLoader`), scoped by `AgentConversationKind.Dispatch`; each turn is an `AgentSession`
-with `Type == Dispatch`.
-
-- Domain: `Entities/AI/Agents/AgentSession.cs`, `AgentConversation.cs`, `AgentMessage.cs`
-- Application: `Modules/AI/AIDispatch/Commands/` (`Create`/`Rename`/`Delete`AIDispatchConversation, `SendAIDispatchMessage` - concurrency guard + quota gate, mirrors `SendAICopilotMessage`; `CancelAIDispatchTurn`), `Modules/AI/AIDispatch/Queries/` (`GetAIDispatchConversations` - no owner filter, `GetAIDispatchConversationById` - messages + decisions + per-turn `AgentSessionDto` stats)
-- Infrastructure: `Infrastructure.AI/Agents/Dispatch/AIDispatchService.cs` (thin adapter onto the shared `AgentTurnService`) + `DispatchAgentSurface.cs` (`IAgentSurface`: no per-caller tool scoping, tenant-wide broadcasts) + `AIDispatchConversationBuilder.cs` (system prompt, transcript replay via `AgentTranscriptLoader.LoadAsync`); planning runs on `Tools/Dispatch/GetDispatchCandidatesTool.cs` (type rule, HOS, deadhead, `EquipmentFit`, eligibility in one call); `Infrastructure.Communications/SignalR/Hubs/AIDispatchHub.cs` (tenant-wide `dispatch-board:{tenantId}` group, mounted at `/hubs/ai-dispatch`)
-- Jobs: `Logistics.API/Jobs/AIDispatchTurnJob.cs` (re-checks `AIDispatch` inside the job, mirrors `AICopilotTurnJob`)
-- API/UI: `AIDispatchController.cs` (`ai/dispatch/conversations` CRUD + messages + cancel, mirroring `AICopilotController`'s route style), `tms-portal/pages/ai-dispatch/`
-
-### Dispatch decisions
-
-- Domain: `Entities/AI/Agents/AgentDecision.cs`
-- Application: `Modules/AI/AIDispatch/Commands/Approve*`, `Reject*` - append a System note to the decision's conversation transcript and broadcast it tenant-wide, but only when the session has a `ConversationId` (old sessions may predate conversations)
-- Infrastructure: `Infrastructure.AI/Agents/AgentDecisionProcessor.cs`
-- Auto-approve: `AIDispatchPolicy.AutoApproveTypes`/`AutoApproveStreak` (eligible set `AutoApproveEligibleTypes`), `AIDispatch/Services/AgentTrustService.cs` (streak since the last rejection or revert), `Commands/RevertAIDispatchDecision/` (15 min, `AgentDecision.RevertWindow`), `Commands/UpdateAIDispatchAutonomy/`, `Queries/GetAIDispatchAutonomy/` (`ai/dispatch/autonomy`); UI `ai-dispatch/components/auto-approve-settings/` (policy page), `components/auto-approved-decisions/` (right panel)
-- API/UI: (under `ai-dispatch/`)
-
-### AI trip alerts
-
-Gated by `TenantFeature.AITripAlerts` (Professional+). The agent proposes; nothing executes without approval.
-
-- Triggers (each stamped once): late stop (`Trips/Events/TripStopRunningLateAlertHandler.cs`), hours shortfall (`Trip.HosShortfallFlaggedAt`, from `EldSyncService` and after each ETA refresh), new HOS violations, detention - all through `Modules/Operations/Trips/Services/TripAlertReporter.cs`, which only enqueues `RaiseTripAlertCommand`
-- Application: `Modules/AI/AIDispatch/Services/TripAlertTurnStarter.cs` (links `Trip.AlertConversationId` by conditional UPDATE, fenced alert message, atomic turn claim, daily cap `TenantSettings.TripAlertsPerDay`, in-app + Telegram notice)
-- Tool: `Infrastructure.AI/Tools/Dispatch/GetTripTool.cs` (`get_trip`: stops, ETAs, late flags, drivers)
-- Jobs: `Logistics.API/Jobs/TripAlertWakeJob.cs` (busy retry); demo scenario `DbMigrator/Seeders/FakeData/TripAlertDemoSeeder.cs`
-
-### Dispatch policy (learned preferences)
-
-- Domain: `Entities/AI/AIDispatch/AIDispatchPolicy.cs` (one row per tenant; `GeneratedContent` is job-owned, `ManualContent` is dispatcher-owned)
-- Application: `Modules/AI/AIDispatch/Services/AIDispatchPolicyLearner.cs` + `DecisionHistoryDigest.cs` + `AIDispatchPolicyPrompt.cs`; `Commands/{Update,Regenerate,Delete}AIDispatchPolicy/`, `Queries/GetAIDispatchPolicy/`
-- Infrastructure: injected into the prompt by `Infrastructure.AI/Agents/Dispatch/AIDispatchSystemPrompt.cs` (`LearnedDispatchPolicy`), loaded in `AIDispatchConversationBuilder`
-- Jobs: `Logistics.API/Jobs/AIDispatchPolicyLearningJob.cs` (nightly, `Cron.Daily(4)`)
-- API/UI: `AIDispatchController` `ai/dispatch/policy`, `tms-portal/pages/ai-dispatch/dispatch-policy/`
-
-### Tool registry
-
-- Infrastructure: `Infrastructure.AI/Tools/` (catalogue, schema/binding) + `Tools/{Dispatch,Financial,Operations,Compliance,LoadBoard,Intermodal,Negotiation}/`
-- API/UI: shared with `Logistics.McpServer` and the AI copilot
-- Behavior metadata (`IsWrite`, `RequiredPermission`, `DecisionType`, `RequiredFeature`) lives on
-  each `AgentToolDefinition` - there is no separate write-tool list anywhere
-- Intermodal reads: `Tools/GetContainerStatusTool.cs` (ISO 6346), `Tools/GetTerminalInfoTool.cs` (UN/LOCODE).
-  Gated by `TenantFeature.IntermodalContainers` - the schemas, the prompt section and the tools' own
-  guard all move together; MCP lists every tool, so the guard inside each tool is the real gate.
-
-### Broker rate negotiation (email)
-
-See [docs/broker-email-negotiation.md](../docs/broker-email-negotiation.md). Gated by
-`TenantFeature.AINegotiation` + `Permission.AINegotiation.View/Manage`. Every outbound offer is an
-approved `AgentDecision`; inbound mail can only append a message and ask for a turn.
-
-- Domain: `Entities/AI/Negotiation/RateNegotiation.cs` (owns the reply token and the round cap), `NegotiationMessage.cs`, `LaneRateFloor.cs`; `Entities/AI/Negotiation/InboundEmailRoute.cs` (**master** DB - maps a reply token to a tenant); `AgentDecision.NegotiationId`, `TenantSettings.DefaultRateFloorPerMile`
-- Application: `Modules/AI/Negotiation/` - `Services/` (`LaneRateFloorResolver`, `NegotiationEmailComposer` - the one owner of broker-facing formatting and sanitization, `NegotiationTurnStarter`, `EmailReplyParser`), `Commands/` (`ProposeCounterOffer` - floor gate then credit gate then send-before-persist; `CloseNegotiation`; `ProcessInboundNegotiationEmail`; lane-floor CRUD), `Queries/` (`GetNegotiations`, `GetNegotiationById`, `PreviewCounterOffer`, `GetRateFloorContext`, `GetLaneRateFloors`); `Modules/Integrations/Webhooks/Commands/ProcessResendWebhook/` (mail without a thread token goes to `ForwardInboundEmail`, which forwards it to `OwnerNotifications:Email`); shared credit gate in `Modules/Integrations/LoadBoard/Services/BrokerCreditGate.cs`
-- Infrastructure: `Infrastructure.Communications/Email/` (`ResendThreadedEmailSender` - reply-to plus `In-Reply-To`/`References`, `ResendInboundEmailReader` - the Received Emails API, `ResendWebhookVerifier`, `SvixSignature`, `Templates/BrokerCounterOffer.liquid`); `Infrastructure.AI/Tools/Negotiation/` (`get_rate_floor`, `get_negotiation_thread`, `propose_counter_offer`)
-- Jobs: `Logistics.API/Jobs/NegotiationExpirySweepJob.cs` (every 6 hours - expires lapsed threads and revokes their routes), `NegotiationWakeJob.cs` (delayed retry when a reply lands mid-turn)
-- API/UI: `NegotiationController.cs` (`negotiations` - list, detail, close, decision preview; sending is deliberately absent), `RateFloorController.cs` (`ratefloors`), `POST /webhooks/resend`, `tms-portal/pages/ai-dispatch/negotiations/` + `negotiation-details/` + `rate-floors/`
-- Demo data: `DbMigrator/Seeders/FakeData/NegotiationSeeder.cs` - lane floors, `Demo` load board listings and one thread per status per demo tenant; the tenant-wide fallback floor comes from `DemoTenantsSeeder`
-
-## AI copilot
-
-See [docs/ai-copilot.md](../docs/ai-copilot.md). Conversational agent sharing the dispatch tool
-registry, `AgentLoopRunner`, decisions, and quota. Gated by `TenantFeature.AICopilot` +
-`Permission.AICopilot.View/Manage`; tool catalogue scoped per user.
-
-### Conversations & turns
-
-- Domain: `Entities/AI/Agents/AgentConversation.cs`, `AgentMessage.cs` (transcript with tool_use ids; `Kind` distinguishes the per-user Copilot conversations here from the tenant-shared Dispatch ones above - every copilot query/list/get filters `Kind == Copilot`); each turn is an `AgentSession` under the conversation
-- Application: `Modules/AI/AICopilot/Commands/` (send returns the server-stamped `UserMessageCreatedAt` so the client's optimistic echo never sorts by a browser clock; rename via `RenameAICopilotConversation`), `Queries/` (incl. `GetAICopilotQuotaStatus` - the shared AI quota behind `Permission.AICopilot.View` for tenants without AIDispatch)
-- Infrastructure: `Infrastructure.AI/Agents/` (`AgentTurnService.cs` - the shared turn lifecycle every conversational agent runs through, parameterized by `IAgentSurface`; `AgentTranscriptCodec.cs`, `AgentTranscriptLoader.cs`) and `Agents/Copilot/` (`AICopilotService.cs` - thin adapter onto `AgentTurnService` + `CopilotAgentSurface.cs`, `AICopilotConversationBuilder.cs`, `AICopilotSystemPrompt.cs` - dispatch-action guardrails render only when the caller's tool catalogue includes the dispatch write tools); `Infrastructure.Communications/SignalR/Hubs/CopilotHub.cs` (`/hubs/copilot`, authorized, per-user groups)
-- Jobs: `Logistics.API/Jobs/AICopilotTurnJob.cs`
-- API/UI: `AICopilotController.cs` (`ai/copilot` - conversations CRUD + rename, messages, cancel, `quota`, decisions approve/reject), `tms-portal/shared/layout/copilot-drawer/`; state in `core/store/copilot.store.ts` (persists drawer width, polls stuck Running turns, gates the launcher on `Copilot.View`)
-
-### Copilot tools (loads, customers, invoicing, expenses, maintenance, detention, inspections)
-
-- Infrastructure: `Tools/SearchLoadsTool.cs`, `GetLoadTool.cs`, `Operations/GetDetentionTool.cs`, `Compliance/GetConditionReportsTool.cs`, `SearchCustomersTool.cs`, `GetInvoicesTool.cs`, `GetInvoiceTool.cs`, `SearchExpensesTool.cs`, `GetExpenseStatsTool.cs`, `CreateLoadInvoiceTool.cs`, `SendInvoiceTool.cs`, `CreatePaymentLinkTool.cs` (+ shared `AgentToolJson.cs` schema and binding)
-
-### LLM providers
-
-- Infrastructure: `Infrastructure.AI/Llm/` (`LlmProviderFactory`) and `Llm/Providers/` (`AnthropicLlmProvider`, `OpenAIResponsesLlmProvider`, `OpenAICompatibleLlmProvider` - DeepSeek etc.)
-
-### Quota / pricing
-
-- Domain: `Entities/Tenancy/Subscription/SubscriptionPlan.cs` (`WeeklyAIBudgetUsd`, required; unsubscribed tenants fall back to the Enterprise budget via `Application.Abstractions/AI/AIWeeklyBudget.cs`)
-- Application: `Application.Abstractions/AI/IAIQuotaService.cs` (port)
-- Infrastructure: `Infrastructure.Persistence/Services/AIDispatch/AIQuotaService.cs` (cost-based quota tracking), `Application.Abstractions/AI/LlmModelCatalog.cs` (per-token prices on each model, `CalculateCost`), `Application.Abstractions/Payments/AIOverageBilling.cs` (cost → Stripe metered units; shared by Stripe metering and the tenant-visible accrued-charges figure)
-- API/UI: (quota bar in `tms-portal/pages/ai-dispatch/`), `admin-portal/pages/ai-settings/tenant-quotas/` (per-tenant usage + revenue-vs-LLM-cost margin report)
-- Quota numbers live in `SubscriptionPlanSeeder` + admin portal only - never exposed to tenants (tenant API returns a percentage)
-
-### Global AI settings
-
-- Application: `Modules/AI/AISettings/` (`GetAISettings`, `UpdateAISettings`); `Abstractions/AI/LlmModelCatalog.cs`
-- Infrastructure: `SystemSettingsService` (`AI.Model`/`AI.ReasoningEffort` keys)
-- API/UI: `AISettingsController.cs`, `admin-portal/pages/ai-settings/`
-
-### Commercial license
-
-- Domain: `ProductLicenseHeartbeat` (master), `Options/ProductLicenseOptions.cs` (`License__Key`, `License__HeartbeatUrl`, `License__HeartbeatEnabled`)
-- Application: `Modules/Tenancy/ProductLicense/` - `Services/ProductLicenseKeyValidator` (ES256 JWT against the embedded public key), `ProductLicenseService` (env var wins over `SystemSettings`, 5 min cache), `ProductLicenseHeartbeatService` (builds the report, sends it through `IProductLicenseHeartbeatSender`); commands `SetProductLicenseKey`, `RecordProductLicenseHeartbeat`; queries `GetProductLicenseStatus`, `GetProductLicenseDiscovery`
-- Infrastructure: `Infrastructure.Integrations/Licensing/` - `ProductLicenseHeartbeatSender` posts the daily report
-- API/UI: `ProductLicenseController.cs` (`/license`, `/license/key`, anonymous `/license/heartbeat` and `/.well-known/logisticsx.json`), `product-license-heartbeat` in `Jobs/Scheduling/RecurringJobs.cs`, `HostDefaults/ProductVersionHeaderExtensions.cs` (`X-LogisticsX-Version`), `shared/services/product-license.service.ts` + `ui-license-banner` (all three portals), `admin-portal/pages/license/`
-- Keys are issued with `tools/Logistics.LicenseIssuer` (`keygen`, `issue`, `inspect`); legal text in `COMMERCIAL-LICENSE.md`, `CLA.md`
-
-### Background runner
-
-- API/UI: `Jobs/AIDispatchTurnJob.cs`
-
-### MCP server
-
-- API/UI: `Logistics.McpServer/` (`McpToolSurface` over `IAgentToolRegistry`)
-
-## Compliance & safety
-
-### ELD / HOS logs
-
-- Domain: `Entities/Compliance/Eld/HosLog.cs`, `HosViolation.cs` (`RuleSetCode`), `DriverHosStatus.cs`, `ValueObjects/HosLimits.cs`
-- Application: `Modules/Compliance/Eld/Commands/`, `Modules/Compliance/Eld/Queries/GetHosLimits/`, `Modules/Compliance/Eld/Services/RuleSetSelector.cs` (region → FMCSA / EU 561/2006)
-- Infrastructure: `Infrastructure.Integrations/Eld/` (Samsara, Motive, TT ELD, Geotab, Demo). Casing comes from `IntegrationJsonOptions` (camel/snake), reads from `TryGetFromJsonAsync` - all in `Integrations/Common/` (429/5xx retries come from the host-wide standard resilience handler, GET only - unsafe methods are never retried). Samsara follows `pagination.endCursor`, picks its host from `EldProviderConfiguration.Region` (us/eu/ca) and implements `IEldGpsTrackingProvider` (`/fleet/vehicles/stats`)
-- API/UI: `EldController.cs` (incl. `/eld/rules/limits`), `tms-portal/pages/eld/` (`EldRulesService`, region-aware dashboard, `eld-hos-logs/`)
-- Docs: [docs/eld-samsara-setup.md](../docs/eld-samsara-setup.md) (tenant setup: token scopes, webhook URL + secret)
-
-### ELD provider config
-
-- Domain: `Entities/Compliance/Eld/EldProviderConfiguration.cs` (`ExternalAccountId` = TT ELD USDOT, `Region` = Samsara data region), `EldDriverMapping.cs`, `EldVehicleMapping.cs`
-- Application: `Commands/CreateEldProviderConfiguration/` (initializes the provider from the unsaved config before validating credentials), `MapEldDriver` / `MapEldVehicle` / `ApplyEldMappingSuggestions`, `Queries/GetEldMappingSuggestions/`, `Services/EldMappingSuggestionService.cs` + `EldMappingMatcher.cs` (driver by email → license → name, vehicle by VIN → truck number; unique keys only)
-- Infrastructure: `Infrastructure.Integrations/Eld/` factory
-- API/UI: `EldController.cs` (`/eld/providers/{id}/{drivers,vehicles,mappings,vehicles/mappings,suggestions}`), `tms-portal/pages/eld/eld-providers/` (connect dialog, webhook URL to copy), `eld-mappings/` (suggestions + driver + vehicle mapping cards)
-
-### ELD sync
-
-- Application: `Modules/Compliance/Eld/Services/EldSyncService.cs` - the only writer of ELD data: `SyncLiveAsync` (HOS clocks + vehicle GPS through `ITruckLocationRecorder`, broadcast via `IRealtimeLiveTrackingService`), `SyncHistoryAsync` (8-day rolling window of `HosLog` rows replaced from the provider, violations upserted). `Modules/Integrations/Webhooks/Commands/ProcessEldWebhook/` (resolves the tenant from the URL, then signature, idempotency, dispatch) and `SyncAllDriversHosStatus` both call it
-- Infrastructure: `WebhookSignature.VerifySamsara` (`v1:{timestamp}:{body}`, base64 secret, 5-min window); `VerifyHmacSha256` for Motive / Geotab
-- API/UI: `Jobs/EldSyncJob.cs` (`eld-sync` every 5 min, `eld-history-sync` every 30 min, gated on `TenantFeature.Eld`), webhooks: `/webhooks/eld/{samsara,motive,geotab}/{tenantId}`
-
-### DVIR inspections
-
-- Domain: `Entities/Compliance/Safety/DvirReport.cs`, `DvirDefect.cs`
-- Application: `Modules/Compliance/Dvir/Commands/`, `Modules/Compliance/Dvir/Queries/`
-- API/UI: `DvirController.cs` (incl. `GET /dvir/trucks/{truckId}/open-defects`), `tms-portal/pages/safety/`
-- Feature flag: `TenantFeature.Dvir` (Starter+; enabled by default; gates commands and queries - separate from `Safety`, which stays Professional)
-
-### Vehicle inspections
-
-- Domain: `Entities/Compliance/Inspection/LoadConditionReport.cs` (`LoadVehicleId` = the load vehicle inspected), `ConditionDefect.cs` (`Zone` / `DamageType` / `PhotoDocumentId` for diagram defects); enums `VehicleDamageZone`, `VehicleDamageType` + `VehicleDamageExtensions` (BOL codes, zone → part category) in `Domain.Primitives/Geo/Inspection/`
-- Application: `Modules/Compliance/Inspections/Commands/`, `Modules/Compliance/Inspections/Queries/`
-- API/UI: `InspectionController.cs` (list/get/create + `GET /inspections/parts`), `VinController.cs` (`GET /vins/{vin}`)
-- Feature flag: `TenantFeature.Safety` **or** `TenantFeature.VehicleTransport` (`[RequiresFeature]` takes several features, any one admits); car haulers get condition reports and VIN decode on any plan
-
-### Accidents
-
-- Domain: `Entities/Compliance/Safety/AccidentReport.cs`
-- Application: `Modules/Compliance/Safety/Commands/`, `Modules/Compliance/Safety/Queries/`
-- API/UI: `AccidentController.cs`, `tms-portal/pages/safety/`
-
-### Maintenance
-
-- Domain: `Entities/Operations/Maintenance/`
-- Application: `Modules/Operations/Maintenance/Commands/`, `Modules/Operations/Maintenance/Queries/`
-- API/UI: `MaintenanceController.cs`, `tms-portal/pages/maintenance/`
-
-### Driver licensing
-
-- Domain: `Entities/Identity/Employee/DriverLicense.cs`
-- Application: `Modules/Identity/Employees/Commands/{Create,Update,Delete}DriverLicense/`, `Application.Abstractions/ApplicationServices/IDispatchEligibilityService`, `Modules/Compliance/Safety/Services/LicenseExpiryReminderService`
-- Infrastructure: `Infrastructure.AI/Tools/Dispatch/CheckDispatchEligibilityTool.cs`
-- API/UI: `EmployeeController` (extended), `tms-portal/pages/employees/components/driver-licenses-tab/`, mobile `feature/more/LicensesScreen.kt`, `ProcessLicenseExpiryReminders` in `Jobs/Scheduling/RecurringJobs.cs`
-
-### ADR / Hazmat
-
-- Domain: `Truck.AdrEquipment`, `Load.HazmatClass`, `ValueObjects/AdrEquipment.cs`
-- Application: `IDispatchEligibilityService` (gates `DispatchLoad`, `BulkDispatchLoads`, `DispatchTrip` handlers)
-- API/UI: (under Loads / Trucks pages - hazmat fields on load-form, ADR fieldset on truck-form)
-
-### IFTA reporting
-
-- Domain: `Entities/Compliance/Ifta/` (`TruckLocationHistory`, `TruckJurisdictionDistance`, `IftaQuarterSnapshot`), `Entities/Compliance/Ifta/IftaTaxRate.cs` (master)
-- Application: `Modules/Compliance/Ifta/` (`TruckLocationRecorder`, `IftaReportService`, quarter-close + filing-reminder services, `IftaQuarters`), `Modules/Compliance/Ifta/TaxRates/` (admin rate CRUD), `Modules/Reporting/Reports/Queries/Ifta/`
-- Infrastructure: `Infrastructure.Routing/Geospatial/JurisdictionResolver.cs` (NTS + embedded boundaries, built once at startup by `JurisdictionResolverWarmup`); `Infrastructure.Documents/Pdf/Ifta/`
-- **Traps**: closed quarters are served verbatim from `IftaQuarterSnapshot.ReportJson` (sole source of truth, deliberately not denormalized into columns). Tax-rate `(Year, Quarter, Jurisdiction)` and mileage `(Truck, Date, Jurisdiction)` uniqueness are raw-SQL unique indexes (NULLS NOT DISTINCT on region) created in migrations, not EF config - complex-type members can't be in an EF index, so a model rebuild won't recreate them. Write paths still probe `IftaTaxRateUniqueness.FindConflictAsync` for a readable error; `TruckLocationRecorder` upserts mileage with `ON CONFLICT`, which needs the index
-- API/UI: `ReportController` `/reports/ifta` + `/reports/ifta/pdf`, `IftaTaxRateController.cs` `/ifta/rates`, `Jobs/IftaQuarterCloseJob.cs`, `ifta-filing-reminders` in `Jobs/Scheduling/RecurringJobs.cs`, `tms-portal/pages/reports/ifta-report/`, `admin-portal/pages/ifta-rates/`
-
-### Privacy (GDPR)
-
-- Domain: `Entities/Compliance/Privacy/`
-- Application: `Modules/Compliance/Privacy/` (Commands, Queries, Services)
-- Infrastructure: `Infrastructure.Documents/Privacy/`, `Infrastructure.Persistence/Services/Privacy/DataAnonymizer.cs`
-- API/UI: `PrivacyController.cs`, `privacy-*` entries in `Jobs/Scheduling/RecurringJobs.cs`, `<ui-cookie-banner>`, `admin-portal/pages/data-requests/`
-
-## Financial
-
-### Invoices (TPH)
-
-- Domain: `Entities/Financial/Invoice/Invoice.cs` + `LoadInvoice`, `PayrollInvoice`, `Invoice.RecalculateTotals`, `InvoiceTaxLine`; `Domain.Primitives/Geo/Invoice/InvoiceStatuses.cs` (`Open`, `Receivable`) - every receivables figure filters on these; never list statuses inline
-- Application: `Modules/Financial/Invoices/Commands/`, `Modules/Financial/Invoices/Queries/`, `IInvoiceTaxApplier`
-- API/UI: `InvoicesController.cs` + `preview-tax`, `tms-portal/pages/invoices/`, `customer-portal/pages/invoices/`
-
-### Accessorials and detention terms
-
-- Domain: `Entities/Operations/Load/AccessorialCharge.cs` (tenant catalog), `TenantSettings.DetentionFreeMinutes`/`DetentionRatePerHour`, `Customer.DetentionFreeMinutes`/`DetentionRatePerHour`
-- Application: `Modules/Financial/Accessorials/` (catalog CRUD, customer detention terms; tenant terms save through `UpdateTenant`)
-- API/UI: `AccessorialController.cs` (`/accessorials`), `CustomerController` (`/customers/{id}/detention`), `tms-portal/pages/settings/accessorial-settings/`, tenant terms in `pages/settings/company-settings/`, `pages/customers/components/customer-detention-terms/`
-
-### Factoring
-
-- Domain: `Entities/Financial/Factoring/` (`FactoringCompany` + `EstimateAmounts`, `FactoringBatch` = schedule of accounts with `IneligibilityReason`/`Submit`/`RefreshStatus`, `FactoringBatchItem` with `Fund`/`Reject`/`ReleaseReserve`/`ChargeBack`, `FactoringAmounts`), `Customer.FactoringCompanyId`, `LoadInvoice.Factoring.cs` (`FactoringStatus`)
-- Application: `Modules/Financial/Factoring/` (company CRUD, `SubmitInvoicesToFactor` - POD/BOL check, attachments, email, `RecordFactoringFunding`, `ReleaseFactoringReserve`, `ChargeBackFactoredInvoice`, batch queries, `Services/FactoringBatchDtos`); QBO in `Accounting/Services/AccountingReceivablesSyncService` (sale payment to the clearing account) and `AccountingPayablesSyncService` (fee as a purchase)
-- Infrastructure: `Infrastructure.Documents/Pdf/Factoring/FactoringSchedulePdfService.cs`, `Pdf/Invoice/InvoiceRemitToSection.cs` (notice of assignment); attachments via `ThreadedEmail.Attachments` in `Communications/Email/ResendThreadedEmailSender.cs`; template `FactoringSchedule.liquid`
-- **Trap**: funding records a `Payment` for the invoice total (the invoice reads Paid), so anything customer-facing must check `Customer.FactoringCompany` before showing paid/balance - the PDF, the invoice email, the portal list and the public pay page all do
-- API/UI: `FactoringController.cs` (`/factoring/companies`, `/factoring/batches`), `tms-portal/pages/settings/factoring-settings/`, `tms-portal/pages/invoices/factoring-batches-list/` + `factoring-batch-details/` + `components/submit-to-factor-dialog/`. Docs: `docs/invoices.md#factoring`
-
-### Tax engine
-
-- Domain: `Entities/Financial/TenantTaxRate.cs`, `Invoice.TaxBehavior`, `Invoice.TaxBreakdownJson`, `ValueObjects/TaxJurisdiction.cs` - build jurisdictions with `TaxJurisdiction.Create(country, region)` on every write path; it upper-cases and normalizes a blank region to null, which is what the equality comparisons rely on
-- Application: `Application.Abstractions/Payments/ITaxCalculator`, `Modules/Financial/Tax/Services/IInvoiceTaxApplier`, `Modules/Financial/Tax/Commands/`, `Modules/Financial/Tax/Queries/`, `Modules/Financial/Invoices/Queries/PreviewInvoiceTax/`
-- Infrastructure: `Infrastructure.Payments/Tax/` (`StripeTaxCalculator`, `ManualTaxCalculator`, `StripeTaxConfigService`, `EUVatRates`/`USSalesTaxRates`/`OtherCountryRates`); `Infrastructure.Documents/Pdf/Invoice/` VAT block
-- API/UI: `TaxController.cs`, `TaxRatesController.cs`, `tms-portal/pages/settings/components/tenant-tax-rates-card/`
-
-### Payments
-
-- Domain: `Entities/Financial/Payment/Payment.cs` (`StripePaymentIntentId`)
-- Application: `Modules/Financial/Payments/Commands/`, `Modules/Financial/Payments/Queries/`
-- Infrastructure: `Infrastructure.Payments/Stripe/StripePaymentService.cs`
-- API/UI: `PaymentController.cs`, `PublicPaymentController.cs`
-
-### Payment links
-
-- Domain: `Entities/Financial/Payment/PaymentLink.cs`
-- Application: `Modules/Financial/PaymentLinks/Commands/`, `Modules/Financial/Payments/Commands/CreatePublicCheckoutSession/`, `Modules/Financial/PaymentLinks/Queries/`
-- API/UI: `customer-portal/pages/payment/` (redirects to Stripe-hosted Checkout)
-
-### Stripe subscriptions
-
-- Domain: `Entities/Tenancy/Subscription/Subscription.cs`
-- Application: `Modules/Tenancy/Subscriptions/Commands/`, `Modules/Tenancy/Subscriptions/Queries/`
-- Infrastructure: `Infrastructure.Payments/Stripe/StripeSubscriptionService.cs`
-- API/UI: `SubscriptionController.cs`, `admin-portal/pages/subscriptions/`, `tms-portal/pages/subscription/`
-
-### Subscription plans
-
-- Domain: `Entities/Tenancy/Subscription/SubscriptionPlan.cs`, `PlanFeature.cs`
-- Application: `Modules/Tenancy/Subscriptions/Queries/`
-- Infrastructure: `Infrastructure.Payments/Stripe/StripePlanService.cs`
-- API/UI: `admin-portal/pages/plans/`
-
-### Stripe Connect
-
-- Domain: `Entities/Tenancy/Tenant.cs` (`StripeConnectedAccountId`), `Entities/Identity/Employee/Employee.cs` (`Address`, `StripeConnectedAccountId`)
-- Application: `Modules/Financial/StripeConnect/Commands/`, `Modules/Financial/StripeConnect/Queries/`, `Modules/Financial/Payroll/Commands/SetupEmployeePayout/`
-- Infrastructure: `Infrastructure.Payments/Stripe/StripeConnectService.cs`, `StripeCapabilities.cs` (country-aware capability map: SEPA/iDEAL/Bacs/ACH)
-- API/UI: `StripeConnectController.cs`, `tms-portal/pages/settings/billing-settings/`
-
-### Stripe webhooks
-
-- Application: `Modules/Integrations/Webhooks/Commands/ProcessStripeEvent/` (`customer.subscription.*`, `payment_intent.processing|succeeded|payment_failed`, `account.updated`, `checkout.session.completed`)
-- Infrastructure: `Infrastructure.Payments/Stripe/StripeWebhookParser.cs` (`IStripeWebhookParser`: signature check + SDK-free records)
-- API/UI: `WebhookController.cs` (`/webhooks/stripe`)
-
-### Payroll
-
-- Domain: `Entities/Financial/Payroll/PayrollInvoice.cs`
-- Application: `Modules/Financial/Payroll/` (Commands, Queries, Services)
-- API/UI: `InvoicesPayrollController.cs` (`/invoices/payrolls/*`), `tms-portal/pages/payroll/`, `Jobs/PayrollGenerationJob.cs`
-- Settlements: `Entities/Financial/Payroll/PayrollInvoice.Settlement.cs` (`ReplaceSettlementLines`, signed deduction lines; `SettlementInputs`), `Entities/Financial/Payroll/RecurringDeduction.cs`, `CashAdvance.cs`, `Employee.PayExcludesFuelSurcharge`/`PayExcludesAccessorials`/`DeductFuelCardCharges`, `FuelCardTransaction.PayrollInvoiceId`; `Services/PayrollService.cs` (generation, build/create/recalculate) with partials `.GrossPay.cs` (gross by salary type incl. `PerLoad`/`PerStop`, credited to `Trip.DriverId`/`SecondaryDriverId` recorded at dispatch - a load on no trip goes to its truck's current drivers) and `.Deductions.cs` (escrow balance, claims/releases advances and fuel); period math in `PayrollInvoice.PeriodWeeks`/`PeriodMonths`/`PeriodUtcRange`, share-of-gross basis in `Employee.PayableRevenue`; commands `UpdateDriverPayProfile`, `IssueCashAdvance`, `DeleteCashAdvance`; queries `GetDriverPayProfile`, `GetCashAdvances`. API: `EmployeeController` (`/employees/{id}/payprofile`), `CashAdvanceController` (`/cashadvances`: list, issue, delete). PDF: `Infrastructure.Documents/Pdf/Payroll/PayrollEarningsSection.cs`. UI: `pages/employees/components/driver-pay-profile/`, `cash-advances-panel/`, `pages/payroll/components/line-items-table/` (generated lines locked)
-
-### Expenses
-
-- Domain: `Entities/Financial/Expense/` (CompanyExpense, TruckExpense, BodyShopExpense; the last two share `TruckLinkedExpense.TruckId`)
-- Application: `Modules/Financial/Expenses/Commands/`, `Modules/Financial/Expenses/Queries/`
-- API/UI: `ExpenseController.cs`, `tms-portal/pages/expenses/`
-
-### Fuel cards
-
-- Domain: `Entities/Integrations/FuelCards/` (`FuelCardProviderConfiguration`, `FuelCard`, `FuelCardTransaction`); `TruckExpense.PurchaseJurisdiction`/`FuelCardProvider`/`ExternalTransactionId`
-- Application: `Modules/Integrations/FuelCards/` (Commands, Queries, `Services/FuelCardSyncService`)
-- Infrastructure: `Infrastructure.Integrations/FuelCards/` (WEX, EFS, Demo; factory). WEX/EFS share `Providers/BearerFuelCardService.cs`; config binds once from the `FuelCards` section into aggregate `FuelCardsOptions` (nullable `Wex`/`Efs`, read as `options.Value.Wex ?? new WexOptions()`) - same shape as `LoadBoardOptions`/`EldOptions`
-- API/UI: `FuelCardsController.cs` (providers, sync, transaction review queue), `Jobs/FuelCardSyncJob.cs`, `tms-portal/pages/fuel-cards/`
-- **Trap**: `FuelCard` has no endpoints by design - it's an internal card→truck mapping table written by `FuelCardSyncService` and `AssignFuelCardTransactionTruckHandler`. It looks orphaned; deleting it breaks both
-
-### Accounting sync (QBO)
-
-- Domain: `Entities/Integrations/Accounting/` (`AccountingProviderConfiguration` - tokens, `NeedsReconnect`, default item/accounts, `SyncFromDate`, item/category mappings as the `Mappings` JSON complex property (column `mappings`, `ValueObjects/Accounting/AccountingMappings`); `QboEntityMapping` - one row per pushed record; failed rows retry on every run)
-- Application: `Modules/Integrations/Accounting/` - `Services/AccountingSyncService` (the only push path, via `AccountingReceivablesSyncService` and `AccountingPayablesSyncService`: selects only rows edited since their last push, batches lookups, 500 per type per run), `AccountingMappingService` (reads and writes `QboEntityMapping`: what is not up to date, push outcomes, retiring), `AccountingPayloads` (payload + content hash + QBO `requestid`), `AccountingConnectionService` (token refresh, flags reconnect on `invalid_grant`); Commands: Connect/DisconnectQuickBooks, UpdateQuickBooksSettings, SyncQuickBooks → `RunAccountingSync` (enqueued, also the sync-issues Retry); Queries: GetQuickBooksConnection/AuthUrl/Lookups/SyncIssues. Ports in `Application.Abstractions/Integrations/` (`IAccountingProviderService`, `IAccountingProviderFactory`, `IOAuthStateProtector`, `AccountingReconnectRequiredException`)
-- Infrastructure: `Infrastructure.Integrations/Accounting/` (QBO OAuth2 + REST push: Customer, Vendor, Invoice + void, Payment + void (deleted payments, e.g. a factoring charge-back), Purchase, Bill; stale-SyncToken retry, `requestid` on creates, `intuit_tid` in errors); token cols encrypted via `Persistence/Converters/EncryptedStringConverter`; `Persistence/Services/Accounting/OAuthStateProtector` (10-minute state)
-- API/UI: `AccountingController.cs` (+ anonymous `/accounting/quickbooks/callback` and `/disconnected`), `Jobs/AccountingSyncJob.cs` (15 min fan-out), `tms-portal/pages/settings/integrations-settings/` + `pages/settings/components/quickbooks-card/`, `quickbooks-settings-form/`, `quickbooks-sync-issues/`. Setup guide: `docs/accounting-quickbooks-setup.md`
-- **Trap**: `GetQuickBooksConnection` and `DisconnectQuickBooks` are deliberately not feature-gated - a downgraded tenant must still be able to revoke access
-
-## Communication
-
-### Real-time messaging
-
-- Domain: `Entities/Operations/Messaging/Conversation.cs`, `Message.cs`
-- Application: `Modules/Operations/Messaging/Commands/`, `Modules/Operations/Messaging/Queries/`
-- Infrastructure: `Infrastructure.Communications/SignalR/Hubs/ChatHub.cs`
-- API/UI: `MessageController.cs`, `tms-portal/pages/messages/`
-
-### Live tracking
-
-- Application: `Modules/Operations/Tracking/Commands/`, `Modules/Operations/Tracking/Queries/`
-- Infrastructure: `Infrastructure.Communications/SignalR/Hubs/TrackingHub.cs`, `SignalR/Services/SignalRTripTrackingService.cs` (port `Application.Abstractions/Communications/ITripTrackingService.cs`), `Infrastructure.Routing/Geocoding/` (Mapbox)
-- API/UI: `TrackingController.cs`, `customer-portal/pages/tracking/`
-
-### Notifications
-
-- Domain: `Entities/Operations/Notification/Notification.cs`
-- Application: `Modules/Operations/Notifications/Commands/`, `Modules/Operations/Notifications/Queries/`, `Modules/Operations/Notifications/Services/NotificationService.cs` (saves, then broadcasts the DTO through the `IRealtimeNotificationService` port)
-- Infrastructure: `Infrastructure.Communications/Notifications/` (Firebase push), `SignalR/Hubs/NotificationHub.cs`
-- API/UI: `NotificationController.cs`, `tms-portal/pages/notifications/`
-
-### Email
-
-- Infrastructure: `Infrastructure.Communications/Email/` (Resend, Fluid templates)
-
-### Public tracking links
-
-- Domain: `Entities/Operations/Load/TrackingLink.cs`
-- Application: `Modules/Operations/Tracking/Commands/`
-
-## Identity & access
-
-### Users
-
-- Domain: `Entities/Identity/User/User.cs`, `UserTenantAccess.cs`
-- Application: `Modules/Identity/Users/` (Commands, Queries, Services)
-- API/UI: `UserController.cs`, `admin-portal/pages/users/`, `tms-portal/pages/settings/`
-
-### Roles / permissions
-
-- Domain: `Entities/Identity/Role/` (AppRole, TenantRole, claims); `Shared.Identity` `AppRoles`/`AppRolePermissions` (SuperAdmin, Admin)
-- Application: `Modules/Identity/Roles/Queries/`
-- API/UI: `RoleController.cs`
-
-### App admins
-
-- Domain: `Entities/Identity/Invitation.cs` (`Type=AppUser`, `AppRole`, nullable `TenantId`)
-- Application: `Modules/Identity/Admins/` (Commands: AddAdmin/RevokeAdmin/Resend+CancelAdminInvitation, Queries: GetAdmins/GetAdminInvitations)
-- API/UI: `AdminController.cs` (`/admins`, SuperAdmin-only), `admin-portal/pages/admins/`
-
-### Invitations
-
-- Domain: `Entities/Identity/Invitation.cs`
-- Application: `Modules/Identity/Invitations/Commands/` (tenant-scoped: Employee/CustomerUser)
-- API/UI: `InvitationController.cs`; app-admin invites via `AdminController`
-
-### Auth / OAuth2
-
-- API/UI: `Logistics.IdentityServer/` (Open.IdentityServer), all portal `pages/login/`
-
-### Tenants
-
-- Domain: `Entities/Tenancy/Tenant.cs`
-- Application: `Modules/Tenancy/Tenants/Commands/`, `Modules/Tenancy/Tenants/Queries/`
-- Infrastructure: `Infrastructure.Persistence/Services/Tenant/CurrentTenantAccessor.cs` (`ICurrentTenantAccessor`, resolves the current tenant), `TenantDatabaseService.cs`
-- API/UI: `TenantController.cs`, `admin-portal/pages/tenants/` (+ `admin-portal/shared/components/tenant-form/`)
-- Demo tenants (`us`, `eu`, `solo`) come from the `Tenants[]` config array read by `DbMigrator/Seeders/Infrastructure/DemoTenantsSeeder.cs`; see [environment-variables.md](../docs/configuration/environment-variables.md#demo-tenants-tenants)
-
-### Impersonation
-
-- Domain: `Entities/Identity/ImpersonationToken.cs`, `ImpersonationAuditLog.cs`
-- API/UI: `ImpersonationController.cs`
-
-### API keys (MCP)
-
-- Domain: `Entities/Identity/ApiKey.cs`
-- Application: `Modules/Identity/ApiKeys/Commands/`, `Modules/Identity/ApiKeys/Queries/`
-- Infrastructure: `Logistics.McpServer/Authentication/`
-- API/UI: `ApiKeysController.cs`
-
-### Feature flags
-
-- Domain: `Entities/Tenancy/Feature/TenantFeatureConfig.cs`, `TenantPresetCatalog.cs`
-- Application: `Modules/Tenancy/Features/Commands/`, `Modules/Tenancy/Features/Queries/`, `Application.Abstractions/Context/IFeatureService.cs` (port)
-- Infrastructure: `Infrastructure.Persistence/Services/Feature/FeatureService.cs` (`ApplyPresetFeaturesAsync` writes per-tenant rows from presets; admin-locked rows are kept; a feature with no row resolves through the tenant's presets - there are no platform-wide defaults)
-- API/UI: `FeaturesController.cs` (admin roles only), `TenantFeaturesController.cs` (read-only, current tenant), `admin-portal/pages/features/`. Tenants cannot toggle features; see _Tenant presets and solo mode_
-
-## Documents & storage
-
-### Documents (POD, BOL, …)
-
-- Domain: `Entities/Operations/Document/` (Load, Truck, Employee, Delivery)
-- Application: `Modules/Operations/Documents/Commands/`, `Modules/Operations/Documents/Queries/`; `Services/DocumentDownloadService.cs` (`IDocumentDownloadService` - the one blob-to-download path, shared by `DownloadDocument`, the portal and public tracking downloads)
-- Infrastructure: `Infrastructure.Documents/`
-- API/UI: `DocumentController.cs`, `customer-portal/pages/documents/`
-
-### PDF generation
-
-- Application: `Application.Abstractions/Documents/` (`IInvoicePdfService`, `IIftaReportPdfService`, … ports)
-- Infrastructure: `Infrastructure.Documents/Pdf/` (QuestPDF: invoices, payroll, IFTA, car hauler eBOL - `VehicleBolPdfService.cs` + `VehicleBol/VehicleDiagram.cs`, the zone geometry the TMS and driver app copy)
-
-### PDF import / extraction
-
-- Application: `Modules/Operations/Loads/Commands/ImportLoadFromPdf/`, `Application.Abstractions/Documents/IPdfDataExtractor.cs`
-- Infrastructure: `Infrastructure.Documents/PdfImport/LlmPdfDataExtractor.cs` (LLM via `ILlmClient`; PdfPig text + Anthropic vision fallback)
-- API/UI: `LoadController.ImportFromPdf` (`POST /loads/import`)
-
-### VIN decoder
-
-- Application: `IVinDecoderService.cs`
-- Infrastructure: `Infrastructure.Integrations/Vin/` (composite: NHTSA `DecodeWMI` for prefix/country + NHTSA `DecodeVinValues` for full US detail)
-- API/UI: `truck-form` Decode VIN button + source badge
-
-### Blob storage
-
-- Application: `IBlobStorageService.cs`
-- Infrastructure: `Infrastructure.Storage/Providers/` (Azure, Cloudflare R2, file system)
-- API/UI: selected via `BlobStorage:Type` config (`azure` / `r2` / default)
-
-## Load board
-
-### Load board search
-
-- Domain: `Entities/Integrations/LoadBoard/LoadBoardListing.cs`, `LoadBoardConfiguration.cs` (`UserEmail` = DAT One seat, `MarketRatesEnabled` = RateView), `Enums/Integrations/LoadBoard/LoadBoardEquipmentType.cs` (the one equipment list; DAT codes in `Providers/Dat/DatEquipment.cs`)
-- Application: `Modules/Integrations/LoadBoard/Commands/` (search, create/update/test provider, create load from listing), `Queries/`; `Services/LoadBoardProviderGateway.cs` - the only way to call a board: token refresh, one 401 retry, vendor error to per-provider `Result`
-- Abstractions: `Application.Abstractions/Integrations/ILoadBoardProviderService.cs` (throws `LoadBoardApiException`; no booking call - no board has a booking API)
-- Infrastructure: `Infrastructure.Integrations/LoadBoard/` - `Providers/Dat/` (two-step org + user token, v1 search, truck posts, RateView), `Demo` (Truckstop and 123Loadboard have no provider; the gateway reports them "not available yet"); `LoadBoardHttp.cs` throwing HTTP helper. API verification status in `docs/loadboard-dat-setup.md`
-- API/UI: `LoadboardController.cs`, `tms-portal/pages/loadboard/` (`provider-dialog` add/edit, `loadboard.constants.ts` equipment + provider labels)
-
-### Broker credit
-
-- Domain: `Entities/Integrations/LoadBoard/BrokerCreditRecord.cs`, `LoadBoardListing.BrokerCredit*`, `TenantSettings.MinBrokerCreditScore`
-- Application: `Modules/Integrations/LoadBoard/Queries/GetBrokerCredit/`, booking gate in `Commands/BookLoadBoardLoad/`
-- Infrastructure: `Infrastructure.Integrations/LoadBoard/Credit/` (`BrokerCreditService`, `FmcsaClient`); `Infrastructure.AI/Tools/LoadBoard/CheckBrokerCreditTool.cs`
-- API/UI: `GET /loadboard/brokers/{mc}/credit`, credit badges on `tms-portal/pages/loadboard/`, threshold on `settings/company-settings/`
-
-### Posted trucks
-
-- Domain: `Entities/Integrations/LoadBoard/PostedTruck.cs`
-- Application: `Modules/Integrations/LoadBoard/Commands/PostTruckToLoadBoard`, `RemovePostedTruck`
-- API/UI: `/loadboard/trucks`, `tms-portal/pages/loadboard/posted-trucks/`
-
-### Background sync
-
-- API/UI: `Jobs/LoadBoardSyncJob.cs` -> `LoadBoard/Services/LoadBoardSyncService.cs` (reconciles active posts with the board every 30 min; hourly expiry cleanup)
-
-## Settings & integrations
-
-### Tenant settings
-
-- Domain: `Entities/Tenancy/Tenant.cs` → `TenantSettings` VO; `McNumber`/`VatNumber`/`EoriNumber`/`CompanyRegistrationNumber`/`TaxResidencyCountry`; `Presets` (see _Tenant presets and solo mode_)
-- Application: `Modules/Tenancy/Tenants/Commands/UpdateTenant` (regulatory IDs validated server-side via `RegexPatterns.VatNumber`/`McNumber`/`EoriNumber`; `AIEnabled` and `BlockAIOverage` toggles per tenant)
-- API/UI: `tms-portal/pages/settings/company-settings/`
-
-### System settings
-
-- Domain: `Entities/Tenancy/SystemSettings.cs`
-- Application: `ISystemSettingsService.cs`
-
-### Captcha
-
-- Application: `Application.Abstractions/Communications/ICaptchaService.cs` (port)
-- Infrastructure: `Infrastructure.Communications/Captcha/` (Google reCAPTCHA)
-
-### Geocoding
-
-- Application: `Application.Abstractions/Routing/IGeocodingService.cs` (port)
-- Infrastructure: `Infrastructure.Routing/Geocoding/` (Mapbox; biased to `Tenant.Settings.Region` country + language)
-
-### Trip optimization
-
-- Application: `ITripOptimizer.cs`
-- Infrastructure: `Infrastructure.Routing/Optimization/` (heuristic, Mapbox Matrix, composite)
-
-## Marketing site
-
-### Blog
-
-- Domain: `Entities/Website/BlogPost.cs`
-- Application: `Modules/Website/BlogPosts/Commands/`, `Modules/Website/BlogPosts/Queries/`
-- API/UI: `BlogPostController.cs`, `admin-portal/pages/blog-posts/`, `website/`
-
-### Contact form
-
-- Domain: `Entities/Website/ContactSubmission.cs`
-- Application: `Modules/Website/Contacts/Commands/`, `Modules/Website/Contacts/Queries/`
-- API/UI: `ContactController.cs`, `admin-portal/pages/contact-submissions/`
-
-### Demo requests
-
-- Domain: `Entities/Website/DemoRequest.cs`
-- Application: `Modules/Website/DemoRequests/Commands/`, `Modules/Website/DemoRequests/Queries/`
-- API/UI: `DemoRequestController.cs`, `admin-portal/pages/demo-requests/`
-
-### Telegram bot
-
-- Domain: `Entities/Operations/Notification/TelegramChat.cs`, `TelegramLoginState.cs`
-- API/UI: `Logistics.TelegramBot/`; login link page `IdentityServer/Pages/Telegram/Login` -> `IdentityServer/Services/TelegramLoginService.cs`
-
-## Hosting
-
-### Observability & backups
-
-- API/UI: `Logistics.HostDefaults/` (`SentryExtensions.cs`, `SentryEventScrubber.cs`, `TenantSentryEventProcessor.cs`), `Logistics.API/Jobs/Scheduling/HangfireHealthCheck.cs` (`hangfire` health check, registered in `Setup.cs`), Angular `projects/shared/src/lib/errors/error-tracking.ts` (lazy Sentry SDK)
-- Deploy: `deploy/db-backup/pg-backup.sh` / `pg-restore.sh`, `deploy/docker-compose.backup.yml`
-- Guide: [docs/deployment/observability-and-backups.md](../docs/deployment/observability-and-backups.md)
-
-## Tests
-
-All under `test/` (singular):
-
-- `Logistics.Application.Tests/` - application handlers, services; folders mirror `Modules/`, shared fixtures in `TestKit/`
-- `Logistics.Architecture.Tests/` - layering/dependency boundaries; discovers projects, never hard-code a list
-- `Logistics.Infrastructure.AI.Tests/` - AI agent, tools, prompts, pricing (quota lives in `Logistics.Infrastructure.Tests/Persistence/`, next to `AIQuotaService`)
-- `Logistics.Infrastructure.Tests/` - every other infrastructure project, one folder each (`Communications`, `Documents`, `Integrations` incl. `Vin`, `Payments` incl. `Tax`, `Persistence`, `Routing`), plus `HostDefaults/` (Sentry scrubbing and tenant tagging)
-- `Logistics.Mediator.Tests/` - the in-repo mediator
-
-## Updating this map
-
-Add a `### Feature` entry when a top-level feature lands. Don't add sub-features (e.g. _PaymentLink expiration_ belongs under Payment links - the entry already points to the right folders). If a path moves, update the line, don't leave a stale one. Only list the layers a feature actually touches.
+﻿# Feature map
+
+Answers "where", only for what the conventions below don't make obvious. For "how it works" see [docs/](../docs/README.md): [architecture](../docs/architecture/overview.md), [module layout](../docs/architecture/module-layout.md), [domain model](../docs/architecture/domain-model.md), [AI dispatch](../docs/ai-dispatch.md), [invoices](../docs/invoices.md).
+
+## Conventions
+
+Path aliases used below: `Dom` = `src/Core/Logistics.Domain/Entities` · `App` = `src/Core/Logistics.Application/Modules` · `Abs` = `src/Core/Logistics.Application.Abstractions` · `Infra.X` = `src/Infrastructure/Logistics.Infrastructure.X` · `Ctl` = `src/Presentation/Logistics.API/Controllers` · `Jobs` = `src/Presentation/Logistics.API/Jobs` · `TMS` / `Cust` / `Admin` = `private/src/Client/Logistics.Angular/projects/{tms-portal,customer-portal,admin-portal}/src/app`.
+
+- Entities: `Dom/{Module}/{Aggregate}/` (one-file aggregates sit in the module folder); enums: `src/Core/Logistics.Domain.Primitives/Enums/{Module}/{Aggregate}/`
+- Commands, queries: `App/{Module}/{Feature}/{Commands,Queries}/{Verb}{Entity}/`; events, services, constants: `App/{Module}/{Feature}/{Events,Services,Constants}/`
+- Domain events: `src/Core/Logistics.Domain/Events/`
+- Ports implemented by infrastructure: `Abs/{Group}/`; ports implemented by Application: `Abs/ApplicationServices/`
+- Implementations: `Infra.{Project}/`; provider integrations (ELD, fuel cards, load board, accounting, VIN, licensing) under `Infra.Integrations/{Provider type}/`, shared plumbing in `Infra.Integrations/Common/`
+- EF configurations: `Infra.Persistence/Configurations/{Module}/{Aggregate}/`
+- Controllers: `Ctl/{Module}/{Feature}Controller.cs`; webhooks: `WebhookController` + `App/Integrations/Webhooks/Commands/`
+- SignalR hubs: `Infra.Communications/SignalR/Hubs/`
+- Hangfire jobs: `Jobs/`, shared plumbing and the recurring schedule in `Jobs/Scheduling/`
+- Error codes: `src/Shared/Logistics.Shared.Models/ErrorCodes.cs`, mirrored in `projects/shared/src/lib/errors/upgrade-handler.ts`
+- Portal pages: `{TMS|Cust|Admin}/pages/{feature}/`; the fourth portal is `website`
+- Driver app: `private/src/Client/Logistics.DriverApp/composeApp/src/commonMain/kotlin/com/logisticsx/driver/`
+
+## Exceptions
+
+Rows give the non-obvious locations.
+
+| Feature | Where |
+| --- | --- |
+| Load vehicles, eBOL (car hauler) | `Dom/Operations/Load/LoadVehicle.cs` · `App/Operations/Loads/Services/VehicleCapacityChecker.cs` · `App/Operations/Loads/Queries/GetVehicleBolPdf/` · `Infra.Documents/Pdf/VehicleBolPdfService.cs` · `Infra.Documents/Pdf/VehicleBol/VehicleDiagram.cs` · `TMS/pages/loads/components/load-vehicles-content/` · [guide](../docs/car-hauler-guide.md) |
+| Load charges, LTL freight | `Dom/Operations/Load/Load.Billing.cs` · `Dom/Operations/Load/Load.Freight.cs` · `Dom/Financial/Invoice/LoadInvoice.Charges.cs` · `App/Operations/Loads/Services/LoadChargeService.cs` |
+| Detention | `Dom/Operations/Trip/DetentionCalculator.cs` · `App/Operations/Loads/Queries/GetLoadDetention/` · `App/Operations/Trips/Services/DetentionAlertService.cs` · `Jobs/DetentionAlertJob.cs` |
+| Accessorials, detention terms | `Dom/Operations/Load/AccessorialCharge.cs` · `App/Financial/Accessorials/` · `TMS/pages/settings/accessorial-settings/` · `TMS/pages/customers/components/customer-detention-terms/` |
+| Customer updates (template emails) | `Dom/Operations/Load/Load.CustomerUpdates.cs` · `App/Operations/Loads/Services/CustomerUpdateService.cs` · `App/Operations/Loads/Events/LoadStatusChangedCustomerUpdateHandler.cs` · `App/Operations/Trips/Events/TripStopRunningLateCustomerUpdateHandler.cs` · `Infra.Communications/Email/Templates/` · `TMS/pages/loads/components/load-customer-updates-content/` |
+| Trip ETA, stop arrive/depart | `Dom/Operations/Trip/Trip.Eta.cs` · `App/Operations/Trips/Services/EtaService.cs` · `Ctl/Operations/DriverController.cs` · `Infra.Routing/Optimization/` |
+| Dispatch eligibility (HOS, license, ADR, truck/load type) | `src/Core/Logistics.Domain.Primitives/Enums/Operations/Truck/TruckLoadCompatibility.cs` · `Abs/ApplicationServices/IDispatchEligibilityService.cs` · `App/AI/AIDispatch/Services/DispatchEligibilityService.cs` |
+| Trailer hooking | `App/Operations/Trailers/Services/TrailerHookService.cs` |
+| Customer portal | `App/Operations/Portal/` · `Ctl/Operations/PortalController.cs` · `Cust/pages/shipments/` · `Cust/pages/documents/` · `Cust/pages/invoices/` · `Cust/pages/tracking/` |
+| Drivers | `Ctl/Operations/DriverController.cs` · `Ctl/Identity/EmployeeController.cs` · `Dom/Identity/Employee/` · `TMS/pages/employees/` |
+| Driver licenses | `Dom/Identity/Employee/DriverLicense.cs` · `App/Compliance/Safety/Services/LicenseExpiryReminderService.cs` · `Jobs/LicenseExpiryReminderJob.cs` · `TMS/pages/employees/components/driver-licenses-tab/` |
+| Containers, drayage | `Dom/Operations/Container/Container.Drayage.cs` · `App/Operations/Containers/Services/` · `Jobs/ContainerDeadlineAlertJob.cs` · `TMS/shared/components/drayage/` |
+| Time entries | `Dom/Operations/TimeEntry.cs` · `App/Operations/TimeEntries/` · `TMS/pages/timesheets/` |
+| Dashboard, stats, reports | `App/Reporting/Stats/` · `App/Reporting/Reports/` · `Ctl/Reporting/` · `TMS/pages/home/` (`TMS/pages/dashboard/` is a redirect stub) · `TMS/pages/reports/` |
+| Profitability | `App/Reporting/Reports/Services/ProfitabilityService.cs` · `App/Reporting/Reports/Services/ProfitEstimateService.cs` · `Abs/ApplicationServices/IProfitEstimateService.cs` · `Infra.AI/Tools/Financial/GetProfitabilityTool.cs` · `TMS/pages/reports/profitability-report/` |
+| Onboarding checklist | `App/Tenancy/Onboarding/` · `Ctl/Tenancy/OnboardingController.cs` · `TMS/pages/home/components/onboarding-checklist/` |
+| Data import | `App/Operations/DataImport/` · `Ctl/Operations/ImportController.cs` · `Infra.Documents/Spreadsheets/SpreadsheetReader.cs` · `TMS/pages/settings/data-import/` · [guide](../docs/data-import.md) |
+| Tenant presets, solo mode | `src/Core/Logistics.Domain.Primitives/Enums/Tenancy/Tenant/TenantPreset.cs` · `Dom/Tenancy/Feature/TenantPresetCatalog.cs` · `App/Tenancy/Tenants/Commands/UpdateTenantPresets/` · `Infra.AI/Agents/Dispatch/AIDispatchSystemPrompt.cs` · `TMS/core/services/sidebar-nav.service.ts` |
+| Feature flags | `Abs/Context/IFeatureService.cs` · `Infra.Persistence/Services/Feature/FeatureService.cs` · `Ctl/Tenancy/FeaturesController.cs` · `Ctl/Tenancy/TenantFeaturesController.cs` · `Admin/pages/features/` |
+| Tenants, tenant resolution | `Infra.Persistence/Services/Tenant/CurrentTenantAccessor.cs` · `Infra.Persistence/Services/Tenant/TenantDatabaseService.cs` · `Admin/pages/tenants/` |
+| AI dispatch conversations | `Dom/AI/Agents/AgentConversation.cs` · `App/AI/AIDispatch/` · `Infra.AI/Agents/Dispatch/` · `Infra.Communications/SignalR/Hubs/AIDispatchHub.cs` · `Jobs/AIDispatchTurnJob.cs` · `TMS/pages/ai-dispatch/` |
+| AI copilot | `App/AI/AICopilot/` · `Infra.AI/Agents/Copilot/` · `Infra.Communications/SignalR/Hubs/CopilotHub.cs` · `Jobs/AICopilotTurnJob.cs` · `TMS/shared/layout/copilot-drawer/` · [doc](../docs/ai-copilot.md) |
+| Agent turns, decisions (shared) | `Infra.AI/Agents/AgentTurnService.cs` · `Infra.AI/Agents/AgentDecisionProcessor.cs` · `Dom/AI/Agents/AgentDecision.cs` |
+| Auto-approve, dispatch policy | `Dom/AI/AIDispatch/AIDispatchPolicy.cs` · `App/AI/AIDispatch/Services/AgentTrustService.cs` · `App/AI/AIDispatch/Services/AIDispatchPolicyLearner.cs` · `Jobs/AIDispatchPolicyLearningJob.cs` · `TMS/pages/ai-dispatch/dispatch-policy/` |
+| AI trip alerts | `App/AI/AIDispatch/Services/TripAlertTurnStarter.cs` · `App/Operations/Trips/Services/TripAlertReporter.cs` · `Jobs/TripAlertWakeJob.cs` |
+| Agent tools, MCP | `Infra.AI/Tools/{Dispatch,Financial,Operations,Compliance,LoadBoard,Intermodal,Negotiation}/` · `src/Presentation/Logistics.McpServer/` · [doc](../docs/mcp-server.md) |
+| Broker negotiation | `Dom/AI/Negotiation/` · `App/AI/Negotiation/` · `Ctl/AI/NegotiationController.cs` · `Ctl/AI/RateFloorController.cs` · `App/Integrations/Webhooks/Commands/ProcessResendWebhook/` · `Jobs/NegotiationExpirySweepJob.cs` · `Infra.Communications/Email/` · `TMS/pages/ai-dispatch/negotiations/` · [doc](../docs/broker-email-negotiation.md) |
+| AI quota, pricing | `Abs/AI/IAIQuotaService.cs` · `Abs/AI/LlmModelCatalog.cs` · `Infra.Persistence/Services/AIDispatch/AIQuotaService.cs` · `Admin/pages/ai-settings/` |
+| Commercial license | `App/Tenancy/ProductLicense/` · `Infra.Integrations/Licensing/` · `src/Presentation/Logistics.HostDefaults/ProductVersionHeaderExtensions.cs` · `Admin/pages/license/` |
+| ELD, HOS | `Dom/Compliance/Eld/` · `App/Compliance/Eld/Services/EldSyncService.cs` · `Infra.Integrations/Eld/` · `App/Integrations/Webhooks/Commands/ProcessEldWebhook/` · `Jobs/EldSyncJob.cs` · `TMS/pages/eld/` · [setup](../docs/eld-samsara-setup.md) |
+| DVIR, accidents | `Dom/Compliance/Safety/` · `App/Compliance/Dvir/` · `App/Compliance/Safety/` · `TMS/pages/safety/` |
+| Vehicle inspections, VIN | `Dom/Compliance/Inspection/` · `Ctl/Compliance/InspectionController.cs` · `Ctl/Compliance/VinController.cs` · `Infra.Integrations/Vin/` |
+| IFTA | `Dom/Compliance/Ifta/` · `App/Compliance/Ifta/` · `App/Reporting/Reports/Queries/Ifta/` · `Infra.Routing/Geospatial/JurisdictionResolver.cs` · `Infra.Documents/Pdf/Ifta/` · `Jobs/IftaQuarterCloseJob.cs` · `TMS/pages/reports/ifta-report/` · `Admin/pages/ifta-rates/` |
+| Privacy (GDPR) | `Dom/Compliance/Privacy/` · `Infra.Documents/Privacy/` · `Infra.Persistence/Services/Privacy/DataAnonymizer.cs` · `Admin/pages/data-requests/` |
+| Invoices | `Dom/Financial/Invoice/` · `Ctl/Financial/InvoicesController.cs` · `TMS/pages/invoices/` · `Cust/pages/invoices/` |
+| Payroll, settlements | `Dom/Financial/Payroll/` · `Ctl/Financial/InvoicesPayrollController.cs` · `Ctl/Financial/CashAdvanceController.cs` · `Jobs/PayrollGenerationJob.cs` · `Infra.Documents/Pdf/Payroll/` · `TMS/pages/payroll/` |
+| Factoring | `Dom/Financial/Factoring/` · `App/Financial/Factoring/` · `Infra.Documents/Pdf/Factoring/` · `TMS/pages/settings/factoring-settings/` · `TMS/pages/invoices/factoring-batches-list/` |
+| Tax | `Dom/Financial/TenantTaxRate.cs` · `App/Financial/Tax/` · `Infra.Payments/Tax/` · `Ctl/Financial/TaxController.cs` · `Ctl/Financial/TaxRatesController.cs` |
+| Payments, payment links | `Dom/Financial/Payment/` · `Infra.Payments/Stripe/StripePaymentService.cs` · `Ctl/Financial/PublicPaymentController.cs` · `Cust/pages/payment/` · [doc](../docs/customer-payments.md) |
+| Stripe subscriptions, plans, Connect | `Dom/Tenancy/Subscription/` · `Infra.Payments/Stripe/` · `Admin/pages/subscriptions/` · `Admin/pages/plans/` · `TMS/pages/subscription/` · `TMS/pages/settings/billing-settings/` |
+| Stripe webhooks | `Ctl/Integrations/WebhookController.cs` · `App/Integrations/Webhooks/Commands/ProcessStripeEvent/` · `Infra.Payments/Stripe/StripeWebhookParser.cs` |
+| QuickBooks sync | `Dom/Integrations/Accounting/` · `App/Integrations/Accounting/Services/AccountingSyncService.cs` · `Infra.Integrations/Accounting/` · `Jobs/AccountingSyncJob.cs` · `TMS/pages/settings/integrations-settings/` · [setup](../docs/accounting-quickbooks-setup.md) |
+| Fuel cards | `Dom/Integrations/FuelCards/` · `App/Integrations/FuelCards/` · `Infra.Integrations/FuelCards/` · `Jobs/FuelCardSyncJob.cs` · `TMS/pages/fuel-cards/` |
+| Load board, posted trucks | `Dom/Integrations/LoadBoard/` · `App/Integrations/LoadBoard/` · `Infra.Integrations/LoadBoard/` · `Ctl/Integrations/LoadboardController.cs` · `Jobs/LoadBoardSyncJob.cs` · `TMS/pages/loadboard/` · [setup](../docs/loadboard-dat-setup.md) |
+| Broker credit | `App/Integrations/LoadBoard/Services/BrokerCreditChecker.cs` · `Infra.Integrations/LoadBoard/Credit/` · `Infra.AI/Tools/LoadBoard/CheckBrokerCreditTool.cs` |
+| Live tracking, public tracking links | `Dom/Operations/Load/TrackingLink.cs` · `App/Operations/Tracking/` · `Infra.Communications/SignalR/Hubs/TrackingHub.cs` · `Infra.Communications/SignalR/Services/SignalRTripTrackingService.cs` · `Cust/pages/tracking/` |
+| Notifications | `App/Operations/Notifications/Services/NotificationService.cs` · `Infra.Communications/Notifications/` · `Infra.Communications/SignalR/Hubs/NotificationHub.cs` |
+| Telegram | `src/Presentation/Logistics.TelegramBot/` · `Dom/Operations/Notification/TelegramChat.cs` · `src/Presentation/Logistics.IdentityServer/Services/TelegramLoginService.cs` |
+| App admins, invitations | `Dom/Identity/Invitation.cs` · `App/Identity/Admins/` · `App/Identity/Invitations/` · `Ctl/Identity/AdminController.cs` · `Admin/pages/admins/` |
+| API keys (MCP) | `Dom/Identity/ApiKey.cs` · `Ctl/Identity/ApiKeysController.cs` · `src/Presentation/Logistics.McpServer/Authentication/` |
+| PDF import | `App/Operations/Loads/Commands/ImportLoadFromPdf/` · `Infra.Documents/PdfImport/LlmPdfDataExtractor.cs` |
+| Geocoding, routing, trip optimization | `Abs/Routing/` · `Infra.Routing/Geocoding/` · `Infra.Routing/Optimization/` |
+| Observability, backups | `src/Presentation/Logistics.HostDefaults/` · `Jobs/Scheduling/HangfireHealthCheck.cs` · `deploy/db-backup/` · [doc](../docs/deployment/observability-and-backups.md) |
+
+Add or update a row only when a feature breaks the convention.

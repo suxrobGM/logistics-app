@@ -13,6 +13,8 @@ paths:
 - **Never `(decimal)x` on a `double`/`float`.** Since .NET 11 it keeps the binary noise (`(decimal)0.3f` is 0.30000001192…). Use `x.ToDecimal()` (`FloatingPointExtensions`).
 - **No static helpers taking a unit of work.** Make an injected instance service. Extension methods that read as a UoW operation (`tenantUow.ReserveSequencesAsync`) are the exception.
 - Raise domain events in entity methods; event handlers live in `Modules/{Module}/{Feature}/Events/`.
+- Build a `TaxJurisdiction` with `TaxJurisdiction.Create(country, region)` on every write path; it upper-cases and turns a blank region into null, which the equality checks rely on.
+- Filter receivables on `InvoiceStatuses.Open` / `Receivable`; never list invoice statuses inline.
 
 ## Naming
 
