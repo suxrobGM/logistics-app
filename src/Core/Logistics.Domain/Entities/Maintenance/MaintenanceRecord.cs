@@ -1,7 +1,7 @@
 using Logistics.Domain.Core;
-using Logistics.Domain.Primitives.Enums.Maintenance;
+using Logistics.Domain.Primitives.Enums;
 
-namespace Logistics.Domain.Entities.Maintenance;
+namespace Logistics.Domain.Entities;
 
 /// <summary>
 /// Service/maintenance record for a truck

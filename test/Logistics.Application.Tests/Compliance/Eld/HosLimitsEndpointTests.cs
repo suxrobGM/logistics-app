@@ -1,12 +1,13 @@
+using Logistics.Application.Modules.Compliance.Eld.Queries;
 using Logistics.Application.Modules.Compliance.Eld.Services;
 using Logistics.Domain.Entities;
 using Logistics.Domain.Persistence;
 using Logistics.Domain.Primitives.Enums;
+using Logistics.Domain.Primitives.Geo;
 using Logistics.Domain.Primitives.ValueObjects;
 using Logistics.Shared.Models;
 using NSubstitute;
 using Xunit;
-using Logistics.Application.Modules.Compliance.Eld.Queries;
 
 namespace Logistics.Application.Tests.Compliance.Eld;
 

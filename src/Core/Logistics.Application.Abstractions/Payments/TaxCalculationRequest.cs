@@ -1,4 +1,5 @@
 using Logistics.Domain.Primitives.Enums;
+using Logistics.Domain.Primitives.Geo;
 using Logistics.Domain.Primitives.ValueObjects;
 
 namespace Logistics.Application.Abstractions.Payments;

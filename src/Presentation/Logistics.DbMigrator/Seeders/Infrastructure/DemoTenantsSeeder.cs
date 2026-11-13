@@ -4,6 +4,7 @@ using Logistics.DbMigrator.Models;
 using Logistics.DbMigrator.Regions;
 using Logistics.Domain.Entities;
 using Logistics.Domain.Primitives.Enums;
+using Logistics.Domain.Primitives.Geo;
 using Microsoft.EntityFrameworkCore;
 
 namespace Logistics.DbMigrator.Seeders.Infrastructure;
@@ -159,7 +160,7 @@ internal sealed class DemoTenantsSeeder(
             updated = true;
         }
 
-        if (profile.Region != Logistics.Domain.Primitives.Enums.Region.EU)
+        if (profile.Region != Logistics.Domain.Primitives.Geo.Region.EU)
         {
             return updated;
         }

@@ -1,6 +1,6 @@
 using Logistics.Application.Abstractions;
 using Logistics.Application.Abstractions.Context;
-using Logistics.Domain.Entities.Messaging;
+using Logistics.Domain.Entities;
 using Logistics.Domain.Persistence;
 using Logistics.Mediator;
 using Logistics.Shared.Models;

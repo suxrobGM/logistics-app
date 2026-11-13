@@ -1,6 +1,6 @@
 using Logistics.Domain.Primitives.Enums;
 
-namespace Logistics.Domain.Primitives;
+namespace Logistics.Domain.Primitives.Geo;
 
 /// <summary>
 /// Maps a tenant <see cref="Region"/> to its allowed ISO 3166-1 alpha-2 country codes.

@@ -1,7 +1,6 @@
 using Logistics.Application.Abstractions.AI;
 using Logistics.Application.Abstractions.Payments;
 using Logistics.Domain.Entities;
-using Logistics.Domain.Extensions;
 using Logistics.Domain.Persistence;
 using Logistics.Domain.Primitives;
 using Logistics.Domain.Primitives.Enums;

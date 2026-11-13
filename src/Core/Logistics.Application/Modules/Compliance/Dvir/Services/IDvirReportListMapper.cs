@@ -1,4 +1,4 @@
-using Logistics.Domain.Entities.Safety;
+using Logistics.Domain.Entities;
 using Logistics.Shared.Models;
 
 namespace Logistics.Application.Modules.Compliance.Dvir.Services;

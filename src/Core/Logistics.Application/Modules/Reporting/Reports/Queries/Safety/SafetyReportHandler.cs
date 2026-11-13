@@ -1,7 +1,6 @@
 using Logistics.Application.Abstractions;
 using Logistics.Application.Abstractions.Persistence;
 using Logistics.Domain.Primitives.Enums;
-using Logistics.Domain.Primitives.Enums.Safety;
 using Logistics.Mediator;
 using Logistics.Shared.Models;
 

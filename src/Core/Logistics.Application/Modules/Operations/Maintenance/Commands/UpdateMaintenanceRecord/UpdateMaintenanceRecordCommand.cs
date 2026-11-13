@@ -1,6 +1,5 @@
 using Logistics.Application.Common.Pipeline;
 using Logistics.Domain.Primitives.Enums;
-using Logistics.Domain.Primitives.Enums.Maintenance;
 using Logistics.Shared.Models;
 
 namespace Logistics.Application.Modules.Operations.Maintenance.Commands;

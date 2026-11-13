@@ -1,4 +1,4 @@
-namespace Logistics.Domain.Primitives.Enums.Safety;
+namespace Logistics.Domain.Primitives.Enums;
 
 public enum AccidentReportStatus
 {

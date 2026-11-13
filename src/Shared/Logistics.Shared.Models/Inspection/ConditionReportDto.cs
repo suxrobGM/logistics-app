@@ -1,5 +1,4 @@
 using Logistics.Domain.Primitives.Enums;
-using Logistics.Domain.Primitives.Enums.Safety;
 
 namespace Logistics.Shared.Models;
 

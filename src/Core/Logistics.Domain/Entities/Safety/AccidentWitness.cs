@@ -1,6 +1,6 @@
 using Logistics.Domain.Core;
 
-namespace Logistics.Domain.Entities.Safety;
+namespace Logistics.Domain.Entities;
 
 /// <summary>
 /// Witness information for an accident report

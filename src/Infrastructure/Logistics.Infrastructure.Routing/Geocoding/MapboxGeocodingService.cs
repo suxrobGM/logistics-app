@@ -4,6 +4,7 @@ using System.Web;
 using Logistics.Application.Abstractions.Context;
 using Logistics.Application.Abstractions.Routing;
 using Logistics.Domain.Primitives;
+using Logistics.Domain.Primitives.Geo;
 using Logistics.Domain.Primitives.ValueObjects;
 using Logistics.Shared.Models;
 using Microsoft.Extensions.Logging;

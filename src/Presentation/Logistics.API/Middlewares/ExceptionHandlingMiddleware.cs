@@ -1,6 +1,6 @@
 using System.Text.Json;
 using FluentValidation;
-using Logistics.Domain.Exceptions;
+using Logistics.Application.Abstractions.Context;
 using Logistics.Shared.Models;
 using Serilog;
 

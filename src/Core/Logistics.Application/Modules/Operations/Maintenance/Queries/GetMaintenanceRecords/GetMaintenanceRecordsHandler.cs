@@ -1,7 +1,7 @@
 using Logistics.Application.Abstractions;
 using Logistics.Application.Common.Extensions;
 using Logistics.Application.Common.Services;
-using Logistics.Domain.Entities.Maintenance;
+using Logistics.Domain.Entities;
 using Logistics.Domain.Persistence;
 using Logistics.Mediator;
 using Logistics.Shared.Models;

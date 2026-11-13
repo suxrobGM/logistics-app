@@ -1,7 +1,7 @@
-using Logistics.Domain.Exceptions;
+using System.Security.Claims;
+using Logistics.Application.Abstractions.Context;
 using Logistics.Shared.Identity.Claims;
 using Logistics.Shared.Identity.Roles;
-using System.Security.Claims;
 
 namespace Logistics.API.Extensions;
 

@@ -1,6 +1,6 @@
 using System.ComponentModel;
 
-namespace Logistics.Domain.Primitives.Enums.Safety;
+namespace Logistics.Domain.Primitives.Enums;
 
 public enum AccidentSeverity
 {

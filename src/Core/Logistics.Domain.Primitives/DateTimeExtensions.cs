@@ -1,4 +1,4 @@
-namespace Logistics.Domain.Extensions;
+namespace Logistics.Domain.Primitives;
 
 public static class DateTimeExtensions
 {

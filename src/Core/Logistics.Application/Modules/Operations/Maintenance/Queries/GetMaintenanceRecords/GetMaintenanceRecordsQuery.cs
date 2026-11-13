@@ -1,4 +1,4 @@
-using Logistics.Domain.Primitives.Enums.Maintenance;
+using Logistics.Domain.Primitives.Enums;
 using Logistics.Shared.Models;
 
 namespace Logistics.Application.Modules.Operations.Maintenance.Queries;

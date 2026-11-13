@@ -1,5 +1,6 @@
 using Logistics.Domain.Entities;
 using Logistics.Domain.Primitives.Enums;
+using Logistics.Domain.Primitives.Geo;
 
 namespace Logistics.Application.Modules.Operations.DataImport.Services;
 

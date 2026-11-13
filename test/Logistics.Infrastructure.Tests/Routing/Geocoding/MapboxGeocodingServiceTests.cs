@@ -2,6 +2,7 @@ using System.Web;
 using Logistics.Application.Abstractions.Context;
 using Logistics.Domain.Entities;
 using Logistics.Domain.Primitives.Enums;
+using Logistics.Domain.Primitives.Geo;
 using Logistics.Domain.Primitives.ValueObjects;
 using Logistics.Infrastructure.Routing.Geocoding;
 using Logistics.Infrastructure.Tests.TestKit;

@@ -1,4 +1,5 @@
 using Logistics.Domain.Primitives.Enums;
+using Logistics.Domain.Primitives.Geo;
 
 namespace Logistics.DbMigrator.Regions;
 

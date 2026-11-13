@@ -1,9 +1,8 @@
 using Logistics.Application.Modules.Compliance.Safety.Commands;
 using Logistics.Application.Tests.TestKit;
 using Logistics.Domain.Entities;
-using Logistics.Domain.Entities.Safety;
 using Logistics.Domain.Persistence;
-using Logistics.Domain.Primitives.Enums.Safety;
+using Logistics.Domain.Primitives.Enums;
 using NSubstitute;
 using Xunit;
 

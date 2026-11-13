@@ -2,9 +2,7 @@ using Logistics.DbMigrator.Abstractions;
 using Logistics.DbMigrator.Extensions;
 using Logistics.DbMigrator.Models;
 using Logistics.Domain.Entities;
-using Logistics.Domain.Entities.Maintenance;
 using Logistics.Domain.Primitives.Enums;
-using Logistics.Domain.Primitives.Enums.Maintenance;
 
 namespace Logistics.DbMigrator.Seeders.FakeData;
 

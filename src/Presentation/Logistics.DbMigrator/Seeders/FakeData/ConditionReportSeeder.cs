@@ -4,7 +4,6 @@ using Logistics.DbMigrator.Models;
 using Logistics.DbMigrator.Regions;
 using Logistics.Domain.Entities;
 using Logistics.Domain.Primitives.Enums;
-using Logistics.Domain.Primitives.Enums.Safety;
 using Logistics.Shared.Identity.Roles;
 
 namespace Logistics.DbMigrator.Seeders.FakeData;

@@ -1,5 +1,6 @@
 using System.Collections.Frozen;
 using Logistics.Domain.Primitives;
+using Logistics.Domain.Primitives.Geo;
 
 namespace Logistics.Infrastructure.Payments.Tax.Data;
 

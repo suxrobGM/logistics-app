@@ -1,6 +1,6 @@
 using System.ComponentModel;
 
-namespace Logistics.Domain.Primitives.Enums.Safety;
+namespace Logistics.Domain.Primitives.Enums;
 
 /// <summary>
 /// FMCSA standard inspection categories for commercial motor vehicles

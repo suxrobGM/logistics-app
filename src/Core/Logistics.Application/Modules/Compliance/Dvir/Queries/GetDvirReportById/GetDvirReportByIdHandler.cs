@@ -1,4 +1,4 @@
-using Logistics.Domain.Entities.Safety;
+using Logistics.Domain.Entities;
 using Logistics.Domain.Persistence;
 using Logistics.Shared.Models;
 

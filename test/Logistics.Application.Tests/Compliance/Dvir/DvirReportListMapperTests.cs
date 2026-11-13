@@ -1,9 +1,9 @@
 using Logistics.Application.Common.Services;
 using Logistics.Application.Modules.Compliance.Dvir.Services;
 using Logistics.Application.Tests.TestKit;
-using Logistics.Domain.Entities.Safety;
+using Logistics.Domain.Entities;
 using Logistics.Domain.Persistence;
-using Logistics.Domain.Primitives.Enums.Safety;
+using Logistics.Domain.Primitives.Enums;
 using MockQueryable;
 using NSubstitute;
 using Xunit;

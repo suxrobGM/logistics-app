@@ -1,6 +1,5 @@
 using Logistics.Application.Modules.Compliance.Inspections.Commands;
 using Logistics.Domain.Primitives.Enums;
-using Logistics.Domain.Primitives.Enums.Safety;
 using Xunit;
 
 namespace Logistics.Application.Tests.Compliance.Inspections;

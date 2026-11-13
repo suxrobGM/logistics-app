@@ -39,7 +39,7 @@ internal class IftaMileageSeeder(ILogger<IftaMileageSeeder> logger) : SeederBase
     public override async Task SeedAsync(SeederContext context, CancellationToken cancellationToken = default)
     {
         // IFTA demo data only makes sense for US-region tenants
-        if (context.Region?.Region != Logistics.Domain.Primitives.Enums.Region.US)
+        if (context.Region?.Region != Logistics.Domain.Primitives.Geo.Region.US)
         {
             return;
         }

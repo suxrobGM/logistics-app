@@ -1,4 +1,4 @@
-using Logistics.Domain.Entities.Messaging;
+using Logistics.Domain.Entities;
 using Logistics.Shared.Models.Messaging;
 using Riok.Mapperly.Abstractions;
 

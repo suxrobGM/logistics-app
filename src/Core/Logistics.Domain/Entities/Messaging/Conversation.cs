@@ -1,6 +1,6 @@
 using Logistics.Domain.Core;
 
-namespace Logistics.Domain.Entities.Messaging;
+namespace Logistics.Domain.Entities;
 
 /// <summary>
 /// Represents a conversation between participants (dispatcher and driver, or multiple users).

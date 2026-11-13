@@ -1,5 +1,6 @@
 using Logistics.Domain.Primitives;
 using Logistics.Domain.Primitives.Enums;
+using Logistics.Domain.Primitives.Geo;
 using Logistics.Infrastructure.Payments.Tax.Data;
 
 namespace Logistics.Infrastructure.Tests.Payments.Tax.Data;

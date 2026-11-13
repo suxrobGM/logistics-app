@@ -1,5 +1,5 @@
 using Logistics.Application.Common.Mapping;
-using Logistics.Domain.Entities.Safety;
+using Logistics.Domain.Entities;
 using Logistics.Shared.Models;
 using Riok.Mapperly.Abstractions;
 

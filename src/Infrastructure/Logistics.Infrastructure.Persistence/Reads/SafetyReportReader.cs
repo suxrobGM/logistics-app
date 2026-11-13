@@ -1,6 +1,5 @@
 using Logistics.Application.Abstractions.Persistence;
 using Logistics.Domain.Entities;
-using Logistics.Domain.Entities.Safety;
 using Logistics.Domain.Persistence;
 using Logistics.Infrastructure.Persistence.Data;
 using Microsoft.EntityFrameworkCore;

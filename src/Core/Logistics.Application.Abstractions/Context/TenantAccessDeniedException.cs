@@ -1,4 +1,4 @@
-namespace Logistics.Domain.Exceptions;
+namespace Logistics.Application.Abstractions.Context;
 
 /// <summary>Thrown when a caller attempts to access another tenant.</summary>
 [Serializable]

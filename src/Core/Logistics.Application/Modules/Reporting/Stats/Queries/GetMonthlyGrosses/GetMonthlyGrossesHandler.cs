@@ -1,8 +1,8 @@
 using Logistics.Application.Abstractions;
 using Logistics.Application.Modules.Operations.Loads;
 using Logistics.Domain.Entities;
-using Logistics.Domain.Extensions;
 using Logistics.Domain.Persistence;
+using Logistics.Domain.Primitives;
 using Logistics.Mediator;
 using Logistics.Shared.Models;
 using Microsoft.EntityFrameworkCore;

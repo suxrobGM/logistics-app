@@ -1,6 +1,5 @@
 using Logistics.Application.Common.Pipeline;
 using Logistics.Domain.Primitives.Enums;
-using Logistics.Domain.Primitives.Enums.Safety;
 using Logistics.Shared.Models;
 
 namespace Logistics.Application.Modules.Compliance.Dvir.Commands;

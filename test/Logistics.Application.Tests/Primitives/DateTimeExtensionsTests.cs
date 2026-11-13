@@ -1,4 +1,4 @@
-using Logistics.Domain.Extensions;
+using Logistics.Domain.Primitives;
 using Xunit;
 
 namespace Logistics.Application.Tests.Primitives;

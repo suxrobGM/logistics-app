@@ -1,5 +1,6 @@
 using System.ComponentModel.DataAnnotations.Schema;
 using Logistics.Domain.Primitives.Enums;
+using Logistics.Domain.Primitives.Geo;
 
 namespace Logistics.Domain.Primitives.ValueObjects;
 

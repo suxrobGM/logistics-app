@@ -1,6 +1,6 @@
 using FluentValidation.TestHelper;
 using Logistics.Application.Modules.Compliance.Safety.Commands;
-using Logistics.Domain.Primitives.Enums.Safety;
+using Logistics.Domain.Primitives.Enums;
 using Xunit;
 
 namespace Logistics.Application.Tests.Compliance.Safety;

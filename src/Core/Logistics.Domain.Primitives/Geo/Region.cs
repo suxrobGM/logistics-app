@@ -1,4 +1,4 @@
-namespace Logistics.Domain.Primitives.Enums;
+namespace Logistics.Domain.Primitives.Geo;
 
 /// <summary>
 /// High-level operating region for a tenant.

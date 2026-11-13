@@ -2,6 +2,7 @@ using Logistics.DbMigrator.Regions;
 using Logistics.Domain.Entities;
 using Logistics.Domain.Persistence;
 using Logistics.Domain.Primitives.Enums;
+using Logistics.Domain.Primitives.Geo;
 using Microsoft.AspNetCore.Identity;
 
 namespace Logistics.DbMigrator.Models;

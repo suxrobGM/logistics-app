@@ -1,9 +1,8 @@
 using Logistics.Application.Modules.Operations.Maintenance.Commands;
 using Logistics.Application.Tests.TestKit;
 using Logistics.Domain.Entities;
-using Logistics.Domain.Entities.Maintenance;
 using Logistics.Domain.Persistence;
-using Logistics.Domain.Primitives.Enums.Maintenance;
+using Logistics.Domain.Primitives.Enums;
 using Logistics.Shared.Models;
 using NSubstitute;
 using Xunit;

@@ -3,6 +3,7 @@ using Logistics.Domain.Persistence;
 using Logistics.TelegramBot.Authentication;
 using Telegram.Bot;
 using Telegram.Bot.Types;
+using Message = Telegram.Bot.Types.Message;
 
 namespace Logistics.TelegramBot.Commands;
 

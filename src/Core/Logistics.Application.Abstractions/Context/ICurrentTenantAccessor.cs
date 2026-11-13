@@ -1,5 +1,4 @@
 using Logistics.Domain.Entities;
-using Logistics.Domain.Exceptions;
 
 namespace Logistics.Application.Abstractions.Context;
 

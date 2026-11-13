@@ -1,4 +1,4 @@
-using Logistics.Domain.Entities.Safety;
+using Logistics.Domain.Entities;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 

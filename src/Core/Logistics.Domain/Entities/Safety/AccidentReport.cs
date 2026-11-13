@@ -1,7 +1,7 @@
 using Logistics.Domain.Core;
-using Logistics.Domain.Primitives.Enums.Safety;
+using Logistics.Domain.Primitives.Enums;
 
-namespace Logistics.Domain.Entities.Safety;
+namespace Logistics.Domain.Entities;
 
 /// <summary>
 /// Detailed accident/incident report

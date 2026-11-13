@@ -2,6 +2,7 @@ using Logistics.Application.Common.Validation;
 using Logistics.Application.Modules.Operations.DataImport.Constants;
 using Logistics.Application.Modules.Operations.DataImport.Services;
 using Logistics.Domain.Primitives;
+using Logistics.Domain.Primitives.Geo;
 using Logistics.Domain.Primitives.ValueObjects;
 using static Logistics.Application.Modules.Operations.DataImport.Constants.ImportFieldKeys;
 
@@ -86,7 +87,7 @@ internal static class ImportCells
                 row.Get(ImportFieldKeys.Address(prefix, City)),
                 row.Get(ImportFieldKeys.Address(prefix, State)),
                 row.Get(ImportFieldKeys.Address(prefix, Zip)),
-                row.Get(ImportFieldKeys.Address(prefix, Country)),
+                row.Get(ImportFieldKeys.Address(prefix, ImportFieldKeys.Country)),
                 row.Get(ImportFieldKeys.Address(prefix, FullAddress)),
                 options.DefaultCountry);
 

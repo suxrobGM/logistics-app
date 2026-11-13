@@ -1,6 +1,5 @@
 using Logistics.Application.Abstractions.Context;
 using Logistics.Domain.Entities;
-using Logistics.Domain.Exceptions;
 using Logistics.Shared.Identity.Roles;
 
 namespace Logistics.Application.Common.Extensions;

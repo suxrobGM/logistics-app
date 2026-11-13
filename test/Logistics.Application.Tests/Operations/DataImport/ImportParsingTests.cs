@@ -1,6 +1,7 @@
 using Logistics.Application.Modules.Operations.DataImport.Importers;
 using Logistics.Application.Modules.Operations.DataImport.Services;
 using Logistics.Domain.Primitives.Enums;
+using Logistics.Domain.Primitives.Geo;
 using Xunit;
 
 namespace Logistics.Application.Tests.Operations.DataImport;

@@ -1,5 +1,6 @@
 using System.Globalization;
 using Logistics.Domain.Primitives.Enums;
+using Logistics.Domain.Primitives.Geo;
 using Logistics.Domain.Primitives.ValueObjects;
 
 namespace Logistics.Infrastructure.Documents.Pdf.Shared;

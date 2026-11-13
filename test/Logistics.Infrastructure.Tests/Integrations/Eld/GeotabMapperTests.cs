@@ -1,4 +1,5 @@
 using Logistics.Domain.Primitives.Enums;
+using Logistics.Domain.Primitives.Geo;
 using Logistics.Infrastructure.Integrations.Eld.Providers.Geotab;
 
 namespace Logistics.Infrastructure.Tests.Integrations.Eld;

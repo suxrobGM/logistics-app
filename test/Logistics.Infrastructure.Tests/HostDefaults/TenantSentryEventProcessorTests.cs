@@ -1,6 +1,5 @@
 using Logistics.Application.Abstractions.Context;
 using Logistics.Domain.Entities;
-using Logistics.Domain.Exceptions;
 using Logistics.Domain.Primitives.ValueObjects;
 using Logistics.HostDefaults;
 using Microsoft.AspNetCore.Http;

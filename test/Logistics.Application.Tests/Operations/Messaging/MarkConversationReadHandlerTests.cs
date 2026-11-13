@@ -1,7 +1,7 @@
 using System.Linq.Expressions;
 using Logistics.Application.Abstractions.Communications;
 using Logistics.Application.Modules.Operations.Messaging.Commands;
-using Logistics.Domain.Entities.Messaging;
+using Logistics.Domain.Entities;
 using Logistics.Domain.Persistence;
 using Logistics.Shared.Models;
 using NSubstitute;

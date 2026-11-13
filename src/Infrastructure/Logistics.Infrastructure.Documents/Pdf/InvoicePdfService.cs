@@ -1,3 +1,4 @@
+using Logistics.Application.Abstractions.Documents;
 using Logistics.Domain.Entities;
 using Logistics.Domain.Primitives.Enums;
 using Logistics.Infrastructure.Documents.Pdf.Invoice;
@@ -5,7 +6,6 @@ using Logistics.Infrastructure.Documents.Pdf.Shared;
 using QuestPDF.Fluent;
 using QuestPDF.Helpers;
 using QuestPDF.Infrastructure;
-using Logistics.Application.Abstractions.Documents;
 using QuestDocument = QuestPDF.Fluent.Document;
 
 namespace Logistics.Infrastructure.Documents.Pdf;

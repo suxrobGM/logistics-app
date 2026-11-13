@@ -2,6 +2,7 @@ using Logistics.Application.Abstractions.Payments;
 using Logistics.Domain.Entities;
 using Logistics.Domain.Persistence;
 using Logistics.Domain.Primitives.Enums;
+using Logistics.Domain.Primitives.Geo;
 using Microsoft.Extensions.Logging;
 
 namespace Logistics.Application.Modules.Financial.Tax.Services;

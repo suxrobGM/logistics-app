@@ -1,7 +1,7 @@
 using Logistics.Domain.Entities;
 using Logistics.Domain.Primitives.Enums;
 
-namespace Logistics.Domain.Persistence;
+namespace Logistics.Application.Modules.AI.AIDispatch;
 
 /// <summary>
 /// The dispatch board and the TMS copilot share <see cref="AgentSession"/>, so every

@@ -1,5 +1,6 @@
 using Logistics.Application.Abstractions.Payments;
 using Logistics.Domain.Primitives.Enums;
+using Logistics.Domain.Primitives.Geo;
 using Logistics.Infrastructure.Payments.Tax.Stripe;
 using Microsoft.Extensions.Logging.Abstractions;
 using NSubstitute;

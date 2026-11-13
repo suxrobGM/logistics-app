@@ -4,7 +4,6 @@ using Logistics.Application.Abstractions.Payments;
 using Logistics.Application.Modules.Tenancy.Subscriptions.Commands;
 using Logistics.Application.Tests.TestKit;
 using Logistics.Domain.Entities;
-using Logistics.Domain.Exceptions;
 using Logistics.Domain.Persistence;
 using Logistics.Domain.Primitives.Enums;
 using Logistics.Domain.Primitives.ValueObjects;

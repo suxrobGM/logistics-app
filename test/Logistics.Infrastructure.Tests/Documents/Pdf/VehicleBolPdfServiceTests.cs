@@ -2,7 +2,6 @@ using System.Text;
 using Logistics.Application.Abstractions.Documents;
 using Logistics.Domain.Entities;
 using Logistics.Domain.Primitives.Enums;
-using Logistics.Domain.Primitives.Enums.Safety;
 using Logistics.Domain.Primitives.ValueObjects;
 using Logistics.Infrastructure.Documents.Pdf;
 using Logistics.Infrastructure.Documents.Pdf.VehicleBol;

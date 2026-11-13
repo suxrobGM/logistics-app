@@ -1,5 +1,5 @@
 using Logistics.Application.Abstractions.ApplicationServices;
-using Logistics.Domain.Entities.Messaging;
+using Logistics.Domain.Entities;
 using Logistics.Domain.Persistence;
 using Microsoft.EntityFrameworkCore;
 

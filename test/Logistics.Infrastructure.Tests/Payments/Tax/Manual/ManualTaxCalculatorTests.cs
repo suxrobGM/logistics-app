@@ -1,4 +1,5 @@
 using Logistics.Domain.Primitives.Enums;
+using Logistics.Domain.Primitives.Geo;
 using Logistics.Infrastructure.Payments.Tax.Manual;
 using Microsoft.Extensions.Logging.Abstractions;
 using static Logistics.Infrastructure.Tests.Payments.Tax.TaxTestBuilders;

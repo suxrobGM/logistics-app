@@ -1,6 +1,5 @@
 using System.Reflection;
 using Logistics.Application.Abstractions.Context;
-using Logistics.Domain.Exceptions;
 using Logistics.Mediator;
 using Logistics.Shared.Models;
 

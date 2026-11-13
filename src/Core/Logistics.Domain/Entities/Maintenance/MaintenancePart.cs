@@ -1,6 +1,6 @@
 using Logistics.Domain.Core;
 
-namespace Logistics.Domain.Entities.Maintenance;
+namespace Logistics.Domain.Entities;
 
 /// <summary>
 /// Parts used in a maintenance service

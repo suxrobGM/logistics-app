@@ -3883,7 +3883,7 @@ namespace Logistics.Infrastructure.Persistence.Migrations.Tenant
                     b.ToTable("load_exceptions", (string)null);
                 });
 
-            modelBuilder.Entity("Logistics.Domain.Entities.Maintenance.MaintenancePart", b =>
+            modelBuilder.Entity("Logistics.Domain.Entities.MaintenancePart", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
@@ -3928,7 +3928,7 @@ namespace Logistics.Infrastructure.Persistence.Migrations.Tenant
                     b.ToTable("maintenance_parts", (string)null);
                 });
 
-            modelBuilder.Entity("Logistics.Domain.Entities.Maintenance.MaintenanceRecord", b =>
+            modelBuilder.Entity("Logistics.Domain.Entities.MaintenanceRecord", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
@@ -4035,7 +4035,7 @@ namespace Logistics.Infrastructure.Persistence.Migrations.Tenant
                     b.ToTable("maintenance_records", (string)null);
                 });
 
-            modelBuilder.Entity("Logistics.Domain.Entities.Messaging.Conversation", b =>
+            modelBuilder.Entity("Logistics.Domain.Entities.Conversation", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
@@ -4075,7 +4075,7 @@ namespace Logistics.Infrastructure.Persistence.Migrations.Tenant
                     b.ToTable("conversations", (string)null);
                 });
 
-            modelBuilder.Entity("Logistics.Domain.Entities.Messaging.ConversationParticipant", b =>
+            modelBuilder.Entity("Logistics.Domain.Entities.ConversationParticipant", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
@@ -4115,7 +4115,7 @@ namespace Logistics.Infrastructure.Persistence.Migrations.Tenant
                     b.ToTable("conversation_participants", (string)null);
                 });
 
-            modelBuilder.Entity("Logistics.Domain.Entities.Messaging.Message", b =>
+            modelBuilder.Entity("Logistics.Domain.Entities.Message", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
@@ -4155,7 +4155,7 @@ namespace Logistics.Infrastructure.Persistence.Migrations.Tenant
                     b.ToTable("messages", (string)null);
                 });
 
-            modelBuilder.Entity("Logistics.Domain.Entities.Messaging.MessageReadReceipt", b =>
+            modelBuilder.Entity("Logistics.Domain.Entities.MessageReadReceipt", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
@@ -4996,7 +4996,7 @@ namespace Logistics.Infrastructure.Persistence.Migrations.Tenant
                     b.ToTable("recurring_deductions", (string)null);
                 });
 
-            modelBuilder.Entity("Logistics.Domain.Entities.Safety.AccidentReport", b =>
+            modelBuilder.Entity("Logistics.Domain.Entities.AccidentReport", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
@@ -5200,7 +5200,7 @@ namespace Logistics.Infrastructure.Persistence.Migrations.Tenant
                     b.ToTable("accident_reports", (string)null);
                 });
 
-            modelBuilder.Entity("Logistics.Domain.Entities.Safety.AccidentThirdParty", b =>
+            modelBuilder.Entity("Logistics.Domain.Entities.AccidentThirdParty", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
@@ -5285,7 +5285,7 @@ namespace Logistics.Infrastructure.Persistence.Migrations.Tenant
                     b.ToTable("accident_third_parties", (string)null);
                 });
 
-            modelBuilder.Entity("Logistics.Domain.Entities.Safety.AccidentWitness", b =>
+            modelBuilder.Entity("Logistics.Domain.Entities.AccidentWitness", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
@@ -5331,7 +5331,7 @@ namespace Logistics.Infrastructure.Persistence.Migrations.Tenant
                     b.ToTable("accident_witnesses", (string)null);
                 });
 
-            modelBuilder.Entity("Logistics.Domain.Entities.Safety.DvirDefect", b =>
+            modelBuilder.Entity("Logistics.Domain.Entities.DvirDefect", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
@@ -5390,7 +5390,7 @@ namespace Logistics.Infrastructure.Persistence.Migrations.Tenant
                     b.ToTable("dvir_defects", (string)null);
                 });
 
-            modelBuilder.Entity("Logistics.Domain.Entities.Safety.DvirReport", b =>
+            modelBuilder.Entity("Logistics.Domain.Entities.DvirReport", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
@@ -7145,9 +7145,9 @@ namespace Logistics.Infrastructure.Persistence.Migrations.Tenant
                     b.Navigation("Load");
                 });
 
-            modelBuilder.Entity("Logistics.Domain.Entities.Maintenance.MaintenancePart", b =>
+            modelBuilder.Entity("Logistics.Domain.Entities.MaintenancePart", b =>
                 {
-                    b.HasOne("Logistics.Domain.Entities.Maintenance.MaintenanceRecord", "MaintenanceRecord")
+                    b.HasOne("Logistics.Domain.Entities.MaintenanceRecord", "MaintenanceRecord")
                         .WithMany("Parts")
                         .HasForeignKey("MaintenanceRecordId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -7157,7 +7157,7 @@ namespace Logistics.Infrastructure.Persistence.Migrations.Tenant
                     b.Navigation("MaintenanceRecord");
                 });
 
-            modelBuilder.Entity("Logistics.Domain.Entities.Maintenance.MaintenanceRecord", b =>
+            modelBuilder.Entity("Logistics.Domain.Entities.MaintenanceRecord", b =>
                 {
                     b.HasOne("Logistics.Domain.Entities.Employee", "PerformedBy")
                         .WithMany()
@@ -7177,7 +7177,7 @@ namespace Logistics.Infrastructure.Persistence.Migrations.Tenant
                     b.Navigation("Truck");
                 });
 
-            modelBuilder.Entity("Logistics.Domain.Entities.Messaging.Conversation", b =>
+            modelBuilder.Entity("Logistics.Domain.Entities.Conversation", b =>
                 {
                     b.HasOne("Logistics.Domain.Entities.Load", "Load")
                         .WithMany()
@@ -7188,9 +7188,9 @@ namespace Logistics.Infrastructure.Persistence.Migrations.Tenant
                     b.Navigation("Load");
                 });
 
-            modelBuilder.Entity("Logistics.Domain.Entities.Messaging.ConversationParticipant", b =>
+            modelBuilder.Entity("Logistics.Domain.Entities.ConversationParticipant", b =>
                 {
-                    b.HasOne("Logistics.Domain.Entities.Messaging.Conversation", "Conversation")
+                    b.HasOne("Logistics.Domain.Entities.Conversation", "Conversation")
                         .WithMany("Participants")
                         .HasForeignKey("ConversationId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -7209,9 +7209,9 @@ namespace Logistics.Infrastructure.Persistence.Migrations.Tenant
                     b.Navigation("Employee");
                 });
 
-            modelBuilder.Entity("Logistics.Domain.Entities.Messaging.Message", b =>
+            modelBuilder.Entity("Logistics.Domain.Entities.Message", b =>
                 {
-                    b.HasOne("Logistics.Domain.Entities.Messaging.Conversation", "Conversation")
+                    b.HasOne("Logistics.Domain.Entities.Conversation", "Conversation")
                         .WithMany("Messages")
                         .HasForeignKey("ConversationId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -7230,9 +7230,9 @@ namespace Logistics.Infrastructure.Persistence.Migrations.Tenant
                     b.Navigation("Sender");
                 });
 
-            modelBuilder.Entity("Logistics.Domain.Entities.Messaging.MessageReadReceipt", b =>
+            modelBuilder.Entity("Logistics.Domain.Entities.MessageReadReceipt", b =>
                 {
-                    b.HasOne("Logistics.Domain.Entities.Messaging.Message", "Message")
+                    b.HasOne("Logistics.Domain.Entities.Message", "Message")
                         .WithMany("ReadReceipts")
                         .HasForeignKey("MessageId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -7351,7 +7351,7 @@ namespace Logistics.Infrastructure.Persistence.Migrations.Tenant
                     b.Navigation("Employee");
                 });
 
-            modelBuilder.Entity("Logistics.Domain.Entities.Safety.AccidentReport", b =>
+            modelBuilder.Entity("Logistics.Domain.Entities.AccidentReport", b =>
                 {
                     b.HasOne("Logistics.Domain.Entities.Employee", "Driver")
                         .WithMany()
@@ -7388,9 +7388,9 @@ namespace Logistics.Infrastructure.Persistence.Migrations.Tenant
                     b.Navigation("Truck");
                 });
 
-            modelBuilder.Entity("Logistics.Domain.Entities.Safety.AccidentThirdParty", b =>
+            modelBuilder.Entity("Logistics.Domain.Entities.AccidentThirdParty", b =>
                 {
-                    b.HasOne("Logistics.Domain.Entities.Safety.AccidentReport", "AccidentReport")
+                    b.HasOne("Logistics.Domain.Entities.AccidentReport", "AccidentReport")
                         .WithMany("ThirdParties")
                         .HasForeignKey("AccidentReportId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -7400,9 +7400,9 @@ namespace Logistics.Infrastructure.Persistence.Migrations.Tenant
                     b.Navigation("AccidentReport");
                 });
 
-            modelBuilder.Entity("Logistics.Domain.Entities.Safety.AccidentWitness", b =>
+            modelBuilder.Entity("Logistics.Domain.Entities.AccidentWitness", b =>
                 {
-                    b.HasOne("Logistics.Domain.Entities.Safety.AccidentReport", "AccidentReport")
+                    b.HasOne("Logistics.Domain.Entities.AccidentReport", "AccidentReport")
                         .WithMany("Witnesses")
                         .HasForeignKey("AccidentReportId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -7412,7 +7412,7 @@ namespace Logistics.Infrastructure.Persistence.Migrations.Tenant
                     b.Navigation("AccidentReport");
                 });
 
-            modelBuilder.Entity("Logistics.Domain.Entities.Safety.DvirDefect", b =>
+            modelBuilder.Entity("Logistics.Domain.Entities.DvirDefect", b =>
                 {
                     b.HasOne("Logistics.Domain.Entities.Employee", "CorrectedBy")
                         .WithMany()
@@ -7420,7 +7420,7 @@ namespace Logistics.Infrastructure.Persistence.Migrations.Tenant
                         .OnDelete(DeleteBehavior.Restrict)
                         .HasConstraintName("fk_dvir_defects_employee_corrected_by_id");
 
-                    b.HasOne("Logistics.Domain.Entities.Safety.DvirReport", "DvirReport")
+                    b.HasOne("Logistics.Domain.Entities.DvirReport", "DvirReport")
                         .WithMany("Defects")
                         .HasForeignKey("DvirReportId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -7432,7 +7432,7 @@ namespace Logistics.Infrastructure.Persistence.Migrations.Tenant
                     b.Navigation("DvirReport");
                 });
 
-            modelBuilder.Entity("Logistics.Domain.Entities.Safety.DvirReport", b =>
+            modelBuilder.Entity("Logistics.Domain.Entities.DvirReport", b =>
                 {
                     b.HasOne("Logistics.Domain.Entities.Employee", "Driver")
                         .WithMany()
@@ -7785,19 +7785,19 @@ namespace Logistics.Infrastructure.Persistence.Migrations.Tenant
                     b.Navigation("Photos");
                 });
 
-            modelBuilder.Entity("Logistics.Domain.Entities.Maintenance.MaintenanceRecord", b =>
+            modelBuilder.Entity("Logistics.Domain.Entities.MaintenanceRecord", b =>
                 {
                     b.Navigation("Parts");
                 });
 
-            modelBuilder.Entity("Logistics.Domain.Entities.Messaging.Conversation", b =>
+            modelBuilder.Entity("Logistics.Domain.Entities.Conversation", b =>
                 {
                     b.Navigation("Messages");
 
                     b.Navigation("Participants");
                 });
 
-            modelBuilder.Entity("Logistics.Domain.Entities.Messaging.Message", b =>
+            modelBuilder.Entity("Logistics.Domain.Entities.Message", b =>
                 {
                     b.Navigation("ReadReceipts");
                 });
@@ -7807,14 +7807,14 @@ namespace Logistics.Infrastructure.Persistence.Migrations.Tenant
                     b.Navigation("Messages");
                 });
 
-            modelBuilder.Entity("Logistics.Domain.Entities.Safety.AccidentReport", b =>
+            modelBuilder.Entity("Logistics.Domain.Entities.AccidentReport", b =>
                 {
                     b.Navigation("ThirdParties");
 
                     b.Navigation("Witnesses");
                 });
 
-            modelBuilder.Entity("Logistics.Domain.Entities.Safety.DvirReport", b =>
+            modelBuilder.Entity("Logistics.Domain.Entities.DvirReport", b =>
                 {
                     b.Navigation("Defects");
                 });

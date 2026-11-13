@@ -1,6 +1,6 @@
 using Logistics.Domain.Core;
 
-namespace Logistics.Domain.Entities.Messaging;
+namespace Logistics.Domain.Entities;
 
 /// <summary>
 /// Tracks when a message was read by a participant.

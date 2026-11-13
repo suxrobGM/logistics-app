@@ -8,6 +8,7 @@ using Logistics.Application.Tests.TestKit;
 using Logistics.Domain.Entities;
 using Logistics.Domain.Persistence;
 using Logistics.Domain.Primitives.Enums;
+using Logistics.Domain.Primitives.Geo;
 using Logistics.Domain.Primitives.ValueObjects;
 using MockQueryable;
 using NSubstitute;

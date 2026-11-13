@@ -1,3 +1,4 @@
+using Logistics.Application.Modules.AI.AIDispatch;
 using Logistics.Application.Modules.Compliance.Privacy.Constants;
 using Logistics.Domain.Entities;
 using Logistics.Domain.Persistence;

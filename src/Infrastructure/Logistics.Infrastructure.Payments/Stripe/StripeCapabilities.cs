@@ -1,5 +1,6 @@
 using Logistics.Domain.Primitives;
 using Logistics.Domain.Primitives.Enums;
+using Logistics.Domain.Primitives.Geo;
 using Stripe;
 
 namespace Logistics.Infrastructure.Payments.Stripe;

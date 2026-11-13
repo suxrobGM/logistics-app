@@ -2,7 +2,6 @@ using Logistics.Application.Abstractions;
 using Logistics.Application.Abstractions.AI;
 using Logistics.Application.Common.Extensions;
 using Logistics.Domain.Entities;
-using Logistics.Domain.Extensions;
 using Logistics.Domain.Persistence;
 using Logistics.Domain.Primitives;
 using Logistics.Domain.Primitives.Enums;
