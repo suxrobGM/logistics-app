@@ -47,3 +47,10 @@ weight in kilograms, odometers in meters (`long`), per-distance rates per km at 
 Name the unit in the property (`WeightKg`, `RatePerKm`, `OdometerMeters`). Convert for display with
 `DistanceUnitExtensions` (`FromMeters`, `RateFromPerKm`) or on the client; external miles, pounds
 and feet go through `ImperialUnits` at the integration edge. IFTA output alone stays in miles.
+
+## Time and JSON columns
+
+Name an instant `XxxAt` (`DateTime`, UTC, `timestamptz`): `RecordedAt`, `OccurredAt`, `StartedAt`. A
+calendar day with no time is `DateOnly` (`date`), e.g. `ExpenseDate`, `DueDate`; the client sends it as
+`yyyy-MM-dd` through `DateUtils.toDateOnly`. Durations are integer minutes named `XxxMinutes`. A string
+property holding JSON maps to `jsonb` with `HasColumnType("jsonb")`, except a payload replayed verbatim.

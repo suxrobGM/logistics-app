@@ -167,7 +167,7 @@ public record LoadDto
     public Guid CustomerId { get; init; }
     public string Name { get; init; } = string.Empty;
     public LoadStatus Status { get; init; }
-    public DateTime CreatedDate { get; init; }
+    public DateTime CreatedAt { get; init; }
 }
 ```
 
@@ -181,7 +181,7 @@ public abstract class Entity : IEntity<Guid>
     public Guid Id { get; set; } = Guid.NewGuid();
 }
 
-// AuditableEntity adds CreatedDate / LastModifiedDate; inherit it for almost everything.
+// AuditableEntity adds CreatedAt / CreatedBy / UpdatedAt / UpdatedBy (user ids as Guid); inherit it for almost everything.
 public abstract class AggregateRoot : Entity
 {
     private readonly List<IDomainEvent> _domainEvents = new();
