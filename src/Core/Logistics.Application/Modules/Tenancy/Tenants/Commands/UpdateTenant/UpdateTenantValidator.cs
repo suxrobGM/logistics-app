@@ -49,6 +49,11 @@ internal sealed class UpdateTenantValidator : AbstractValidator<UpdateTenantComm
             .When(i => i.Settings?.DefaultRateFloorPerMile is not null)
             .WithMessage("Default rate floor per mile must be between 0 and 100.");
 
+        RuleFor(i => i.Settings!.CostPerMile)
+            .InclusiveBetween(0m, 100m)
+            .When(i => i.Settings?.CostPerMile is not null)
+            .WithMessage("Cost per mile must be between 0 and 100.");
+
         RuleFor(i => i.Settings!.DetentionFreeMinutes)
             .InclusiveBetween(0, 24 * 60)
             .When(i => i.Settings?.DetentionFreeMinutes is not null)

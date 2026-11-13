@@ -1386,6 +1386,11 @@ namespace Logistics.Infrastructure.Persistence.Migrations.Master
                                 .HasColumnType("boolean")
                                 .HasColumnName("settings_block_ai_overage");
 
+                            b1.Property<decimal?>("CostPerMile")
+                                .HasPrecision(18, 2)
+                                .HasColumnType("numeric(18,2)")
+                                .HasColumnName("settings_cost_per_mile");
+
                             b1.Property<string>("Currency")
                                 .IsRequired()
                                 .HasColumnType("text")

@@ -18,6 +18,7 @@ internal sealed class GetDispatchCandidatesTool(
     IMediator mediator,
     ITenantUnitOfWork tenantUow,
     IDispatchEligibilityService eligibilityService,
+    IProfitEstimateService profitEstimate,
     AvailableTruckLoader truckLoader)
     : AgentTool<GetDispatchCandidatesTool.Input>, IAgentToolMetadata
 {
@@ -35,7 +36,7 @@ internal sealed class GetDispatchCandidatesTool(
 
     public static AgentToolDefinition Definition => new(
         "get_dispatch_candidates",
-        "Rank the Available trucks for each unassigned load. Type-incompatible trucks and drivers whose hours cannot cover the trip are already removed and counted under excluded. Each candidate carries deadhead and total distance in the tenant's unit (key suffix _mi or _km), estimated drive_time and the driver's driving_time_left, hos (feasible, multi_day or unknown), equipment (match, unconfirmed or mismatch, with a note) and linehaul rate per distance unit. Hazmat and car hauler loads also run the eligibility check: blocked = true means an error issue that stops the assignment. Best candidate first.")
+        "Rank the Available trucks for each unassigned load. Type-incompatible trucks and drivers whose hours cannot cover the trip are already removed and counted under excluded. Each candidate carries deadhead and total distance in the tenant's unit (key suffix _mi or _km), estimated drive_time and the driver's driving_time_left, hos (feasible, multi_day or unknown), equipment (match, unconfirmed or mismatch, with a note) linehaul rate per distance unit, and est_margin with margin per distance unit (revenue minus truck operating cost over the total distance minus the driver's per-load pay; absent when costs are unknown). Hazmat and car hauler loads also run the eligibility check: blocked = true means an error issue that stops the assignment. Ranked by equipment, then HOS, then margin per distance, then deadhead; best candidate first.")
     {
         RequiredPermission = Permission.Dispatch.View,
         Surfaces = AgentSurfaces.All
@@ -54,10 +55,16 @@ internal sealed class GetDispatchCandidatesTool(
         var unit = tenantUow.GetCurrentTenant().Settings.DistanceUnit;
         var limit = Math.Clamp(input.Limit ?? DefaultLimit, 1, MaxLimit);
 
+        var scoring = loads.Select(load => Score(load, fleet)).ToList();
+        var requests = scoring
+            .SelectMany(s => s.Scored.Select(c => new MarginRequest(c.Entry.Truck.Id, s.Load.Id, c.TripMeters)))
+            .ToList();
+        var estimates = await profitEstimate.EstimateMarginsAsync(requests, ct);
+
         var planned = new List<object>(loads.Count);
-        foreach (var load in loads)
+        foreach (var loadScoring in scoring)
         {
-            planned.Add(await PlanAsync(load, fleet, unit, limit, ct));
+            planned.Add(await PlanAsync(loadScoring, estimates, unit, limit, ct));
         }
 
         return ToolResult.Ok(new
@@ -69,8 +76,7 @@ internal sealed class GetDispatchCandidatesTool(
         });
     }
 
-    private async Task<Dictionary<string, object?>> PlanAsync(
-        LoadDto load, List<AvailableTruck> fleet, DistanceUnit unit, int limit, CancellationToken ct)
+    private static LoadScoring Score(LoadDto load, List<AvailableTruck> fleet)
     {
         var (typeIncompatible, hosInfeasible, noDriver) = (0, 0, 0);
         var scored = new List<Scored>();
@@ -116,9 +122,23 @@ internal sealed class GetDispatchCandidatesTool(
             scored.Add(new Scored(entry, deadheadMeters, tripMeters, verdict, fit, equipment, note));
         }
 
-        var best = scored
+        return new LoadScoring(load, scored, typeIncompatible, hosInfeasible, noDriver);
+    }
+
+    private async Task<Dictionary<string, object?>> PlanAsync(
+        LoadScoring scoring,
+        IReadOnlyDictionary<(Guid TruckId, Guid LoadId), MarginEstimate> estimates,
+        DistanceUnit unit,
+        int limit,
+        CancellationToken ct)
+    {
+        var load = scoring.Load;
+        MarginEstimate? EstimateOf(Scored s) => estimates.GetValueOrDefault((s.Entry.Truck.Id, load.Id));
+
+        var best = scoring.Scored
             .OrderBy(s => s.Equipment)
             .ThenBy(s => s.Hos)
+            .ThenByDescending(s => EstimateOf(s) is { } e ? (double)e.Margin / Math.Max(s.TripMeters, 1) : double.MinValue)
             .ThenBy(s => s.DeadheadMeters ?? double.MaxValue)
             .Take(limit)
             .ToList();
@@ -128,6 +148,7 @@ internal sealed class GetDispatchCandidatesTool(
         foreach (var candidate in best)
         {
             var row = Describe(candidate, load, unit);
+            DispatchUnits.AddMargin(row, EstimateOf(candidate), DispatchUnits.FromMeters(candidate.TripMeters, unit), unit);
             var blocked = false;
 
             if (needsEligibility)
@@ -152,9 +173,9 @@ internal sealed class GetDispatchCandidatesTool(
             ["candidates"] = candidates.OrderBy(c => c.Blocked).Select(c => c.Row).ToList(),
             ["excluded"] = new
             {
-                type_incompatible = typeIncompatible,
-                hos_infeasible = hosInfeasible,
-                no_driver = noDriver
+                type_incompatible = scoring.TypeIncompatible,
+                hos_infeasible = scoring.HosInfeasible,
+                no_driver = scoring.NoDriver
             }
         };
     }
@@ -193,6 +214,9 @@ internal sealed class GetDispatchCandidatesTool(
     }
 
     private static readonly string[] HosLabels = ["feasible", "multi_day", "unknown"];
+
+    private sealed record LoadScoring(
+        LoadDto Load, List<Scored> Scored, int TypeIncompatible, int HosInfeasible, int NoDriver);
 
     private sealed record Scored(
         AvailableTruck Entry,

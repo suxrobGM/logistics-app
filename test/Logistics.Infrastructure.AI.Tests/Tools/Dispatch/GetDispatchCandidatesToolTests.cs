@@ -26,6 +26,7 @@ public class GetDispatchCandidatesToolTests
         Substitute.For<ITenantRepository<DriverHosStatus, Guid>>();
     private readonly ITenantRepository<Employee, Guid> _employeeRepo =
         Substitute.For<ITenantRepository<Employee, Guid>>();
+    private readonly IProfitEstimateService _profitEstimate = Substitute.For<IProfitEstimateService>();
     private readonly GetDispatchCandidatesTool _sut;
 
     /// <summary>Dallas - every load here picks up from it.</summary>
@@ -37,7 +38,10 @@ public class GetDispatchCandidatesToolTests
         _tenantUow.Repository<DriverHosStatus>().Returns(_hosRepo);
         _tenantUow.Repository<Employee>().Returns(_employeeRepo);
         _tenantUow.GetCurrentTenant().Returns(TestTenant.Create());
-        _sut = new GetDispatchCandidatesTool(_mediator, _tenantUow, _eligibility, new AvailableTruckLoader(_tenantUow));
+        _profitEstimate.EstimateMarginsAsync(Arg.Any<IReadOnlyCollection<MarginRequest>>(), Arg.Any<CancellationToken>())
+            .Returns(new Dictionary<(Guid TruckId, Guid LoadId), MarginEstimate>());
+        _sut = new GetDispatchCandidatesTool(
+            _mediator, _tenantUow, _eligibility, _profitEstimate, new AvailableTruckLoader(_tenantUow));
     }
 
     private static LoadDto Load(LoadType type = LoadType.GeneralFreight, double distanceMeters = 400_000)

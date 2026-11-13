@@ -1,5 +1,6 @@
 using System.ComponentModel;
 using Logistics.Application.Abstractions.AI;
+using Logistics.Application.Abstractions.ApplicationServices;
 using Logistics.Domain.Entities;
 using Logistics.Domain.Persistence;
 using Logistics.Domain.Primitives.Enums;
@@ -7,7 +8,7 @@ using Logistics.Shared.Identity.Policies;
 
 namespace Logistics.Infrastructure.AI.Tools.Dispatch;
 
-internal sealed class CalculateAssignmentMetricsTool(ITenantUnitOfWork tenantUow)
+internal sealed class CalculateAssignmentMetricsTool(ITenantUnitOfWork tenantUow, IProfitEstimateService profitEstimate)
     : AgentTool<CalculateAssignmentMetricsTool.Input>, IAgentToolMetadata
 {
     internal sealed record Input
@@ -30,7 +31,7 @@ internal sealed class CalculateAssignmentMetricsTool(ITenantUnitOfWork tenantUow
 
     public static AgentToolDefinition Definition => new(
         "calculate_assignment_metrics",
-        "Score candidate truck-load pairs: deadhead, loaded and total distance, linehaul (delivery_cost, excluding fuel surcharge and accessorials), linehaul rate per distance unit, and deadhead ratio, best rate first. Distances are in the tenant's unit, named in each key (_mi or _km).")
+        "Score candidate truck-load pairs: deadhead, loaded and total distance, linehaul (delivery_cost, excluding fuel surcharge and accessorials), linehaul rate per distance unit, deadhead ratio, and est_margin with margin per distance unit (revenue minus truck operating cost over the total distance minus the driver's per-load pay; absent when costs are unknown). Best margin per distance first, else best rate. Distances are in the tenant's unit, named in each key (_mi or _km).")
     {
         RequiredPermission = Permission.Dispatch.View,
         Surfaces = AgentSurfaces.All
@@ -53,7 +54,8 @@ internal sealed class CalculateAssignmentMetricsTool(ITenantUnitOfWork tenantUow
         var unit = tenantUow.GetCurrentTenant().Settings.DistanceUnit;
         var suffix = unit.Abbreviation();
 
-        var scored = new List<(double Rate, Dictionary<string, object?> Row)>();
+        var scored = new List<(double? MarginPer, double Rate, Dictionary<string, object?> Row)>();
+        var pairs = new List<(Candidate Candidate, Load Load, Truck Truck, double DeadheadMeters)>();
         var errors = new List<object>();
 
         foreach (var candidate in input.Candidates)
@@ -75,14 +77,21 @@ internal sealed class CalculateAssignmentMetricsTool(ITenantUnitOfWork tenantUow
             var deadheadMeters = truck.CurrentLocation is not null && load.OriginLocation is not null
                 ? truck.CurrentLocation.DistanceTo(load.OriginLocation)
                 : 0.0;
+            pairs.Add((candidate, load, truck, deadheadMeters));
+        }
 
+        var estimates = await profitEstimate.EstimateMarginsAsync(
+            pairs.Select(p => new MarginRequest(p.Truck.Id, p.Load.Id, p.DeadheadMeters + p.Load.Distance)).ToList(), ct);
+
+        foreach (var (candidate, load, truck, deadheadMeters) in pairs)
+        {
             var deadhead = DispatchUnits.FromMeters(deadheadMeters, unit);
             var total = DispatchUnits.FromMeters(deadheadMeters + load.Distance, unit);
             var linehaul = load.DeliveryCost?.Amount ?? 0;
             var rate = DispatchUnits.RatePer(linehaul, total);
 
             // Keys carry the unit so the model never has to guess whether to convert.
-            scored.Add((rate, new Dictionary<string, object?>
+            var row = new Dictionary<string, object?>
             {
                 ["load_id"] = candidate.LoadId,
                 ["truck_id"] = candidate.TruckId,
@@ -94,12 +103,16 @@ internal sealed class CalculateAssignmentMetricsTool(ITenantUnitOfWork tenantUow
                 ["delivery_cost"] = linehaul,
                 [$"revenue_per_{suffix}"] = rate,
                 ["deadhead_ratio"] = Math.Round(total > 0 ? deadhead / total : 0, 3)
-            }));
+            };
+            var estimate = estimates.GetValueOrDefault((truck.Id, load.Id));
+            DispatchUnits.AddMargin(row, estimate, total, unit);
+            scored.Add((estimate is null ? null : DispatchUnits.RatePer(estimate.Margin, total), rate, row));
         }
 
         // Best pairings first; unscoreable candidates last.
         var candidates = scored
-            .OrderByDescending(s => s.Rate)
+            .OrderByDescending(s => s.MarginPer ?? double.MinValue)
+            .ThenByDescending(s => s.Rate)
             .Select(s => (object)s.Row)
             .Concat(errors)
             .ToList();

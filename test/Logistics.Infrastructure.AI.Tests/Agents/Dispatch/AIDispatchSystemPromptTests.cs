@@ -204,7 +204,7 @@ public class AIDispatchSystemPromptTests
 
         Assert.DoesNotContain("Maximize fleet utilization", solo);
         Assert.DoesNotContain("| Load | Truck | Driver | Reasoning |", solo);
-        Assert.Contains("Maximize rate per mile", solo);
+        Assert.Contains("Maximize margin per mile", solo);
         Assert.Contains("### Plan", solo);
     }
 
@@ -217,8 +217,8 @@ public class AIDispatchSystemPromptTests
             IsSolo = true
         });
 
-        Assert.Contains("Maximize rate per km", prompt);
-        Assert.DoesNotContain("rate per mile", prompt);
+        Assert.Contains("Maximize margin per km", prompt);
+        Assert.DoesNotContain("per mile", prompt);
     }
 
     #endregion

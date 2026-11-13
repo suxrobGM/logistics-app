@@ -1,4 +1,5 @@
 using System.Net;
+using Logistics.Application.Abstractions.ApplicationServices;
 using Logistics.Application.Abstractions.Integrations;
 using Logistics.Application.Modules.Integrations.LoadBoard.Commands;
 using Logistics.Application.Modules.Integrations.LoadBoard.Services;
@@ -45,6 +46,8 @@ public class SearchLoadBoardHandlerTests
         TokenExpiresAt = DateTime.UtcNow.AddHours(1)
     };
 
+    private readonly IProfitEstimateService _profitEstimate = Substitute.For<IProfitEstimateService>();
+
     public SearchLoadBoardHandlerTests()
     {
         _tenantUow.Repository<LoadBoardConfiguration>().Returns(_configRepo);
@@ -61,7 +64,7 @@ public class SearchLoadBoardHandlerTests
         _factory.GetProvider(LoadBoardProviderType.Dat).Returns(_dat);
 
         var gateway = new LoadBoardProviderGateway(_tenantUow, _factory, NullLogger<LoadBoardProviderGateway>.Instance);
-        _sut = new SearchLoadBoardHandler(_tenantUow, gateway, NullLogger<SearchLoadBoardHandler>.Instance);
+        _sut = new SearchLoadBoardHandler(_tenantUow, gateway, _profitEstimate, NullLogger<SearchLoadBoardHandler>.Instance);
     }
 
     private static LoadBoardListingDto CreateListing(string externalId, DateTime? expiresAt = null) => new()
@@ -91,6 +94,19 @@ public class SearchLoadBoardHandlerTests
         Assert.Equal(2, result.Value!.TotalCount);
         Assert.Equal(0, result.Value.CountByProvider[LoadBoardProviderType.Dat]);
         Assert.Equal("DAT: DAT returned 400 BadRequest - invalid origin", result.Value.Errors![LoadBoardProviderType.Dat]);
+    }
+
+    [Fact]
+    public async Task Handle_FleetCostKnown_StampsRateMinusCostPerMile()
+    {
+        _profitEstimate.GetFleetCostPerMetreAsync(Arg.Any<CancellationToken>()).Returns(1.5m / 1609.344m);
+        _demo.SearchLoadsAsync(Arg.Any<LoadBoardSearchCriteria>(), Arg.Any<CancellationToken>())
+            .Returns([CreateListing("EXT-1")]);
+        _dat.SearchLoadsAsync(Arg.Any<LoadBoardSearchCriteria>(), Arg.Any<CancellationToken>()).Returns([]);
+
+        var result = await _sut.Handle(new SearchLoadBoardCommand(), CancellationToken.None);
+
+        Assert.Equal(1.00m, Assert.Single(result.Value!.Listings).EstimatedMarginPerMile);
     }
 
     [Fact]

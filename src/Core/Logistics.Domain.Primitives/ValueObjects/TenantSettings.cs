@@ -49,6 +49,12 @@ public record TenantSettings
     public decimal? DefaultRateFloorPerMile { get; set; }
 
     /// <summary>
+    /// Truck operating cost per mile, driver pay excluded, that AI dispatch prices loads with.
+    /// Null uses each truck's trailing 90-day cost.
+    /// </summary>
+    public decimal? CostPerMile { get; set; }
+
+    /// <summary>
     /// Minutes a truck may wait at a stop before detention starts. Null means the 2-hour industry default.
     /// A customer's own terms override it.
     /// </summary>

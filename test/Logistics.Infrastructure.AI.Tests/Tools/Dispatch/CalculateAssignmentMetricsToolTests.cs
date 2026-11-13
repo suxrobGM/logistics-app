@@ -1,3 +1,4 @@
+using Logistics.Application.Abstractions.ApplicationServices;
 using Logistics.Application.Tests.TestKit;
 using Logistics.Infrastructure.AI.Tools.Dispatch;
 using System.Linq.Expressions;
@@ -20,6 +21,8 @@ public class CalculateAssignmentMetricsToolTests
         Substitute.For<ITenantRepository<Load, Guid>>();
     private readonly ITenantRepository<Truck, Guid> _truckRepo =
         Substitute.For<ITenantRepository<Truck, Guid>>();
+    private readonly IProfitEstimateService _profitEstimate = Substitute.For<IProfitEstimateService>();
+    private readonly Dictionary<(Guid TruckId, Guid LoadId), MarginEstimate> _estimates = [];
     private readonly CalculateAssignmentMetricsTool _sut;
 
     public CalculateAssignmentMetricsToolTests()
@@ -27,7 +30,9 @@ public class CalculateAssignmentMetricsToolTests
         _tenantUow.Repository<Load>().Returns(_loadRepo);
         _tenantUow.Repository<Truck>().Returns(_truckRepo);
         _tenantUow.GetCurrentTenant().Returns(TestTenant.Create());
-        _sut = new CalculateAssignmentMetricsTool(_tenantUow);
+        _profitEstimate.EstimateMarginsAsync(Arg.Any<IReadOnlyCollection<MarginRequest>>(), Arg.Any<CancellationToken>())
+            .Returns(_estimates);
+        _sut = new CalculateAssignmentMetricsTool(_tenantUow, _profitEstimate);
     }
 
     private static Address SomeAddress => new()
@@ -120,6 +125,40 @@ public class CalculateAssignmentMetricsToolTests
         Assert.Equal(1242.74, candidate.GetProperty("delivery_cost").GetDouble(), 2);
         Assert.Equal(20.0, candidate.GetProperty("revenue_per_mi").GetDouble(), 1);
         Assert.Equal(0, candidate.GetProperty("deadhead_ratio").GetDouble());
+    }
+
+    [Fact]
+    public async Task Execute_NoCostData_OmitsMarginKeys()
+    {
+        var loadId = Guid.NewGuid();
+        var truckId = Guid.NewGuid();
+        Setup([CreateLoad(loadId, "Dallas run", 100_000, 1000m)], [CreateTruck(truckId, "T-1")]);
+
+        var candidate = (await Run(Candidate(loadId, truckId))).GetProperty("candidates")[0];
+
+        Assert.False(candidate.TryGetProperty("est_margin", out _));
+        Assert.False(candidate.TryGetProperty("margin_per_mi", out _));
+    }
+
+    [Fact]
+    public async Task Execute_WithEstimates_RanksByMarginPerDistanceOverRate()
+    {
+        var richLoad = Guid.NewGuid();
+        var leanLoad = Guid.NewGuid();
+        var truckId = Guid.NewGuid();
+        Setup(
+            [CreateLoad(richLoad, "Pays more", 100_000, 2000m), CreateLoad(leanLoad, "Costs less", 100_000, 1500m)],
+            [CreateTruck(truckId, "T-1")]);
+        _estimates[(truckId, richLoad)] = new MarginEstimate(2000m, 1500m, 600m);
+        _estimates[(truckId, leanLoad)] = new MarginEstimate(1500m, 500m, 200m);
+
+        var candidates = (await Run(Candidate(richLoad, truckId), Candidate(leanLoad, truckId)))
+            .GetProperty("candidates");
+
+        Assert.Equal(leanLoad, candidates[0].GetProperty("load_id").GetGuid());
+        Assert.Equal(800m, candidates[0].GetProperty("est_margin").GetDecimal());
+        Assert.Equal(12.88, candidates[0].GetProperty("margin_per_mi").GetDouble(), 2);
+        Assert.Equal(-100m, candidates[1].GetProperty("est_margin").GetDecimal());
     }
 
     [Fact]

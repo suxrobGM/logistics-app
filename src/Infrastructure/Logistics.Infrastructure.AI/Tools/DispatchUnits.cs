@@ -1,3 +1,4 @@
+using Logistics.Application.Abstractions.ApplicationServices;
 using Logistics.Domain.Primitives.Enums;
 
 namespace Logistics.Infrastructure.AI.Tools;
@@ -18,4 +19,16 @@ internal static class DispatchUnits
     /// <summary>Linehaul per distance unit, compared across tools when ranking candidates.</summary>
     public static double RatePer(decimal linehaul, double distance) =>
         distance > 0 ? Math.Round((double)linehaul / distance, 2) : 0;
+
+    /// <summary>The model ranks on <c>margin_per_{unit}</c>, so a pair with no estimate shows no margin keys.</summary>
+    public static void AddMargin(Dictionary<string, object?> row, MarginEstimate? estimate, double total, DistanceUnit unit)
+    {
+        if (estimate is null)
+        {
+            return;
+        }
+
+        row["est_margin"] = estimate.Margin;
+        row[$"margin_per_{unit.Abbreviation()}"] = RatePer(estimate.Margin, total);
+    }
 }

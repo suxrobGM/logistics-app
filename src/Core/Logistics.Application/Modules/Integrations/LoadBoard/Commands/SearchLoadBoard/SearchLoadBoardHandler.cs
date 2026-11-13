@@ -1,8 +1,10 @@
+using Logistics.Application.Abstractions.ApplicationServices;
 using Logistics.Application.Abstractions.Integrations;
 using Logistics.Application.Modules.AI.Negotiation.Services;
 using Logistics.Application.Modules.Integrations.LoadBoard.Services;
 using Logistics.Domain.Entities;
 using Logistics.Domain.Persistence;
+using Logistics.Domain.Primitives;
 using Logistics.Domain.Primitives.Enums;
 using Logistics.Domain.Primitives.ValueObjects;
 using Logistics.Mediator;
@@ -14,6 +16,7 @@ namespace Logistics.Application.Modules.Integrations.LoadBoard.Commands;
 internal sealed class SearchLoadBoardHandler(
     ITenantUnitOfWork tenantUow,
     ILoadBoardProviderGateway gateway,
+    IProfitEstimateService profitEstimate,
     ILogger<SearchLoadBoardHandler> logger)
     : IRequestHandler<SearchLoadBoardCommand, Result<LoadBoardSearchResultDto>>
 {
@@ -96,6 +99,7 @@ internal sealed class SearchLoadBoardHandler(
             }
         }
 
+        await AttachEstimatedMarginsAsync(sortedListings, ct);
         await PersistListingsAsync(sortedListings, ct);
 
         return Result<LoadBoardSearchResultDto>.Ok(new LoadBoardSearchResultDto
@@ -106,6 +110,24 @@ internal sealed class SearchLoadBoardHandler(
             Errors = errors.Count > 0 ? errors : null
         });
     }
+
+    private async Task AttachEstimatedMarginsAsync(IReadOnlyList<LoadBoardListingDto> listings, CancellationToken ct)
+    {
+        if (listings.Count == 0 || await profitEstimate.GetFleetCostPerMetreAsync(ct) is not { } costPerMetre)
+        {
+            return;
+        }
+
+        var costPerMile = costPerMetre * DistanceUnit.Miles.ToMeters(1).ToDecimal();
+        foreach (var listing in listings)
+        {
+            var ratePerMile = listing.RatePerMile ?? RatePerMile(listing.TotalRate, listing.Distance);
+            listing.EstimatedMarginPerMile = ratePerMile is { } rate ? Math.Round(rate - costPerMile, 2) : null;
+        }
+    }
+
+    private static decimal? RatePerMile(decimal? totalRate, double? miles) =>
+        totalRate is { } total && miles is > 0 ? total / miles.Value.ToDecimal() : null;
 
     /// <summary>
     /// Prices each distinct city-to-city lane once, in one batched lookup, and stamps the rate on

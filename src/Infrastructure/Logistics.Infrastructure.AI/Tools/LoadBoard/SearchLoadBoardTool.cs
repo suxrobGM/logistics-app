@@ -30,7 +30,7 @@ internal sealed class SearchLoadBoardTool(IMediator mediator)
 
     public static AgentToolDefinition Definition => new(
         "search_loadboard",
-        "Search the connected load boards (DAT) for available loads leaving a city. Use this when trucks have capacity gaps to find revenue opportunities. market_rate_per_mile, when present, is the DAT RateView spot rate for the lane.")
+        "Search the connected load boards (DAT) for available loads leaving a city. Use this when trucks have capacity gaps to find revenue opportunities. market_rate_per_mile, when present, is the DAT RateView spot rate for the lane. est_margin_per_mile, when present, is the rate per mile minus the fleet's operating cost per mile (no deadhead or driver pay); a negative one is a below-cost load.")
     {
         RequiredFeature = TenantFeature.LoadBoard,
         RequiredPermission = Permission.Dispatch.View,
@@ -67,6 +67,7 @@ internal sealed class SearchLoadBoardTool(IMediator mediator)
             destination = l.DestinationAddress.ToString(),
             rate_per_mile = l.RatePerMile,
             market_rate_per_mile = l.MarketRatePerMile,
+            est_margin_per_mile = l.EstimatedMarginPerMile,
             total_rate = l.TotalRate,
             currency = l.Currency,
             distance_miles = l.Distance,

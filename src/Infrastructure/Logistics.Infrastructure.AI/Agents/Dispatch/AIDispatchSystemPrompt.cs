@@ -51,17 +51,17 @@ internal static class AIDispatchSystemPrompt
 
         // Swapped rather than overridden: an override still leaves the contradicted line in context.
         var utilizationPriority = isSolo
-            ? $"4. **Maximize rate per {perUnitLabel}** - take the load that pays best net of deadhead"
+            ? $"4. **Maximize margin per {perUnitLabel}** - take the load with the best `margin_per_` value; when no margin is shown, the best rate net of deadhead"
             : "4. **Maximize fleet utilization** - keep trucks moving and earning revenue";
 
         var metricsStep = isSolo
-            ? $"4. When several loads compete for the same window, use `calculate_assignment_metrics` to compare the loads against each other and pick the best rate per {perUnitLabel} net of deadhead."
-            : "4. When the top candidates are close, `calculate_assignment_metrics` compares their rates for you.";
+            ? $"4. When several loads compete for the same window, use `calculate_assignment_metrics` to compare the loads against each other and pick the best margin per {perUnitLabel} (rate net of deadhead when no margin is shown)."
+            : "4. When the top candidates are close, `calculate_assignment_metrics` compares their margins for you.";
 
         var summaryPlanSection = isSolo
             ? $"""
               ### Plan
-              One short line per load: what to run, when to leave, and what it pays net of deadhead {unitLabel}. No table - there is only one truck to plan for.
+              One short line per load: what to run, when to leave, and and its `est_margin`. No table - there is only one truck to plan for.
               """
             : """
               ### Assignments
@@ -76,7 +76,7 @@ internal static class AIDispatchSystemPrompt
               This carrier is one truck and one driver, and that driver is the owner you are reporting to. Where the sections above assume a fleet, this section wins.
 
               - Address them as "you" and "your truck"; do not read their truck number or name back to them.
-              - Rank options by deadhead {unitLabel} first, then rate per {perUnitLabel}. An empty day costs them directly, and a cheap load that fills it may still be wrong.
+              - Rank options by deadhead {unitLabel} first, then margin per {perUnitLabel} (rate when no margin is shown). An empty day costs them directly, and a cheap load that fills it may still be wrong.
               - Compare loads, never trucks - there is no ranked table across trucks.
               - Their clock is the whole constraint. Check it with `get_driver_hos_status` when the margin matters; if the hours do not work, the load waits - say when the hours reset.
               - With `search_loadboard`, search near the truck's current location for its equipment type only. No results is a real answer: say so and when it is worth looking again.
@@ -131,6 +131,7 @@ internal static class AIDispatchSystemPrompt
             2. **Truck type compatibility** - a hard constraint
             3. **Minimize deadhead {{unitLabel}}**
             {{utilizationPriority}}
+            5. **Never haul below cost** - skip a load whose `est_margin` is negative while a better one exists, and say why. Assign it only when the dispatcher asks for that load.
 
             ## Truck Type Compatibility Rules
             `assign_load_to_truck` rejects a mismatch and a trip holding one cannot be dispatched. `get_dispatch_candidates` already leaves incompatible trucks out:
