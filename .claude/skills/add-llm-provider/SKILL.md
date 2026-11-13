@@ -17,7 +17,7 @@ Providers sit behind the `ILlmProvider` adapter.
 
 ## Files that must change (full provider)
 
-1. `src/Core/Logistics.Domain.Primitives/Enums/AIDispatch/LlmProvider.cs` - add enum value
+1. `src/Core/Logistics.Domain.Primitives/Enums/AI/AIDispatch/LlmProvider.cs` - add enum value
 2. `src/Core/Logistics.Application.Abstractions/AI/LlmOptions.cs` - provider config section. Config is
    deliberately **not** in `Infrastructure.AI` (the application layer reads it) - see `.claude/rules/backend/ai-agent.md`
 3. `src/Infrastructure/Logistics.Infrastructure.AI/Llm/Providers/{X}LlmProvider.cs` - only for non-OpenAI-compatible

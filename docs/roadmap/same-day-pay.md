@@ -17,7 +17,7 @@ product no bolt-on-factoring competitor can match. DataTruck sells Fintruck as a
 - Phase 1 (low risk, pure plumbing): instant payout flow - when a customer payment settles (`payment_intent.succeeded` in `ProcessStripeEvent`), trigger same-day driver settlement via Stripe Connect instant payouts instead of the payroll cycle. Tenant opt-in per driver.
 - Phase 2 (regulated, needs partner/capital): invoice advances - pay the carrier X% of a verified invoice (delivered + POD on file) before the shipper pays. Start with Stripe Capital / a lending partner rather than our own balance sheet. **Do legal/lending-license review before building.**
 - Fee model: undercut factoring (e.g. ~1–1.5%) - becomes a revenue line pricing pages can headline.
-- Risk controls: only advance invoices with POD documents attached (`Entities/Document/`), customer payment history score, per-tenant advance limits.
+- Risk controls: only advance invoices with POD documents attached (`Entities/Operations/Document/`), customer payment history score, per-tenant advance limits.
 - Factoring (built, see [invoices](../invoices.md#factoring)) serves carriers locked into factoring contracts; this replaces factoring for the rest.
 
 ## Acceptance

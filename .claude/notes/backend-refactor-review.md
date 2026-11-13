@@ -170,6 +170,8 @@ Update `AssemblyAnchors`, the arch-tests csproj, `overview.md`, CLAUDE.md ("15 f
 
 - [x] ✅ API layout, done 2026-11-13: controllers in `Controllers/{Module}/` (routes and controller names unchanged), Hangfire plumbing in `Jobs/Scheduling/`, wire-format code (date/enum converters, binder, OpenAPI transformers) in `Serialization/`; `AccountingOptions` moved to `Abstractions/Integrations` so no controller references Infrastructure.
 
+- [x] ✅ Domain layout, done 2026-11-13: entity, enum and EF configuration folders grouped by the nine modules (`Entities/{Module}/{Aggregate}/`), namespaces kept flat (the `Safety`, `Messaging` and `Maintenance` sub-namespaces folded in); payroll entities in `Financial/Payroll/`; tenancy exceptions moved to `Abstractions/Context`, `AgentSessionQueryExtensions` to `Application/Modules/AI/AIDispatch`, `DateTimeExtensions` to Primitives, `Region`/`RegionCountries` to `Geo/`.
+
 **Inside Application:**
 - [x] ✅ Modules regrouped 6 → 9, done 2026-11-13: `IdentityAccess` split into `Identity` and `Tenancy`; AI features out of `Integrations` into `AI`; `Platform` dissolved into `Reporting`, `Website`, `Tenancy`, `AI` and `Operations` (Portal, Notifications, DataImport); Customers, Documents and Messaging into `Operations`; Accidents merged into `Compliance/Safety`. See `docs/architecture/module-layout.md`.
 - [x] ✅ CustomerUser queries moved from Portal to `Identity/CustomerUsers/Queries` (`6cc972c59`).

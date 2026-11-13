@@ -13,7 +13,7 @@ Before writing any code:
 
 1. **Master DB or tenant DB?** Master = platform-level data shared across tenants (Tenant, Subscription, BlogPost). Tenant = per-company operational data (Load, Trip, Customer). Most new features are tenant-scoped.
 2. **Which module?** Application code lives under `Logistics.Application/Modules/{Module}/{Feature}/`. Pick by bounded context: `Operations` (dispatching, fleet, customers, documents), `Compliance` (ELD, DVIR, safety, privacy), `Financial` (invoices, payments, payroll, tax), `Identity` (users, roles, employees), `Tenancy` (tenants, subscriptions, features), `AI` (dispatch, copilot, negotiation), `Integrations` (outside vendors, webhooks), `Reporting` (reports, stats), `Website` (marketing site). See [module-layout.md](../../../docs/architecture/module-layout.md).
-3. **Aggregate root or child entity?** A new aggregate gets its own folder under `Entities/{Feature}/`. A child entity belongs to an existing aggregate's folder.
+3. **Aggregate root or child entity?** A new aggregate gets its own folder under `Entities/{Module}/{Aggregate}/` (the module from step 2). A child entity belongs to an existing aggregate's folder.
 4. **Is it auditable?** Almost always yes - inherit `AuditableEntity`. Use `Entity` only for very simple lookup tables.
 5. **Which marker interface?** `IMasterEntity` (master DB) or `ITenantEntity` (tenant DB). The DbContext picks up the entity automatically based on this - **no manual `DbSet<T>` needed**.
 
@@ -21,7 +21,7 @@ Before writing any code:
 
 ### 1. Domain entity
 
-`src/Core/Logistics.Domain/Entities/{Feature}/{Entity}.cs`
+`src/Core/Logistics.Domain/Entities/{Module}/{Aggregate}/{Entity}.cs` (namespace `Logistics.Domain.Entities`, whatever the folder)
 
 ```csharp
 using Logistics.Domain.Core;
@@ -37,11 +37,11 @@ public class Subcontractor : AuditableEntity, ITenantEntity
 }
 ```
 
-If status enum needed: `src/Core/Logistics.Domain.Primitives/Enums/{Feature}/{Status}.cs`. Use `GetDescription()` for display - `[Description]` only when humanization isn't enough (acronyms, special formatting).
+If status enum needed: `src/Core/Logistics.Domain.Primitives/Enums/{Module}/{Aggregate}/{Status}.cs` (namespace `Logistics.Domain.Primitives.Enums`). Use `GetDescription()` for display - `[Description]` only when humanization isn't enough (acronyms, special formatting).
 
 ### 2. EF configuration
 
-`src/Infrastructure/Logistics.Infrastructure.Persistence/Configurations/{Feature}/{Entity}EntityConfiguration.cs`
+`src/Infrastructure/Logistics.Infrastructure.Persistence/Configurations/{Module}/{Aggregate}/{Entity}EntityConfiguration.cs`
 
 ```csharp
 internal sealed class SubcontractorEntityConfiguration : IEntityTypeConfiguration<Subcontractor>

@@ -1,6 +1,6 @@
 # Application Module Layout
 
-`Logistics.Application` is organised into nine modules. Each module owns the features inside one bounded context - pick a module by context, not by entity. Code shared across modules lives in `Logistics.Application/Common/`, which is not a module.
+`Logistics.Application` is organised into nine modules. Each module owns the features inside one bounded context - pick a module by context, not by entity. Code shared across modules lives in `Logistics.Application/Common/`, which is not a module. The same module names group the API controllers, the Domain entity and enum folders, and the EF configurations, so a feature sits under the same module in every project.
 
 ## The nine modules
 

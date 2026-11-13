@@ -38,7 +38,7 @@ answers `IsProviderSupported` with `HasProvider`, both in `ProviderRegistrationE
 
 ### 1. Enum value
 
-`src/Core/Logistics.Domain.Primitives/Enums/{Family}ProviderType.cs`. Add `[Description]` only when
+`src/Core/Logistics.Domain.Primitives/Enums/Integrations/{Family}/{Family}ProviderType.cs` (ELD's lives in `Enums/Compliance/Eld/`). Add `[Description]` only when
 `GetDescription()`'s humanization isn't enough (`TtEld` → `"TT ELD"`).
 
 ### 2. Provider implementation

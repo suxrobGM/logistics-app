@@ -8,7 +8,7 @@
 ## Why
 
 We uniquely hold DVIR defects (`DvirReport`/`DvirDefect`), ELD telematics (odometer, engine data from
-Samsara/Motive/Geotab), maintenance history (`Entities/Maintenance/`), and truck expenses in one schema.
+Samsara/Motive/Geotab), maintenance history (`Entities/Operations/Maintenance/`), and truck expenses in one schema.
 "This truck's defect pattern precedes a breakdown - service it before assigning that 800-mile load"
 prevents stranded loads, which is the expensive outcome.
 

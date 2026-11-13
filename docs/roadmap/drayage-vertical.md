@@ -9,7 +9,7 @@
 
 Drayage carriers (port/rail container moves) are poorly served: they juggle demurrage/per-diem
 deadlines, terminal appointments, and chassis - none of which generic small-carrier TMSs model.
-We're halfway there: `Entities/Container/`, `Entities/Terminal/`, ContainerTruck type, and
+We're halfway there: `Entities/Operations/Container/`, `Entities/Operations/Terminal.cs`, ContainerTruck type, and
 load↔container↔terminal links already exist.
 
 ## What to build

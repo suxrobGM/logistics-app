@@ -29,9 +29,9 @@ Don't use it for:
 
 ## Files that must change
 
-1. `src/Core/Logistics.Domain.Primitives/Enums/Tenant/TenantFeature.cs` - enum value
+1. `src/Core/Logistics.Domain.Primitives/Enums/Tenancy/Tenant/TenantFeature.cs` - enum value
 2. `SubscriptionPlanSeeder` - `PlanFeature` rows for the tiers that grant it
-3. `src/Core/Logistics.Domain/Entities/Feature/TenantPresetCatalog.cs` - only if a preset should control it
+3. `src/Core/Logistics.Domain/Entities/Tenancy/Feature/TenantPresetCatalog.cs` - only if a preset should control it
 4. Backend: `[RequiresFeature]` on **every** command AND query in the module
 5. Backend: any Hangfire job touching the feature - jobs bypass the pipeline and must check explicitly
 6. Frontend: feature gate in route guards, components, or services
