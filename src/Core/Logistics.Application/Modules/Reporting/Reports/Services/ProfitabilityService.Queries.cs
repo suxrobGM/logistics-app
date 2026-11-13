@@ -10,9 +10,6 @@ internal sealed partial class ProfitabilityService
 {
     private const string RepairsCategory = "Repairs";
 
-    /// <summary>Pending expenses may still be rejected, so only these count as costs.</summary>
-    private static readonly ExpenseStatus[] CountedStatuses = [ExpenseStatus.Approved, ExpenseStatus.Paid];
-
     private Task<List<DeliveredLoadRow>> GetDeliveredLoadsAsync(DateTime from, DateTime to, CancellationToken ct) =>
         tenantUow.Repository<Load>().Query()
             .Where(l => l.DeliveredAt >= from && l.DeliveredAt < to)
@@ -66,14 +63,14 @@ internal sealed partial class ProfitabilityService
     {
         var truckExpenses = await tenantUow.Repository<Expense>().Query()
             .OfType<TruckExpense>()
-            .Where(e => CountedStatuses.Contains(e.Status) && e.ExpenseDate >= from && e.ExpenseDate < to)
+            .Where(e => ExpenseStatuses.Counted.Contains(e.Status) && e.ExpenseDate >= from && e.ExpenseDate < to)
             .GroupBy(e => new { e.TruckId, e.Category })
             .Select(g => new { g.Key.TruckId, g.Key.Category, Amount = g.Sum(e => e.Amount.Amount) })
             .ToListAsync(ct);
 
         var repairs = await tenantUow.Repository<Expense>().Query()
             .OfType<BodyShopExpense>()
-            .Where(e => CountedStatuses.Contains(e.Status) && e.ExpenseDate >= from && e.ExpenseDate < to)
+            .Where(e => ExpenseStatuses.Counted.Contains(e.Status) && e.ExpenseDate >= from && e.ExpenseDate < to)
             .GroupBy(e => e.TruckId)
             .Select(g => new { TruckId = g.Key, Amount = g.Sum(e => e.Amount.Amount) })
             .ToListAsync(ct);
@@ -144,7 +141,7 @@ internal sealed partial class ProfitabilityService
     private Task<decimal> SumOverheadAsync(DateTime from, DateTime to, CancellationToken ct) =>
         tenantUow.Repository<Expense>().Query()
             .OfType<CompanyExpense>()
-            .Where(e => CountedStatuses.Contains(e.Status) && e.ExpenseDate >= from && e.ExpenseDate < to)
+            .Where(e => ExpenseStatuses.Counted.Contains(e.Status) && e.ExpenseDate >= from && e.ExpenseDate < to)
             .SumAsync(e => e.Amount.Amount, ct);
 
     /// <summary>Period-paid employees who are not driving: dispatchers, office and management.</summary>

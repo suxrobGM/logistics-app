@@ -205,7 +205,7 @@ internal sealed class FinancialsReportHandler(ITenantUnitOfWork tenantUow)
         DateTime from, DateTime to, CancellationToken ct)
     {
         var rows = await tenantUow.Repository<Expense>().Query()
-            .Where(e => e.Status == ExpenseStatus.Approved || e.Status == ExpenseStatus.Paid)
+            .Where(e => ExpenseStatuses.Counted.Contains(e.Status))
             .Where(e => e.ExpenseDate >= from && e.ExpenseDate < to)
             .GroupBy(e => new { e.ExpenseDate.Year, e.ExpenseDate.Month })
             .Select(g => new { g.Key.Year, g.Key.Month, Total = g.Sum(e => e.Amount.Amount) })
