@@ -13,7 +13,7 @@ internal sealed partial class ProfitabilityService(
     ITenantUnitOfWork tenantUow,
     IDriverPayCalculator payCalculator) : IProfitabilityService
 {
-    public async Task<ProfitabilityResult> BuildAsync(DateTime from, DateTime to, CancellationToken ct = default)
+    public async Task<ProfitabilityReportDto> BuildAsync(DateTime from, DateTime to, CancellationToken ct = default)
     {
         from = DateTime.SpecifyKind(from, DateTimeKind.Utc);
         to = DateTime.SpecifyKind(to, DateTimeKind.Utc);
@@ -26,21 +26,23 @@ internal sealed partial class ProfitabilityService(
         var funded = await GetFundedFactoringFeesAsync(from, to, ct);
         var factors = await GetFactoringCompaniesAsync(ct);
 
-        var creditedDrivers = loads.ToDictionary(l => l.Id, l => CreditedDrivers(l, tripDrivers, trucks));
-        var driverIds = creditedDrivers.Values.SelectMany(d => d).Concat(TruckDriverIds(trucks));
+        var loadsByDriver = loads
+            .SelectMany(l => GetCreditedDrivers(l, tripDrivers, trucks).Select(driverId => (driverId, l)))
+            .ToLookup(x => x.driverId, x => x.l);
+        var driverIds = loadsByDriver.Select(g => g.Key).Concat(trucks.Values.SelectMany(t => t.DriverIds()));
         var drivers = await GetDriversAsync(driverIds, ct);
         var hours = await GetHoursAsync(drivers.Values, from, to, ct);
 
-        var period = PayPeriod.Of(from, to);
-        var rows = loads.ToDictionary(l => l.Id, l => NewRow(l, trucks, funded, factors));
-        var unallocatedDriverPay = AddDriverPay(loads, rows, creditedDrivers, tripDrivers, drivers, hours, unit, period);
+        var period = new PayPeriod(from, to);
+        var rows = loads.ToDictionary(l => l.Id, l => CreateRow(l, trucks, funded, factors));
+        var unallocatedDriverPay = AddDriverPay(rows, loadsByDriver, tripDrivers, drivers, hours, unit, period);
         var unallocatedTruckCosts = AddTruckCosts(loads, rows, truckCosts);
 
         foreach (var row in rows.Values)
         {
             row.TruckCostsTotal = row.TruckCosts.Sum(c => c.Amount);
             row.Margin = row.Revenue - row.DriverPay - row.TruckCostsTotal - row.FactoringFee;
-            row.MarginPerDistance = PerDistance(row.Margin, row.Distance, unit);
+            row.MarginPerDistance = CalculatePerDistance(row.Margin, row.Distance, unit);
         }
 
         var loadRows = rows.Values.OrderBy(r => r.Margin).ToList();
@@ -49,14 +51,16 @@ internal sealed partial class ProfitabilityService(
         var unassignedFuel = await SumUnassignedFuelAsync(from, to, ct);
         var staffPay = await SumStaffPayAsync(drivers.Keys, period, from, to, ct);
 
-        return new ProfitabilityResult(
-            loadRows,
-            GroupByTruck(loadRows, trucks, truckCosts, actualDistance, unit),
-            GroupByLane(loadRows, unit),
-            Summarize(loadRows, unallocatedTruckCosts, unallocatedDriverPay, staffPay, overhead, unassignedFuel));
+        return new ProfitabilityReportDto
+        {
+            Summary = Summarize(loadRows, unallocatedTruckCosts, unallocatedDriverPay, staffPay, overhead, unassignedFuel),
+            Trucks = GroupByTruck(loadRows, trucks, truckCosts, actualDistance, unit),
+            Lanes = GroupByLane(loadRows, unit),
+            Loads = loadRows
+        };
     }
 
-    private static LoadProfitDto NewRow(
+    private static LoadProfitDto CreateRow(
         DeliveredLoadRow load,
         Dictionary<Guid, TruckRow> trucks,
         Dictionary<Guid, decimal> funded,
@@ -73,7 +77,7 @@ internal sealed partial class ProfitabilityService(
             TruckNumber = load.TruckId is { } truckId && trucks.TryGetValue(truckId, out var truck) ? truck.Number : null,
             CustomerId = load.CustomerId,
             CustomerName = load.CustomerName,
-            Lane = LaneName(load.Origin, load.Destination),
+            Lane = FormatLane(load.Origin, load.Destination),
             DeliveredAt = load.DeliveredAt,
             Distance = load.Distance,
             Revenue = load.Revenue,
@@ -83,7 +87,7 @@ internal sealed partial class ProfitabilityService(
     }
 
     /// <summary>Same crediting rule as payroll: the trips' drivers, else whoever drives the truck now.</summary>
-    private static HashSet<Guid> CreditedDrivers(
+    private static HashSet<Guid> GetCreditedDrivers(
         DeliveredLoadRow load, ILookup<Guid, TripDriverRow> tripDrivers, Dictionary<Guid, TruckRow> trucks)
     {
         if (load.HasTripStops)
@@ -99,14 +103,10 @@ internal sealed partial class ProfitabilityService(
         return [];
     }
 
-    private static IEnumerable<Guid> TruckDriverIds(Dictionary<Guid, TruckRow> trucks) =>
-        trucks.Values.SelectMany(t => t.DriverIds());
-
     /// <returns>Period pay of drivers with no load to spread it on.</returns>
     private decimal AddDriverPay(
-        IReadOnlyList<DeliveredLoadRow> loads,
         Dictionary<Guid, LoadProfitDto> rows,
-        Dictionary<Guid, HashSet<Guid>> creditedDrivers,
+        ILookup<Guid, DeliveredLoadRow> loadsByDriver,
         ILookup<Guid, TripDriverRow> tripDrivers,
         Dictionary<Guid, Employee> drivers,
         Dictionary<Guid, decimal> hours,
@@ -117,7 +117,7 @@ internal sealed partial class ProfitabilityService(
 
         foreach (var driver in drivers.Values)
         {
-            var driverLoads = loads.Where(l => creditedDrivers[l.Id].Contains(driver.Id)).ToList();
+            var driverLoads = loadsByDriver[driver.Id].ToList();
             foreach (var load in driverLoads)
             {
                 var stops = tripDrivers[load.Id]
@@ -127,7 +127,7 @@ internal sealed partial class ProfitabilityService(
                 rows[load.Id].DriverPay += payCalculator.PayForLoads(driver, [basis], unit);
             }
 
-            var periodPay = PeriodPay(driver, period, hours);
+            var periodPay = CalculatePeriodPay(driver, period, hours);
             if (periodPay == 0)
             {
                 continue;
@@ -189,7 +189,7 @@ internal sealed partial class ProfitabilityService(
         return unallocated;
     }
 
-    private decimal PeriodPay(Employee employee, PayPeriod period, Dictionary<Guid, decimal> hours) =>
+    private decimal CalculatePeriodPay(Employee employee, PayPeriod period, Dictionary<Guid, decimal> hours) =>
         Math.Round(payCalculator.PayForPeriod(
             employee, period.Weeks, period.Months, hours.GetValueOrDefault(employee.Id)), 2);
 
@@ -220,27 +220,25 @@ internal sealed partial class ProfitabilityService(
         return company.EstimateAmounts(load.InvoiceTotal ?? load.Revenue).Fee;
     }
 
-    private static string LaneName(Address origin, Address destination) =>
-        $"{LanePoint(origin)} → {LanePoint(destination)}";
+    private static string FormatLane(Address origin, Address destination) =>
+        $"{FormatLanePoint(origin)} → {FormatLanePoint(destination)}";
 
-    private static string LanePoint(Address address) =>
+    private static string FormatLanePoint(Address address) =>
         LaneKey.State(address.State) ?? LaneKey.Country(address.Country);
 
-    private static decimal? PerDistance(decimal amount, double meters, DistanceUnit unit)
+    private static decimal? CalculatePerDistance(decimal amount, double meters, DistanceUnit unit)
     {
         var distance = unit.FromMeters(meters);
         return distance > 0 ? Math.Round(amount / distance.ToDecimal(), 2) : null;
     }
 
     /// <summary>A report period in the units salaries are paid in, prorated rather than rounded up as payroll does.</summary>
-    private sealed record PayPeriod(decimal Weeks, decimal Months)
+    private sealed class PayPeriod(DateTime from, DateTime to)
     {
         private const decimal DaysPerMonth = 365.25m / 12;
+        private readonly decimal days = (to - from).TotalDays.ToDecimal();
 
-        public static PayPeriod Of(DateTime from, DateTime to)
-        {
-            var days = (to - from).TotalDays.ToDecimal();
-            return new PayPeriod(days / 7, days / DaysPerMonth);
-        }
+        public decimal Weeks => days / 7;
+        public decimal Months => days / DaysPerMonth;
     }
 }

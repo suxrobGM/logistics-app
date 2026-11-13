@@ -20,8 +20,6 @@ public class GetProfitabilityToolTests
     public GetProfitabilityToolTests()
     {
         _tenantUow.GetCurrentTenant().Returns(TestTenant.Create());
-        _mediator.Send(Arg.Any<ProfitabilitySummaryQuery>(), Arg.Any<CancellationToken>())
-            .Returns(Result<ProfitabilitySummaryDto>.Ok(new ProfitabilitySummaryDto { LoadCount = 2, NetProfit = -150m }));
         _sut = new GetProfitabilityTool(_mediator, _tenantUow);
     }
 
@@ -39,11 +37,15 @@ public class GetProfitabilityToolTests
     [Fact]
     public async Task Execute_ByLane_ReturnsLanesWithTotals()
     {
-        _mediator.Send(Arg.Any<LanesProfitabilityQuery>(), Arg.Any<CancellationToken>())
-            .Returns(Result<List<LaneProfitDto>>.Ok(
-            [
-                new LaneProfitDto { Lane = "TX → CA", LoadCount = 2, Margin = -300m, MarginPerDistance = -0.5m, WorstCustomer = "Acme" }
-            ]));
+        _mediator.Send(Arg.Any<ProfitabilityReportQuery>(), Arg.Any<CancellationToken>())
+            .Returns(Result<ProfitabilityReportDto>.Ok(new ProfitabilityReportDto
+            {
+                Summary = new ProfitabilitySummaryDto { LoadCount = 2, NetProfit = -150m },
+                Lanes =
+                [
+                    new LaneProfitDto { Lane = "TX → CA", LoadCount = 2, Margin = -300m, MarginPerDistance = -0.5m, WorstCustomer = "Acme" }
+                ]
+            }));
 
         var root = await Run(new JsonObject { ["group_by"] = "lane" });
 

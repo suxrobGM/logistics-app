@@ -65,40 +65,11 @@ public class ReportController(IMediator mediator) : ControllerBase
         return result.ToActionResult();
     }
 
-    [HttpGet("profitability/loads", Name = "GetLoadsProfitability")]
-    [ProducesResponseType(typeof(PagedResponse<LoadProfitDto>), StatusCodes.Status200OK)]
-    [Authorize(Policy = Permission.Stat.View)]
-    public async Task<IActionResult> GetLoadsProfitability([FromQuery] LoadsProfitabilityQuery request)
-    {
-        var result = await mediator.Send(request);
-        return Ok(PagedResponse<LoadProfitDto>.FromPagedResult(result, request.Page, request.PageSize));
-    }
-
-    [HttpGet("profitability/trucks", Name = "GetTrucksProfitability")]
-    [ProducesResponseType(typeof(List<TruckProfitDto>), StatusCodes.Status200OK)]
+    [HttpGet("profitability", Name = "GetProfitabilityReport")]
+    [ProducesResponseType(typeof(ProfitabilityReportDto), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status400BadRequest)]
     [Authorize(Policy = Permission.Stat.View)]
-    public async Task<IActionResult> GetTrucksProfitability([FromQuery] TrucksProfitabilityQuery request)
-    {
-        var result = await mediator.Send(request);
-        return result.ToActionResult();
-    }
-
-    [HttpGet("profitability/lanes", Name = "GetLanesProfitability")]
-    [ProducesResponseType(typeof(List<LaneProfitDto>), StatusCodes.Status200OK)]
-    [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status400BadRequest)]
-    [Authorize(Policy = Permission.Stat.View)]
-    public async Task<IActionResult> GetLanesProfitability([FromQuery] LanesProfitabilityQuery request)
-    {
-        var result = await mediator.Send(request);
-        return result.ToActionResult();
-    }
-
-    [HttpGet("profitability/summary", Name = "GetProfitabilitySummary")]
-    [ProducesResponseType(typeof(ProfitabilitySummaryDto), StatusCodes.Status200OK)]
-    [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status400BadRequest)]
-    [Authorize(Policy = Permission.Stat.View)]
-    public async Task<IActionResult> GetProfitabilitySummary([FromQuery] ProfitabilitySummaryQuery request)
+    public async Task<IActionResult> GetProfitabilityReport([FromQuery] ProfitabilityReportQuery request)
     {
         var result = await mediator.Send(request);
         return result.ToActionResult();

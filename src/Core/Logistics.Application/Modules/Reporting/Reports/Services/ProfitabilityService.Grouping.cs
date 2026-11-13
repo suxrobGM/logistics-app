@@ -26,7 +26,7 @@ internal sealed partial class ProfitabilityService
                 var factoringFee = truckLoads.Sum(l => l.FactoringFee);
                 var costsTotal = costs.Sum(c => c.Amount);
                 var loaded = truckLoads.Sum(l => l.Distance);
-                double? actual = LoggedDistance(actualDistance, truckId, loaded);
+                double? actual = GetLoggedDistance(actualDistance, truckId, loaded);
 
                 return new TruckProfitDto
                 {
@@ -35,28 +35,25 @@ internal sealed partial class ProfitabilityService
                     LoadCount = truckLoads.Count,
                     LoadedDistance = loaded,
                     ActualDistance = actual,
-                    DeadheadPercent = DeadheadPercent(loaded, actual),
+                    DeadheadPercent = CalculateDeadheadPercent(loaded, actual),
                     Revenue = revenue,
                     DriverPay = driverPay,
                     TruckCosts = costs,
                     TruckCostsTotal = costsTotal,
                     FactoringFee = factoringFee,
                     Margin = revenue - driverPay - costsTotal - factoringFee,
-                    CostPerDistance = PerDistance(driverPay + costsTotal, actual ?? loaded, unit)
+                    CostPerDistance = CalculatePerDistance(driverPay + costsTotal, actual ?? loaded, unit)
                 };
             })
             .OrderBy(t => t.Margin)
             .ToList();
     }
 
-    /// <summary>
-    /// A log shorter than the loads the truck delivered is missing days, so it would show no deadhead and
-    /// overstate cost per distance; such a truck is treated as having no log.
-    /// </summary>
-    private static double? LoggedDistance(Dictionary<Guid, double> actualDistance, Guid truckId, double loaded) =>
+    /// <summary>A log shorter than the delivered loads is missing days, so the truck counts as having no log.</summary>
+    private static double? GetLoggedDistance(Dictionary<Guid, double> actualDistance, Guid truckId, double loaded) =>
         actualDistance.TryGetValue(truckId, out var meters) && meters >= loaded ? meters : null;
 
-    private static double? DeadheadPercent(double loaded, double? actual)
+    private static double? CalculateDeadheadPercent(double loaded, double? actual)
     {
         if (actual is not > 0)
         {
@@ -86,8 +83,8 @@ internal sealed partial class ProfitabilityService
                     LoadCount = lane.Count(),
                     Revenue = revenue,
                     Margin = margin,
-                    RevenuePerDistance = PerDistance(revenue, distance, unit),
-                    MarginPerDistance = PerDistance(margin, distance, unit),
+                    RevenuePerDistance = CalculatePerDistance(revenue, distance, unit),
+                    MarginPerDistance = CalculatePerDistance(margin, distance, unit),
                     BestCustomer = customers[0].Name,
                     WorstCustomer = customers[^1].Name
                 };

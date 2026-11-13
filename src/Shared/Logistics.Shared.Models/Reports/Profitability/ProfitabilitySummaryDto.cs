@@ -1,8 +1,6 @@
 namespace Logistics.Shared.Models;
 
-/// <summary>
-/// Company totals for a period. NetProfit = LoadMargin - UnallocatedTruckCosts - UnallocatedDriverPay - StaffPay - Overhead.
-/// </summary>
+/// <summary>NetProfit = LoadMargin - UnallocatedTruckCosts - UnallocatedDriverPay - StaffPay - Overhead.</summary>
 public record ProfitabilitySummaryDto
 {
     public int LoadCount { get; set; }

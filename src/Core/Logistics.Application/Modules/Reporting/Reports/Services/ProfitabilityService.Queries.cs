@@ -157,7 +157,7 @@ internal sealed partial class ProfitabilityService
                         StaffSalaryTypes.Contains(e.SalaryType))
             .ToListAsync(ct);
         var hours = await GetHoursAsync(staff, from, to, ct);
-        return staff.Sum(e => PeriodPay(e, period, hours));
+        return staff.Sum(e => CalculatePeriodPay(e, period, hours));
     }
 
     private Task<decimal> SumUnassignedFuelAsync(DateTime from, DateTime to, CancellationToken ct) =>
