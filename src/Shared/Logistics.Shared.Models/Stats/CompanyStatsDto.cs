@@ -50,4 +50,5 @@ public class TopTruckDto
     public string? TruckNumber { get; set; }
     public string? DriverName { get; set; }
     public decimal Revenue { get; set; }
+    public decimal Margin { get; set; }
 }

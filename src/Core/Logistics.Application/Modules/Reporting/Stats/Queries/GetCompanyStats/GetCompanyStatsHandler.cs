@@ -1,4 +1,5 @@
 using Logistics.Application.Abstractions;
+using Logistics.Application.Modules.Reporting.Reports.Services;
 using Logistics.Domain.Entities;
 using Logistics.Domain.Persistence;
 using Logistics.Domain.Primitives.Enums;
@@ -9,7 +10,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Logistics.Application.Modules.Reporting.Stats.Queries;
 
-internal sealed class GetCompanyStatsHandler(ITenantUnitOfWork tenantUow)
+internal sealed class GetCompanyStatsHandler(ITenantUnitOfWork tenantUow, IProfitabilityService profitability)
     : IRequestHandler<GetCompanyStatsQuery, Result<CompanyStatsDto>>
 {
     public async Task<Result<CompanyStatsDto>> Handle(
@@ -177,26 +178,34 @@ internal sealed class GetCompanyStatsHandler(ITenantUnitOfWork tenantUow)
             .Where(p => p.Status == PaymentStatus.Paid && p.CreatedAt >= startOfWeek)
             .SumAsync(p => p.Amount.Amount, ct);
 
-        // Top 3 trucks by revenue this month - single query with join
-        stats.TopTrucks = await loadsRepository.Query()
-            .Where(l => l.DeliveredAt >= startOfMonth && l.AssignedTruck != null)
-            .GroupBy(l => new
-            {
-                l.AssignedTruckId,
-                l.AssignedTruck!.Number,
-                DriverName = l.AssignedTruck.MainDriver != null
-                    ? l.AssignedTruck.MainDriver.FirstName + " " + l.AssignedTruck.MainDriver.LastName
-                    : null
-            })
-            .Select(g => new TopTruckDto
-            {
-                TruckId = g.Key.AssignedTruckId!.Value,
-                TruckNumber = g.Key.Number,
-                DriverName = g.Key.DriverName,
-                Revenue = g.Sum(l => l.DeliveryCost.Amount)
-            })
-            .OrderByDescending(x => x.Revenue)
+        stats.TopTrucks = await GetTopTrucksAsync(startOfMonth, now, ct);
+    }
+
+    /// <summary>The month's three trucks with the best margin among those that delivered.</summary>
+    private async Task<List<TopTruckDto>> GetTopTrucksAsync(DateTime from, DateTime to, CancellationToken ct)
+    {
+        var profit = await profitability.BuildAsync(from, to, ct);
+        var top = profit.Trucks
+            .Where(t => t.LoadCount > 0)
+            .OrderByDescending(t => t.Margin)
             .Take(3)
-            .ToListAsync(ct);
+            .ToList();
+
+        var truckIds = top.Select(t => t.TruckId).ToList();
+        var driverNames = await tenantUow.Repository<Truck>().Query()
+            .Where(t => truckIds.Contains(t.Id) && t.MainDriver != null)
+            .Select(t => new { t.Id, Name = t.MainDriver!.FirstName + " " + t.MainDriver.LastName })
+            .ToDictionaryAsync(t => t.Id, t => t.Name, ct);
+
+        return top
+            .Select(t => new TopTruckDto
+            {
+                TruckId = t.TruckId,
+                TruckNumber = t.TruckNumber,
+                DriverName = driverNames.GetValueOrDefault(t.TruckId),
+                Revenue = t.Revenue,
+                Margin = t.Margin
+            })
+            .ToList();
     }
 }

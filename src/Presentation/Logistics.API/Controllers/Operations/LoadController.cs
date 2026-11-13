@@ -3,6 +3,7 @@ using Logistics.Application.Modules.AI.AIDispatch.Queries;
 using Logistics.Application.Modules.Operations.Containers.Commands;
 using Logistics.Application.Modules.Operations.Loads.Commands;
 using Logistics.Application.Modules.Operations.Loads.Queries;
+using Logistics.Application.Modules.Reporting.Reports.Queries;
 using Logistics.Mediator;
 using Logistics.Shared.Identity.Claims;
 using Logistics.Shared.Identity.Policies;
@@ -278,6 +279,20 @@ public class LoadController(IMediator mediator) : ControllerBase
     public async Task<IActionResult> GetDetention(Guid id)
     {
         var result = await mediator.Send(new GetLoadDetentionQuery { LoadId = id });
+        return result.ToActionResult();
+    }
+
+    /// <summary>
+    ///     Revenue, costs and margin of a delivered load. Truck costs and salaried pay are estimated shares.
+    /// </summary>
+    [HttpGet("{id:guid}/profit", Name = "GetLoadProfit")]
+    [ProducesResponseType(typeof(LoadProfitDto), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status404NotFound)]
+    [Authorize(Policy = Permission.Stat.View)]
+    public async Task<IActionResult> GetProfit(Guid id)
+    {
+        var result = await mediator.Send(new GetLoadProfitQuery(id));
         return result.ToActionResult();
     }
 }

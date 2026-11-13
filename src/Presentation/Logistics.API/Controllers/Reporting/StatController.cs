@@ -43,15 +43,6 @@ public class StatController(IMediator mediator) : ControllerBase
         return result.ToActionResult();
     }
 
-    [HttpGet("trucks", Name = "GetTrucksStats")]
-    [ProducesResponseType(typeof(PagedResponse<TruckStatsDto>), StatusCodes.Status200OK)]
-    [Authorize(Policy = Permission.Stat.View)]
-    public async Task<IActionResult> GetTrucksStatsList([FromQuery] GetTrucksStatsListQuery request)
-    {
-        var result = await mediator.Send(request);
-        return Ok(PagedResponse<TruckStatsDto>.FromPagedResult(result, request.Page, request.PageSize));
-    }
-
     [HttpGet("driver/{userId:guid}", Name = "GetDriverStats")]
     [ProducesResponseType(typeof(DriverStatsDto), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status400BadRequest)]
