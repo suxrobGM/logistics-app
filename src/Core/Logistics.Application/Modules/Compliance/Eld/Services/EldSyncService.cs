@@ -196,7 +196,7 @@ internal sealed class EldSyncService(
         var stored = await repo.GetListAsync(l =>
             l.EmployeeId == mapping.EmployeeId &&
             l.ProviderType == mapping.ProviderType &&
-            (l.StartTime >= windowStart || keys.Contains(l.ExternalLogId!)), ct);
+            (l.StartedAt >= windowStart || keys.Contains(l.ExternalLogId!)), ct);
 
         var seen = new HashSet<string>();
         foreach (var log in stored)
@@ -220,7 +220,7 @@ internal sealed class EldSyncService(
                 ExternalLogId = key,
                 LogDate = entry.LogDate,
                 DutyStatus = entry.DutyStatus,
-                StartTime = entry.StartTime
+                StartedAt = entry.StartTime
             };
             Apply(log, entry);
             await repo.AddAsync(log, ct);
@@ -230,8 +230,8 @@ internal sealed class EldSyncService(
         {
             log.LogDate = entry.LogDate;
             log.DutyStatus = entry.DutyStatus;
-            log.StartTime = entry.StartTime;
-            log.EndTime = entry.EndTime;
+            log.StartedAt = entry.StartTime;
+            log.EndedAt = entry.EndTime;
             log.DurationMinutes = entry.DurationMinutes;
             log.Location = entry.Location;
             log.Latitude = entry.Latitude;

@@ -17,7 +17,7 @@ public class AccidentReportDto
     public AccidentReportStatus Status { get; set; }
     public string StatusDisplay { get; set; } = string.Empty;
 
-    public DateTime AccidentDateTime { get; set; }
+    public DateTime OccurredAt { get; set; }
     public string Location { get; set; } = string.Empty;
     public double? Latitude { get; set; }
     public double? Longitude { get; set; }

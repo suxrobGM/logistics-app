@@ -43,7 +43,7 @@ public partial class Trip
     /// <summary>In route order.</summary>
     public IReadOnlyList<TripStop> GetRemainingStops()
     {
-        return [.. Stops.Where(s => s.ArrivedAt is null).OrderBy(s => s.Order)];
+        return [.. Stops.Where(s => s.ArrivedAt is null).OrderBy(s => s.Position)];
     }
 
     /// <summary>Raises <see cref="TripStopRunningLateEvent"/> at most once per stop.</summary>

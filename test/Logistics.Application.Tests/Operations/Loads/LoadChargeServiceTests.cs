@@ -48,7 +48,7 @@ public class LoadChargeServiceTests
 
     private TripStop Stop(int index, int dwellMinutes, bool departed = true)
     {
-        var stop = _trip.Stops.OrderBy(s => s.Order).ElementAt(index);
+        var stop = _trip.Stops.OrderBy(s => s.Position).ElementAt(index);
         stop.ArrivedAt = DateTime.UtcNow.AddMinutes(-dwellMinutes - 1);
         stop.DepartedAt = departed ? stop.ArrivedAt.Value.AddMinutes(dwellMinutes) : null;
         return stop;

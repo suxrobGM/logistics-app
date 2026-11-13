@@ -147,11 +147,11 @@ public class TenantModelMappingTests
     }
 
     [Fact]
-    public void Notifications_IndexCreatedDate_AndHaveNoSharedReadFlag()
+    public void Notifications_IndexCreatedAt_AndHaveNoSharedReadFlag()
     {
         var table = Table("notifications");
 
-        Assert.Contains(table.Indexes, i => i.Columns.Single().Name == "created_date");
+        Assert.Contains(table.Indexes, i => i.Columns.Single().Name == "created_at");
         Assert.DoesNotContain(table.Columns, c => c.Name == "is_read");
     }
 

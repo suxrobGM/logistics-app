@@ -45,7 +45,7 @@ public class LoadInvoiceChargesTests
             AccessorialUnit.PerStop));
         var invoice = LoadInvoice.Create(load);
 
-        Assert.Collection(invoice.LineItems.OrderBy(li => li.Order),
+        Assert.Collection(invoice.LineItems.OrderBy(li => li.Position),
             l => Assert.Equal(InvoiceLineItemType.BaseRate, l.Type),
             l =>
             {
@@ -88,7 +88,7 @@ public class LoadInvoiceChargesTests
             Description = "Tarp",
             Type = InvoiceLineItemType.Other,
             Amount = 40m,
-            Order = 1
+            Position = 1
         };
         var storage = new InvoiceLineItem
         {
@@ -96,7 +96,7 @@ public class LoadInvoiceChargesTests
             Description = "Storage",
             Type = InvoiceLineItemType.Storage,
             Amount = 150m,
-            Order = 2
+            Position = 2
         };
         invoice.LineItems.AddRange([manual, storage]);
 
@@ -110,8 +110,8 @@ public class LoadInvoiceChargesTests
         Assert.Contains(manual, invoice.LineItems);
         Assert.Contains(storage, invoice.LineItems);
         Assert.Equal(2100m + 200m + 40m + 150m, invoice.Total);
-        Assert.Equal([0, 1, 2, 3], invoice.LineItems.OrderBy(l => l.Order).Select(l => l.Order));
-        Assert.Equal(InvoiceLineItemType.BaseRate, invoice.LineItems.OrderBy(l => l.Order).First().Type);
+        Assert.Equal([0, 1, 2, 3], invoice.LineItems.OrderBy(l => l.Position).Select(l => l.Position));
+        Assert.Equal(InvoiceLineItemType.BaseRate, invoice.LineItems.OrderBy(l => l.Position).First().Type);
     }
 
     [Fact]

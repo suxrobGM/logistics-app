@@ -10,8 +10,8 @@ public record HosLogDto
     public DateTime LogDate { get; set; }
     public DutyStatus DutyStatus { get; set; }
     public string? DutyStatusDisplay { get; set; }
-    public DateTime StartTime { get; set; }
-    public DateTime? EndTime { get; set; }
+    public DateTime StartedAt { get; set; }
+    public DateTime? EndedAt { get; set; }
     public int DurationMinutes { get; set; }
     public string? DurationDisplay { get; set; }
     public string? Location { get; set; }

@@ -9,5 +9,5 @@ public class Notification : Entity, ITenantEntity
 {
     public required string Title { get; set; }
     public required string Message { get; set; }
-    public DateTime CreatedDate { get; set; } = DateTime.UtcNow;
+    public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
 }

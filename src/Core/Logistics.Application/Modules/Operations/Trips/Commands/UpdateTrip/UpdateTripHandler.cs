@@ -159,7 +159,7 @@ internal sealed class UpdateTripHandler(
         // Build a lookup for the new order: key = (LoadId, Type), value = new Order
         var orderLookup = optimizedStops.ToDictionary(
             s => (s.LoadId, s.Type),
-            s => s.Order);
+            s => s.Position);
 
         // Update the order of existing stops
         foreach (var stop in trip.Stops)
@@ -167,7 +167,7 @@ internal sealed class UpdateTripHandler(
             var key = (stop.LoadId, stop.Type);
             if (orderLookup.TryGetValue(key, out var newOrder))
             {
-                stop.Order = newOrder;
+                stop.Position = newOrder;
             }
             else
             {

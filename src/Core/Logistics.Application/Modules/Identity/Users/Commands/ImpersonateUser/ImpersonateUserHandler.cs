@@ -111,7 +111,7 @@ internal sealed class ImpersonateUserHandler(
             AdminEmail = adminEmail,
             TargetUserId = targetUserId,
             TargetEmail = targetEmail,
-            Timestamp = DateTime.UtcNow,
+            OccurredAt = DateTime.UtcNow,
             IpAddress = ipAddress,
             UserAgent = userAgent,
             WasSuccessful = true
@@ -139,7 +139,7 @@ internal sealed class ImpersonateUserHandler(
             AdminEmail = adminEmail ?? "unknown",
             TargetUserId = Guid.Empty,
             TargetEmail = targetEmail,
-            Timestamp = DateTime.UtcNow,
+            OccurredAt = DateTime.UtcNow,
             IpAddress = ipAddress,
             UserAgent = userAgent,
             WasSuccessful = false,

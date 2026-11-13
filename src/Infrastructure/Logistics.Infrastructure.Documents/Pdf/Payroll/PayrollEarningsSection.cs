@@ -15,7 +15,7 @@ internal static class PayrollEarningsSection
 {
     public static void Render(IContainer container, PayrollInvoice payroll, string currency)
     {
-        var lineItems = payroll.LineItems.OrderBy(li => li.Order).ToList();
+        var lineItems = payroll.LineItems.OrderBy(li => li.Position).ToList();
         var earnings = lineItems.Where(li => !li.Type.IsPayDeduction()).ToList();
         var deductions = lineItems.Where(li => li.Type.IsPayDeduction()).ToList();
 

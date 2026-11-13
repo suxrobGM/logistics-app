@@ -11,7 +11,7 @@ public record InvoiceLineItemDto
     public InvoiceLineItemType Type { get; set; }
     public decimal Amount { get; set; }
     public decimal Quantity { get; set; }
-    public int Order { get; set; }
+    public int Position { get; set; }
     public string? Notes { get; set; }
 
     /// <summary>

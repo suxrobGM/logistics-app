@@ -43,7 +43,7 @@ internal sealed class IftaFilingReminderService(
                 {
                     Title = $"IFTA Q{quarter} {year} filing due in {daysUntilDeadline} day(s)",
                     Message = $"The IFTA return for Q{quarter} {year} is due {deadline:MMMM d, yyyy}. Review the IFTA report and file with your base jurisdiction.",
-                    CreatedDate = utcNow
+                    CreatedAt = utcNow
                 }, ct);
             }
             catch (Exception ex)

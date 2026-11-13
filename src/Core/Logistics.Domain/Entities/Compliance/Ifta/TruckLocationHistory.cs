@@ -18,7 +18,7 @@ public class TruckLocationHistory : Entity, ITenantEntity
     public required GeoPoint Location { get; set; }
 
     /// <summary>When the position was recorded (UTC).</summary>
-    public required DateTime Timestamp { get; set; }
+    public required DateTime RecordedAt { get; set; }
 
     /// <summary>ELD provider the ping came from; null for driver-app/manual sources.</summary>
     public EldProviderType? Source { get; set; }

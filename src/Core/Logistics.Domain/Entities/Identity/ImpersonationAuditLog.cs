@@ -31,7 +31,7 @@ public class ImpersonationAuditLog : Entity, IMasterEntity
     /// <summary>
     /// When the impersonation occurred.
     /// </summary>
-    public DateTime Timestamp { get; set; } = DateTime.UtcNow;
+    public DateTime OccurredAt { get; set; } = DateTime.UtcNow;
 
     /// <summary>
     /// IP address of the request.

@@ -8,5 +8,5 @@ public record ConsentRecordDto
     public Guid UserId { get; set; }
     public ConsentType ConsentType { get; set; }
     public bool Granted { get; set; }
-    public DateTime Timestamp { get; set; }
+    public DateTime RecordedAt { get; set; }
 }

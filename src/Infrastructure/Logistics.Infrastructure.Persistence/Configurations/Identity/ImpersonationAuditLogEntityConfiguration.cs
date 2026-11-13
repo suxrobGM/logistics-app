@@ -32,7 +32,7 @@ internal sealed class ImpersonationAuditLogEntityConfiguration : IEntityTypeConf
 
         builder.HasIndex(l => l.AdminUserId);
         builder.HasIndex(l => l.TargetUserId);
-        builder.HasIndex(l => l.Timestamp);
-        builder.HasIndex(l => new { l.WasSuccessful, l.Timestamp });
+        builder.HasIndex(l => l.OccurredAt);
+        builder.HasIndex(l => new { l.WasSuccessful, l.OccurredAt });
     }
 }

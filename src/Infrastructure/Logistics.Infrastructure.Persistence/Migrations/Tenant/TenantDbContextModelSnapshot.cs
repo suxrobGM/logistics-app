@@ -162,10 +162,6 @@ namespace Logistics.Infrastructure.Persistence.Migrations.Tenant
                         .HasColumnType("uuid")
                         .HasColumnName("id");
 
-                    b.Property<DateTime>("AccidentDateTime")
-                        .HasColumnType("timestamp with time zone")
-                        .HasColumnName("accident_date_time");
-
                     b.Property<string>("AccidentType")
                         .IsRequired()
                         .HasColumnType("text")
@@ -264,6 +260,10 @@ namespace Logistics.Infrastructure.Persistence.Migrations.Tenant
                     b.Property<int?>("NumberOfInjuries")
                         .HasColumnType("integer")
                         .HasColumnName("number_of_injuries");
+
+                    b.Property<DateTime>("OccurredAt")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("occurred_at");
 
                     b.Property<string>("PoliceDepartment")
                         .HasMaxLength(200)
@@ -379,8 +379,8 @@ namespace Logistics.Infrastructure.Persistence.Migrations.Tenant
                     b.HasIndex("TruckId")
                         .HasDatabaseName("ix_accident_reports_truck_id");
 
-                    b.HasIndex("DriverId", "AccidentDateTime")
-                        .HasDatabaseName("ix_accident_reports_driver_id_accident_date_time");
+                    b.HasIndex("DriverId", "OccurredAt")
+                        .HasDatabaseName("ix_accident_reports_driver_id_occurred_at");
 
                     b.ToTable("accident_reports", (string)null);
                 });
@@ -3090,9 +3090,9 @@ namespace Logistics.Infrastructure.Persistence.Migrations.Tenant
                         .HasColumnType("uuid")
                         .HasColumnName("employee_id");
 
-                    b.Property<DateTime?>("EndTime")
+                    b.Property<DateTime?>("EndedAt")
                         .HasColumnType("timestamp with time zone")
-                        .HasColumnName("end_time");
+                        .HasColumnName("ended_at");
 
                     b.Property<string>("ExternalLogId")
                         .HasMaxLength(100)
@@ -3126,9 +3126,9 @@ namespace Logistics.Infrastructure.Persistence.Migrations.Tenant
                         .HasColumnType("character varying(1000)")
                         .HasColumnName("remark");
 
-                    b.Property<DateTime>("StartTime")
+                    b.Property<DateTime>("StartedAt")
                         .HasColumnType("timestamp with time zone")
-                        .HasColumnName("start_time");
+                        .HasColumnName("started_at");
 
                     b.HasKey("Id")
                         .HasName("pk_hos_logs");
@@ -3395,9 +3395,9 @@ namespace Logistics.Infrastructure.Persistence.Migrations.Tenant
                         .HasColumnType("character varying(1000)")
                         .HasColumnName("notes");
 
-                    b.Property<int>("Order")
+                    b.Property<int>("Position")
                         .HasColumnType("integer")
-                        .HasColumnName("order");
+                        .HasColumnName("position");
 
                     b.Property<decimal>("Quantity")
                         .HasPrecision(12, 2)
@@ -4795,9 +4795,9 @@ namespace Logistics.Infrastructure.Persistence.Migrations.Tenant
                         .HasColumnType("uuid")
                         .HasColumnName("id");
 
-                    b.Property<DateTime>("CreatedDate")
+                    b.Property<DateTime>("CreatedAt")
                         .HasColumnType("timestamp with time zone")
-                        .HasColumnName("created_date");
+                        .HasColumnName("created_at");
 
                     b.Property<string>("Message")
                         .IsRequired()
@@ -4812,8 +4812,8 @@ namespace Logistics.Infrastructure.Persistence.Migrations.Tenant
                     b.HasKey("Id")
                         .HasName("pk_notifications");
 
-                    b.HasIndex("CreatedDate")
-                        .HasDatabaseName("ix_notifications_created_date");
+                    b.HasIndex("CreatedAt")
+                        .HasDatabaseName("ix_notifications_created_at");
 
                     b.ToTable("notifications", (string)null);
                 });
@@ -6073,9 +6073,9 @@ namespace Logistics.Infrastructure.Persistence.Migrations.Tenant
                         .HasColumnType("uuid")
                         .HasColumnName("load_id");
 
-                    b.Property<int>("Order")
+                    b.Property<int>("Position")
                         .HasColumnType("integer")
-                        .HasColumnName("order");
+                        .HasColumnName("position");
 
                     b.Property<Guid>("TripId")
                         .HasColumnType("uuid")
@@ -6371,13 +6371,13 @@ namespace Logistics.Infrastructure.Persistence.Migrations.Tenant
                         .HasColumnType("bigint")
                         .HasColumnName("odometer_meters");
 
+                    b.Property<DateTime>("RecordedAt")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("recorded_at");
+
                     b.Property<string>("Source")
                         .HasColumnType("text")
                         .HasColumnName("source");
-
-                    b.Property<DateTime>("Timestamp")
-                        .HasColumnType("timestamp with time zone")
-                        .HasColumnName("timestamp");
 
                     b.Property<Guid>("TruckId")
                         .HasColumnType("uuid")
@@ -6399,13 +6399,13 @@ namespace Logistics.Infrastructure.Persistence.Migrations.Tenant
                     b.HasKey("Id")
                         .HasName("pk_truck_location_history");
 
-                    b.HasIndex("Timestamp")
-                        .HasDatabaseName("ix_truck_location_history_timestamp");
+                    b.HasIndex("RecordedAt")
+                        .HasDatabaseName("ix_truck_location_history_recorded_at");
 
-                    NpgsqlIndexBuilderExtensions.HasMethod(b.HasIndex("Timestamp"), "brin");
+                    NpgsqlIndexBuilderExtensions.HasMethod(b.HasIndex("RecordedAt"), "brin");
 
-                    b.HasIndex("TruckId", "Timestamp")
-                        .HasDatabaseName("ix_truck_location_history_truck_id_timestamp");
+                    b.HasIndex("TruckId", "RecordedAt")
+                        .HasDatabaseName("ix_truck_location_history_truck_id_recorded_at");
 
                     b.ToTable("truck_location_history", (string)null);
                 });

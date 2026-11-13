@@ -21,12 +21,12 @@ public class HosLog : Entity, ITenantEntity
     /// <summary>
     /// When this duty status period started
     /// </summary>
-    public required DateTime StartTime { get; set; }
+    public required DateTime StartedAt { get; set; }
 
     /// <summary>
     /// When this duty status period ended (null if still ongoing)
     /// </summary>
-    public DateTime? EndTime { get; set; }
+    public DateTime? EndedAt { get; set; }
 
     /// <summary>
     /// Duration of this status period in minutes

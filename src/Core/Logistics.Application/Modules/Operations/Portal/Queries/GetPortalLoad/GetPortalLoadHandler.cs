@@ -28,7 +28,7 @@ internal sealed class GetPortalLoadHandler(ITenantUnitOfWork tenantUow, ITrackin
 
         var nextStop = load.TripStops
             .Where(s => s.ArrivedAt == null)
-            .OrderBy(s => s.Order)
+            .OrderBy(s => s.Position)
             .FirstOrDefault();
         var trackingLink = await trackingLinks.FindActiveAsync(load.Id, ct);
 

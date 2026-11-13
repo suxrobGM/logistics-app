@@ -21,7 +21,7 @@ public class InvoiceLineItem : Entity, ITenantEntity
     /// <summary>
     /// Display order of the line item.
     /// </summary>
-    public int Order { get; set; }
+    public int Position { get; set; }
 
     public string? Notes { get; set; }
 

@@ -57,7 +57,7 @@ public class TruckLocationRecorderTests
     {
         TruckId = _truck.Id,
         Location = location,
-        Timestamp = timestamp,
+        RecordedAt = timestamp,
         OdometerMeters = odometer
     };
 

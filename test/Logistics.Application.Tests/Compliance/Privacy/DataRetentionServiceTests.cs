@@ -24,7 +24,7 @@ public class DataRetentionServiceTests
         {
             Title = "Old",
             Message = "Never read",
-            CreatedDate = DateTime.UtcNow - PrivacyDefaults.NotificationRetention - TimeSpan.FromDays(1)
+            CreatedAt = DateTime.UtcNow - PrivacyDefaults.NotificationRetention - TimeSpan.FromDays(1)
         };
         var recent = new Notification { Title = "Recent", Message = "Never read" };
         var notificationRepo = tenantUow.Stub<Notification>(old, recent);

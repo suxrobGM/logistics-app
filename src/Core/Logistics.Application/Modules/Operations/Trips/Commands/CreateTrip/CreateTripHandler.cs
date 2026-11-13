@@ -179,7 +179,7 @@ internal sealed class CreateTripHandler(
             var tripStop = new TripStop
             {
                 // Don't use the ID from DTO to avoid conflicts with existing entities
-                Order = stopDto.Order,
+                Position = stopDto.Position,
                 Type = stopDto.Type,
                 Address = stopDto.Address,
                 Location = stopDto.Location,

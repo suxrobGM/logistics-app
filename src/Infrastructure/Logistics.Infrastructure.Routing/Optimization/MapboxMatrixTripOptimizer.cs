@@ -21,7 +21,7 @@ internal sealed class MapboxMatrixTripOptimizer(MapboxMatrixClient matrix) : ITr
             coords.Add((@params.Start.Longitude, @params.Start.Latitude));
         }
 
-        foreach (var s in @params.Stops.OrderBy(s => s.Order))
+        foreach (var s in @params.Stops.OrderBy(s => s.Position))
         {
             idxOf[s.Id] = coords.Count;
             coords.Add((s.Location.Longitude, s.Location.Latitude));
@@ -95,7 +95,7 @@ internal sealed class MapboxMatrixTripOptimizer(MapboxMatrixClient matrix) : ITr
         // 4) Renumber orders
         for (var i = 0; i < route.Count; i++)
         {
-            route[i].Order = i + 1;
+            route[i].Position = i + 1;
         }
 
         return route;

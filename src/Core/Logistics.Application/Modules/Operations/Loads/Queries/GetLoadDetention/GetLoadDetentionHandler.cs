@@ -21,7 +21,7 @@ internal sealed class GetLoadDetentionHandler(ITenantUnitOfWork tenantUow)
 
         var stops = load.TripStops
             .Where(s => s.ArrivedAt is not null)
-            .OrderBy(s => s.Order)
+            .OrderBy(s => s.Position)
             .Select(s =>
             {
                 var detention = DetentionCalculator.Calculate(s, now, terms)!;

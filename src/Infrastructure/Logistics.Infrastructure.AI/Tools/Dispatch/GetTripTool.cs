@@ -46,9 +46,9 @@ internal sealed class GetTripTool(ITenantUnitOfWork tenantUow)
             secondary_driver_id = trip.SecondaryDriverId,
             secondary_driver_name = await GetNameAsync(trip.SecondaryDriverId, ct),
             eta_updated_at = Format(trip.EtaUpdatedAt),
-            stops = trip.Stops.OrderBy(s => s.Order).Select(s => new
+            stops = trip.Stops.OrderBy(s => s.Position).Select(s => new
             {
-                order = s.Order,
+                order = s.Position,
                 type = s.Type.ToString(),
                 address = s.Address.ToString(),
                 load_id = s.LoadId,

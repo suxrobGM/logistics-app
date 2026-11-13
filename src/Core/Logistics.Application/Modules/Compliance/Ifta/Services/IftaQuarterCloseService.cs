@@ -46,7 +46,7 @@ internal sealed class IftaQuarterCloseService(
     {
         var cutoff = DateTime.UtcNow - AuditRetention;
         return await tenantUow.Repository<TruckLocationHistory>().Query()
-            .Where(h => h.Timestamp < cutoff)
+            .Where(h => h.RecordedAt < cutoff)
             .ExecuteDeleteAsync(ct);
     }
 }

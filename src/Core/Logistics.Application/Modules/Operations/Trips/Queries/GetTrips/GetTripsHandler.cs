@@ -62,7 +62,7 @@ internal sealed class GetTripsHandler(ITenantUnitOfWork tenantUow, IDisplayNameL
 
         var stops = await tenantUow.Repository<TripStop>().Query()
             .Where(s => tripIds.Contains(s.TripId))
-            .OrderBy(s => s.Order)
+            .OrderBy(s => s.Position)
             .ToListAsync(ct);
         var stopsByTrip = stops.ToLookup(s => s.TripId);
         var loads = await GetTripLoadsAsync(stops, ct);

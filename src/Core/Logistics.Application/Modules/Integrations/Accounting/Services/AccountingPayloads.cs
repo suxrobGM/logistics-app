@@ -46,7 +46,7 @@ internal static class AccountingPayloads
         AccountingProviderConfiguration config, AccountingMappings mappings, string currency)
     {
         var lines = lineItems
-            .OrderBy(li => li.Order)
+            .OrderBy(li => li.Position)
             .Select(li => new QboInvoiceLinePayload
             {
                 Description = li.Description,

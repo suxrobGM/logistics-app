@@ -21,6 +21,6 @@ internal sealed class ConsentRecordEntityConfiguration : IEntityTypeConfiguratio
             .OnDelete(DeleteBehavior.Cascade);
 
         builder.HasIndex(r => r.UserId);
-        builder.HasIndex(r => new { r.ConsentType, r.Timestamp });
+        builder.HasIndex(r => new { r.ConsentType, r.RecordedAt });
     }
 }

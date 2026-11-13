@@ -20,7 +20,7 @@ internal sealed class DataRetentionService(
 
         var oldNotifications = await tenantUow.Repository<Notification>()
             .Query()
-            .Where(n => n.CreatedDate < notificationCutoff)
+            .Where(n => n.CreatedAt < notificationCutoff)
             .ToListAsync(ct);
 
         foreach (var notification in oldNotifications)

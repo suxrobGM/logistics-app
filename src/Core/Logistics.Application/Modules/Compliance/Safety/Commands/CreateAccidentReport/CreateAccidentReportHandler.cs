@@ -33,7 +33,7 @@ internal sealed class CreateAccidentReportHandler(ITenantUnitOfWork tenantUow)
             AccidentType = req.Type,
             Severity = req.Severity,
             Status = AccidentReportStatus.Draft,
-            AccidentDateTime = req.AccidentDateTime,
+            OccurredAt = req.OccurredAt,
             Address = req.Location,
             Latitude = req.Latitude ?? 0,
             Longitude = req.Longitude ?? 0,

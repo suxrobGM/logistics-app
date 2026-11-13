@@ -91,11 +91,11 @@ internal sealed class DataExportService(
         var consents = await masterUow.Repository<ConsentRecord>()
             .Query()
             .Where(c => c.UserId == userId)
-            .OrderBy(c => c.Timestamp)
+            .OrderBy(c => c.RecordedAt)
             .ToListAsync(ct);
 
         await WriteJsonAsync(archive, "consents.json",
-            consents.Select(c => new { c.ConsentType, c.Granted, c.Timestamp }),
+            consents.Select(c => new { c.ConsentType, c.Granted, c.RecordedAt }),
             ct);
 
         var exports = await masterUow.Repository<DataExportRequest>()

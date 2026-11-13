@@ -10,7 +10,7 @@ public record InvoiceDto
     public long Number { get; set; }
     public InvoiceType Type { get; set; }
     public InvoiceStatus Status { get; set; }
-    public DateTime CreatedDate { get; set; }
+    public DateTime CreatedAt { get; set; }
 
     /// <summary>
     /// Sum of line item nets (pre-tax) in the invoice currency.

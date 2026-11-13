@@ -18,7 +18,7 @@ public class TripStop : Entity, ITenantEntity
     /// <summary>
     ///     1-based position in the overall route.
     /// </summary>
-    public int Order { get; set; }
+    public int Position { get; set; }
 
     public required Address Address { get; set; }
     public required GeoPoint Location { get; set; }

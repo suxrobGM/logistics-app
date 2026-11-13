@@ -54,7 +54,7 @@ public partial class Trip : AuditableEntity, ITenantEntity
     /// </summary>
     public Address GetOriginAddress()
     {
-        return Stops.OrderBy(s => s.Order).First().Address;
+        return Stops.OrderBy(s => s.Position).First().Address;
     }
 
     /// <summary>
@@ -62,7 +62,7 @@ public partial class Trip : AuditableEntity, ITenantEntity
     /// </summary>
     public Address GetDestinationAddress()
     {
-        return Stops.OrderBy(s => s.Order).Last().Address;
+        return Stops.OrderBy(s => s.Position).Last().Address;
     }
 
     /// <summary>

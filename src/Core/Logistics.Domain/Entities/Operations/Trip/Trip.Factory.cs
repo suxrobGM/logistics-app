@@ -62,7 +62,7 @@ public partial class Trip
         {
             Trip = trip,
             TripId = trip.Id,
-            Order = order,
+            Position = order,
             Type = TripStopType.PickUp,
             Address = load.OriginAddress,
             Location = load.OriginLocation,
@@ -73,7 +73,7 @@ public partial class Trip
         {
             Trip = trip,
             TripId = trip.Id,
-            Order = order + 1,
+            Position = order + 1,
             Type = TripStopType.DropOff,
             Address = load.DestinationAddress,
             Location = load.DestinationLocation,
@@ -82,7 +82,7 @@ public partial class Trip
         }
     ];
 
-    internal int GetNextStopOrder() => Stops.Count == 0 ? 1 : Stops.Max(s => s.Order) + 1;
+    internal int GetNextStopOrder() => Stops.Count == 0 ? 1 : Stops.Max(s => s.Position) + 1;
 
     private void AddStopsForLoads(IEnumerable<Load> loads)
     {

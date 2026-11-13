@@ -40,11 +40,11 @@ internal sealed class TruckLocationRecorder(
     {
         var previous = await tenantUow.Repository<TruckLocationHistory>().Query()
             .Where(h => h.TruckId == truck.Id)
-            .OrderByDescending(h => h.Timestamp)
+            .OrderByDescending(h => h.RecordedAt)
             .FirstOrDefaultAsync(ct);
 
         // Out-of-order or duplicate ping: keep the newest state, don't accrue backwards
-        if (previous is not null && timestampUtc <= previous.Timestamp)
+        if (previous is not null && timestampUtc <= previous.RecordedAt)
         {
             return;
         }
@@ -53,7 +53,7 @@ internal sealed class TruckLocationRecorder(
         {
             TruckId = truck.Id,
             Location = location,
-            Timestamp = timestampUtc,
+            RecordedAt = timestampUtc,
             Source = source,
             OdometerMeters = odometerMeters
         }, ct);
@@ -96,7 +96,7 @@ internal sealed class TruckLocationRecorder(
         // Teleport guard: an implausible implied speed means a GPS glitch, not real distance.
         // Long gaps still accrue - dropping distance understates tax liability, which is worse
         // in an IFTA audit than GPS drift.
-        var hours = (timestampUtc - previous.Timestamp).TotalHours;
+        var hours = (timestampUtc - previous.RecordedAt).TotalHours;
         if (hours > 0 && (double)meters / hours > MaxPlausibleMetersPerHour)
         {
             logger.LogWarning(

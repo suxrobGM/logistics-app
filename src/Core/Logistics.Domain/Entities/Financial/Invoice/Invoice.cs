@@ -48,14 +48,14 @@ public abstract partial class Invoice : AuditableEntity, ITenantEntity, IAuditab
         }
 
         var order = fresh.Count;
-        foreach (var other in LineItems.OrderBy(li => li.Order))
+        foreach (var other in LineItems.OrderBy(li => li.Position))
         {
-            other.Order = order++;
+            other.Position = order++;
         }
 
         for (var i = 0; i < fresh.Count; i++)
         {
-            fresh[i].Order = i;
+            fresh[i].Position = i;
         }
 
         LineItems.AddRange(fresh);
@@ -108,7 +108,7 @@ public abstract partial class Invoice : AuditableEntity, ITenantEntity, IAuditab
             Type = type,
             Amount = SignLineAmount(type, amount),
             Quantity = quantity,
-            Order = LineItems.Count > 0 ? LineItems.Max(li => li.Order) + 1 : 0,
+            Position = LineItems.Count > 0 ? LineItems.Max(li => li.Position) + 1 : 0,
             Notes = notes
         };
 

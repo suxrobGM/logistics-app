@@ -31,7 +31,7 @@ internal class NotificationSeeder(ILogger<NotificationSeeder> logger) : SeederBa
             {
                 Title = $"Test notification {i}",
                 Message = $"Notification {i} description",
-                CreatedDate = DateTime.SpecifyKind(
+                CreatedAt = DateTime.SpecifyKind(
                     random.UtcDate(DateTime.UtcNow.AddMonths(-1), DateTime.UtcNow.AddDays(-1)),
                     DateTimeKind.Utc)
             };

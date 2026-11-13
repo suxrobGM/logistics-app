@@ -74,7 +74,7 @@ internal sealed class LicenseExpiryReminderService(
             Message =
                 $"License {license.LicenseNumber} ({license.IssuingCountry}) expires on " +
                 $"{license.ExpiresAt:yyyy-MM-dd}.",
-            CreatedDate = DateTime.UtcNow
+            CreatedAt = DateTime.UtcNow
         };
 
         await notificationService.BroadcastNotificationAsync(tenantId, notification);

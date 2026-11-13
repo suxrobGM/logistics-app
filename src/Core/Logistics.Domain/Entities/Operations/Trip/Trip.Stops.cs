@@ -72,9 +72,9 @@ public partial class Trip
     private void RenumberStops()
     {
         var order = 1;
-        foreach (var s in Stops.OrderBy(x => x.Order))
+        foreach (var s in Stops.OrderBy(x => x.Position))
         {
-            s.Order = order++;
+            s.Position = order++;
         }
     }
 }

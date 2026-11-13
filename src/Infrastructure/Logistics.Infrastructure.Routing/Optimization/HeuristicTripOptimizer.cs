@@ -77,7 +77,7 @@ internal sealed class HeuristicTripOptimizer : ITripOptimizer
         // re-number orders
         for (var i = 0; i < ordered.Count; i++)
         {
-            ordered[i].Order = i + 1;
+            ordered[i].Position = i + 1;
         }
 
         return Task.FromResult<IReadOnlyList<TripStopDto>>(ordered);

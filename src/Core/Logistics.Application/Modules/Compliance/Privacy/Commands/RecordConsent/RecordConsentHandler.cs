@@ -16,7 +16,7 @@ internal sealed class RecordConsentHandler(IMasterUnitOfWork masterUow)
             UserId = req.UserId,
             ConsentType = req.ConsentType,
             Granted = req.Granted,
-            Timestamp = DateTime.UtcNow,
+            RecordedAt = DateTime.UtcNow,
             IpAddress = req.IpAddress,
             UserAgent = req.UserAgent
         };

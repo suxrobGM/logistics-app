@@ -10,6 +10,6 @@ internal sealed class NotificationEntityConfiguration : IEntityTypeConfiguration
     {
         builder.ToTable("notifications");
 
-        builder.HasIndex(n => n.CreatedDate);
+        builder.HasIndex(n => n.CreatedAt);
     }
 }

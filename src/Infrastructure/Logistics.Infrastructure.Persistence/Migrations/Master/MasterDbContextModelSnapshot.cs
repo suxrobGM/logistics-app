@@ -201,9 +201,9 @@ namespace Logistics.Infrastructure.Persistence.Migrations.Master
                         .HasColumnType("character varying(64)")
                         .HasColumnName("ip_address");
 
-                    b.Property<DateTime>("Timestamp")
+                    b.Property<DateTime>("RecordedAt")
                         .HasColumnType("timestamp with time zone")
-                        .HasColumnName("timestamp");
+                        .HasColumnName("recorded_at");
 
                     b.Property<string>("UserAgent")
                         .HasMaxLength(512)
@@ -220,8 +220,8 @@ namespace Logistics.Infrastructure.Persistence.Migrations.Master
                     b.HasIndex("UserId")
                         .HasDatabaseName("ix_consent_records_user_id");
 
-                    b.HasIndex("ConsentType", "Timestamp")
-                        .HasDatabaseName("ix_consent_records_consent_type_timestamp");
+                    b.HasIndex("ConsentType", "RecordedAt")
+                        .HasDatabaseName("ix_consent_records_consent_type_recorded_at");
 
                     b.ToTable("consent_records", (string)null);
                 });
@@ -589,6 +589,10 @@ namespace Logistics.Infrastructure.Persistence.Migrations.Master
                         .HasColumnType("character varying(64)")
                         .HasColumnName("ip_address");
 
+                    b.Property<DateTime>("OccurredAt")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("occurred_at");
+
                     b.Property<string>("TargetEmail")
                         .IsRequired()
                         .HasMaxLength(256)
@@ -598,10 +602,6 @@ namespace Logistics.Infrastructure.Persistence.Migrations.Master
                     b.Property<Guid>("TargetUserId")
                         .HasColumnType("uuid")
                         .HasColumnName("target_user_id");
-
-                    b.Property<DateTime>("Timestamp")
-                        .HasColumnType("timestamp with time zone")
-                        .HasColumnName("timestamp");
 
                     b.Property<string>("UserAgent")
                         .IsRequired()
@@ -619,14 +619,14 @@ namespace Logistics.Infrastructure.Persistence.Migrations.Master
                     b.HasIndex("AdminUserId")
                         .HasDatabaseName("ix_impersonation_audit_logs_admin_user_id");
 
+                    b.HasIndex("OccurredAt")
+                        .HasDatabaseName("ix_impersonation_audit_logs_occurred_at");
+
                     b.HasIndex("TargetUserId")
                         .HasDatabaseName("ix_impersonation_audit_logs_target_user_id");
 
-                    b.HasIndex("Timestamp")
-                        .HasDatabaseName("ix_impersonation_audit_logs_timestamp");
-
-                    b.HasIndex("WasSuccessful", "Timestamp")
-                        .HasDatabaseName("ix_impersonation_audit_logs_was_successful_timestamp");
+                    b.HasIndex("WasSuccessful", "OccurredAt")
+                        .HasDatabaseName("ix_impersonation_audit_logs_was_successful_occurred_at");
 
                     b.ToTable("impersonation_audit_logs", (string)null);
                 });

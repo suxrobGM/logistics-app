@@ -38,7 +38,7 @@ public static partial class TripMapper
             IReadOnlyCollection<TripStop> stops,
             IReadOnlyList<TripLoadDto> loads)
         {
-            var ordered = stops.OrderBy(s => s.Order).ToArray();
+            var ordered = stops.OrderBy(s => s.Position).ToArray();
             var deliveryCosts = loads.ToDictionary(l => l.Id, l => l.DeliveryCost);
 
             var dto = MapTrip(entity, ordered.First().Address, ordered.Last().Address);

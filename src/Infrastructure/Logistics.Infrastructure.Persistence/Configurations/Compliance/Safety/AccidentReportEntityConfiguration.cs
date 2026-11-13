@@ -10,7 +10,7 @@ internal sealed class AccidentReportEntityConfiguration : IEntityTypeConfigurati
     {
         builder.ToTable("accident_reports");
 
-        builder.HasIndex(i => new { i.DriverId, i.AccidentDateTime });
+        builder.HasIndex(i => new { i.DriverId, i.OccurredAt });
         builder.HasIndex(i => i.Status);
         builder.HasIndex(i => i.Severity);
 

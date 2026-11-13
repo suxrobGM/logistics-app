@@ -79,7 +79,7 @@ internal static class InvoiceLineItemsSection
                 }
             });
 
-            var lines = invoice.LineItems.OrderBy(li => li.Order).ToList();
+            var lines = invoice.LineItems.OrderBy(li => li.Position).ToList();
             if (lines.Count == 0 && invoice.Load is not null)
             {
                 RenderFallbackRow(table, invoice.Load.DeliveryCost, currency, showTax);

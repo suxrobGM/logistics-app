@@ -67,7 +67,7 @@ public class FuelCardSyncJob(
             {
                 Title = "Fuel card transactions need review",
                 Message = $"{result.Pending} fuel card transaction(s) could not be matched to a truck. Review them in Fuel Cards.",
-                CreatedDate = DateTime.UtcNow
+                CreatedAt = DateTime.UtcNow
             });
         }
     }

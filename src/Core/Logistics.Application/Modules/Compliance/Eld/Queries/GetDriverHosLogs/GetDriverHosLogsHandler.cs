@@ -23,7 +23,7 @@ internal sealed class GetDriverHosLogsHandler(ITenantUnitOfWork tenantUow)
         var totalItems = await query.CountAsync(ct);
 
         var logs = await query
-            .OrderByDescending(l => l.StartTime)
+            .OrderByDescending(l => l.StartedAt)
             .Skip((req.Page - 1) * req.PageSize)
             .Take(req.PageSize)
             .Select(l => l.ToDto(l.Employee.FirstName + " " + l.Employee.LastName))

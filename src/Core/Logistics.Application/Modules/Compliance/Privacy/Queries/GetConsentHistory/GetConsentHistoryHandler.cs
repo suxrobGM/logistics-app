@@ -24,7 +24,7 @@ internal sealed class GetConsentHistoryHandler(
         var records = await masterUow.Repository<ConsentRecord>()
             .Query()
             .Where(r => r.UserId == userId.Value)
-            .OrderByDescending(r => r.Timestamp)
+            .OrderByDescending(r => r.RecordedAt)
             .ToListAsync(ct);
 
         return Result<List<ConsentRecordDto>>.Ok(records.Select(r => r.ToDto()).ToList());

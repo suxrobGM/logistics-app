@@ -136,7 +136,7 @@ internal class AccidentReportSeeder(ILogger<AccidentReportSeeder> logger) : Seed
             Status = status,
             AccidentType = random.Pick(Enum.GetValues<AccidentType>()),
             Severity = severity,
-            AccidentDateTime = accidentDate,
+            OccurredAt = accidentDate,
             Latitude = location.Latitude + (random.NextDouble() - 0.5) * 0.01,
             Longitude = location.Longitude + (random.NextDouble() - 0.5) * 0.01,
             Address = $"{location.Address.Line1}, {location.Address.City}, {location.Address.State} {location.Address.ZipCode}",

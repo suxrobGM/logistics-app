@@ -46,7 +46,7 @@ public class SettlementLinesTests
             0, [advance], [fuel]));
 
         Assert.Equal(5000m - 600m - 250m - 200m - 450m, payroll.Total);
-        Assert.Collection(payroll.LineItems.OrderBy(l => l.Order),
+        Assert.Collection(payroll.LineItems.OrderBy(l => l.Position),
             l => Assert.Equal((InvoiceLineItemType.BasePay, 5000m), (l.Type, l.Total)),
             l => Assert.Equal((InvoiceLineItemType.Deduction, -600m), (l.Type, l.Total)),
             l => Assert.Equal((InvoiceLineItemType.Deduction, -250m), (l.Type, l.Total)),
@@ -100,7 +100,7 @@ public class SettlementLinesTests
             Description = "Lumper paid by driver",
             Type = InvoiceLineItemType.Reimbursement,
             Amount = 120m,
-            Order = 5
+            Position = 5
         });
         payroll.LineItems.Add(new InvoiceLineItem
         {
@@ -108,7 +108,7 @@ public class SettlementLinesTests
             Description = "Damaged pallet",
             Type = InvoiceLineItemType.Deduction,
             Amount = PayrollInvoice.SignedLineAmount(InvoiceLineItemType.Deduction, 80m),
-            Order = 6
+            Position = 6
         });
 
         var (removed, added) = payroll.ReplaceSettlementLines(new SettlementInputs(1500m, "Gross", [], 0, [], []));

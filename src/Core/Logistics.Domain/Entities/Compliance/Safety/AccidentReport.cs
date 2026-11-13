@@ -22,7 +22,7 @@ public class AccidentReport : AuditableEntity, ITenantEntity
     public required AccidentSeverity Severity { get; set; }
 
     // Incident details
-    public required DateTime AccidentDateTime { get; set; }
+    public required DateTime OccurredAt { get; set; }
     public required double Latitude { get; set; }
     public required double Longitude { get; set; }
     public string? Address { get; set; }

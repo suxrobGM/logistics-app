@@ -6,7 +6,7 @@ namespace Logistics.Shared.Models;
 public record TripStopDto
 {
     public Guid Id { get; set; }
-    public int Order { get; set; }
+    public int Position { get; set; }
     public TripStopType Type { get; set; }
 
     public required Address Address { get; set; }

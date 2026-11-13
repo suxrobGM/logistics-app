@@ -79,7 +79,7 @@ public class CreateAccidentReportHandlerTests
         DriverId = _driver.Id,
         Type = AccidentType.Collision,
         Severity = AccidentSeverity.Minor,
-        AccidentDateTime = DateTime.UtcNow,
+        OccurredAt = DateTime.UtcNow,
         Location = "I-35, Dallas, TX",
         Description = "Rear-ended at a light"
     };

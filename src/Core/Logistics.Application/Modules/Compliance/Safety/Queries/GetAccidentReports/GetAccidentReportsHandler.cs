@@ -38,15 +38,15 @@ internal sealed class GetAccidentReportsHandler(ITenantUnitOfWork tenantUow, IDi
 
         if (req.FromDate.HasValue)
         {
-            baseQuery = baseQuery.Where(r => r.AccidentDateTime >= req.FromDate);
+            baseQuery = baseQuery.Where(r => r.OccurredAt >= req.FromDate);
         }
 
         if (req.ToDate.HasValue)
         {
-            baseQuery = baseQuery.Where(r => r.AccidentDateTime <= req.ToDate);
+            baseQuery = baseQuery.Where(r => r.OccurredAt <= req.ToDate);
         }
 
-        return await baseQuery.ToPagedResultAsync(req, MapPageAsync, ct, defaultOrderBy: "-AccidentDateTime");
+        return await baseQuery.ToPagedResultAsync(req, MapPageAsync, ct, defaultOrderBy: "-OccurredAt");
     }
 
     private async Task<IEnumerable<AccidentReportDto>> MapPageAsync(

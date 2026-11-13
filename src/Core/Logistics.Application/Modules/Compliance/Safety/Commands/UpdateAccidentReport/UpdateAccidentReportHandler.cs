@@ -41,7 +41,7 @@ internal sealed class UpdateAccidentReportHandler(ITenantUnitOfWork tenantUow)
         report.Driver = driver;
         report.AccidentType = req.Type;
         report.Severity = req.Severity;
-        report.AccidentDateTime = req.AccidentDateTime;
+        report.OccurredAt = req.OccurredAt;
         report.Address = req.Location;
         report.Latitude = req.Latitude ?? 0;
         report.Longitude = req.Longitude ?? 0;

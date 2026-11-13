@@ -12,7 +12,7 @@ public record UpdateAccidentReportCommand : ICommand<Result<AccidentReportDto>>
     public required Guid DriverId { get; set; }
     public required AccidentType Type { get; set; }
     public required AccidentSeverity Severity { get; set; }
-    public required DateTime AccidentDateTime { get; set; }
+    public required DateTime OccurredAt { get; set; }
     public required string Location { get; set; }
     public double? Latitude { get; set; }
     public double? Longitude { get; set; }

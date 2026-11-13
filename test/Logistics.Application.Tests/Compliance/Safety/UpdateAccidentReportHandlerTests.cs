@@ -27,7 +27,7 @@ public class UpdateAccidentReportHandlerTests
             Status = AccidentReportStatus.Draft,
             AccidentType = AccidentType.Collision,
             Severity = AccidentSeverity.Minor,
-            AccidentDateTime = DateTime.UtcNow,
+            OccurredAt = DateTime.UtcNow,
             Latitude = 0,
             Longitude = 0,
             FatalitiesReported = true,
@@ -88,7 +88,7 @@ public class UpdateAccidentReportHandlerTests
         DriverId = _driver.Id,
         Type = AccidentType.Collision,
         Severity = AccidentSeverity.Minor,
-        AccidentDateTime = DateTime.UtcNow,
+        OccurredAt = DateTime.UtcNow,
         Location = "I-35, Dallas, TX",
         Description = "Rear-ended at a light"
     };

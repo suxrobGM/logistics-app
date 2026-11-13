@@ -133,7 +133,7 @@
                     @foreach (var consent in Model.Consents)
                     {
                         <tr>
-                            <td>@consent.Timestamp.ToLocalTime().ToString("g")</td>
+                            <td>@consent.RecordedAt.ToLocalTime().ToString("g")</td>
                             <td>@consent.ConsentType.GetDescription()</td>
                             <td>
                                 <span class="badge @(consent.Granted ? "bg-success" : "bg-secondary")">

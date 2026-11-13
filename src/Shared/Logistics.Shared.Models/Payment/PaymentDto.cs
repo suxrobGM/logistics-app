@@ -6,7 +6,7 @@ namespace Logistics.Shared.Models;
 public record PaymentDto
 {
     public Guid Id { get; set; }
-    public DateTime CreatedDate { get; set; }
+    public DateTime CreatedAt { get; set; }
 
     public decimal Amount { get; set; }
     public string? StripePaymentMethodId { get; set; }

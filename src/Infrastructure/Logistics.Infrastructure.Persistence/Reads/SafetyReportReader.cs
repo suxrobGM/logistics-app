@@ -34,8 +34,8 @@ internal sealed class SafetyReportReader(TenantDbContext db, ITenantUnitOfWork t
 
         var accidentByStatusSeverityAndMonth = await db.Set<AccidentReport>()
             .AsNoTracking()
-            .Where(a => a.AccidentDateTime >= startDate && a.AccidentDateTime <= endDate)
-            .GroupBy(a => new { a.Status, a.Severity, a.AccidentDateTime.Year, a.AccidentDateTime.Month })
+            .Where(a => a.OccurredAt >= startDate && a.OccurredAt <= endDate)
+            .GroupBy(a => new { a.Status, a.Severity, a.OccurredAt.Year, a.OccurredAt.Month })
             .Select(g => new AccidentGroupRow(
                 g.Key.Status,
                 g.Key.Severity,
@@ -48,7 +48,7 @@ internal sealed class SafetyReportReader(TenantDbContext db, ITenantUnitOfWork t
 
         var topAccidentDrivers = await db.Set<AccidentReport>()
             .AsNoTracking()
-            .Where(a => a.AccidentDateTime >= startDate && a.AccidentDateTime <= endDate)
+            .Where(a => a.OccurredAt >= startDate && a.OccurredAt <= endDate)
             .GroupBy(a => a.DriverId)
             .Select(g => new DriverEventCountRow(g.Key, g.Count()))
             .OrderByDescending(x => x.Count)
@@ -57,7 +57,7 @@ internal sealed class SafetyReportReader(TenantDbContext db, ITenantUnitOfWork t
 
         var truckAccidentCounts = await db.Set<AccidentReport>()
             .AsNoTracking()
-            .Where(a => a.AccidentDateTime >= startDate && a.AccidentDateTime <= endDate)
+            .Where(a => a.OccurredAt >= startDate && a.OccurredAt <= endDate)
             .GroupBy(a => a.TruckId)
             .Select(g => new TruckEventCountRow(g.Key, g.Count()))
             .ToListAsync(ct);

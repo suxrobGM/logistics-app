@@ -97,7 +97,7 @@ internal class IftaMileageSeeder(ILogger<IftaMileageSeeder> logger) : SeederBase
                     {
                         TruckId = truck.Id,
                         Location = new GeoPoint(longitude, latitude),
-                        Timestamp = date.ToDateTime(new TimeOnly(6 + i * 4, (int)(seed % 60)), DateTimeKind.Utc)
+                        RecordedAt = date.ToDateTime(new TimeOnly(6 + i * 4, (int)(seed % 60)), DateTimeKind.Utc)
                     }, cancellationToken);
 
                     count++;

@@ -15,9 +15,9 @@ internal sealed class TruckLocationHistoryEntityConfiguration : IEntityTypeConfi
             .HasForeignKey(i => i.TruckId)
             .OnDelete(DeleteBehavior.Cascade);
 
-        builder.HasIndex(i => new { i.TruckId, i.Timestamp });
+        builder.HasIndex(i => new { i.TruckId, i.RecordedAt });
 
         // BRIN suits the append-only, time-ordered access pattern (retention purges, range scans)
-        builder.HasIndex(i => i.Timestamp).HasMethod("brin");
+        builder.HasIndex(i => i.RecordedAt).HasMethod("brin");
     }
 }

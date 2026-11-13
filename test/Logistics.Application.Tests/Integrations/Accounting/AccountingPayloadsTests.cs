@@ -183,7 +183,7 @@ public class AccountingPayloadsTests
         Description = type.ToString(),
         Type = type,
         Amount = amount,
-        Order = order
+        Position = order
     };
 
     private static TruckExpense NewTruckExpense(TruckExpenseCategory category) => new()
