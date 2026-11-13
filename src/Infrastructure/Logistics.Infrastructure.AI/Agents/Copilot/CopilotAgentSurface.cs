@@ -1,6 +1,6 @@
 using Logistics.Application.Abstractions.AI;
 using Logistics.Application.Abstractions.AICopilot;
-using Logistics.Application.Modules.IdentityAccess.Users.Services;
+using Logistics.Application.Modules.Identity.Users.Services;
 using Logistics.Domain.Entities;
 using Logistics.Domain.Primitives.Enums;
 using Logistics.Shared.Models;

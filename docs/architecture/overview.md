@@ -187,7 +187,7 @@ A public clone gets an empty `private/` directory. Everything else builds and ru
 
 Commands and queries are separated and dispatched through `Logistics.Mediator` (`src/Core/Logistics.Mediator`), an in-repo replacement for MediatR, which moved to a commercial licence. Both extend `IRequest<TResponse>` via the `ICommand<T>` / `IQuery<T>` markers in `Logistics.Application.Abstractions.Common`. A command targets the master or tenant DB purely by which unit of work its handler injects (`IMasterUnitOfWork` vs `ITenantUnitOfWork`) - there is no separate marker interface. Handlers own their own `SaveChangesAsync` calls - there is no auto-transaction wrapper.
 
-Commands and queries live under `Logistics.Application/Modules/{Module}/{Feature}/{Commands|Queries}/`. See [module-layout.md](module-layout.md) for the six modules and the feature-folder convention.
+Commands and queries live under `Logistics.Application/Modules/{Module}/{Feature}/{Commands|Queries}/`. See [module-layout.md](module-layout.md) for the nine modules and the feature-folder convention.
 
 ```csharp
 public class CreateLoadCommand : ICommand;                 // flat fields, bound directly as the request body

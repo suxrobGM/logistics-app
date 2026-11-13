@@ -48,7 +48,7 @@ This file answers _where_. For _how it works_, follow the deep dive: **AI dispat
 Template emails, no LLM. Gated by `TenantFeature.CustomerUpdates` (every plan).
 
 - Domain: `Entities/Load/Load.CustomerUpdates.cs` + `CustomerUpdate.cs` (JSON `loads.customer_updates`: sent / skipped / failed), `Customer.UpdatePreferences` (`ValueObjects/CustomerUpdatePreferences.cs`)
-- Application: `Modules/Operations/Loads/Services/CustomerUpdateService.cs` (recipients = `Customer.Email` + active `CustomerUser`s; tracking link from `Tracking/Services/TrackingLinkService.cs`), queued by `Loads/Events/LoadStatusChangedCustomerUpdateHandler.cs` and `Trips/Events/TripStopRunningLateCustomerUpdateHandler.cs` as `Commands/SendCustomerStatusUpdate/` and `Commands/SendCustomerLateNotice/` background jobs; `Commands/SendCustomerDelayNotice/` (the agent's `send_customer_update`); `IdentityAccess/Customers/Commands/SetCustomerUpdatePreferences/` (`PUT /customers/{id}/preferences`)
+- Application: `Modules/Operations/Loads/Services/CustomerUpdateService.cs` (recipients = `Customer.Email` + active `CustomerUser`s; tracking link from `Tracking/Services/TrackingLinkService.cs`), queued by `Loads/Events/LoadStatusChangedCustomerUpdateHandler.cs` and `Trips/Events/TripStopRunningLateCustomerUpdateHandler.cs` as `Commands/SendCustomerStatusUpdate/` and `Commands/SendCustomerLateNotice/` background jobs; `Commands/SendCustomerDelayNotice/` (the agent's `send_customer_update`); `Operations/Customers/Commands/SetCustomerUpdatePreferences/` (`PUT /customers/{id}/preferences`)
 - Templates: `Infrastructure.Communications/Email/Templates/Shipment{Dispatched,PickedUp,Delivered,Late}.liquid`, model `ShipmentUpdateEmailModel`
 - UI: `tms-portal/pages/loads/components/load-customer-updates-content/`, `pages/customers/components/customer-update-preferences/`; customer-portal `shipments/components/shipment-schedule/` (windows, ETA, tracking link, sent updates via `PortalLoadDto`)
 
@@ -78,18 +78,18 @@ Template emails, no LLM. Gated by `TenantFeature.CustomerUpdates` (every plan).
 ### Customers
 
 - Domain: `Entities/Customer.cs`
-- Application: `Modules/IdentityAccess/Customers/Commands/`, `Modules/IdentityAccess/Customers/Queries/`
+- Application: `Modules/Operations/Customers/Commands/`, `Modules/Operations/Customers/Queries/`
 - API/UI: `CustomerController.cs`, `tms-portal/pages/customers/`
 
 ### Customer users
 
 - Domain: `Entities/Customer/CustomerUser.cs`
-- Application: `Modules/IdentityAccess/CustomerUsers/Commands/`
+- Application: `Modules/Identity/CustomerUsers/Commands/`
 - API/UI: `CustomerUserController.cs`, `customer-portal/pages/`
 
 ### Customer portal
 
-- Application: `Modules/Platform/Portal/Queries/` (portal loads, load documents + download, invoices, customer users, tenant access)
+- Application: `Modules/Operations/Portal/Queries/` (portal loads, load documents + download, invoices, customer users, tenant access)
 - API/UI: `PortalController.cs` (`/portal/*`), `customer-portal/pages/` (`shipments/`, `documents/`, `invoices/`, `tracking/`, `payment/`, `account/`)
 
 ### Containers (ISO 6346)
@@ -113,7 +113,7 @@ Template emails, no LLM. Gated by `TenantFeature.CustomerUpdates` (every plan).
 ### Employees / Drivers
 
 - Domain: `Entities/Employee.cs`
-- Application: `Modules/IdentityAccess/Employees/Commands/`, `Modules/IdentityAccess/Employees/Queries/`
+- Application: `Modules/Identity/Employees/Commands/`, `Modules/Identity/Employees/Queries/`
 - API/UI: `EmployeeController.cs`, `DriverController.cs`, `tms-portal/pages/employees/`
 
 ### Time entries
@@ -124,19 +124,19 @@ Template emails, no LLM. Gated by `TenantFeature.CustomerUpdates` (every plan).
 
 ### Dashboard / stats
 
-- Application: `Modules/Platform/Stats/Queries/`, `Modules/Platform/Reports/Queries/`
+- Application: `Modules/Reporting/Stats/Queries/`, `Modules/Reporting/Reports/Queries/`
 - API/UI: `StatController.cs`, `ReportController.cs`, `tms-portal/pages/home/` (+ its `components/` panels), `pages/reports/`. `pages/dashboard/` is a redirect-only stub kept for old bookmarks - don't add anything there
 
 ### Onboarding
 
-- Application: `Modules/Platform/Onboarding/Queries/GetOnboardingProgress/` - read-only checklist; step keys are camelCase, labels/icons/routes live on the client. Each step declares a `TenantFeature`, so a disabled feature drops its step rather than shipping one that can never complete
+- Application: `Modules/Tenancy/Onboarding/Queries/GetOnboardingProgress/` - read-only checklist; step keys are camelCase, labels/icons/routes live on the client. Each step declares a `TenantFeature`, so a disabled feature drops its step rather than shipping one that can never complete
 - API/UI: `OnboardingController.cs` (`GET /onboarding/progress`, `Permission.Employee.Manage` - Owner + Manager), `tms-portal/pages/home/components/onboarding-checklist/` (also links to the data import)
 
 ### Data import (CSV / XLSX from another TMS)
 
 Stateless: the client re-sends the file on every step; nothing is stored. Full guide: [docs/data-import.md](../docs/data-import.md).
 
-- Application: `Modules/Platform/DataImport/` - `Constants/ImportFieldCatalog.cs` (fields + header synonyms per entity), `Services/` (`ImportHeaderMapper`, `ImportValueParser`, `ImportAddressParser`), `Importers/` (one `EntityImporter<TDraft>` per entity: customers, drivers, trucks, trailers, loads), `Commands/RunImport/` (validate = dry run, import), `Queries/PreviewImport|GetImportTemplate/`
+- Application: `Modules/Operations/DataImport/` - `Constants/ImportFieldCatalog.cs` (fields + header synonyms per entity), `Services/` (`ImportHeaderMapper`, `ImportValueParser`, `ImportAddressParser`), `Importers/` (one `EntityImporter<TDraft>` per entity: customers, drivers, trucks, trailers, loads), `Commands/RunImport/` (validate = dry run, import), `Queries/PreviewImport|GetImportTemplate/`
 - Infrastructure: `Infrastructure.Documents/Spreadsheets/SpreadsheetReader.cs` (ExcelDataReader) behind `Application.Abstractions/Documents/ISpreadsheetReader`
 - API/UI: `ImportController.cs` (`/imports/*`, `Permission.Import.Manage`), `tms-portal/pages/settings/data-import/`
 - Trap: imported drivers get a password-less master `User`; `CreateInvitationHandler` lets such a member be invited and `AcceptInvitationHandler` sets the password on accept instead of failing "already an employee"
@@ -144,7 +144,7 @@ Stateless: the client re-sends the file on every step; nothing is stored. Full g
 ### Tenant presets and solo mode
 
 - Domain: `Primitives/Enums/Tenant/TenantPreset.cs` (`GeneralFreight` | `CarHauler` | `Intermodal` | `SoloOperator`), stored as `Tenant.Presets` (`presets text[]` on `tenants`, master DB) with `Tenant.IsSolo`; `Entities/Feature/TenantPresetCatalog.cs` maps presets to features (presets combine; solo drops `Payroll`/`Timesheets`)
-- Application: `Modules/IdentityAccess/Tenants/Commands/CreateTenant` + `UpdateTenantPresets` (admin roles only) call `IFeatureService.ApplyPresetFeaturesAsync`; `Modules/Platform/Onboarding/` drops the `inviteTeam` step for solo; `Modules/Operations/Loads/Services/VehicleTransportCheck.cs` gates vehicle load and car hauler truck types on `TenantFeature.VehicleTransport`
+- Application: `Modules/Tenancy/Tenants/Commands/CreateTenant` + `UpdateTenantPresets` (admin roles only) call `IFeatureService.ApplyPresetFeaturesAsync`; `Modules/Tenancy/Onboarding/` drops the `inviteTeam` step for solo; `Modules/Operations/Loads/Services/VehicleTransportCheck.cs` gates vehicle load and car hauler truck types on `TenantFeature.VehicleTransport`
 - Infrastructure: `Infrastructure.AI/Agents/Dispatch/AIDispatchSystemPrompt.cs` - solo swaps in a `## Fleet Profile: SOLO OWNER-OPERATOR` section
 - API/UI: `TenantController.UpdateTenantPresets`, `tms-portal/core/services/tenant.service.ts` (`isSoloMode`), `core/services/sidebar-nav.service.ts` (`SOLO_HIDDEN_ITEMS`), `admin-portal/shared/components/tenant-form/`, `admin-portal/pages/tenants/tenant-edit/`
 - Note: solo relies on Owner holding `Permission.Driver.*` (`Shared.Identity/Policies/TenantRolePermissions.cs`), and driver-facing queries keying off `Truck.MainDriverId`/`SecondaryDriverId` rather than the role. There is no multi-role model
@@ -162,7 +162,7 @@ Tenant-shared, not per-user: any user with `Permission.Dispatch.View` can list/r
 with `Type == Dispatch`.
 
 - Domain: `Entities/AIDispatch/AgentSession.cs`, `AgentConversation.cs`, `AgentMessage.cs`
-- Application: `Modules/Integrations/AIDispatch/Commands/` (`Create`/`Rename`/`Delete`AIDispatchConversation, `SendAIDispatchMessage` - concurrency guard + quota gate, mirrors `SendAICopilotMessage`; `CancelAIDispatchTurn`), `Modules/Integrations/AIDispatch/Queries/` (`GetAIDispatchConversations` - no owner filter, `GetAIDispatchConversationById` - messages + decisions + per-turn `AgentSessionDto` stats)
+- Application: `Modules/AI/AIDispatch/Commands/` (`Create`/`Rename`/`Delete`AIDispatchConversation, `SendAIDispatchMessage` - concurrency guard + quota gate, mirrors `SendAICopilotMessage`; `CancelAIDispatchTurn`), `Modules/AI/AIDispatch/Queries/` (`GetAIDispatchConversations` - no owner filter, `GetAIDispatchConversationById` - messages + decisions + per-turn `AgentSessionDto` stats)
 - Infrastructure: `Infrastructure.AI/Agents/Dispatch/AIDispatchService.cs` (thin adapter onto the shared `AgentTurnService`) + `DispatchAgentSurface.cs` (`IAgentSurface`: no per-caller tool scoping, tenant-wide broadcasts) + `AIDispatchConversationBuilder.cs` (system prompt, transcript replay via `AgentTranscriptLoader.LoadAsync`); planning runs on `Tools/Dispatch/GetDispatchCandidatesTool.cs` (type rule, HOS, deadhead, `EquipmentFit`, eligibility in one call); `Infrastructure.Communications/SignalR/Hubs/AIDispatchHub.cs` (tenant-wide `dispatch-board:{tenantId}` group, mounted at `/hubs/ai-dispatch`)
 - Jobs: `Logistics.API/Jobs/AIDispatchTurnJob.cs` (re-checks `AgenticDispatch` inside the job, mirrors `AICopilotTurnJob`)
 - API/UI: `AIDispatchController.cs` (`ai/dispatch/conversations` CRUD + messages + cancel, mirroring `AICopilotController`'s route style), `tms-portal/pages/ai-dispatch/`
@@ -170,7 +170,7 @@ with `Type == Dispatch`.
 ### Dispatch decisions
 
 - Domain: `Entities/AIDispatch/AgentDecision.cs`
-- Application: `Modules/Integrations/AIDispatch/Commands/Approve*`, `Reject*` - append a System note to the decision's conversation transcript and broadcast it tenant-wide, but only when the session has a `ConversationId` (old sessions may predate conversations)
+- Application: `Modules/AI/AIDispatch/Commands/Approve*`, `Reject*` - append a System note to the decision's conversation transcript and broadcast it tenant-wide, but only when the session has a `ConversationId` (old sessions may predate conversations)
 - Infrastructure: `Infrastructure.AI/Agents/AgentDecisionProcessor.cs`
 - Auto-approve: `AIDispatchPolicy.AutoApproveTypes`/`AutoApproveStreak` (eligible set `AutoApproveEligibleTypes`), `AIDispatch/Services/AgentTrustService.cs` (streak since the last rejection or revert), `Commands/RevertAIDispatchDecision/` (15 min, `AgentDecision.RevertWindow`), `Commands/UpdateAIDispatchAutonomy/`, `Queries/GetAIDispatchAutonomy/` (`ai/dispatch/autonomy`); UI `ai-dispatch/components/auto-approve-settings/` (policy page), `components/auto-approved-decisions/` (right panel)
 - API/UI: (under `ai-dispatch/`)
@@ -180,14 +180,14 @@ with `Type == Dispatch`.
 Gated by `TenantFeature.AITripAlerts` (Professional+). The agent proposes; nothing executes without approval.
 
 - Triggers (each stamped once): late stop (`Trips/Events/TripStopRunningLateAlertHandler.cs`), hours shortfall (`Trip.HosShortfallFlaggedAt`, from `EldSyncService` and after each ETA refresh), new HOS violations, detention - all through `Modules/Operations/Trips/Services/TripAlertReporter.cs`, which only enqueues `RaiseTripAlertCommand`
-- Application: `Modules/Integrations/AIDispatch/Services/TripAlertTurnStarter.cs` (links `Trip.AlertConversationId` by conditional UPDATE, fenced alert message, atomic turn claim, daily cap `TenantSettings.TripAlertsPerDay`, in-app + Telegram notice)
+- Application: `Modules/AI/AIDispatch/Services/TripAlertTurnStarter.cs` (links `Trip.AlertConversationId` by conditional UPDATE, fenced alert message, atomic turn claim, daily cap `TenantSettings.TripAlertsPerDay`, in-app + Telegram notice)
 - Tool: `Infrastructure.AI/Tools/Dispatch/GetTripTool.cs` (`get_trip`: stops, ETAs, late flags, drivers)
 - Jobs: `Logistics.API/Jobs/TripAlertWakeJob.cs` (busy retry); demo scenario `DbMigrator/Seeders/FakeData/TripAlertDemoSeeder.cs`
 
 ### Dispatch policy (learned preferences)
 
 - Domain: `Entities/AIDispatch/AIDispatchPolicy.cs` (one row per tenant; `GeneratedContent` is job-owned, `ManualContent` is dispatcher-owned)
-- Application: `Modules/Integrations/AIDispatch/Services/AIDispatchPolicyLearner.cs` + `DecisionHistoryDigest.cs` + `AIDispatchPolicyPrompt.cs`; `Commands/{Update,Regenerate,Delete}AIDispatchPolicy/`, `Queries/GetAIDispatchPolicy/`
+- Application: `Modules/AI/AIDispatch/Services/AIDispatchPolicyLearner.cs` + `DecisionHistoryDigest.cs` + `AIDispatchPolicyPrompt.cs`; `Commands/{Update,Regenerate,Delete}AIDispatchPolicy/`, `Queries/GetAIDispatchPolicy/`
 - Infrastructure: injected into the prompt by `Infrastructure.AI/Agents/Dispatch/AIDispatchSystemPrompt.cs` (`LearnedDispatchPolicy`), loaded in `AIDispatchConversationBuilder`
 - Jobs: `Logistics.API/Jobs/AIDispatchPolicyLearningJob.cs` (nightly, `Cron.Daily(4)`)
 - API/UI: `AIDispatchController` `ai/dispatch/policy`, `tms-portal/pages/ai-dispatch/dispatch-policy/`
@@ -209,7 +209,7 @@ See [docs/broker-email-negotiation.md](../docs/broker-email-negotiation.md). Gat
 approved `AgentDecision`; inbound mail can only append a message and ask for a turn.
 
 - Domain: `Entities/Negotiation/RateNegotiation.cs` (owns the reply token and the round cap), `NegotiationMessage.cs`, `LaneRateFloor.cs`; `Entities/InboundEmailRoute.cs` (**master** DB - maps a reply token to a tenant); `AgentDecision.NegotiationId`, `TenantSettings.DefaultRateFloorPerMile`
-- Application: `Modules/Integrations/Negotiation/` - `Services/` (`LaneRateFloorResolver`, `NegotiationEmailComposer` - the one owner of broker-facing formatting and sanitization, `NegotiationTurnStarter`, `EmailReplyParser`), `Commands/` (`ProposeCounterOffer` - floor gate then credit gate then send-before-persist; `CloseNegotiation`; `ProcessInboundNegotiationEmail`; lane-floor CRUD), `Queries/` (`GetNegotiations`, `GetNegotiationById`, `PreviewCounterOffer`, `GetRateFloorContext`, `GetLaneRateFloors`); `Modules/Integrations/Webhooks/Commands/ProcessResendWebhook/` (mail without a thread token goes to `ForwardInboundEmail`, which forwards it to `OwnerNotifications:Email`); shared credit gate in `Modules/Integrations/LoadBoard/Services/BrokerCreditGate.cs`
+- Application: `Modules/AI/Negotiation/` - `Services/` (`LaneRateFloorResolver`, `NegotiationEmailComposer` - the one owner of broker-facing formatting and sanitization, `NegotiationTurnStarter`, `EmailReplyParser`), `Commands/` (`ProposeCounterOffer` - floor gate then credit gate then send-before-persist; `CloseNegotiation`; `ProcessInboundNegotiationEmail`; lane-floor CRUD), `Queries/` (`GetNegotiations`, `GetNegotiationById`, `PreviewCounterOffer`, `GetRateFloorContext`, `GetLaneRateFloors`); `Modules/Integrations/Webhooks/Commands/ProcessResendWebhook/` (mail without a thread token goes to `ForwardInboundEmail`, which forwards it to `OwnerNotifications:Email`); shared credit gate in `Modules/Integrations/LoadBoard/Services/BrokerCreditGate.cs`
 - Infrastructure: `Infrastructure.Communications/Email/` (`ResendThreadedEmailSender` - reply-to plus `In-Reply-To`/`References`, `ResendInboundEmailReader` - the Received Emails API, `ResendWebhookVerifier`, `SvixSignature`, `Templates/BrokerCounterOffer.liquid`); `Infrastructure.AI/Tools/Negotiation/` (`get_rate_floor`, `get_negotiation_thread`, `propose_counter_offer`)
 - Jobs: `Logistics.API/Jobs/NegotiationExpirySweepJob.cs` (every 6 hours - expires lapsed threads and revokes their routes), `NegotiationWakeJob.cs` (delayed retry when a reply lands mid-turn)
 - API/UI: `NegotiationController.cs` (`negotiations` - list, detail, close, decision preview; sending is deliberately absent), `RateFloorController.cs` (`ratefloors`), `POST /webhooks/resend`, `tms-portal/pages/ai-dispatch/negotiations/` + `negotiation-details/` + `rate-floors/`
@@ -224,7 +224,7 @@ registry, `AgentLoopRunner`, decisions, and quota. Gated by `TenantFeature.AICop
 ### Conversations & turns
 
 - Domain: `Entities/AIDispatch/AgentConversation.cs`, `AgentMessage.cs` (transcript with tool_use ids; `Kind` distinguishes the per-user Copilot conversations here from the tenant-shared Dispatch ones above - every copilot query/list/get filters `Kind == Copilot`); `AgentSession.Type == Copilot` per turn
-- Application: `Modules/Integrations/AICopilot/Commands/` (send returns the server-stamped `UserMessageCreatedAt` so the client's optimistic echo never sorts by a browser clock; rename via `RenameAICopilotConversation`), `Queries/` (incl. `GetAICopilotQuotaStatus` - the shared AI quota behind `Permission.Copilot.View` for tenants without AgenticDispatch)
+- Application: `Modules/AI/AICopilot/Commands/` (send returns the server-stamped `UserMessageCreatedAt` so the client's optimistic echo never sorts by a browser clock; rename via `RenameAICopilotConversation`), `Queries/` (incl. `GetAICopilotQuotaStatus` - the shared AI quota behind `Permission.Copilot.View` for tenants without AgenticDispatch)
 - Infrastructure: `Infrastructure.AI/Agents/` (`AgentTurnService.cs` - the shared turn lifecycle every conversational agent runs through, parameterized by `IAgentSurface`; `AgentTranscriptCodec.cs`, `AgentTranscriptLoader.cs`) and `Agents/Copilot/` (`AICopilotService.cs` - thin adapter onto `AgentTurnService` + `CopilotAgentSurface.cs`, `AICopilotConversationBuilder.cs`, `AICopilotSystemPrompt.cs` - dispatch-action guardrails render only when the caller's tool catalogue includes the dispatch write tools); `Infrastructure.Communications/SignalR/Hubs/CopilotHub.cs` (`/hubs/copilot`, authorized, per-user groups)
 - Jobs: `Logistics.API/Jobs/AICopilotTurnJob.cs`
 - API/UI: `AICopilotController.cs` (`ai/copilot` - conversations CRUD + rename, messages, cancel, `quota`, decisions approve/reject), `tms-portal/shared/layout/copilot-drawer/`; state in `core/store/copilot.store.ts` (persists drawer width, polls stuck Running turns, gates the launcher on `Copilot.View`)
@@ -247,14 +247,14 @@ registry, `AgentLoopRunner`, decisions, and quota. Gated by `TenantFeature.AICop
 
 ### Global AI settings
 
-- Application: `Modules/Platform/AISettings/` (`GetAISettings`, `UpdateAISettings`); `Abstractions/AIDispatch/LlmModelCatalog.cs`
+- Application: `Modules/AI/AISettings/` (`GetAISettings`, `UpdateAISettings`); `Abstractions/AIDispatch/LlmModelCatalog.cs`
 - Infrastructure: `SystemSettingsService` (`AI.Model`/`AI.ReasoningEffort` keys)
 - API/UI: `AISettingsController.cs`, `admin-portal/pages/ai-settings/`
 
 ### Commercial license
 
 - Domain: `ProductLicenseHeartbeat` (master), `Options/ProductLicenseOptions.cs` (`License__Key`, `License__HeartbeatUrl`, `License__HeartbeatEnabled`)
-- Application: `Modules/Platform/ProductLicense/` - `Services/ProductLicenseKeyValidator` (ES256 JWT against the embedded public key), `ProductLicenseService` (env var wins over `SystemSettings`, 5 min cache), `ProductLicenseHeartbeatService` (builds the report, sends it through `IProductLicenseHeartbeatSender`); commands `SetProductLicenseKey`, `RecordProductLicenseHeartbeat`; queries `GetProductLicenseStatus`, `GetProductLicenseDiscovery`
+- Application: `Modules/Tenancy/ProductLicense/` - `Services/ProductLicenseKeyValidator` (ES256 JWT against the embedded public key), `ProductLicenseService` (env var wins over `SystemSettings`, 5 min cache), `ProductLicenseHeartbeatService` (builds the report, sends it through `IProductLicenseHeartbeatSender`); commands `SetProductLicenseKey`, `RecordProductLicenseHeartbeat`; queries `GetProductLicenseStatus`, `GetProductLicenseDiscovery`
 - Infrastructure: `Infrastructure.Integrations/Licensing/` - `ProductLicenseHeartbeatSender` posts the daily report
 - API/UI: `ProductLicenseController.cs` (`/license`, `/license/key`, anonymous `/license/heartbeat` and `/.well-known/logisticsx.json`), `product-license-heartbeat` in `Jobs/RecurringJobs.cs`, `HostDefaults/ProductVersionHeaderExtensions.cs` (`X-LogisticsX-Version`), `shared/services/product-license.service.ts` + `ui-license-banner` (all three portals), `admin-portal/pages/license/`
 - Keys are issued with `tools/Logistics.LicenseIssuer` (`keygen`, `issue`, `inspect`); legal text in `COMMERCIAL-LICENSE.md`, `CLA.md`
@@ -307,7 +307,7 @@ registry, `AgentLoopRunner`, decisions, and quota. Gated by `TenantFeature.AICop
 ### Accidents
 
 - Domain: `Entities/Safety/AccidentReport.cs`
-- Application: `Modules/Compliance/Accidents/Commands/`, `Modules/Compliance/Accidents/Queries/`
+- Application: `Modules/Compliance/Safety/Commands/`, `Modules/Compliance/Safety/Queries/`
 - API/UI: `AccidentController.cs`, `tms-portal/pages/safety/`
 
 ### Maintenance
@@ -319,7 +319,7 @@ registry, `AgentLoopRunner`, decisions, and quota. Gated by `TenantFeature.AICop
 ### Driver licensing
 
 - Domain: `Entities/Employee/DriverLicense.cs`
-- Application: `Modules/IdentityAccess/Employees/Commands/{Create,Update,Delete}DriverLicense/`, `Application.Abstractions/Dispatch/IDispatchEligibilityService`, `Modules/Compliance/Safety/Services/LicenseExpiryReminderService`
+- Application: `Modules/Identity/Employees/Commands/{Create,Update,Delete}DriverLicense/`, `Application.Abstractions/Dispatch/IDispatchEligibilityService`, `Modules/Compliance/Safety/Services/LicenseExpiryReminderService`
 - Infrastructure: `Infrastructure.AI/Tools/Dispatch/CheckDispatchEligibilityTool.cs`
 - API/UI: `EmployeeController` (extended), `tms-portal/pages/employees/components/driver-licenses-tab/`, mobile `feature/more/LicensesScreen.kt`, `ProcessLicenseExpiryReminders` in `Jobs/RecurringJobs.cs`
 
@@ -332,7 +332,7 @@ registry, `AgentLoopRunner`, decisions, and quota. Gated by `TenantFeature.AICop
 ### IFTA reporting
 
 - Domain: `Entities/Ifta/` (`TruckLocationHistory`, `TruckJurisdictionMileage`, `IftaQuarterSnapshot`), `Entities/IftaTaxRate.cs` (master)
-- Application: `Modules/Compliance/Ifta/` (`TruckLocationRecorder`, `IftaReportService`, quarter-close + filing-reminder services, `IftaQuarters`), `Modules/Compliance/Ifta/TaxRates/` (admin rate CRUD), `Modules/Platform/Reports/Queries/Ifta/`
+- Application: `Modules/Compliance/Ifta/` (`TruckLocationRecorder`, `IftaReportService`, quarter-close + filing-reminder services, `IftaQuarters`), `Modules/Compliance/Ifta/TaxRates/` (admin rate CRUD), `Modules/Reporting/Reports/Queries/Ifta/`
 - Infrastructure: `Infrastructure.Routing/Geospatial/JurisdictionResolver.cs` (NTS + embedded boundaries, built once at startup by `JurisdictionResolverWarmup`); `Infrastructure.Documents/Pdf/Ifta/`
 - **Traps**: closed quarters are served verbatim from `IftaQuarterSnapshot.ReportJson` (sole source of truth, deliberately not denormalized into columns). Tax-rate `(Year, Quarter, Jurisdiction)` and mileage `(Truck, Date, Jurisdiction)` uniqueness are raw-SQL unique indexes (NULLS NOT DISTINCT on region) created in migrations, not EF config - complex-type members can't be in an EF index, so a model rebuild won't recreate them. Write paths still probe `IftaTaxRateUniqueness.FindConflictAsync` for a readable error; `TruckLocationRecorder` upserts mileage with `ON CONFLICT`, which needs the index
 - API/UI: `ReportController` `/reports/ifta` + `/reports/ifta/pdf`, `IftaTaxRateController.cs` `/ifta/rates`, `Jobs/IftaQuarterCloseJob.cs`, `ifta-filing-reminders` in `Jobs/RecurringJobs.cs`, `tms-portal/pages/reports/ifta-report/`, `admin-portal/pages/ifta-rates/`
@@ -389,14 +389,14 @@ registry, `AgentLoopRunner`, decisions, and quota. Gated by `TenantFeature.AICop
 ### Stripe subscriptions
 
 - Domain: `Entities/Subscription/Subscription.cs`
-- Application: `Modules/IdentityAccess/Subscriptions/Commands/`, `Modules/IdentityAccess/Subscriptions/Queries/`
+- Application: `Modules/Tenancy/Subscriptions/Commands/`, `Modules/Tenancy/Subscriptions/Queries/`
 - Infrastructure: `Infrastructure.Payments/Stripe/StripeSubscriptionService.cs`
 - API/UI: `SubscriptionController.cs`, `admin-portal/pages/subscriptions/`, `tms-portal/pages/subscription/`
 
 ### Subscription plans
 
 - Domain: `Entities/Subscription/SubscriptionPlan.cs`, `PlanFeature.cs`
-- Application: `Modules/IdentityAccess/Subscriptions/Queries/`
+- Application: `Modules/Tenancy/Subscriptions/Queries/`
 - Infrastructure: `Infrastructure.Payments/Stripe/StripePlanService.cs`
 - API/UI: `admin-portal/pages/plans/`
 
@@ -447,7 +447,7 @@ registry, `AgentLoopRunner`, decisions, and quota. Gated by `TenantFeature.AICop
 ### Real-time messaging
 
 - Domain: `Entities/Messaging/Conversation.cs`, `Message.cs`
-- Application: `Modules/Integrations/Messaging/Commands/`, `Modules/Integrations/Messaging/Queries/`
+- Application: `Modules/Operations/Messaging/Commands/`, `Modules/Operations/Messaging/Queries/`
 - Infrastructure: `Infrastructure.Communications/SignalR/Hubs/ChatHub.cs`
 - API/UI: `MessageController.cs`, `tms-portal/pages/messages/`
 
@@ -460,7 +460,7 @@ registry, `AgentLoopRunner`, decisions, and quota. Gated by `TenantFeature.AICop
 ### Notifications
 
 - Domain: `Entities/Notification.cs`
-- Application: `Modules/Platform/Notifications/Commands/`, `Modules/Platform/Notifications/Queries/`, `Modules/Platform/Notifications/Services/NotificationService.cs` (saves, then broadcasts the DTO through the `IRealtimeNotificationService` port)
+- Application: `Modules/Operations/Notifications/Commands/`, `Modules/Operations/Notifications/Queries/`, `Modules/Operations/Notifications/Services/NotificationService.cs` (saves, then broadcasts the DTO through the `IRealtimeNotificationService` port)
 - Infrastructure: `Infrastructure.Communications/Notifications/` (Firebase push), `SignalR/Hubs/NotificationHub.cs`
 - API/UI: `NotificationController.cs`, `tms-portal/pages/notifications/`
 
@@ -478,25 +478,25 @@ registry, `AgentLoopRunner`, decisions, and quota. Gated by `TenantFeature.AICop
 ### Users
 
 - Domain: `Entities/User.cs`, `UserTenantAccess.cs`
-- Application: `Modules/IdentityAccess/Users/` (Commands, Queries, Services)
+- Application: `Modules/Identity/Users/` (Commands, Queries, Services)
 - API/UI: `UserController.cs`, `admin-portal/pages/users/`, `tms-portal/pages/settings/`
 
 ### Roles / permissions
 
 - Domain: `Entities/Role/` (AppRole, TenantRole, claims); `Shared.Identity` `AppRoles`/`AppRolePermissions` (SuperAdmin, Admin)
-- Application: `Modules/IdentityAccess/Roles/Queries/`
+- Application: `Modules/Identity/Roles/Queries/`
 - API/UI: `RoleController.cs`
 
 ### App admins
 
 - Domain: `Entities/Invitation.cs` (`Type=AppUser`, `AppRole`, nullable `TenantId`)
-- Application: `Modules/IdentityAccess/Admins/` (Commands: AddAdmin/RevokeAdmin/Resend+CancelAdminInvitation, Queries: GetAdmins/GetAdminInvitations)
+- Application: `Modules/Identity/Admins/` (Commands: AddAdmin/RevokeAdmin/Resend+CancelAdminInvitation, Queries: GetAdmins/GetAdminInvitations)
 - API/UI: `AdminController.cs` (`/admins`, SuperAdmin-only), `admin-portal/pages/admins/`
 
 ### Invitations
 
 - Domain: `Entities/Invitation.cs`
-- Application: `Modules/IdentityAccess/Invitations/Commands/` (tenant-scoped: Employee/CustomerUser)
+- Application: `Modules/Identity/Invitations/Commands/` (tenant-scoped: Employee/CustomerUser)
 - API/UI: `InvitationController.cs`; app-admin invites via `AdminController`
 
 ### Auth / OAuth2
@@ -506,7 +506,7 @@ registry, `AgentLoopRunner`, decisions, and quota. Gated by `TenantFeature.AICop
 ### Tenants
 
 - Domain: `Entities/Tenant.cs`
-- Application: `Modules/IdentityAccess/Tenants/Commands/`, `Modules/IdentityAccess/Tenants/Queries/`
+- Application: `Modules/Tenancy/Tenants/Commands/`, `Modules/Tenancy/Tenants/Queries/`
 - Infrastructure: `Infrastructure.Persistence/Services/Tenant/CurrentTenantAccessor.cs` (`ICurrentTenantAccessor`, resolves the current tenant), `TenantDatabaseService.cs`
 - API/UI: `TenantController.cs`, `admin-portal/pages/tenants/` (+ `admin-portal/shared/components/tenant-form/`)
 - Demo tenants (`us`, `eu`, `solo`) come from the `Tenants[]` config array read by `DbMigrator/Seeders/Infrastructure/DemoTenantsSeeder.cs`; see [environment-variables.md](../docs/configuration/environment-variables.md#demo-tenants-tenants)
@@ -519,14 +519,14 @@ registry, `AgentLoopRunner`, decisions, and quota. Gated by `TenantFeature.AICop
 ### API keys (MCP)
 
 - Domain: `Entities/ApiKey.cs`
-- Application: `Modules/IdentityAccess/ApiKeys/Commands/`, `Modules/IdentityAccess/ApiKeys/Queries/`
+- Application: `Modules/Identity/ApiKeys/Commands/`, `Modules/Identity/ApiKeys/Queries/`
 - Infrastructure: `Logistics.McpServer/Authentication/`
 - API/UI: `ApiKeysController.cs`
 
 ### Feature flags
 
 - Domain: `Entities/Feature/TenantFeatureConfig.cs`, `TenantPresetCatalog.cs`
-- Application: `Modules/IdentityAccess/Features/Commands/`, `Modules/IdentityAccess/Features/Queries/`, `Application.Abstractions/Features/IFeatureService.cs` (port)
+- Application: `Modules/Tenancy/Features/Commands/`, `Modules/Tenancy/Features/Queries/`, `Application.Abstractions/Features/IFeatureService.cs` (port)
 - Infrastructure: `Infrastructure.Persistence/Services/Feature/FeatureService.cs` (`ApplyPresetFeaturesAsync` writes per-tenant rows from presets; admin-locked rows are kept; a feature with no row resolves through the tenant's presets - there are no platform-wide defaults)
 - API/UI: `FeaturesController.cs` (admin roles only), `TenantFeaturesController.cs` (read-only, current tenant), `admin-portal/pages/features/`. Tenants cannot toggle features; see _Tenant presets and solo mode_
 
@@ -535,7 +535,7 @@ registry, `AgentLoopRunner`, decisions, and quota. Gated by `TenantFeature.AICop
 ### Documents (POD, BOL, …)
 
 - Domain: `Entities/Document/` (Load, Truck, Employee, Delivery)
-- Application: `Modules/Integrations/Documents/Commands/`, `Modules/Integrations/Documents/Queries/`; `Services/DocumentDownloadService.cs` (`IDocumentDownloadService` - the one blob-to-download path, shared by `DownloadDocument`, the portal and public tracking downloads)
+- Application: `Modules/Operations/Documents/Commands/`, `Modules/Operations/Documents/Queries/`; `Services/DocumentDownloadService.cs` (`IDocumentDownloadService` - the one blob-to-download path, shared by `DownloadDocument`, the portal and public tracking downloads)
 - Infrastructure: `Infrastructure.Documents/`
 - API/UI: `DocumentController.cs`, `customer-portal/pages/documents/`
 
@@ -594,7 +594,7 @@ registry, `AgentLoopRunner`, decisions, and quota. Gated by `TenantFeature.AICop
 ### Tenant settings
 
 - Domain: `Entities/Tenant.cs` → `TenantSettings` VO; `McNumber`/`VatNumber`/`EoriNumber`/`CompanyRegistrationNumber`/`TaxResidencyCountry`; `Presets` (see _Tenant presets and solo mode_)
-- Application: `Modules/IdentityAccess/Tenants/Commands/UpdateTenant` (regulatory IDs validated server-side via `RegexPatterns.VatNumber`/`McNumber`/`EoriNumber`; `AIEnabled` and `BlockAIOverage` toggles per tenant)
+- Application: `Modules/Tenancy/Tenants/Commands/UpdateTenant` (regulatory IDs validated server-side via `RegexPatterns.VatNumber`/`McNumber`/`EoriNumber`; `AIEnabled` and `BlockAIOverage` toggles per tenant)
 - API/UI: `tms-portal/pages/settings/company-settings/`
 
 ### System settings
@@ -622,19 +622,19 @@ registry, `AgentLoopRunner`, decisions, and quota. Gated by `TenantFeature.AICop
 ### Blog
 
 - Domain: `Entities/BlogPost.cs`
-- Application: `Modules/Platform/BlogPosts/Commands/`, `Modules/Platform/BlogPosts/Queries/`
+- Application: `Modules/Website/BlogPosts/Commands/`, `Modules/Website/BlogPosts/Queries/`
 - API/UI: `BlogPostController.cs`, `admin-portal/pages/blog-posts/`, `website/`
 
 ### Contact form
 
 - Domain: `Entities/ContactSubmission.cs`
-- Application: `Modules/Platform/Contacts/Commands/`, `Modules/Platform/Contacts/Queries/`
+- Application: `Modules/Website/Contacts/Commands/`, `Modules/Website/Contacts/Queries/`
 - API/UI: `ContactController.cs`, `admin-portal/pages/contact-submissions/`
 
 ### Demo requests
 
 - Domain: `Entities/DemoRequest.cs`
-- Application: `Modules/Platform/DemoRequests/Commands/`, `Modules/Platform/DemoRequests/Queries/`
+- Application: `Modules/Website/DemoRequests/Commands/`, `Modules/Website/DemoRequests/Queries/`
 - API/UI: `DemoRequestController.cs`, `admin-portal/pages/demo-requests/`
 
 ### Telegram bot

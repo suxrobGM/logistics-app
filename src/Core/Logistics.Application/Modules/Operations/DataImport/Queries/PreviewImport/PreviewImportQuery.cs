@@ -1,0 +1,14 @@
+using Logistics.Application.Modules.Operations.DataImport.Commands;
+using Logistics.Domain.Primitives.Enums;
+using Logistics.Shared.Models;
+
+namespace Logistics.Application.Modules.Operations.DataImport.Queries;
+
+public class PreviewImportQuery : IQuery<Result<ImportPreviewDto>>, IImportFile
+{
+    public required Stream Content { get; init; }
+    public required string FileName { get; init; }
+    public required string ContentType { get; init; }
+    public long FileSizeBytes { get; init; }
+    public ImportEntityType EntityType { get; init; }
+}

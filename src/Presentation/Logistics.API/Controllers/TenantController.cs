@@ -1,16 +1,16 @@
 using Logistics.API.Extensions;
+using Logistics.Application.Modules.AI.AIDispatch.Commands;
+using Logistics.Application.Modules.AI.AIDispatch.Queries;
+using Logistics.Application.Modules.AI.AISettings.Commands;
+using Logistics.Application.Modules.AI.AISettings.Queries;
+using Logistics.Application.Modules.Tenancy.Tenants.Commands;
+using Logistics.Application.Modules.Tenancy.Tenants.Queries;
+using Logistics.Mediator;
 using Logistics.Shared.Identity.Policies;
 using Logistics.Shared.Identity.Roles;
 using Logistics.Shared.Models;
-using Logistics.Mediator;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Logistics.Application.Modules.IdentityAccess.Tenants.Commands;
-using Logistics.Application.Modules.IdentityAccess.Tenants.Queries;
-using Logistics.Application.Modules.Integrations.AIDispatch.Commands;
-using Logistics.Application.Modules.Integrations.AIDispatch.Queries;
-using Logistics.Application.Modules.Platform.AISettings.Queries;
-using Logistics.Application.Modules.Platform.AISettings.Commands;
 
 namespace Logistics.API.Controllers;
 

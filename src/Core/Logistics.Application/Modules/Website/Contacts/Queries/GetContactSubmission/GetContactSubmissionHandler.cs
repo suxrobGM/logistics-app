@@ -1,0 +1,23 @@
+using Logistics.Application.Abstractions;
+using Logistics.Domain.Entities;
+using Logistics.Domain.Persistence;
+using Logistics.Mediator;
+using Logistics.Shared.Models;
+
+namespace Logistics.Application.Modules.Website.Contacts.Queries;
+
+internal sealed class GetContactSubmissionHandler(
+    IMasterUnitOfWork masterUow) : IRequestHandler<GetContactSubmissionQuery, Result<ContactSubmissionDto>>
+{
+    public async Task<Result<ContactSubmissionDto>> Handle(GetContactSubmissionQuery req, CancellationToken ct)
+    {
+        var submission = await masterUow.Repository<ContactSubmission>().GetByIdAsync(req.Id, ct);
+
+        if (submission is null)
+        {
+            return Result<ContactSubmissionDto>.Fail($"Contact submission with ID '{req.Id}' not found", ErrorCodes.NotFound);
+        }
+
+        return Result<ContactSubmissionDto>.Ok(submission.ToDto());
+    }
+}

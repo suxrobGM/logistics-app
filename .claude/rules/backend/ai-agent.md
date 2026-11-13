@@ -1,10 +1,10 @@
 ---
 paths:
   - "src/Infrastructure/Logistics.Infrastructure.AI/**/*.cs"
-  - "src/Core/Logistics.Application/Modules/Integrations/AIDispatch/**/*.cs"
-  - "src/Core/Logistics.Application/Modules/Integrations/AICopilot/**/*.cs"
-  - "src/Core/Logistics.Application/Modules/Integrations/Agents/**/*.cs"
-  - "src/Core/Logistics.Application/Modules/Platform/AISettings/**/*.cs"
+  - "src/Core/Logistics.Application/Modules/AI/AIDispatch/**/*.cs"
+  - "src/Core/Logistics.Application/Modules/AI/AICopilot/**/*.cs"
+  - "src/Core/Logistics.Application/Modules/AI/Agents/**/*.cs"
+  - "src/Core/Logistics.Application/Modules/AI/AISettings/**/*.cs"
   - "src/Presentation/Logistics.McpServer/**/*.cs"
 ---
 

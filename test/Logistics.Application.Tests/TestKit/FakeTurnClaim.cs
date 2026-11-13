@@ -1,4 +1,4 @@
-using Logistics.Application.Modules.Integrations.Agents.Services;
+using Logistics.Application.Modules.AI.Agents.Services;
 using Logistics.Domain.Entities;
 using Logistics.Domain.Primitives.Enums;
 

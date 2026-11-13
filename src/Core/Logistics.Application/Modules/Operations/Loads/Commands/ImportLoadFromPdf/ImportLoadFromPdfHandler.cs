@@ -1,5 +1,7 @@
+using Logistics.Application.Abstractions.Documents;
+using Logistics.Application.Abstractions.Geocoding;
+using Logistics.Application.Modules.Operations.Customers.Services;
 using Logistics.Application.Modules.Operations.Loads.Services;
-using Logistics.Application.Modules.IdentityAccess.Customers.Services;
 using Logistics.Domain.Entities;
 using Logistics.Domain.Persistence;
 using Logistics.Domain.Primitives.Enums;
@@ -7,8 +9,6 @@ using Logistics.Domain.Primitives.ValueObjects;
 using Logistics.Mediator;
 using Logistics.Shared.Models;
 using Microsoft.Extensions.Logging;
-using Logistics.Application.Abstractions.Geocoding;
-using Logistics.Application.Abstractions.Documents;
 
 namespace Logistics.Application.Modules.Operations.Loads.Commands;
 

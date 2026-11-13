@@ -1,0 +1,27 @@
+using Logistics.Application.Abstractions;
+using Logistics.Application.Modules.Operations.Documents.Services;
+using Logistics.Mediator;
+using Logistics.Shared.Models;
+
+namespace Logistics.Application.Modules.Operations.Documents.Commands;
+
+internal sealed class CaptureProofOfDeliveryHandler(IDeliveryDocumentService deliveryDocuments)
+    : IRequestHandler<CaptureProofOfDeliveryCommand, Result<Guid>>
+{
+    public Task<Result<Guid>> Handle(CaptureProofOfDeliveryCommand req, CancellationToken ct)
+    {
+        return deliveryDocuments.CaptureAsync(
+            DeliveryDocumentKind.ProofOfDelivery,
+            new CaptureDeliveryDocumentParameters(
+                req.LoadId,
+                req.TripStopId,
+                req.Photos,
+                req.SignatureBase64,
+                req.RecipientName,
+                req.Latitude,
+                req.Longitude,
+                req.Notes,
+                req.UnableToSignReason),
+            ct);
+    }
+}

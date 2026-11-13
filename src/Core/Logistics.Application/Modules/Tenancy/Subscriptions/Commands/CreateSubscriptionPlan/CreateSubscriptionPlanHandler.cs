@@ -1,0 +1,40 @@
+using Logistics.Application.Abstractions;
+using Logistics.Domain.Entities;
+using Logistics.Domain.Persistence;
+using Logistics.Mediator;
+using Logistics.Shared.Models;
+using Logistics.Application.Abstractions.Payments.Stripe;
+
+namespace Logistics.Application.Modules.Tenancy.Subscriptions.Commands;
+
+internal sealed class CreateSubscriptionPlanHandler(
+    IMasterUnitOfWork masterUow,
+    IStripePlanService stripePlanService) : IRequestHandler<CreateSubscriptionPlanCommand, Result>
+{
+    public async Task<Result> Handle(
+        CreateSubscriptionPlanCommand req, CancellationToken ct)
+    {
+        var subscriptionPlan = new SubscriptionPlan
+        {
+            Name = req.Name,
+            Description = req.Description,
+            Price = new() { Amount = req.Price, Currency = "USD" },
+            Interval = req.Interval,
+            IntervalCount = req.IntervalCount,
+            Tier = req.Tier,
+            PerTruckPrice = new() { Amount = req.PerTruckPrice, Currency = "USD" },
+            MaxTrucks = req.MaxTrucks,
+            WeeklyAIBudgetUsd = req.WeeklyAIBudgetUsd
+        };
+
+        var result = await stripePlanService.CreatePlanAsync(subscriptionPlan);
+
+        subscriptionPlan.StripeProductId = result.ProductId;
+        subscriptionPlan.StripePriceId = result.BasePriceId;
+        subscriptionPlan.StripePerTruckPriceId = result.PerTruckPriceId;
+        subscriptionPlan.StripeAIOveragePriceId = result.AIOveragePriceId;
+        await masterUow.Repository<SubscriptionPlan>().AddAsync(subscriptionPlan, ct);
+        await masterUow.SaveChangesAsync(ct);
+        return Result.Ok();
+    }
+}

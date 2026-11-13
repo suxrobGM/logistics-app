@@ -1,0 +1,36 @@
+using Logistics.Application.Abstractions;
+using Logistics.Application.Modules.Operations.Documents.Services;
+using Logistics.Domain.Entities;
+using Logistics.Domain.Persistence;
+using Logistics.Domain.Primitives.Enums;
+using Logistics.Mediator;
+using Logistics.Shared.Models;
+
+namespace Logistics.Application.Modules.Operations.Documents.Queries;
+
+internal sealed class GetDocumentByIdHandler(
+    ITenantUnitOfWork tenantUow,
+    IDocumentAccessService documentAccess)
+    : IRequestHandler<GetDocumentByIdQuery, Result<DocumentDto>>
+{
+    public async Task<Result<DocumentDto>> Handle(GetDocumentByIdQuery req, CancellationToken ct)
+    {
+        // Query the base type; EF will materialize derived type (TPH)
+        var document = await tenantUow.Repository<Document>()
+            .GetAsync(d => d.Id == req.DocumentId, ct);
+
+        if (document is null)
+        {
+            return Result<DocumentDto>.Fail($"Could not find document with ID '{req.DocumentId}'", ErrorCodes.NotFound);
+        }
+
+        var caller = await documentAccess.ResolveCallerAsync(ct);
+        if (caller is null || !await documentAccess.CanAccessAsync(caller, document, ct))
+        {
+            return Result<DocumentDto>.Fail("Document not found or access denied.", ErrorCodes.NotFound);
+        }
+
+        var dto = document.ToDto();
+        return Result<DocumentDto>.Ok(dto);
+    }
+}

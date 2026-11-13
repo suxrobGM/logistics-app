@@ -1,13 +1,13 @@
 using System.Text.Json;
 using System.Text.Json.Nodes;
 using Logistics.Application.Abstractions.Agents;
-using Logistics.Application.Modules.Integrations.Negotiation.Commands;
-using Logistics.Application.Modules.Integrations.Negotiation.Queries;
+using Logistics.Application.Modules.AI.Negotiation.Commands;
+using Logistics.Application.Modules.AI.Negotiation.Queries;
 using Logistics.Domain.Primitives.Enums;
 using Logistics.Domain.Primitives.ValueObjects;
 using Logistics.Infrastructure.AI.Tools.Negotiation;
-using Logistics.Shared.Models;
 using Logistics.Mediator;
+using Logistics.Shared.Models;
 using NSubstitute;
 using Xunit;
 

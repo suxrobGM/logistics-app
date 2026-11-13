@@ -1,11 +1,11 @@
 using Logistics.API.Extensions;
+using Logistics.Application.Modules.Tenancy.Subscriptions.Commands;
+using Logistics.Application.Modules.Tenancy.Subscriptions.Queries;
+using Logistics.Mediator;
 using Logistics.Shared.Identity.Roles;
 using Logistics.Shared.Models;
-using Logistics.Mediator;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Logistics.Application.Modules.IdentityAccess.Subscriptions.Commands;
-using Logistics.Application.Modules.IdentityAccess.Subscriptions.Queries;
 
 namespace Logistics.API.Controllers;
 

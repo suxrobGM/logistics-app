@@ -1,5 +1,5 @@
-using Logistics.Application.Modules.Integrations.Negotiation;
-using Logistics.Application.Modules.Integrations.Negotiation.Services;
+using Logistics.Application.Modules.AI.Negotiation;
+using Logistics.Application.Modules.AI.Negotiation.Services;
 using Logistics.DbMigrator.Abstractions;
 using Logistics.DbMigrator.Extensions;
 using Logistics.DbMigrator.Models;

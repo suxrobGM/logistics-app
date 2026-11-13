@@ -1,4 +1,4 @@
-using Logistics.Application.Modules.IdentityAccess.Employees;
+using Logistics.Application.Modules.Identity.Employees;
 using Logistics.Domain.Entities;
 using Logistics.Domain.Persistence;
 using Logistics.Shared.Models;

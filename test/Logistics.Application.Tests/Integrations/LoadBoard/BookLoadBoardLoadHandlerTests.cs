@@ -1,9 +1,9 @@
 using Logistics.Application.Abstractions.AIDispatch;
 using Logistics.Application.Abstractions.CurrentUser;
 using Logistics.Application.Abstractions.LoadBoard;
+using Logistics.Application.Modules.AI.Negotiation.Services;
 using Logistics.Application.Modules.Integrations.LoadBoard.Commands;
 using Logistics.Application.Modules.Integrations.LoadBoard.Services;
-using Logistics.Application.Modules.Integrations.Negotiation.Services;
 using Logistics.Application.Modules.Operations.Loads.Services;
 using Logistics.Application.Tests.TestKit;
 using Logistics.Domain.Entities;

@@ -1,5 +1,5 @@
 using Logistics.Application.Abstractions;
-using Logistics.Application.Modules.Integrations.Documents;
+using Logistics.Application.Modules.Operations.Documents;
 using Logistics.Domain.Entities;
 using Logistics.Domain.Persistence;
 using Logistics.Domain.Primitives.Enums;

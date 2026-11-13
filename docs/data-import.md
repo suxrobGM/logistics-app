@@ -40,7 +40,7 @@ trailers, loads. `*` marks a required field.
 | Loads     | source reference | reference*, customer* (by name), rate*, status, load type, truck (by number) or driver (uses that driver's truck), pickup + delivery address*, pickup + delivery date, notes |
 
 The exact keys, labels and header synonyms live in
-`src/Core/Logistics.Application/Modules/Platform/DataImport/Constants/ImportFieldCatalog.cs`.
+`src/Core/Logistics.Application/Modules/Operations/DataImport/Constants/ImportFieldCatalog.cs`.
 
 Notes per entity:
 
@@ -85,8 +85,8 @@ to `ImportHeaderMapperTests`.
 
 - Parsing: `Application.Abstractions/Documents/ISpreadsheetReader.cs`, implemented by
   `Infrastructure.Documents/Spreadsheets/SpreadsheetReader.cs` (ExcelDataReader, MIT).
-- Mapping, values and addresses: `Modules/Platform/DataImport/Services/`.
-- One importer per entity: `Modules/Platform/DataImport/Importers/` - each derives from
+- Mapping, values and addresses: `Modules/Operations/DataImport/Services/`.
+- One importer per entity: `Modules/Operations/DataImport/Importers/` - each derives from
   `EntityImporter<TDraft>`, which owns parse, in-file duplicate check, lookup, the
   create/update/skip decision and the write.
 - Handlers: `Commands/RunImport/` (validate and import), `Queries/PreviewImport/`,

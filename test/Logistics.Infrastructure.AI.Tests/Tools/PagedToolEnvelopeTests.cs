@@ -1,14 +1,14 @@
-using Logistics.Infrastructure.AI.Tools.Operations;
-using Logistics.Infrastructure.AI.Tools.Financial;
 using System.Text.Json;
 using System.Text.Json.Nodes;
 using Logistics.Application.Modules.Financial.Expenses.Queries;
 using Logistics.Application.Modules.Financial.Invoices.Queries;
-using Logistics.Application.Modules.IdentityAccess.Customers.Queries;
+using Logistics.Application.Modules.Operations.Customers.Queries;
 using Logistics.Application.Modules.Operations.Loads.Queries;
 using Logistics.Infrastructure.AI.Tools;
-using Logistics.Shared.Models;
+using Logistics.Infrastructure.AI.Tools.Financial;
+using Logistics.Infrastructure.AI.Tools.Operations;
 using Logistics.Mediator;
+using Logistics.Shared.Models;
 using NSubstitute;
 using Xunit;
 

@@ -1,12 +1,12 @@
 using System.Linq.Expressions;
 using Logistics.Application.Abstractions.Email;
-using Logistics.Application.Modules.Integrations.Negotiation.Commands;
+using Logistics.Application.Modules.AI.Negotiation.Commands;
 using Logistics.Application.Modules.Integrations.Webhooks.Commands;
 using Logistics.Application.Modules.Integrations.Webhooks.Services;
 using Logistics.Domain.Entities;
 using Logistics.Domain.Persistence;
-using Logistics.Shared.Models;
 using Logistics.Mediator;
+using Logistics.Shared.Models;
 using Microsoft.Extensions.Logging.Abstractions;
 using NSubstitute;
 using Xunit;

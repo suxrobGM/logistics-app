@@ -1,0 +1,8 @@
+using Logistics.Application.Common.Pipeline;
+using Logistics.Domain.Primitives.Enums;
+using Logistics.Shared.Models;
+
+namespace Logistics.Application.Modules.AI.AIDispatch.Commands;
+
+[RequiresFeature(TenantFeature.AgenticDispatch)]
+public class CreateAIDispatchConversationCommand : ICommand<Result<AgentConversationDto>>;

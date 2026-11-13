@@ -1,0 +1,60 @@
+using Logistics.Application.Abstractions;
+using Logistics.Application.Abstractions.Payments.Stripe;
+using Logistics.Application.Common;
+using Logistics.Domain.Entities;
+using Logistics.Domain.Persistence;
+using Logistics.Mediator;
+using Logistics.Shared.Models;
+using Microsoft.Extensions.Logging;
+
+namespace Logistics.Application.Modules.Tenancy.Subscriptions.Commands;
+
+internal sealed class UpdateSubscriptionPlanHandler(
+    IMasterUnitOfWork masterUow,
+    IStripePlanService stripePlanService,
+    IStripeSubscriptionService stripeSubscriptionService,
+    ILogger<UpdateSubscriptionPlanHandler> logger) : IRequestHandler<UpdateSubscriptionPlanCommand, Result>
+{
+    public async Task<Result> Handle(
+        UpdateSubscriptionPlanCommand req, CancellationToken ct)
+    {
+        var subscriptionPlan = await masterUow.Repository<SubscriptionPlan>().GetByIdAsync(req.Id, ct);
+
+        if (subscriptionPlan is null)
+        {
+            return Result.Fail($"Could not find a subscription plan with ID '{req.Id}'", ErrorCodes.NotFound);
+        }
+
+        subscriptionPlan.Name = PropertyUpdater.UpdateIfChanged(req.Name, subscriptionPlan.Name);
+        subscriptionPlan.Description = PropertyUpdater.UpdateIfChanged(req.Description, subscriptionPlan.Description);
+        if (req.Price is not null && req.Price != subscriptionPlan.Price.Amount)
+        {
+            subscriptionPlan.Price = new() { Amount = req.Price.Value, Currency = subscriptionPlan.Price.Currency };
+        }
+        if (req.PerTruckPrice is not null && req.PerTruckPrice != subscriptionPlan.PerTruckPrice.Amount)
+        {
+            subscriptionPlan.PerTruckPrice = new() { Amount = req.PerTruckPrice.Value, Currency = subscriptionPlan.PerTruckPrice.Currency };
+        }
+        subscriptionPlan.Interval = PropertyUpdater.UpdateIfChanged(req.Interval, subscriptionPlan.Interval);
+        subscriptionPlan.IntervalCount =
+            PropertyUpdater.UpdateIfChanged(req.IntervalCount, subscriptionPlan.IntervalCount);
+        // MaxTrucks alone is unconditional: the edit form posts full state, and null is "unlimited".
+        subscriptionPlan.MaxTrucks = req.MaxTrucks;
+        subscriptionPlan.WeeklyAIBudgetUsd =
+            PropertyUpdater.UpdateIfChanged(req.WeeklyAIBudgetUsd, subscriptionPlan.WeeklyAIBudgetUsd);
+        subscriptionPlan.Tier = PropertyUpdater.UpdateIfChanged(req.Tier, subscriptionPlan.Tier);
+
+        // SyncPlanAsync writes the refreshed price ids onto the plan itself.
+        var previousOveragePriceId = subscriptionPlan.StripeAIOveragePriceId;
+        await stripePlanService.SyncPlanAsync(subscriptionPlan);
+        await masterUow.SaveChangesAsync(ct);
+
+        // A recreated overage price leaves live subscriptions billing against the deactivated one.
+        if (subscriptionPlan.StripeAIOveragePriceId != previousOveragePriceId)
+        {
+            await stripeSubscriptionService.SyncAIOverageItemAsync(subscriptionPlan);
+        }
+        logger.LogInformation("Updated subscription plan {SubscriptionPlanId}", subscriptionPlan.Id);
+        return Result.Ok();
+    }
+}

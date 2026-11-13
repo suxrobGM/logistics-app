@@ -1,14 +1,14 @@
 using Logistics.API.Extensions;
+using Logistics.Application.Modules.Identity.CustomerUsers.Queries;
+using Logistics.Application.Modules.Operations.Loads.Queries;
+using Logistics.Application.Modules.Operations.Portal.Queries;
+using Logistics.Mediator;
+using Logistics.Shared.Identity.Claims;
 using Logistics.Shared.Identity.Policies;
 using Logistics.Shared.Models;
 using Logistics.Shared.Models.Portal;
-using Logistics.Mediator;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Logistics.Application.Modules.Platform.Portal.Queries;
-using Logistics.Application.Modules.Operations.Loads.Queries;
-using Logistics.Shared.Identity.Claims;
-using Logistics.Application.Modules.IdentityAccess.CustomerUsers.Queries;
 
 namespace Logistics.API.Controllers;
 

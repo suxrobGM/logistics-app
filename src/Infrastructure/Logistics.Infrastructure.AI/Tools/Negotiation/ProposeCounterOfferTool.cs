@@ -1,9 +1,9 @@
 using System.ComponentModel;
 using Logistics.Application.Abstractions.Agents;
-using Logistics.Application.Modules.Integrations.Negotiation.Commands;
+using Logistics.Application.Modules.AI.Negotiation.Commands;
 using Logistics.Domain.Primitives.Enums;
-using Logistics.Shared.Identity.Policies;
 using Logistics.Mediator;
+using Logistics.Shared.Identity.Policies;
 
 namespace Logistics.Infrastructure.AI.Tools.Negotiation;
 

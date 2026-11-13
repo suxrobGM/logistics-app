@@ -1,0 +1,125 @@
+using Logistics.Application.Abstractions;
+using Logistics.Application.Abstractions.CurrentUser;
+using Logistics.Domain.Entities;
+using Logistics.Domain.Persistence;
+using Logistics.Domain.Primitives.Enums;
+using Logistics.Mediator;
+using Logistics.Shared.Identity.Roles;
+using Logistics.Shared.Models;
+
+namespace Logistics.Application.Modules.Identity.Employees.Commands;
+
+internal sealed class UpdateEmployeeHandler(
+    ITenantUnitOfWork tenantUow,
+    ICurrentUserService currentUserService)
+    : IRequestHandler<UpdateEmployeeCommand, Result>
+{
+    public async Task<Result> Handle(
+        UpdateEmployeeCommand req, CancellationToken ct)
+    {
+        var employeeEntity = await tenantUow.Repository<Employee>().GetByIdAsync(req.UserId, ct);
+        var tenantRole = await tenantUow.Repository<TenantRole>().GetAsync(i => i.Name == req.Role, ct);
+
+        if (employeeEntity is null)
+        {
+            return Result.Fail("Could not find the specified user", ErrorCodes.NotFound);
+        }
+
+        if (tenantRole is not null && tenantRole.Name != employeeEntity.Role?.Name)
+        {
+            var guard = await CheckRoleChangeAllowedAsync(employeeEntity, tenantRole, ct);
+            if (!guard.IsSuccess)
+            {
+                return guard;
+            }
+
+            employeeEntity.Role = tenantRole;
+        }
+
+        if (req.SalaryType.HasValue && employeeEntity.SalaryType != req.SalaryType)
+        {
+            employeeEntity.SalaryType = req.SalaryType.Value;
+        }
+
+        if (req.Salary.HasValue && employeeEntity.Salary != req.Salary)
+        {
+            var salaryAmount = req.SalaryType == SalaryType.None ? 0 : req.Salary.Value;
+            employeeEntity.Salary = new() { Amount = salaryAmount, Currency = employeeEntity.Salary.Currency };
+        }
+
+        if (req.Status is { } status && status != employeeEntity.Status)
+        {
+            employeeEntity.Status = status;
+            if (status != EmployeeStatus.Active)
+            {
+                await ReleaseTruckSeatsAsync(employeeEntity.Id, ct);
+            }
+        }
+
+        if (req.Address is not null)
+        {
+            employeeEntity.Address = req.Address;
+        }
+
+        await tenantUow.SaveChangesAsync(ct);
+        return Result.Ok();
+    }
+
+    /// <summary>
+    /// Only Active employees drive, so one leaving Active gives up their truck seats; readers of a truck's
+    /// drivers then never see an inactive one.
+    /// </summary>
+    private async Task ReleaseTruckSeatsAsync(Guid employeeId, CancellationToken ct)
+    {
+        var trucks = await tenantUow.Repository<Truck>()
+            .GetListAsync(t => t.MainDriverId == employeeId || t.SecondaryDriverId == employeeId, ct);
+
+        foreach (var truck in trucks)
+        {
+            truck.RemoveDriver(employeeId);
+        }
+    }
+
+    private async Task<Result> CheckRoleChangeAllowedAsync(
+        Employee target, TenantRole newRole, CancellationToken ct)
+    {
+        if (currentUserService.IsInRole(AppRoles.SuperAdmin, AppRoles.Admin))
+        {
+            return Result.Ok();
+        }
+
+        var callerId = currentUserService.GetUserId();
+        if (callerId is null)
+        {
+            return Result.Fail("User not authenticated.");
+        }
+
+        if (callerId.Value == target.Id)
+        {
+            return Result.Fail("You cannot change your own role.");
+        }
+
+        var caller = await tenantUow.Repository<Employee>().GetByIdAsync(callerId.Value, ct);
+        if (caller?.Role is null)
+        {
+            return Result.Fail("This role cannot be assigned here.");
+        }
+
+        var callerClaims = caller.Role.Claims
+            .Select(c => (c.ClaimType, c.ClaimValue))
+            .ToHashSet();
+
+        if (HasClaimsOutside(newRole, callerClaims) ||
+            target.Role is not null && HasClaimsOutside(target.Role, callerClaims))
+        {
+            return Result.Fail("You cannot assign a role with permissions beyond your own.");
+        }
+
+        return Result.Ok();
+    }
+
+    private static bool HasClaimsOutside(
+        TenantRole role,
+        HashSet<(string ClaimType, string ClaimValue)> allowedClaims) =>
+        role.Claims.Any(c => !allowedClaims.Contains((c.ClaimType, c.ClaimValue)));
+}

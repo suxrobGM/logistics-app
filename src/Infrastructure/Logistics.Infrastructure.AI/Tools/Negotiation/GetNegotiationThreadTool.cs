@@ -1,12 +1,12 @@
 using System.ComponentModel;
 using System.Text.Json.Serialization;
 using Logistics.Application.Abstractions.Agents;
-using Logistics.Application.Modules.Integrations.Negotiation;
-using Logistics.Application.Modules.Integrations.Negotiation.Queries;
+using Logistics.Application.Modules.AI.Negotiation;
+using Logistics.Application.Modules.AI.Negotiation.Queries;
 using Logistics.Domain.Primitives.Enums;
+using Logistics.Mediator;
 using Logistics.Shared.Identity.Policies;
 using Logistics.Shared.Models;
-using Logistics.Mediator;
 
 namespace Logistics.Infrastructure.AI.Tools.Negotiation;
 

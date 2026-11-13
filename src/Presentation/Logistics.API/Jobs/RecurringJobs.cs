@@ -2,7 +2,7 @@ using Hangfire;
 using Logistics.Application.Abstractions.ProductLicense;
 using Logistics.Application.Modules.Compliance.Ifta.Services;
 using Logistics.Application.Modules.Compliance.Privacy.Services;
-using Logistics.Application.Modules.IdentityAccess.Invitations.Services;
+using Logistics.Application.Modules.Identity.Invitations.Services;
 using Logistics.Application.Modules.Integrations.Webhooks.Services;
 
 namespace Logistics.API.Jobs;

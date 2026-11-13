@@ -1,0 +1,16 @@
+using Logistics.Application.Abstractions;
+using Logistics.Application.Modules.Compliance.Ifta.Services;
+using Logistics.Mediator;
+using Logistics.Shared.Models;
+
+namespace Logistics.Application.Modules.Reporting.Reports.Queries;
+
+internal sealed class IftaReportHandler(IIftaReportService iftaReportService)
+    : IRequestHandler<IftaReportQuery, Result<IftaReportDto>>
+{
+    public async Task<Result<IftaReportDto>> Handle(IftaReportQuery req, CancellationToken ct)
+    {
+        var report = await iftaReportService.GetReportAsync(req.Year, req.Quarter, ct);
+        return Result<IftaReportDto>.Ok(report);
+    }
+}

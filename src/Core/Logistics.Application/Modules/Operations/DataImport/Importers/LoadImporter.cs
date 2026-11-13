@@ -1,0 +1,274 @@
+using Logistics.Application.Abstractions.CurrentUser;
+using Logistics.Application.Abstractions.Geocoding;
+using Logistics.Application.Modules.Operations.DataImport.Constants;
+using Logistics.Application.Modules.Operations.DataImport.Services;
+using Logistics.Application.Modules.Operations.Loads.Services;
+using Logistics.Domain.Entities;
+using Logistics.Domain.Persistence;
+using Logistics.Domain.Primitives.Enums;
+using Logistics.Domain.Primitives.ValueObjects;
+using Microsoft.EntityFrameworkCore;
+using static Logistics.Application.Modules.Operations.DataImport.Constants.ImportFieldKeys;
+
+namespace Logistics.Application.Modules.Operations.DataImport.Importers;
+
+/// <summary>
+///     Loads match on the source system's reference, kept in <see cref="Load.ExternalSourceId"/> with
+///     <see cref="LoadSource.Import"/>. Customers and trucks must already exist. Addresses are geocoded
+///     only when the import commits, so a validation run makes no geocoding calls.
+/// </summary>
+internal sealed class LoadImporter(
+    ITenantUnitOfWork tenantUow,
+    IGeocodingService geocodingService,
+    IVehicleTransportCheck vehicleTransportCheck,
+    ICurrentUserService currentUserService) : EntityImporter<LoadImporter.Draft>
+{
+    private static readonly IReadOnlyDictionary<string, LoadStatus> StatusAliases = new Dictionary<string, LoadStatus>
+    {
+        ["Open"] = LoadStatus.Draft,
+        ["Booked"] = LoadStatus.Draft,
+        ["Available"] = LoadStatus.Draft,
+        ["Planned"] = LoadStatus.Draft,
+        ["Pending"] = LoadStatus.Draft,
+        ["New"] = LoadStatus.Draft,
+        ["Assigned"] = LoadStatus.Dispatched,
+        ["Covered"] = LoadStatus.Dispatched,
+        ["In Transit"] = LoadStatus.PickedUp,
+        ["Loaded"] = LoadStatus.PickedUp,
+        ["Picked"] = LoadStatus.PickedUp,
+        ["Completed"] = LoadStatus.Delivered,
+        ["Complete"] = LoadStatus.Delivered,
+        ["Invoiced"] = LoadStatus.Delivered,
+        ["Paid"] = LoadStatus.Delivered,
+        ["Closed"] = LoadStatus.Delivered,
+        ["Billed"] = LoadStatus.Delivered,
+        ["Canceled"] = LoadStatus.Cancelled,
+        ["TONU"] = LoadStatus.Cancelled,
+        ["Void"] = LoadStatus.Cancelled
+    };
+
+    private static readonly IReadOnlyDictionary<string, LoadType> TypeAliases = new Dictionary<string, LoadType>
+    {
+        ["Dry"] = LoadType.GeneralFreight,
+        ["Dry Van"] = LoadType.GeneralFreight,
+        ["FTL"] = LoadType.GeneralFreight,
+        ["LTL"] = LoadType.GeneralFreight,
+        ["Reefer"] = LoadType.RefrigeratedGoods,
+        ["Hazmat"] = LoadType.HazardousMaterials,
+        ["Oversize"] = LoadType.OversizeHeavy,
+        ["Tanker"] = LoadType.Liquid,
+        ["Auto"] = LoadType.Vehicle,
+        ["Car"] = LoadType.Vehicle,
+        ["Container"] = LoadType.IntermodalContainer,
+        ["Drayage"] = LoadType.IntermodalContainer
+    };
+
+    public override ImportEntityType EntityType => ImportEntityType.Loads;
+
+    protected override Draft Parse(ImportRow row, ImportOptions options)
+    {
+        var draft = new Draft(row, row.Get(Reference) ?? "");
+        draft.ReadRequired(Reference, "Load reference");
+        draft.ReadRequired(ImportFieldKeys.Customer, "Customer");
+
+        draft.Rate = draft.ReadDecimal(Rate, "Rate");
+        if (row.Get(Rate) is null)
+        {
+            draft.Errors.Add("Rate is required.");
+        }
+        else if (draft.Rate < 0)
+        {
+            draft.Errors.Add("Rate cannot be negative.");
+        }
+
+        draft.Status = draft.ReadEnum(Status, "Status", StatusAliases) ?? LoadStatus.Draft;
+        draft.Type = draft.ReadEnum(ImportFieldKeys.Type, "Load type", TypeAliases) ?? LoadType.GeneralFreight;
+        draft.PickupDate = draft.ReadDate(PickupDate, "Pickup date", options);
+        draft.DeliveryDate = draft.ReadDate(DeliveryDate, "Delivery date", options);
+        draft.PickupAppointmentFrom = draft.ReadDate(PickupAppointmentFrom, "Pickup appointment from", options);
+        draft.PickupAppointmentTo = draft.ReadDate(PickupAppointmentTo, "Pickup appointment to", options);
+        draft.DeliveryAppointmentFrom = draft.ReadDate(DeliveryAppointmentFrom, "Delivery appointment from", options);
+        draft.DeliveryAppointmentTo = draft.ReadDate(DeliveryAppointmentTo, "Delivery appointment to", options);
+        draft.Origin = draft.ReadAddress(PickupPrefix, "Pickup address", options, required: true);
+        draft.Destination = draft.ReadAddress(DeliveryPrefix, "Delivery address", options, required: true);
+        return draft;
+    }
+
+    protected override async Task ResolveAsync(IReadOnlyList<Draft> drafts, ImportOptions options, CancellationToken ct)
+    {
+        var dispatcher = currentUserService.GetUserId() is { } userId
+            ? await tenantUow.Repository<Employee>().GetByIdAsync(userId, ct)
+            : null;
+
+        var references = drafts.Select(d => d.Key).ToArray();
+        var existing = await tenantUow.Repository<Load>().Query()
+            .Where(l => l.Source == LoadSource.Import && l.ExternalSourceId != null && references.Contains(l.ExternalSourceId))
+            .ToListAsync(ct);
+        var customers = await tenantUow.Repository<Customer>().Query().ToListAsync(ct);
+        var trucks = await tenantUow.Repository<Truck>().Query().ToListAsync(ct);
+        var drivers = new EmployeeMatcher(await tenantUow.Repository<Employee>().Query().ToListAsync(ct));
+
+        var hasVehicleLoads = drafts.Any(d => d.Type == LoadType.Vehicle);
+        if (hasVehicleLoads && await vehicleTransportCheck.CheckLoadTypeAsync(LoadType.Vehicle) is { IsSuccess: false } typeCheck)
+        {
+            foreach (var draft in drafts.Where(d => d.Type == LoadType.Vehicle))
+            {
+                draft.Errors.Add(typeCheck.Error!);
+            }
+        }
+
+        foreach (var draft in drafts)
+        {
+            draft.Existing = existing.FirstOrDefault(l => l.ExternalSourceId == draft.Key);
+            draft.Exists = draft.Existing is not null;
+            draft.Dispatcher = dispatcher;
+            if (dispatcher is null)
+            {
+                draft.Errors.Add("Loads are imported with you as dispatcher, and your user is not an employee here.");
+            }
+
+            var customerName = draft.Row.Get(ImportFieldKeys.Customer)!;
+            draft.Customer = customers.FirstOrDefault(c => c.Name.Equals(customerName, StringComparison.OrdinalIgnoreCase));
+            if (draft.Customer is null)
+            {
+                draft.Errors.Add($"Unknown customer '{customerName}'. Import customers first.");
+            }
+
+            ResolveTruck(draft, trucks, drivers);
+
+            if (TruckChangeError(draft) is { } truckError)
+            {
+                draft.Errors.Add(truckError);
+            }
+        }
+    }
+
+    /// <summary>Why an existing load's truck can't change to the row's truck; null when it can or doesn't change.</summary>
+    private static string? TruckChangeError(Draft draft)
+    {
+        if (draft.Existing is not { } load || draft.Truck is not { } truck)
+        {
+            return null;
+        }
+
+        return truck.Id == load.AssignedTruckId ? null : load.TruckChangeBlockedReason();
+    }
+
+    protected override async Task WriteAsync(IReadOnlyList<Draft> drafts, ImportOptions options, CancellationToken ct)
+    {
+        var geocoded = new Dictionary<Address, GeoPoint?>();
+        foreach (var draft in drafts)
+        {
+            if (draft.Existing is { } load)
+            {
+                if (draft.Truck is { } truck && truck.Id != load.AssignedTruckId)
+                {
+                    load.AssignToTruck(truck);
+                }
+
+                load.RequestedPickupDate = draft.PickupDate ?? load.RequestedPickupDate;
+                load.RequestedDeliveryDate = draft.DeliveryDate ?? load.RequestedDeliveryDate;
+                load.PickupAppointmentFrom = draft.PickupAppointmentFrom ?? load.PickupAppointmentFrom;
+                load.PickupAppointmentTo = draft.PickupAppointmentTo ?? load.PickupAppointmentTo;
+                load.DeliveryAppointmentFrom = draft.DeliveryAppointmentFrom ?? load.DeliveryAppointmentFrom;
+                load.DeliveryAppointmentTo = draft.DeliveryAppointmentTo ?? load.DeliveryAppointmentTo;
+                load.Notes = draft.Row.Get(Notes) ?? load.Notes;
+                if (draft.Row.Get(Status) is not null)
+                {
+                    load.RestoreImportedStatus(draft.Status, draft.PickupDate, draft.DeliveryDate);
+                }
+
+                continue;
+            }
+
+            var origin = await GeocodeAsync(draft.Origin!, geocoded, ct);
+            var destination = await GeocodeAsync(draft.Destination!, geocoded, ct);
+            if (origin is null || destination is null)
+            {
+                draft.Errors.Add($"Could not locate the {(origin is null ? "pickup" : "delivery")} address on the map.");
+                continue;
+            }
+
+            var created = Load.Create(draft.Key, draft.Type, draft.Rate!.Value, draft.Origin!, origin,
+                draft.Destination!, destination, draft.Customer!, draft.Truck, draft.Dispatcher!, options.Currency);
+
+            // History must not push "new load" and "assigned to you" notifications to drivers.
+            created.DomainEvents.Clear();
+            created.Source = LoadSource.Import;
+            created.ExternalSourceId = draft.Key;
+            created.RequestedPickupDate = draft.PickupDate;
+            created.RequestedDeliveryDate = draft.DeliveryDate;
+            created.PickupAppointmentFrom = draft.PickupAppointmentFrom;
+            created.PickupAppointmentTo = draft.PickupAppointmentTo;
+            created.DeliveryAppointmentFrom = draft.DeliveryAppointmentFrom;
+            created.DeliveryAppointmentTo = draft.DeliveryAppointmentTo;
+            created.Notes = draft.Row.Get(Notes);
+            created.RestoreImportedStatus(draft.Status, draft.PickupDate, draft.DeliveryDate);
+            await tenantUow.Repository<Load>().AddAsync(created, ct);
+        }
+
+        await tenantUow.SaveChangesAsync(ct);
+    }
+
+    /// <summary>
+    ///     The truck cell wins; with only a driver, the load goes to the truck that driver drives.
+    /// </summary>
+    private static void ResolveTruck(Draft draft, IReadOnlyList<Truck> trucks, EmployeeMatcher drivers)
+    {
+        if (draft.Row.Get(ImportFieldKeys.Truck) is { } truckNumber)
+        {
+            draft.Truck = trucks.FirstOrDefault(t => t.Number.Equals(truckNumber, StringComparison.OrdinalIgnoreCase));
+            if (draft.Truck is null)
+            {
+                draft.Errors.Add($"Unknown truck '{truckNumber}'. Import trucks first.");
+            }
+
+            return;
+        }
+
+        if (draft.Row.Get(Driver) is not { } driverCell)
+        {
+            return;
+        }
+
+        var driver = drivers.Find(driverCell);
+        draft.Truck = driver is null ? null : trucks.FirstOrDefault(t => t.IsDrivenBy(driver.Id));
+        if (draft.Truck is null)
+        {
+            draft.Errors.Add($"No truck is driven by '{driverCell}'. Add a truck column or assign the driver to a truck.");
+        }
+    }
+
+    private async Task<GeoPoint?> GeocodeAsync(Address address, Dictionary<Address, GeoPoint?> cache, CancellationToken ct)
+    {
+        if (cache.TryGetValue(address, out var cached))
+        {
+            return cached;
+        }
+
+        var result = await geocodingService.GeocodeAddressAsync(
+            address.Line1, address.City, address.State, address.ZipCode, address.Country, ct);
+        var point = result.IsSuccess ? result.Value : null;
+        cache[address] = point;
+        return point;
+    }
+
+    internal sealed class Draft(ImportRow row, string key) : ImportDraft(row, key)
+    {
+        public decimal? Rate { get; set; }
+        public LoadStatus Status { get; set; }
+        public LoadType Type { get; set; }
+        public DateTime? PickupDate { get; set; }
+        public DateTime? DeliveryDate { get; set; }
+        public DateTime? PickupAppointmentFrom { get; set; }
+        public DateTime? PickupAppointmentTo { get; set; }
+        public DateTime? DeliveryAppointmentFrom { get; set; }
+        public DateTime? DeliveryAppointmentTo { get; set; }
+        public Address? Origin { get; set; }
+        public Address? Destination { get; set; }
+        public Customer? Customer { get; set; }
+        public Truck? Truck { get; set; }
+        public Employee? Dispatcher { get; set; }
+        public Load? Existing { get; set; }
+    }
+}

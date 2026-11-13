@@ -1,17 +1,20 @@
 # Application Module Layout
 
-`Logistics.Application` is organised into six modules. Each module owns the features inside one bounded context - pick a module by context, not by entity.
+`Logistics.Application` is organised into nine modules. Each module owns the features inside one bounded context - pick a module by context, not by entity. Code shared across modules lives in `Logistics.Application/Common/`, which is not a module.
 
-## The six modules
+## The nine modules
 
-| Module           | Bounded context                              | Example features                                                                                  |
-| ---------------- | -------------------------------------------- | ------------------------------------------------------------------------------------------------- |
-| `Operations`     | Daily TMS work: dispatching, fleet, tracking | Loads, Trips, Trucks, Containers, Terminals, Tracking                                             |
-| `Compliance`     | Regulatory and safety                        | ELD/HOS, DVIR, Inspections, Accidents, Safety, Privacy, Ifta                                      |
-| `Financial`      | Money in / money out                         | Invoices, Tax, Payments, PaymentLinks, Payroll, StripeConnect, Expenses                           |
-| `IdentityAccess` | Who can do what, and which org               | Users, Roles, Tenants, Customers, Employees, Subscriptions, ApiKeys, Features, Invitations        |
-| `Integrations`   | Outbound integrations + inbound webhooks     | AIDispatch, LoadBoard, FuelCards, Accounting, Webhooks, Messaging, Documents, UpdateNotifications |
-| `Platform`       | Cross-cutting, marketing, internal           | Stats, Reports, BlogPosts, Contacts, DemoRequests, Notifications                                  |
+| Module         | Bounded context                                   | Features                                                                                         |
+| -------------- | ------------------------------------------------- | ------------------------------------------------------------------------------------------------ |
+| `Operations`   | Daily TMS work: dispatching, fleet, shippers      | Loads, Trips, Trucks, Trailers, Containers, Terminals, Tracking, Maintenance, TimeEntries, Customers, Documents, Messaging, Notifications, Portal, DataImport |
+| `Compliance`   | Regulatory and safety                             | Eld, Dvir, Inspections, Safety, Privacy, Ifta                                                    |
+| `Financial`    | Money in / money out                              | Invoices, Tax, Payments, PaymentLinks, Payroll, StripeConnect, Expenses, Factoring, Accessorials |
+| `Identity`     | Who can sign in and what they may do              | Users, Roles, Employees, Invitations, ApiKeys, Admins, CustomerUsers                             |
+| `Tenancy`      | A tenant's lifecycle and what its plan unlocks    | Tenants, Subscriptions, Features, ProductLicense, Onboarding                                     |
+| `AI`           | Agent-driven work and its settings                | AIDispatch, AICopilot, Agents, Negotiation, AISettings                                           |
+| `Integrations` | Outside vendors and inbound webhooks              | LoadBoard, FuelCards, Accounting, Webhooks                                                       |
+| `Reporting`    | Read-only reports and dashboards over tenant data | Reports, Stats                                                                                   |
+| `Website`      | The marketing site                                | BlogPosts, Contacts, DemoRequests                                                                |
 
 ## Folder convention inside a module
 
@@ -28,30 +31,34 @@ Modules/{Module}/
     │       ├── Get{Entity}ByIdQuery.cs
     │       └── Get{Entity}ByIdHandler.cs
     ├── Events/                         # optional: domain-event handlers
-    ├── Policies/                       # optional: authorisation / domain policies
-    └── ReadModels/                     # optional: projected read models
+    ├── Services/                       # optional: feature-scoped workflow services
+    ├── Constants/                      # optional
+    └── {Entity}Mapper.cs               # Mapperly mapper for the feature's entities
 ```
 
 ### Verified example
 
 ```text
-Modules/Compliance/Accidents/
+Modules/Compliance/Safety/
 ├── Commands/
 │   └── CreateAccidentReport/
 │       ├── CreateAccidentReportCommand.cs
 │       └── CreateAccidentReportHandler.cs
-└── Queries/
+├── Queries/
+├── Services/
+└── AccidentMapper.cs
 ```
 
-See `src/Core/Logistics.Application/Modules/Compliance/Accidents/Commands/CreateAccidentReport/CreateAccidentReportCommand.cs`.
+See `src/Core/Logistics.Application/Modules/Compliance/Safety/Commands/CreateAccidentReport/CreateAccidentReportCommand.cs`.
 
 ## Picking the right module for a new feature
 
 Use bounded context, not entity affinity:
 
-- A _driver licence_ is owned by an Employee, but checking expiry is **Compliance** behaviour → `Modules/Compliance/...`. If the licence record itself lives next to the employee, that part stays in `Modules/IdentityAccess/Employees/...`.
+- A _driver licence_ is owned by an Employee, but checking expiry is **Compliance** behaviour → `Modules/Compliance/Safety/`. The licence record itself stays next to the employee in `Modules/Identity/Employees/`.
 - A _Stripe webhook_ could feel like Financial, but webhook plumbing is **Integrations** → `Modules/Integrations/Webhooks/`. The downstream effect (issuing an invoice) is Financial - split the command from the side effect.
-- _Blog posts_ power the marketing site, so they're **Platform**, not IdentityAccess, even though they have an Author.
+- _Broker negotiation_ talks to outside brokers, but an agent drives it, so it is **AI**, not Integrations.
+- _Blog posts_ power the marketing site, so they're **Website**, not Identity, even though they have an Author.
 
 When two modules both look right, pick the one whose other features the new command will mostly call.
 

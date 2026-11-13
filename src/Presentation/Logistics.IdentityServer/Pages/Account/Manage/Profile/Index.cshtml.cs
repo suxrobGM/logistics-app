@@ -1,4 +1,4 @@
-using Logistics.Application.Modules.IdentityAccess.Users.Services;
+using Logistics.Application.Modules.Identity.Users.Services;
 using Logistics.Domain.Entities;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;

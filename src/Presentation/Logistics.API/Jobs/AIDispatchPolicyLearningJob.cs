@@ -1,6 +1,6 @@
 using Hangfire;
 using Logistics.Application.Abstractions.Features;
-using Logistics.Application.Modules.Integrations.AIDispatch.Services;
+using Logistics.Application.Modules.AI.AIDispatch.Services;
 using Logistics.Domain.Entities;
 using Logistics.Domain.Primitives.Enums;
 

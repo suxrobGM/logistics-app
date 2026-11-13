@@ -1,7 +1,7 @@
 using System.Globalization;
 using Logistics.Application.Abstractions.BackgroundJobs;
 using Logistics.Application.Abstractions.Features;
-using Logistics.Application.Modules.Integrations.AIDispatch.Commands;
+using Logistics.Application.Modules.AI.AIDispatch.Commands;
 using Logistics.Domain.Entities;
 using Logistics.Domain.Events;
 using Logistics.Domain.Persistence;

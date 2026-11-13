@@ -1,11 +1,11 @@
+using Logistics.Application.Abstractions;
 using Logistics.Application.Abstractions.AIDispatch;
 using Logistics.Application.Abstractions.CurrentUser;
 using Logistics.Application.Abstractions.LoadBoard;
-using Logistics.Application.Abstractions;
-using Logistics.Application.Modules.IdentityAccess.Customers.Services;
+using Logistics.Application.Modules.AI.Negotiation;
+using Logistics.Application.Modules.AI.Negotiation.Services;
 using Logistics.Application.Modules.Integrations.LoadBoard.Services;
-using Logistics.Application.Modules.Integrations.Negotiation.Services;
-using Logistics.Application.Modules.Integrations.Negotiation;
+using Logistics.Application.Modules.Operations.Customers.Services;
 using Logistics.Application.Modules.Operations.Loads.Services;
 using Logistics.Domain.Entities;
 using Logistics.Domain.Persistence;

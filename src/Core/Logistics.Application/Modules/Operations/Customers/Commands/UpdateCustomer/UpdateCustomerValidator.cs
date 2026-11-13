@@ -1,0 +1,16 @@
+using FluentValidation;
+using Logistics.Application.Common.Validation;
+
+namespace Logistics.Application.Modules.Operations.Customers.Commands;
+
+internal sealed class UpdateCustomerValidator : AbstractValidator<UpdateCustomerCommand>
+{
+    public UpdateCustomerValidator()
+    {
+        RuleFor(i => i.Name).NotEmpty();
+
+        RuleFor(i => i.Address!)
+            .SetValidator(new AddressValidator())
+            .When(i => i.Address is not null);
+    }
+}

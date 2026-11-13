@@ -1,6 +1,6 @@
 using Logistics.Application.Modules.Financial.Payments;
-using Logistics.Application.Modules.IdentityAccess.Customers;
-using Logistics.Application.Modules.IdentityAccess.Employees;
+using Logistics.Application.Modules.Identity.Employees;
+using Logistics.Application.Modules.Operations.Customers;
 using Logistics.Domain.Entities;
 using Logistics.Domain.Primitives.Enums;
 using Logistics.Shared.Models;

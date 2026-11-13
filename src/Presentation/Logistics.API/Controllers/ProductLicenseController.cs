@@ -1,9 +1,9 @@
 using Logistics.API.Extensions;
-using Logistics.Application.Modules.Platform.ProductLicense.Commands;
-using Logistics.Application.Modules.Platform.ProductLicense.Queries;
+using Logistics.Application.Modules.Tenancy.ProductLicense.Commands;
+using Logistics.Application.Modules.Tenancy.ProductLicense.Queries;
+using Logistics.Mediator;
 using Logistics.Shared.Identity.Policies;
 using Logistics.Shared.Models;
-using Logistics.Mediator;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.RateLimiting;

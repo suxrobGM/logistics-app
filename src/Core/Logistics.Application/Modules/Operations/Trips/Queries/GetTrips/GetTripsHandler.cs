@@ -1,7 +1,7 @@
 using Logistics.Application.Abstractions;
 using Logistics.Application.Common.Extensions;
 using Logistics.Application.Common.Services;
-using Logistics.Application.Modules.IdentityAccess.Customers;
+using Logistics.Application.Modules.Operations.Customers;
 using Logistics.Application.Modules.Operations.Loads;
 using Logistics.Domain.Entities;
 using Logistics.Domain.Persistence;

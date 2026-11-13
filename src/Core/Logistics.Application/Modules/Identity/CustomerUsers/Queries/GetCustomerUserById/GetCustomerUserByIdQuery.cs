@@ -1,0 +1,14 @@
+using Logistics.Shared.Models;
+
+namespace Logistics.Application.Modules.Identity.CustomerUsers.Queries;
+
+/// <summary>
+/// Query to get a CustomerUser by ID.
+/// </summary>
+public class GetCustomerUserByIdQuery : IQuery<Result<CustomerUserDto>>, IHaveId
+{
+    /// <summary>
+    /// The customer user ID.
+    /// </summary>
+    public required Guid Id { get; set; }
+}

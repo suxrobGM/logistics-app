@@ -1,0 +1,31 @@
+using Logistics.Application.Abstractions;
+using Logistics.Application.Abstractions.AIDispatch;
+using Logistics.Application.Modules.AI.AICopilot.Queries;
+using Logistics.Application.Modules.AI.AIDispatch.Queries;
+using Logistics.Domain.Persistence;
+using Logistics.Mediator;
+using Logistics.Shared.Models;
+
+namespace Logistics.Application.Modules.AI.Agents.Queries;
+
+/// <summary>One handler for both surfaces' quota queries; only the feature gate differs per query.</summary>
+internal sealed class GetAIQuotaStatusHandler(
+    IAIQuotaService quotaService,
+    ITenantUnitOfWork tenantUow)
+    : IRequestHandler<GetAIQuotaStatusQuery, Result<AIQuotaStatusDto>>,
+        IRequestHandler<GetAICopilotQuotaStatusQuery, Result<AIQuotaStatusDto>>
+{
+    public Task<Result<AIQuotaStatusDto>> Handle(GetAIQuotaStatusQuery request, CancellationToken ct) =>
+        GetStatusAsync(ct);
+
+    public Task<Result<AIQuotaStatusDto>> Handle(GetAICopilotQuotaStatusQuery request, CancellationToken ct) =>
+        GetStatusAsync(ct);
+
+    private async Task<Result<AIQuotaStatusDto>> GetStatusAsync(CancellationToken ct)
+    {
+        var tenant = tenantUow.GetCurrentTenant();
+        var status = await quotaService.GetQuotaStatusAsync(tenant.Id, ct);
+
+        return Result<AIQuotaStatusDto>.Ok(status.ToDto());
+    }
+}

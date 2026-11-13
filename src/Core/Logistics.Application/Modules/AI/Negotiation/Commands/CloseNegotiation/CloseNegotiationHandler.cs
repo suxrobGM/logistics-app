@@ -1,0 +1,42 @@
+using Logistics.Application.Abstractions;
+using Logistics.Application.Modules.AI.Negotiation.Services;
+using Logistics.Domain.Entities;
+using Logistics.Domain.Persistence;
+using Logistics.Domain.Primitives.Enums;
+using Logistics.Mediator;
+using Logistics.Shared.Models;
+
+namespace Logistics.Application.Modules.AI.Negotiation.Commands;
+
+internal sealed class CloseNegotiationHandler(
+    ITenantUnitOfWork tenantUow,
+    IInboundEmailRouteRegistry routeRegistry,
+    INegotiationPublisher negotiationPublisher)
+    : IRequestHandler<CloseNegotiationCommand, Result>
+{
+    public async Task<Result> Handle(CloseNegotiationCommand req, CancellationToken ct)
+    {
+        var negotiation = await tenantUow.Repository<RateNegotiation>().GetByIdAsync(req.Id, ct);
+        if (negotiation is null)
+        {
+            return Result.Fail($"Could not find a negotiation with ID '{req.Id}'", ErrorCodes.NotFound);
+        }
+
+        if (!negotiation.IsOpen)
+        {
+            return Result.Fail($"This negotiation is already {negotiation.Status.GetDescription().ToLowerInvariant()}.");
+        }
+
+        negotiation.Close(
+            req.Declined ? RateNegotiationStatus.Declined : RateNegotiationStatus.Closed,
+            req.Reason);
+
+        await tenantUow.SaveChangesAsync(ct);
+
+        await routeRegistry.RevokeAsync([negotiation.ReplyToken], ct);
+
+        await negotiationPublisher.PublishAsync(negotiation, ct);
+
+        return Result.Ok();
+    }
+}

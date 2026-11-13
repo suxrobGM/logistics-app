@@ -1,0 +1,54 @@
+using Logistics.Application.Abstractions;
+using Logistics.Application.Abstractions.CurrentUser;
+using Logistics.Domain.Entities.Messaging;
+using Logistics.Domain.Persistence;
+using Logistics.Mediator;
+using Logistics.Shared.Models;
+using Logistics.Shared.Models.Messaging;
+
+namespace Logistics.Application.Modules.Operations.Messaging.Queries;
+
+internal sealed class GetMessagesHandler(
+    ITenantUnitOfWork tenantUow,
+    ICurrentUserService currentUserService)
+    : IRequestHandler<GetMessagesQuery, Result<MessageDto[]>>
+{
+    public async Task<Result<MessageDto[]>> Handle(GetMessagesQuery req, CancellationToken ct)
+    {
+        // Verify conversation exists
+        var conversation = await tenantUow.Repository<Conversation>()
+            .GetByIdAsync(req.ConversationId, ct);
+
+        if (conversation is null)
+        {
+            return Result<MessageDto[]>.Fail($"Conversation with ID '{req.ConversationId}' not found", ErrorCodes.NotFound);
+        }
+
+        if (!conversation.IsTenantChat)
+        {
+            var callerId = currentUserService.GetUserId();
+            var isParticipant = callerId is not null && await tenantUow.Repository<ConversationParticipant>()
+                .GetAsync(p => p.ConversationId == req.ConversationId && p.EmployeeId == callerId.Value, ct)
+                is not null;
+
+            if (!isParticipant)
+            {
+                return Result<MessageDto[]>.Fail("Conversation not found or access denied.", ErrorCodes.NotFound);
+            }
+        }
+
+        var messages = await tenantUow.Repository<Message>()
+            .GetListAsync(m => m.ConversationId == req.ConversationId
+                               && (!req.Before.HasValue || m.SentAt < req.Before.Value), ct);
+
+        var messageDtos = messages
+            .OrderByDescending(m => m.SentAt)
+            .Skip(req.Offset)
+            .Take(req.Limit)
+            .Select(m => m.ToDtoWithReadStatus())
+            .Reverse() // Return in chronological order
+            .ToArray();
+
+        return Result<MessageDto[]>.Ok(messageDtos);
+    }
+}

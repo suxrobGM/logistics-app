@@ -3,7 +3,7 @@ using FluentValidation;
 using Logistics.Application.Common.Pipeline;
 using Logistics.Application.Modules.Financial.Tax.Services;
 using Logistics.Application.Modules.Integrations.FuelCards.Services;
-using Logistics.Application.Modules.Platform.ProductLicense.Services;
+using Logistics.Application.Modules.Tenancy.ProductLicense.Services;
 using Logistics.Mediator;
 using Microsoft.Extensions.DependencyInjection;
 

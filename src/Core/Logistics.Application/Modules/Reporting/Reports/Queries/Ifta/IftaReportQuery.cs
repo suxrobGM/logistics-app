@@ -1,0 +1,14 @@
+using Logistics.Application.Common.Pipeline;
+using Logistics.Domain.Primitives.Enums;
+using Logistics.Shared.Models;
+
+namespace Logistics.Application.Modules.Reporting.Reports.Queries;
+
+[RequiresFeature(TenantFeature.Ifta)]
+public class IftaReportQuery : IQuery<Result<IftaReportDto>>
+{
+    public int Year { get; set; }
+
+    /// <summary>Calendar quarter, 1-4.</summary>
+    public int Quarter { get; set; }
+}

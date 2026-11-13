@@ -1,6 +1,6 @@
 using Hangfire;
 using Logistics.Application.Abstractions.Features;
-using Logistics.Application.Modules.Integrations.Negotiation.Services;
+using Logistics.Application.Modules.AI.Negotiation.Services;
 using Logistics.Domain.Persistence;
 using Logistics.Domain.Primitives.Enums;
 

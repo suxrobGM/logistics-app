@@ -1,13 +1,13 @@
 using System.Text.Json;
 using Logistics.Application.Abstractions.Email;
-using Logistics.Application.Modules.Integrations.Negotiation;
-using Logistics.Application.Modules.Integrations.Negotiation.Commands;
+using Logistics.Application.Modules.AI.Negotiation;
+using Logistics.Application.Modules.AI.Negotiation.Commands;
 using Logistics.Application.Modules.Integrations.Webhooks.Services;
 using Logistics.Domain.Entities;
 using Logistics.Domain.Persistence;
 using Logistics.Domain.Primitives.Enums;
-using Logistics.Shared.Models;
 using Logistics.Mediator;
+using Logistics.Shared.Models;
 using Microsoft.Extensions.Logging;
 
 namespace Logistics.Application.Modules.Integrations.Webhooks.Commands;

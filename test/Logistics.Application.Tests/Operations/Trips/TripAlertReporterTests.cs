@@ -1,6 +1,6 @@
 using Logistics.Application.Abstractions.BackgroundJobs;
 using Logistics.Application.Abstractions.Features;
-using Logistics.Application.Modules.Integrations.AIDispatch.Commands;
+using Logistics.Application.Modules.AI.AIDispatch.Commands;
 using Logistics.Application.Modules.Operations.Trips.Services;
 using Logistics.Application.Tests.Operations.Loads;
 using Logistics.Application.Tests.TestKit;

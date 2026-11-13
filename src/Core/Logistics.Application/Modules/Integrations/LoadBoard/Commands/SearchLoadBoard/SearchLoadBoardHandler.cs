@@ -1,5 +1,5 @@
-using Logistics.Application.Modules.Integrations.Negotiation.Services;
 using Logistics.Application.Abstractions.LoadBoard;
+using Logistics.Application.Modules.AI.Negotiation.Services;
 using Logistics.Application.Modules.Integrations.LoadBoard.Services;
 using Logistics.Domain.Entities;
 using Logistics.Domain.Persistence;

@@ -5,7 +5,7 @@ using Logistics.Application.Common.Pipeline;
 using Logistics.Application.Modules.Compliance.Privacy.Services;
 using Logistics.Application.Modules.Compliance.Safety.Services;
 using Logistics.Application.Modules.Financial.Payroll.Services;
-using Logistics.Application.Modules.IdentityAccess.Invitations.Services;
+using Logistics.Application.Modules.Identity.Invitations.Services;
 using Logistics.Domain.Entities;
 using Logistics.Domain.Persistence;
 using Logistics.Mediator;

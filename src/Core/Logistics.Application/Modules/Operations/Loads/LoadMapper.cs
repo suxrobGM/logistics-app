@@ -1,4 +1,4 @@
-using Logistics.Application.Modules.IdentityAccess.Customers;
+using Logistics.Application.Modules.Operations.Customers;
 using Logistics.Application.Modules.Operations.Loads.Services;
 using Logistics.Domain.Entities;
 using Logistics.Shared.Models;

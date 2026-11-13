@@ -1,13 +1,11 @@
 using System.Threading.RateLimiting;
-using Open.IdentityServer;
 using Logistics.Application;
-using Logistics.Application.Modules.IdentityAccess.Users.Services;
-using Logistics.Domain.Entities;
 using Logistics.Application.Abstractions.Options;
+using Logistics.Application.Modules.Identity.Users.Services;
+using Logistics.Domain.Entities;
 using Logistics.HostDefaults;
 using Logistics.IdentityServer.Services;
 using Logistics.IdentityServer.Services.SigningKeys;
-using Open.IdentityServer.Stores;
 using Logistics.Infrastructure.Communications;
 using Logistics.Infrastructure.Persistence;
 using Logistics.Infrastructure.Persistence.Data;
@@ -15,6 +13,8 @@ using Logistics.Infrastructure.Storage;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.HttpOverrides;
 using Microsoft.AspNetCore.Identity;
+using Open.IdentityServer;
+using Open.IdentityServer.Stores;
 using Serilog;
 
 namespace Logistics.IdentityServer;

@@ -1,5 +1,5 @@
 using System.Security.Claims;
-using Logistics.Application.Modules.IdentityAccess.Users.Services;
+using Logistics.Application.Modules.Identity.Users.Services;
 using Logistics.Shared.Identity.Claims;
 using Microsoft.AspNetCore.Authorization;
 

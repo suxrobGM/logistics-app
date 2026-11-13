@@ -22,7 +22,7 @@ converters, AI quota), `Integrations/` (QBO, ELD, DAT, FMCSA, fuel cards, VIN, w
 `Requests`). A test of infrastructure code goes there, never in `Application.Tests`.
 
 `Application.Tests` folders mirror `src/Core/Logistics.Application/Modules/`
-(`Operations/Loads/`, `Integrations/AIDispatch/`, ...) and the namespace follows the folder. Tests
+(`Operations/Loads/`, `AI/AIDispatch/`, ...) and the namespace follows the folder. Tests
 of code outside `Modules/` mirror `Common/` (`Common/Pipeline/`, `Common/Validation/`, ...), and
 `Primitives/` holds domain value types and extensions.
 

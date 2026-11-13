@@ -1,8 +1,8 @@
-using Logistics.API.Extensions;
 using System.Text;
 using System.Text.Json;
-using Logistics.Application.Modules.Platform.DataImport.Commands;
-using Logistics.Application.Modules.Platform.DataImport.Queries;
+using Logistics.API.Extensions;
+using Logistics.Application.Modules.Operations.DataImport.Commands;
+using Logistics.Application.Modules.Operations.DataImport.Queries;
 using Logistics.Domain.Primitives.Enums;
 using Logistics.Mediator;
 using Logistics.Shared.Identity.Policies;

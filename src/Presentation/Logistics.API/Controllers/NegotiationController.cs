@@ -1,9 +1,9 @@
 using Logistics.API.Extensions;
-using Logistics.Application.Modules.Integrations.Negotiation.Commands;
-using Logistics.Application.Modules.Integrations.Negotiation.Queries;
+using Logistics.Application.Modules.AI.Negotiation.Commands;
+using Logistics.Application.Modules.AI.Negotiation.Queries;
+using Logistics.Mediator;
 using Logistics.Shared.Identity.Policies;
 using Logistics.Shared.Models;
-using Logistics.Mediator;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 

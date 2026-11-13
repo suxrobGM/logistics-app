@@ -1,8 +1,0 @@
-using Logistics.Shared.Models;
-
-namespace Logistics.Application.Modules.IdentityAccess.Customers.Queries;
-
-public class GetCustomerByIdQuery : IQuery<Result<CustomerDto>>, IHaveId
-{
-    public Guid Id { get; set; }
-}

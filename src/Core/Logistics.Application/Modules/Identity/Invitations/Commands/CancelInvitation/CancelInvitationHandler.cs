@@ -1,0 +1,36 @@
+using Logistics.Application.Abstractions;
+using Logistics.Domain.Entities;
+using Logistics.Domain.Persistence;
+
+using Logistics.Mediator;
+using Logistics.Shared.Models;
+
+namespace Logistics.Application.Modules.Identity.Invitations.Commands;
+
+internal sealed class CancelInvitationHandler(
+    IMasterUnitOfWork masterUow,
+    ITenantUnitOfWork tenantUow)
+    : IRequestHandler<CancelInvitationCommand, Result>
+{
+    public async Task<Result> Handle(CancelInvitationCommand req, CancellationToken ct)
+    {
+        var tenant = tenantUow.GetCurrentTenant();
+
+        var invitation = await masterUow.Repository<Invitation>()
+            .GetAsync(i => i.Id == req.Id && i.TenantId == tenant.Id, ct);
+
+        if (invitation is null)
+        {
+            return Result.Fail("Invitation not found.", ErrorCodes.NotFound);
+        }
+
+        if (invitation.Cancel() is { } cancelBlocked)
+        {
+            return Result.Fail(cancelBlocked);
+        }
+
+        await masterUow.SaveChangesAsync(ct);
+
+        return Result.Ok();
+    }
+}

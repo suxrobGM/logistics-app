@@ -7,16 +7,20 @@ Patterns and conventions for .NET backend development.
 ```text
 src/Core/Logistics.Application/
 ├── Modules/            # Feature code grouped by bounded context
-│   ├── Operations/     # Loads, Trips, Trucks, Containers, Terminals, …
+│   ├── Operations/     # Loads, Trips, Trucks, Customers, Documents, Messaging, Portal, …
 │   │   └── Loads/
 │   │       ├── Commands/CreateLoad/
 │   │       ├── Queries/GetLoadById/
-│   │       └── Services/         # feature-scoped workflow services (e.g. ILoadService)
-│   ├── Compliance/     # ELD, DVIR, Accidents, Safety, Privacy, Ifta
+│   │       ├── Services/         # feature-scoped workflow services (e.g. ILoadService)
+│   │       └── LoadMapper.cs     # Mapperly mappers sit next to their feature
+│   ├── Compliance/     # ELD, DVIR, Safety, Inspections, Privacy, Ifta
 │   ├── Financial/      # Invoices, Payments, Payroll, Expenses, Tax
-│   ├── IdentityAccess/ # Users, Tenants, Roles, Subscriptions
-│   ├── Integrations/   # AIDispatch, LoadBoard, FuelCards, Accounting, Webhooks, Messaging, Documents
-│   └── Platform/       # Stats, Reports, BlogPosts, Notifications
+│   ├── Identity/       # Users, Roles, Employees, Invitations, ApiKeys
+│   ├── Tenancy/        # Tenants, Subscriptions, Features, ProductLicense, Onboarding
+│   ├── AI/             # AIDispatch, AICopilot, Agents, Negotiation, AISettings
+│   ├── Integrations/   # LoadBoard, FuelCards, Accounting, Webhooks
+│   ├── Reporting/      # Reports, Stats
+│   └── Website/        # BlogPosts, Contacts, DemoRequests
 └── Common/             # Cross-module code; not a module
     ├── Handlers/       # Generic base handlers (Delete/GetById/Update) that trivial slices subclass
     ├── Pipeline/       # request pipeline behaviours and [RequiresFeature]

@@ -1,5 +1,5 @@
 using Logistics.Application.Modules.Operations.Loads.Events;
-using Logistics.Application.Modules.Platform.Notifications.Services;
+using Logistics.Application.Modules.Operations.Notifications.Services;
 using Logistics.Application.Tests.TestKit;
 using Logistics.Domain.Entities;
 using Logistics.Domain.Events;
