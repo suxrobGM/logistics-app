@@ -59,4 +59,22 @@ public class GetLoadsHandlerTests
 
         Assert.Single(result.Value!);
     }
+
+    [Fact]
+    public async Task Handle_Unassigned_ReturnsOnlyLoadsWithoutATruck()
+    {
+        var tenantUow = Substitute.For<ITenantUnitOfWork>();
+        tenantUow.StubLoadLookups();
+        var unassigned = TestData.Load();
+        var assigned = TestData.Load();
+        assigned.AssignedTruckId = Guid.NewGuid();
+        tenantUow.Stub<Load>(unassigned, assigned);
+
+        var sut = new GetLoadsHandler(tenantUow, Substitute.For<ICurrentUserService>(), new LoadLookupBuilder(tenantUow, new DisplayNameLookup(tenantUow)));
+        var result = await sut.Handle(new GetLoadsQuery { Unassigned = true }, CancellationToken.None);
+
+        var load = Assert.Single(result.Value!);
+        Assert.Equal(unassigned.Id, load.Id);
+        Assert.Equal(1, result.TotalItems);
+    }
 }

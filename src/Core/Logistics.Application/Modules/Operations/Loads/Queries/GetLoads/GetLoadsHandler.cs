@@ -65,6 +65,11 @@ internal sealed class GetLoadsHandler(
                 i.Status == LoadStatus.Dispatched || i.Status == LoadStatus.PickedUp);
         }
 
+        if (req.Unassigned)
+        {
+            baseQuery = baseQuery.Where(i => i.AssignedTruckId == null);
+        }
+
         if (userId.HasValue)
         {
             baseQuery = baseQuery.Where(i => i.AssignedTruck != null &&

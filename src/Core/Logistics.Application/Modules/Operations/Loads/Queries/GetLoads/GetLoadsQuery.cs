@@ -6,6 +6,9 @@ namespace Logistics.Application.Modules.Operations.Loads.Queries;
 public class GetLoadsQuery : SearchableQuery, IQuery<PagedResult<LoadDto>>
 {
     public bool ActiveOnly { get; set; }
+
+    /// <summary>Only loads with no truck assigned.</summary>
+    public bool Unassigned { get; set; }
     public Guid? DriverId { get; set; }
     public Guid? TruckId { get; set; }
     public DateTime? FromDate { get; set; }
