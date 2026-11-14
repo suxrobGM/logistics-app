@@ -21,21 +21,22 @@ internal sealed class DispatchLoadHandler(
             return Result.Fail($"Load not found with ID '{req.Id}'", ErrorCodes.NotFound);
         }
 
-        // Eligibility is enforced at the dispatch gate - assignment up to this point is
-        // planning. If the load is being dispatched, the truck and driver must be qualified
-        // to carry it (license, ADR/Hazmat endorsements, ADR cert, placarding).
-        if (load.AssignedTruckId.HasValue)
+        if (load.AssignedTruckId is not { } truckId)
         {
-            var eligibility = await eligibilityService.CheckAsync(
-                load.AssignedTruckId.Value, load.Id, ct: ct);
-            if (!eligibility.IsEligible)
-            {
-                var reasons = string.Join("; ",
-                    eligibility.Issues
-                        .Where(i => i.Severity == EligibilitySeverity.Error)
-                        .Select(i => i.Message));
-                return Result.Fail($"Cannot dispatch load: {reasons}");
-            }
+            return Result.Fail($"Assign a truck to load #{load.Number} before dispatching it");
+        }
+
+        // Eligibility is enforced at the dispatch gate - assignment up to this point is
+        // planning. The truck and driver must be qualified to carry the load
+        // (license, ADR/Hazmat endorsements, ADR cert, placarding).
+        var eligibility = await eligibilityService.CheckAsync(truckId, load.Id, ct: ct);
+        if (!eligibility.IsEligible)
+        {
+            var reasons = string.Join("; ",
+                eligibility.Issues
+                    .Where(i => i.Severity == EligibilitySeverity.Error)
+                    .Select(i => i.Message));
+            return Result.Fail($"Cannot dispatch load: {reasons}");
         }
 
         try

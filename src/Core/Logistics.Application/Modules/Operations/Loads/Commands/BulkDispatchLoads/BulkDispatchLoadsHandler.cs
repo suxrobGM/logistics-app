@@ -35,20 +35,23 @@ internal sealed class BulkDispatchLoadsHandler(
                 continue;
             }
 
-            if (load.AssignedTruckId.HasValue)
+            if (load.AssignedTruckId is not { } truckId)
             {
-                var eligibility = await eligibilityService.CheckAsync(
-                    load.AssignedTruckId.Value, load.Id, ct: ct);
-                if (!eligibility.IsEligible)
-                {
-                    var reasons = string.Join(", ",
-                        eligibility.Issues
-                            .Where(i => i.Severity == EligibilitySeverity.Error)
-                            .Select(i => i.Message));
-                    ineligibleReasons.Add($"Load '{load.Name}': {reasons}");
-                    skippedCount++;
-                    continue;
-                }
+                ineligibleReasons.Add($"Load #{load.Number}: no truck assigned");
+                skippedCount++;
+                continue;
+            }
+
+            var eligibility = await eligibilityService.CheckAsync(truckId, load.Id, ct: ct);
+            if (!eligibility.IsEligible)
+            {
+                var reasons = string.Join(", ",
+                    eligibility.Issues
+                        .Where(i => i.Severity == EligibilitySeverity.Error)
+                        .Select(i => i.Message));
+                ineligibleReasons.Add($"Load #{load.Number}: {reasons}");
+                skippedCount++;
+                continue;
             }
 
             load.Dispatch();
