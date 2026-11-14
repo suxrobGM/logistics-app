@@ -36,7 +36,7 @@ internal sealed class LoadsCommand(IMediator mediator, ITenantUnitOfWork tenantU
             ActiveOnly = true,
             Page = page,
             PageSize = PageSize,
-            OrderBy = "-CreatedAt"
+            OrderBy = "-createdAt"
         }, ct);
 
         var loads = result.Value?.ToList() ?? [];

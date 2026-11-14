@@ -14,6 +14,11 @@ internal sealed class GetInvitationsHandler(
     ITenantUnitOfWork tenantUow)
     : IRequestHandler<GetInvitationsQuery, PagedResult<InvitationDto>>
 {
+    private static readonly SortFields<Invitation> Sorts = new SortFields<Invitation>("-createdAt")
+        .Add("email", x => x.Email)
+        .Add("createdAt", x => x.CreatedAt)
+        .Add("expiresAt", x => x.ExpiresAt);
+
     public async Task<PagedResult<InvitationDto>> Handle(GetInvitationsQuery req, CancellationToken ct)
     {
         var tenant = tenantUow.GetCurrentTenant();
@@ -39,7 +44,7 @@ internal sealed class GetInvitationsHandler(
         }
 
         return await query.ToPagedResultAsync(
-            req, (page, token) => MapPageAsync(page, tenant, token), ct, defaultOrderBy: "-CreatedAt");
+            req, Sorts, (page, token) => MapPageAsync(page, tenant, token), ct);
     }
 
     private async Task<IEnumerable<InvitationDto>> MapPageAsync(

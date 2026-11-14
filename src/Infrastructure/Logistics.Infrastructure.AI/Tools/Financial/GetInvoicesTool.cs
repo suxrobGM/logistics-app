@@ -57,8 +57,7 @@ internal sealed class GetInvoicesTool(IMediator mediator)
             FromDate = input.StartDate,
             ToDate = input.EndDate,
             Type = InvoiceType.Load,
-            // Entity property name, not the DTO's CreatedDate - the sort is applied to the query.
-            OrderBy = "-CreatedAt",
+            OrderBy = "-createdAt",
             Page = input.Page ?? 1,
             PageSize = ToolResult.MaxResults
         };

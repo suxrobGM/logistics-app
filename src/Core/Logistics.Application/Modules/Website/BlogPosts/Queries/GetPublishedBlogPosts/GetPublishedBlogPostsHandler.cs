@@ -11,6 +11,9 @@ namespace Logistics.Application.Modules.Website.BlogPosts.Queries;
 internal sealed class GetPublishedBlogPostsHandler(
     IMasterUnitOfWork masterUow) : IRequestHandler<GetPublishedBlogPostsQuery, PagedResult<BlogPostDto>>
 {
+    private static readonly SortFields<BlogPost> Sorts = new SortFields<BlogPost>("-publishedAt")
+        .Add("publishedAt", x => x.PublishedAt);
+
     public async Task<PagedResult<BlogPostDto>> Handle(GetPublishedBlogPostsQuery req, CancellationToken ct)
     {
         var query = masterUow.Repository<BlogPost>().Query()
@@ -29,6 +32,6 @@ internal sealed class GetPublishedBlogPostsHandler(
             query = query.Where(x => x.Category == req.Category);
         }
 
-        return await query.ToPagedResultAsync(req, i => i.ToDto(), ct, defaultOrderBy: "-PublishedAt");
+        return await query.ToPagedResultAsync(req, Sorts, i => i.ToDto(), ct);
     }
 }

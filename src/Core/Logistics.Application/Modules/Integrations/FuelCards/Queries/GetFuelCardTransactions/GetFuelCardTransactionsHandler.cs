@@ -11,6 +11,9 @@ namespace Logistics.Application.Modules.Integrations.FuelCards.Queries;
 internal sealed class GetFuelCardTransactionsHandler(ITenantUnitOfWork tenantUow, IDisplayNameLookup names)
     : IRequestHandler<GetFuelCardTransactionsQuery, PagedResult<FuelCardTransactionDto>>
 {
+    private static readonly SortFields<FuelCardTransaction> Sorts = new SortFields<FuelCardTransaction>("-transactionDate")
+        .Add("transactionDate", x => x.TransactionDate);
+
     public async Task<PagedResult<FuelCardTransactionDto>> Handle(
         GetFuelCardTransactionsQuery req,
         CancellationToken ct)
@@ -42,7 +45,7 @@ internal sealed class GetFuelCardTransactionsHandler(ITenantUnitOfWork tenantUow
             query = query.Where(t => t.TransactionDate <= req.ToDate.Value);
         }
 
-        return await query.ToPagedResultAsync(req, MapPageAsync, ct, defaultOrderBy: "-TransactionDate");
+        return await query.ToPagedResultAsync(req, Sorts, MapPageAsync, ct);
     }
 
     private async Task<IEnumerable<FuelCardTransactionDto>> MapPageAsync(

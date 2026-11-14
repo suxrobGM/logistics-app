@@ -10,6 +10,13 @@ namespace Logistics.Application.Modules.Website.Contacts.Queries;
 internal sealed class GetContactSubmissionsHandler(
     IMasterUnitOfWork masterUow) : IRequestHandler<GetContactSubmissionsQuery, PagedResult<ContactSubmissionDto>>
 {
+    private static readonly SortFields<ContactSubmission> Sorts = new SortFields<ContactSubmission>("-createdAt")
+        .Add("firstName", x => x.FirstName)
+        .Add("email", x => x.Email)
+        .Add("subject", x => x.Subject)
+        .Add("status", x => x.Status)
+        .Add("createdAt", x => x.CreatedAt);
+
     public async Task<PagedResult<ContactSubmissionDto>> Handle(GetContactSubmissionsQuery req, CancellationToken ct)
     {
         var query = masterUow.Repository<ContactSubmission>().Query();
@@ -24,6 +31,6 @@ internal sealed class GetContactSubmissionsHandler(
                 x.Message.ToLower().Contains(search));
         }
 
-        return await query.ToPagedResultAsync(req, i => i.ToDto(), ct);
+        return await query.ToPagedResultAsync(req, Sorts, i => i.ToDto(), ct);
     }
 }

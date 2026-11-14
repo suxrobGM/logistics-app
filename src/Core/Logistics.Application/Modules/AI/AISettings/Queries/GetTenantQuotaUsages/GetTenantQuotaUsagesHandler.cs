@@ -16,6 +16,12 @@ internal sealed class GetTenantQuotaUsagesHandler(
     IMasterUnitOfWork masterUow,
     IServiceScopeFactory scopeFactory) : IRequestHandler<GetTenantQuotaUsagesQuery, PagedResult<TenantQuotaUsageDto>>
 {
+    private static readonly SortFields<TenantQuotaUsageDto> Sorts = new SortFields<TenantQuotaUsageDto>("-spentThisWeekUsd")
+        .Add("tenantName", x => x.TenantName)
+        .Add("planName", x => x.PlanName)
+        .Add("spentThisWeekUsd", x => x.SpentThisWeekUsd)
+        .Add("overageUsd", x => x.OverageUsd);
+
     /// <summary>
     /// How many tenant databases this report reads at once. Each read holds a pooled connection
     /// for the duration, so this bounds the report's share of the pool.
@@ -61,8 +67,7 @@ internal sealed class GetTenantQuotaUsagesHandler(
 
         var usages = rows.OfType<TenantQuotaUsageDto>().ToList();
 
-        var paged = usages.AsQueryable()
-            .OrderBy(request.OrderBy, x => x.TenantId, defaultOrderBy: "-SpentThisWeekUsd")
+        var paged = Sorts.Apply(usages.AsQueryable(), request.OrderBy, x => x.TenantId)
             .ApplyPaging(request.Page, request.PageSize)
             .ToArray();
 

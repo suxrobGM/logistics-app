@@ -10,6 +10,13 @@ namespace Logistics.Application.Modules.Financial.Payments.Queries;
 internal sealed class GetPaymentsHandler(ITenantUnitOfWork tenantUow)
     : IRequestHandler<GetPaymentsQuery, PagedResult<PaymentDto>>
 {
+    private static readonly SortFields<Payment> Sorts = new SortFields<Payment>("-createdAt")
+        .Add("createdAt", x => x.CreatedAt)
+        .Add("amount", x => x.Amount)
+        .Add("status", x => x.Status)
+        .Add("billingAddress", x => x.BillingAddress.Line1)
+        .Add("description", x => x.Description);
+
     public async Task<PagedResult<PaymentDto>> Handle(
         GetPaymentsQuery req,
         CancellationToken ct)
@@ -26,6 +33,6 @@ internal sealed class GetPaymentsHandler(ITenantUnitOfWork tenantUow)
             query = query.Where(i => i.CreatedAt <= toDate);
         }
 
-        return await query.ToPagedResultAsync(req, i => i.ToDto(), ct);
+        return await query.ToPagedResultAsync(req, Sorts, i => i.ToDto(), ct);
     }
 }

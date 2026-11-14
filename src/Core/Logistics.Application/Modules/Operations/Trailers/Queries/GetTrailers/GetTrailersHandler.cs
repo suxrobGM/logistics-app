@@ -11,6 +11,9 @@ namespace Logistics.Application.Modules.Operations.Trailers.Queries;
 internal sealed class GetTrailersHandler(ITenantUnitOfWork tenantUow)
     : IRequestHandler<GetTrailersQuery, PagedResult<TrailerDto>>
 {
+    private static readonly SortFields<Trailer> Sorts = new SortFields<Trailer>("number")
+        .Add("number", x => x.Number);
+
     public async Task<PagedResult<TrailerDto>> Handle(GetTrailersQuery req, CancellationToken ct)
     {
         var query = tenantUow.Repository<Trailer>().Query();
@@ -34,7 +37,7 @@ internal sealed class GetTrailersHandler(ITenantUnitOfWork tenantUow)
             query = query.Where(i => i.Type == req.Type.Value);
         }
 
-        return await query.ToPagedResultAsync(req, MapPageAsync, ct);
+        return await query.ToPagedResultAsync(req, Sorts, MapPageAsync, ct);
     }
 
     private async Task<IEnumerable<TrailerDto>> MapPageAsync(IReadOnlyList<Trailer> trailers, CancellationToken ct)

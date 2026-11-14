@@ -11,6 +11,12 @@ namespace Logistics.Application.Modules.Financial.Factoring.Queries;
 internal sealed class GetFactoringBatchesHandler(ITenantUnitOfWork tenantUow)
     : IRequestHandler<GetFactoringBatchesQuery, PagedResult<FactoringBatchDto>>
 {
+    private static readonly SortFields<FactoringBatch> Sorts = new SortFields<FactoringBatch>("-submittedAt")
+        .Add("number", x => x.Number)
+        .Add("submittedAt", x => x.SubmittedAt)
+        .Add("total", x => x.Total)
+        .Add("status", x => x.Status);
+
     public async Task<PagedResult<FactoringBatchDto>> Handle(GetFactoringBatchesQuery req, CancellationToken ct)
     {
         var query = tenantUow.Repository<FactoringBatch>().Query();
@@ -19,7 +25,7 @@ internal sealed class GetFactoringBatchesHandler(ITenantUnitOfWork tenantUow)
             query = query.Where(b => b.Status == status);
         }
 
-        return await query.ToPagedResultAsync(req, MapPageAsync, ct, defaultOrderBy: "-SubmittedAt");
+        return await query.ToPagedResultAsync(req, Sorts, MapPageAsync, ct);
     }
 
     private async Task<IEnumerable<FactoringBatchDto>> MapPageAsync(

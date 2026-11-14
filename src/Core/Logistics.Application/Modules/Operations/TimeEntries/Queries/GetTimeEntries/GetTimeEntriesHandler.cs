@@ -13,6 +13,10 @@ namespace Logistics.Application.Modules.Operations.TimeEntries.Queries;
 internal sealed class GetTimeEntriesHandler(ITenantUnitOfWork tenantUow, IDisplayNameLookup names)
     : IRequestHandler<GetTimeEntriesQuery, PagedResult<TimeEntryDto>>
 {
+    private static readonly SortFields<TimeEntry> Sorts = new SortFields<TimeEntry>("-startedAt")
+        .Add("startedAt", x => x.StartedAt)
+        .Add("totalHours", x => x.TotalHours);
+
     public async Task<PagedResult<TimeEntryDto>> Handle(GetTimeEntriesQuery req, CancellationToken ct)
     {
         var repository = tenantUow.Repository<TimeEntry>();
@@ -38,10 +42,10 @@ internal sealed class GetTimeEntriesHandler(ITenantUnitOfWork tenantUow, IDispla
             query = query.Where(t => t.Type == req.Type.Value);
         }
 
-        return await query.ToPagedResultAsync(req, async (page, token) =>
+        return await query.ToPagedResultAsync(req, Sorts, async (page, token) =>
         {
             var employeeNames = await names.GetEmployeeNamesAsync(page.Select(t => (Guid?)t.EmployeeId), token);
             return page.Select(t => t.ToDto(employeeNames.Find(t.EmployeeId)));
-        }, ct, defaultOrderBy: "-StartedAt");
+        }, ct);
     }
 }

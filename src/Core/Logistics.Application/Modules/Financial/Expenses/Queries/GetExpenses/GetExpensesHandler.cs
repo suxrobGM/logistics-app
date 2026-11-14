@@ -12,6 +12,13 @@ namespace Logistics.Application.Modules.Financial.Expenses.Queries;
 internal sealed class GetExpensesHandler(ITenantUnitOfWork tenantUow, ITruckDtoMapper truckDtoMapper)
     : IRequestHandler<GetExpensesQuery, PagedResult<ExpenseDto>>
 {
+    private static readonly SortFields<Expense> Sorts = new SortFields<Expense>("-expenseDate")
+        .Add("number", x => x.Number)
+        .Add("type", x => x.Type)
+        .Add("amount", x => x.Amount)
+        .Add("expenseDate", x => x.ExpenseDate)
+        .Add("status", x => x.Status);
+
     public async Task<PagedResult<ExpenseDto>> Handle(GetExpensesQuery req, CancellationToken ct)
     {
         var query = tenantUow.Repository<Expense>().Query();
@@ -56,7 +63,7 @@ internal sealed class GetExpensesHandler(ITenantUnitOfWork tenantUow, ITruckDtoM
                 (e.Notes ?? "").ToLower().Contains(search));
         }
 
-        return await query.ToPagedResultAsync(req, MapPageAsync, ct, defaultOrderBy: "-ExpenseDate");
+        return await query.ToPagedResultAsync(req, Sorts, MapPageAsync, ct);
     }
 
     private async Task<IEnumerable<ExpenseDto>> MapPageAsync(IReadOnlyList<Expense> expenses, CancellationToken ct)

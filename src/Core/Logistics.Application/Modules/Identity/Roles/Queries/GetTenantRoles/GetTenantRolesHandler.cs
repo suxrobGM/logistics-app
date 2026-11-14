@@ -10,6 +10,9 @@ namespace Logistics.Application.Modules.Identity.Roles.Queries;
 internal sealed class GetTenantRolesHandler(ITenantUnitOfWork tenantUow)
     : IRequestHandler<GetTenantRolesQuery, PagedResult<RoleDto>>
 {
+    private static readonly SortFields<TenantRole> Sorts = new SortFields<TenantRole>("name")
+        .Add("name", x => x.Name);
+
     public async Task<PagedResult<RoleDto>> Handle(
         GetTenantRolesQuery req, CancellationToken ct)
     {
@@ -23,6 +26,6 @@ internal sealed class GetTenantRolesHandler(ITenantUnitOfWork tenantUow)
                 (i.DisplayName != null && i.DisplayName.ToLower().Contains(search)));
         }
 
-        return await query.ToPagedResultAsync(req, i => i.ToDto(), ct, defaultOrderBy: "Name");
+        return await query.ToPagedResultAsync(req, Sorts, i => i.ToDto(), ct);
     }
 }

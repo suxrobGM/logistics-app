@@ -10,6 +10,10 @@ namespace Logistics.Application.Modules.Tenancy.Tenants.Queries;
 internal sealed class GetTenantsHandler(IMasterUnitOfWork masterUow)
     : IRequestHandler<GetTenantsQuery, PagedResult<TenantDto>>
 {
+    private static readonly SortFields<Tenant> Sorts = new SortFields<Tenant>("name")
+        .Add("name", x => x.Name)
+        .Add("companyName", x => x.CompanyName);
+
     public async Task<PagedResult<TenantDto>> Handle(
         GetTenantsQuery req, CancellationToken ct)
     {
@@ -23,6 +27,6 @@ internal sealed class GetTenantsHandler(IMasterUnitOfWork masterUow)
                 (!string.IsNullOrEmpty(i.CompanyName) && i.CompanyName.ToLower().Contains(search)));
         }
 
-        return await query.ToPagedResultAsync(req, i => i.ToDto(null), ct);
+        return await query.ToPagedResultAsync(req, Sorts, i => i.ToDto(null), ct);
     }
 }

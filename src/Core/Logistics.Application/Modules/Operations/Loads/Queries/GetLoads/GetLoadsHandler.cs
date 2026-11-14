@@ -17,6 +17,21 @@ internal sealed class GetLoadsHandler(
     ILoadLookupBuilder lookupBuilder)
     : IRequestHandler<GetLoadsQuery, PagedResult<LoadDto>>
 {
+    private static readonly SortFields<Load> Sorts = new SortFields<Load>("-createdAt")
+        .Add("number", x => x.Number)
+        .Add("name", x => x.Name)
+        .Add("type", x => x.Type)
+        .Add("customer.name", x => x.Customer!.Name)
+        .Add("originAddress", x => x.OriginAddress.City)
+        .Add("status", x => x.Status)
+        .Add("distance", x => x.Distance)
+        .Add("deliveryCost", x => x.DeliveryCost)
+        .Add("assignedTruckNumber", x => x.AssignedTruck!.Number)
+        .Add("assignedDispatcherName", x => x.AssignedDispatcher!.FirstName)
+        .Add("dispatchedAt", x => x.DispatchedAt)
+        .Add("deliveredAt", x => x.DeliveredAt)
+        .Add("createdAt", x => x.CreatedAt);
+
     public async Task<PagedResult<LoadDto>> Handle(
         GetLoadsQuery req,
         CancellationToken ct)
@@ -85,10 +100,10 @@ internal sealed class GetLoadsHandler(
 
         var totalItems = await baseQuery.CountAsync(ct);
 
-        var entities = await baseQuery
-            .OrderBy(req.OrderBy, x => x.Id)
+        var entities = await Sorts.Apply(baseQuery, req.OrderBy, x => x.Id)
             .ApplyPaging(req.Page, req.PageSize)
             .ToArrayAsync(ct);
+
         var lookup = await lookupBuilder.BuildAsync(entities, ct);
         var loads = entities.Select(i => i.ToDto(lookup)).ToArray();
 

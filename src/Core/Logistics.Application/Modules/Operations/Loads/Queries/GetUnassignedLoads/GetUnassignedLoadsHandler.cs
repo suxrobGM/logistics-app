@@ -16,6 +16,9 @@ namespace Logistics.Application.Modules.Operations.Loads.Queries;
 internal sealed class GetUnassignedLoadsHandler(ITenantUnitOfWork uow, ILoadLookupBuilder lookupBuilder)
     : IRequestHandler<GetUnassignedLoadsQuery, PagedResult<LoadDto>>
 {
+    private static readonly SortFields<Load> Sorts = new SortFields<Load>("-createdAt")
+        .Add("createdAt", x => x.CreatedAt);
+
     public async Task<PagedResult<LoadDto>> Handle(GetUnassignedLoadsQuery req, CancellationToken ct)
     {
         var loadRepo = uow.Repository<Load>();
@@ -33,8 +36,7 @@ internal sealed class GetUnassignedLoadsHandler(ITenantUnitOfWork uow, ILoadLook
             predicate: l => l.Status == LoadStatus.Draft && l.TripStops.Count == 0,
             ct: ct);
 
-        var entities = await baseQuery
-            .OrderBy(req.OrderBy, l => l.Id, defaultOrderBy: "-CreatedAt")
+        var entities = await Sorts.Apply(baseQuery, req.OrderBy, l => l.Id)
             .ApplyPaging(req.Page, req.PageSize)
             .ToArrayAsync(ct);
 

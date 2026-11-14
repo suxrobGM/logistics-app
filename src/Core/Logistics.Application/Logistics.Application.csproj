@@ -12,7 +12,6 @@
 
   <ItemGroup>
     <PackageReference Include="FluentValidation.DependencyInjectionExtensions" />
-    <PackageReference Include="System.Linq.Dynamic.Core"/>
     <PackageReference Include="Riok.Mapperly" />
     <PackageReference Include="Scrutor" />
     <PackageReference Include="Microsoft.EntityFrameworkCore" />

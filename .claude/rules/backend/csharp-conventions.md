@@ -31,4 +31,4 @@ No validator whose only rule is `Id NotEmpty`; the not-found path covers it. A C
 
 ## Sorting
 
-Sort parameters are `-field` (descending) or `field`, camelCase like every query value; the parser ignores case. It rejects `"field desc"`. Every client uses this form.
+`orderBy` is `key` or `-key` (descending). Each list handler declares its keys in a `static readonly SortFields<T>` with the default; a key is the camelCase DTO path its column shows (`customer.name`, `truckNumber`), mapped to the entity expression. Keys match exactly, and an unknown key is a 400. A new sortable column adds a key to that map.

@@ -11,6 +11,11 @@ namespace Logistics.Application.Modules.Compliance.Dvir.Queries;
 internal sealed class GetDvirReportsHandler(ITenantUnitOfWork tenantUow, IDvirReportListMapper listMapper)
     : IRequestHandler<GetDvirReportsQuery, PagedResult<DvirReportDto>>
 {
+    private static readonly SortFields<DvirReport> Sorts = new SortFields<DvirReport>("-inspectionDate")
+        .Add("inspectionDate", x => x.InspectionDate)
+        .Add("truckNumber", x => x.Truck.Number)
+        .Add("driverName", x => x.Driver.FirstName);
+
     public async Task<PagedResult<DvirReportDto>> Handle(GetDvirReportsQuery req, CancellationToken ct)
     {
         var baseQuery = tenantUow.Repository<DvirReport>().Query();
@@ -45,6 +50,6 @@ internal sealed class GetDvirReportsHandler(ITenantUnitOfWork tenantUow, IDvirRe
             baseQuery = baseQuery.Where(r => r.InspectionDate <= req.ToDate);
         }
 
-        return await baseQuery.ToPagedResultAsync(req, listMapper.MapAsync, ct, defaultOrderBy: "-InspectionDate");
+        return await baseQuery.ToPagedResultAsync(req, Sorts, listMapper.MapAsync, ct);
     }
 }

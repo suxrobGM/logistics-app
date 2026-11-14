@@ -13,6 +13,9 @@ namespace Logistics.Application.Modules.Identity.Admins.Queries;
 internal sealed class GetAdminInvitationsHandler(IMasterUnitOfWork masterUow)
     : IRequestHandler<GetAdminInvitationsQuery, PagedResult<InvitationDto>>
 {
+    private static readonly SortFields<Invitation> Sorts = new SortFields<Invitation>("-createdAt")
+        .Add("createdAt", x => x.CreatedAt);
+
     public async Task<PagedResult<InvitationDto>> Handle(GetAdminInvitationsQuery req, CancellationToken ct)
     {
         var query = masterUow.Repository<Invitation>()
@@ -25,7 +28,7 @@ internal sealed class GetAdminInvitationsHandler(IMasterUnitOfWork masterUow)
             query = query.Where(i => i.Email.ToLower().Contains(search));
         }
 
-        return await query.ToPagedResultAsync(req, MapPageAsync, ct, defaultOrderBy: "-CreatedAt");
+        return await query.ToPagedResultAsync(req, Sorts, MapPageAsync, ct);
     }
 
     private async Task<IEnumerable<InvitationDto>> MapPageAsync(IReadOnlyList<Invitation> invitations, CancellationToken ct)

@@ -15,6 +15,14 @@ namespace Logistics.Application.Modules.Operations.Trips.Queries;
 internal sealed class GetTripsHandler(ITenantUnitOfWork tenantUow, IDisplayNameLookup names)
     : IRequestHandler<GetTripsQuery, PagedResult<TripDto>>
 {
+    private static readonly SortFields<Trip> Sorts = new SortFields<Trip>("-createdAt")
+        .Add("number", x => x.Number)
+        .Add("name", x => x.Name)
+        .Add("truckNumber", x => x.Truck!.Number)
+        .Add("totalDistance", x => x.TotalDistance)
+        .Add("status", x => x.Status)
+        .Add("createdAt", x => x.CreatedAt);
+
     public Task<PagedResult<TripDto>> Handle(
         GetTripsQuery req, CancellationToken ct)
     {
@@ -49,7 +57,7 @@ internal sealed class GetTripsHandler(ITenantUnitOfWork tenantUow, IDisplayNameL
             query = query.Where(i => i.Status != TripStatus.Completed && i.Status != TripStatus.Cancelled);
         }
 
-        return query.ToPagedResultAsync(req, MapPageAsync, ct);
+        return query.ToPagedResultAsync(req, Sorts, MapPageAsync, ct);
     }
 
     private async Task<IEnumerable<TripDto>> MapPageAsync(IReadOnlyList<Trip> trips, CancellationToken ct)

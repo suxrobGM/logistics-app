@@ -17,6 +17,12 @@ internal sealed class GetTrucksHandler(
     ITruckDtoMapper truckDtoMapper)
     : IRequestHandler<GetTrucksQuery, PagedResult<TruckDto>>
 {
+    private static readonly SortFields<Truck> Sorts = new SortFields<Truck>("number")
+        .Add("number", x => x.Number)
+        .Add("type", x => x.Type)
+        .Add("status", x => x.Status)
+        .Add("licensePlate", x => x.LicensePlate);
+
     public async Task<PagedResult<TruckDto>> Handle(
         GetTrucksQuery req,
         CancellationToken ct)
@@ -34,7 +40,7 @@ internal sealed class GetTrucksHandler(
                               i.SecondaryDriver.LastName.ToLower().Contains(search))));
         }
 
-        baseQuery = baseQuery.OrderBy(req.OrderBy, x => x.Id);
+        baseQuery = Sorts.Apply(baseQuery, req.OrderBy, x => x.Id);
 
         if (req.Statuses?.Length > 0)
         {

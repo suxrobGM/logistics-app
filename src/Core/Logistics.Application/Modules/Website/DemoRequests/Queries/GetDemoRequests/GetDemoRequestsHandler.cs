@@ -10,6 +10,13 @@ namespace Logistics.Application.Modules.Website.DemoRequests.Queries;
 internal sealed class GetDemoRequestsHandler(
     IMasterUnitOfWork masterUow) : IRequestHandler<GetDemoRequestsQuery, PagedResult<DemoRequestDto>>
 {
+    private static readonly SortFields<DemoRequest> Sorts = new SortFields<DemoRequest>("-createdAt")
+        .Add("firstName", x => x.FirstName)
+        .Add("email", x => x.Email)
+        .Add("company", x => x.Company)
+        .Add("status", x => x.Status)
+        .Add("createdAt", x => x.CreatedAt);
+
     public async Task<PagedResult<DemoRequestDto>> Handle(GetDemoRequestsQuery req, CancellationToken ct)
     {
         var query = masterUow.Repository<DemoRequest>().Query();
@@ -24,6 +31,6 @@ internal sealed class GetDemoRequestsHandler(
                 x.Company.ToLower().Contains(search));
         }
 
-        return await query.ToPagedResultAsync(req, i => i.ToDto(), ct);
+        return await query.ToPagedResultAsync(req, Sorts, i => i.ToDto(), ct);
     }
 }

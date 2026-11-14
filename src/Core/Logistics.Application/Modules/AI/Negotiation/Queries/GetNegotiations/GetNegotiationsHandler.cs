@@ -11,6 +11,9 @@ namespace Logistics.Application.Modules.AI.Negotiation.Queries;
 internal sealed class GetNegotiationsHandler(ITenantUnitOfWork tenantUow, INegotiationDtoMapper dtoMapper)
     : IRequestHandler<GetNegotiationsQuery, PagedResult<RateNegotiationDto>>
 {
+    private static readonly SortFields<RateNegotiation> Sorts = new SortFields<RateNegotiation>("-createdAt")
+        .Add("createdAt", x => x.CreatedAt);
+
     public async Task<PagedResult<RateNegotiationDto>> Handle(GetNegotiationsQuery req, CancellationToken ct)
     {
         var query = tenantUow.Repository<RateNegotiation>().Query();
@@ -24,7 +27,7 @@ internal sealed class GetNegotiationsHandler(ITenantUnitOfWork tenantUow, INegot
             query = query.Where(RateNegotiation.Open());
         }
 
-        return await query.ToPagedResultAsync(req, MapPageAsync, ct, defaultOrderBy: "-CreatedAt");
+        return await query.ToPagedResultAsync(req, Sorts, MapPageAsync, ct);
     }
 
     private async Task<IEnumerable<RateNegotiationDto>> MapPageAsync(

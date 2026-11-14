@@ -35,7 +35,7 @@ internal sealed class TripsCommand(IMediator mediator) : ITelegramCommand, ICall
             ActiveOnly = true,
             Page = page,
             PageSize = PageSize,
-            OrderBy = "-CreatedAt"
+            OrderBy = "-createdAt"
         }, ct);
 
         var trips = result.Value?.ToList() ?? [];

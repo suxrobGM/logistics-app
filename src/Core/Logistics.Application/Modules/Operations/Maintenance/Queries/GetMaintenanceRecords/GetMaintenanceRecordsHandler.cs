@@ -12,6 +12,12 @@ namespace Logistics.Application.Modules.Operations.Maintenance.Queries;
 internal sealed class GetMaintenanceRecordsHandler(ITenantUnitOfWork tenantUow, IDisplayNameLookup names)
     : IRequestHandler<GetMaintenanceRecordsQuery, PagedResult<MaintenanceRecordDto>>
 {
+    private static readonly SortFields<MaintenanceRecord> Sorts = new SortFields<MaintenanceRecord>("-serviceDate")
+        .Add("serviceDate", x => x.ServiceDate)
+        .Add("truckNumber", x => x.Truck.Number)
+        .Add("odometerMeters", x => x.OdometerMeters)
+        .Add("totalCost", x => x.TotalCost);
+
     public async Task<PagedResult<MaintenanceRecordDto>> Handle(GetMaintenanceRecordsQuery req, CancellationToken ct)
     {
         var baseQuery = tenantUow.Repository<MaintenanceRecord>().Query();
@@ -36,7 +42,7 @@ internal sealed class GetMaintenanceRecordsHandler(ITenantUnitOfWork tenantUow, 
             baseQuery = baseQuery.Where(r => r.ServiceDate <= DateOnly.FromDateTime(req.ToDate.Value));
         }
 
-        return await baseQuery.ToPagedResultAsync(req, MapPageAsync, ct, defaultOrderBy: "-ServiceDate");
+        return await baseQuery.ToPagedResultAsync(req, Sorts, MapPageAsync, ct);
     }
 
     private async Task<IEnumerable<MaintenanceRecordDto>> MapPageAsync(

@@ -10,6 +10,13 @@ namespace Logistics.Application.Modules.Website.BlogPosts.Queries;
 internal sealed class GetBlogPostsHandler(
     IMasterUnitOfWork masterUow) : IRequestHandler<GetBlogPostsQuery, PagedResult<BlogPostDto>>
 {
+    private static readonly SortFields<BlogPost> Sorts = new SortFields<BlogPost>("-createdAt")
+        .Add("title", x => x.Title)
+        .Add("category", x => x.Category)
+        .Add("authorName", x => x.AuthorName)
+        .Add("publishedAt", x => x.PublishedAt)
+        .Add("createdAt", x => x.CreatedAt);
+
     public async Task<PagedResult<BlogPostDto>> Handle(GetBlogPostsQuery req, CancellationToken ct)
     {
         var query = masterUow.Repository<BlogPost>().Query();
@@ -33,6 +40,6 @@ internal sealed class GetBlogPostsHandler(
             query = query.Where(x => x.Status == req.Status.Value);
         }
 
-        return await query.ToPagedResultAsync(req, i => i.ToDto(), ct);
+        return await query.ToPagedResultAsync(req, Sorts, i => i.ToDto(), ct);
     }
 }

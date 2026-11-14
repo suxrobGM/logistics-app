@@ -10,6 +10,9 @@ namespace Logistics.Application.Modules.Identity.Users.Queries;
 internal sealed class GetUsersHandler(IMasterUnitOfWork masterUow)
     : IRequestHandler<GetUsersQuery, PagedResult<UserDto>>
 {
+    private static readonly SortFields<User> Sorts = new SortFields<User>("email")
+        .Add("email", x => x.Email);
+
     public async Task<PagedResult<UserDto>> Handle(
         GetUsersQuery req,
         CancellationToken ct)
@@ -26,6 +29,6 @@ internal sealed class GetUsersHandler(IMasterUnitOfWork masterUow)
                 (i.Email != null && i.Email.ToLower().Contains(search)));
         }
 
-        return await query.ToPagedResultAsync(req, i => i.ToDto(), ct);
+        return await query.ToPagedResultAsync(req, Sorts, i => i.ToDto(), ct);
     }
 }

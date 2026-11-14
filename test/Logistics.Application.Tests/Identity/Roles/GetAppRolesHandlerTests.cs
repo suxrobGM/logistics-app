@@ -41,7 +41,7 @@ public class GetAppRolesHandlerTests
         var zeta = new AppRole("zeta");
         _roleRepo.Query().Returns(new[] { alpha, zeta }.BuildMock());
 
-        var result = await _sut.Handle(new GetAppRolesQuery { OrderBy = "-Name" }, CancellationToken.None);
+        var result = await _sut.Handle(new GetAppRolesQuery { OrderBy = "-name" }, CancellationToken.None);
 
         Assert.Equal(["app.zeta", "app.alpha"], result.Value!.Select(r => r.Name));
     }

@@ -12,6 +12,11 @@ namespace Logistics.Application.Modules.Compliance.Safety.Queries;
 internal sealed class GetAccidentReportsHandler(ITenantUnitOfWork tenantUow, IDisplayNameLookup names)
     : IRequestHandler<GetAccidentReportsQuery, PagedResult<AccidentReportDto>>
 {
+    private static readonly SortFields<AccidentReport> Sorts = new SortFields<AccidentReport>("-occurredAt")
+        .Add("occurredAt", x => x.OccurredAt)
+        .Add("truckNumber", x => x.Truck.Number)
+        .Add("driverName", x => x.Driver.FirstName);
+
     public async Task<PagedResult<AccidentReportDto>> Handle(GetAccidentReportsQuery req, CancellationToken ct)
     {
         var baseQuery = tenantUow.Repository<AccidentReport>().Query();
@@ -46,7 +51,7 @@ internal sealed class GetAccidentReportsHandler(ITenantUnitOfWork tenantUow, IDi
             baseQuery = baseQuery.Where(r => r.OccurredAt <= req.ToDate);
         }
 
-        return await baseQuery.ToPagedResultAsync(req, MapPageAsync, ct, defaultOrderBy: "-OccurredAt");
+        return await baseQuery.ToPagedResultAsync(req, Sorts, MapPageAsync, ct);
     }
 
     private async Task<IEnumerable<AccidentReportDto>> MapPageAsync(

@@ -10,6 +10,13 @@ namespace Logistics.Application.Modules.Identity.Employees.Queries;
 
 internal sealed class GetEmployeesHandler(ITenantUnitOfWork tenantUow) : IRequestHandler<GetEmployeesQuery, PagedResult<EmployeeDto>>
 {
+    private static readonly SortFields<Employee> Sorts = new SortFields<Employee>("fullName")
+        .Add("fullName", x => x.FirstName)
+        .Add("email", x => x.Email)
+        .Add("phoneNumber", x => x.PhoneNumber)
+        .Add("salary", x => x.Salary)
+        .Add("joinedDate", x => x.JoinedDate);
+
     public async Task<PagedResult<EmployeeDto>> Handle(
         GetEmployeesQuery req,
         CancellationToken ct)
@@ -31,7 +38,7 @@ internal sealed class GetEmployeesHandler(ITenantUnitOfWork tenantUow) : IReques
             query = query.Where(e => e.Role != null && req.Roles.Contains(e.Role.Name));
         }
 
-        return await query.ToPagedResultAsync(req, MapPageAsync, ct);
+        return await query.ToPagedResultAsync(req, Sorts, MapPageAsync, ct);
     }
 
     private async Task<IEnumerable<EmployeeDto>> MapPageAsync(IReadOnlyList<Employee> employees, CancellationToken ct)

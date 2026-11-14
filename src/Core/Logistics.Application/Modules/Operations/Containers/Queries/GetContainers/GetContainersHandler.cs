@@ -12,6 +12,11 @@ namespace Logistics.Application.Modules.Operations.Containers.Queries;
 internal sealed class GetContainersHandler(ITenantUnitOfWork tenantUow)
     : IRequestHandler<GetContainersQuery, PagedResult<ContainerDto>>
 {
+    private static readonly SortFields<Container> Sorts = new SortFields<Container>("-createdAt")
+        .Add("number", x => x.Number)
+        .Add("lastFreeDay", x => x.LastFreeDay)
+        .Add("createdAt", x => x.CreatedAt);
+
     public async Task<PagedResult<ContainerDto>> Handle(GetContainersQuery req, CancellationToken ct)
     {
         var query = tenantUow.Repository<Container>().Query();
@@ -43,7 +48,7 @@ internal sealed class GetContainersHandler(ITenantUnitOfWork tenantUow)
             query = query.Where(i => i.CurrentTerminalId == req.CurrentTerminalId.Value);
         }
 
-        return await query.ToPagedResultAsync(req, MapPageAsync, ct);
+        return await query.ToPagedResultAsync(req, Sorts, MapPageAsync, ct);
     }
 
     private async Task<IEnumerable<ContainerDto>> MapPageAsync(IReadOnlyList<Container> containers, CancellationToken ct)

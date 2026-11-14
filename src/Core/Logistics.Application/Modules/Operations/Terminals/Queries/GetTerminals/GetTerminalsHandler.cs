@@ -10,6 +10,10 @@ namespace Logistics.Application.Modules.Operations.Terminals.Queries;
 internal sealed class GetTerminalsHandler(ITenantUnitOfWork tenantUow)
     : IRequestHandler<GetTerminalsQuery, PagedResult<TerminalDto>>
 {
+    private static readonly SortFields<Terminal> Sorts = new SortFields<Terminal>("code")
+        .Add("code", x => x.Code)
+        .Add("name", x => x.Name);
+
     public async Task<PagedResult<TerminalDto>> Handle(GetTerminalsQuery req, CancellationToken ct)
     {
         var query = tenantUow.Repository<Terminal>().Query();
@@ -33,6 +37,6 @@ internal sealed class GetTerminalsHandler(ITenantUnitOfWork tenantUow)
             query = query.Where(i => i.Address.Country == req.CountryCode);
         }
 
-        return await query.ToPagedResultAsync(req, i => i.ToDto(), ct);
+        return await query.ToPagedResultAsync(req, Sorts, i => i.ToDto(), ct);
     }
 }

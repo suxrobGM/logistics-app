@@ -10,6 +10,12 @@ namespace Logistics.Application.Modules.Compliance.Ifta.TaxRates.Queries;
 internal sealed class GetIftaTaxRatesHandler(
     IMasterUnitOfWork masterUow) : IRequestHandler<GetIftaTaxRatesQuery, PagedResult<IftaTaxRateDto>>
 {
+    private static readonly SortFields<IftaTaxRate> Sorts = new SortFields<IftaTaxRate>("jurisdiction")
+        .Add("jurisdiction", x => x.Jurisdiction.CountryCode)
+        .Add("year", x => x.Year)
+        .Add("quarter", x => x.Quarter)
+        .Add("ratePerGallon", x => x.RatePerGallon);
+
     public Task<PagedResult<IftaTaxRateDto>> Handle(GetIftaTaxRatesQuery req, CancellationToken ct)
     {
         var query = masterUow.Repository<IftaTaxRate>().Query();
@@ -39,13 +45,7 @@ internal sealed class GetIftaTaxRatesHandler(
 
         var totalItems = query.Count();
 
-        // Default sort is a nested owned-type path (Jurisdiction.CountryCode), which the string
-        // OrderBy overload can't resolve, so apply it with a typed selector.
-        var ordered = string.IsNullOrEmpty(req.OrderBy)
-            ? query.OrderBy(x => x.Jurisdiction.CountryCode).ThenBy(x => x.Id)
-            : query.OrderBy(req.OrderBy, x => x.Id);
-
-        var items = ordered
+        var items = Sorts.Apply(query, req.OrderBy, x => x.Id)
             .ApplyPaging(req.Page, req.PageSize)
             .Select(i => i.ToDto())
             .ToArray();
