@@ -52,7 +52,7 @@ internal sealed class GetInvoicesTool(IMediator mediator)
         {
             LoadId = input.LoadId,
             CustomerId = input.CustomerId,
-            Status = input.Status,
+            Statuses = input.Status is { } status ? [status] : null,
             OverdueOnly = input.OverdueOnly,
             FromDate = input.StartDate,
             ToDate = input.EndDate,

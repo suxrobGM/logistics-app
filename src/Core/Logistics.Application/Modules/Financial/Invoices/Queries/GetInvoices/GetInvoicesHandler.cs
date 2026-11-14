@@ -70,9 +70,9 @@ internal sealed class GetInvoicesHandler(ITenantUnitOfWork tenantUow)
             query = query.Where(i => i.LoadId == req.LoadId.Value);
         }
 
-        if (req.Status.HasValue)
+        if (req.Statuses?.Length > 0)
         {
-            query = query.Where(i => i.Status == req.Status.Value);
+            query = query.Where(i => req.Statuses.Contains(i.Status));
         }
 
         if (req.CustomerId.HasValue)
@@ -137,14 +137,14 @@ internal sealed class GetInvoicesHandler(ITenantUnitOfWork tenantUow)
                                    || i.Employee.LastName.ToLower().Contains(search));
         }
 
-        if (req.Status.HasValue)
+        if (req.Statuses?.Length > 0)
         {
-            query = query.Where(i => i.Status == req.Status.Value);
+            query = query.Where(i => req.Statuses.Contains(i.Status));
         }
 
-        if (req.SalaryType.HasValue)
+        if (req.SalaryTypes?.Length > 0)
         {
-            query = query.Where(i => i.Employee.SalaryType == req.SalaryType.Value);
+            query = query.Where(i => req.SalaryTypes.Contains(i.Employee.SalaryType));
         }
 
         // A payroll matches when its period overlaps the requested range.

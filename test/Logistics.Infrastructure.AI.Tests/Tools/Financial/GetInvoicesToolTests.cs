@@ -34,7 +34,7 @@ public class GetInvoicesToolTests
         await _mediator.Received(1).Send(
             Arg.Is<GetInvoicesQuery>(q =>
                 q.Type == InvoiceType.Load &&
-                q.Status == InvoiceStatus.Sent),
+                q.Statuses!.SequenceEqual(new[] { InvoiceStatus.Sent })),
             Arg.Any<CancellationToken>());
     }
 
