@@ -31,4 +31,4 @@ No validator whose only rule is `Id NotEmpty`; the not-found path covers it. A C
 
 ## Sorting
 
-Sort parameters are `-Field` (descending) or `Field`. The parser rejects `"Field desc"`. Every client uses this form.
+Sort parameters are `-field` (descending) or `field`, camelCase like every query value; the parser ignores case. It rejects `"field desc"`. Every client uses this form.

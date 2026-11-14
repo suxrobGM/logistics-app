@@ -17,6 +17,15 @@ paths:
 - Route ids are assigned: `request.Id = id;`.
 - Add a `*Request` record only when the wire shape must differ from the command.
 
+## Query strings
+
+camelCase on the wire (`QueryParameterNameTransformer`); clients regenerate from OpenAPI. One name per concept, enforced by `QueryParameterNameTests`:
+
+- Lists extend `PagedQuery` (`page`, `pageSize`, `orderBy`) or `SearchableQuery` (+ `search`). Free text goes in `search`, never `customerName`-style filters.
+- Date ranges are `fromDate` / `toDate` (`DateRangeQuery`, `PagedDateRangeQuery`).
+- Flags: `xOnly` narrows (`activeOnly`, `overdueOnly`), `includeX` widens (`includeLoads`).
+- Multi-value filters are plural arrays (`statuses`); single-value filters are singular (`status`). Name ids after the role filtered (`driverId`, `employeeId`).
+
 ## Error codes
 
 When a client must branch on a failure, return a code, never rely on message text:
