@@ -33,7 +33,6 @@ internal sealed class DriversReportHandler(ITenantUnitOfWork tenantUow) : IReque
             loads = loads.Where(l => l.CreatedAt <= to);
         }
 
-        // Calculate efficiency based on actual period
         var periodDays = req is { FromDate: { } periodStart, ToDate: { } periodEnd }
             ? Math.Max(1, (periodEnd - periodStart).TotalDays)
             : 30.0;

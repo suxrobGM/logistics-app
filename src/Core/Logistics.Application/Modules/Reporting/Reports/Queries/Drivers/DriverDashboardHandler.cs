@@ -84,7 +84,6 @@ internal sealed class DriverDashboardHandler(ITenantUnitOfWork tenantUow) : IReq
         var totalDistance = driverStats.Sum(d => d.DistanceDriven);
         var totalLoadsDelivered = driverStats.Sum(d => d.LoadsDelivered);
 
-        // Calculate efficiency based on actual period
         var periodDays = req is { FromDate: { } periodStart, ToDate: { } periodEnd }
             ? Math.Max(1, (periodEnd - periodStart).TotalDays)
             : 30.0;
