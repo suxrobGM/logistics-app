@@ -8,7 +8,6 @@ public interface ILoadListFilter
     string? Search { get; }
     bool ActiveOnly { get; }
     bool Unassigned { get; }
-    Guid? DriverId { get; }
     Guid? TruckId { get; }
     DateTime? FromDate { get; }
     DateTime? ToDate { get; }

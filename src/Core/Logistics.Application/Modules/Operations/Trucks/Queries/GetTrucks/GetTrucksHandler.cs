@@ -27,13 +27,13 @@ internal sealed class GetTrucksHandler(
         GetTrucksQuery req,
         CancellationToken ct)
     {
-        var filtered = tenantUow.Repository<Truck>().Query().FilterForList(req);
-        IQueryable<Truck> baseQuery = Sorts.Apply(filtered, req.OrderBy, x => x.Id);
+        var baseQuery = tenantUow.Repository<Truck>().Query().FilterForList(req);
 
         var totalItems = await baseQuery.CountAsync(ct);
-        baseQuery = baseQuery.ApplyPaging(req.Page, req.PageSize);
 
-        var entities = await baseQuery.ToArrayAsync(ct);
+        var entities = await Sorts.Apply(baseQuery, req.OrderBy, x => x.Id)
+            .ApplyPaging(req.Page, req.PageSize)
+            .ToArrayAsync(ct);
         var trailerNumbers = await GetTrailerNumbersAsync(entities, ct);
         var truckDtos = await truckDtoMapper.MapAsync(entities, ct);
 
