@@ -93,7 +93,7 @@ internal static class Setup
                 options.AddSchemaTransformer<DateTimeSchemaTransformer>();
                 options.AddOperationTransformer<EnumParameterTransformer>();
                 // After the enum transformer, which matches parameters by their C# names.
-                options.AddOperationTransformer<QueryParameterNameTransformer>();
+                options.AddOperationTransformer<ParameterNameTransformer>();
                 options.AddDocumentTransformer<EnumSchemaTransformer>();
             });
 

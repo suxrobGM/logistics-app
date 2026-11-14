@@ -19,7 +19,7 @@ paths:
 
 ## Query strings
 
-camelCase on the wire (`QueryParameterNameTransformer`); clients regenerate from OpenAPI. One name per concept, enforced by `QueryParameterNameTests`:
+Query parameters and form fields are camelCase on the wire (`ParameterNameTransformer`); clients regenerate from OpenAPI. One name per concept, enforced by `QueryParameterNameTests`:
 
 - Lists extend `PagedQuery` (`page`, `pageSize`, `orderBy`) or `SearchableQuery` (+ `search`). Free text goes in `search`, never `customerName`-style filters.
 - Date ranges are `fromDate` / `toDate` (`DateRangeQuery`, `PagedDateRangeQuery`).
