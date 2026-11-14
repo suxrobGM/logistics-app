@@ -26,13 +26,11 @@ internal sealed class DriverDashboardHandler(ITenantUnitOfWork tenantUow) : IReq
 
         if (req.FromDate is { } fromDate)
         {
-            var from = DateTime.SpecifyKind(fromDate, DateTimeKind.Utc);
-            loads = loads.Where(l => l.CreatedAt >= from);
+            loads = loads.Where(l => l.CreatedAt >= fromDate);
         }
         if (req.ToDate is { } toDate)
         {
-            var to = DateTime.SpecifyKind(toDate, DateTimeKind.Utc);
-            loads = loads.Where(l => l.CreatedAt <= to);
+            loads = loads.Where(l => l.CreatedAt <= toDate);
         }
 
         var mainDriverStats = trucks
@@ -124,13 +122,13 @@ internal sealed class DriverDashboardHandler(ITenantUnitOfWork tenantUow) : IReq
     private List<DriverTrendDto> CalculateDriverTrends(IQueryable<Load> loads, IQueryable<Truck> trucks, DateTime? startDate, DateTime? endDate)
     {
         var trends = new List<DriverTrendDto>();
-        var currentDate = DateTime.SpecifyKind(startDate ?? DateTime.UtcNow.AddMonths(-6), DateTimeKind.Utc);
-        var end = DateTime.SpecifyKind(endDate ?? DateTime.UtcNow, DateTimeKind.Utc);
+        var currentDate = startDate ?? DateTime.UtcNow.AddMonths(-6);
+        var end = endDate ?? DateTime.UtcNow;
 
         while (currentDate <= end)
         {
             var monthStart = DateTime.SpecifyKind(new DateTime(currentDate.Year, currentDate.Month, 1), DateTimeKind.Utc);
-            var monthEnd = DateTime.SpecifyKind(monthStart.AddMonths(1).AddDays(-1), DateTimeKind.Utc);
+            var monthEnd = monthStart.AddMonths(1).AddDays(-1);
 
             var monthLoads = loads
                 .Where(l => l.CreatedAt >= monthStart && l.CreatedAt <= monthEnd)

@@ -18,14 +18,12 @@ internal sealed class FinancialsReportHandler(ITenantUnitOfWork tenantUow)
 
         if (req.FromDate is { } fromDate)
         {
-            var from = DateTime.SpecifyKind(fromDate, DateTimeKind.Utc);
-            invoicesQuery = invoicesQuery.Where(i => i.CreatedAt >= from);
+            invoicesQuery = invoicesQuery.Where(i => i.CreatedAt >= fromDate);
         }
 
         if (req.ToDate is { } toDate)
         {
-            var to = DateTime.SpecifyKind(toDate, DateTimeKind.Utc);
-            invoicesQuery = invoicesQuery.Where(i => i.CreatedAt <= to);
+            invoicesQuery = invoicesQuery.Where(i => i.CreatedAt <= toDate);
         }
 
         var invoices = await invoicesQuery.ToListAsync(ct);

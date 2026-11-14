@@ -17,14 +17,12 @@ internal sealed class LoadsReportHandler(ITenantUnitOfWork tenantUow) : IRequest
 
         if (req.FromDate is { } fromDate)
         {
-            var from = DateTime.SpecifyKind(fromDate, DateTimeKind.Utc);
-            queryable = queryable.Where(l => l.CreatedAt >= from);
+            queryable = queryable.Where(l => l.CreatedAt >= fromDate);
         }
 
         if (req.ToDate is { } toDate)
         {
-            var to = DateTime.SpecifyKind(toDate, DateTimeKind.Utc);
-            queryable = queryable.Where(l => l.CreatedAt <= to);
+            queryable = queryable.Where(l => l.CreatedAt <= toDate);
         }
 
         var totalLoads = queryable.Count();
@@ -88,13 +86,13 @@ internal sealed class LoadsReportHandler(ITenantUnitOfWork tenantUow) : IRequest
     private static List<LoadTrendDto> CalculateLoadTrends(IQueryable<Load> queryable, DateTime? startDate, DateTime? endDate)
     {
         var trends = new List<LoadTrendDto>();
-        var currentDate = DateTime.SpecifyKind(startDate ?? DateTime.UtcNow.AddMonths(-6), DateTimeKind.Utc);
-        var end = DateTime.SpecifyKind(endDate ?? DateTime.UtcNow, DateTimeKind.Utc);
+        var currentDate = startDate ?? DateTime.UtcNow.AddMonths(-6);
+        var end = endDate ?? DateTime.UtcNow;
 
         while (currentDate <= end)
         {
             var monthStart = DateTime.SpecifyKind(new DateTime(currentDate.Year, currentDate.Month, 1), DateTimeKind.Utc);
-            var monthEnd = DateTime.SpecifyKind(monthStart.AddMonths(1).AddDays(-1), DateTimeKind.Utc);
+            var monthEnd = monthStart.AddMonths(1).AddDays(-1);
 
             var monthLoads = queryable
                 .Where(l => l.CreatedAt >= monthStart && l.CreatedAt <= monthEnd)

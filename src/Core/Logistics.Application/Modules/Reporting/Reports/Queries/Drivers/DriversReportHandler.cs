@@ -24,13 +24,11 @@ internal sealed class DriversReportHandler(ITenantUnitOfWork tenantUow) : IReque
 
         if (req.FromDate is { } fromDate)
         {
-            var from = DateTime.SpecifyKind(fromDate, DateTimeKind.Utc);
-            loads = loads.Where(l => l.CreatedAt >= from);
+            loads = loads.Where(l => l.CreatedAt >= fromDate);
         }
         if (req.ToDate is { } toDate)
         {
-            var to = DateTime.SpecifyKind(toDate, DateTimeKind.Utc);
-            loads = loads.Where(l => l.CreatedAt <= to);
+            loads = loads.Where(l => l.CreatedAt <= toDate);
         }
 
         var periodDays = req is { FromDate: { } periodStart, ToDate: { } periodEnd }

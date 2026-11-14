@@ -13,8 +13,6 @@ internal sealed partial class ProfitabilityService(ITenantUnitOfWork tenantUow) 
 {
     public async Task<ProfitabilityReportDto> BuildAsync(DateTime from, DateTime to, CancellationToken ct = default)
     {
-        from = DateTime.SpecifyKind(from, DateTimeKind.Utc);
-        to = DateTime.SpecifyKind(to, DateTimeKind.Utc);
         var unit = tenantUow.GetCurrentTenant().Settings.DistanceUnit;
 
         var loads = await GetDeliveredLoadsAsync(from, to, ct);

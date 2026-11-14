@@ -29,8 +29,8 @@ internal sealed class GetMonthlyGrossesHandler(ITenantUnitOfWork tenantUow) : IR
             truckId = truck.Id;
         }
 
-        var startDate = DateTime.SpecifyKind(req.FromDate!.Value, DateTimeKind.Utc);
-        var endDate = DateTime.SpecifyKind(req.ToDate ?? DateTime.UtcNow, DateTimeKind.Utc);
+        var startDate = req.FromDate!.Value;
+        var endDate = req.ToDate ?? DateTime.UtcNow;
 
         var months = startDate.MonthsBetween(endDate);
         var filteredLoads = await tenantUow.Repository<Load>().Query().FilterDeliveredBetween(truckId, startDate, endDate).ToArrayAsync(ct);

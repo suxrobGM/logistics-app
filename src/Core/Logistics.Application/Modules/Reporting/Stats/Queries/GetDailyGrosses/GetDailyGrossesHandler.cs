@@ -29,8 +29,8 @@ internal sealed class GetDailyGrossesHandler(ITenantUnitOfWork tenantUow) : IReq
             truckId = truck.Id;
         }
 
-        var startDate = DateTime.SpecifyKind(req.FromDate!.Value, DateTimeKind.Utc);
-        var endDate = DateTime.SpecifyKind(req.ToDate ?? DateTime.UtcNow, DateTimeKind.Utc);
+        var startDate = req.FromDate!.Value;
+        var endDate = req.ToDate ?? DateTime.UtcNow;
 
         var days = startDate.DaysBetween(endDate);
         var dict = days.ToDictionary(
