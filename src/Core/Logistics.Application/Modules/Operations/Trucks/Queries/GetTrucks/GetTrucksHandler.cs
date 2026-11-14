@@ -5,6 +5,7 @@ using Logistics.Application.Modules.Operations.Loads;
 using Logistics.Application.Modules.Operations.Trucks.Services;
 using Logistics.Domain.Entities;
 using Logistics.Domain.Persistence;
+using Logistics.Domain.Primitives.Enums;
 using Logistics.Mediator;
 using Logistics.Shared.Models;
 using Microsoft.EntityFrameworkCore;
@@ -50,6 +51,12 @@ internal sealed class GetTrucksHandler(
         if (req.Types?.Length > 0)
         {
             baseQuery = baseQuery.Where(i => req.Types.Contains(i.Type));
+        }
+
+        if (req.Idle)
+        {
+            baseQuery = baseQuery.Where(i => !i.Loads.Any(l =>
+                l.Status == LoadStatus.Dispatched || l.Status == LoadStatus.PickedUp));
         }
 
         var totalItems = await baseQuery.CountAsync(ct);
