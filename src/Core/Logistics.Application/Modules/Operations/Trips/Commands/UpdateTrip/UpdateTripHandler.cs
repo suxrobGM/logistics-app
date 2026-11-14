@@ -114,15 +114,19 @@ internal sealed class UpdateTripHandler(
             return 0;
         }
 
-        var loadRepo = uow.Repository<Load>();
+        var stopRepo = uow.Repository<TripStop>();
 
         var before = loadsMap.Count;
         foreach (var loadId in loadIdsToRemove.Distinct())
         {
-            if (loadsMap.Remove(loadId, out var load))
+            if (loadsMap.Remove(loadId))
             {
+                var stops = trip.Stops.Where(s => s.LoadId == loadId).ToList();
                 trip.RemoveLoad(loadId);
-                loadRepo.Delete(load);
+                foreach (var stop in stops)
+                {
+                    stopRepo.Delete(stop);
+                }
             }
         }
 

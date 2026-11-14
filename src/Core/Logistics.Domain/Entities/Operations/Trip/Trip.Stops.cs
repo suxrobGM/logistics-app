@@ -40,6 +40,7 @@ public partial class Trip
         RecalculateDistance();
     }
 
+    /// <summary>Takes a load off the trip, and off the trip's truck; the load itself stays.</summary>
     /// <exception cref="InvalidOperationException">The trip is not Draft.</exception>
     public void RemoveLoad(Guid loadId)
     {
@@ -57,6 +58,12 @@ public partial class Trip
         foreach (var s in toRemove)
         {
             Stops.Remove(s);
+        }
+
+        var load = toRemove[0].Load;
+        if (load.AssignedTruckId == TruckId)
+        {
+            load.UnassignTruck();
         }
 
         RenumberStops();

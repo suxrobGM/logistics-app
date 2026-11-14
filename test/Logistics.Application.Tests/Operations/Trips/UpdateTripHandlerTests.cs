@@ -55,4 +55,20 @@ public class UpdateTripHandlerTests
         Assert.Equal(ErrorCodes.NotFound, result.ErrorCode);
         await _uow.DidNotReceive().SaveChangesAsync(Arg.Any<CancellationToken>());
     }
+
+    [Fact]
+    public async Task Handle_DetachedLoad_UnlinksItWithoutDeletingIt()
+    {
+        var load = _trip.GetLoads().Single();
+        var loadRepo = _uow.Stub(load);
+        var stopRepo = _uow.Stub<TripStop>([.. _trip.Stops]);
+
+        var result = await _sut.Handle(new UpdateTripCommand { TripId = _trip.Id, DetachedLoadIds = [load.Id] }, CancellationToken.None);
+
+        Assert.True(result.IsSuccess);
+        Assert.Empty(_trip.Stops);
+        Assert.Null(load.AssignedTruckId);
+        loadRepo.DidNotReceive().Delete(Arg.Any<Load>());
+        stopRepo.Received(2).Delete(Arg.Is<TripStop>(s => s.LoadId == load.Id));
+    }
 }
