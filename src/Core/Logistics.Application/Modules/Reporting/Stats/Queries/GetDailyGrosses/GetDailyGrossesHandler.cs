@@ -29,11 +29,10 @@ internal sealed class GetDailyGrossesHandler(ITenantUnitOfWork tenantUow) : IReq
             truckId = truck.Id;
         }
 
-        // Ensure dates are UTC for PostgreSQL compatibility
-        var startDate = DateTime.SpecifyKind(req.FromDate, DateTimeKind.Utc);
-        var endDate = DateTime.SpecifyKind(req.ToDate, DateTimeKind.Utc);
+        var startDate = DateTime.SpecifyKind(req.FromDate!.Value, DateTimeKind.Utc);
+        var endDate = DateTime.SpecifyKind(req.ToDate ?? DateTime.UtcNow, DateTimeKind.Utc);
 
-        var days = req.FromDate.DaysBetween(req.ToDate);
+        var days = startDate.DaysBetween(endDate);
         var dict = days.ToDictionary(
             k => (k.Year, k.Month, k.Day),
             m => new DailyGrossDto(m.Year, m.Month, m.Day));

@@ -13,20 +13,17 @@ internal sealed class LoadsReportHandler(ITenantUnitOfWork tenantUow) : IRequest
 
     public async Task<Result<LoadsReportDto>> Handle(LoadsReportQuery req, CancellationToken ct)
     {
-        var hasStart = req.FromDate != default;
-        var hasEnd = req.ToDate != default;
-
         var queryable = tenantUow.Repository<Load>().Query();
 
-        if (hasStart)
+        if (req.FromDate is { } fromDate)
         {
-            var from = DateTime.SpecifyKind(req.FromDate, DateTimeKind.Utc);
+            var from = DateTime.SpecifyKind(fromDate, DateTimeKind.Utc);
             queryable = queryable.Where(l => l.CreatedAt >= from);
         }
 
-        if (hasEnd)
+        if (req.ToDate is { } toDate)
         {
-            var to = DateTime.SpecifyKind(req.ToDate, DateTimeKind.Utc);
+            var to = DateTime.SpecifyKind(toDate, DateTimeKind.Utc);
             queryable = queryable.Where(l => l.CreatedAt <= to);
         }
 
@@ -88,11 +85,11 @@ internal sealed class LoadsReportHandler(ITenantUnitOfWork tenantUow) : IRequest
         return Result<LoadsReportDto>.Ok(dto);
     }
 
-    private static List<LoadTrendDto> CalculateLoadTrends(IQueryable<Load> queryable, DateTime startDate, DateTime endDate)
+    private static List<LoadTrendDto> CalculateLoadTrends(IQueryable<Load> queryable, DateTime? startDate, DateTime? endDate)
     {
         var trends = new List<LoadTrendDto>();
-        var currentDate = startDate == default ? DateTime.UtcNow.AddMonths(-6) : DateTime.SpecifyKind(startDate, DateTimeKind.Utc);
-        var end = endDate == default ? DateTime.UtcNow : DateTime.SpecifyKind(endDate, DateTimeKind.Utc);
+        var currentDate = DateTime.SpecifyKind(startDate ?? DateTime.UtcNow.AddMonths(-6), DateTimeKind.Utc);
+        var end = DateTime.SpecifyKind(endDate ?? DateTime.UtcNow, DateTimeKind.Utc);
 
         while (currentDate <= end)
         {

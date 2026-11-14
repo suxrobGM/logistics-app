@@ -16,15 +16,15 @@ internal sealed class FinancialsReportHandler(ITenantUnitOfWork tenantUow)
         var invoicesQuery = tenantUow.Repository<LoadInvoice>().Query()
             .Where(i => InvoiceStatuses.Receivable.Contains(i.Status));
 
-        if (req.FromDate != default)
+        if (req.FromDate is { } fromDate)
         {
-            var from = DateTime.SpecifyKind(req.FromDate, DateTimeKind.Utc);
+            var from = DateTime.SpecifyKind(fromDate, DateTimeKind.Utc);
             invoicesQuery = invoicesQuery.Where(i => i.CreatedAt >= from);
         }
 
-        if (req.ToDate != default)
+        if (req.ToDate is { } toDate)
         {
-            var to = DateTime.SpecifyKind(req.ToDate, DateTimeKind.Utc);
+            var to = DateTime.SpecifyKind(toDate, DateTimeKind.Utc);
             invoicesQuery = invoicesQuery.Where(i => i.CreatedAt <= to);
         }
 
@@ -51,8 +51,8 @@ internal sealed class FinancialsReportHandler(ITenantUnitOfWork tenantUow)
         var createdDates = invoices.Select(i => i.CreatedAt).DefaultIfEmpty(now).ToList();
         var paymentTrends = CalculatePaymentTrends(
             invoices,
-            req.FromDate != default ? req.FromDate : createdDates.Min(),
-            req.ToDate != default ? req.ToDate : createdDates.Max()
+            req.FromDate ?? createdDates.Min(),
+            req.ToDate ?? createdDates.Max()
         );
 
         var topCustomers = GetTopCustomersByValue(invoices);
@@ -157,12 +157,12 @@ internal sealed class FinancialsReportHandler(ITenantUnitOfWork tenantUow)
     /// <summary>Cash-basis net profit per month: paid invoices minus approved expenses, payroll and factoring fees.</summary>
     private async Task<List<RevenueTrendDto>> CalculateRevenueTrendsAsync(
         List<LoadInvoice> invoices,
-        DateTime startDate,
-        DateTime endDate,
+        DateTime? startDate,
+        DateTime? endDate,
         CancellationToken ct)
     {
-        var start = startDate == default ? DateTime.UtcNow.AddMonths(-6) : startDate;
-        var end = endDate == default ? DateTime.UtcNow : endDate;
+        var start = startDate ?? DateTime.UtcNow.AddMonths(-6);
+        var end = endDate ?? DateTime.UtcNow;
         var firstMonth = DateTime.SpecifyKind(new DateTime(start.Year, start.Month, 1), DateTimeKind.Utc);
         var afterLastMonth = DateTime.SpecifyKind(new DateTime(end.Year, end.Month, 1), DateTimeKind.Utc).AddMonths(1);
 

@@ -14,15 +14,15 @@ internal sealed class PayrollReportHandler(ITenantUnitOfWork tenantUow)
     {
         var payrollsQuery = tenantUow.Repository<PayrollInvoice>().Query();
 
-        if (req.FromDate != default)
+        if (req.FromDate is { } fromDate)
         {
-            var from = DateOnly.FromDateTime(req.FromDate);
+            var from = DateOnly.FromDateTime(fromDate);
             payrollsQuery = payrollsQuery.Where(p => p.PeriodStart >= from);
         }
 
-        if (req.ToDate != default)
+        if (req.ToDate is { } toDate)
         {
-            var to = DateOnly.FromDateTime(req.ToDate);
+            var to = DateOnly.FromDateTime(toDate);
             payrollsQuery = payrollsQuery.Where(p => p.PeriodEnd <= to);
         }
 
@@ -71,9 +71,9 @@ internal sealed class PayrollReportHandler(ITenantUnitOfWork tenantUow)
 
     private static DateOnly TrendStart(PayrollReportQuery req, List<PayrollInvoice> payrolls)
     {
-        if (req.FromDate != default)
+        if (req.FromDate is { } fromDate)
         {
-            return DateOnly.FromDateTime(req.FromDate);
+            return DateOnly.FromDateTime(fromDate);
         }
 
         return payrolls.Count > 0
@@ -83,9 +83,9 @@ internal sealed class PayrollReportHandler(ITenantUnitOfWork tenantUow)
 
     private static DateOnly TrendEnd(PayrollReportQuery req, List<PayrollInvoice> payrolls)
     {
-        if (req.ToDate != default)
+        if (req.ToDate is { } toDate)
         {
-            return DateOnly.FromDateTime(req.ToDate);
+            return DateOnly.FromDateTime(toDate);
         }
 
         return payrolls.Count > 0

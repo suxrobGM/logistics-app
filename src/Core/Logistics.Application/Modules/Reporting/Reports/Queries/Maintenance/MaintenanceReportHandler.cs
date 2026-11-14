@@ -13,8 +13,8 @@ internal sealed class MaintenanceReportHandler(ITenantUnitOfWork tenantUow)
 {
     public async Task<Result<MaintenanceReportDto>> Handle(MaintenanceReportQuery req, CancellationToken ct)
     {
-        var startDate = req.FromDate == default ? DateTime.UtcNow.AddMonths(-6) : req.FromDate;
-        var endDate = req.ToDate == default ? DateTime.UtcNow : req.ToDate;
+        var startDate = req.FromDate ?? DateTime.UtcNow.AddMonths(-6);
+        var endDate = req.ToDate ?? DateTime.UtcNow;
 
         var recordQuery = tenantUow.Repository<MaintenanceRecord>().Query()
             .Where(r => r.ServiceDate >= DateOnly.FromDateTime(startDate) && r.ServiceDate <= DateOnly.FromDateTime(endDate));

@@ -8,5 +8,5 @@ internal sealed class ProfitabilityReportHandler(IProfitabilityService profitabi
     : IRequestHandler<ProfitabilityReportQuery, Result<ProfitabilityReportDto>>
 {
     public async Task<Result<ProfitabilityReportDto>> Handle(ProfitabilityReportQuery req, CancellationToken ct) =>
-        Result<ProfitabilityReportDto>.Ok(await profitability.BuildAsync(req.FromDate, req.ToDate, ct));
+        Result<ProfitabilityReportDto>.Ok(await profitability.BuildAsync(req.FromDate!.Value, req.ToDate!.Value, ct));
 }

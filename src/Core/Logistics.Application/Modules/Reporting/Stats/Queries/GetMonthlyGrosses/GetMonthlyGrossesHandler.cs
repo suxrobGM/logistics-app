@@ -29,11 +29,10 @@ internal sealed class GetMonthlyGrossesHandler(ITenantUnitOfWork tenantUow) : IR
             truckId = truck.Id;
         }
 
-        // Ensure dates are UTC for PostgreSQL compatibility
-        var startDate = DateTime.SpecifyKind(req.FromDate, DateTimeKind.Utc);
-        var endDate = DateTime.SpecifyKind(req.ToDate, DateTimeKind.Utc);
+        var startDate = DateTime.SpecifyKind(req.FromDate!.Value, DateTimeKind.Utc);
+        var endDate = DateTime.SpecifyKind(req.ToDate ?? DateTime.UtcNow, DateTimeKind.Utc);
 
-        var months = req.FromDate.MonthsBetween(req.ToDate);
+        var months = startDate.MonthsBetween(endDate);
         var filteredLoads = await tenantUow.Repository<Load>().Query().FilterDeliveredBetween(truckId, startDate, endDate).ToArrayAsync(ct);
 
         var dict = months.ToDictionary(

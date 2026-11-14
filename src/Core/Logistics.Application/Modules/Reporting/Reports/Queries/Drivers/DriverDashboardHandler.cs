@@ -24,14 +24,14 @@ internal sealed class DriverDashboardHandler(ITenantUnitOfWork tenantUow) : IReq
         var trucks = tenantUow.Repository<Truck>().Query();
         var loads = tenantUow.Repository<Load>().Query();
 
-        if (req.FromDate != default)
+        if (req.FromDate is { } fromDate)
         {
-            var from = DateTime.SpecifyKind(req.FromDate, DateTimeKind.Utc);
+            var from = DateTime.SpecifyKind(fromDate, DateTimeKind.Utc);
             loads = loads.Where(l => l.CreatedAt >= from);
         }
-        if (req.ToDate != default)
+        if (req.ToDate is { } toDate)
         {
-            var to = DateTime.SpecifyKind(req.ToDate, DateTimeKind.Utc);
+            var to = DateTime.SpecifyKind(toDate, DateTimeKind.Utc);
             loads = loads.Where(l => l.CreatedAt <= to);
         }
 
@@ -85,8 +85,8 @@ internal sealed class DriverDashboardHandler(ITenantUnitOfWork tenantUow) : IReq
         var totalLoadsDelivered = driverStats.Sum(d => d.LoadsDelivered);
 
         // Calculate efficiency based on actual period
-        var periodDays = req.FromDate != default && req.ToDate != default
-            ? Math.Max(1, (req.ToDate - req.FromDate).TotalDays)
+        var periodDays = req is { FromDate: { } periodStart, ToDate: { } periodEnd }
+            ? Math.Max(1, (periodEnd - periodStart).TotalDays)
             : 30.0;
 
         var topPerformers = driverStats
@@ -122,11 +122,11 @@ internal sealed class DriverDashboardHandler(ITenantUnitOfWork tenantUow) : IReq
         return Result<DriverDashboardDto>.Ok(dto);
     }
 
-    private List<DriverTrendDto> CalculateDriverTrends(IQueryable<Load> loads, IQueryable<Truck> trucks, DateTime startDate, DateTime endDate)
+    private List<DriverTrendDto> CalculateDriverTrends(IQueryable<Load> loads, IQueryable<Truck> trucks, DateTime? startDate, DateTime? endDate)
     {
         var trends = new List<DriverTrendDto>();
-        var currentDate = startDate == default ? DateTime.UtcNow.AddMonths(-6) : DateTime.SpecifyKind(startDate, DateTimeKind.Utc);
-        var end = endDate == default ? DateTime.UtcNow : DateTime.SpecifyKind(endDate, DateTimeKind.Utc);
+        var currentDate = DateTime.SpecifyKind(startDate ?? DateTime.UtcNow.AddMonths(-6), DateTimeKind.Utc);
+        var end = DateTime.SpecifyKind(endDate ?? DateTime.UtcNow, DateTimeKind.Utc);
 
         while (currentDate <= end)
         {

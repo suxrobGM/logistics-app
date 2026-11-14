@@ -15,20 +15,20 @@ internal sealed class DriversReportHandler(ITenantUnitOfWork tenantUow) : IReque
         var trucks = tenantUow.Repository<Truck>().Query();
         var loads = tenantUow.Repository<Load>().Query();
 
-        if (req.FromDate != default)
+        if (req.FromDate is { } fromDate)
         {
-            var from = DateTime.SpecifyKind(req.FromDate, DateTimeKind.Utc);
+            var from = DateTime.SpecifyKind(fromDate, DateTimeKind.Utc);
             loads = loads.Where(l => l.CreatedAt >= from);
         }
-        if (req.ToDate != default)
+        if (req.ToDate is { } toDate)
         {
-            var to = DateTime.SpecifyKind(req.ToDate, DateTimeKind.Utc);
+            var to = DateTime.SpecifyKind(toDate, DateTimeKind.Utc);
             loads = loads.Where(l => l.CreatedAt <= to);
         }
 
         // Calculate efficiency based on actual period
-        var periodDays = req.FromDate != default && req.ToDate != default
-            ? Math.Max(1, (req.ToDate - req.FromDate).TotalDays)
+        var periodDays = req is { FromDate: { } periodStart, ToDate: { } periodEnd }
+            ? Math.Max(1, (periodEnd - periodStart).TotalDays)
             : 30.0;
 
         var mainDriverStats = trucks
