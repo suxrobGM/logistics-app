@@ -5,6 +5,7 @@ using Logistics.Domain.Entities;
 using Logistics.Domain.Persistence;
 using Logistics.Mediator;
 using Logistics.Shared.Models;
+using Microsoft.EntityFrameworkCore;
 
 namespace Logistics.Application.Modules.Operations.Trucks.Queries;
 
@@ -21,8 +22,7 @@ internal sealed class GetTruckHandler(ITenantUnitOfWork tenantUow, ILoadLookupBu
             return Result<TruckDto>.Fail($"Could not find a truck with ID '{req.TruckOrDriverId}'", ErrorCodes.NotFound);
         }
 
-        // Resolve only the loads that reach the DTO, not ones ActiveLoadsOnly drops.
-        var loads = SelectLoads(truckEntity, req.IncludeLoads, req.ActiveLoadsOnly);
+        var loads = await GetLoadsAsync(truckEntity.Id, req.IncludeLoads, req.ActiveLoadsOnly, ct);
         var lookup = await lookupBuilder.BuildAsync(loads, ct);
 
         var truckDto = ConvertToDto(truckEntity, loads, lookup);
@@ -45,17 +45,21 @@ internal sealed class GetTruckHandler(ITenantUnitOfWork tenantUow, ILoadLookupBu
         return tenantUow.Repository<Truck>().GetAsync(i => i.MainDriverId == userId || i.SecondaryDriverId == userId);
     }
 
-    private static IReadOnlyCollection<Load> SelectLoads(
-        Truck truckEntity, bool includeLoads, bool activeLoadsOnly)
+    private async Task<IReadOnlyCollection<Load>> GetLoadsAsync(
+        Guid truckId, bool includeLoads, bool activeLoadsOnly, CancellationToken ct)
     {
         if (!includeLoads)
         {
             return [];
         }
 
-        return activeLoadsOnly
-            ? [.. truckEntity.Loads.Where(l => l.DeliveredAt is null)]
-            : [.. truckEntity.Loads];
+        var query = tenantUow.Repository<Load>().Query().Where(l => l.AssignedTruckId == truckId);
+        if (activeLoadsOnly)
+        {
+            query = query.Where(l => l.DeliveredAt == null);
+        }
+
+        return await query.ToListAsync(ct);
     }
 
     private static TruckDto ConvertToDto(
