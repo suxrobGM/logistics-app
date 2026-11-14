@@ -104,9 +104,9 @@ namespace Logistics.Infrastructure.Persistence.Migrations.Master
                     jurisdiction_country_code = table.Column<string>(type: "character varying(2)", maxLength: 2, nullable: false),
                     jurisdiction_region = table.Column<string>(type: "character varying(10)", maxLength: 10, nullable: true),
                     created_at = table.Column<DateTime>(type: "timestamp with time zone", nullable: false, defaultValueSql: "CURRENT_TIMESTAMP"),
-                    created_by = table.Column<string>(type: "character varying(50)", maxLength: 50, nullable: true),
+                    created_by = table.Column<Guid>(type: "uuid", nullable: true),
                     updated_at = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
-                    updated_by = table.Column<string>(type: "character varying(50)", maxLength: 50, nullable: true)
+                    updated_by = table.Column<Guid>(type: "uuid", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -122,7 +122,7 @@ namespace Logistics.Infrastructure.Persistence.Migrations.Master
                     admin_email = table.Column<string>(type: "character varying(256)", maxLength: 256, nullable: false),
                     target_user_id = table.Column<Guid>(type: "uuid", nullable: false),
                     target_email = table.Column<string>(type: "character varying(256)", maxLength: 256, nullable: false),
-                    timestamp = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
+                    occurred_at = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
                     ip_address = table.Column<string>(type: "character varying(64)", maxLength: 64, nullable: false),
                     user_agent = table.Column<string>(type: "character varying(512)", maxLength: 512, nullable: false),
                     was_successful = table.Column<bool>(type: "boolean", nullable: false),
@@ -233,9 +233,9 @@ namespace Logistics.Infrastructure.Persistence.Migrations.Master
                     price_amount = table.Column<decimal>(type: "numeric(18,2)", precision: 18, scale: 2, nullable: false),
                     price_currency = table.Column<string>(type: "character varying(3)", maxLength: 3, nullable: false),
                     created_at = table.Column<DateTime>(type: "timestamp with time zone", nullable: false, defaultValueSql: "CURRENT_TIMESTAMP"),
-                    created_by = table.Column<string>(type: "character varying(50)", maxLength: 50, nullable: true),
+                    created_by = table.Column<Guid>(type: "uuid", nullable: true),
                     updated_at = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
-                    updated_by = table.Column<string>(type: "character varying(50)", maxLength: 50, nullable: true)
+                    updated_by = table.Column<Guid>(type: "uuid", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -300,24 +300,27 @@ namespace Logistics.Infrastructure.Persistence.Migrations.Master
                     payouts_enabled = table.Column<bool>(type: "boolean", nullable: false),
                     charges_enabled = table.Column<bool>(type: "boolean", nullable: false),
                     company_address_city = table.Column<string>(type: "text", nullable: false),
-                    company_address_country = table.Column<string>(type: "text", nullable: false),
+                    company_address_country = table.Column<string>(type: "character varying(2)", maxLength: 2, nullable: false),
                     company_address_line1 = table.Column<string>(type: "text", nullable: false),
                     company_address_line2 = table.Column<string>(type: "text", nullable: true),
                     company_address_state = table.Column<string>(type: "text", nullable: false),
                     company_address_zip_code = table.Column<string>(type: "text", nullable: false),
                     settings_ai_enabled = table.Column<bool>(type: "boolean", nullable: true),
                     settings_block_ai_overage = table.Column<bool>(type: "boolean", nullable: false),
+                    settings_cost_per_km = table.Column<decimal>(type: "numeric(18,4)", precision: 18, scale: 4, nullable: true),
                     settings_currency = table.Column<string>(type: "text", nullable: false),
                     settings_date_format = table.Column<string>(type: "text", nullable: false),
-                    settings_default_rate_floor_per_mile = table.Column<decimal>(type: "numeric(18,2)", precision: 18, scale: 2, nullable: true),
+                    settings_default_rate_floor_per_km = table.Column<decimal>(type: "numeric(18,4)", precision: 18, scale: 4, nullable: true),
                     settings_detention_free_minutes = table.Column<int>(type: "integer", nullable: true),
                     settings_detention_rate_per_hour = table.Column<decimal>(type: "numeric(18,2)", precision: 18, scale: 2, nullable: true),
                     settings_distance_unit = table.Column<string>(type: "text", nullable: false),
                     settings_language = table.Column<string>(type: "text", nullable: false),
                     settings_min_broker_credit_score = table.Column<int>(type: "integer", nullable: true),
                     settings_region = table.Column<string>(type: "text", nullable: false),
+                    settings_stop_dwell_minutes = table.Column<int>(type: "integer", nullable: true),
                     settings_temperature_unit = table.Column<string>(type: "text", nullable: false),
                     settings_timezone = table.Column<string>(type: "text", nullable: false),
+                    settings_trip_alerts_per_day = table.Column<int>(type: "integer", nullable: true),
                     settings_volume_unit = table.Column<string>(type: "text", nullable: false),
                     settings_weight_unit = table.Column<string>(type: "text", nullable: false)
                 },
@@ -427,9 +430,9 @@ namespace Logistics.Infrastructure.Persistence.Migrations.Master
                     is_enabled = table.Column<bool>(type: "boolean", nullable: false),
                     is_admin_locked = table.Column<bool>(type: "boolean", nullable: false),
                     created_at = table.Column<DateTime>(type: "timestamp with time zone", nullable: false, defaultValueSql: "CURRENT_TIMESTAMP"),
-                    created_by = table.Column<string>(type: "character varying(50)", maxLength: 50, nullable: true),
+                    created_by = table.Column<Guid>(type: "uuid", nullable: true),
                     updated_at = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
-                    updated_by = table.Column<string>(type: "character varying(50)", maxLength: 50, nullable: true)
+                    updated_by = table.Column<Guid>(type: "uuid", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -456,9 +459,9 @@ namespace Logistics.Infrastructure.Persistence.Migrations.Master
                     jurisdiction_country_code = table.Column<string>(type: "character varying(2)", maxLength: 2, nullable: false),
                     jurisdiction_region = table.Column<string>(type: "character varying(10)", maxLength: 10, nullable: true),
                     created_at = table.Column<DateTime>(type: "timestamp with time zone", nullable: false, defaultValueSql: "CURRENT_TIMESTAMP"),
-                    created_by = table.Column<string>(type: "character varying(50)", maxLength: 50, nullable: true),
+                    created_by = table.Column<Guid>(type: "uuid", nullable: true),
                     updated_at = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
-                    updated_by = table.Column<string>(type: "character varying(50)", maxLength: 50, nullable: true)
+                    updated_by = table.Column<Guid>(type: "uuid", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -480,9 +483,9 @@ namespace Logistics.Infrastructure.Persistence.Migrations.Master
                     last_name = table.Column<string>(type: "text", nullable: false),
                     tenant_id = table.Column<Guid>(type: "uuid", nullable: true),
                     created_at = table.Column<DateTime>(type: "timestamp with time zone", nullable: false, defaultValueSql: "CURRENT_TIMESTAMP"),
-                    created_by = table.Column<string>(type: "character varying(50)", maxLength: 50, nullable: true),
+                    created_by = table.Column<Guid>(type: "uuid", nullable: true),
                     updated_at = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
-                    updated_by = table.Column<string>(type: "character varying(50)", maxLength: 50, nullable: true),
+                    updated_by = table.Column<Guid>(type: "uuid", nullable: true),
                     anonymized_at = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
                     user_name = table.Column<string>(type: "character varying(256)", maxLength: 256, nullable: true),
                     normalized_user_name = table.Column<string>(type: "character varying(256)", maxLength: 256, nullable: true),
@@ -518,7 +521,7 @@ namespace Logistics.Infrastructure.Persistence.Migrations.Master
                     user_id = table.Column<Guid>(type: "uuid", nullable: false),
                     consent_type = table.Column<string>(type: "text", nullable: false),
                     granted = table.Column<bool>(type: "boolean", nullable: false),
-                    timestamp = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
+                    recorded_at = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
                     ip_address = table.Column<string>(type: "character varying(64)", maxLength: 64, nullable: true),
                     user_agent = table.Column<string>(type: "character varying(512)", maxLength: 512, nullable: true)
                 },
@@ -603,9 +606,9 @@ namespace Logistics.Infrastructure.Persistence.Migrations.Master
                     send_count = table.Column<int>(type: "integer", nullable: false),
                     last_sent_at = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
                     created_at = table.Column<DateTime>(type: "timestamp with time zone", nullable: false, defaultValueSql: "CURRENT_TIMESTAMP"),
-                    created_by = table.Column<string>(type: "character varying(50)", maxLength: 50, nullable: true),
+                    created_by = table.Column<Guid>(type: "uuid", nullable: true),
                     updated_at = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
-                    updated_by = table.Column<string>(type: "character varying(50)", maxLength: 50, nullable: true)
+                    updated_by = table.Column<Guid>(type: "uuid", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -706,9 +709,9 @@ namespace Logistics.Infrastructure.Persistence.Migrations.Master
                     customer_name = table.Column<string>(type: "character varying(255)", maxLength: 255, nullable: true),
                     is_active = table.Column<bool>(type: "boolean", nullable: false),
                     created_at = table.Column<DateTime>(type: "timestamp with time zone", nullable: false, defaultValueSql: "CURRENT_TIMESTAMP"),
-                    created_by = table.Column<string>(type: "character varying(50)", maxLength: 50, nullable: true),
+                    created_by = table.Column<Guid>(type: "uuid", nullable: true),
                     updated_at = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
-                    updated_by = table.Column<string>(type: "character varying(50)", maxLength: 50, nullable: true)
+                    updated_by = table.Column<Guid>(type: "uuid", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -774,9 +777,9 @@ namespace Logistics.Infrastructure.Persistence.Migrations.Master
                 column: "status");
 
             migrationBuilder.CreateIndex(
-                name: "ix_consent_records_consent_type_timestamp",
+                name: "ix_consent_records_consent_type_recorded_at",
                 table: "consent_records",
-                columns: new[] { "consent_type", "timestamp" });
+                columns: new[] { "consent_type", "recorded_at" });
 
             migrationBuilder.CreateIndex(
                 name: "ix_consent_records_user_id",
@@ -844,14 +847,14 @@ namespace Logistics.Infrastructure.Persistence.Migrations.Master
                 column: "email");
 
             migrationBuilder.CreateIndex(
-                name: "ix_ifta_tax_rates_year_quarter",
-                table: "ifta_tax_rates",
-                columns: new[] { "year", "quarter" });
-
-            migrationBuilder.CreateIndex(
                 name: "ix_impersonation_audit_logs_admin_user_id",
                 table: "impersonation_audit_logs",
                 column: "admin_user_id");
+
+            migrationBuilder.CreateIndex(
+                name: "ix_impersonation_audit_logs_occurred_at",
+                table: "impersonation_audit_logs",
+                column: "occurred_at");
 
             migrationBuilder.CreateIndex(
                 name: "ix_impersonation_audit_logs_target_user_id",
@@ -859,14 +862,9 @@ namespace Logistics.Infrastructure.Persistence.Migrations.Master
                 column: "target_user_id");
 
             migrationBuilder.CreateIndex(
-                name: "ix_impersonation_audit_logs_timestamp",
+                name: "ix_impersonation_audit_logs_was_successful_occurred_at",
                 table: "impersonation_audit_logs",
-                column: "timestamp");
-
-            migrationBuilder.CreateIndex(
-                name: "ix_impersonation_audit_logs_was_successful_timestamp",
-                table: "impersonation_audit_logs",
-                columns: new[] { "was_successful", "timestamp" });
+                columns: new[] { "was_successful", "occurred_at" });
 
             migrationBuilder.CreateIndex(
                 name: "ix_impersonation_tokens_expires_at",
