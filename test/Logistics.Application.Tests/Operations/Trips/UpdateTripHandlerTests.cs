@@ -1,5 +1,6 @@
 using Logistics.Application.Modules.Operations.Loads.Services;
 using Logistics.Application.Modules.Operations.Trips.Commands;
+using Logistics.Application.Modules.Operations.Trips.Services;
 using Logistics.Application.Tests.TestKit;
 using Logistics.Domain.Entities;
 using Logistics.Domain.Persistence;
@@ -21,7 +22,7 @@ public class UpdateTripHandlerTests
     {
         _trip = Trip.Create("Trip", _truck, [TestData.Load()]);
         _uow.Stub(_trip);
-        _sut = new UpdateTripHandler(_uow, Substitute.For<ILoadService>(), NullLogger<UpdateTripHandler>.Instance);
+        _sut = new UpdateTripHandler(_uow, Substitute.For<ILoadService>(), new TripLoadFinder(_uow), NullLogger<UpdateTripHandler>.Instance);
     }
 
     [Fact]

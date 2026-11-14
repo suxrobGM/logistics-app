@@ -1,4 +1,5 @@
 using Logistics.Application.Modules.Operations.Loads.Services;
+using Logistics.Application.Modules.Operations.Trips.Services;
 using Logistics.Domain.Entities;
 using Logistics.Domain.Persistence;
 using Logistics.Domain.Primitives.Enums;
@@ -12,6 +13,7 @@ namespace Logistics.Application.Modules.Operations.Trips.Commands;
 internal sealed class UpdateTripHandler(
     ITenantUnitOfWork uow,
     ILoadService loadService,
+    ITripLoadFinder tripLoadFinder,
     ILogger<UpdateTripHandler> logger)
     : IRequestHandler<UpdateTripCommand, Result>
 {
@@ -171,21 +173,13 @@ internal sealed class UpdateTripHandler(
             return Result.Ok();
         }
 
-        var loads = await uow.Repository<Load>().GetListAsync(l => ids.Contains(l.Id), ct);
-        var missingId = ids.Except(loads.Select(l => l.Id)).FirstOrDefault();
-        if (missingId != Guid.Empty)
+        var found = await tripLoadFinder.FindAttachableAsync(ids, trip.Id, ct);
+        if (!found.IsSuccess)
         {
-            return Result.Fail($"Load '{missingId}' not found.", ErrorCodes.NotFound);
+            return Result.Fail(found);
         }
 
-        var onOtherTrip = await uow.Repository<TripStop>().Query()
-            .Where(s => ids.Contains(s.LoadId) && s.TripId != trip.Id)
-            .Select(s => s.LoadId)
-            .FirstOrDefaultAsync(ct);
-        if (onOtherTrip != Guid.Empty)
-        {
-            return Result.Fail($"Load '{onOtherTrip}' is already on another trip.");
-        }
+        var loads = found.Value!;
 
         var stopCount = trip.Stops.Count;
         trip.AddLoads(loads);

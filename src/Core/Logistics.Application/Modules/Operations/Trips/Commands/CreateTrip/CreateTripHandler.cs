@@ -1,4 +1,5 @@
 using Logistics.Application.Modules.Operations.Loads.Services;
+using Logistics.Application.Modules.Operations.Trips.Services;
 using Logistics.Domain.Entities;
 using Logistics.Domain.Persistence;
 using Logistics.Mediator;
@@ -10,6 +11,7 @@ namespace Logistics.Application.Modules.Operations.Trips.Commands;
 internal sealed class CreateTripHandler(
     ITenantUnitOfWork tenantUow,
     ILoadService loadService,
+    ITripLoadFinder tripLoadFinder,
     ILogger<CreateTripHandler> logger)
     : IRequestHandler<CreateTripCommand, Result<Guid>>
 {
@@ -38,7 +40,14 @@ internal sealed class CreateTripHandler(
             }
         }
 
-        var existingLoads = await GetExistingLoadsAsync(req);
+        var existing = await tripLoadFinder.FindAttachableAsync(
+            req.AttachedLoadIds?.Distinct().ToList() ?? [], tripId: null, ct);
+        if (!existing.IsSuccess)
+        {
+            return Result<Guid>.Fail(existing);
+        }
+
+        var existingLoads = existing.Value!;
         var created = await CreateNewLoadsAsync(req);
         if (!created.IsSuccess)
         {
@@ -117,22 +126,6 @@ internal sealed class CreateTripHandler(
             "Created {Count} new loads for trip '{TripName}' with truck '{TruckId}'",
             loads.Count, command.Name, command.TruckId?.ToString() ?? "unassigned");
         return Result<(IReadOnlyList<Load>, Dictionary<string, Guid>)>.Ok((loads, tempIdToLoadId));
-    }
-
-    /// <summary>Loads the existing loads to attach to the trip; <see cref="Trip.Create"/> assigns them its truck.</summary>
-    private async Task<List<Load>> GetExistingLoadsAsync(CreateTripCommand command)
-    {
-        if (command.AttachedLoadIds is null || !command.AttachedLoadIds.Any())
-        {
-            return [];
-        }
-
-        var loads = await tenantUow.Repository<Load>().GetListAsync(i => command.AttachedLoadIds.Contains(i.Id));
-
-        logger.LogInformation(
-            "Retrieved {Count} existing loads for trip '{TripName}' with truck '{TruckId}'",
-            loads.Count, command.Name, command.TruckId?.ToString() ?? "unassigned");
-        return loads;
     }
 
     /// <summary>
