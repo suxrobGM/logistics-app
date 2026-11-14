@@ -30,7 +30,7 @@ public class AICopilotController(IMediator mediator) : ControllerBase
     public async Task<IActionResult> GetConversations([FromQuery] GetAICopilotConversationsQuery query)
     {
         var result = await mediator.Send(query);
-        return result.IsSuccess ? Ok(result) : BadRequest(ErrorResponse.FromResult(result));
+        return Ok(PagedResponse<AgentConversationDto>.FromPagedResult(result, query.Page, query.PageSize));
     }
 
     [HttpGet("conversations/{conversationId:guid}", Name = "GetCopilotConversationById")]
