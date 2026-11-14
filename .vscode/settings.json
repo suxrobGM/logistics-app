@@ -19,9 +19,17 @@
     "**/out-tsc": true
   },
   "VSCodeCounter.exclude": [
-    "bun.lock",
-    "openapi.json",
-    "src/Infrastructure/Logistics.Infrastructure.Persistence/Migrations"
+    "**/.gitignore",
+    "**/.vscode/**",
+    "**/node_modules/**",
+    "**/bun.lock",
+    "**/openapi.json",
+    "**/api/generated/**",
+    "**/Migrations/**",
+    "**/wwwroot/lib/**",
+    "**/*.csv",
+    "**/*.min.*",
+    "**/*.map"
   ],
   "VSCodeCounter.languages": {
     "kotlin": {
