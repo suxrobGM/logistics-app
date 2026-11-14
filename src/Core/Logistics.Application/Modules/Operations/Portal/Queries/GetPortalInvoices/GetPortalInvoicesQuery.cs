@@ -12,13 +12,7 @@ public class GetPortalInvoicesQuery : SearchableQuery, IQuery<PagedResult<Portal
     /// </summary>
     public required Guid CustomerId { get; set; }
 
-    /// <summary>
-    /// Start date filter.
-    /// </summary>
     public DateTime? FromDate { get; set; }
 
-    /// <summary>
-    /// End date filter.
-    /// </summary>
     public DateTime? ToDate { get; set; }
 }

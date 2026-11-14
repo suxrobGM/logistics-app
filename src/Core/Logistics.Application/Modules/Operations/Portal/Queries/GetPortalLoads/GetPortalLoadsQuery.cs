@@ -12,18 +12,9 @@ public class GetPortalLoadsQuery : SearchableQuery, IQuery<PagedResult<PortalLoa
     /// </summary>
     public required Guid CustomerId { get; set; }
 
-    /// <summary>
-    /// Only return active (non-delivered) loads.
-    /// </summary>
     public bool ActiveOnly { get; set; }
 
-    /// <summary>
-    /// Start date filter.
-    /// </summary>
     public DateTime? FromDate { get; set; }
 
-    /// <summary>
-    /// End date filter.
-    /// </summary>
     public DateTime? ToDate { get; set; }
 }

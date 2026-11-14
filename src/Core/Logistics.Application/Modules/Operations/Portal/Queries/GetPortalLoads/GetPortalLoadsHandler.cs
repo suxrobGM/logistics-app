@@ -1,4 +1,5 @@
 using Logistics.Application.Abstractions;
+using Logistics.Application.Common.Extensions;
 using Logistics.Domain.Entities;
 using Logistics.Domain.Persistence;
 using Logistics.Domain.Primitives.Enums;
@@ -11,6 +12,11 @@ namespace Logistics.Application.Modules.Operations.Portal.Queries;
 internal sealed class GetPortalLoadsHandler(ITenantUnitOfWork tenantUow)
     : IRequestHandler<GetPortalLoadsQuery, PagedResult<PortalLoadDto>>
 {
+    private static readonly SortFields<Load> Sorts = new SortFields<Load>("-createdAt")
+        .Add("number", l => l.Number)
+        .Add("status", l => l.Status)
+        .Add("createdAt", l => l.CreatedAt);
+
     public async Task<PagedResult<PortalLoadDto>> Handle(
         GetPortalLoadsQuery req,
         CancellationToken ct)
@@ -18,7 +24,6 @@ internal sealed class GetPortalLoadsHandler(ITenantUnitOfWork tenantUow)
         var baseQuery = tenantUow.Repository<Load>().Query()
             .Where(l => l.CustomerId == req.CustomerId);
 
-        // Apply search filter
         if (!string.IsNullOrWhiteSpace(req.Search))
         {
             var search = req.Search.ToLower();
@@ -27,35 +32,26 @@ internal sealed class GetPortalLoadsHandler(ITenantUnitOfWork tenantUow)
                 l.Number.ToString().Contains(search));
         }
 
-        // Apply active loads filter
         if (req.ActiveOnly)
         {
             baseQuery = baseQuery.Where(l => l.DeliveredAt == null && l.CancelledAt == null);
         }
 
-        // Apply date filters
-        if (req is { FromDate: not null, ToDate: not null })
+        if (req.FromDate is { } fromDate)
         {
-            baseQuery = baseQuery.Where(l => l.CreatedAt >= req.FromDate && l.CreatedAt <= req.ToDate);
+            baseQuery = baseQuery.Where(l => l.CreatedAt >= fromDate);
+        }
+
+        if (req.ToDate is { } toDate)
+        {
+            baseQuery = baseQuery.Where(l => l.CreatedAt <= toDate);
         }
 
         var totalItems = await baseQuery.CountAsync(ct);
 
-        // Apply ordering
-        baseQuery = req.OrderBy?.ToLower() switch
-        {
-            "number" => baseQuery.OrderBy(l => l.Number),
-            "number_desc" => baseQuery.OrderByDescending(l => l.Number),
-            "status" => baseQuery.OrderBy(l => l.Status),
-            "created" => baseQuery.OrderBy(l => l.CreatedAt),
-            _ => baseQuery.OrderByDescending(l => l.CreatedAt)
-        };
-
-        // Apply paging
-        baseQuery = baseQuery.Skip((req.Page - 1) * req.PageSize).Take(req.PageSize);
-
-        // Load data first, then project (GetDriversNames can't be translated to SQL)
-        var loadEntities = await baseQuery
+        // Materialized before projecting: GetDriversNames can't be translated to SQL.
+        var loadEntities = await Sorts.Apply(baseQuery, req.OrderBy, l => l.Id)
+            .ApplyPaging(req.Page, req.PageSize)
             .ToListAsync(ct);
 
         var loads = loadEntities.Select(l => new PortalLoadDto

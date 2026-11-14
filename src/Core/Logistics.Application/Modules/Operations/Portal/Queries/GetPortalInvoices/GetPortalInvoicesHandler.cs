@@ -1,4 +1,5 @@
 using Logistics.Application.Abstractions;
+using Logistics.Application.Common.Extensions;
 using Logistics.Domain.Entities;
 using Logistics.Domain.Persistence;
 using Logistics.Domain.Primitives.Enums;
@@ -11,6 +12,12 @@ namespace Logistics.Application.Modules.Operations.Portal.Queries;
 internal sealed class GetPortalInvoicesHandler(ITenantUnitOfWork tenantUow)
     : IRequestHandler<GetPortalInvoicesQuery, PagedResult<PortalInvoiceDto>>
 {
+    private static readonly SortFields<LoadInvoice> Sorts = new SortFields<LoadInvoice>("-createdAt")
+        .Add("number", i => i.Number)
+        .Add("status", i => i.Status)
+        .Add("total", i => i.Total)
+        .Add("createdAt", i => i.CreatedAt);
+
     public async Task<PagedResult<PortalInvoiceDto>> Handle(
         GetPortalInvoicesQuery req,
         CancellationToken ct)
@@ -18,7 +25,6 @@ internal sealed class GetPortalInvoicesHandler(ITenantUnitOfWork tenantUow)
         var baseQuery = tenantUow.Repository<LoadInvoice>().Query()
             .Where(i => i.CustomerId == req.CustomerId);
 
-        // Apply search filter
         if (!string.IsNullOrWhiteSpace(req.Search))
         {
             var search = req.Search.ToLower();
@@ -27,47 +33,38 @@ internal sealed class GetPortalInvoicesHandler(ITenantUnitOfWork tenantUow)
                 (i.Load != null && i.Load.Name.ToLower().Contains(search)));
         }
 
-        // Apply date filters
-        if (req is { FromDate: not null, ToDate: not null })
+        if (req.FromDate is { } fromDate)
         {
-            baseQuery = baseQuery.Where(i => i.CreatedAt >= req.FromDate && i.CreatedAt <= req.ToDate);
+            baseQuery = baseQuery.Where(i => i.CreatedAt >= fromDate);
+        }
+
+        if (req.ToDate is { } toDate)
+        {
+            baseQuery = baseQuery.Where(i => i.CreatedAt <= toDate);
         }
 
         var totalItems = await baseQuery.CountAsync(ct);
 
-        // Apply ordering
-        baseQuery = req.OrderBy?.ToLower() switch
-        {
-            "number" => baseQuery.OrderBy(i => i.Number),
-            "number_desc" => baseQuery.OrderByDescending(i => i.Number),
-            "status" => baseQuery.OrderBy(i => i.Status),
-            "total" => baseQuery.OrderBy(i => i.Total),
-            "total_desc" => baseQuery.OrderByDescending(i => i.Total),
-            "created" => baseQuery.OrderBy(i => i.CreatedAt),
-            _ => baseQuery.OrderByDescending(i => i.CreatedAt)
-        };
-
-        // Apply paging
-        baseQuery = baseQuery.Skip((req.Page - 1) * req.PageSize).Take(req.PageSize);
-
-        var invoices = await baseQuery.Select(i => new PortalInvoiceDto
-        {
-            Id = i.Id,
-            Number = i.Number,
-            Status = i.Status,
-            Total = i.Total,
-            LoadId = i.LoadId,
-            LoadNumber = i.Load != null ? i.Load.Number : null,
-            LoadName = i.Load != null ? i.Load.Name : null,
-            CreatedAt = i.CreatedAt,
-            PaidAt = i.Payments.Any(p => p.Status == PaymentStatus.Paid)
-                ? i.Payments.Where(p => p.Status == PaymentStatus.Paid).Max(p => p.CreatedAt)
-                : null,
-            DueDate = i.DueDate,
-            RemitTo = i.Customer.FactoringCompany == null
-                ? null
-                : new RemitToDto { Name = i.Customer.FactoringCompany.Name, Address = i.Customer.FactoringCompany.RemitToAddress }
-        }).ToArrayAsync(ct);
+        var invoices = await Sorts.Apply(baseQuery, req.OrderBy, i => i.Id)
+            .ApplyPaging(req.Page, req.PageSize)
+            .Select(i => new PortalInvoiceDto
+            {
+                Id = i.Id,
+                Number = i.Number,
+                Status = i.Status,
+                Total = i.Total,
+                LoadId = i.LoadId,
+                LoadNumber = i.Load != null ? i.Load.Number : null,
+                LoadName = i.Load != null ? i.Load.Name : null,
+                CreatedAt = i.CreatedAt,
+                PaidAt = i.Payments.Any(p => p.Status == PaymentStatus.Paid)
+                    ? i.Payments.Where(p => p.Status == PaymentStatus.Paid).Max(p => p.CreatedAt)
+                    : null,
+                DueDate = i.DueDate,
+                RemitTo = i.Customer.FactoringCompany == null
+                    ? null
+                    : new RemitToDto { Name = i.Customer.FactoringCompany.Name, Address = i.Customer.FactoringCompany.RemitToAddress }
+            }).ToArrayAsync(ct);
 
         return PagedResult<PortalInvoiceDto>.Ok(invoices, totalItems, req.PageSize);
     }
