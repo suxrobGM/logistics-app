@@ -1,9 +1,8 @@
 using FluentValidation;
-using Logistics.Application.Modules.Tenancy.Tenants.Queries;
 
 namespace Logistics.Application.Modules.Operations.Trips.Queries;
 
-internal sealed class GetTripsValidator : AbstractValidator<GetTenantsQuery>
+internal sealed class GetTripsValidator : AbstractValidator<GetTripsQuery>
 {
     public GetTripsValidator()
     {
