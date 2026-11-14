@@ -1,3 +1,4 @@
+using Logistics.Application.Abstractions.AI;
 using Logistics.Domain.Entities;
 
 namespace Logistics.Application.Modules.AI.Agents.Services;
@@ -8,20 +9,19 @@ namespace Logistics.Application.Modules.AI.Agents.Services;
 /// </summary>
 internal sealed record AgentDecisionNote(string ForAgent, string ForUser)
 {
-    private const int OutputLimit = 500;
-
     public static AgentDecisionNote Executed(AgentDecision decision, string output) => new(
-        $"Approved and executed: {decision.ToolName} - {Truncate(output)}",
+        $"Approved and executed: {decision.ToolName} - {ToolErrorSanitizer.Truncate(output)}",
         $"Approved: {LabelOf(decision)}");
 
     public static AgentDecisionNote Failed(AgentDecision decision, string error) => new(
-        $"Approved but failed to execute: {decision.ToolName} - {Truncate(error)}",
-        $"Approved, but {LabelOf(decision)} failed: {Truncate(error)}");
+        $"Approved but failed to execute: {decision.ToolName} - {ToolErrorSanitizer.Truncate(error)}",
+        $"Approved, but {LabelOf(decision)} failed: {ToolErrorSanitizer.Truncate(error)}");
 
-    public static AgentDecisionNote Rejected(AgentDecision decision, string? reason) =>
-        string.IsNullOrWhiteSpace(reason)
-            ? new($"Rejected: {decision.ToolName}", $"Rejected: {LabelOf(decision)}")
-            : new($"Rejected: {decision.ToolName} - {reason}", $"Rejected: {LabelOf(decision)} - {reason}");
+    public static AgentDecisionNote Rejected(AgentDecision decision, string? reason)
+    {
+        var suffix = string.IsNullOrWhiteSpace(reason) ? "" : $" - {reason}";
+        return new($"Rejected: {decision.ToolName}{suffix}", $"Rejected: {LabelOf(decision)}{suffix}");
+    }
 
     public static AgentDecisionNote Reverted(AgentDecision decision) => new(
         $"Reverted by a dispatcher: {decision.ToolName}",
@@ -33,6 +33,4 @@ internal sealed record AgentDecisionNote(string ForAgent, string ForUser)
         var words = (decision.ToolName ?? "action").Replace('_', ' ');
         return char.ToUpperInvariant(words[0]) + words[1..];
     }
-
-    private static string Truncate(string text) => text.Length > OutputLimit ? text[..OutputLimit] : text;
 }
