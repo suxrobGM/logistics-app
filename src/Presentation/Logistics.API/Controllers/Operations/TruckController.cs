@@ -34,6 +34,15 @@ public class TruckController(IMediator mediator) : ControllerBase
         return Ok(PagedResponse<TruckDto>.FromPagedResult(result, query.Page, query.PageSize));
     }
 
+    [HttpGet("summary", Name = "GetTrucksSummary")]
+    [ProducesResponseType(typeof(TrucksSummaryDto), StatusCodes.Status200OK)]
+    [Authorize(Policy = Permission.Truck.View)]
+    public async Task<IActionResult> GetSummary([FromQuery] GetTrucksSummaryQuery query)
+    {
+        var result = await mediator.Send(query);
+        return result.ToActionResult();
+    }
+
     [HttpPost(Name = "CreateTruck")]
     [ProducesResponseType(StatusCodes.Status204NoContent)]
     [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status400BadRequest)]

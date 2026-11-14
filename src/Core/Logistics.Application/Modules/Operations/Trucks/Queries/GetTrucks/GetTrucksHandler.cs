@@ -5,7 +5,6 @@ using Logistics.Application.Modules.Operations.Loads;
 using Logistics.Application.Modules.Operations.Trucks.Services;
 using Logistics.Domain.Entities;
 using Logistics.Domain.Persistence;
-using Logistics.Domain.Primitives.Enums;
 using Logistics.Mediator;
 using Logistics.Shared.Models;
 using Microsoft.EntityFrameworkCore;
@@ -28,36 +27,8 @@ internal sealed class GetTrucksHandler(
         GetTrucksQuery req,
         CancellationToken ct)
     {
-        var baseQuery = tenantUow.Repository<Truck>().Query();
-
-        if (!string.IsNullOrEmpty(req.Search))
-        {
-            var search = req.Search.ToLower();
-            baseQuery = baseQuery.Where(i => i.Number.ToLower().Contains(search) ||
-                            i.MainDriver != null && (i.MainDriver.FirstName.ToLower().Contains(search) ||
-                                                     i.MainDriver.LastName.ToLower().Contains(search)) ||
-                            (i.SecondaryDriver != null &&
-                             (i.SecondaryDriver.FirstName.ToLower().Contains(search) ||
-                              i.SecondaryDriver.LastName.ToLower().Contains(search))));
-        }
-
-        baseQuery = Sorts.Apply(baseQuery, req.OrderBy, x => x.Id);
-
-        if (req.Statuses?.Length > 0)
-        {
-            baseQuery = baseQuery.Where(i => req.Statuses.Contains(i.Status));
-        }
-
-        if (req.Types?.Length > 0)
-        {
-            baseQuery = baseQuery.Where(i => req.Types.Contains(i.Type));
-        }
-
-        if (req.Idle)
-        {
-            baseQuery = baseQuery.Where(i => !i.Loads.Any(l =>
-                l.Status == LoadStatus.Dispatched || l.Status == LoadStatus.PickedUp));
-        }
+        var filtered = tenantUow.Repository<Truck>().Query().FilterForList(req);
+        IQueryable<Truck> baseQuery = Sorts.Apply(filtered, req.OrderBy, x => x.Id);
 
         var totalItems = await baseQuery.CountAsync(ct);
         baseQuery = baseQuery.ApplyPaging(req.Page, req.PageSize);
