@@ -37,6 +37,15 @@ public class LoadController(IMediator mediator) : ControllerBase
         return Ok(PagedResponse<LoadDto>.FromPagedResult(result, query.Page, query.PageSize));
     }
 
+    [HttpGet("summary", Name = "GetLoadsSummary")]
+    [ProducesResponseType(typeof(LoadsSummaryDto), StatusCodes.Status200OK)]
+    [Authorize(Policy = Permission.Load.View)]
+    public async Task<IActionResult> GetSummary([FromQuery] GetLoadsSummaryQuery query)
+    {
+        var result = await mediator.Send(query);
+        return result.ToActionResult();
+    }
+
     [HttpGet("unassigned", Name = "GetUnassignedLoads")]
     [ProducesResponseType(typeof(PagedResponse<LoadDto>), StatusCodes.Status200OK)]
     [Authorize(Policy = Permission.AIDispatch.View)]
