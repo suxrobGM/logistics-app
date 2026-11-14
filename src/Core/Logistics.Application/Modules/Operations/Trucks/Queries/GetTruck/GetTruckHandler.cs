@@ -21,8 +21,8 @@ internal sealed class GetTruckHandler(ITenantUnitOfWork tenantUow, ILoadLookupBu
             return Result<TruckDto>.Fail($"Could not find a truck with ID '{req.TruckOrDriverId}'", ErrorCodes.NotFound);
         }
 
-        // Resolve only the loads that reach the DTO, not ones OnlyActiveLoads drops.
-        var loads = SelectLoads(truckEntity, req.IncludeLoads, req.OnlyActiveLoads);
+        // Resolve only the loads that reach the DTO, not ones ActiveLoadsOnly drops.
+        var loads = SelectLoads(truckEntity, req.IncludeLoads, req.ActiveLoadsOnly);
         var lookup = await lookupBuilder.BuildAsync(loads, ct);
 
         var truckDto = ConvertToDto(truckEntity, loads, lookup);
@@ -46,14 +46,14 @@ internal sealed class GetTruckHandler(ITenantUnitOfWork tenantUow, ILoadLookupBu
     }
 
     private static IReadOnlyCollection<Load> SelectLoads(
-        Truck truckEntity, bool includeLoads, bool onlyActiveLoads)
+        Truck truckEntity, bool includeLoads, bool activeLoadsOnly)
     {
         if (!includeLoads)
         {
             return [];
         }
 
-        return onlyActiveLoads
+        return activeLoadsOnly
             ? [.. truckEntity.Loads.Where(l => l.DeliveredAt is null)]
             : [.. truckEntity.Loads];
     }

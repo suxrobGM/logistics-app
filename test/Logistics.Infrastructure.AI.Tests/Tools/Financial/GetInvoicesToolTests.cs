@@ -33,7 +33,7 @@ public class GetInvoicesToolTests
         // Payroll/subscription invoices must never leak into copilot answers.
         await _mediator.Received(1).Send(
             Arg.Is<GetInvoicesQuery>(q =>
-                q.InvoiceType == InvoiceType.Load &&
+                q.Type == InvoiceType.Load &&
                 q.Status == InvoiceStatus.Sent),
             Arg.Any<CancellationToken>());
     }

@@ -15,7 +15,7 @@ internal sealed class GetPaymentsHandler(ITenantUnitOfWork tenantUow)
         CancellationToken ct)
     {
         var query = tenantUow.Repository<Payment>().Query()
-            .Where(i => i.CreatedAt >= req.StartDate && i.CreatedAt <= req.EndDate);
+            .Where(i => i.CreatedAt >= req.FromDate && i.CreatedAt <= req.ToDate);
 
         return await query.ToPagedResultAsync(req, i => i.ToDto(), ct);
     }

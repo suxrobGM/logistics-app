@@ -20,10 +20,13 @@ internal sealed class GetTripsHandler(ITenantUnitOfWork tenantUow, IDisplayNameL
     {
         var query = tenantUow.Repository<Trip>().Query();
 
-        if (!string.IsNullOrEmpty(req.Name))
+        if (!string.IsNullOrEmpty(req.Search))
         {
-            var name = req.Name.ToLower();
-            query = query.Where(i => i.Name.ToLower().Contains(name));
+            var search = req.Search.ToLower();
+            query = query.Where(i =>
+                i.Name.ToLower().Contains(search) ||
+                i.Number.ToString().Contains(search) ||
+                (i.Truck != null && i.Truck.Number.ToLower().Contains(search)));
         }
 
         if (req.Status.HasValue)
@@ -31,22 +34,17 @@ internal sealed class GetTripsHandler(ITenantUnitOfWork tenantUow, IDisplayNameL
             query = query.Where(i => i.Status == req.Status.Value);
         }
 
-        if (!string.IsNullOrEmpty(req.TruckNumber))
-        {
-            query = query.Where(i => i.Truck != null && i.Truck.Number == req.TruckNumber);
-        }
-
         if (req.TruckId.HasValue)
         {
             query = query.Where(i => i.TruckId == req.TruckId.Value);
         }
 
-        if (req.StartDate.HasValue && req.EndDate.HasValue)
+        if (req.FromDate.HasValue && req.ToDate.HasValue)
         {
-            query = query.Where(i => i.CreatedAt >= req.StartDate.Value && i.CreatedAt <= req.EndDate.Value);
+            query = query.Where(i => i.CreatedAt >= req.FromDate.Value && i.CreatedAt <= req.ToDate.Value);
         }
 
-        if (req.OnlyActiveTrips)
+        if (req.ActiveOnly)
         {
             query = query.Where(i => i.Status != TripStatus.Completed && i.Status != TripStatus.Cancelled);
         }

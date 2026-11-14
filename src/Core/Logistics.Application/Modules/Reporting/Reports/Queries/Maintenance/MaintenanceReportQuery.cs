@@ -2,6 +2,6 @@ using Logistics.Shared.Models;
 
 namespace Logistics.Application.Modules.Reporting.Reports.Queries;
 
-public class MaintenanceReportQuery : PagedIntervalQuery, IQuery<Result<MaintenanceReportDto>>
+public class MaintenanceReportQuery : PagedDateRangeQuery, IQuery<Result<MaintenanceReportDto>>
 {
 }

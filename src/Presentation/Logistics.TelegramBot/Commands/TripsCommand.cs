@@ -32,7 +32,7 @@ internal sealed class TripsCommand(IMediator mediator) : ITelegramCommand, ICall
     {
         var result = await mediator.Send(new GetTripsQuery
         {
-            OnlyActiveTrips = true,
+            ActiveOnly = true,
             Page = page,
             PageSize = PageSize,
             OrderBy = "-CreatedAt"

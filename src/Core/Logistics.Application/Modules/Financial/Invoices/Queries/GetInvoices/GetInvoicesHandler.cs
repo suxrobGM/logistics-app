@@ -15,23 +15,21 @@ internal sealed class GetInvoicesHandler(ITenantUnitOfWork tenantUow)
     {
         var filtersLoadFields = req.LoadId.HasValue
                                 || req.CustomerId.HasValue
-                                || !string.IsNullOrEmpty(req.CustomerName)
                                 || req.FactoringStatus.HasValue;
-        if (req.InvoiceType == InvoiceType.Load || filtersLoadFields)
+        if (req.Type == InvoiceType.Load || filtersLoadFields)
         {
             return FilterLoadInvoices(req).ToPagedResultAsync(req, i => i.ToDto(), ct);
         }
 
-        var filtersPayrollFields = req.EmployeeId.HasValue || !string.IsNullOrEmpty(req.EmployeeName);
-        if (req.InvoiceType == InvoiceType.Payroll || filtersPayrollFields)
+        if (req.Type == InvoiceType.Payroll || req.EmployeeId.HasValue)
         {
             return FilterPayrollInvoices(req).ToPagedResultAsync(req, i => i.ToDto(), ct);
         }
 
         var query = tenantUow.Repository<Invoice>().Query();
-        if (req.InvoiceType is not null)
+        if (req.Type is not null)
         {
-            query = query.Where(i => i.Type == req.InvoiceType);
+            query = query.Where(i => i.Type == req.Type);
         }
 
         return query.ToPagedResultAsync(req, i => i.ToDto(), ct);
@@ -56,12 +54,6 @@ internal sealed class GetInvoicesHandler(ITenantUnitOfWork tenantUow)
             query = query.Where(i => i.CustomerId == req.CustomerId.Value);
         }
 
-        if (!string.IsNullOrWhiteSpace(req.CustomerName))
-        {
-            var name = req.CustomerName.ToLower();
-            query = query.Where(i => i.Customer.Name.ToLower().Contains(name));
-        }
-
         if (!string.IsNullOrWhiteSpace(req.Search))
         {
             var search = req.Search.ToLower();
@@ -74,14 +66,14 @@ internal sealed class GetInvoicesHandler(ITenantUnitOfWork tenantUow)
                 : query.Where(i => i.Customer.Name.ToLower().Contains(search));
         }
 
-        if (req.StartDate.HasValue)
+        if (req.FromDate.HasValue)
         {
-            query = query.Where(i => i.CreatedAt >= req.StartDate.Value);
+            query = query.Where(i => i.CreatedAt >= req.FromDate.Value);
         }
 
-        if (req.EndDate.HasValue)
+        if (req.ToDate.HasValue)
         {
-            query = query.Where(i => i.CreatedAt <= req.EndDate.Value);
+            query = query.Where(i => i.CreatedAt <= req.ToDate.Value);
         }
 
         if (req.OverdueOnly == true)
@@ -110,11 +102,13 @@ internal sealed class GetInvoicesHandler(ITenantUnitOfWork tenantUow)
             query = query.Where(i => i.EmployeeId == req.EmployeeId.Value);
         }
 
-        if (!string.IsNullOrWhiteSpace(req.EmployeeName))
+        if (!string.IsNullOrWhiteSpace(req.Search))
         {
-            var name = req.EmployeeName.ToLower();
-            query = query.Where(i => i.Employee.FirstName.ToLower().Contains(name)
-                                     || i.Employee.LastName.ToLower().Contains(name));
+            var search = req.Search.ToLower();
+            query = long.TryParse(req.Search, out var number)
+                ? query.Where(i => i.Number == number)
+                : query.Where(i => i.Employee.FirstName.ToLower().Contains(search)
+                                   || i.Employee.LastName.ToLower().Contains(search));
         }
 
         if (req.Status.HasValue)
@@ -128,15 +122,15 @@ internal sealed class GetInvoicesHandler(ITenantUnitOfWork tenantUow)
         }
 
         // A payroll matches when its period overlaps the requested range.
-        if (req.StartDate.HasValue)
+        if (req.FromDate.HasValue)
         {
-            var from = DateOnly.FromDateTime(req.StartDate.Value);
+            var from = DateOnly.FromDateTime(req.FromDate.Value);
             query = query.Where(i => i.PeriodEnd >= from);
         }
 
-        if (req.EndDate.HasValue)
+        if (req.ToDate.HasValue)
         {
-            var to = DateOnly.FromDateTime(req.EndDate.Value);
+            var to = DateOnly.FromDateTime(req.ToDate.Value);
             query = query.Where(i => i.PeriodStart <= to);
         }
 

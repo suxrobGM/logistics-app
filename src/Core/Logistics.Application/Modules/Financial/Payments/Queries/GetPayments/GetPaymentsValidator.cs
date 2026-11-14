@@ -6,7 +6,7 @@ internal sealed class GetPaymentsValidator : AbstractValidator<GetPaymentsQuery>
 {
     public GetPaymentsValidator()
     {
-        RuleFor(i => i.StartDate).LessThan(i => i.EndDate);
+        RuleFor(i => i.FromDate).LessThan(i => i.ToDate);
         RuleFor(i => i.Page)
             .GreaterThanOrEqualTo(0);
 

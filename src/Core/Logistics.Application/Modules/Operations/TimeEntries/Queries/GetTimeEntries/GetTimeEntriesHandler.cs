@@ -18,33 +18,24 @@ internal sealed class GetTimeEntriesHandler(ITenantUnitOfWork tenantUow, IDispla
         var repository = tenantUow.Repository<TimeEntry>();
         var query = repository.Query();
 
-        // Filter by employee
         if (req.EmployeeId.HasValue)
         {
             query = query.Where(t => t.EmployeeId == req.EmployeeId.Value);
         }
 
-        // Filter by date range
-        if (req.StartDate.HasValue)
+        if (req.FromDate.HasValue)
         {
-            query = query.Where(t => t.StartedAt >= req.StartDate.Value);
+            query = query.Where(t => t.StartedAt >= req.FromDate.Value);
         }
-        if (req.EndDate.HasValue)
+        if (req.ToDate.HasValue)
         {
-            // EndDate is a date and inclusive, so keep entries that start before the following midnight.
-            query = query.Where(t => t.StartedAt < req.EndDate.Value.AddDays(1));
-        }
-
-        // Filter by type
-        if (!string.IsNullOrWhiteSpace(req.Type) && Enum.TryParse<TimeEntryType>(req.Type, true, out var type))
-        {
-            query = query.Where(t => t.Type == type);
+            // ToDate is a date and inclusive, so keep entries that start before the following midnight.
+            query = query.Where(t => t.StartedAt < req.ToDate.Value.AddDays(1));
         }
 
-        // Filter by linked to payroll
-        if (req.IncludeLinkedToPayroll.HasValue && !req.IncludeLinkedToPayroll.Value)
+        if (req.Type.HasValue)
         {
-            query = query.Where(t => t.PayrollInvoiceId == null);
+            query = query.Where(t => t.Type == req.Type.Value);
         }
 
         return await query.ToPagedResultAsync(req, async (page, token) =>

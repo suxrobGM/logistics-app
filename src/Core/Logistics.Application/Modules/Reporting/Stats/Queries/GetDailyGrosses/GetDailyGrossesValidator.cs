@@ -6,6 +6,6 @@ internal sealed class GetDailyGrossesValidator : AbstractValidator<GetDailyGross
 {
     public GetDailyGrossesValidator()
     {
-        RuleFor(i => i.StartDate).LessThan(i => i.EndDate);
+        RuleFor(i => i.FromDate).LessThan(i => i.ToDate);
     }
 }

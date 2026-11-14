@@ -13,20 +13,20 @@ internal sealed class LoadsReportHandler(ITenantUnitOfWork tenantUow) : IRequest
 
     public async Task<Result<LoadsReportDto>> Handle(LoadsReportQuery req, CancellationToken ct)
     {
-        var hasStart = req.StartDate != default;
-        var hasEnd = req.EndDate != default;
+        var hasStart = req.FromDate != default;
+        var hasEnd = req.ToDate != default;
 
         var queryable = tenantUow.Repository<Load>().Query();
 
         if (hasStart)
         {
-            var from = DateTime.SpecifyKind(req.StartDate, DateTimeKind.Utc);
+            var from = DateTime.SpecifyKind(req.FromDate, DateTimeKind.Utc);
             queryable = queryable.Where(l => l.CreatedAt >= from);
         }
 
         if (hasEnd)
         {
-            var to = DateTime.SpecifyKind(req.EndDate, DateTimeKind.Utc);
+            var to = DateTime.SpecifyKind(req.ToDate, DateTimeKind.Utc);
             queryable = queryable.Where(l => l.CreatedAt <= to);
         }
 
@@ -65,7 +65,7 @@ internal sealed class LoadsReportHandler(ITenantUnitOfWork tenantUow) : IRequest
         var cancellationRate = totalLoads > 0 ?
             (double)(statusBreakdown.FirstOrDefault(s => s.Status == LoadStatus.Cancelled)?.Count ?? 0) / totalLoads * 100 : 0;
 
-        var loadTrends = CalculateLoadTrends(queryable, req.StartDate, req.EndDate);
+        var loadTrends = CalculateLoadTrends(queryable, req.FromDate, req.ToDate);
         var topCustomers = GetTopCustomersByLoads(queryable);
         var performanceMetrics = CalculatePerformanceMetrics(queryable, totalLoads, totalRevenue, totalDistance);
 

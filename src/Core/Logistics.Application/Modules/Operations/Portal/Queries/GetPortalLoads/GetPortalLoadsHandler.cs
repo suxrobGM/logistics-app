@@ -28,15 +28,15 @@ internal sealed class GetPortalLoadsHandler(ITenantUnitOfWork tenantUow)
         }
 
         // Apply active loads filter
-        if (req.OnlyActiveLoads)
+        if (req.ActiveOnly)
         {
             baseQuery = baseQuery.Where(l => l.DeliveredAt == null && l.CancelledAt == null);
         }
 
         // Apply date filters
-        if (req is { StartDate: not null, EndDate: not null })
+        if (req is { FromDate: not null, ToDate: not null })
         {
-            baseQuery = baseQuery.Where(l => l.CreatedAt >= req.StartDate && l.CreatedAt <= req.EndDate);
+            baseQuery = baseQuery.Where(l => l.CreatedAt >= req.FromDate && l.CreatedAt <= req.ToDate);
         }
 
         var totalItems = await baseQuery.CountAsync(ct);

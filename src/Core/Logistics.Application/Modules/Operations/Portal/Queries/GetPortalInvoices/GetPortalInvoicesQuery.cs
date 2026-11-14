@@ -15,10 +15,10 @@ public class GetPortalInvoicesQuery : SearchableQuery, IQuery<PagedResult<Portal
     /// <summary>
     /// Start date filter.
     /// </summary>
-    public DateTime? StartDate { get; set; }
+    public DateTime? FromDate { get; set; }
 
     /// <summary>
     /// End date filter.
     /// </summary>
-    public DateTime? EndDate { get; set; }
+    public DateTime? ToDate { get; set; }
 }

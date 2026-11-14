@@ -16,15 +16,15 @@ internal sealed class FinancialsReportHandler(ITenantUnitOfWork tenantUow)
         var invoicesQuery = tenantUow.Repository<LoadInvoice>().Query()
             .Where(i => InvoiceStatuses.Receivable.Contains(i.Status));
 
-        if (req.StartDate != default)
+        if (req.FromDate != default)
         {
-            var from = DateTime.SpecifyKind(req.StartDate, DateTimeKind.Utc);
+            var from = DateTime.SpecifyKind(req.FromDate, DateTimeKind.Utc);
             invoicesQuery = invoicesQuery.Where(i => i.CreatedAt >= from);
         }
 
-        if (req.EndDate != default)
+        if (req.ToDate != default)
         {
-            var to = DateTime.SpecifyKind(req.EndDate, DateTimeKind.Utc);
+            var to = DateTime.SpecifyKind(req.ToDate, DateTimeKind.Utc);
             invoicesQuery = invoicesQuery.Where(i => i.CreatedAt <= to);
         }
 
@@ -51,13 +51,13 @@ internal sealed class FinancialsReportHandler(ITenantUnitOfWork tenantUow)
         var createdDates = invoices.Select(i => i.CreatedAt).DefaultIfEmpty(now).ToList();
         var paymentTrends = CalculatePaymentTrends(
             invoices,
-            req.StartDate != default ? req.StartDate : createdDates.Min(),
-            req.EndDate != default ? req.EndDate : createdDates.Max()
+            req.FromDate != default ? req.FromDate : createdDates.Min(),
+            req.ToDate != default ? req.ToDate : createdDates.Max()
         );
 
         var topCustomers = GetTopCustomersByValue(invoices);
         var statusDistribution = GetStatusDistribution(invoices, fullyPaidInvoices, partiallyPaidInvoices, unpaidInvoices);
-        var revenueTrends = await CalculateRevenueTrendsAsync(invoices, req.StartDate, req.EndDate, ct);
+        var revenueTrends = await CalculateRevenueTrendsAsync(invoices, req.FromDate, req.ToDate, ct);
         List<FinancialMetricDto> financialMetrics =
         [
             new() { Metric = "Average Invoice Value", Value = averageInvoiceValue, Unit = "$", Category = "Revenue" },

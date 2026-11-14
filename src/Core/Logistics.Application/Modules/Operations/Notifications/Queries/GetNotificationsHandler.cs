@@ -18,7 +18,7 @@ internal sealed class GetNotificationsHandler(ITenantUnitOfWork tenantUow, ICurr
         var userId = currentUser.GetUserId();
         var reads = tenantUow.Repository<NotificationRead>().Query();
         var notifications = await tenantUow.Repository<Notification>().Query()
-            .Where(n => n.CreatedAt >= req.StartDate && n.CreatedAt <= req.EndDate)
+            .Where(n => n.CreatedAt >= req.FromDate && n.CreatedAt <= req.ToDate)
             .OrderByDescending(n => n.CreatedAt)
             .Select(n => new { Notification = n, IsRead = reads.Any(r => r.NotificationId == n.Id && r.UserId == userId) })
             .ToListAsync(ct);

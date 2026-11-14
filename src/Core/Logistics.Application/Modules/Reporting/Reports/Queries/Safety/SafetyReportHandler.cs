@@ -11,8 +11,8 @@ internal sealed class SafetyReportHandler(ISafetyReportReader reader)
 {
     public async Task<Result<SafetyReportDto>> Handle(SafetyReportQuery req, CancellationToken ct)
     {
-        var startDate = req.StartDate == default ? DateTime.UtcNow.AddMonths(-6) : req.StartDate;
-        var endDate = req.EndDate == default ? DateTime.UtcNow : req.EndDate;
+        var startDate = req.FromDate == default ? DateTime.UtcNow.AddMonths(-6) : req.FromDate;
+        var endDate = req.ToDate == default ? DateTime.UtcNow : req.ToDate;
 
         var facts = await reader.GetSafetyFactsAsync(startDate, endDate, ct);
 

@@ -16,24 +16,24 @@ internal sealed class GetDailyGrossesHandler(ITenantUnitOfWork tenantUow) : IReq
     {
         var truckId = req.TruckId;
 
-        if (req.UserId.HasValue)
+        if (req.DriverId.HasValue)
         {
-            var truck = await tenantUow.Repository<Truck>().GetAsync(i => i.MainDriverId == req.UserId.Value ||
-                                                                           i.SecondaryDriverId == req.UserId.Value, ct);
+            var truck = await tenantUow.Repository<Truck>().GetAsync(i => i.MainDriverId == req.DriverId.Value ||
+                                                                           i.SecondaryDriverId == req.DriverId.Value, ct);
 
             if (truck is null)
             {
-                return Result<DailyGrossesDto>.Fail($"Could not find a truck with driver ID '{req.UserId}'", ErrorCodes.NotFound);
+                return Result<DailyGrossesDto>.Fail($"Could not find a truck with driver ID '{req.DriverId}'", ErrorCodes.NotFound);
             }
 
             truckId = truck.Id;
         }
 
         // Ensure dates are UTC for PostgreSQL compatibility
-        var startDate = DateTime.SpecifyKind(req.StartDate, DateTimeKind.Utc);
-        var endDate = DateTime.SpecifyKind(req.EndDate, DateTimeKind.Utc);
+        var startDate = DateTime.SpecifyKind(req.FromDate, DateTimeKind.Utc);
+        var endDate = DateTime.SpecifyKind(req.ToDate, DateTimeKind.Utc);
 
-        var days = req.StartDate.DaysBetween(req.EndDate);
+        var days = req.FromDate.DaysBetween(req.ToDate);
         var dict = days.ToDictionary(
             k => (k.Year, k.Month, k.Day),
             m => new DailyGrossDto(m.Year, m.Month, m.Day));

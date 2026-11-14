@@ -54,9 +54,9 @@ internal sealed class GetInvoicesTool(IMediator mediator)
             CustomerId = input.CustomerId,
             Status = input.Status,
             OverdueOnly = input.OverdueOnly,
-            StartDate = input.StartDate,
-            EndDate = input.EndDate,
-            InvoiceType = InvoiceType.Load,
+            FromDate = input.StartDate,
+            ToDate = input.EndDate,
+            Type = InvoiceType.Load,
             // Entity property name, not the DTO's CreatedDate - the sort is applied to the query.
             OrderBy = "-CreatedAt",
             Page = input.Page ?? 1,

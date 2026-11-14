@@ -18,7 +18,7 @@ internal sealed class GetDriverHosLogsHandler(ITenantUnitOfWork tenantUow)
             .Query()
             .Where(l => l.EmployeeId == req.EmployeeId);
 
-        query = query.Where(l => l.LogDate >= DateOnly.FromDateTime(req.StartDate) && l.LogDate <= DateOnly.FromDateTime(req.EndDate));
+        query = query.Where(l => l.LogDate >= DateOnly.FromDateTime(req.FromDate) && l.LogDate <= DateOnly.FromDateTime(req.ToDate));
 
         var totalItems = await query.CountAsync(ct);
 

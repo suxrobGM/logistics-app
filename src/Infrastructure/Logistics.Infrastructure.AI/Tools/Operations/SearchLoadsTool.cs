@@ -57,8 +57,8 @@ internal sealed class SearchLoadsTool(IMediator mediator)
             Types = input.Types,
             CustomerId = input.CustomerId,
             TruckId = input.TruckId,
-            StartDate = input.StartDate,
-            EndDate = input.EndDate,
+            FromDate = input.StartDate,
+            ToDate = input.EndDate,
             OrderBy = "-CreatedAt",
             Page = input.Page ?? 1,
             PageSize = ToolResult.MaxResults

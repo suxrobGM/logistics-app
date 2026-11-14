@@ -6,5 +6,5 @@ public class GetTruckQuery : IQuery<Result<TruckDto>>
 {
     public Guid? TruckOrDriverId { get; set; }
     public bool IncludeLoads { get; set; }
-    public bool OnlyActiveLoads { get; set; }
+    public bool ActiveLoadsOnly { get; set; }
 }

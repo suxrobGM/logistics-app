@@ -37,7 +37,7 @@ public class NotificationReadTests
         _reads.Add(new NotificationRead { NotificationId = theirs.Id, UserId = Guid.NewGuid() });
 
         var result = await new GetNotificationsHandler(_tenantUow, _currentUser).Handle(
-            new GetNotificationsQuery { StartDate = DateTime.UtcNow.AddDays(-1), EndDate = DateTime.UtcNow.AddDays(1) },
+            new GetNotificationsQuery { FromDate = DateTime.UtcNow.AddDays(-1), ToDate = DateTime.UtcNow.AddDays(1) },
             CancellationToken.None);
 
         var dtos = result.Value!.ToDictionary(n => n.Id!.Value);

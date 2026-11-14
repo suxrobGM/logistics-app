@@ -22,7 +22,7 @@ internal sealed class GetLoadsHandler(
         CancellationToken ct)
     {
         var isDriver = currentUserService.IsTenantDriver();
-        var userId = isDriver ? currentUserService.GetUserId() : req.UserId;
+        var userId = isDriver ? currentUserService.GetUserId() : req.DriverId;
 
         if (isDriver && userId is null)
         {
@@ -44,7 +44,7 @@ internal sealed class GetLoadsHandler(
                 (i.DestinationAddress.Line2 != null && i.DestinationAddress.Line2.ToLower().Contains(search)));
         }
 
-        if (req.OnlyActiveLoads)
+        if (req.ActiveOnly)
         {
             baseQuery = baseQuery.Where(i =>
                 i.Status == LoadStatus.Dispatched || i.Status == LoadStatus.PickedUp);
@@ -77,22 +77,18 @@ internal sealed class GetLoadsHandler(
             baseQuery = baseQuery.Where(i => i.CustomerId == req.CustomerId.Value);
         }
 
-        if (req is { StartDate: not null, EndDate: not null })
+        if (req is { FromDate: not null, ToDate: not null })
         {
-            baseQuery = baseQuery.Where(i => i.DispatchedAt >= req.StartDate &&
-                                             i.DispatchedAt <= req.EndDate);
+            baseQuery = baseQuery.Where(i => i.DispatchedAt >= req.FromDate &&
+                                             i.DispatchedAt <= req.ToDate);
         }
 
         var totalItems = await baseQuery.CountAsync(ct);
 
-        baseQuery = baseQuery.OrderBy(req.OrderBy, x => x.Id);
-
-        if (!req.LoadAllPages)
-        {
-            baseQuery = baseQuery.ApplyPaging(req.Page, req.PageSize);
-        }
-
-        var entities = await baseQuery.ToArrayAsync(ct);
+        var entities = await baseQuery
+            .OrderBy(req.OrderBy, x => x.Id)
+            .ApplyPaging(req.Page, req.PageSize)
+            .ToArrayAsync(ct);
         var lookup = await lookupBuilder.BuildAsync(entities, ct);
         var loads = entities.Select(i => i.ToDto(lookup)).ToArray();
 

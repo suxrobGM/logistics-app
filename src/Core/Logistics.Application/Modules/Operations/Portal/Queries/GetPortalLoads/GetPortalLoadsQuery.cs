@@ -15,15 +15,15 @@ public class GetPortalLoadsQuery : SearchableQuery, IQuery<PagedResult<PortalLoa
     /// <summary>
     /// Only return active (non-delivered) loads.
     /// </summary>
-    public bool OnlyActiveLoads { get; set; }
+    public bool ActiveOnly { get; set; }
 
     /// <summary>
     /// Start date filter.
     /// </summary>
-    public DateTime? StartDate { get; set; }
+    public DateTime? FromDate { get; set; }
 
     /// <summary>
     /// End date filter.
     /// </summary>
-    public DateTime? EndDate { get; set; }
+    public DateTime? ToDate { get; set; }
 }

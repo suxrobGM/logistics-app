@@ -28,9 +28,9 @@ internal sealed class GetPortalInvoicesHandler(ITenantUnitOfWork tenantUow)
         }
 
         // Apply date filters
-        if (req is { StartDate: not null, EndDate: not null })
+        if (req is { FromDate: not null, ToDate: not null })
         {
-            baseQuery = baseQuery.Where(i => i.CreatedAt >= req.StartDate && i.CreatedAt <= req.EndDate);
+            baseQuery = baseQuery.Where(i => i.CreatedAt >= req.FromDate && i.CreatedAt <= req.ToDate);
         }
 
         var totalItems = await baseQuery.CountAsync(ct);

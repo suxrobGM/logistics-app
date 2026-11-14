@@ -84,9 +84,9 @@ public class PortalController(IMediator mediator) : ControllerBase
             Page = request.Page,
             PageSize = request.PageSize,
             OrderBy = request.OrderBy,
-            OnlyActiveLoads = request.OnlyActiveLoads,
-            StartDate = request.StartDate,
-            EndDate = request.EndDate
+            ActiveOnly = request.ActiveOnly,
+            FromDate = request.FromDate,
+            ToDate = request.ToDate
         };
 
         var result = await mediator.Send(query);
@@ -232,8 +232,8 @@ public class PortalController(IMediator mediator) : ControllerBase
             Page = request.Page,
             PageSize = request.PageSize,
             OrderBy = request.OrderBy,
-            StartDate = request.StartDate,
-            EndDate = request.EndDate
+            FromDate = request.FromDate,
+            ToDate = request.ToDate
         };
 
         var result = await mediator.Send(query);

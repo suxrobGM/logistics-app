@@ -9,7 +9,7 @@ public record GetPortalLoadsRequest
     public int Page { get; init; } = 1;
     public int PageSize { get; init; } = 20;
     public string? OrderBy { get; init; }
-    public bool OnlyActiveLoads { get; init; }
-    public DateTime? StartDate { get; init; }
-    public DateTime? EndDate { get; init; }
+    public bool ActiveOnly { get; init; }
+    public DateTime? FromDate { get; init; }
+    public DateTime? ToDate { get; init; }
 }

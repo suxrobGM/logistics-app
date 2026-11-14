@@ -6,6 +6,6 @@ internal sealed class GetMonthlyGrossesValidator : AbstractValidator<GetMonthlyG
 {
     public GetMonthlyGrossesValidator()
     {
-        RuleFor(i => i.StartDate).LessThan(i => i.EndDate);
+        RuleFor(i => i.FromDate).LessThan(i => i.ToDate);
     }
 }

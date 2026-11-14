@@ -33,7 +33,7 @@ internal sealed class LoadsCommand(IMediator mediator, ITenantUnitOfWork tenantU
     {
         var result = await mediator.Send(new GetLoadsQuery
         {
-            OnlyActiveLoads = true,
+            ActiveOnly = true,
             Page = page,
             PageSize = PageSize,
             OrderBy = "-CreatedAt"

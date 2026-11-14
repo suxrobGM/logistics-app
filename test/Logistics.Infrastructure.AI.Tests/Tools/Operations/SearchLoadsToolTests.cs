@@ -40,7 +40,7 @@ public class SearchLoadsToolTests
             Arg.Is<GetLoadsQuery>(q =>
                 q.Statuses!.Single() == LoadStatus.Delivered &&
                 q.CustomerId == customerId &&
-                q.StartDate == new DateTime(2026, 7, 20, 0, 0, 0, DateTimeKind.Utc) &&
+                q.FromDate == new DateTime(2026, 7, 20, 0, 0, 0, DateTimeKind.Utc) &&
                 q.Page == 2 &&
                 q.PageSize == 20),
             Arg.Any<CancellationToken>());

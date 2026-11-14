@@ -48,7 +48,7 @@ internal sealed class GetProfitabilityTool(IMediator mediator, ITenantUnitOfWork
         var start = input.StartDate ?? end.AddDays(-DefaultDays);
         var suffix = tenantUow.GetCurrentTenant().Settings.DistanceUnit.Abbreviation();
 
-        var result = await mediator.Send(new ProfitabilityReportQuery { StartDate = start, EndDate = end }, ct);
+        var result = await mediator.Send(new ProfitabilityReportQuery { FromDate = start, ToDate = end }, ct);
         if (!result.IsSuccess || result.Value is null)
             return ToolResult.Error(result.Error ?? "No profitability data");
 

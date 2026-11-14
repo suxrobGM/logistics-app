@@ -6,8 +6,8 @@ internal sealed class ProfitabilityReportValidator : AbstractValidator<Profitabi
 {
     public ProfitabilityReportValidator()
     {
-        RuleFor(q => q.StartDate).LessThan(q => q.EndDate);
-        RuleFor(q => q.EndDate).LessThanOrEqualTo(q => q.StartDate.AddYears(1))
+        RuleFor(q => q.FromDate).LessThan(q => q.ToDate);
+        RuleFor(q => q.ToDate).LessThanOrEqualTo(q => q.FromDate.AddYears(1))
             .WithMessage("Pick a range of a year or less.");
     }
 }
