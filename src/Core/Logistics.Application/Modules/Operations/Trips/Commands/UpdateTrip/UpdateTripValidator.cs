@@ -9,5 +9,6 @@ internal sealed class UpdateTripValidator : AbstractValidator<UpdateTripCommand>
     {
         RuleFor(i => i.TripId).NotEmpty();
         RuleForEach(i => i.NewLoads).SetValidator(new LoadChargesValidator());
+        RuleForEach(i => i.AttachedLoadIds).NotEmpty();
     }
 }

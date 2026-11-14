@@ -15,6 +15,11 @@ public class UpdateTripCommand : ICommand
 
     public IEnumerable<CreateTripLoadCommand>? NewLoads { get; set; }
     public IEnumerable<Guid>? DetachedLoadIds { get; set; }
+
+    /// <summary>
+    ///     Existing loads to add to the trip. They take the trip's truck.
+    /// </summary>
+    public IEnumerable<Guid>? AttachedLoadIds { get; set; }
     public IEnumerable<TripStopDto>? OptimizedStops { get; set; }
 
     /// <summary>

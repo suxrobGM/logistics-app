@@ -4,6 +4,7 @@ using Logistics.Domain.Persistence;
 using Logistics.Domain.Primitives.Enums;
 using Logistics.Mediator;
 using Logistics.Shared.Models;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 
 namespace Logistics.Application.Modules.Operations.Trips.Commands;
@@ -74,6 +75,12 @@ internal sealed class UpdateTripHandler(
         }
 
         var createdCount = created.Value;
+
+        var attached = await AttachLoadsAsync(trip, loadsMap, req.AttachedLoadIds, ct);
+        if (!attached.IsSuccess)
+        {
+            return Result.Fail(attached);
+        }
 
         // Update stop order if optimized stops are provided
         if (req.OptimizedStops != null && req.OptimizedStops.Any())
@@ -149,6 +156,52 @@ internal sealed class UpdateTripHandler(
         }
 
         return Result<int>.Ok(created.Value.Count);
+    }
+
+    /// <summary>Adds existing loads to the trip; runs before <see cref="UpdateStopOrder"/> so optimized stops can reference them.</summary>
+    private async Task<Result> AttachLoadsAsync(
+        Trip trip,
+        Dictionary<Guid, Load> loadsMap,
+        IEnumerable<Guid>? attachedLoadIds,
+        CancellationToken ct)
+    {
+        var ids = attachedLoadIds?.Distinct().Where(id => !loadsMap.ContainsKey(id)).ToList() ?? [];
+        if (ids.Count == 0)
+        {
+            return Result.Ok();
+        }
+
+        var loads = await uow.Repository<Load>().GetListAsync(l => ids.Contains(l.Id), ct);
+        var missingId = ids.Except(loads.Select(l => l.Id)).FirstOrDefault();
+        if (missingId != Guid.Empty)
+        {
+            return Result.Fail($"Load '{missingId}' not found.", ErrorCodes.NotFound);
+        }
+
+        var onOtherTrip = await uow.Repository<TripStop>().Query()
+            .Where(s => ids.Contains(s.LoadId) && s.TripId != trip.Id)
+            .Select(s => s.LoadId)
+            .FirstOrDefaultAsync(ct);
+        if (onOtherTrip != Guid.Empty)
+        {
+            return Result.Fail($"Load '{onOtherTrip}' is already on another trip.");
+        }
+
+        var stopCount = trip.Stops.Count;
+        trip.AddLoads(loads);
+        await uow.Repository<TripStop>().AddRangeAsync(trip.Stops.Skip(stopCount), ct);
+
+        foreach (var load in loads)
+        {
+            if (trip.Status == TripStatus.Dispatched && load.Status == LoadStatus.Draft)
+            {
+                load.Dispatch();
+            }
+
+            loadsMap[load.Id] = load;
+        }
+
+        return Result.Ok();
     }
 
     /// <summary>

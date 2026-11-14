@@ -17,6 +17,7 @@ public partial class Trip
             .ToArray();
     }
 
+    /// <summary>Adds a pickup and drop-off stop per load and gives the loads the trip's truck.</summary>
     /// <exception cref="InvalidOperationException">The trip is not Draft.</exception>
     public void AddLoads(IEnumerable<Load> loads)
     {
@@ -25,7 +26,17 @@ public partial class Trip
             throw new InvalidOperationException("Cannot modify loads unless trip is Draft.");
         }
 
-        AddStopsForLoads(loads);
+        var loadsArr = loads.ToArray();
+        if (TruckId is not null)
+        {
+            foreach (var load in loadsArr)
+            {
+                load.AssignedTruckId = TruckId;
+                load.AssignedTruck = Truck;
+            }
+        }
+
+        AddStopsForLoads(loadsArr);
         RecalculateDistance();
     }
 
