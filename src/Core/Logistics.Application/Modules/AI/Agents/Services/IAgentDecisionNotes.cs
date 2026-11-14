@@ -10,8 +10,6 @@ namespace Logistics.Application.Modules.AI.Agents.Services;
 /// </summary>
 internal interface IAgentDecisionNotes : IApplicationService
 {
-    string RejectionNote(AgentDecision decision, string? reason);
-
     /// <summary>The conversation a decision's outcome belongs in.</summary>
     Task<AgentConversation> LoadConversationAsync(AgentDecision decision, CancellationToken ct);
 
@@ -21,7 +19,7 @@ internal interface IAgentDecisionNotes : IApplicationService
     /// </summary>
     Task AppendAsync(
         AgentConversation conversation,
-        string note,
+        AgentDecisionNote note,
         Guid? actedByUserId,
         Func<AgentMessageDto, Task> broadcastMessageAsync,
         CancellationToken ct);

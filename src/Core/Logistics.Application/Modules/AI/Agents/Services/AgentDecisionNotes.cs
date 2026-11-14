@@ -10,11 +10,6 @@ internal sealed class AgentDecisionNotes(
     ITenantUnitOfWork tenantUow,
     IAgentSenderDirectory senderDirectory) : IAgentDecisionNotes
 {
-    public string RejectionNote(AgentDecision decision, string? reason) =>
-        string.IsNullOrWhiteSpace(reason)
-            ? $"Rejected: {decision.ToolName}"
-            : $"Rejected: {decision.ToolName} - {reason}";
-
     public Task<AgentConversation> LoadConversationAsync(AgentDecision decision, CancellationToken ct) =>
         // Projected off the session query, not decision.Session, which lazy-loads the whole row
         // for one FK. Required FK, so a live decision always has its conversation.
@@ -25,13 +20,14 @@ internal sealed class AgentDecisionNotes(
 
     public async Task AppendAsync(
         AgentConversation conversation,
-        string note,
+        AgentDecisionNote note,
         Guid? actedByUserId,
         Func<AgentMessageDto, Task> broadcastMessageAsync,
         CancellationToken ct)
     {
         var sequence = await tenantUow.ReserveSequencesAsync(conversation, 1, ct);
-        var message = conversation.AddTextMessage(sequence, AgentMessageRole.System, note, actedByUserId);
+        var message = conversation.AddTextMessage(
+            sequence, AgentMessageRole.System, note.ForAgent, actedByUserId, note.ForUser);
         await tenantUow.Repository<AgentMessage>().AddAsync(message, ct);
         await tenantUow.SaveChangesAsync(ct);
 

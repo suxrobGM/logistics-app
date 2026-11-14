@@ -52,7 +52,8 @@ public class ApproveAIDispatchDecisionHandlerTests
         Assert.True(result.IsSuccess);
         var note = Assert.Single(_ctx.AddedMessages);
         Assert.Equal(AgentMessageRole.System, note.Role);
-        Assert.StartsWith("Approved and executed: assign_load_to_truck", note.DisplayText);
+        Assert.Equal("Approved: Assign load to truck", note.DisplayText);
+        Assert.Contains("Approved and executed: assign_load_to_truck", note.ContentJson);
 
         // Adding to the navigation alone saves as an UPDATE affecting 0 rows - see ef-persistence.md.
         await _ctx.MessageRepo.Received(1).AddAsync(note, Arg.Any<CancellationToken>());
@@ -91,7 +92,7 @@ public class ApproveAIDispatchDecisionHandlerTests
 
         Assert.False(result.IsSuccess);
         Assert.Equal(AgentDecisionStatus.Failed, decision.Status);
-        Assert.Contains("failed to execute", Assert.Single(_ctx.AddedMessages).DisplayText);
+        Assert.Contains("failed:", Assert.Single(_ctx.AddedMessages).DisplayText);
     }
 
     [Fact]
@@ -108,6 +109,6 @@ public class ApproveAIDispatchDecisionHandlerTests
         Assert.False(result.IsSuccess);
         Assert.Contains("Truck is out of service", result.Error);
         Assert.Equal(AgentDecisionStatus.Failed, decision.Status);
-        Assert.Contains("failed to execute", Assert.Single(_ctx.AddedMessages).DisplayText);
+        Assert.Contains("failed:", Assert.Single(_ctx.AddedMessages).DisplayText);
     }
 }

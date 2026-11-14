@@ -68,7 +68,8 @@ public class ApproveAICopilotDecisionHandlerTests
 
         var note = Assert.Single(_ctx.AddedMessages);
         Assert.Equal(AgentMessageRole.System, note.Role);
-        Assert.StartsWith("Approved and executed: send_invoice", note.DisplayText);
+        Assert.Equal("Approved: Send invoice", note.DisplayText);
+        Assert.Contains("Approved and executed: send_invoice - {", note.ContentJson);
 
         // Adding to the navigation alone saves as an UPDATE affecting 0 rows - see ef-persistence.md.
         await _ctx.MessageRepo.Received(1).AddAsync(note, Arg.Any<CancellationToken>());
@@ -91,6 +92,6 @@ public class ApproveAICopilotDecisionHandlerTests
 
         Assert.False(result.IsSuccess);
         Assert.Equal(AgentDecisionStatus.Failed, decision.Status);
-        Assert.Contains("failed to execute", Assert.Single(_ctx.AddedMessages).DisplayText);
+        Assert.Contains("failed:", Assert.Single(_ctx.AddedMessages).DisplayText);
     }
 }

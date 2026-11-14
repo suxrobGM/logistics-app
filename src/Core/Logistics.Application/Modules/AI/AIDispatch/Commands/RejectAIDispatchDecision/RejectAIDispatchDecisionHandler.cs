@@ -30,7 +30,7 @@ internal sealed class RejectAIDispatchDecisionHandler(
         var conversation = await notes.LoadConversationAsync(decision, ct);
 
         await notes.AppendAsync(
-            conversation, notes.RejectionNote(decision, request.Reason), userId,
+            conversation, AgentDecisionNote.Rejected(decision, request.Reason), userId,
             message => broadcastService.BroadcastMessageAsync(tenantId, message), ct);
 
         return Result.Ok();

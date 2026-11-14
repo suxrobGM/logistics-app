@@ -29,10 +29,15 @@ public class AgentMessage : Entity, ITenantEntity
 
     public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
 
-    /// <summary>Builds a plain-text message. AgentTranscriptCodec writes the same ContentJson shape, so the two must match.</summary>
+    /// <summary>
+    /// Builds a plain-text message. AgentTranscriptCodec writes the same ContentJson shape, so the two must match.
+    /// <paramref name="displayText"/> replaces <paramref name="text"/> in the UI when the LLM needs details a person does not.
+    /// </summary>
     public static AgentMessage TextMessage(
-        Guid conversationId, int sequence, AgentMessageRole role, string text, Guid? sentByUserId = null)
+        Guid conversationId, int sequence, AgentMessageRole role, string text, Guid? sentByUserId = null,
+        string? displayText = null)
     {
+        var shown = displayText ?? text;
         return new AgentMessage
         {
             ConversationId = conversationId,
@@ -41,7 +46,7 @@ public class AgentMessage : Entity, ITenantEntity
             SentByUserId = sentByUserId,
             ContentJson = new JsonArray(
                 new JsonObject { ["type"] = "text", ["text"] = text }).ToJsonString(),
-            DisplayText = text.Length > 4000 ? text[..4000] : text
+            DisplayText = shown.Length > 4000 ? shown[..4000] : shown
         };
     }
 }

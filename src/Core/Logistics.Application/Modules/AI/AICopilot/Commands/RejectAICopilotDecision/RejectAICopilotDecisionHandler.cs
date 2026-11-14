@@ -30,7 +30,7 @@ internal sealed class RejectAICopilotDecisionHandler(
         var tenantId = tenantUow.GetCurrentTenant().Id;
 
         await notes.AppendAsync(
-            conversation, notes.RejectionNote(decision, request.Reason), userId,
+            conversation, AgentDecisionNote.Rejected(decision, request.Reason), userId,
             message => broadcastService.BroadcastMessageAsync(tenantId, conversation.CreatedById, message), ct);
 
         await broadcastService.BroadcastDecisionAsync(

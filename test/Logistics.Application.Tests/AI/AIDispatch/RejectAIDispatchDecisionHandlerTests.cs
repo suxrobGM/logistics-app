@@ -33,7 +33,8 @@ public class RejectAIDispatchDecisionHandlerTests
         Assert.True(result.IsSuccess);
         var note = Assert.Single(_ctx.AddedMessages);
         Assert.Equal(AgentMessageRole.System, note.Role);
-        Assert.Equal("Rejected: assign_load_to_truck - wrong truck", note.DisplayText);
+        Assert.Equal("Rejected: Assign load to truck - wrong truck", note.DisplayText);
+        Assert.Contains("Rejected: assign_load_to_truck - wrong truck", note.ContentJson);
 
         await _broadcastService.Received(1).BroadcastMessageAsync(
             _ctx.Tenant.Id, Arg.Is<AgentMessageDto>(m => m.ConversationId == conversation.Id));
@@ -65,6 +66,6 @@ public class RejectAIDispatchDecisionHandlerTests
         await _sut.Handle(
             new RejectAIDispatchDecisionCommand { DecisionId = decision.Id }, CancellationToken.None);
 
-        Assert.Equal("Rejected: assign_load_to_truck", Assert.Single(_ctx.AddedMessages).DisplayText);
+        Assert.Equal("Rejected: Assign load to truck", Assert.Single(_ctx.AddedMessages).DisplayText);
     }
 }

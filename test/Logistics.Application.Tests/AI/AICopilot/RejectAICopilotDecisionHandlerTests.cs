@@ -61,7 +61,8 @@ public class RejectAICopilotDecisionHandlerTests
 
         var note = Assert.Single(_ctx.AddedMessages);
         Assert.Equal(AgentMessageRole.System, note.Role);
-        Assert.Equal("Rejected: send_invoice - wrong invoice", note.DisplayText);
+        Assert.Equal("Rejected: Send invoice - wrong invoice", note.DisplayText);
+        Assert.Contains("Rejected: send_invoice - wrong invoice", note.ContentJson);
 
         // Adding to the navigation alone saves as an UPDATE affecting 0 rows - see ef-persistence.md.
         await _ctx.MessageRepo.Received(1).AddAsync(note, Arg.Any<CancellationToken>());
@@ -80,6 +81,6 @@ public class RejectAICopilotDecisionHandlerTests
         await _sut.Handle(
             new RejectAICopilotDecisionCommand { DecisionId = decision.Id }, CancellationToken.None);
 
-        Assert.Equal("Rejected: send_invoice", Assert.Single(_ctx.AddedMessages).DisplayText);
+        Assert.Equal("Rejected: Send invoice", Assert.Single(_ctx.AddedMessages).DisplayText);
     }
 }

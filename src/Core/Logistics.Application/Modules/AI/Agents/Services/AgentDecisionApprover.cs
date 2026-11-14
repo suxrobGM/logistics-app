@@ -12,8 +12,6 @@ internal sealed class AgentDecisionApprover(
     IAgentDecisionNotes notes,
     IAgentRunContext runContext) : IAgentDecisionApprover
 {
-    private const int NoteOutputLimit = 500;
-
     public async Task<Result> ApproveAsync(
         AgentDecision decision,
         AgentConversation conversation,
@@ -41,7 +39,7 @@ internal sealed class AgentDecisionApprover(
         return outcome;
     }
 
-    private async Task<(Result Outcome, string Note)> ExecuteAsync(AgentDecision decision, CancellationToken ct)
+    private async Task<(Result Outcome, AgentDecisionNote Note)> ExecuteAsync(AgentDecision decision, CancellationToken ct)
     {
         try
         {
@@ -51,23 +49,18 @@ internal sealed class AgentDecisionApprover(
             {
                 var error = parsed?["error"]?.ToString() ?? "The tool reported a failure";
                 decision.MarkFailed(output);
-                return (Result.Fail($"Failed to execute decision: {error}"),
-                    $"Approved but failed to execute: {decision.ToolName} - {Compact(error)}");
+                return (Result.Fail($"Failed to execute decision: {error}"), AgentDecisionNote.Failed(decision, error));
             }
 
             decision.ToolOutput = output;
             decision.MarkExecuted();
-            return (Result.Ok(), $"Approved and executed: {decision.ToolName} - {Compact(output)}");
+            return (Result.Ok(), AgentDecisionNote.Executed(decision, output));
         }
         catch (Exception ex)
         {
             var error = ToolErrorSanitizer.Sanitize(ex);
             decision.MarkFailed(error);
-            return (Result.Fail($"Failed to execute decision: {error}"),
-                $"Approved but failed to execute: {decision.ToolName} - {Compact(error)}");
+            return (Result.Fail($"Failed to execute decision: {error}"), AgentDecisionNote.Failed(decision, error));
         }
     }
-
-    private static string Compact(string text) =>
-        text.Length > NoteOutputLimit ? text[..NoteOutputLimit] : text;
 }

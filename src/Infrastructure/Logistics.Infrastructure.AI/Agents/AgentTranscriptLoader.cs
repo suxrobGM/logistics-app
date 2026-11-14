@@ -70,7 +70,7 @@ internal sealed class AgentTranscriptLoader(ITenantUnitOfWork tenantUow)
         foreach (var row in window)
         {
             var blocks = row.Role == AgentMessageRole.System
-                ? [new LlmTextBlock($"[system note] {row.DisplayText}")]
+                ? AgentTranscriptCodec.Decode(row.ContentJson).Select(MarkSystemNote).ToList()
                 : AgentTranscriptCodec.Decode(row.ContentJson).Select(Compact).ToList();
 
             if (blocks.Count == 0)
@@ -93,6 +93,10 @@ internal sealed class AgentTranscriptLoader(ITenantUnitOfWork tenantUow)
     /// <summary>From the row, never the clock, so a replayed message never changes.</summary>
     internal static string SentStamp(DateTime createdAt) =>
         $"[Sent: {createdAt.ToString("yyyy-MM-dd HH:mm", CultureInfo.InvariantCulture)} UTC]";
+
+    /// <summary>From ContentJson, not DisplayText: a decision note shows people a sentence but gives the agent the tool output.</summary>
+    private static LlmContentBlock MarkSystemNote(LlmContentBlock block) =>
+        block is LlmTextBlock text ? new LlmTextBlock($"[system note] {text.Text}") : block;
 
     private static LlmContentBlock Compact(LlmContentBlock block) =>
         block is LlmToolResultBlock { Content.Length: > MaxReplayedToolResultChars } result

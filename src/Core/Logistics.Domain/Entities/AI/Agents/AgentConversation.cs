@@ -27,9 +27,10 @@ public class AgentConversation : AuditableEntity, ITenantEntity
     public virtual List<AgentMessage> Messages { get; } = [];
 
     /// <summary>Creates a text message for this conversation. The caller reserves <paramref name="sequence"/> in the database first and adds the returned message with the repository.</summary>
-    public AgentMessage AddTextMessage(int sequence, AgentMessageRole role, string text, Guid? sentByUserId = null)
+    public AgentMessage AddTextMessage(
+        int sequence, AgentMessageRole role, string text, Guid? sentByUserId = null, string? displayText = null)
     {
-        var message = AgentMessage.TextMessage(Id, sequence, role, text, sentByUserId);
+        var message = AgentMessage.TextMessage(Id, sequence, role, text, sentByUserId, displayText);
         LastMessageAt = DateTime.UtcNow;
         return message;
     }

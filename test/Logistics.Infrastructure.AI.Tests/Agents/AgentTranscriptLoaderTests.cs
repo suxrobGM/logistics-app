@@ -124,5 +124,16 @@ public class AgentTranscriptLoaderTests
         Assert.IsType<LlmToolResultBlock>(Assert.Single(messages[2].Content));
     }
 
+    [Fact]
+    public async Task Load_SystemNote_ReplaysTheAgentTextNotTheDisplayText()
+    {
+        _rows.Add(_conversation.AddTextMessage(1, AgentMessageRole.System,
+            "Approved and executed: assign_load_to_truck - {\"success\":true}", displayText: "Approved: Assign load to truck"));
+
+        var note = Assert.IsType<LlmTextBlock>(Assert.Single(Assert.Single(await Load()).Content));
+
+        Assert.Equal("[system note] Approved and executed: assign_load_to_truck - {\"success\":true}", note.Text);
+    }
+
     #endregion
 }

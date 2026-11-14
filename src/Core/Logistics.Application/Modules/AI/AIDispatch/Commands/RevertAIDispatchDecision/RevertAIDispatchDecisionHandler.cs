@@ -48,7 +48,7 @@ internal sealed class RevertAIDispatchDecisionHandler(
         var tenantId = tenantUow.GetCurrentTenant().Id;
         var conversation = await notes.LoadConversationAsync(decision, ct);
         await notes.AppendAsync(
-            conversation, $"Reverted by a dispatcher: {decision.ToolName}", currentUser.GetUserId() ?? Guid.Empty,
+            conversation, AgentDecisionNote.Reverted(decision), currentUser.GetUserId() ?? Guid.Empty,
             message => broadcastService.BroadcastMessageAsync(tenantId, message), ct);
 
         return Result.Ok();
