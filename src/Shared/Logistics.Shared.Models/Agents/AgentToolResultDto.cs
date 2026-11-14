@@ -72,6 +72,9 @@ public class AgentToolFleetSummaryDto
 public class AgentToolLoadDto
 {
     public Guid Id { get; set; }
+
+    /// <summary>The number dispatchers know a load by; the agent quotes it instead of the ID.</summary>
+    public long Number { get; set; }
     public string? Name { get; set; }
     public string? Type { get; set; }
     public string? Origin { get; set; }

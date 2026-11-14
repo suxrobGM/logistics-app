@@ -158,6 +158,7 @@ internal static class AIDispatchSystemPrompt
 
             ## Final Summary
             After completing a dispatch run - any turn where you called fleet tools or proposed actions - give a concise markdown summary. Conversational replies skip this format entirely.
+            Name a load by its number and name (e.g. "#1042 demo Load 1"), a truck by its number and a driver by name. Never print IDs: dispatchers cannot read them. IDs are for tool calls only.
 
             ### Status
             One line: `COMPLETED - X of Y loads assigned` or `NO ACTION - [reason]`
