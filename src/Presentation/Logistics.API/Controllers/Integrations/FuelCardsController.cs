@@ -60,12 +60,12 @@ public class FuelCardsController(IMediator mediator) : ControllerBase
     #region Transactions
 
     [HttpGet("transactions", Name = "GetFuelCardTransactions")]
-    [ProducesResponseType(typeof(PagedResult<FuelCardTransactionDto>), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(PagedResponse<FuelCardTransactionDto>), StatusCodes.Status200OK)]
     [Authorize(Policy = Permission.FuelCard.View)]
     public async Task<IActionResult> GetTransactions([FromQuery] GetFuelCardTransactionsQuery query)
     {
         var result = await mediator.Send(query);
-        return result.IsSuccess ? Ok(result) : BadRequest(ErrorResponse.FromResult(result));
+        return Ok(PagedResponse<FuelCardTransactionDto>.FromPagedResult(result, query.Page, query.PageSize));
     }
 
     [HttpPost("transactions/assign", Name = "AssignFuelCardTransactionTruck")]
