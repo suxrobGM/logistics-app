@@ -47,9 +47,14 @@ internal sealed class GetTripsHandler(ITenantUnitOfWork tenantUow, IDisplayNameL
             query = query.Where(i => i.TruckId == req.TruckId.Value);
         }
 
-        if (req.FromDate.HasValue && req.ToDate.HasValue)
+        if (req.FromDate is { } fromDate)
         {
-            query = query.Where(i => i.CreatedAt >= req.FromDate.Value && i.CreatedAt <= req.ToDate.Value);
+            query = query.Where(i => i.CreatedAt >= fromDate);
+        }
+
+        if (req.ToDate is { } toDate)
+        {
+            query = query.Where(i => i.CreatedAt <= toDate);
         }
 
         if (req.ActiveOnly)

@@ -92,10 +92,14 @@ internal sealed class GetLoadsHandler(
             baseQuery = baseQuery.Where(i => i.CustomerId == req.CustomerId.Value);
         }
 
-        if (req is { FromDate: not null, ToDate: not null })
+        if (req.FromDate is { } fromDate)
         {
-            baseQuery = baseQuery.Where(i => i.DispatchedAt >= req.FromDate &&
-                                             i.DispatchedAt <= req.ToDate);
+            baseQuery = baseQuery.Where(i => i.DispatchedAt >= fromDate);
+        }
+
+        if (req.ToDate is { } toDate)
+        {
+            baseQuery = baseQuery.Where(i => i.DispatchedAt <= toDate);
         }
 
         var totalItems = await baseQuery.CountAsync(ct);
