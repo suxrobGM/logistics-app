@@ -38,7 +38,7 @@ internal sealed class CreateTripHandler(
             }
         }
 
-        var existingLoads = await GetExistingLoadsAsync(req, truck);
+        var existingLoads = await GetExistingLoadsAsync(req);
         var created = await CreateNewLoadsAsync(req);
         if (!created.IsSuccess)
         {
@@ -119,8 +119,8 @@ internal sealed class CreateTripHandler(
         return Result<(IReadOnlyList<Load>, Dictionary<string, Guid>)>.Ok((loads, tempIdToLoadId));
     }
 
-    /// <summary>Loads the existing loads to attach to the trip and assigns them to the trip's truck when one is set.</summary>
-    private async Task<List<Load>> GetExistingLoadsAsync(CreateTripCommand command, Truck? truck)
+    /// <summary>Loads the existing loads to attach to the trip; <see cref="Trip.Create"/> assigns them its truck.</summary>
+    private async Task<List<Load>> GetExistingLoadsAsync(CreateTripCommand command)
     {
         if (command.AttachedLoadIds is null || !command.AttachedLoadIds.Any())
         {
@@ -128,16 +128,6 @@ internal sealed class CreateTripHandler(
         }
 
         var loads = await tenantUow.Repository<Load>().GetListAsync(i => command.AttachedLoadIds.Contains(i.Id));
-
-        // Only assign truck to loads if truck is provided
-        if (truck is not null)
-        {
-            foreach (var load in loads)
-            {
-                load.AssignedTruck = truck;
-                load.AssignedTruckId = truck.Id;
-            }
-        }
 
         logger.LogInformation(
             "Retrieved {Count} existing loads for trip '{TripName}' with truck '{TruckId}'",

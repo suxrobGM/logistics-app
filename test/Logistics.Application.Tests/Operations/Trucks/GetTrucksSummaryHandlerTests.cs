@@ -25,6 +25,7 @@ public class GetTrucksSummaryHandlerTests
         var busy = TestData.Truck(number: "T-2");
         busy.Status = TruckStatus.EnRoute;
         var load = TestData.Load();
+        load.AssignedTruckId = busy.Id;
         load.UpdateStatus(LoadStatus.Dispatched);
         busy.Loads.Add(load);
         _tenantUow.Stub<Truck>(idle, busy);

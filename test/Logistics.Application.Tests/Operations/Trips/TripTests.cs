@@ -47,6 +47,40 @@ public class TripTests
         Assert.All(trip.GetLoads(), load => Assert.Equal(newTruck.Id, load.AssignedTruckId));
     }
 
+    [Fact]
+    public void Create_WithTruck_AssignsItToEveryLoad()
+    {
+        var load = NewLoad();
+        load.AssignedTruckId = null;
+
+        Trip.Create("Trip", _truck, [load]);
+
+        Assert.Equal(_truck.Id, load.AssignedTruckId);
+    }
+
+    #endregion
+
+    #region Dispatch
+
+    [Fact]
+    public void Dispatch_NoTruck_Throws()
+    {
+        var trip = Trip.Create("Trip", truck: null, [NewLoad()]);
+
+        Assert.Throws<InvalidOperationException>(trip.Dispatch);
+        Assert.Equal(TripStatus.Draft, trip.Status);
+    }
+
+    [Fact]
+    public void LoadDispatch_NoTruck_Throws()
+    {
+        var load = NewLoad();
+        load.AssignedTruckId = null;
+
+        Assert.Throws<InvalidOperationException>(() => load.Dispatch());
+        Assert.Equal(LoadStatus.Draft, load.Status);
+    }
+
     #endregion
 
     #region Dispatch

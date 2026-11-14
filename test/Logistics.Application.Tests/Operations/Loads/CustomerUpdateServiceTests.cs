@@ -169,6 +169,7 @@ public class CustomerUpdateServiceTests
         loadRepo.GetByIdAsync(_load.Id, Arg.Any<CancellationToken>()).Returns(_load);
         _tenantUow.Repository<Load>().Returns(loadRepo);
         var handler = new LoadStatusChangedCustomerUpdateHandler(_tenantUow, enqueuer);
+        _load.AssignedTruckId = Guid.NewGuid();
         _load.Dispatch();
         _load.ConfirmPickup();
         _load.ConfirmDelivery();

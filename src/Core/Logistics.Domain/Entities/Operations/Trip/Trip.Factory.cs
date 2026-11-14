@@ -27,6 +27,16 @@ public partial class Trip
             TotalDistance = optimizedTotalDistance ?? loadsArr.Sum(l => l.Distance)
         };
 
+        // The trip decides its loads' truck.
+        if (truck is not null)
+        {
+            foreach (var load in loadsArr)
+            {
+                load.AssignedTruckId = truck.Id;
+                load.AssignedTruck = truck;
+            }
+        }
+
         if (optimizedStops is not null)
         {
             foreach (var stop in optimizedStops)

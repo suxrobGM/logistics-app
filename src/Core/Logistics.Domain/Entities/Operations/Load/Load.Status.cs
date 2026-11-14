@@ -26,6 +26,11 @@ public partial class Load
             throw new InvalidOperationException($"Cannot change load status from '{Status}' to '{newStatus}'.");
         }
 
+        if (newStatus == LoadStatus.Dispatched && AssignedTruckId is null)
+        {
+            throw new InvalidOperationException($"Assign a truck to load #{Number} before dispatching it");
+        }
+
         var oldStatus = Status;
         var now = DateTime.UtcNow;
         switch (newStatus)

@@ -27,6 +27,11 @@ public partial class Trip
             throw new InvalidOperationException("Trip already dispatched");
         }
 
+        if (TruckId is null)
+        {
+            throw new InvalidOperationException($"Assign a truck to trip '{Name}' before dispatching it");
+        }
+
         Status = TripStatus.Dispatched;
         DispatchedAt = DateTime.UtcNow;
         RecordDrivers();
