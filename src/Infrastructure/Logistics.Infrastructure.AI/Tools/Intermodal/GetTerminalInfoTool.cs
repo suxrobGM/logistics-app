@@ -63,25 +63,9 @@ internal sealed class GetTerminalInfoTool(ITenantUnitOfWork tenantUow)
             type = terminal.Type.ToString(),
             type_description = terminal.Type.GetDescription(),
             country_code = terminal.Address.Country,
-            address = FormatAddress(terminal.Address),
+            address = terminal.Address.ToString(),
             city = terminal.Address.City,
             notes = terminal.Notes
         });
-    }
-
-    /// <summary>Formats an address on one line; the record's default <c>ToString</c> includes property names and costs too many tokens.</summary>
-    internal static string FormatAddress(Address address)
-    {
-        string[] parts =
-        [
-            address.Line1,
-            address.Line2 ?? "",
-            address.City,
-            address.State,
-            address.ZipCode,
-            address.Country
-        ];
-
-        return string.Join(", ", parts.Where(p => !string.IsNullOrWhiteSpace(p)));
     }
 }
