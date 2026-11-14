@@ -22,6 +22,7 @@
     <ProjectReference Include="..\..\src\Infrastructure\Logistics.Infrastructure.Payments\Logistics.Infrastructure.Payments.csproj" />
     <ProjectReference Include="..\..\src\Infrastructure\Logistics.Infrastructure.Persistence\Logistics.Infrastructure.Persistence.csproj" />
     <ProjectReference Include="..\..\src\Infrastructure\Logistics.Infrastructure.Routing\Logistics.Infrastructure.Routing.csproj" />
+    <ProjectReference Include="..\..\src\Presentation\Logistics.API\Logistics.API.csproj" />
     <ProjectReference Include="..\..\src\Presentation\Logistics.HostDefaults\Logistics.HostDefaults.csproj" />
   </ItemGroup>
 

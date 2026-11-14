@@ -11,7 +11,14 @@ public class Iso8601UtcDateTimeConverter : JsonConverter<DateTime>
     public override DateTime Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)
     {
         var dateString = reader.GetString();
-        return string.IsNullOrEmpty(dateString) ? default : DateTime.Parse(dateString).ToUniversalTime();
+        if (string.IsNullOrEmpty(dateString))
+        {
+            return default;
+        }
+
+        return UtcDateParser.TryParse(dateString, out var utc)
+            ? utc
+            : throw new JsonException($"'{dateString}' is not a valid ISO 8601 date.");
     }
 
     public override void Write(Utf8JsonWriter writer, DateTime value, JsonSerializerOptions options)

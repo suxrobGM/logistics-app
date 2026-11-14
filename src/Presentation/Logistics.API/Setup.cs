@@ -210,6 +210,7 @@ internal static class Setup
                     configure.Filters.Add(new AuthorizeFilter(policy));
 
                     configure.ModelBinderProviders.Insert(0, new SnakeCaseEnumModelBinderProvider());
+                    configure.ModelBinderProviders.Insert(0, new UtcDateTimeModelBinderProvider());
                 })
                 .ConfigureApiBehaviorOptions(options =>
                 {

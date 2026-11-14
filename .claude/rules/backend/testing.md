@@ -13,7 +13,7 @@ xUnit v3 on Microsoft.Testing.Platform (test projects are `Exe`), NSubstitute, `
 | --- | --- |
 | `Logistics.Application.Tests` | Handlers and services. Folders mirror `Modules/` (`Operations/Loads/`), plus `Common/` and `Primitives/` |
 | `Logistics.Infrastructure.AI.Tests` | Agents, tools, prompts, pricing |
-| `Logistics.Infrastructure.Tests` | Every other infrastructure project and HostDefaults, one folder per project (`Persistence/`, `Integrations/`, `Payments/`, ...) |
+| `Logistics.Infrastructure.Tests` | Every other infrastructure project, HostDefaults and the API's `Serialization/`, one folder per project (`Persistence/`, `Integrations/`, `Api/`, ...) |
 | `Logistics.Architecture.Tests` | Layer boundaries (ArchUnitNET) |
 | `Logistics.Mediator.Tests` | The in-repo mediator |
 
