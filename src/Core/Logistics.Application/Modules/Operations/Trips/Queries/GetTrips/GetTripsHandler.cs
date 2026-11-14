@@ -42,6 +42,11 @@ internal sealed class GetTripsHandler(ITenantUnitOfWork tenantUow, IDisplayNameL
             query = query.Where(i => i.Status == req.Status.Value);
         }
 
+        if (req.Statuses?.Length > 0)
+        {
+            query = query.Where(i => req.Statuses.Contains(i.Status));
+        }
+
         if (req.TruckId.HasValue)
         {
             query = query.Where(i => i.TruckId == req.TruckId.Value);
