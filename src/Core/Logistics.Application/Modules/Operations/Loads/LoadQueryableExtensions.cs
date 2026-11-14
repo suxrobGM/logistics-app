@@ -1,3 +1,5 @@
+using Logistics.Application.Abstractions.Context;
+using Logistics.Application.Common.Extensions;
 using Logistics.Application.Modules.Operations.Loads.Queries;
 using Logistics.Domain.Entities;
 using Logistics.Domain.Primitives.Enums;
@@ -15,9 +17,16 @@ public static class LoadQueryableExtensions
             return truckId.HasValue ? delivered.Where(i => i.AssignedTruckId == truckId) : delivered;
         }
 
-        /// <summary>Applies the load list filters; <paramref name="driverId"/> limits to loads on that driver's truck.</summary>
-        public IQueryable<Load> FilterForList(ILoadListFilter filter, Guid? driverId)
+        /// <summary>Applies the load list filters; a tenant driver only ever sees loads on a truck they drive.</summary>
+        public IQueryable<Load> FilterForList(ILoadListFilter filter, ICurrentUserService currentUser)
         {
+            var isDriver = currentUser.IsTenantDriver();
+            var driverId = isDriver ? currentUser.GetUserId() : filter.DriverId;
+            if (isDriver && driverId is null)
+            {
+                return loads.Where(_ => false);
+            }
+
             var query = loads;
 
             if (!string.IsNullOrEmpty(filter.Search))

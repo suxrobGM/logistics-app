@@ -1,5 +1,4 @@
 using Logistics.Application.Abstractions.Context;
-using Logistics.Application.Common.Extensions;
 using Logistics.Domain.Entities;
 using Logistics.Domain.Persistence;
 using Logistics.Mediator;
@@ -15,16 +14,8 @@ internal sealed class GetLoadsSummaryHandler(
 {
     public async Task<Result<LoadsSummaryDto>> Handle(GetLoadsSummaryQuery req, CancellationToken ct)
     {
-        var isDriver = currentUserService.IsTenantDriver();
-        var driverId = isDriver ? currentUserService.GetUserId() : req.DriverId;
-
-        if (isDriver && driverId is null)
-        {
-            return Result<LoadsSummaryDto>.Ok(new LoadsSummaryDto());
-        }
-
         var groups = await tenantUow.Repository<Load>().Query()
-            .FilterForList(req, driverId)
+            .FilterForList(req, currentUserService)
             .GroupBy(l => l.Status)
             .Select(g => new { Status = g.Key, Count = g.Count(), Revenue = g.Sum(l => l.DeliveryCost) })
             .ToListAsync(ct);

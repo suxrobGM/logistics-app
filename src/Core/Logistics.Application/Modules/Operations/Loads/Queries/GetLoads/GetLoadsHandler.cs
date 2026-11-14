@@ -35,15 +35,7 @@ internal sealed class GetLoadsHandler(
         GetLoadsQuery req,
         CancellationToken ct)
     {
-        var isDriver = currentUserService.IsTenantDriver();
-        var userId = isDriver ? currentUserService.GetUserId() : req.DriverId;
-
-        if (isDriver && userId is null)
-        {
-            return PagedResult<LoadDto>.Ok([], 0, req.PageSize);
-        }
-
-        var baseQuery = tenantUow.Repository<Load>().Query().FilterForList(req, userId);
+        var baseQuery = tenantUow.Repository<Load>().Query().FilterForList(req, currentUserService);
 
         var totalItems = await baseQuery.CountAsync(ct);
 

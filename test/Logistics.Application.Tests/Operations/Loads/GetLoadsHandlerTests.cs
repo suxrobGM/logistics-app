@@ -20,9 +20,8 @@ public class GetLoadsHandlerTests
     public async Task Handle_DriverWithoutUserClaim_ReturnsNoLoads()
     {
         var tenantUow = Substitute.For<ITenantUnitOfWork>();
-        var loadRepo = Substitute.For<ITenantRepository<Load, Guid>>();
         var currentUser = Substitute.For<ICurrentUserService>();
-        tenantUow.Repository<Load>().Returns(loadRepo);
+        tenantUow.Stub<Load>(TestData.Load());
         currentUser.IsInRole(TenantRoles.Driver).Returns(true);
 
         var sut = new GetLoadsHandler(tenantUow, currentUser, new LoadLookupBuilder(tenantUow, new DisplayNameLookup(tenantUow)));
@@ -31,7 +30,6 @@ public class GetLoadsHandlerTests
         Assert.True(result.IsSuccess);
         Assert.Empty(result.Value!);
         Assert.Equal(0, result.TotalItems);
-        _ = loadRepo.DidNotReceive().Query();
     }
 
     [Fact]
