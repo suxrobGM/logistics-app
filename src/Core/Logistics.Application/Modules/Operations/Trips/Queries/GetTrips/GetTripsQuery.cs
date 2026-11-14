@@ -3,9 +3,8 @@ using Logistics.Shared.Models;
 
 namespace Logistics.Application.Modules.Operations.Trips.Queries;
 
-public sealed class GetTripsQuery : SearchableQuery, IQuery<PagedResult<TripDto>>
+public sealed class GetTripsQuery : SearchableQuery, IQuery<PagedResult<TripDto>>, ITripListFilter
 {
-    public TripStatus? Status { get; set; }
     public TripStatus[]? Statuses { get; set; }
     public Guid? TruckId { get; set; }
     public DateTime? FromDate { get; set; }

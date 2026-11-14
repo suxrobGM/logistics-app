@@ -33,6 +33,15 @@ public class TripController(IMediator mediator) : ControllerBase
         return Ok(PagedResponse<TripDto>.FromPagedResult(result, query.Page, query.PageSize));
     }
 
+    [HttpGet("summary", Name = "GetTripsSummary")]
+    [ProducesResponseType(typeof(TripsSummaryDto), StatusCodes.Status200OK)]
+    [Authorize(Policy = Permission.Load.View)]
+    public async Task<IActionResult> GetSummary([FromQuery] GetTripsSummaryQuery query)
+    {
+        var result = await mediator.Send(query);
+        return result.ToActionResult();
+    }
+
     [HttpPost(Name = "CreateTrip")]
     [ProducesResponseType(typeof(Result<Guid>), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status400BadRequest)]

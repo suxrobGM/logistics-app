@@ -3,6 +3,7 @@ using Logistics.Application.Common.Extensions;
 using Logistics.Application.Common.Services;
 using Logistics.Application.Modules.Operations.Customers;
 using Logistics.Application.Modules.Operations.Loads;
+using Logistics.Application.Modules.Operations.Trips;
 using Logistics.Domain.Entities;
 using Logistics.Domain.Persistence;
 using Logistics.Domain.Primitives.Enums;
@@ -26,46 +27,7 @@ internal sealed class GetTripsHandler(ITenantUnitOfWork tenantUow, IDisplayNameL
     public Task<PagedResult<TripDto>> Handle(
         GetTripsQuery req, CancellationToken ct)
     {
-        var query = tenantUow.Repository<Trip>().Query();
-
-        if (!string.IsNullOrEmpty(req.Search))
-        {
-            var search = req.Search.ToLower();
-            query = query.Where(i =>
-                i.Name.ToLower().Contains(search) ||
-                i.Number.ToString().Contains(search) ||
-                (i.Truck != null && i.Truck.Number.ToLower().Contains(search)));
-        }
-
-        if (req.Status.HasValue)
-        {
-            query = query.Where(i => i.Status == req.Status.Value);
-        }
-
-        if (req.Statuses?.Length > 0)
-        {
-            query = query.Where(i => req.Statuses.Contains(i.Status));
-        }
-
-        if (req.TruckId.HasValue)
-        {
-            query = query.Where(i => i.TruckId == req.TruckId.Value);
-        }
-
-        if (req.FromDate is { } fromDate)
-        {
-            query = query.Where(i => i.CreatedAt >= fromDate);
-        }
-
-        if (req.ToDate is { } toDate)
-        {
-            query = query.Where(i => i.CreatedAt <= toDate);
-        }
-
-        if (req.ActiveOnly)
-        {
-            query = query.Where(i => i.Status != TripStatus.Completed && i.Status != TripStatus.Cancelled);
-        }
+        var query = tenantUow.Repository<Trip>().Query().FilterForList(req);
 
         return query.ToPagedResultAsync(req, Sorts, MapPageAsync, ct);
     }
