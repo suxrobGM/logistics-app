@@ -92,6 +92,8 @@ internal static class Setup
                 options.OpenApiVersion = OpenApiSpecVersion.OpenApi3_1;
                 options.AddSchemaTransformer<DateTimeSchemaTransformer>();
                 options.AddOperationTransformer<EnumParameterTransformer>();
+                // After the enum transformer, which matches parameters by their C# names.
+                options.AddOperationTransformer<QueryParameterNameTransformer>();
                 options.AddDocumentTransformer<EnumSchemaTransformer>();
             });
 
