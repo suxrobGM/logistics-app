@@ -26,7 +26,9 @@ Goal: the TMS portal felt overwhelming. Fewer places to go, fewer controls per s
 
 ## Phase 3: page template
 
-- [ ] One primary action per page header, the rest in an overflow menu
-- [ ] Drop Back buttons that duplicate breadcrumbs
-- [ ] Load details: hide empty sections, money in its own tab
-- [ ] Other detail pages, one per commit
+- [x] Settings no longer pinned to the sidebar bottom (user request); `pinToBottom` removed
+- [x] Load details: next step (Assign Truck or Dispatch) + Edit + overflow menu; money in a Charges tab; Timeline and duplicate rows removed; Customer Updates only when present
+- [x] Header Back buttons become `backLink` arrows (loads, customers, employees, trucks, factoring schedules)
+- [x] Headers audited: the rest show at most two buttons or state-exclusive pairs (Approve/Reject)
+- [ ] Other detail pages (truck, employee, customer, trip): hide empty sections, move secondary data into tabs
+- [ ] List pages: one filter pattern (search + chips + "More filters") instead of the always-open Filters card
