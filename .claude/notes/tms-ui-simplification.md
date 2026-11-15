@@ -30,5 +30,12 @@ Goal: the TMS portal felt overwhelming. Fewer places to go, fewer controls per s
 - [x] Load details: next step (Assign Truck or Dispatch) + Edit + overflow menu; money in a Charges tab; Timeline and duplicate rows removed; Customer Updates only when present
 - [x] Header Back buttons become `backLink` arrows (loads, customers, employees, trucks, factoring schedules)
 - [x] Headers audited: the rest show at most two buttons or state-exclusive pairs (Approve/Reject)
-- [ ] Other detail pages (truck, employee, customer, trip): hide empty sections, move secondary data into tabs
-- [ ] List pages: one filter pattern (search + chips + "More filters") instead of the always-open Filters card
+- [x] Detail pages: employee links in a header menu, customer "New Load" in the header, duplicate truck rows gone; trip already clean
+- [x] List filters: `app-filter-bar` (one row + "More filters") on loads, trucks, trips, load invoices, payroll invoices
+- [x] Inputs and select triggers have a solid `bg-card` fill (they read as disabled on the page background)
+
+## Sidebar and home follow-ups (user requests)
+
+- [x] Sidebar spacing: one 0.75rem gutter, brand inline, collapse toggle in the footer icon row
+- [x] Sidebar gradient kept (user disliked it flat); borders, scrollbar, search and account raised for contrast
+- [x] Needs Attention lists every waiting action (AI decisions, unassigned loads, overdue invoices, idle trucks) in a scrolling list
