@@ -12,11 +12,17 @@ Goal: the TMS portal felt overwhelming. Fewer places to go, fewer controls per s
 
 ## Phase 2: home dashboard
 
-- [ ] Panels size to content: no nested scrollbars, KPI cards never scroll
-- [ ] Header: one "Customize" menu (add/remove panels, reset layout) plus Quick Actions
-- [ ] KPI empty state instead of `$0.00`; body font, not monospace
-- [ ] Needs Attention hidden when empty; onboarding shows remaining steps only
-- [ ] Active Loads: distinct status colours, Title Case, no progress column
+- [x] Gridster removed: KPI row, then main and side columns sized to content (user chose dropping drag/resize)
+- [x] Header: Refresh, one Customize menu (show/hide panels, reset) and Quick Actions
+- [x] KPI empty state instead of `$0.00`; tabular numbers, not monospace
+- [x] Needs Attention hidden when empty, zero rows dropped; onboarding lists remaining steps only
+- [x] Active Loads: 6 rows max, no progress column; badges Title Case, picked up has its own colour
+
+## Accent styles (user request)
+
+- [x] No left-edge stripes: nav active item, unread notifications, load table rows
+- [x] Coloured icon circles neutral (`bg-muted`) in all three portals; colour kept only for state
+- [x] Stat card: no gradient ring or glow; `valueTone` only for values that carry state
 
 ## Phase 3: page template
 
